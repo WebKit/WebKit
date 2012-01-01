@@ -64,9 +64,6 @@ enum CollectionType {
 static const CollectionType FirstUnnamedDocumentCachedType = DocImages;
 static const unsigned NumUnnamedDocumentCachedTypes = NodeChildren - DocImages + 1;
 
-static const CollectionType FirstNamedDocumentCachedType = WindowNamedItems;
-static const unsigned NumNamedDocumentCachedTypes = DocumentNamedItems - WindowNamedItems + 1;
-
 } // namespace
 
 #endif

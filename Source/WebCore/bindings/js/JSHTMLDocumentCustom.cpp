@@ -61,8 +61,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
     JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
-    String name = identifierToString(propertyName);
-    RefPtr<HTMLCollection> collection = document->documentNamedItems(name);
+    RefPtr<HTMLCollection> collection = document->documentNamedItems(identifierToAtomicString(propertyName));
 
     unsigned length = collection->length();
     if (!length)

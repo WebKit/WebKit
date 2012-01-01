@@ -24,7 +24,8 @@
 #define HTMLNameCollection_h
 
 #include "HTMLCollection.h"
-#include "PlatformString.h"
+
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -32,17 +33,17 @@ class Document;
 
 class HTMLNameCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLNameCollection> create(PassRefPtr<Document> document, CollectionType type, const String& name)
+    static PassRefPtr<HTMLNameCollection> create(Document* document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(new HTMLNameCollection(document, type, name));
     }
-    
+
 private:
-    HTMLNameCollection(PassRefPtr<Document>, CollectionType, const String& name);
+    HTMLNameCollection(Document*, CollectionType, const AtomicString& name);
 
-    virtual Element* itemAfter(Element*) const;
+    virtual Element* itemAfter(Element*) const OVERRIDE;
 
-    String m_name;
+    AtomicString m_name;
 };
 
 }

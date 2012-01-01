@@ -98,6 +98,7 @@ class HTMLFrameOwnerElement;
 class HTMLHeadElement;
 class HTMLInputElement;
 class HTMLMapElement;
+class HTMLNameCollection;
 class HitTestRequest;
 class HitTestResult;
 class IntPoint;
@@ -136,8 +137,6 @@ class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
-
-struct CollectionCache;
 
 #if ENABLE(SVG)
 class SVGDocumentExtensions;
@@ -420,12 +419,10 @@ public:
     PassRefPtr<HTMLCollection> anchors();
     PassRefPtr<HTMLCollection> objects();
     PassRefPtr<HTMLCollection> scripts();
-    PassRefPtr<HTMLCollection> windowNamedItems(const String& name);
-    PassRefPtr<HTMLCollection> documentNamedItems(const String& name);
+    PassRefPtr<HTMLCollection> windowNamedItems(const AtomicString& name);
+    PassRefPtr<HTMLCollection> documentNamedItems(const AtomicString& name);
 
     PassRefPtr<HTMLAllCollection> all();
-
-    CollectionCache* nameCollectionInfo(CollectionType, const AtomicString& name);
 
     // Other methods (not part of DOM)
     bool isHTMLDocument() const { return m_isHTML; }
@@ -1364,8 +1361,9 @@ private:
     RefPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
     RefPtr<HTMLAllCollection> m_allCollection;
 
-    typedef HashMap<AtomicStringImpl*, OwnPtr<CollectionCache> > NamedCollectionMap;
-    FixedArray<NamedCollectionMap, NumNamedDocumentCachedTypes> m_nameCollectionInfo;
+    typedef HashMap<AtomicStringImpl*, RefPtr<HTMLNameCollection> > NamedCollectionMap;
+    NamedCollectionMap m_documentNamedItemCollections;
+    NamedCollectionMap m_windowNamedItemCollections;
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 

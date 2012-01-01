@@ -1,5 +1,45 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        Cache named item collections on Document, not just their caches.
+        <http://webkit.org/b/75403>
+
+        Reviewed by Anders Carlsson.
+
+        Keep two maps of name -> RefPtr<HTMLNameCollection> on Document. We already
+        had maps for the CollectionCaches and were creating the HTMLNameCollections
+        every time they were accessed. We now let the collections create and manage
+        the CollectionCaches instead of Document.
+
+        No new tests since these collections are not exposed to the web.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+
+            Replace the name/CollectionCache maps by name/HTMLNameCollection maps.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+
+            Pass names as AtomicStrings to Document's collection getters.
+
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+
+            Store the name in an AtomicString instead of a String, incidentally
+            making traversal of HTMLNameCollections more efficient.
+
+        * html/CollectionType.h:
+
+            Remove two now-unneeded constants.
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         Remove Document::collectionInfo() and let collections manage their caches.
         <http://webkit.org/b/75401>
 

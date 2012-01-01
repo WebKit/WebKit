@@ -32,8 +32,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollection::HTMLNameCollection(PassRefPtr<Document> document, CollectionType type, const String& name)
-    : HTMLCollection(document.get(), type, document->nameCollectionInfo(type, name))
+HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, const AtomicString& name)
+    : HTMLCollection(document, type, 0, /* retainBaseNode */ false)
     , m_name(name)
 {
 }

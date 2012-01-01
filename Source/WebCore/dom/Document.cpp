@@ -41,7 +41,6 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CollectionCache.h"
 #include "Comment.h"
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
@@ -4253,27 +4252,20 @@ PassRefPtr<HTMLAllCollection> Document::all()
     return m_allCollection;
 }
 
-PassRefPtr<HTMLCollection> Document::windowNamedItems(const String &name)
+PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
-    return HTMLNameCollection::create(this, WindowNamedItems, name);
+    RefPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), 0).first->second;
+    if (!collection)
+        collection = HTMLNameCollection::create(this, WindowNamedItems, name);
+    return collection;
 }
 
-PassRefPtr<HTMLCollection> Document::documentNamedItems(const String &name)
+PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
 {
-    return HTMLNameCollection::create(this, DocumentNamedItems, name);
-}
-
-CollectionCache* Document::nameCollectionInfo(CollectionType type, const AtomicString& name)
-{
-    ASSERT(type >= FirstNamedDocumentCachedType);
-    unsigned index = type - FirstNamedDocumentCachedType;
-    ASSERT(index < NumNamedDocumentCachedTypes);
-
-    OwnPtr<CollectionCache>& cache = m_nameCollectionInfo[index].add(name.impl(), nullptr).first->second;
-    if (!cache)
-        cache = adoptPtr(new CollectionCache);
-    cache->checkConsistency();
-    return cache.get();
+    RefPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), 0).first->second;
+    if (!collection)
+        collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
+    return collection;
 }
 
 void Document::finishedParsing()
