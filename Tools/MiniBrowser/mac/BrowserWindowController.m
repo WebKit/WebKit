@@ -574,12 +574,10 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (void)awakeFromNib
 {
-    _webView = [[WKView alloc] initWithFrame:[containerView frame] contextRef:_context pageGroupRef:_pageGroup];
+    _webView = [[WKView alloc] initWithFrame:[containerView bounds] contextRef:_context pageGroupRef:_pageGroup];
 
-    [containerView addSubview:_webView];
-    [_webView setFrame:[containerView frame]];
-    
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    [containerView addSubview:_webView];
     
     WKPageLoaderClient loadClient = {
         kWKPageLoaderClientCurrentVersion,
