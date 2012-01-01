@@ -1,3 +1,14 @@
+2012-01-01  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/CPP/WebDOMTestSupplemental.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestSupplemental.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestSupplemental.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestSupplemental.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestSupplemental.cpp: Added.
+        * bindings/scripts/test/ObjC/DOMTestSupplemental.h: Added.
+
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
         Make HTMLCollections play nice after their base node is gone.
