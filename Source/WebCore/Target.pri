@@ -1234,6 +1234,7 @@ SOURCES += \
     rendering/RenderSlider.cpp \
     rendering/RenderSummary.cpp \
     rendering/RenderTable.cpp \
+    rendering/RenderTableCaption.cpp \
     rendering/RenderTableCell.cpp \
     rendering/RenderTableCol.cpp \
     rendering/RenderTableRow.cpp \
@@ -2358,6 +2359,7 @@ HEADERS += \
     rendering/RenderScrollbarTheme.h \
     rendering/RenderSlider.h \
     rendering/RenderSummary.h \
+    rendering/RenderTableCaption.h \
     rendering/RenderTableCell.h \
     rendering/RenderTableCol.h \
     rendering/RenderTable.h \

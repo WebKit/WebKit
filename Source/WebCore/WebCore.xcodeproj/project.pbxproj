@@ -1760,6 +1760,8 @@
 		6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E5312A8929800DB1709 /* WebGLExtension.h */; };
 		6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */; };
 		6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */; };
+		6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */; };
+		6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED878C3147493F4004C3597 /* RenderTableCaption.h */; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		7134496D146941B300720312 /* SVGLengthContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7134496B146941B300720312 /* SVGLengthContext.cpp */; };
@@ -9053,6 +9055,8 @@
 		6EBF0E5312A8929800DB1709 /* WebGLExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLExtension.h; path = canvas/WebGLExtension.h; sourceTree = "<group>"; };
 		6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureFloat.cpp; sourceTree = "<group>"; };
 		6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloat.h; sourceTree = "<group>"; };
+		6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTableCaption.cpp; sourceTree = "<group>"; };
+		6ED878C3147493F4004C3597 /* RenderTableCaption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableCaption.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		7134496B146941B300720312 /* SVGLengthContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLengthContext.cpp; sourceTree = "<group>"; };
@@ -21172,6 +21176,8 @@
 				D302754C12A5FEAB004BD828 /* RenderSummary.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
+				6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */,
+				6ED878C3147493F4004C3597 /* RenderTableCaption.h */,
 				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
 				A8DF4ADF0980C42C0052981B /* RenderTableCell.h */,
 				A8DF4ADE0980C42C0052981B /* RenderTableCol.cpp */,
@@ -24967,6 +24973,7 @@
 				FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */,
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactory.h in Headers */,
+				6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27872,6 +27879,7 @@
 				FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */,
 				FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactory.mm in Sources */,
+				6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

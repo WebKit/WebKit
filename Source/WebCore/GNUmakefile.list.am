@@ -3498,6 +3498,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderSlider.h \
 	Source/WebCore/rendering/RenderSummary.cpp \
 	Source/WebCore/rendering/RenderSummary.h \
+	Source/WebCore/rendering/RenderTableCaption.cpp \
+	Source/WebCore/rendering/RenderTableCaption.h \
 	Source/WebCore/rendering/RenderTableCell.cpp \
 	Source/WebCore/rendering/RenderTableCell.h \
 	Source/WebCore/rendering/RenderTableCol.cpp \

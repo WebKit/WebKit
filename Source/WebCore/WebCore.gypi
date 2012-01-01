@@ -4744,6 +4744,8 @@
             'rendering/RenderSummary.h',
             'rendering/RenderTable.cpp',
             'rendering/RenderTable.h',
+            'rendering/RenderTableCaption.cpp',
+            'rendering/RenderTableCaption.h',
             'rendering/RenderTableCell.cpp',
             'rendering/RenderTableCell.h',
             'rendering/RenderTableCol.cpp',

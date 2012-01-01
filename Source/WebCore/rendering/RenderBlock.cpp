@@ -708,7 +708,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
 
         ASSERT(beforeChildAnonymousContainer->isTable());
         if ((newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
-                || (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
+                || (newChild->isTableCaption())
                 || newChild->isTableSection()
                 || newChild->isTableRow()
                 || newChild->isTableCell()) {

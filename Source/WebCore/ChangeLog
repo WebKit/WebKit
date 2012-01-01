@@ -1,3 +1,51 @@
+2011-12-20  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-collapse-offset-002.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=71705
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: css2.1/20110323/border-collapse-offset-002-expected.html
+               fast/css/caption-width-absolute-position-offset-top.htm
+               fast/css/caption-width-absolute-position.htm
+               fast/css/caption-width-fixed-position-offset-top.htm
+               fast/css/caption-width-fixed-position.htm
+               fast/css/caption-width-relative-position-offset-top.htm
+               fast/css/caption-width-relative-position.htm
+
+        Table captions are implemented as children of the table but have a special
+        requirement to expand to the full width of the table rather than just the 'available'
+        width, i.e. the full width minus padding and borders.
+
+        To accomodate this create a RenderTableCaption object that reimplements containingBlockLogicalWidthForContent()
+        to return the full width of the containing block (i.e. the table) rather than the available width.
+
+
+        * CMakeLists.txt: Add RenderTableCaption.[cpp|h]
+        * GNUmakefile.list.am: Add RenderTableCaption.[cpp|h]
+        * Target.pri: Add RenderTableCaption.[cpp|h]
+        * WebCore.gypi: Add RenderTableCaption.[cpp|h]
+        * WebCore.vcproj/WebCore.vcproj: Add RenderTableCaption.[cpp|h]
+        * WebCore.xcodeproj/project.pbxproj: Add RenderTableCaption.[cpp|h]
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): Use RenderTableCaption
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): Add RenderTableCaption.[cpp|h]
+        (WebCore::RenderObject::addChild): ditto
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isTableCaption):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCaption.cpp: Added.
+        (WebCore::RenderTableCaption::RenderTableCaption): Implement RenderTableCaption
+        (WebCore::RenderTableCaption::~RenderTableCaption):
+        (WebCore::RenderTableCaption::containingBlockLogicalWidthForContent): Return the containing block's full width rather than it's available width.
+        * rendering/RenderTableCaption.h: Added.
+        (WebCore::RenderTableCaption::isTableCaption):
+        (WebCore::toRenderTableCaption):
+        * rendering/RenderingAllInOne.cpp:
+
 2012-01-01  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

@@ -328,6 +328,7 @@ public:
     virtual bool isTable() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableCol() const { return false; }
+    virtual bool isTableCaption() const { return false; }
     virtual bool isTableRow() const { return false; }
     virtual bool isTableSection() const { return false; }
     virtual bool isTextControl() const { return false; }

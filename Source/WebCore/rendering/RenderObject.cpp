@@ -54,6 +54,7 @@
 #include "RenderRegion.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
+#include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
@@ -176,7 +177,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     case TABLE_CELL:
         return new (arena) RenderTableCell(node);
     case TABLE_CAPTION:
-        return new (arena) RenderBlock(node);
+        return new (arena) RenderTableCaption(node);
     case BOX:
     case INLINE_BOX:
         return new (arena) RenderDeprecatedFlexibleBox(node);
@@ -286,7 +287,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
     if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
         needsTable = !isTable();
-    else if (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
+    else if (newChild->isTableCaption())
         needsTable = !isTable();
     else if (newChild->isTableSection())
         needsTable = !isTable();
