@@ -4605,28 +4605,18 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     return kit(_private->page->rangeOfString(string, core(previousRange), coreOptions(options)).get());
 }
 
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+// FIXME: Remove once WebKit no longer needs to support versions of Safari that call this.
 - (void)setHoverFeedbackSuspended:(BOOL)newValue
 {
-    if (_private->hoverFeedbackSuspended == newValue)
-        return;
-    
-    _private->hoverFeedbackSuspended = newValue;
-
-    id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
-    // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
-    // such as by calling a protocol method or using respondsToSelector or sending a notification.
-    // But until there is any need for these more general solutions, we'll just hardwire it to work
-    // with WebHTMLView.
-    // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
-    // on each subframe separately.
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
 }
 
+// FIXME: Remove once WebKit no longer needs to support versions of Safari that call this.
 - (BOOL)isHoverFeedbackSuspended
 {
-    return _private->hoverFeedbackSuspended;
+    return NO;
 }
+#endif
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
 {

@@ -132,12 +132,6 @@ typedef enum {
 
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
 
-// setHoverFeedbackSuspended: can be called by clients that want to temporarily prevent the webView
-// from displaying feedback about mouse position. Each WebDocumentView class that displays feedback
-// about mouse position should honor this setting.
-- (void)setHoverFeedbackSuspended:(BOOL)newValue;
-- (BOOL)isHoverFeedbackSuspended;
-
 /*!
 @method setScriptDebugDelegate:
 @abstract Set the WebView's WebScriptDebugDelegate delegate.

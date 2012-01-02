@@ -48,7 +48,6 @@ namespace WebCore {
 - (id <WebHTMLHighlighter>)_highlighterForType:(NSString*)type;
 - (WebFrame *)_frame;
 - (void)_lookUpInDictionaryFromMenu:(id)sender;
-- (void)_hoverFeedbackSuspendedChanged;
 - (BOOL)_interpretKeyEvent:(WebCore::KeyboardEvent *)event savingCommands:(BOOL)savingCommands;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 - (NSEvent *)_mouseDownEvent;

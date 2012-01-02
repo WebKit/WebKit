@@ -1,3 +1,21 @@
+2012-01-02  Dan Bernstein  <mitz@apple.com>
+
+        [mac] Remove -[WebView setHoverFeedbackSuspended:]
+        https://bugs.webkit.org/show_bug.cgi?id=75406
+
+        Reviewed by Tim Hatcher.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Removed check for suspended hover updates.
+        * WebView/WebHTMLViewInternal.h: Removed -_hoverFeedbackSuspendedChanged.
+        * WebView/WebView.mm:
+        (-[WebView setHoverFeedbackSuspended:]): Left empty implementation to support versions of
+        Safari that call this.
+        (-[WebView isHoverFeedbackSuspended]): Left implementation that always returns NO to support
+        versions of Safari that call this.
+        * WebView/WebViewData.h: Removed hoverFeedbackSuspended ivar.
+        * WebView/WebViewPrivate.h: Removed method definitions.
+
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac changes for: REGRESSION (WebKit2): Cursor, hover states not updated when page scrolls under stationary mouse pointer

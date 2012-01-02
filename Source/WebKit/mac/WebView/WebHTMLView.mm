@@ -1558,7 +1558,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     forceWebHTMLViewHitTest = NO;
     
     WebHTMLView *view = nil;
-    if ([hitView isKindOfClass:[WebHTMLView class]] && ![[(WebHTMLView *)hitView _webView] isHoverFeedbackSuspended])
+    if ([hitView isKindOfClass:[WebHTMLView class]])
         view = (WebHTMLView *)hitView;    
 
     if (view)
@@ -5256,11 +5256,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
                                 coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
-}
-
-- (void)_hoverFeedbackSuspendedChanged
-{
-    [self _updateMouseoverWithFakeEvent];
 }
 
 - (void)_executeSavedKeypressCommands
