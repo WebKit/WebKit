@@ -153,8 +153,6 @@ void ewk_view_frame_view_creation_notify(Evas_Object* ewkView);
 void ewk_view_js_window_object_clear(Evas_Object* ewkView, Evas_Object* frame);
 #endif
 
-int ewk_util_dpi_get();
-
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
 bool ewk_view_need_touch_events_get(const Evas_Object*);

@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
 #include "EditorClientEfl.h"
+#include "EflScreenUtilities.h"
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoaderClientEfl.h"
@@ -1084,7 +1085,7 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* smartData)
 static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Ewk_View_Private_Data* priv)
 {
     int desktopWidth = 980;
-    int deviceDPI = ewk_util_dpi_get();
+    int deviceDPI = WebCore::getDPI();
 
     WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome()->client()->pageRect());
     WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome()->client()->windowRect());

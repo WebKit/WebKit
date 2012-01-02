@@ -1,3 +1,19 @@
+2012-01-01  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL] Move function to get dpi to the WebCore/platform/efl/EflScreenUtilities.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=75292
+
+        Reviewed by Andreas Kling.
+
+        Move ewk_util_dpi_get() function in the ewk_util.cpp to the
+        WebCore/platform/efl/EflScreenUtilities.cpp in order to use it in the WebKit2.
+        The function's name is changed to getDPI().
+
+        * PlatformEfl.cmake:
+        * platform/efl/EflScreenUtilities.cpp: Added.
+        (WebCore::getDPI):
+        * platform/efl/EflScreenUtilities.h: Added.
+
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
         Merge CollectionCache into HTMLCollection.

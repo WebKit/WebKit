@@ -1,3 +1,20 @@
+2012-01-01  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL] Move function to get dpi to the WebCore/platform/efl/EflScreenUtilities.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=75292
+
+        Reviewed by Andreas Kling.
+
+        Move ewk_util_dpi_get() function in the ewk_util.cpp to the
+        WebCore/platform/efl/EflScreenUtilities.cpp in order to use it in the WebKit2.
+        The function's name is changed to getDPI().
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        (ewk_util_image_from_cairo_surface_add):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
 2011-12-27  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Remove duplicate code and remove entry after freeing the matrix.
