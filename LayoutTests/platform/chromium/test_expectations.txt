@@ -3905,3 +3905,5 @@ BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
 
 BUGWK75418 : css2.1/20110323/border-collapse-offset-002.htm = MISSING
+
+BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
