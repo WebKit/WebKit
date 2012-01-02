@@ -749,7 +749,6 @@ BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 // Plugin tests
 // -----------------------------------------------------------------
 
-BUGWK69791 : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT PASS
 
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 
