@@ -1,3 +1,10 @@
+2012-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        * Platform/mac/SharedMemoryMac.cpp:
+
 2012-01-02  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix build on Lion, by including mach_error.h in two places that need it.

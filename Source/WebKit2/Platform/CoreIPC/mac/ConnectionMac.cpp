@@ -30,6 +30,7 @@
 #include "MachPort.h"
 #include "MachUtilities.h"
 #include "RunLoop.h"
+#include <mach/mach_error.h>
 #include <mach/vm_map.h>
 
 using namespace std;
