@@ -1,3 +1,11 @@
+2012-01-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix qmake warning about unescaped backslashes
+
+        Reviewed by Ossy.
+
+        * DerivedSources.pri:
+
 2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issue.
