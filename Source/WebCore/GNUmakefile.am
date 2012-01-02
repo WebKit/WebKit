@@ -902,6 +902,7 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/generate-bindings.pl \
 	Source/WebCore/bindings/scripts/gobject-generate-headers.pl \
 	Source/WebCore/bindings/scripts/preprocessor.pm \
+	Source/WebCore/bindings/scripts/resolve-supplemental.pl \
 	Source/WebCore/ChangeLog \
 	Source/WebCore/css/CSSGrammar.y \
 	Source/WebCore/css/CSSPropertyNames.in \

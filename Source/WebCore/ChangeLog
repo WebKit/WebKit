@@ -1,3 +1,10 @@
+2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issue.
+
+        * GNUmakefile.am: Add resolve-supplemental.pl script to
+        EXTRA_DIST.
+
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
         Clear HTMLCollection's internal cache on construction.
