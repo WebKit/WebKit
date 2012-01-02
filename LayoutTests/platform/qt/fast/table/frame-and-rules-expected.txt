@@ -200,13 +200,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,1) size 96x21
                 text run at (1,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,740) size 296x136 [border: none (1px solid #808080) none none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 268x21
-            RenderText {#text} at (11,0) size 268x21
-              text run at (11,0) width 268: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}none\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (279,0) size 5x21
-              text run at (279,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 269x21
+            RenderText {#text} at (11,0) size 269x21
+              text run at (11,0) width 269: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}none\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (279,0) size 6x21
+              text run at (279,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 295x23
           RenderTableRow {TR} at (0,0) size 295x23
             RenderTableCell {TD} at (0,0) size 99x23 [border: none] [r=0 c=0 rs=1 cs=1]
@@ -298,13 +298,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,1) size 96x21
                 text run at (1,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,1108) size 295x136 [border: none (1px solid #808080) none]
-        RenderBlock {CAPTION} at (0,0) size 294x21
-          RenderInline {A} at (0,0) size 243x21
-            RenderText {#text} at (23,0) size 243x21
-              text run at (23,0) width 243: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}none\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (266,0) size 5x21
-              text run at (266,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 295x21
+          RenderInline {A} at (0,0) size 244x21
+            RenderText {#text} at (23,0) size 244x21
+              text run at (23,0) width 244: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}none\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (266,0) size 6x21
+              text run at (266,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 294x23
           RenderTableRow {TR} at (0,0) size 294x23
             RenderTableCell {TD} at (0,0) size 98x23 [r=0 c=0 rs=1 cs=1]
@@ -347,13 +347,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,1) size 96x21
                 text run at (1,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,1292) size 296x138 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 248x21
-            RenderText {#text} at (21,0) size 248x21
-              text run at (21,0) width 248: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}none\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (268,0) size 6x21
-              text run at (268,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 247x21
+            RenderText {#text} at (22,0) size 247x21
+              text run at (22,0) width 247: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}none\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (269,0) size 5x21
+              text run at (269,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
@@ -396,13 +396,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,1) size 96x21
                 text run at (1,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,1478) size 296x138 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 270x21
-            RenderText {#text} at (10,0) size 270x21
-              text run at (10,0) width 270: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}none\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (279,0) size 6x21
-              text run at (279,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 269x21
+            RenderText {#text} at (11,0) size 269x21
+              text run at (11,0) width 269: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}none\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (280,0) size 5x21
+              text run at (280,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
@@ -641,13 +641,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,2412) size 296x138 [border: none (1px solid #808080) none none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 284x21
-            RenderText {#text} at (3,0) size 284x21
-              text run at (3,0) width 284: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}groups\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (287,0) size 5x21
-              text run at (287,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 285x21
+            RenderText {#text} at (3,0) size 285x21
+              text run at (3,0) width 285: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}groups\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (287,0) size 6x21
+              text run at (287,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 295x23 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {TR} at (0,0) size 295x23
             RenderTableCell {TD} at (0,0) size 99x23 [border: none] [r=0 c=0 rs=1 cs=1]
@@ -739,13 +739,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,2784) size 295x138 [border: none (1px solid #808080) none]
-        RenderBlock {CAPTION} at (0,0) size 294x21
-          RenderInline {A} at (0,0) size 259x21
-            RenderText {#text} at (15,0) size 259x21
-              text run at (15,0) width 259: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}groups\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (274,0) size 5x21
-              text run at (274,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 295x21
+          RenderInline {A} at (0,0) size 260x21
+            RenderText {#text} at (15,0) size 260x21
+              text run at (15,0) width 260: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}groups\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (274,0) size 6x21
+              text run at (274,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 294x23 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {TR} at (0,0) size 294x23
             RenderTableCell {TD} at (0,0) size 98x23 [r=0 c=0 rs=1 cs=1]
@@ -788,13 +788,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,2970) size 296x140 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 264x21
-            RenderText {#text} at (13,0) size 264x21
-              text run at (13,0) width 264: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}groups\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (276,0) size 6x21
-              text run at (276,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 263x21
+            RenderText {#text} at (14,0) size 263x21
+              text run at (14,0) width 263: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}groups\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (277,0) size 5x21
+              text run at (277,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
@@ -837,13 +837,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,3158) size 296x140 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 286x21
-            RenderText {#text} at (2,0) size 286x21
-              text run at (2,0) width 286: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}groups\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (287,0) size 6x21
-              text run at (287,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 285x21
+            RenderText {#text} at (3,0) size 285x21
+              text run at (3,0) width 285: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}groups\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (288,0) size 5x21
+              text run at (288,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
@@ -1082,13 +1082,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,4102) size 296x140 [border: none (1px solid #808080) none none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 266x21
-            RenderText {#text} at (12,0) size 266x21
-              text run at (12,0) width 266: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}rows\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (278,0) size 5x21
-              text run at (278,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 267x21
+            RenderText {#text} at (12,0) size 267x21
+              text run at (12,0) width 267: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}rows\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (278,0) size 6x21
+              text run at (278,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 295x23
           RenderTableRow {TR} at (0,0) size 295x23
             RenderTableCell {TD} at (0,0) size 99x23 [border: none none none (1px none #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1180,13 +1180,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,4478) size 295x140 [border: none (1px solid #808080) none]
-        RenderBlock {CAPTION} at (0,0) size 294x21
-          RenderInline {A} at (0,0) size 241x21
-            RenderText {#text} at (24,0) size 241x21
-              text run at (24,0) width 241: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}rows\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (265,0) size 5x21
-              text run at (265,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 295x21
+          RenderInline {A} at (0,0) size 242x21
+            RenderText {#text} at (24,0) size 242x21
+              text run at (24,0) width 242: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}rows\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (265,0) size 6x21
+              text run at (265,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 294x23
           RenderTableRow {TR} at (0,0) size 294x23
             RenderTableCell {TD} at (0,0) size 98x23 [r=0 c=0 rs=1 cs=1]
@@ -1229,13 +1229,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,4666) size 296x142 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 246x21
-            RenderText {#text} at (22,0) size 246x21
-              text run at (22,0) width 246: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}rows\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (267,0) size 6x21
-              text run at (267,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 245x21
+            RenderText {#text} at (23,0) size 245x21
+              text run at (23,0) width 245: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}rows\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (268,0) size 5x21
+              text run at (268,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px solid #808080) none none (1px none #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1278,13 +1278,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (1,2) size 96x21
                 text run at (1,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,4856) size 296x142 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 295x21
-          RenderInline {A} at (0,0) size 268x21
-            RenderText {#text} at (11,0) size 268x21
-              text run at (11,0) width 268: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}rows\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (278,0) size 6x21
-              text run at (278,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 296x21
+          RenderInline {A} at (0,0) size 267x21
+            RenderText {#text} at (12,0) size 267x21
+              text run at (12,0) width 267: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}rows\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (279,0) size 5x21
+              text run at (279,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 295x24
           RenderTableRow {TR} at (0,0) size 295x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px solid #808080) none none (1px none #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1523,13 +1523,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,1) size 96x21
                 text run at (2,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,5786) size 298x136 [border: none (1px solid #808080) none none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 262x21
-            RenderText {#text} at (15,0) size 262x21
-              text run at (15,0) width 262: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}cols\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (276,0) size 6x21
-              text run at (276,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 261x21
+            RenderText {#text} at (16,0) size 261x21
+              text run at (16,0) width 261: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}cols\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (277,0) size 5x21
+              text run at (277,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 297x23
           RenderTableRow {TR} at (0,0) size 297x23
             RenderTableCell {TD} at (0,0) size 99x23 [border: none none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1621,13 +1621,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,1) size 96x21
                 text run at (2,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,6154) size 297x136 [border: none (1px solid #808080) none]
-        RenderBlock {CAPTION} at (0,0) size 296x21
-          RenderInline {A} at (0,0) size 237x21
-            RenderText {#text} at (27,0) size 237x21
-              text run at (27,0) width 237: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}cols\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (263,0) size 6x21
-              text run at (263,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 297x21
+          RenderInline {A} at (0,0) size 236x21
+            RenderText {#text} at (28,0) size 236x21
+              text run at (28,0) width 236: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}cols\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (264,0) size 5x21
+              text run at (264,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 296x23
           RenderTableRow {TR} at (0,0) size 296x23
             RenderTableCell {TD} at (0,0) size 98x23 [r=0 c=0 rs=1 cs=1]
@@ -1670,13 +1670,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,1) size 96x21
                 text run at (2,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,6338) size 298x138 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 240x21
-            RenderText {#text} at (26,0) size 240x21
-              text run at (26,0) width 240: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}cols\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (266,0) size 5x21
-              text run at (266,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 241x21
+            RenderText {#text} at (26,0) size 241x21
+              text run at (26,0) width 241: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}cols\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (266,0) size 6x21
+              text run at (266,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 297x24
           RenderTableRow {TR} at (0,0) size 297x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1719,13 +1719,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,1) size 96x21
                 text run at (2,1) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,6524) size 298x138 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 262x21
-            RenderText {#text} at (15,0) size 262x21
-              text run at (15,0) width 262: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}cols\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (277,0) size 5x21
-              text run at (277,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 263x21
+            RenderText {#text} at (15,0) size 263x21
+              text run at (15,0) width 263: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}cols\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (277,0) size 6x21
+              text run at (277,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 297x24
           RenderTableRow {TR} at (0,0) size 297x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -1964,13 +1964,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,2) size 96x21
                 text run at (2,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,7466) size 298x140 [border: none (1px solid #808080) none none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 246x21
-            RenderText {#text} at (23,0) size 246x21
-              text run at (23,0) width 246: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}all\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (269,0) size 5x21
-              text run at (269,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 247x21
+            RenderText {#text} at (23,0) size 247x21
+              text run at (23,0) width 247: "Frame=\x{201C}vsides\x{201D} and Rules=\x{201C}all\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (269,0) size 6x21
+              text run at (269,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 297x23
           RenderTableRow {TR} at (0,0) size 297x23
             RenderTableCell {TD} at (0,0) size 99x23 [border: none] [r=0 c=0 rs=1 cs=1]
@@ -2062,13 +2062,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,2) size 96x21
                 text run at (2,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,7842) size 297x140 [border: none (1px solid #808080) none]
-        RenderBlock {CAPTION} at (0,0) size 296x21
-          RenderInline {A} at (0,0) size 221x21
-            RenderText {#text} at (35,0) size 221x21
-              text run at (35,0) width 221: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}all\x{201D}"
-          RenderInline (generated) at (0,0) size 5x21
-            RenderText at (256,0) size 5x21
-              text run at (256,0) width 5: ":"
+        RenderBlock {CAPTION} at (0,0) size 297x21
+          RenderInline {A} at (0,0) size 222x21
+            RenderText {#text} at (35,0) size 222x21
+              text run at (35,0) width 222: "Frame=\x{201C}rhs\x{201D} and Rules=\x{201C}all\x{201D}"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderText at (256,0) size 6x21
+              text run at (256,0) width 6: ":"
         RenderTableSection {THEAD} at (0,21) size 296x23
           RenderTableRow {TR} at (0,0) size 296x23
             RenderTableCell {TD} at (0,0) size 98x23 [r=0 c=0 rs=1 cs=1]
@@ -2111,13 +2111,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,2) size 96x21
                 text run at (2,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,8030) size 298x142 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 226x21
-            RenderText {#text} at (33,0) size 226x21
-              text run at (33,0) width 226: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}all\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (258,0) size 6x21
-              text run at (258,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 225x21
+            RenderText {#text} at (34,0) size 225x21
+              text run at (34,0) width 225: "Frame=\x{201C}box\x{201D} and Rules=\x{201C}all\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (259,0) size 5x21
+              text run at (259,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 297x24
           RenderTableRow {TR} at (0,0) size 297x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -2160,13 +2160,13 @@ layer at (0,0) size 784x8418
               RenderText {#text} at (2,2) size 96x21
                 text run at (2,2) width 96: "Row 5, Cell 3"
       RenderTable {TABLE} at (0,8220) size 298x142 [border: none]
-        RenderBlock {CAPTION} at (0,0) size 297x21
-          RenderInline {A} at (0,0) size 248x21
-            RenderText {#text} at (22,0) size 248x21
-              text run at (22,0) width 248: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}all\x{201D}"
-          RenderInline (generated) at (0,0) size 6x21
-            RenderText at (269,0) size 6x21
-              text run at (269,0) width 6: ":"
+        RenderBlock {CAPTION} at (0,0) size 298x21
+          RenderInline {A} at (0,0) size 247x21
+            RenderText {#text} at (23,0) size 247x21
+              text run at (23,0) width 247: "Frame=\x{201C}border\x{201D} and Rules=\x{201C}all\x{201D}"
+          RenderInline (generated) at (0,0) size 5x21
+            RenderText at (270,0) size 5x21
+              text run at (270,0) width 5: ":"
         RenderTableSection {THEAD} at (0,21) size 297x24
           RenderTableRow {TR} at (0,0) size 297x24
             RenderTableCell {TD} at (0,0) size 99x24 [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=1]

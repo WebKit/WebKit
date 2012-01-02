@@ -56,9 +56,9 @@ layer at (0,0) size 784x1469
               text run at (0,0) width 103: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,466) size 630x487 [color=#FFFFFF] [border: (3px dotted #FFFFFF)]
-        RenderBlock {CAPTION} at (0,0) size 624x25
-          RenderText {#text} at (166,0) size 292x25
-            text run at (166,0) width 292: "With 'border-collapse: separate'"
+        RenderBlock {CAPTION} at (0,0) size 630x25
+          RenderText {#text} at (169,0) size 292x25
+            text run at (169,0) width 292: "With 'border-collapse: separate'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#000000] [border: (5px dashed #FFFFFF)]
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#000000] [border: (9px dashed #FFFFFF)]
@@ -115,9 +115,9 @@ layer at (0,0) size 784x1469
               RenderText {#text} at (2,2) size 43x25
                 text run at (2,2) width 43: "TD L"
       RenderTable {TABLE} at (0,953) size 588x439 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
-        RenderBlock {CAPTION} at (0,0) size 584x25
-          RenderText {#text} at (147,0) size 290x25
-            text run at (147,0) width 290: "With 'border-collapse: collapse'"
+        RenderBlock {CAPTION} at (0,0) size 588x25
+          RenderText {#text} at (149,0) size 290x25
+            text run at (149,0) width 290: "With 'border-collapse: collapse'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#000000] [border: (5px dashed #FFFFFF)]
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#000000] [border: (9px dashed #FFFFFF)]

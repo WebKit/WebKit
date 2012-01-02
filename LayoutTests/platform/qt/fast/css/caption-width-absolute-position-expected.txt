@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x56
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x40
+      RenderTable {TABLE} at (0,0) size 106x40 [border: none]
+        RenderTableSection (anonymous) at (0,0) size 106x2
+          RenderTableRow (anonymous) at (0,0) size 106x2
+            RenderTableCell (anonymous) at (0,0) size 106x2 [border:] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,2) size 106x36
+          RenderTableRow {TR} at (0,0) size 106x36
+            RenderTableCell {TD} at (0,15) size 106x6 [border: (2px solid #FFA500)] [r=0 c=0 rs=1 cs=1]
+layer at (8,8) size 56x21
+  RenderBlock (positioned) {CAPTION} at (8,8) size 56x21 [border: (4px solid #008000)]
+    RenderText {#text} at (4,4) size 48x13
+      text run at (4,4) width 48: "xxxx"

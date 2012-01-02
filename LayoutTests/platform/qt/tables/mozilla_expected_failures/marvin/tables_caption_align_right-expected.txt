@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 482x21
           text run at (0,0) width 482: "The caption should be aligned at the right side of the top of the table."
       RenderTable {TABLE} at (0,37) size 191x79 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 189x21
-          RenderText {#text} at (60,0) size 69x21
-            text run at (60,0) width 69: "Wild Cats"
+        RenderBlock {CAPTION} at (0,0) size 191x21
+          RenderText {#text} at (61,0) size 69x21
+            text run at (61,0) width 69: "Wild Cats"
         RenderTableSection {TBODY} at (1,22) size 189x56
           RenderTableRow {TR} at (0,2) size 189x25
             RenderTableCell {TD} at (2,2) size 53x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -4,10 +4,10 @@ layer at (0,0) size 800x596
   RenderBlock {HTML} at (0,0) size 800x596
     RenderBody {BODY} at (8,8) size 784x572 [bgcolor=#999999]
       RenderTable {TABLE} at (0,0) size 150x73 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 148x42
-          RenderText {#text} at (5,0) size 138x42
-            text run at (5,0) width 138: "Table with no width"
-            text run at (45,21) width 58: "attribute"
+        RenderBlock {CAPTION} at (0,0) size 150x42
+          RenderText {#text} at (6,0) size 138x42
+            text run at (6,0) width 138: "Table with no width"
+            text run at (46,21) width 58: "attribute"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -31,9 +31,9 @@ layer at (0,0) size 800x596
         RenderText {#text} at (0,0) size 48x21
           text run at (0,0) width 48: "correct"
       RenderTable {TABLE} at (0,126) size 500x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 498x21
-          RenderText {#text} at (113,0) size 272x21
-            text run at (113,0) width 272: "Table with fixed width attribute =500px"
+        RenderBlock {CAPTION} at (0,0) size 500x21
+          RenderText {#text} at (114,0) size 272x21
+            text run at (114,0) width 272: "Table with fixed width attribute =500px"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -62,9 +62,9 @@ layer at (0,0) size 800x596
           text run at (0,42) width 371: "unused by other columns, so no expand are needed "
           text run at (371,42) width 126: "for other columns."
       RenderTable {TABLE} at (0,273) size 784x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 782x21
-          RenderText {#text} at (275,0) size 232x21
-            text run at (275,0) width 232: "Table with width attribute =100%"
+        RenderBlock {CAPTION} at (0,0) size 784x21
+          RenderText {#text} at (276,0) size 232x21
+            text run at (276,0) width 232: "Table with width attribute =100%"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -88,9 +88,9 @@ layer at (0,0) size 800x596
         RenderText {#text} at (0,0) size 181x21
           text run at (0,0) width 181: "incorrect: same as above."
       RenderTable {TABLE} at (0,378) size 500x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 498x21
-          RenderText {#text} at (132,0) size 234x21
-            text run at (132,0) width 234: "Table with width attribute =500px"
+        RenderBlock {CAPTION} at (0,0) size 500x21
+          RenderText {#text} at (133,0) size 234x21
+            text run at (133,0) width 234: "Table with width attribute =500px"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -114,9 +114,9 @@ layer at (0,0) size 800x596
         RenderText {#text} at (0,0) size 48x21
           text run at (0,0) width 48: "correct"
       RenderTable {TABLE} at (0,483) size 784x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 782x21
-          RenderText {#text} at (275,0) size 232x21
-            text run at (275,0) width 232: "Table with width attribute =100%"
+        RenderBlock {CAPTION} at (0,0) size 784x21
+          RenderText {#text} at (276,0) size 232x21
+            text run at (276,0) width 232: "Table with width attribute =100%"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

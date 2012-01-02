@@ -4,9 +4,9 @@ layer at (0,0) size 800x272
   RenderBlock {HTML} at (0,0) size 800x272
     RenderBody {BODY} at (8,8) size 784x256
       RenderTable {TABLE} at (0,0) size 400x256 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 398x21
-          RenderText {#text} at (32,0) size 334x21
-            text run at (32,0) width 334: "Table is 400 px width, set with table width=400."
+        RenderBlock {CAPTION} at (0,0) size 400x21
+          RenderText {#text} at (33,0) size 334x21
+            text run at (33,0) width 334: "Table is 400 px width, set with table width=400."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

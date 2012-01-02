@@ -5,9 +5,9 @@ layer at (0,0) size 800x439
     RenderBody {BODY} at (8,16) size 784x407
       RenderBlock {P} at (0,0) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (0,22) size 142x81 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 72x27 [border: (3px solid #FFA500)]
-          RenderText {#text} at (23,3) size 26x21
-            text run at (23,3) width 26: "cap"
+        RenderBlock {CAPTION} at (0,0) size 142x27 [border: (3px solid #FFA500)]
+          RenderText {#text} at (58,3) size 26x21
+            text run at (58,3) width 26: "cap"
         RenderTableSection {TBODY} at (35,30) size 72x48
           RenderTableRow {TR} at (0,2) size 72x44
             RenderTableCell {TD} at (2,2) size 68x44 [r=0 c=0 rs=1 cs=1]
@@ -19,9 +19,9 @@ layer at (0,0) size 800x439
       RenderBlock {P} at (0,119) size 784x6 [border: (3px solid #800080)]
       RenderBlock {P} at (0,141) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (321,163) size 142x81 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 72x27 [border: (3px solid #FFA500)]
-          RenderText {#text} at (23,3) size 26x21
-            text run at (23,3) width 26: "cap"
+        RenderBlock {CAPTION} at (0,0) size 142x27 [border: (3px solid #FFA500)]
+          RenderText {#text} at (58,3) size 26x21
+            text run at (58,3) width 26: "cap"
         RenderTableSection {TBODY} at (35,30) size 72x48
           RenderTableRow {TR} at (0,2) size 72x44
             RenderTableCell {TD} at (2,2) size 68x44 [r=0 c=0 rs=1 cs=1]
@@ -33,9 +33,9 @@ layer at (0,0) size 800x439
       RenderBlock {P} at (0,260) size 784x6 [border: (3px solid #800080)]
       RenderBlock {P} at (0,282) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (0,304) size 142x81 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 72x27 [border: (3px solid #FFA500)]
-          RenderText {#text} at (23,3) size 26x21
-            text run at (23,3) width 26: "cap"
+        RenderBlock {CAPTION} at (0,0) size 142x27 [border: (3px solid #FFA500)]
+          RenderText {#text} at (58,3) size 26x21
+            text run at (58,3) width 26: "cap"
         RenderTableSection {TBODY} at (35,30) size 72x48
           RenderTableRow {TR} at (0,2) size 72x44
             RenderTableCell {TD} at (2,2) size 68x44 [r=0 c=0 rs=1 cs=1]

@@ -27,9 +27,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,226) size 784x21
         RenderBR {BR} at (0,0) size 0x21
       RenderTable {TABLE} at (0,247) size 294x79 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 292x21
-          RenderText {#text} at (26,0) size 240x21
-            text run at (26,0) width 240: "Testing Default and Regular Input"
+        RenderBlock {CAPTION} at (0,0) size 294x21
+          RenderText {#text} at (27,0) size 240x21
+            text run at (27,0) width 240: "Testing Default and Regular Input"
         RenderTableSection {TBODY} at (1,22) size 292x56
           RenderTableRow {TR} at (0,2) size 292x25
             RenderTableCell {TD} at (2,2) size 35x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -66,9 +66,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,326) size 784x21
         RenderBR {BR} at (0,0) size 0x21
       RenderTable {TABLE} at (0,347) size 209x79 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 207x21
-          RenderText {#text} at (8,0) size 191x21
-            text run at (8,0) width 191: "Testing Zero Special Case"
+        RenderBlock {CAPTION} at (0,0) size 209x21
+          RenderText {#text} at (9,0) size 191x21
+            text run at (9,0) width 191: "Testing Zero Special Case"
         RenderTableSection {TBODY} at (1,22) size 207x56
           RenderTableRow {TR} at (0,2) size 207x25
             RenderTableCell {TD} at (2,2) size 48x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

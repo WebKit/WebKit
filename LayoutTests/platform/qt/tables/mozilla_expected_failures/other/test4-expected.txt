@@ -46,9 +46,9 @@ layer at (0,0) size 784x2824
         RenderText {#text} at (0,21) size 4x21
           text run at (0,21) width 4: " "
       RenderTable {TABLE} at (0,217) size 768x148 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 766x21
-          RenderText {#text} at (102,0) size 562x21
-            text run at (102,0) width 562: "Table 1 has this caption at the top.  It is defined to be 100% of it's parent's width."
+        RenderBlock {CAPTION} at (0,0) size 768x21
+          RenderText {#text} at (103,0) size 562x21
+            text run at (103,0) width 562: "Table 1 has this caption at the top.  It is defined to be 100% of it's parent's width."
         RenderTableSection {TBODY} at (1,22) size 766x125
           RenderTableRow {TR} at (0,2) size 766x46
             RenderTableCell {TD} at (2,12) size 397x25 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -81,9 +81,9 @@ layer at (0,0) size 784x2824
         RenderText {#text} at (0,21) size 4x21
           text run at (0,21) width 4: " "
       RenderTable {TABLE} at (0,407) size 545x106 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 543x21
-          RenderText {#text} at (93,0) size 357x21
-            text run at (93,0) width 357: "Table 2 has auto-width (no width param specified.)"
+        RenderBlock {CAPTION} at (0,0) size 545x21
+          RenderText {#text} at (94,0) size 357x21
+            text run at (94,0) width 357: "Table 2 has auto-width (no width param specified.)"
         RenderTableSection {TBODY} at (1,22) size 543x83
           RenderTableRow {TR} at (0,2) size 543x25
             RenderTableCell {TD} at (2,2) size 33x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -110,9 +110,9 @@ layer at (0,0) size 784x2824
         RenderText {#text} at (0,0) size 4x21
           text run at (0,0) width 4: " "
       RenderTable {TABLE} at (0,534) size 545x106 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 543x21
-          RenderText {#text} at (52,0) size 439x21
-            text run at (52,0) width 439: "Table 3 is the same as Table 2, but with equal column widths. "
+        RenderBlock {CAPTION} at (0,0) size 545x21
+          RenderText {#text} at (53,0) size 439x21
+            text run at (53,0) width 439: "Table 3 is the same as Table 2, but with equal column widths. "
         RenderTableSection {TBODY} at (1,22) size 543x83
           RenderTableRow {TR} at (0,2) size 543x25
             RenderTableCell {TD} at (2,2) size 33x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -140,11 +140,11 @@ layer at (0,0) size 784x2824
         RenderText {#text} at (0,21) size 4x21
           text run at (0,21) width 4: " "
       RenderTable {TABLE} at (0,682) size 252x198 [border: (1px none #808080)]
-        RenderBlock {CAPTION} at (0,135) size 250x63
-          RenderText {#text} at (12,0) size 226x63
-            text run at (12,0) width 226: "Table 4 has this bottom caption."
-            text run at (14,21) width 222: "The table has specified column"
-            text run at (17,42) width 216: "widths and collapsing borders."
+        RenderBlock {CAPTION} at (0,135) size 252x63
+          RenderText {#text} at (13,0) size 226x63
+            text run at (13,0) width 226: "Table 4 has this bottom caption."
+            text run at (15,21) width 222: "The table has specified column"
+            text run at (18,42) width 216: "widths and collapsing borders."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [border: (2px dashed #0000FF) none (2px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0 [border: (1px solid #FF0000) none]
@@ -501,10 +501,10 @@ layer at (0,0) size 784x2824
             text run at (0,0) width 476: "The following table will have its rows and columns in red collapsed "
           RenderBR {BR} at (0,0) size 0x0
         RenderTable {TABLE} at (0,21) size 152x106 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 150x21
+          RenderBlock {CAPTION} at (0,0) size 152x21
             RenderInline {B} at (0,0) size 50x21
-              RenderText {#text} at (50,0) size 50x21
-                text run at (50,0) width 50: "before"
+              RenderText {#text} at (51,0) size 50x21
+                text run at (51,0) width 50: "before"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -543,10 +543,10 @@ layer at (0,0) size 784x2824
         RenderBlock (anonymous) at (0,127) size 768x21
           RenderBR {BR} at (0,0) size 0x21
         RenderTable {TABLE} at (0,148) size 152x106 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 150x21
+          RenderBlock {CAPTION} at (0,0) size 152x21
             RenderInline {B} at (0,0) size 34x21
-              RenderText {#text} at (58,0) size 34x21
-                text run at (58,0) width 34: "after"
+              RenderText {#text} at (59,0) size 34x21
+                text run at (59,0) width 34: "after"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -589,10 +589,10 @@ layer at (0,0) size 784x2824
             text run at (0,21) width 66: "properly. "
           RenderBR {BR} at (66,37) size 0x0
         RenderTable {TABLE} at (0,42) size 206x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 204x21
+          RenderBlock {CAPTION} at (0,0) size 206x21
             RenderInline {B} at (0,0) size 50x21
-              RenderText {#text} at (77,0) size 50x21
-                text run at (77,0) width 50: "before"
+              RenderText {#text} at (78,0) size 50x21
+                text run at (78,0) width 50: "before"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -643,10 +643,10 @@ layer at (0,0) size 784x2824
                 RenderText {#text} at (2,2) size 30x21
                   text run at (2,2) width 30: "C44"
         RenderTable {TABLE} at (0,165) size 206x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 204x21
+          RenderBlock {CAPTION} at (0,0) size 206x21
             RenderInline {B} at (0,0) size 34x21
-              RenderText {#text} at (85,0) size 34x21
-                text run at (85,0) width 34: "after"
+              RenderText {#text} at (86,0) size 34x21
+                text run at (86,0) width 34: "after"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -702,10 +702,10 @@ layer at (0,0) size 784x2824
             text run at (0,0) width 504: "The following table will have its 1st row group collapsed (rows 1 and 2) "
           RenderBR {BR} at (504,16) size 0x0
         RenderTable {TABLE} at (0,21) size 138x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 136x21
+          RenderBlock {CAPTION} at (0,0) size 138x21
             RenderInline {B} at (0,0) size 50x21
-              RenderText {#text} at (43,0) size 50x21
-                text run at (43,0) width 50: "before"
+              RenderText {#text} at (44,0) size 50x21
+                text run at (44,0) width 50: "before"
           RenderTableSection {TBODY} at (1,22) size 136x50 [bgcolor=#FF0000]
             RenderTableRow {TR} at (0,0) size 136x25
               RenderTableCell {TD} at (0,0) size 34x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -763,10 +763,10 @@ layer at (0,0) size 784x2824
         RenderBlock (anonymous) at (0,144) size 768x21
           RenderBR {BR} at (0,0) size 0x21
         RenderTable {TABLE} at (0,165) size 138x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 136x21
+          RenderBlock {CAPTION} at (0,0) size 138x21
             RenderInline {B} at (0,0) size 34x21
-              RenderText {#text} at (51,0) size 34x21
-                text run at (51,0) width 34: "after"
+              RenderText {#text} at (52,0) size 34x21
+                text run at (52,0) width 34: "after"
           RenderTableSection {TBODY} at (1,22) size 136x50
             RenderTableRow {TR} at (0,0) size 136x25
               RenderTableCell {TD} at (0,0) size 34x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -831,10 +831,10 @@ layer at (0,0) size 784x2824
             text run at (0,21) width 543: "and 2nd col collapsed. A window resize may be necessary to see it properly. "
           RenderBR {BR} at (543,37) size 0x0
         RenderTable {TABLE} at (0,42) size 206x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 204x21
+          RenderBlock {CAPTION} at (0,0) size 206x21
             RenderInline {B} at (0,0) size 50x21
-              RenderText {#text} at (77,0) size 50x21
-                text run at (77,0) width 50: "before"
+              RenderText {#text} at (78,0) size 50x21
+                text run at (78,0) width 50: "before"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -885,10 +885,10 @@ layer at (0,0) size 784x2824
                 RenderText {#text} at (2,2) size 30x21
                   text run at (2,2) width 30: "C44"
         RenderTable {TABLE} at (0,165) size 206x123 [bgcolor=#FFA500] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 204x21
+          RenderBlock {CAPTION} at (0,0) size 206x21
             RenderInline {B} at (0,0) size 34x21
-              RenderText {#text} at (85,0) size 34x21
-                text run at (85,0) width 34: "after"
+              RenderText {#text} at (86,0) size 34x21
+                text run at (86,0) width 34: "after"
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0

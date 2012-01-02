@@ -14,10 +14,10 @@ layer at (0,0) size 784x1006
             RenderTableRow {TR} at (0,2) size 621x124
               RenderTableCell {TD} at (2,2) size 164x124 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 152x112 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
-                  RenderBlock {CAPTION} at (0,0) size 150x21
+                  RenderBlock {CAPTION} at (0,0) size 152x21
                     RenderInline {NOBR} at (0,0) size 50x21
-                      RenderText {#text} at (50,0) size 50x21
-                        text run at (50,0) width 50: "Table I"
+                      RenderText {#text} at (51,0) size 50x21
+                        text run at (51,0) width 50: "Table I"
                   RenderTableSection {TBODY} at (1,22) size 150x89
                     RenderTableRow {TR} at (0,5) size 150x23
                       RenderTableCell {TD} at (5,5) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -69,10 +69,10 @@ layer at (0,0) size 784x1006
                           text run at (1,1) width 22: "3,5"
               RenderTableCell {TD} at (168,2) size 164x124 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 152x112 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
-                  RenderBlock {CAPTION} at (0,0) size 150x21
+                  RenderBlock {CAPTION} at (0,0) size 152x21
                     RenderInline {NOBR} at (0,0) size 54x21
-                      RenderText {#text} at (48,0) size 54x21
-                        text run at (48,0) width 54: "Table II"
+                      RenderText {#text} at (49,0) size 54x21
+                        text run at (49,0) width 54: "Table II"
                   RenderTableSection {TBODY} at (1,22) size 150x89
                     RenderTableRow {TR} at (0,5) size 150x23
                       RenderTableCell {TD} at (5,5) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -118,10 +118,10 @@ layer at (0,0) size 784x1006
                           text run at (1,1) width 22: "3,5"
               RenderTableCell {TD} at (334,2) size 142x124 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 130x112 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
-                  RenderBlock {CAPTION} at (0,0) size 128x21
+                  RenderBlock {CAPTION} at (0,0) size 130x21
                     RenderInline {NOBR} at (0,0) size 58x21
-                      RenderText {#text} at (35,0) size 58x21
-                        text run at (35,0) width 58: "Table III"
+                      RenderText {#text} at (36,0) size 58x21
+                        text run at (36,0) width 58: "Table III"
                   RenderTableSection {TBODY} at (1,22) size 128x89
                     RenderTableRow {TR} at (0,5) size 128x23
                       RenderTableCell {TD} at (5,5) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -161,10 +161,10 @@ layer at (0,0) size 784x1006
                           text run at (1,1) width 22: "3,5"
               RenderTableCell {TD} at (478,2) size 141x96 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 129x84 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
-                  RenderBlock {CAPTION} at (0,0) size 127x21
+                  RenderBlock {CAPTION} at (0,0) size 129x21
                     RenderInline {NOBR} at (0,0) size 61x21
-                      RenderText {#text} at (33,0) size 61x21
-                        text run at (33,0) width 61: "Table IV"
+                      RenderText {#text} at (34,0) size 61x21
+                        text run at (34,0) width 61: "Table IV"
                   RenderTableSection {TBODY} at (1,22) size 127x61
                     RenderTableRow {TR} at (0,5) size 127x23
                       RenderTableCell {TD} at (5,5) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

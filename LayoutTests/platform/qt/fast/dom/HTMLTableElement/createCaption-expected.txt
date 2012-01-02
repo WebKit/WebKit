@@ -31,10 +31,10 @@ layer at (0,0) size 800x600
           text run at (0,42) width 53: "Things."
       RenderBlock {HR} at (0,195) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,205) size 121x106 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 119x21
+        RenderBlock {CAPTION} at (0,0) size 121x21
           RenderInline {B} at (0,0) size 45x21
-            RenderText {#text} at (37,0) size 45x21
-              text run at (37,0) width 45: "Fruity"
+            RenderText {#text} at (38,0) size 45x21
+              text run at (38,0) width 45: "Fruity"
         RenderTableSection {TBODY} at (1,22) size 119x83
           RenderTableRow {TR} at (0,2) size 119x25
             RenderTableCell {TH} at (2,2) size 60x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -60,10 +60,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,311) size 784x21
         RenderBR {BR} at (0,0) size 0x21
       RenderTable {TABLE} at (0,332) size 145x106 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 143x21
+        RenderBlock {CAPTION} at (0,0) size 145x21
           RenderInline {B} at (0,0) size 85x21
-            RenderText {#text} at (29,0) size 85x21
-              text run at (29,0) width 85: "Vegetabley"
+            RenderText {#text} at (30,0) size 85x21
+              text run at (30,0) width 85: "Vegetabley"
         RenderTableSection {TBODY} at (1,22) size 143x83
           RenderTableRow {TR} at (0,2) size 143x25
             RenderTableCell {TH} at (2,2) size 80x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

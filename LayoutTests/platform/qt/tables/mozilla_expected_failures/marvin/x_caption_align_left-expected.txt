@@ -7,9 +7,9 @@ layer at (0,0) size 800x140
         RenderText {#text} at (0,0) size 322x21
           text run at (0,0) width 322: "The table caption should be aligned at the left"
       RenderTable {table} at (0,37) size 136x79 [border: (1px outset #808080)]
-        RenderBlock {caption} at (0,0) size 134x21
-          RenderText {#text} at (31,0) size 72x21
-            text run at (31,0) width 72: "CAPTION"
+        RenderBlock {caption} at (0,0) size 136x21
+          RenderText {#text} at (32,0) size 72x21
+            text run at (32,0) width 72: "CAPTION"
         RenderTableSection (anonymous) at (1,22) size 134x56
           RenderTableRow {tr} at (0,2) size 134x25
             RenderTableCell {td} at (2,2) size 42x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
