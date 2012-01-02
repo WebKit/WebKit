@@ -44,22 +44,9 @@ RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement* node)
 {
 }
 
-RenderSVGResourceGradient::~RenderSVGResourceGradient()
-{
-    if (m_gradient.isEmpty())
-        return;
-
-    deleteAllValues(m_gradient);
-    m_gradient.clear();
-}
-
 void RenderSVGResourceGradient::removeAllClientsFromCache(bool markForInvalidation)
 {
-    if (!m_gradient.isEmpty()) {
-        deleteAllValues(m_gradient);
-        m_gradient.clear();
-    }
-
+    m_gradientMap.clear();
     m_shouldCollectGradientAttributes = true;
     markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
@@ -67,10 +54,7 @@ void RenderSVGResourceGradient::removeAllClientsFromCache(bool markForInvalidati
 void RenderSVGResourceGradient::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-
-    if (m_gradient.contains(client))
-        delete m_gradient.take(client);
-
+    m_gradientMap.remove(client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
@@ -168,15 +152,15 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    if (!m_gradient.contains(object))
-        m_gradient.set(object, new GradientData);
+    OwnPtr<GradientData>& gradientData = m_gradientMap.add(object, nullptr).first->second;
+    if (!gradientData)
+        gradientData = adoptPtr(new GradientData);
 
-    GradientData* gradientData = m_gradient.get(object);
     bool isPaintingText = resourceMode & ApplyToTextMode;
 
     // Create gradient object
     if (!gradientData->gradient) {
-        buildGradient(gradientData);
+        buildGradient(gradientData.get());
 
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
@@ -240,9 +224,8 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
     if (resourceMode & ApplyToTextMode) {
 #if USE(CG)
         // CG requires special handling for gradient on text
-        if (m_savedContext && m_gradient.contains(object)) {
-            GradientData* gradientData = m_gradient.get(object);
-
+        GradientData* gradientData;
+        if (m_savedContext && gradientData = m_gradientMap.get(object)) {
             // Restore on-screen drawing context
             context = m_savedContext;
             m_savedContext = 0;
