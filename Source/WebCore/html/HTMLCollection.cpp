@@ -41,6 +41,7 @@ HTMLCollection::HTMLCollection(Node* base, CollectionType type)
     , m_type(type)
     , m_base(base)
 {
+    m_cache.clear();
 }
 
 bool HTMLCollection::shouldIncludeChildren(CollectionType type)
@@ -98,14 +99,7 @@ void HTMLCollection::invalidateCacheIfNeeded() const
     if (m_cache.version == docversion)
         return;
 
-    m_cache.current = 0;
-    m_cache.position = 0;
-    m_cache.length = 0;
-    m_cache.hasLength = false;
-    m_cache.elementsArrayPosition = 0;
-    m_cache.idCache.clear();
-    m_cache.nameCache.clear();
-    m_cache.hasNameCache = false;
+    m_cache.clear();
     m_cache.version = docversion;
 }
 

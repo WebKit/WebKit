@@ -81,6 +81,19 @@ protected:
         int elementsArrayPosition;
         bool hasLength;
         bool hasNameCache;
+
+        void clear()
+        {
+            idCache.clear();
+            nameCache.clear();
+            version = 0;
+            current = 0;
+            position = 0;
+            length = 0;
+            elementsArrayPosition = 0;
+            hasLength = false;
+            hasNameCache = false;
+        }
     } m_cache;
 
 private:

@@ -1,3 +1,15 @@
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
+        Clear HTMLCollection's internal cache on construction.
+        <http://webkit.org/b/75423>
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+
 2012-01-01  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL] Move function to get dpi to the WebCore/platform/efl/EflScreenUtilities.cpp.
