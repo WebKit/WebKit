@@ -34,6 +34,7 @@
 #import "PluginProcess.h"
 #import "RunLoop.h"
 #import <WebKitSystemInterface.h>
+#import <mach/mach_error.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <wtf/MainThread.h>

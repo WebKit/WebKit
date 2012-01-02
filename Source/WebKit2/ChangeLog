@@ -1,3 +1,10 @@
+2012-01-02  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix build on Lion, by including mach_error.h in two places that need it.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        * WebProcess/mac/WebProcessMainMac.mm:
+
 2012-01-01  Dan Bernstein  <mitz@apple.com>
 
         EnvironmentUtilities::stripValuesEndingWithString enters an infinite loop if the search value

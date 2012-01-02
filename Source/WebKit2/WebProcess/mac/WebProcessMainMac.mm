@@ -33,6 +33,7 @@
 #import "WebSystemInterface.h"
 #import <WebKit2/WKView.h>
 #import <WebKitSystemInterface.h>
+#import <mach/mach_error.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
