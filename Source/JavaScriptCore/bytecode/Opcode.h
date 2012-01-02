@@ -164,8 +164,8 @@ namespace JSC {
         \
         macro(op_new_func, 4) \
         macro(op_new_func_exp, 3) \
-        macro(op_call, 4) \
-        macro(op_call_eval, 4) \
+        macro(op_call, 6) \
+        macro(op_call_eval, 6) \
         macro(op_call_varargs, 5) \
         macro(op_tear_off_activation, 3) \
         macro(op_tear_off_arguments, 2) \
@@ -174,7 +174,7 @@ namespace JSC {
         macro(op_ret_object_or_this, 3) \
         macro(op_method_check, 1) \
         \
-        macro(op_construct, 4) \
+        macro(op_construct, 6) \
         macro(op_strcat, 4) \
         macro(op_to_primitive, 3) \
         \

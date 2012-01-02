@@ -1,3 +1,16 @@
+2012-01-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Call instructions should leave room for linking information
+        https://bugs.webkit.org/show_bug.cgi?id=75422
+        <rdar://problem/10633985>
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
         Continue trying to fix the Windows build after r103823.

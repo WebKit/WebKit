@@ -1821,6 +1821,8 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     instructions().append(func->index()); // func
     instructions().append(callArguments.argumentCountIncludingThis()); // argCount
     instructions().append(callArguments.registerOffset()); // registerOffset
+    instructions().append(0);
+    instructions().append(0);
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
@@ -1921,6 +1923,8 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(func->index()); // func
     instructions().append(callArguments.argumentCountIncludingThis()); // argCount
     instructions().append(callArguments.registerOffset()); // registerOffset
+    instructions().append(0);
+    instructions().append(0);
     if (dst != ignoredResult()) {
         emitOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
