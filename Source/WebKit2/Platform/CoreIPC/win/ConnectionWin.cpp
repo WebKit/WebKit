@@ -27,6 +27,7 @@
 #include "Connection.h"
 
 #include "ArgumentEncoder.h"
+#include "BinarySemaphore.h"
 #include <wtf/Functional.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>

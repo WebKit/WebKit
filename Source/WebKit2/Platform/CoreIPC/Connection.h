@@ -54,6 +54,7 @@ class RunLoop;
 
 namespace CoreIPC {
 
+class BinarySemaphore;
 class MessageID;
     
 enum MessageSendFlags {

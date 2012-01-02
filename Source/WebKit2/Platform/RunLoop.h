@@ -43,10 +43,6 @@ typedef struct _GMainContext GMainContext;
 typedef int gboolean;
 #endif
 
-namespace CoreIPC {
-class BinarySemaphore;
-}
-
 class RunLoop {
 public:
     // Must be called from the main thread.

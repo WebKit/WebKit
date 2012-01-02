@@ -1,5 +1,14 @@
 2012-01-02  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        * Platform/RunLoop.h:
+        Missing declarations/includes of BinarySemaphore.
+
+2012-01-02  Sam Weinig  <sam@webkit.org>
+
         Move dispatchSentMessagesUntil out of the RunLoop class.
         https://bugs.webkit.org/show_bug.cgi?id=75320
 
