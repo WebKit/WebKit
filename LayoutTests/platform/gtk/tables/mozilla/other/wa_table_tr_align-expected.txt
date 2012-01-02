@@ -150,9 +150,9 @@ layer at (0,0) size 784x1309
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,631) size 768x70
         RenderTable {TABLE} at (0,0) size 345x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 343x18
-            RenderText {#text} at (57,0) size 229x17
-              text run at (57,0) width 229: "Default Horizontal Row Alignment"
+          RenderBlock {CAPTION} at (0,0) size 345x18
+            RenderText {#text} at (58,0) size 229x17
+              text run at (58,0) width 229: "Default Horizontal Row Alignment"
           RenderTableSection {TBODY} at (1,19) size 343x50
             RenderTableRow {TR} at (0,2) size 343x22
               RenderTableCell {TH} at (2,2) size 111x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -196,9 +196,9 @@ layer at (0,0) size 784x1309
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,813) size 768x146
         RenderTable {TABLE} at (0,0) size 345x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 343x18
-            RenderText {#text} at (60,0) size 223x17
-              text run at (60,0) width 223: "Horizontal Row Alignment=LEFT"
+          RenderBlock {CAPTION} at (0,0) size 345x18
+            RenderText {#text} at (61,0) size 223x17
+              text run at (61,0) width 223: "Horizontal Row Alignment=LEFT"
           RenderTableSection {TBODY} at (1,19) size 343x126
             RenderTableRow {TR} at (0,2) size 343x22
               RenderTableCell {TH} at (2,2) size 111x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -244,9 +244,9 @@ layer at (0,0) size 784x1309
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,975) size 768x146
         RenderTable {TABLE} at (0,0) size 345x146 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 343x18
-            RenderText {#text} at (48,0) size 247x17
-              text run at (48,0) width 247: "Horizontal Row Alignment=CENTER"
+          RenderBlock {CAPTION} at (0,0) size 345x18
+            RenderText {#text} at (49,0) size 247x17
+              text run at (49,0) width 247: "Horizontal Row Alignment=CENTER"
           RenderTableSection {TBODY} at (1,19) size 343x126
             RenderTableRow {TR} at (0,2) size 343x22
               RenderTableCell {TH} at (2,2) size 111x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -292,9 +292,9 @@ layer at (0,0) size 784x1309
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1137) size 768x70
         RenderTable {TABLE} at (0,0) size 345x70 [bgcolor=#FFE4C4] [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 343x18
-            RenderText {#text} at (55,0) size 233x17
-              text run at (55,0) width 233: "Horizontal Row Alignment=RIGHT"
+          RenderBlock {CAPTION} at (0,0) size 345x18
+            RenderText {#text} at (56,0) size 233x17
+              text run at (56,0) width 233: "Horizontal Row Alignment=RIGHT"
           RenderTableSection {TBODY} at (1,19) size 343x50
             RenderTableRow {TR} at (0,2) size 343x22
               RenderTableCell {TH} at (2,2) size 111x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

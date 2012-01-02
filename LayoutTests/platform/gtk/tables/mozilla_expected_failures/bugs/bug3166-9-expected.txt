@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 784x324 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 395x24 [border: (3px solid #FFA500)]
-          RenderText {#text} at (80,3) size 235x17
-            text run at (80,3) width 235: "caption text caption text caption text"
+        RenderBlock {CAPTION} at (0,0) size 398x24 [border: (3px solid #FFA500)]
+          RenderText {#text} at (82,3) size 234x17
+            text run at (82,3) width 234: "caption text caption text caption text"
         RenderTableSection {TBODY} at (3,27) size 778x294
           RenderTableRow {TR} at (0,2) size 778x290
             RenderTableCell {TD} at (2,2) size 774x290 [r=0 c=0 rs=1 cs=1]

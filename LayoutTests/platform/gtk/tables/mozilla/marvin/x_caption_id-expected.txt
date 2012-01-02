@@ -4,10 +4,10 @@ layer at (0,0) size 800x62
   RenderBlock {html} at (0,0) size 800x62
     RenderBody {body} at (8,8) size 784x46
       RenderTable {table} at (0,0) size 784x46 [border: (1px outset #808080)]
-        RenderBlock {caption} at (0,0) size 782x18 [bgcolor=#00FF00]
-          RenderText {#text} at (249,0) size 284x17
-            text run at (249,0) width 209: "This caption should have a lime "
-            text run at (457,0) width 76: "background"
+        RenderBlock {caption} at (0,0) size 784x18 [bgcolor=#00FF00]
+          RenderText {#text} at (250,0) size 284x17
+            text run at (250,0) width 209: "This caption should have a lime "
+            text run at (458,0) width 76: "background"
         RenderTableSection (anonymous) at (1,19) size 782x26
           RenderTableRow {tr} at (0,2) size 782x22
             RenderTableCell {td} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

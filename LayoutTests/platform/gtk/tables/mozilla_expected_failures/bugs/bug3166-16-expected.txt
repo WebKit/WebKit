@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (356,0) size 71x54 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (23,0) size 19x24 [border: (3px solid #FFA500)]
+        RenderBlock {CAPTION} at (25,0) size 20x24 [border: (3px solid #FFA500)]
           RenderText {#text} at (3,3) size 23x17
             text run at (3,3) width 23: "cap"
         RenderTableSection {TBODY} at (3,27) size 65x24

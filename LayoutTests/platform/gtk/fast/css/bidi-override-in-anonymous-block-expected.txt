@@ -179,9 +179,9 @@ layer at (0,0) size 784x1216
         RenderText {#text} at (0,0) size 426x17
           text run at (0,0) width 426: "The following 2 tables should be identical, ignorning whitespaces:"
       RenderTable {TABLE} at (1,945) size 86x66 [border: (1px solid #808080)]
-        RenderBlock {CAPTION} at (0,0) size 84x18
-          RenderText {#text} at (-1,0) size 86x17
-            text run at (-1,0) width 85: "NormalTable"
+        RenderBlock {CAPTION} at (0,0) size 86x18
+          RenderText {#text} at (0,0) size 86x17
+            text run at (0,0) width 86: "NormalTable"
         RenderTableSection {TBODY} at (1,19) size 84x46
           RenderTableRow {TR} at (0,2) size 84x20
             RenderTableCell {TD} at (44,2) size 38x20 [r=0 c=0 rs=1 cs=1]
@@ -198,9 +198,9 @@ layer at (0,0) size 784x1216
               RenderText {#text} at (15,1) size 24x17
                 text run at (15,1) width 24: "opq"
       RenderTable {DIV} at (1,1012) size 145x56 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (0,0) size 143x18
-          RenderText {#text} at (-1,0) size 145x17
-            text run at (-1,0) width 144: "AnonymousTableRow"
+        RenderBlock {DIV} at (0,0) size 145x18
+          RenderText {#text} at (0,0) size 145x17
+            text run at (0,0) width 145: "AnonymousTableRow"
         RenderTableSection (anonymous) at (1,19) size 143x36
           RenderTableRow {DIV} at (0,0) size 143x18
             RenderTableCell {DIV} at (74,0) size 69x18 [r=0 c=0 rs=1 cs=1]

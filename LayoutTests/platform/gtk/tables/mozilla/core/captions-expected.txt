@@ -4,11 +4,11 @@ layer at (0,0) size 784x1084
   RenderBlock {HTML} at (0,0) size 784x1084
     RenderBody {BODY} at (8,8) size 768x1068
       RenderTable {TABLE} at (0,0) size 768x602 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 766x18
+        RenderBlock {CAPTION} at (0,0) size 768x18
           RenderInline {NOBR} at (0,0) size 624x17
-            RenderText {#text} at (71,0) size 624x17
-              text run at (71,0) width 361: "caption is considered part of % width, not so in Nav4.6, "
-              text run at (431,0) width 264: "caption is not considered part of %height"
+            RenderText {#text} at (72,0) size 624x17
+              text run at (72,0) width 361: "caption is considered part of % width, not so in Nav4.6, "
+              text run at (432,0) width 264: "caption is not considered part of %height"
           RenderText {#text} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,19) size 766x582
           RenderTableRow {TR} at (0,2) size 766x578
@@ -18,9 +18,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,602) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,620) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 509x18
-          RenderText {#text} at (222,0) size 65x17
-            text run at (222,0) width 65: "top center"
+        RenderBlock {CAPTION} at (0,0) size 511x18
+          RenderText {#text} at (223,0) size 65x17
+            text run at (223,0) width 65: "top center"
         RenderTableSection {TBODY} at (1,19) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -29,9 +29,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,666) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,684) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 509x18
-          RenderText {#text} at (454,0) size 55x17
-            text run at (454,0) width 55: "top right"
+        RenderBlock {CAPTION} at (0,0) size 511x18
+          RenderText {#text} at (456,0) size 55x17
+            text run at (456,0) width 55: "top right"
         RenderTableSection {TBODY} at (1,19) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -40,9 +40,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,730) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,748) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,28) size 509x18
-          RenderText {#text} at (210,0) size 89x17
-            text run at (210,0) width 89: "bottom center"
+        RenderBlock {CAPTION} at (0,28) size 511x18
+          RenderText {#text} at (211,0) size 89x17
+            text run at (211,0) width 89: "bottom center"
         RenderTableSection {TBODY} at (1,1) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -51,7 +51,7 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,794) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,812) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,28) size 509x18
+        RenderBlock {CAPTION} at (0,28) size 511x18
           RenderText {#text} at (0,0) size 71x17
             text run at (0,0) width 71: "bottom left"
         RenderTableSection {TBODY} at (1,1) size 509x26
@@ -62,9 +62,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,858) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,876) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 509x18
-          RenderText {#text} at (222,0) size 65x17
-            text run at (222,0) width 65: "top center"
+        RenderBlock {CAPTION} at (0,0) size 511x18
+          RenderText {#text} at (223,0) size 65x17
+            text run at (223,0) width 65: "top center"
         RenderTableSection {TBODY} at (1,19) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -73,9 +73,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,922) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,940) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,28) size 509x18
-          RenderText {#text} at (210,0) size 89x17
-            text run at (210,0) width 89: "bottom center"
+        RenderBlock {CAPTION} at (0,28) size 511x18
+          RenderText {#text} at (211,0) size 89x17
+            text run at (211,0) width 89: "bottom center"
         RenderTableSection {TBODY} at (1,1) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -84,9 +84,9 @@ layer at (0,0) size 784x1084
       RenderBlock (anonymous) at (0,986) size 768x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,1004) size 511x46 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 509x18
-          RenderText {#text} at (222,0) size 65x17
-            text run at (222,0) width 65: "top center"
+        RenderBlock {CAPTION} at (0,0) size 511x18
+          RenderText {#text} at (223,0) size 65x17
+            text run at (223,0) width 65: "top center"
         RenderTableSection {TBODY} at (1,19) size 509x26
           RenderTableRow {TR} at (0,2) size 509x22
             RenderTableCell {TD} at (2,2) size 505x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

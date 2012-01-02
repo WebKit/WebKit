@@ -31,10 +31,10 @@ layer at (0,0) size 800x600
           text run at (0,18) width 637: "Upon failure, the first table will have no caption, and the second table will have the caption Things."
       RenderBlock {HR} at (0,156) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,166) size 112x94 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 110x18
+        RenderBlock {CAPTION} at (0,0) size 112x18
           RenderInline {B} at (0,0) size 44x17
-            RenderText {#text} at (33,0) size 44x17
-              text run at (33,0) width 44: "Fruity"
+            RenderText {#text} at (34,0) size 44x17
+              text run at (34,0) width 44: "Fruity"
         RenderTableSection {TBODY} at (1,19) size 110x74
           RenderTableRow {TR} at (0,2) size 110x22
             RenderTableCell {TH} at (2,2) size 52x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -60,10 +60,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,260) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,278) size 132x94 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 130x18
+        RenderBlock {CAPTION} at (0,0) size 132x18
           RenderInline {B} at (0,0) size 76x17
-            RenderText {#text} at (27,0) size 76x17
-              text run at (27,0) width 76: "Vegetabley"
+            RenderText {#text} at (28,0) size 76x17
+              text run at (28,0) width 76: "Vegetabley"
         RenderTableSection {TBODY} at (1,19) size 130x74
           RenderTableRow {TR} at (0,2) size 130x22
             RenderTableCell {TH} at (2,2) size 72x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
