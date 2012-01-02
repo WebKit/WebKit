@@ -1685,7 +1685,7 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-        push(@implContent, "    releaseImplIfNotNull();\n");
+        push(@implContent, "    thisObject->releaseImplIfNotNull();\n");
         push(@implContent, "}\n\n");
     }
 

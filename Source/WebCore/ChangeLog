@@ -1,3 +1,9 @@
+2012-01-02  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2012-01-02  Andy Estes  <aestes@apple.com>
 
         Fix the Windows build after r103888.
