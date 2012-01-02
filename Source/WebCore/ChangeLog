@@ -1,3 +1,10 @@
+2012-01-02  Andy Estes  <aestes@apple.com>
+
+        Fix the Windows build after r103888.
+
+        * WebCore.vcproj/WebCore.vcproj: Remove CollectionCache.{cpp, h} from
+        the WebCore vcproj.
+
 2012-01-02  Sam Weinig  <sam@webkit.org>
 
         REGRESSION(r100517): We're leaking many, many DOM objects!

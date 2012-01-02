@@ -55818,14 +55818,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\CollectionCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\CollectionCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\CollectionType.h"
 				>
 			</File>
