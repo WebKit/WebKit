@@ -691,7 +691,6 @@ SOURCES += \
     html/ButtonInputType.cpp \
     html/CheckboxInputType.cpp \
     html/ClassList.cpp \
-    html/CollectionCache.cpp \
     html/ColorInputType.cpp \
     html/DOMFormData.cpp \
     html/DOMSettableTokenList.cpp \
@@ -1767,7 +1766,6 @@ HEADERS += \
     html/canvas/CanvasStyle.h \
     html/canvas/DataView.h \
     html/ClassList.h \
-    html/CollectionCache.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \

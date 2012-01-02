@@ -46,7 +46,7 @@ public:
 
     void setLength(unsigned, ExceptionCode&);
 
-    void invalidateCache();
+    using HTMLCollection::invalidateCacheIfNeeded;
 
 private:
     HTMLOptionsCollection(HTMLSelectElement*);

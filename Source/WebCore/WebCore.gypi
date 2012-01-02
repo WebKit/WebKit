@@ -1058,7 +1058,6 @@
             'dom/ViewportArguments.h',
         ],
         'webcore_html_privateheader_files': [
-            'html/CollectionCache.h',
             'html/CollectionType.h',
             'html/FormAssociatedElement.h',
             'html/HTMLAppletElement.h',
@@ -5495,7 +5494,6 @@
             'html/CheckboxInputType.h',
             'html/ClassList.cpp',
             'html/ClassList.h',
-            'html/CollectionCache.cpp',
             'html/ColorInputType.cpp',
             'html/ColorInputType.h',
             'html/DOMFormData.cpp',

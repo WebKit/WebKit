@@ -36,8 +36,6 @@ class Element;
 class Node;
 class NodeList;
 
-struct CollectionCache;
-
 class HTMLCollection : public RefCounted<HTMLCollection> {
 public:
     static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
@@ -65,11 +63,25 @@ public:
 protected:
     HTMLCollection(Node* base, CollectionType);
 
-    CollectionCache* info() const { return m_info; }
-    void resetCollectionInfo() const;
+    void invalidateCacheIfNeeded() const;
 
     virtual void updateNameCache() const;
     virtual Element* itemAfter(Element*) const;
+
+    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*> > > NodeCacheMap;
+    static void append(NodeCacheMap&, const AtomicString&, Element*);
+
+    mutable struct {
+        NodeCacheMap idCache;
+        NodeCacheMap nameCache;
+        uint64_t version;
+        Element* current;
+        unsigned position;
+        unsigned length;
+        int elementsArrayPosition;
+        bool hasLength;
+        bool hasNameCache;
+    } m_cache;
 
 private:
     static bool shouldIncludeChildren(CollectionType);
@@ -80,12 +92,9 @@ private:
     bool isAcceptableElement(Element*) const;
 
     bool m_includeChildren : 1;
-    mutable bool m_ownsInfo : 1;
     unsigned m_type : 5; // CollectionType
 
     Node* m_base;
-
-    mutable CollectionCache* m_info;
 };
 
 } // namespace

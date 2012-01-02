@@ -1947,8 +1947,6 @@ webcore_sources += \
 	Source/WebCore/html/CheckboxInputType.h \
 	Source/WebCore/html/ClassList.cpp \
 	Source/WebCore/html/ClassList.h \
-	Source/WebCore/html/CollectionCache.cpp \
-	Source/WebCore/html/CollectionCache.h \
 	Source/WebCore/html/CollectionType.h \
 	Source/WebCore/html/ColorInputType.cpp \
 	Source/WebCore/html/ColorInputType.h \

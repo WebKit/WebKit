@@ -703,7 +703,6 @@ SET(WebCore_SOURCES
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp
     html/ClassList.cpp
-    html/CollectionCache.cpp
     html/ColorInputType.cpp
     html/DOMFormData.cpp
     html/DOMSettableTokenList.cpp

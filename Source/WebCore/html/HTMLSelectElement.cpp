@@ -689,7 +689,7 @@ void HTMLSelectElement::setRecalcListItems()
     setOptionsChangedOnRenderer();
     setNeedsStyleRecalc();
     if (!inDocument() && m_optionsCollection)
-        m_optionsCollection->invalidateCache();
+        m_optionsCollection->invalidateCacheIfNeeded();
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

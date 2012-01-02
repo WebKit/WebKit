@@ -3173,8 +3173,6 @@
 		93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */; };
 		93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C09A800B064F00005ABD4D /* EventHandler.cpp */; };
 		93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09C850B0657AA005ABD4D /* ScrollTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93C441EF0F813A1A00C1A634 /* CollectionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */; };
-		93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441EE0F813A1A00C1A634 /* CollectionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C442000F813AE100C1A634 /* CollectionType.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C441FF0F813AE100C1A634 /* CollectionType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */; };
 		93C841F809CE855C00DFF5E5 /* DOMImplementationFront.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */; };
@@ -10444,8 +10442,6 @@
 		93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerMac.mm; sourceTree = "<group>"; };
 		93C09A800B064F00005ABD4D /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		93C09C850B0657AA005ABD4D /* ScrollTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollTypes.h; sourceTree = "<group>"; };
-		93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionCache.cpp; sourceTree = "<group>"; };
-		93C441EE0F813A1A00C1A634 /* CollectionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionCache.h; sourceTree = "<group>"; };
 		93C441FF0F813AE100C1A634 /* CollectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionType.h; sourceTree = "<group>"; };
 		93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollbar.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
@@ -17236,8 +17232,6 @@
 				F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */,
 				4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */,
 				4ACBC0BD12713CBD0094F9B2 /* ClassList.h */,
-				93C441ED0F813A1A00C1A634 /* CollectionCache.cpp */,
-				93C441EE0F813A1A00C1A634 /* CollectionCache.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				F55B3D7F1251F12D003EF269 /* ColorInputType.cpp */,
 				F55B3D801251F12D003EF269 /* ColorInputType.h */,
@@ -22082,7 +22076,6 @@
 				51FB54F5113E364200821176 /* CloseEvent.h in Headers */,
 				C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */,
 				BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */,
-				93C441F00F813A1A00C1A634 /* CollectionCache.h in Headers */,
 				93C442000F813AE100C1A634 /* CollectionType.h in Headers */,
 				B27535670B053814002CE64F /* Color.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
@@ -25461,7 +25454,6 @@
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
-				93C441EF0F813A1A00C1A634 /* CollectionCache.cpp in Sources */,
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
 				1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */,

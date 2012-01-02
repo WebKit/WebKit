@@ -23,7 +23,6 @@
 #include "config.h"
 #include "HTMLCollection.h"
 
-#include "CollectionCache.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -39,10 +38,8 @@ using namespace HTMLNames;
 
 HTMLCollection::HTMLCollection(Node* base, CollectionType type)
     : m_includeChildren(shouldIncludeChildren(type))
-    , m_ownsInfo(false)
     , m_type(type)
     , m_base(base)
-    , m_info(0)
 {
 }
 
@@ -85,8 +82,6 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType typ
 
 HTMLCollection::~HTMLCollection()
 {
-    if (m_ownsInfo)
-        delete m_info;
 }
 
 void HTMLCollection::detachFromNode()
@@ -94,23 +89,24 @@ void HTMLCollection::detachFromNode()
     m_base = 0;
 }
 
-void HTMLCollection::resetCollectionInfo() const
+void HTMLCollection::invalidateCacheIfNeeded() const
 {
     ASSERT(m_base);
 
     uint64_t docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
-    if (!m_info) {
-        m_info = new CollectionCache;
-        m_ownsInfo = true;
-        m_info->version = docversion;
+    if (m_cache.version == docversion)
         return;
-    }
 
-    if (m_info->version != docversion) {
-        m_info->reset();
-        m_info->version = docversion;
-    }
+    m_cache.current = 0;
+    m_cache.position = 0;
+    m_cache.length = 0;
+    m_cache.hasLength = false;
+    m_cache.elementsArrayPosition = 0;
+    m_cache.idCache.clear();
+    m_cache.nameCache.clear();
+    m_cache.hasNameCache = false;
+    m_cache.version = docversion;
 }
 
 inline bool HTMLCollection::isAcceptableElement(Element* element) const
@@ -207,12 +203,12 @@ unsigned HTMLCollection::length() const
     if (!m_base)
         return 0;
 
-    resetCollectionInfo();
-    if (!m_info->hasLength) {
-        m_info->length = calcLength();
-        m_info->hasLength = true;
+    invalidateCacheIfNeeded();
+    if (!m_cache.hasLength) {
+        m_cache.length = calcLength();
+        m_cache.hasLength = true;
     }
-    return m_info->length;
+    return m_cache.length;
 }
 
 Node* HTMLCollection::item(unsigned index) const
@@ -220,23 +216,23 @@ Node* HTMLCollection::item(unsigned index) const
     if (!m_base)
         return 0;
 
-     resetCollectionInfo();
-     if (m_info->current && m_info->position == index)
-         return m_info->current;
-     if (m_info->hasLength && m_info->length <= index)
+     invalidateCacheIfNeeded();
+     if (m_cache.current && m_cache.position == index)
+         return m_cache.current;
+     if (m_cache.hasLength && m_cache.length <= index)
          return 0;
-     if (!m_info->current || m_info->position > index) {
-         m_info->current = itemAfter(0);
-         m_info->position = 0;
-         if (!m_info->current)
+     if (!m_cache.current || m_cache.position > index) {
+         m_cache.current = itemAfter(0);
+         m_cache.position = 0;
+         if (!m_cache.current)
              return 0;
      }
-     Element* e = m_info->current;
-     for (unsigned pos = m_info->position; e && pos < index; pos++)
+     Element* e = m_cache.current;
+     for (unsigned pos = m_cache.position; e && pos < index; pos++)
          e = itemAfter(e);
-     m_info->current = e;
-     m_info->position = index;
-     return m_info->current;
+     m_cache.current = e;
+     m_cache.position = index;
+     return m_cache.current;
 }
 
 Node* HTMLCollection::firstItem() const
@@ -247,12 +243,12 @@ Node* HTMLCollection::firstItem() const
 Node* HTMLCollection::nextItem() const
 {
      ASSERT(m_base);
-     resetCollectionInfo();
+     invalidateCacheIfNeeded();
 
      // Look for the 'second' item. The first one is currentItem, already given back.
-     Element* retval = itemAfter(m_info->current);
-     m_info->current = retval;
-     m_info->position++;
+     Element* retval = itemAfter(m_cache.current);
+     m_cache.current = retval;
+     m_cache.position++;
      return retval;
 }
 
@@ -294,23 +290,23 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    resetCollectionInfo();
+    invalidateCacheIfNeeded();
 
     for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
         if (checkForNameMatch(e, /* checkName */ false, name)) {
-            m_info->current = e;
+            m_cache.current = e;
             return e;
         }
     }
 
     for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
         if (checkForNameMatch(e, /* checkName */ true, name)) {
-            m_info->current = e;
+            m_cache.current = e;
             return e;
         }
     }
 
-    m_info->current = 0;
+    m_cache.current = 0;
     return 0;
 }
 
@@ -318,7 +314,7 @@ void HTMLCollection::updateNameCache() const
 {
     ASSERT(m_base);
 
-    if (m_info->hasNameCache)
+    if (m_cache.hasNameCache)
         return;
 
     for (Element* element = itemAfter(0); element; element = itemAfter(element)) {
@@ -328,12 +324,12 @@ void HTMLCollection::updateNameCache() const
         const AtomicString& idAttrVal = e->getIdAttribute();
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty())
-            append(m_info->idCache, idAttrVal, e);
+            append(m_cache.idCache, idAttrVal, e);
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (m_type != DocAll || nameShouldBeVisibleInDocumentAll(e)))
-            append(m_info->nameCache, nameAttrVal, e);
+            append(m_cache.nameCache, nameAttrVal, e);
     }
 
-    m_info->hasNameCache = true;
+    m_cache.hasNameCache = true;
 }
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const
@@ -344,16 +340,15 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
     if (name.isEmpty())
         return false;
 
-    resetCollectionInfo();
+    invalidateCacheIfNeeded();
     updateNameCache();
-    m_info->checkConsistency();
 
-    if (Vector<Element*>* idCache = m_info->idCache.get(name.impl())) {
+    if (Vector<Element*>* idCache = m_cache.idCache.get(name.impl())) {
         if (!idCache->isEmpty())
             return true;
     }
 
-    if (Vector<Element*>* nameCache = m_info->nameCache.get(name.impl())) {
+    if (Vector<Element*>* nameCache = m_cache.nameCache.get(name.impl())) {
         if (!nameCache->isEmpty())
             return true;
     }
@@ -370,13 +365,12 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
     if (name.isEmpty())
         return;
 
-    resetCollectionInfo();
+    invalidateCacheIfNeeded();
     updateNameCache();
-    m_info->checkConsistency();
 
-    Vector<Element*>* idResults = m_info->idCache.get(name.impl());
-    Vector<Element*>* nameResults = m_info->nameCache.get(name.impl());
-    
+    Vector<Element*>* idResults = m_cache.idCache.get(name.impl());
+    Vector<Element*>* nameResults = m_cache.nameCache.get(name.impl());
+
     for (unsigned i = 0; idResults && i < idResults->size(); ++i)
         result.append(idResults->at(i));
 
@@ -390,6 +384,14 @@ PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
         return 0;
 
     return m_base->getElementsByTagName(name);
+}
+
+void HTMLCollection::append(NodeCacheMap& map, const AtomicString& key, Element* element)
+{
+    OwnPtr<Vector<Element*> >& vector = map.add(key.impl(), nullptr).first->second;
+    if (!vector)
+        vector = adoptPtr(new Vector<Element*>);
+    vector->append(element);
 }
 
 } // namespace WebCore

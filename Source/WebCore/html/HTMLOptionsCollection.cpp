@@ -21,7 +21,6 @@
 #include "config.h"
 #include "HTMLOptionsCollection.h"
 
-#include "CollectionCache.h"
 #include "ExceptionCode.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
@@ -97,12 +96,6 @@ void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
     if (!base())
         return;
     toHTMLSelectElement(base())->setLength(length, ec);
-}
-
-void HTMLOptionsCollection::invalidateCache()
-{
-    if (info())
-        info()->reset();
 }
 
 } //namespace

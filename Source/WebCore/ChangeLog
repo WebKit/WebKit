@@ -1,5 +1,62 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        Merge CollectionCache into HTMLCollection.
+        <http://webkit.org/b/75423>
+
+        Reviewed by Anders Carlsson.
+
+        - Move the members of CollectionCache into HTMLCollection.
+        - Renamed resetCollectionInfo() to invalidateCacheIfNeeded().
+        - Removed a bunch of overkill HashMap::checkConsistency() calls.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CollectionCache.cpp: Removed.
+        * html/CollectionCache.h: Removed.
+
+            Remove CollectionCache.
+
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::nextItem):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::append):
+        * html/HTMLCollection.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedItem):
+        (WebCore::HTMLFormCollection::nextItem):
+        (WebCore::HTMLFormCollection::namedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+
+            HTMLCollection's m_info and info() become "struct m_cache" (protected.)
+
+        * html/HTMLOptionsCollection.cpp:
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+
+            Expose HTMLCollection::invalidateCacheIfNeeded() so we can call it from
+            HTMLSelectElement::setRecalcListItems().
+
+        * html/HTMLFormCollection.h:
+
+            Remove stale declaration of formCollectionInfo() which no longer exists.
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         Move the remaining collections to caching on their respective base nodes.
         <http://webkit.org/b/75416>
 
