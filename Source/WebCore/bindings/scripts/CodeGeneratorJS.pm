@@ -816,6 +816,10 @@ sub GenerateHeader
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     }
 
+    if (!$hasParent) {
+        push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
+    }
+
     # Class info
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
 
@@ -953,6 +957,7 @@ sub GenerateHeader
     if (!$hasParent) {
         push(@headerContent, "    $implType* impl() const { return m_impl; }\n");
         push(@headerContent, "    void releaseImpl() { m_impl->deref(); m_impl = 0; }\n\n");
+        push(@headerContent, "    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    $implType* m_impl;\n");
     } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
@@ -1667,6 +1672,20 @@ sub GenerateImplementation
         } else {
             push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));\n");
         }
+        push(@implContent, "}\n\n");
+    }
+
+    if (!$hasParent) {
+        # FIXME: This destroy function should not be necessary, as 
+        # a finalizer should be called for each DOM object wrapper.
+        # However, that seems not to be the case, so this has been
+        # added back to avoid leaking while we figure out why the
+        # finalizers are not always getting called. The work tracking
+        # the finalizer issue is being tracked in http://webkit.org/b/75451
+        push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
+        push(@implContent, "    releaseImplIfNotNull();\n");
         push(@implContent, "}\n\n");
     }
 

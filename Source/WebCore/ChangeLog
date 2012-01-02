@@ -1,3 +1,15 @@
+2012-01-02  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION(r100517): We're leaking many, many DOM objects!
+        https://bugs.webkit.org/show_bug.cgi?id=75451
+
+        Reviewed by Mark Rowe.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add a temporary workaround to the problem of handle finalizers
+        not getting called by adding back the destructors (or rather
+        their replacement, destroy() functions).
+
 2012-01-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Fix chromium mac build after r103905
