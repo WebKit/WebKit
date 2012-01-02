@@ -225,7 +225,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
 #if USE(CG)
         // CG requires special handling for gradient on text
         GradientData* gradientData;
-        if (m_savedContext && gradientData = m_gradientMap.get(object)) {
+        if (m_savedContext && (gradientData = m_gradientMap.get(object))) {
             // Restore on-screen drawing context
             context = m_savedContext;
             m_savedContext = 0;

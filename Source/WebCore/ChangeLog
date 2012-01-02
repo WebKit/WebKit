@@ -1,3 +1,16 @@
+2012-01-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Fix chromium mac build after r103905
+        https://bugs.webkit.org/show_bug.cgi?id=75436
+
+        Reviewed by Csaba Osztrogonác.
+
+        Adding parenthesis to disambiguate because clang gives error
+        "expression is not assignable".
+
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+
 2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Use HashMap<OwnPtr> in RenderSVGResourceGradient
