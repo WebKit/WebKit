@@ -1,3 +1,21 @@
+2012-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove whitespace/declaration style exception
+        https://bugs.webkit.org/show_bug.cgi?id=75424
+
+        Reviewed by David Levin.
+
+        EFL port doesn't need to avoid *whitespace/declaration* exception because of coding
+        style change. However, EWebLauncher and MiniBrowser need to use EFL coding style because
+        they are EFL application.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_invalidate):
+        * ewk/ewk_view.cpp:
+
 2012-01-01  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL] Move function to get dpi to the WebCore/platform/efl/EflScreenUtilities.cpp.

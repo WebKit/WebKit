@@ -949,8 +949,7 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
     WebCore::PlatformEvent::Type type;
-    switch (action)
-    {
+    switch (action) {
     case EWK_TOUCH_START:
         type = WebCore::PlatformEvent::TouchStart;
         break;

@@ -181,7 +181,11 @@ _PATH_RULES_SPECIFIER = [
       # both lower-cased and camel-cased, underscore-sparated
       # values.
       "Source/WebKit/efl/ewk/",
-      "Source/WebKit2/UIProcess/API/efl/",
+      "Source/WebKit2/UIProcess/API/efl/"],
+     ["-readability/naming",
+      "-readability/parameter_name"]),
+    ([# EWebLauncher and MiniBrowser are EFL simple application.
+      # They need to use efl coding style.
       "Tools/EWebLauncher/",
       "Tools/MiniBrowser/efl/"],
      ["-readability/naming",

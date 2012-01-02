@@ -1,3 +1,15 @@
+2012-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove whitespace/declaration style exception
+        https://bugs.webkit.org/show_bug.cgi?id=75424
+
+        Reviewed by David Levin.
+
+        Remove *whitespace/eclaration* style rule. However, EWebLauncher and MiniBrowser are EFL simple
+        application. So, they still need to use EFL coding style.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a way to change web view settings in MiniBrowser

@@ -272,7 +272,7 @@ void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix* tileMatrix)
     matrixList = tileMatrix->matrices;
     while (matrixList) {
         iterator = EINA_INLIST_CONTAINER_GET(matrixList, Ewk_Tile_Matrix_Entry);
-        Eina_Inlist *next = (matrixList->next) ? matrixList->next : 0;
+        Eina_Inlist* next = (matrixList->next) ? matrixList->next : 0;
 
         if (iterator->matrix != tileMatrix->matrix) {
             eina_matrixsparse_free(iterator->matrix);
