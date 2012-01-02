@@ -26,6 +26,7 @@
  */
 
 #include "BrowserWindow.h"
+#include "BrowserSettingsDialog.h"
 
 enum {
     PROP_0,
@@ -42,6 +43,7 @@ struct _BrowserWindow {
     GtkWidget *backItem;
     GtkWidget *forwardItem;
     GtkWidget *statusLabel;
+    GtkWidget *settingsDialog;
     WebKitWebView *webView;
 
 };
@@ -81,6 +83,19 @@ static void goBackCallback(BrowserWindow *window)
 static void goForwardCallback(BrowserWindow *window)
 {
     webkit_web_view_go_forward(window->webView);
+}
+
+static void settingsCallback(BrowserWindow *window)
+{
+    if (window->settingsDialog) {
+        gtk_window_present(GTK_WINDOW(window->settingsDialog));
+        return;
+    }
+
+    window->settingsDialog = browser_settings_dialog_new(webkit_web_view_get_settings(window->webView));
+    gtk_window_set_transient_for(GTK_WINDOW(window->settingsDialog), GTK_WINDOW(window));
+    g_object_add_weak_pointer(G_OBJECT(window->settingsDialog), (gpointer *)&window->settingsDialog);
+    gtk_widget_show(window->settingsDialog);
 }
 
 static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
@@ -274,6 +289,11 @@ static void browser_window_init(BrowserWindow *window)
     window->forwardItem = GTK_WIDGET(item);
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(item), 0);
     g_signal_connect_swapped(G_OBJECT(item), "clicked", G_CALLBACK(goForwardCallback), (gpointer)window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_PREFERENCES);
+    g_signal_connect_swapped(G_OBJECT(item), "clicked", G_CALLBACK(settingsCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 

@@ -1,3 +1,12 @@
+2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a way to change web view settings in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=71568
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Initialize minibrowser_built_sources.
+
 2011-12-28  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Fix compilation issue when selecting opengl for Accelerated compositing

@@ -81,6 +81,7 @@ webkit2_built_sources :=
 webkit2_plugin_process_built_sources :=
 webkittestrunner_built_sources :=
 libwebcoreinternals_built_sources :=
+minibrowser_built_sources :=
 global_cppflags :=
 global_cflags :=
 global_cxxflags :=

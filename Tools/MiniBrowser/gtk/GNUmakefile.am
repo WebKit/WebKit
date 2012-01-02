@@ -1,8 +1,13 @@
 noinst_PROGRAMS += \
 	Programs/MiniBrowser
 
+minibrowser_built_sources += \
+	DerivedSources/WebKit2/BrowserMarshal.h \
+	DerivedSources/WebKit2/BrowserMarshal.c
+
 Programs_MiniBrowser_CPPFLAGS = \
 	-I$(srcdir)/Source \
+	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
@@ -11,6 +16,11 @@ Programs_MiniBrowser_CPPFLAGS = \
 	$(GTK_CFLAGS)
 
 Programs_MiniBrowser_SOURCES = \
+	$(minibrowser_built_sources) \
+	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.h \
+	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.c \
+	Tools/MiniBrowser/gtk/BrowserSettingsDialog.h \
+	Tools/MiniBrowser/gtk/BrowserSettingsDialog.c \
 	Tools/MiniBrowser/gtk/BrowserWindow.h \
 	Tools/MiniBrowser/gtk/BrowserWindow.c \
 	Tools/MiniBrowser/gtk/main.c
@@ -25,5 +35,27 @@ Programs_MiniBrowser_LDFLAGS = \
 	-no-install
 
 CLEANFILES += \
-	$(top_builddir)/Programs/MiniBrowser
+	$(top_builddir)/Programs/MiniBrowser \
+	$(minibrowser_built_sources) \
+	$(top_builddir)/stamp-mini-browser-marshal.h \
+	$(top_builddir)/stamp-mini-browser-marshal.c
 
+BUILT_SOURCES += $(minibrowser_built_sources)
+
+minibrowser_marshal_list = $(srcdir)/Tools/MiniBrowser/gtk/browser-marshal.list
+
+$(GENSOURCES_WEBKIT2)/BrowserMarshal.h: stamp-mini-browser-marshal.h
+	@true
+$(GENSOURCES_WEBKIT2)/BrowserMarshal.c: stamp-mini-browser-marshal.c
+	@true
+
+stamp-mini-browser-marshal.c: $(minibrowser_marshal_list)
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=browser_marshal $(minibrowser_marshal_list) --body > $(GENSOURCES_WEBKIT2)/BrowserMarshal.c && \
+	echo timestamp > $(@F)
+
+stamp-mini-browser-marshal.h: $(MiniBrowser_marshal_list)
+	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=browser_marshal $(minibrowser_marshal_list) --header > $(GENSOURCES_WEBKIT2)/BrowserMarshal.h && \
+	echo timestamp > $(@F)
+
+EXTRA_DIST += \
+	$(minibrowser_marshal_list)

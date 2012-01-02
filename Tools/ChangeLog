@@ -1,5 +1,50 @@
 2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add a way to change web view settings in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=71568
+
+        Reviewed by Philippe Normand.
+
+        Add a preferences button to the toolbar that shows a dialog to
+        change settings of the current web view. It uses a GtkTreeView
+        with a custom cell renderer to support multiple types of values.
+
+        * MiniBrowser/gtk/BrowserCellRendererVariant.c: Added.
+        (browserCellRendererVariantFinalize):
+        (browserCellRendererVariantGetProperty):
+        (browserCellRendererVariantSetModeForValue):
+        (browserCellRendererVariantSetProperty):
+        (browserCellRendererVariantGetRendererForValue):
+        (browserCellRendererVariantCellRendererTextEdited):
+        (browserCellRendererVariantCellRendererSpinEdited):
+        (browserCellRendererVariantCellRendererActivate):
+        (browserCellRendererVariantCellRendererRender):
+        (browserCellRendererVariantCellRendererStartEditing):
+        (browserCellRendererVariantCellRendererGetPreferredWidth):
+        (browserCellRendererVariantCellRendererGetPreferredHeight):
+        (browserCellRendererVariantCellRendererGetPreferredWidthForHeight):
+        (browserCellRendererVariantCellRendererGetPreferredHeightForWidth):
+        (browserCellRendererVariantCellRendererGetAlignedArea):
+        (browser_cell_renderer_variant_init):
+        (browser_cell_renderer_variant_class_init):
+        (browser_cell_renderer_variant_new):
+        * MiniBrowser/gtk/BrowserCellRendererVariant.h: Added.
+        * MiniBrowser/gtk/BrowserSettingsDialog.c: Added.
+        (cellRendererChanged):
+        (browserSettingsDialogSetProperty):
+        (browser_settings_dialog_init):
+        (browserSettingsDialogConstructed):
+        (browser_settings_dialog_class_init):
+        (browser_settings_dialog_new):
+        * MiniBrowser/gtk/BrowserSettingsDialog.h: Added.
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (settingsCallback):
+        (browser_window_init):
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * MiniBrowser/gtk/browser-marshal.list: Added.
+
+2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Implement create/ready-to-show/close signals in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=74711
 
