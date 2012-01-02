@@ -32,9 +32,6 @@
 #include <wtf/text/WTFString.h>
 
 using namespace std;
-// We explicitly don't use the WebCore namespace here because CoreIPC should only use WTF types and
-// WTF::String is really in WTF.
-using WTF::String;
  
 namespace CoreIPC {
 
@@ -317,6 +314,47 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
     // We can only send one asynchronous message at a time (see comment in platformCanSendOutgoingMessages).
     return false;
+}
+
+bool Connection::dispatchSentMessagesUntil(const Vector<HWND>& windows, CoreIPC::BinarySemaphore& semaphore, double absoluteTime)
+{
+    if (windows.isEmpty())
+        return semaphore.wait(absoluteTime);
+
+    HANDLE handle = semaphore.event();
+    DWORD handleCount = 1;
+
+    while (true) {
+        DWORD interval = absoluteTimeToWaitTimeoutInterval(absoluteTime);
+        if (!interval) {
+            // Consider the wait to have timed out, even if the semaphore is currently signaled.
+            // This matches the WTF::ThreadCondition implementation of BinarySemaphore::wait.
+            return false;
+        }
+
+        DWORD result = ::MsgWaitForMultipleObjectsEx(handleCount, &handle, interval, QS_SENDMESSAGE, 0);
+        if (result == WAIT_OBJECT_0) {
+            // The semaphore was signaled.
+            return true;
+        }
+        if (result == WAIT_TIMEOUT) {
+            // absoluteTime was reached.
+            return false;
+        }
+        if (result == WAIT_OBJECT_0 + handleCount) {
+            // One or more sent messages are available. Process sent messages for all the windows
+            // we were given, since we don't have a way of knowing which window has available sent
+            // messages.
+            for (size_t i = 0; i < windows.size(); ++i) {
+                MSG message;
+                ::PeekMessageW(&message, windows[i], 0, 0, PM_NOREMOVE | PM_QS_SENDMESSAGE);
+            }
+            continue;
+        }
+        ASSERT_WITH_MESSAGE(result != WAIT_FAILED, "::MsgWaitForMultipleObjectsEx failed with error %lu", ::GetLastError());
+        ASSERT_WITH_MESSAGE(false, "::MsgWaitForMultipleObjectsEx returned unexpected result %lu", result);
+        return false;
+    }
 }
 
 } // namespace CoreIPC

@@ -1,3 +1,17 @@
+2012-01-02  Sam Weinig  <sam@webkit.org>
+
+        Move dispatchSentMessagesUntil out of the RunLoop class.
+        https://bugs.webkit.org/show_bug.cgi?id=75320
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::waitWhileDispatchingSentWin32Messages):
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::dispatchSentMessagesUntil):
+        * Platform/win/RunLoopWin.cpp:
+
 2012-01-02  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
