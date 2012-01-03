@@ -225,10 +225,7 @@ mac {
     QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
 }
 
-plugin_backend_xlib {
-    CONFIG *= link_pkgconfig
-    PKGCONFIG += x11
-}
+plugin_backend_xlib: PKGCONFIG += x11
 
 linux-g++*: {
     PRE_TARGETDEPS += $$PWD/qtwebkit-export.map

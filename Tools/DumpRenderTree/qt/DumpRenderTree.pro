@@ -9,6 +9,7 @@ TEMPLATE = app
 TARGET = DumpRenderTree
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
+load(features)
 CONFIG += uitools
 
 load(wtf)
@@ -20,16 +21,11 @@ INCLUDEPATH += \
     $$PWD/.. \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 
-!embedded: PKGCONFIG += fontconfig
-
 QT = core gui network testlib
 macx: QT += xml
 haveQt(5): QT += widgets printsupport
 
-contains(config_test_fontconfig, yes) {
-    PKGCONFIG += fontconfig
-    CONFIG += link_pkgconfig
-}
+contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 HEADERS += \
     $$PWD/../WorkQueue.h \

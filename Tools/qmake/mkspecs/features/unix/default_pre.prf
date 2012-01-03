@@ -22,6 +22,7 @@ SBOX_CHECK = $$(_SBOX_DIR)
 # flag that can be used to test for either of these situations.
 contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 
+# Make sure we process the PKGCONFIG variable if applicable
 !mac: CONFIG += link_pkgconfig
 
 load(default_pre)

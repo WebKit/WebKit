@@ -1,5 +1,26 @@
 2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Clean up detection of fontconfig
+
+        We decide in features.prf whether or not fontconfig is available, and
+        set the HAVE_FONTCONFIG define accordingly. All leaf project files
+        should use this define to decide whether or not to link against
+        fontconfig, not do their own detection.
+
+        We don't need to add link_pkgconfig to CONFIG in each project file,
+        as we selectivly enable that configuration in defaults_post when
+        needed.
+
+        Reviewed by Ossy.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * qmake/mkspecs/features/unix/default_post.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
+2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Introduce qmake replace function for the active build config
 
         Reviewed by Ossy.

@@ -8,6 +8,8 @@ TEMPLATE = app
 
 INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 
+load(features)
+
 SOURCES += \
     locationedit.cpp \
     launcherwindow.cpp \
@@ -46,7 +48,7 @@ QT += network
 macx:QT += xml
 haveQt(5): QT += printsupport widgets
 
-!embedded: PKGCONFIG += fontconfig
+contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 contains(QT_CONFIG, opengl): QT += opengl
 

@@ -59,9 +59,7 @@ load(webcore)
 
 CONFIG += plugin qtwebkit
 
-contains(config_test_fontconfig, yes) {
-    PKGCONFIG += fontconfig
-}
+contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 INCLUDEPATH += \
     $$PWD/.. \
@@ -71,8 +69,6 @@ INCLUDEPATH += \
 
 PREFIX_HEADER = $$PWD/../WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
-
-!embedded: PKGCONFIG += fontconfig
 
 linux-* {
     QMAKE_LFLAGS += -Wl,--no-undefined

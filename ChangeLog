@@ -1,3 +1,20 @@
+2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Clean up detection of fontconfig
+
+        We decide in features.prf whether or not fontconfig is available, and
+        set the HAVE_FONTCONFIG define accordingly. All leaf project files
+        should use this define to decide whether or not to link against
+        fontconfig, not do their own detection.
+
+        We don't need to add link_pkgconfig to CONFIG in each project file,
+        as we selectivly enable that configuration in defaults_post when
+        needed.
+
+        Reviewed by Ossy.
+
+        * Source/api.pri:
+
 2012-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a way to change web view settings in MiniBrowser
