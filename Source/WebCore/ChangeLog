@@ -1,5 +1,20 @@
 2012-01-02  Kentaro Hara  <haraken@chromium.org>
 
+        Add resolve-supplemental.pl to project.pbxproj
+        https://bugs.webkit.org/show_bug.cgi?id=75426
+
+        Reviewed by Adam Barth.
+
+        We should have added "resolve-supplemental.pl" to build scripts of AppleWebKit
+        when we enabled the [Supplemental] IDL on AppleWebKit at r103519.
+        This is a follow-up patch for it.
+
+        No tests. Just confirm that the AppleWebKit build passes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-01-02  Kentaro Hara  <haraken@chromium.org>
+
         Add resolve-supplemental.pl to build scripts of AppleWin
         https://bugs.webkit.org/show_bug.cgi?id=75412
 
