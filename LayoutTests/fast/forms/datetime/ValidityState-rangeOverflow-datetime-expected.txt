@@ -9,7 +9,7 @@ PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "foo".
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-27T12:34Z".
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2010-01-27T12:34:56Z".
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "2011-01-26T12:34Z".
-PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34Z".
+PASS The value "" sanitized from "foo" doesn't overflow the maximum value "2011-01-26T12:34Z".
 PASS The value "2010-01-27T12:34Z" doesn't overflow the maximum value "0000-01-01T00:00Z".
 PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:33:59.999Z".
 PASS The value "9999-01-01T23:59Z" overflows the maximum value "2010-12-31T00:00Z".

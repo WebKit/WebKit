@@ -12,15 +12,15 @@ PASS "2009-09-07T16:49:31.123" is a correct valid datetime-local string.
 PASS "2009-09-07T16:49:31.1234567890" is a correct valid datetime-local string.
 PASS "275760-09-13T00:00:00.000" is a correct valid datetime-local string.
 PASS "0001-01-01T00:00:00.000" is a correct valid datetime-local string.
-PASS " 2009-09-07T16:49 " is a correct invalid datetime-local string.
-PASS "2009-09-07t16:49" is a correct invalid datetime-local string.
-PASS "2009-09-07 16:49" is a correct invalid datetime-local string.
-PASS "2009/09/07T16:49" is a correct invalid datetime-local string.
-PASS "a" is a correct invalid datetime-local string.
-PASS "-1-09-07T16:49" is a correct invalid datetime-local string.
-PASS "0000-12-31T23:59:59.999" is a correct invalid datetime-local string.
-PASS "275760-09-13T00:00:00.001" is a correct invalid datetime-local string.
-PASS "invalid" is a correct valid datetime-local string when disabled.
+PASS " 2009-09-07T16:49 " is an invalid datetime-local string and was sanitized.
+PASS "2009-09-07t16:49" is an invalid datetime-local string and was sanitized.
+PASS "2009-09-07 16:49" is an invalid datetime-local string and was sanitized.
+PASS "2009/09/07T16:49" is an invalid datetime-local string and was sanitized.
+PASS "a" is an invalid datetime-local string and was sanitized.
+PASS "-1-09-07T16:49" is an invalid datetime-local string and was sanitized.
+PASS "0000-12-31T23:59:59.999" is an invalid datetime-local string and was sanitized.
+PASS "275760-09-13T00:00:00.001" is an invalid datetime-local string and was sanitized.
+PASS "invalid" is an invalid datetime-local string and was sanitized while disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

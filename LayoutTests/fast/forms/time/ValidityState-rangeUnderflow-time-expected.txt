@@ -10,7 +10,7 @@ PASS The value "00:00:00.000" doesn't underflow the minimum value "".
 PASS The value "23:59:59.999" doesn't underflow the minimum value "".
 PASS The value "13:16" doesn't underflow the minimum value "11:00".
 PASS The value "13:16" doesn't underflow the minimum value "13:16".
-PASS The value "foo" doesn't underflow the minimum value "11:00".
+PASS The value "" sanitized from "foo" doesn't underflow the minimum value "11:00".
 PASS The value "13:16" undeflows the minimum value "13:17".
 PASS The value "23:59" undeflows the minimum value "23:59:30".
 PASS The value "13:16" undeflows the minimum value "14:00".

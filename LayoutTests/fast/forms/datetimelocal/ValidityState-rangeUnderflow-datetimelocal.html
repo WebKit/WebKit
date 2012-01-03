@@ -26,19 +26,26 @@ function checkUnderflow(value, min, disabled)
         testFailed(resultText);
 }
 
-function checkNotUnderflow(value, min, disabled)
+function checkNotUnderflow(value, min, disabled, sanitized)
 {
     input.value = value;
     input.min = min;
     input.disabled = !!disabled;
     var underflow = input.validity.rangeUnderflow;
     var resultText = 'The value "' + input.value + '" ' +
+        (sanitized ? 'sanitized from "' + value + '" ' : '') +
         (underflow ? 'underflows' : 'doesn\'t underflow') +
         ' the minimum value "' + input.min + '"' + (disabled ? ' when disabled.' : '.');
     if (underflow)
         testFailed(resultText);
     else
         testPassed(resultText);
+}
+
+function checkSanitizedValueNotUnderflow(value, max, disabled)
+{
+    // For date types, invalid values are sanitized to "".
+    checkNotUnderflow(value, max, disabled, true);
 }
 
 input.type = 'datetime-local';
@@ -53,7 +60,7 @@ checkNotUnderflow('1000-01-01T12:34', '');
 checkNotUnderflow('1582-10-15T00:00', '');
 checkNotUnderflow('2010-01-27T12:34', '2010-01-26T00:00');
 checkNotUnderflow('2010-01-27T12:34', '2009-01-28T00:00');
-checkNotUnderflow('foo', '2011-01-26T00:00');
+checkSanitizedValueNotUnderflow('foo', '2011-01-26T00:00');
 
 // Underflow cases
 checkUnderflow('2010-01-27T12:34', '2010-01-27T13:00');

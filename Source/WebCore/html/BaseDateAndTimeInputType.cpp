@@ -212,4 +212,9 @@ String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleVa
     return serializeWithMilliseconds(parsedValue);
 }
 
+String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) const
+{
+    return typeMismatchFor(proposedValue) ? String() : proposedValue;
+}
+
 } // namespace WebCore

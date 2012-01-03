@@ -11,27 +11,31 @@ description('This test aims to check for typeMismatch flag with type=datetime-lo
 var i = document.createElement('input');
 i.type = 'datetime-local';
 
-function check(value, mismatchExpected, disabled)
+function check(value, disabled)
 {
     i.value = value;
     i.disabled = !!disabled;
-    var actual = i.validity.typeMismatch;
-    var didPass = actual == mismatchExpected;
-    var resultText = '"' + value + '" is ' + (didPass ? 'a correct ' : 'an incorrect ') + (actual ? 'invalid' : 'valid') + ' datetime-local string' + (disabled ? ' when disabled.' : '.');
-    if (didPass)
-        testPassed(resultText);
+
+    if (i.validity.typeMismatch)
+        testFailed('"' + value + '" had typeMismatch. This should not happen with sanitization.');
+}
+
+function shouldBeValid(value)
+{
+    check(value);
+    if ((value === '' && i.value === '') || (value !== '' && i.value !== ""))
+        testPassed('"' + value + '" is a correct valid datetime-local string.');
     else
-        testFailed(resultText);
+        testFailed('"' + value + '" is a valid datetime-local string that failed to be set on the input.');
 }
 
-function shouldBeValid(value, disabled)
+function shouldBeInvalid(value, disabled)
 {
-    check(value, false, disabled);
-}
-
-function shouldBeInvalid(value)
-{
-    check(value, true);
+    check(value, disabled);
+    if (i.value === '')
+        testPassed('"' + value + '" is an invalid datetime-local string and was sanitized' + (disabled ? ' while disabled' : '') + '.');
+    else
+        testFailed('"' + value + '" is an invalid datetime-local string and was not sanitized' + (disabled ? ' while disabled' : '') + '.');
 }
 
 // Valid values
@@ -56,7 +60,7 @@ shouldBeInvalid('0000-12-31T23:59:59.999');
 shouldBeInvalid('275760-09-13T00:00:00.001');
 
 // Disabled
-shouldBeValid('invalid', true);
+shouldBeInvalid('invalid', true);
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

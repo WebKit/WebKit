@@ -26,19 +26,26 @@ function checkOverflow(value, max, disabled)
         testFailed(resultText);
 }
 
-function checkNotOverflow(value, max, disabled)
+function checkNotOverflow(value, max, disabled, sanitized)
 {
     input.value = value;
     input.max = max;
     input.disabled = !!disabled;
     var overflow = input.validity.rangeOverflow;
     var resultText = 'The value "' + input.value + '" ' +
+        (sanitized ? 'sanitized from "' + value + '" ' : '') +
         (overflow ? 'overflows' : 'doesn\'t overflow') +
         ' the maximum value "' + input.max + '"' + (disabled ? ' when disabled.' : '.');
     if (overflow)
         testFailed(resultText);
     else
         testPassed(resultText);
+}
+
+function checkSanitizedValueNotOverflow(value, max, disabled)
+{
+    // For date types, invalid values are sanitized to "".
+    checkNotOverflow(value, max, disabled, true);
 }
 
 input.type = 'time';
@@ -50,7 +57,7 @@ checkNotOverflow('13:16', 'foo');
 checkNotOverflow('13:16', '13:16');
 checkNotOverflow('13:16', '13:17');
 checkNotOverflow('13:16', '14:15');
-checkNotOverflow('foo', '13:16');
+checkSanitizedValueNotOverflow('foo', '13:16');
 
 // Overflow cases
 checkOverflow('13:16', '13:15');

@@ -9,7 +9,7 @@ PASS The value "13:16" doesn't overflow the maximum value "foo".
 PASS The value "13:16" doesn't overflow the maximum value "13:16".
 PASS The value "13:16" doesn't overflow the maximum value "13:17".
 PASS The value "13:16" doesn't overflow the maximum value "14:15".
-PASS The value "foo" doesn't overflow the maximum value "13:16".
+PASS The value "" sanitized from "foo" doesn't overflow the maximum value "13:16".
 PASS The value "13:16" overflows the maximum value "13:15".
 PASS The value "23:59:59.999" overflows the maximum value "13:16".
 PASS The value "13:16" overflows the maximum value "12:00".

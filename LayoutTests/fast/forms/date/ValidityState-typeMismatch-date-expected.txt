@@ -23,40 +23,40 @@ PASS "2009-11-30" is a correct valid date string.
 PASS "2009-12-31" is a correct valid date string.
 PASS "2008-02-29" is a correct valid date string.
 PASS "2000-02-29" is a correct valid date string.
-PASS " 2009-09-07 " is a correct invalid date string.
-PASS "a" is a correct invalid date string.
-PASS "-1-09-07" is a correct invalid date string.
-PASS "0000-12-31" is a correct invalid date string.
-PASS "0000-01-01" is a correct invalid date string.
-PASS "275760-09-14" is a correct invalid date string.
-PASS "2147483648-12-31" is a correct invalid date string.
-PASS "2009/09/07" is a correct invalid date string.
-PASS "20090907" is a correct invalid date string.
-PASS "2009--2-07" is a correct invalid date string.
-PASS "2009-00-07" is a correct invalid date string.
-PASS "2009-13-07" is a correct invalid date string.
-PASS "2009-xx-30" is a correct invalid date string.
-PASS "2009-01-32" is a correct invalid date string.
-PASS "2009-02-29" is a correct invalid date string.
-PASS "2009-03-32" is a correct invalid date string.
-PASS "2009-04-31" is a correct invalid date string.
-PASS "2009-05-32" is a correct invalid date string.
-PASS "2009-06-31" is a correct invalid date string.
-PASS "2009-07-32" is a correct invalid date string.
-PASS "2009-08-32" is a correct invalid date string.
-PASS "2009-09-31" is a correct invalid date string.
-PASS "2009-10-32" is a correct invalid date string.
-PASS "2009-11-31" is a correct invalid date string.
-PASS "2009-12-32" is a correct invalid date string.
-PASS "2100-02-29" is a correct invalid date string.
-PASS "2009-09-00" is a correct invalid date string.
-PASS "2009-09-" is a correct invalid date string.
-PASS "2009-09-7" is a correct invalid date string.
-PASS "2009-09-001" is a correct invalid date string.
-PASS "2009-09-xx" is a correct invalid date string.
-PASS "2009-09" is a correct invalid date string.
-PASS "2009" is a correct invalid date string.
-PASS "2009-09" is a correct valid date string when disabled.
+PASS " 2009-09-07 " is an invalid date string and was sanitized.
+PASS "a" is an invalid date string and was sanitized.
+PASS "-1-09-07" is an invalid date string and was sanitized.
+PASS "0000-12-31" is an invalid date string and was sanitized.
+PASS "0000-01-01" is an invalid date string and was sanitized.
+PASS "275760-09-14" is an invalid date string and was sanitized.
+PASS "2147483648-12-31" is an invalid date string and was sanitized.
+PASS "2009/09/07" is an invalid date string and was sanitized.
+PASS "20090907" is an invalid date string and was sanitized.
+PASS "2009--2-07" is an invalid date string and was sanitized.
+PASS "2009-00-07" is an invalid date string and was sanitized.
+PASS "2009-13-07" is an invalid date string and was sanitized.
+PASS "2009-xx-30" is an invalid date string and was sanitized.
+PASS "2009-01-32" is an invalid date string and was sanitized.
+PASS "2009-02-29" is an invalid date string and was sanitized.
+PASS "2009-03-32" is an invalid date string and was sanitized.
+PASS "2009-04-31" is an invalid date string and was sanitized.
+PASS "2009-05-32" is an invalid date string and was sanitized.
+PASS "2009-06-31" is an invalid date string and was sanitized.
+PASS "2009-07-32" is an invalid date string and was sanitized.
+PASS "2009-08-32" is an invalid date string and was sanitized.
+PASS "2009-09-31" is an invalid date string and was sanitized.
+PASS "2009-10-32" is an invalid date string and was sanitized.
+PASS "2009-11-31" is an invalid date string and was sanitized.
+PASS "2009-12-32" is an invalid date string and was sanitized.
+PASS "2100-02-29" is an invalid date string and was sanitized.
+PASS "2009-09-00" is an invalid date string and was sanitized.
+PASS "2009-09-" is an invalid date string and was sanitized.
+PASS "2009-09-7" is an invalid date string and was sanitized.
+PASS "2009-09-001" is an invalid date string and was sanitized.
+PASS "2009-09-xx" is an invalid date string and was sanitized.
+PASS "2009-09" is an invalid date string and was sanitized.
+PASS "2009" is an invalid date string and was sanitized.
+PASS "2009-09" is an invalid date string and was sanitized while disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

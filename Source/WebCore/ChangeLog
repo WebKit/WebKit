@@ -1,3 +1,19 @@
+2011-12-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Implement Date and Time Input Value Sanitization
+        https://bugs.webkit.org/show_bug.cgi?id=59951
+
+        Sanitize non-parsable incoming strings to the empty string.
+
+        Reviewed by Kent Tamura.
+
+        Covered by existing tests.
+
+        * html/BaseDateAndTimeInputType.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::sanitizeValue): check if the
+        incoming string is valid. If not just return the empty string.
+
 2012-01-03  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderLayer::backgroundClipRect should not check parent()
