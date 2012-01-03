@@ -1,5 +1,20 @@
 2012-01-02  Kentaro Hara  <haraken@chromium.org>
 
+        REGRESSION(r103919): Remove resolve-supplemental.pl from the WebCore target in Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=75458
+
+        Reviewed by Adam Barth.
+
+        At r103919, we added resolve-supplemental.pl to WebCore.framework/Resources,
+        but we should have added it to the project without adding it to any target.
+        This patch fixes it.
+
+        No tests. No change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-01-02  Kentaro Hara  <haraken@chromium.org>
+
         Enable the [Supplemental] IDL on GTK/GObject
         https://bugs.webkit.org/show_bug.cgi?id=75411
 

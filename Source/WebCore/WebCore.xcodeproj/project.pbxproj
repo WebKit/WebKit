@@ -3938,7 +3938,6 @@
 		A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C4A7FC09D563270003AC8D /* Attr.cpp */; };
 		A8C4A84C09D5649D0003AC8D /* MappedAttributeEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8CF59BC14B1E7B2004CC35C /* resolve-supplemental.pl in Resources */ = {isa = PBXBuildFile; fileRef = A8CF59BB14B1E7B2004CC35C /* resolve-supplemental.pl */; };
 		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
@@ -11084,7 +11083,6 @@
 		A8C4A7FC09D563270003AC8D /* Attr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attr.cpp; sourceTree = "<group>"; };
 		A8C4A84B09D5649D0003AC8D /* MappedAttributeEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MappedAttributeEntry.h; sourceTree = "<group>"; };
 		A8CB41020E85B8A50032C4F0 /* DashArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DashArray.h; sourceTree = "<group>"; };
-		A8CF59BB14B1E7B2004CC35C /* resolve-supplemental.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "resolve-supplemental.pl"; path = "scripts/resolve-supplemental.pl"; sourceTree = "<group>"; };
 		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
 		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
@@ -11347,6 +11345,7 @@
 		A8EA80040A19516E00A8EF5F /* StyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleSheet.h; sourceTree = "<group>"; };
 		A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheet.cpp; sourceTree = "<group>"; };
 		A8EA80060A19516E00A8EF5F /* MediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaList.h; sourceTree = "<group>"; };
+		A8F4578F14B2B004000CEA59 /* resolve-supplemental.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "resolve-supplemental.pl"; path = "scripts/resolve-supplemental.pl"; sourceTree = "<group>"; };
 		A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
 		A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pattern.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
@@ -19658,7 +19657,6 @@
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
-				A8CF59BB14B1E7B2004CC35C /* resolve-supplemental.pl */,
 				B5D31DF711CF60E5009F22B4 /* generic */,
 				BC1A3793097C6FB10019F3D8 /* js */,
 				BC1A3794097C6FC40019F3D8 /* objc */,
@@ -19669,6 +19667,7 @@
 				C0F2A43F13869A280066C534 /* preprocessor.pm */,
 				8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */,
 				8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */,
+				A8F4578F14B2B004000CEA59 /* resolve-supplemental.pl */,
 				97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */,
 				CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */,
 			);
@@ -25117,7 +25116,6 @@
 				93153BE014195A2800FCF5BE /* deleteButtonPressed.png in Resources */,
 				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
 				93153BE414195B2A00FCF5BE /* inputSpeech.png in Resources */,
-				A8CF59BC14B1E7B2004CC35C /* resolve-supplemental.pl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
