@@ -263,6 +263,7 @@ Rectangle {
         }
 
         experimental.itemSelector: ItemSelector { }
+        experimental.alertDialog: AlertDialog { }
     }
 
     ViewportInfoItem {

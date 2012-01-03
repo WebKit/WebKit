@@ -1,3 +1,20 @@
+2012-01-03  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Add UI for JavaScript Alert dialog in the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=75471
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add simple UI for JavaScript Alert dialogs. This patch also adds a
+        simple DialogButton QML type and a Dialog QML type which will be
+        reusable for other JavaScript dialogs.
+
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/qml/AlertDialog.qml: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/Dialog.qml: Added.
+        * MiniBrowser/qt/qml/DialogButton.qml: Added.
+
 2012-01-03  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] MiniBrowser doesn't show url bar
