@@ -1,3 +1,16 @@
+2012-01-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Revert accidentally removed chrome client compositing check
+        https://bugs.webkit.org/show_bug.cgi?id=75500
+
+        Reviewed by James Robinson.
+
+        This check was overzealously removed in r103968 as a part of
+        re-enabling compositing for RTL pages. Add it back.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::allowedCompositingTriggers):
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed

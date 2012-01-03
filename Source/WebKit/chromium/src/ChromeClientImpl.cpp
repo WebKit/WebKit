@@ -895,6 +895,9 @@ void ChromeClientImpl::scheduleCompositingLayerSync()
 
 ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTriggers() const
 {
+    if (!m_webView->allowsAcceleratedCompositing())
+        return 0;
+
     CompositingTriggerFlags flags = 0;
     Settings* settings = m_webView->page()->settings();
     if (settings->acceleratedCompositingFor3DTransformsEnabled())
