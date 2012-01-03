@@ -1,0 +1,5 @@
+Test for bug 74515: npCreateV8ScriptObject() should not return an existing V8NPObject if the rootObject doesn't match.
+The subframe causes an entry corresponding to window.top to be added to staticV8NPObjectMap with the subframe as rootObject. When the plugin in the main frame executes script "outputResult()", the existing entry in staticV8NPObjectMap should not be used. Otherwise the wrong outputResult(), which is in the subframe, will be called.
+
+
+SUCCESS

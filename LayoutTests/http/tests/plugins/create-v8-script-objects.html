@@ -1,0 +1,31 @@
+<html>
+<head>
+<script type="text/javascript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function onSubframeLoaded() {
+    document.getElementById('pluginContainer').innerHTML =
+        '<embed name="plugin" type="application/x-webkit-test-netscape"></embed>';
+    document.plugin.testEvaluate('outputResult()');
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function outputResult() {
+    document.getElementById('result').innerHTML = 'SUCCESS';
+}
+</script>
+</head>
+<body>
+<div>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=74515">bug 74515</a>: npCreateV8ScriptObject() should not return an existing V8NPObject if the rootObject doesn't match.</div>
+<div>The subframe causes an entry corresponding to window.top to be added to staticV8NPObjectMap with the subframe as rootObject. When the plugin in the main frame executes script "outputResult()", the existing entry in staticV8NPObjectMap should not be used. Otherwise the wrong outputResult(), which is in the subframe, will be called.
+</div>
+<iframe name="childFrame" src="resources/create-v8-script-objects-iframe.html"></iframe>
+<div id="pluginContainer"></div>
+<div id="result">Running...</div>
+</body>
+</html>

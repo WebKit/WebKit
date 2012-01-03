@@ -57,7 +57,8 @@ WrapperTypeInfo* npObjectTypeInfo()
     return &typeInfo;
 }
 
-typedef HashMap<int, V8NPObject*> V8NPObjectMap;
+typedef Vector<V8NPObject*> V8NPObjectVector;
+typedef HashMap<int, V8NPObjectVector> V8NPObjectMap;
 
 static V8NPObjectMap* staticV8NPObjectMap()
 {
@@ -75,8 +76,19 @@ static void freeV8NPObject(NPObject* npObject)
 {
     V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
     if (int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash()) {
-        ASSERT(staticV8NPObjectMap()->contains(v8ObjectHash));
-        staticV8NPObjectMap()->remove(v8ObjectHash);
+        V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
+        if (iter != staticV8NPObjectMap()->end()) {
+            V8NPObjectVector& objects = iter->second;
+            for (size_t index = 0; index < objects.size(); ++index) {
+                if (objects.at(index) == v8NpObject) {
+                    objects.remove(index);
+                    break;
+                }
+            }
+            if (objects.isEmpty())
+                staticV8NPObjectMap()->remove(v8ObjectHash);
+        } else
+            ASSERT_NOT_REACHED();
     } else {
         ASSERT(!v8::Context::InContext());
         staticV8NPObjectMap()->clear();
@@ -139,11 +151,19 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 
     int v8ObjectHash = object->GetIdentityHash();
     ASSERT(v8ObjectHash);
-    if (staticV8NPObjectMap()->contains(v8ObjectHash)) {
-        V8NPObject* v8npObject = staticV8NPObjectMap()->get(v8ObjectHash);
-        ASSERT(v8npObject->v8Object == object);
-        _NPN_RetainObject(&v8npObject->object);
-        return reinterpret_cast<NPObject*>(v8npObject);
+    V8NPObjectMap::iterator iter = staticV8NPObjectMap()->find(v8ObjectHash);
+    if (iter != staticV8NPObjectMap()->end()) {
+        V8NPObjectVector& objects = iter->second;
+        for (size_t index = 0; index < objects.size(); ++index) {
+            V8NPObject* v8npObject = objects.at(index);
+            if (v8npObject->rootObject == root) {
+                ASSERT(v8npObject->v8Object == object);
+                _NPN_RetainObject(&v8npObject->object);
+                return reinterpret_cast<NPObject*>(v8npObject);
+            }
+        }
+    } else {
+        iter = staticV8NPObjectMap()->set(v8ObjectHash, V8NPObjectVector()).first; 
     }
 
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));
@@ -153,7 +173,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 #endif
     v8npObject->rootObject = root;
 
-    staticV8NPObjectMap()->set(v8ObjectHash, v8npObject);
+    iter->second.append(v8npObject);
 
     return reinterpret_cast<NPObject*>(v8npObject);
 }
