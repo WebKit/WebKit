@@ -237,6 +237,7 @@
 		40D4CDF30E30E07400294801 /* General.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = General.xcconfig; sourceTree = "<group>"; };
 		40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseProject.xcconfig; sourceTree = "<group>"; };
 		40D4CF510E30F5E200294801 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ProductionProject.xcconfig; sourceTree = "<group>"; };
 		4539C8FF0EC27F6400A70F4C /* gtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4539C9330EC280AE00A70F4C /* gtest-param-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-test.h"; sourceTree = "<group>"; };
 		4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-linked_ptr.h"; sourceTree = "<group>"; };
@@ -414,6 +415,7 @@
 				40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */,
 				40D4CDF30E30E07400294801 /* General.xcconfig */,
 				40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */,
+				44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */,
 				40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */,
 			);
 			path = Config;
@@ -578,6 +580,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 4FADC24608B4156D00ABE55E /* Build configuration list for PBXProject "gtest" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -931,6 +934,106 @@
 			};
 			name = Release;
 		};
+		44C48E0414A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		44C48E0514A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				HEADER_SEARCH_PATHS = (
+					../,
+					../include/,
+				);
+				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
+				INFOPLIST_PREPROCESS = YES;
+				PRODUCT_NAME = gtest;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Production;
+		};
+		44C48E0614A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
+			buildSettings = {
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				HEADER_SEARCH_PATHS = (
+					../,
+					../include/,
+				);
+				PRODUCT_NAME = gtest;
+			};
+			name = Production;
+		};
+		44C48E0714A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../,
+					../include/,
+				);
+				PRODUCT_NAME = gtest_main;
+			};
+			name = Production;
+		};
+		44C48E0814A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = ../;
+				PRODUCT_NAME = "gtest_unittest-framework";
+			};
+			name = Production;
+		};
+		44C48E0914A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = ../;
+				PRODUCT_NAME = gtest_unittest;
+			};
+			name = Production;
+		};
+		44C48E0A14A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "sample1_unittest-framework";
+			};
+			name = Production;
+		};
+		44C48E0B14A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "sample1_unittest-static";
+			};
+			name = Production;
+		};
+		44C48E0C14A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Check;
+				ZERO_LINK = NO;
+			};
+			name = Production;
+		};
+		44C48E0D14A409DE00A2D9C7 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = gtest;
+				TARGET_NAME = gtest;
+			};
+			name = Production;
+		};
 		4FADC24308B4156D00ABE55E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
@@ -989,90 +1092,100 @@
 			buildConfigurations = (
 				3B238F600E828B5400846E11 /* Debug */,
 				3B238F610E828B5400846E11 /* Release */,
+				44C48E0C14A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40899F4A0FFA71BC000B29AE /* Build configuration list for PBXNativeTarget "gtest_unittest-framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40899F450FFA7185000B29AE /* Debug */,
 				40899F460FFA7185000B29AE /* Release */,
+				44C48E0814A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		4089A0240FFACF01000B29AE /* Build configuration list for PBXNativeTarget "sample1_unittest-framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4089A0150FFACEFD000B29AE /* Debug */,
 				4089A0160FFACEFD000B29AE /* Release */,
+				44C48E0A14A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40C44AE40E379905008FCC51 /* Build configuration list for PBXAggregateTarget "Version Info" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C44ADF0E3798F4008FCC51 /* Debug */,
 				40C44AE00E3798F4008FCC51 /* Release */,
+				44C48E0D14A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40C84902101A212E0083642A /* Build configuration list for PBXNativeTarget "gtest-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C848FB101A209D0083642A /* Debug */,
 				40C848FC101A209D0083642A /* Release */,
+				44C48E0614A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40C84912101A21D20083642A /* Build configuration list for PBXNativeTarget "gtest_main-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C8490E101A217F0083642A /* Debug */,
 				40C8490F101A217F0083642A /* Release */,
+				44C48E0714A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40C84984101A36850083642A /* Build configuration list for PBXNativeTarget "gtest_unittest-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C84985101A36850083642A /* Debug */,
 				40C84986101A36850083642A /* Release */,
+				44C48E0914A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		40C84994101A36A60083642A /* Build configuration list for PBXNativeTarget "sample1_unittest-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C84995101A36A60083642A /* Debug */,
 				40C84996101A36A60083642A /* Release */,
+				44C48E0B14A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		4FADC24208B4156D00ABE55E /* Build configuration list for PBXNativeTarget "gtest-framework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FADC24308B4156D00ABE55E /* Debug */,
 				4FADC24408B4156D00ABE55E /* Release */,
+				44C48E0514A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 		4FADC24608B4156D00ABE55E /* Build configuration list for PBXProject "gtest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FADC24708B4156D00ABE55E /* Debug */,
 				4FADC24808B4156D00ABE55E /* Release */,
+				44C48E0414A409DE00A2D9C7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

@@ -2,5 +2,8 @@ GTest v.1.5.0
 
 http://googletest.googlecode.com/svn/tags/release-1.5.0/ 
 
+2011-12-22 David Kilzer (ddkilzer@apple.com)
+      Added Production configuration to gtest Xcode project.
+
 2011-05-06 Dmitry Lomov (dslomov@google.com)
       gtest-md.vcproj upgraded to VS 2005 (8.0) format to match the rest of WebKit

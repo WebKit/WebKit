@@ -1,3 +1,16 @@
+2012-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        Add Production configuration to gtest Xcode project
+        <http://webkit.org/b/75153>
+
+        Reviewed by Adam Roben.
+
+        * gtest/README.WebKit: Updated.
+        * gtest/xcode/Config/ProductionProject.xcconfig: Added.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+        - Added Production configuration based on Release configuration.
+        - Made Production the default configuration.
+
 2011-12-25  Darin Adler  <darin@apple.com>
 
         * gtest/xcode/gtest.xcodeproj: Added property svn:ignore.
