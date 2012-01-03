@@ -1,6 +1,6 @@
 S15.1.2.2_D1.2
 
-FAIL SputnikError: #1: parseInt("08") === parseInt("08", 10)
+PASS 
 
 TEST COMPLETE
 

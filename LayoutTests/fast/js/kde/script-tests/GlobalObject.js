@@ -46,7 +46,7 @@ shouldBeTrue("isNaN(parseInt('Infinity'))");
 
 // all should return 15
 shouldBe('parseInt("15")', "15");
-shouldBe('parseInt("017")', "15"); /// The spec says it's ok, and even encouraged, to parse this as 17!
+shouldBe('parseInt("015")', "15"); // ES5 prohibits parseInt from handling octal, see annex E.
 shouldBe('parseInt("0xf")', "15");
 shouldBe('parseInt("15", 0)', "15");
 shouldBe('parseInt("15", 10)', "15");

@@ -1,5 +1,17 @@
 2012-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        ES5 prohibits parseInt from supporting octal
+        https://bugs.webkit.org/show_bug.cgi?id=75455
+
+        Reviewed by Sam Weinig.
+
+        See sections 15.1.2.2 and annex E.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+
+2012-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=55343
         Global JSON should be configurable but isn't
 

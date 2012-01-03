@@ -230,16 +230,23 @@ double parseIntOverflow(const UChar* s, int length, int radix)
     return number;
 }
 
+// ES5.1 15.1.2.2
 template <typename CharType>
 ALWAYS_INLINE
 static double parseInt(const UString& s, const CharType* data, int radix)
 {
+    // 1. Let inputString be ToString(string).
+    // 2. Let S be a newly created substring of inputString consisting of the first character that is not a
+    //    StrWhiteSpaceChar and all characters following that character. (In other words, remove leading white
+    //    space.) If inputString does not contain any such characters, let S be the empty string.
     int length = s.length();
     int p = 0;
-
     while (p < length && isStrWhiteSpace(data[p]))
         ++p;
 
+    // 3. Let sign be 1.
+    // 4. If S is not empty and the first character of S is a minus sign -, let sign be -1.
+    // 5. If S is not empty and the first character of S is a plus sign + or a minus sign -, then remove the first character from S.
     double sign = 1;
     if (p < length) {
         if (data[p] == '+')
@@ -250,19 +257,33 @@ static double parseInt(const UString& s, const CharType* data, int radix)
         }
     }
 
+    // 6. Let R = ToInt32(radix).
+    // 7. Let stripPrefix be true.
+    // 8. If R != 0,then
+    //   b. If R != 16, let stripPrefix be false.
+    // 9. Else, R == 0
+    //   a. LetR = 10.
+    // 10. If stripPrefix is true, then
+    //   a. If the length of S is at least 2 and the first two characters of S are either ―0x or ―0X,
+    //      then remove the first two characters from S and let R = 16.
+    // 11. If S contains any character that is not a radix-R digit, then let Z be the substring of S
+    //     consisting of all characters before the first such character; otherwise, let Z be S.
     if ((radix == 0 || radix == 16) && length - p >= 2 && data[p] == '0' && (data[p + 1] == 'x' || data[p + 1] == 'X')) {
         radix = 16;
         p += 2;
-    } else if (radix == 0) {
-        if (p < length && data[p] == '0')
-            radix = 8;
-        else
-            radix = 10;
-    }
+    } else if (radix == 0)
+        radix = 10;
 
+    // 8.a If R < 2 or R > 36, then return NaN.
     if (radix < 2 || radix > 36)
         return std::numeric_limits<double>::quiet_NaN();
 
+    // 13. Let mathInt be the mathematical integer value that is represented by Z in radix-R notation, using the letters
+    //     A-Z and a-z for digits with values 10 through 35. (However, if R is 10 and Z contains more than 20 significant
+    //     digits, every significant digit after the 20th may be replaced by a 0 digit, at the option of the implementation;
+    //     and if R is not 2, 4, 8, 10, 16, or 32, then mathInt may be an implementation-dependent approximation to the
+    //     mathematical integer value that is represented by Z in radix-R notation.)
+    // 14. Let number be the Number value for mathInt.
     int firstDigitPosition = p;
     bool sawDigit = false;
     double number = 0;
@@ -275,7 +296,6 @@ static double parseInt(const UString& s, const CharType* data, int radix)
         number += digit;
         ++p;
     }
-
     if (number >= mantissaOverflowLowerBound) {
         if (radix == 10)
             number = WTF::strtod(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), 0);
@@ -283,9 +303,11 @@ static double parseInt(const UString& s, const CharType* data, int radix)
             number = parseIntOverflow(s.substringSharingImpl(firstDigitPosition, p - firstDigitPosition).utf8().data(), p - firstDigitPosition, radix);
     }
 
+    // 12. If Z is empty, return NaN.
     if (!sawDigit)
         return std::numeric_limits<double>::quiet_NaN();
 
+    // 15. Return sign x number.
     return sign * number;
 }
 

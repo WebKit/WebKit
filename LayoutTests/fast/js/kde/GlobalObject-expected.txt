@@ -38,7 +38,7 @@ PASS parseInt('3x') is 3
 PASS parseInt('3 x') is 3
 PASS isNaN(parseInt('Infinity')) is true
 PASS parseInt("15") is 15
-PASS parseInt("017") is 15
+PASS parseInt("015") is 15
 PASS parseInt("0xf") is 15
 PASS parseInt("15", 0) is 15
 PASS parseInt("15", 10) is 15
