@@ -53,11 +53,6 @@ typedef struct _GMainLoop GMainLoop;
 typedef gboolean (*GSourceFunc) (gpointer data);
 #endif
 
-namespace WTF {
-    template<typename> class Function;
-}
-using WTF::Function;
-
 class WorkQueue {
     WTF_MAKE_NONCOPYABLE(WorkQueue);
 

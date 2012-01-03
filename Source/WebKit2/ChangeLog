@@ -1,3 +1,12 @@
+2012-01-03  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary forward declaration of Function
+        https://bugs.webkit.org/show_bug.cgi?id=75485
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/WorkQueue.h:
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify loader client WebKit2 GTK+ API
