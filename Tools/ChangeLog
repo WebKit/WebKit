@@ -1,3 +1,22 @@
+2011-12-04  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2][GTK] WebSettings support in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=73773
+
+        Reviewed by Martin Robinson.
+
+        Patch heavily inspired from the WebKit GtkLauncher to support
+        command-line WebSettings. Example: --enable-fullscreen=TRUE.
+        The full list of options can be consulted with --help-websettings.
+
+        * MiniBrowser/gtk/main.c:
+        (loadURI):
+        (parseOptionEntryCallback):
+        (isValidParameterType):
+        (getOptionEntriesFromWebKitSettings):
+        (addSettingsGroupToContext):
+        (main):
+
 2012-01-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] GtkLauncher settings improvements
