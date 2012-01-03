@@ -56,6 +56,25 @@ for (i = 0; i < properties.length; ++i) {
     shouldBe("computedStyle.getPropertyCSSValue('" + properties[i] + "').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
 
 }
+
+e.style.cssText = "";
+e.style.border = "20em solid red";
+shouldBe("computedStyle.getPropertyValue('border')", "'320px solid rgb(255, 0, 0)'");
+shouldBe("computedStyle.getPropertyCSSValue('border').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border').cssText", "'320px solid rgb(255, 0, 0)'");
+shouldBe("computedStyle.getPropertyCSSValue('border').length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('border').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX)", "320");
+shouldBe("computedStyle.getPropertyCSSValue('border').item(1).getStringValue()", "'solid'");
+shouldBe("computedStyle.getPropertyCSSValue('border').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('border').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+
+
+e.style.border = "20em solid red";
+e.style.borderTop = "10px groove blue";
+shouldBe("computedStyle.getPropertyValue('border')", "''");
+
+
 document.body.removeChild(testContainer);
 
 </script>

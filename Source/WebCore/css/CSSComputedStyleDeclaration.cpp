@@ -2137,8 +2137,17 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 #endif
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
-        case CSSPropertyBorder:
             break;
+        case CSSPropertyBorder: {
+            RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyBorderTop, DoNotUpdateLayout);
+            const int properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
+                                        CSSPropertyBorderLeft };
+            for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
+                if (value->cssText() !=  getPropertyCSSValue(properties[i], DoNotUpdateLayout)->cssText())
+                    return 0;
+            }
+            return value.release();
+        }
         case CSSPropertyBorderBottom: {
             const int properties[3] = { CSSPropertyBorderBottomWidth, CSSPropertyBorderBottomStyle,
                                         CSSPropertyBorderBottomColor };
