@@ -59,7 +59,7 @@ public:
 
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.
-    void protectTileTextures(const IntRect& contentRect);
+    void protectTileTextures(const IntRect& layerRect);
 
 protected:
     explicit TiledLayerChromium(CCLayerDelegate*);
@@ -77,16 +77,16 @@ protected:
     virtual LayerTextureUpdater* textureUpdater() const = 0;
 
     // Set invalidations to be potentially repainted during update().
-    void invalidateRect(const IntRect& contentRect);
+    void invalidateRect(const IntRect& layerRect);
 
-    // Prepare data needed to update textures that intersect with contentRect.
-    void prepareToUpdate(const IntRect& contentRect);
+    // Prepare data needed to update textures that intersect with layerRect.
+    void prepareToUpdate(const IntRect& layerRect);
 
     // Same as above, but this will try to paint additional surrounding content if idle.
-    void prepareToUpdateIdle(const IntRect& contentRect);
+    void prepareToUpdateIdle(const IntRect& layerRect);
 
     // After preparing an update, returns true if more pre-painting is needed.
-    bool needsIdlePaint(const IntRect& contentRect);
+    bool needsIdlePaint(const IntRect& layerRect);
 
     virtual void protectVisibleTileTextures();
 
@@ -101,7 +101,7 @@ private:
     void setTilingOption(TilingOption);
 
     void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom);
-    IntRect idlePaintRect(const IntRect& visibleContentRect);
+    IntRect idlePaintRect(const IntRect& visibleLayerRect);
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);

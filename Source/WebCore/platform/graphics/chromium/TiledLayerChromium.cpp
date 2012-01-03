@@ -58,12 +58,10 @@ public:
     LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
     ManagedTexture* managedTexture() { return m_texture->texture(); }
 
-    bool isDirty() const { return !m_dirtyLayerRect.isEmpty(); }
-    void clearDirty() { m_dirtyLayerRect = IntRect(); }
+    bool isDirty() const { return !m_dirtyRect.isEmpty(); }
+    void clearDirty() { m_dirtyRect = IntRect(); }
 
-    // Layer-space dirty rectangle that needs to be repainted.
-    IntRect m_dirtyLayerRect;
-    // Content-space rectangle that needs to be updated.
+    IntRect m_dirtyRect;
     IntRect m_updateRect;
 private:
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
@@ -214,7 +212,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
                 continue;
 
             ASSERT(tile->managedTexture()->isReserved());
-            const IntPoint anchor = m_tiler->tileContentRect(tile).location();
+            const IntPoint anchor = m_tiler->tileRect(tile).location();
 
             // Calculate tile-space rectangle to upload into.
             IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
@@ -238,7 +236,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
         }
     }
 
-    m_updateRect = FloatRect(m_tiler->contentRectToLayerRect(m_paintRect));
+    m_updateRect = FloatRect(m_paintRect);
 }
 
 void TiledLayerChromium::setTilingOption(TilingOption tilingOption)
@@ -290,7 +288,7 @@ UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
     RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(textureUpdater()->createTexture(textureManager())));
     m_tiler->addTile(tile, i, j);
-    tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile.get());
+    tile->m_dirtyRect = m_tiler->tileRect(tile.get());
 
     return tile.get();
 }
@@ -316,25 +314,21 @@ void TiledLayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
     setBorderTexelOption(borderTexelOption);
 }
 
-void TiledLayerChromium::invalidateRect(const IntRect& contentRect)
+void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
 {
-    if (m_tiler->isEmpty() || contentRect.isEmpty() || m_skipsDraw)
+    if (m_tiler->isEmpty() || layerRect.isEmpty() || m_skipsDraw)
         return;
 
-    // Dirty rects are always in layer space, as the layer could be repositioned
-    // after invalidation.
-    const IntRect layerRect = m_tiler->contentRectToLayerRect(contentRect);
-
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
             if (!tile)
                 continue;
-            IntRect bound = m_tiler->tileLayerRect(tile);
+            IntRect bound = m_tiler->tileRect(tile);
             bound.intersect(layerRect);
-            tile->m_dirtyLayerRect.unite(bound);
+            tile->m_dirtyRect.unite(bound);
         }
     }
 }
@@ -344,13 +338,13 @@ void TiledLayerChromium::protectVisibleTileTextures()
     protectTileTextures(IntRect(IntPoint::zero(), contentBounds()));
 }
 
-void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
+void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
 {
-    if (m_tiler->isEmpty() || contentRect.isEmpty())
+    if (m_tiler->isEmpty() || layerRect.isEmpty())
         return;
 
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
@@ -381,7 +375,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                 tile = createTile(i, j);
 
             if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
-                tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile);
+                tile->m_dirtyRect = m_tiler->tileRect(tile);
 
             if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
                 m_skipsIdlePaint = true;
@@ -392,11 +386,11 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                 return;
             }
 
-            dirtyLayerRect.unite(tile->m_dirtyLayerRect);
+            dirtyLayerRect.unite(tile->m_dirtyRect);
         }
     }
 
-    m_paintRect = m_tiler->layerRectToContentRect(dirtyLayerRect);
+    m_paintRect = dirtyLayerRect;
     if (dirtyLayerRect.isEmpty())
         return;
 
@@ -423,9 +417,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile->isDirty())
                 continue;
 
-            // Calculate content-space rectangle to copy from.
-            IntRect sourceRect = m_tiler->tileContentRect(tile);
-            sourceRect.intersect(m_tiler->layerRectToContentRect(tile->m_dirtyLayerRect));
+            IntRect sourceRect = m_tiler->tileRect(tile);
+            sourceRect.intersect(tile->m_dirtyRect);
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.
             sourceRect.intersect(m_paintRect);
@@ -444,7 +437,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 }
 
 
-void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
+void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect)
 {
     m_skipsDraw = false;
     m_skipsIdlePaint = false;
@@ -453,16 +446,16 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
 
     updateBounds();
 
-    if (contentRect.isEmpty() || !m_tiler->numTiles())
+    if (layerRect.isEmpty() || !m_tiler->numTiles())
         return;
 
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
     prepareToUpdateTiles(false, left, top, right, bottom);
 }
 
-void TiledLayerChromium::prepareToUpdateIdle(const IntRect& contentRect)
+void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect)
 {
     // Abort if we have already prepared a paint or run out of memory.
     if (m_skipsIdlePaint || !m_paintRect.isEmpty())
@@ -477,14 +470,14 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& contentRect)
 
     // Protect any textures in the pre-paint area so we don't end up just
     // reclaiming them below.
-    IntRect idlePaintContentRect = idlePaintRect(contentRect);
-    protectTileTextures(idlePaintContentRect);
+    IntRect idlePaintLayerRect = idlePaintRect(layerRect);
+    protectTileTextures(idlePaintLayerRect);
 
     // Expand outwards until we find a dirty row or column to update.
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
     int prepaintLeft, prepaintTop, prepaintRight, prepaintBottom;
-    m_tiler->contentRectToTileIndices(idlePaintContentRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
+    m_tiler->layerRectToTileIndices(idlePaintLayerRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
     while (!m_skipsIdlePaint && (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom)) {
         if (bottom < prepaintBottom) {
             ++bottom;
@@ -513,15 +506,15 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& contentRect)
     }
 }
 
-bool TiledLayerChromium::needsIdlePaint(const IntRect& contentRect)
+bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
 {
     if (m_skipsIdlePaint)
         return false;
 
-    IntRect idlePaintContentRect = idlePaintRect(contentRect);
+    IntRect idlePaintLayerRect = idlePaintRect(layerRect);
 
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(idlePaintContentRect, left, top, right, bottom);
+    m_tiler->layerRectToTileIndices(idlePaintLayerRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             if (m_requestedUpdateTilesRect.contains(IntPoint(i, j)))
@@ -534,9 +527,9 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& contentRect)
     return false;
 }
 
-IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleContentRect)
+IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleLayerRect)
 {
-    IntRect prepaintRect = visibleContentRect;
+    IntRect prepaintRect = visibleLayerRect;
     // FIXME: This can be made a lot larger if we can:
     // - reserve memory at a lower priority than for visible content
     // - only reserve idle paint tiles up to a memory reclaim threshold and

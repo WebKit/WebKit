@@ -69,7 +69,6 @@ void CCLayerTilingData::setBorderTexelOption(BorderTexelOption borderTexelOption
 const CCLayerTilingData& CCLayerTilingData::operator=(const CCLayerTilingData& tiler)
 {
     m_tileSize = tiler.m_tileSize;
-    m_layerPosition = tiler.m_layerPosition;
     m_tilingData = tiler.m_tilingData;
 
     return *this;
@@ -100,52 +99,20 @@ void CCLayerTilingData::reset()
     m_tilingData.setTotalSize(0, 0);
 }
 
-void CCLayerTilingData::contentRectToTileIndices(const IntRect& contentRect, int& left, int& top, int& right, int& bottom) const
+void CCLayerTilingData::layerRectToTileIndices(const IntRect& layerRect, int& left, int& top, int& right, int& bottom) const
 {
-    const IntRect layerRect = contentRectToLayerRect(contentRect);
-
     left = m_tilingData.tileXIndexFromSrcCoord(layerRect.x());
     top = m_tilingData.tileYIndexFromSrcCoord(layerRect.y());
     right = m_tilingData.tileXIndexFromSrcCoord(layerRect.maxX() - 1);
     bottom = m_tilingData.tileYIndexFromSrcCoord(layerRect.maxY() - 1);
 }
 
-IntRect CCLayerTilingData::contentRectToLayerRect(const IntRect& contentRect) const
-{
-    IntPoint pos(contentRect.x() - m_layerPosition.x(), contentRect.y() - m_layerPosition.y());
-    IntRect layerRect(pos, contentRect.size());
-
-    // Clip to the position.
-    if (pos.x() < 0 || pos.y() < 0)
-        layerRect = IntRect(IntPoint(0, 0), IntSize(contentRect.width() + pos.x(), contentRect.height() + pos.y()));
-    return layerRect;
-}
-
-IntRect CCLayerTilingData::layerRectToContentRect(const IntRect& layerRect) const
-{
-    IntRect contentRect = layerRect;
-    contentRect.move(m_layerPosition.x(), m_layerPosition.y());
-    return contentRect;
-}
-
-IntRect CCLayerTilingData::tileContentRect(const Tile* tile) const
-{
-    IntRect contentRect = tileLayerRect(tile);
-    contentRect.move(m_layerPosition.x(), m_layerPosition.y());
-    return contentRect;
-}
-
-IntRect CCLayerTilingData::tileLayerRect(const Tile* tile) const
+IntRect CCLayerTilingData::tileRect(const Tile* tile) const
 {
     const int index = m_tilingData.tileIndex(tile->i(), tile->j());
-    IntRect layerRect = m_tilingData.tileBoundsWithBorder(index);
-    layerRect.setSize(m_tileSize);
-    return layerRect;
-}
-
-void CCLayerTilingData::setLayerPosition(const IntPoint& layerPosition)
-{
-    m_layerPosition = layerPosition;
+    IntRect tileRect = m_tilingData.tileBoundsWithBorder(index);
+    tileRect.setSize(m_tileSize);
+    return tileRect;
 }
 
 void CCLayerTilingData::setBounds(const IntSize& size)

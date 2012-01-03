@@ -50,9 +50,6 @@ public:
     IntRect tileBounds(int i, int j) const { return m_tilingData.tileBounds(m_tilingData.tileIndex(i, j)); }
     IntPoint textureOffset(int xIndex, int yIndex) const { return m_tilingData.textureOffset(xIndex, yIndex); }
 
-    // Set position of this tiled layer in content space.
-    void setLayerPosition(const IntPoint&);
-
     // Change the tile size. This may invalidate all the existing tiles.
     void setTileSize(const IntSize&);
     const IntSize& tileSize() const { return m_tileSize; }
@@ -100,11 +97,8 @@ public:
     void setBounds(const IntSize&);
     IntSize bounds() const;
 
-    void contentRectToTileIndices(const IntRect& contentRect, int &left, int &top, int &right, int &bottom) const;
-    IntRect contentRectToLayerRect(const IntRect& contentRect) const;
-    IntRect layerRectToContentRect(const IntRect& layerRect) const;
-    IntRect tileContentRect(const Tile*) const;
-    IntRect tileLayerRect(const Tile*) const;
+    void layerRectToTileIndices(const IntRect&, int &left, int &top, int &right, int &bottom) const;
+    IntRect tileRect(const Tile*) const;
 
     void reset();
 
@@ -113,7 +107,6 @@ protected:
 
     TileMap m_tiles;
     IntSize m_tileSize;
-    IntPoint m_layerPosition;
     TilingData m_tilingData;
 };
 

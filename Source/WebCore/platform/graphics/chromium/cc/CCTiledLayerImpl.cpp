@@ -116,14 +116,13 @@ TransformationMatrix CCTiledLayerImpl::quadTransform() const
 
 void CCTiledLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
-    const IntRect& contentRect = visibleLayerRect();
+    const IntRect& layerRect = visibleLayerRect();
 
-    if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || contentRect.isEmpty())
+    if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || layerRect.isEmpty())
         return;
 
     int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
-    IntRect layerRect = m_tiler->contentRectToLayerRect(contentRect);
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             DrawableTile* tile = tileAt(i, j);

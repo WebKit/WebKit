@@ -1,3 +1,46 @@
+2012-01-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove unneeded content vs. layer space distinction in tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=75498
+
+        Reviewed by James Robinson.
+
+        Long ago, before scrollbars became their own layers, tiled layers had
+        a distinction between content space (what's mostly called layer space
+        elsewhere) and layer space (the transformed content space). It seemed
+        like this transform could get reused for supporting RTL pages, but as
+        that's not the case, it should be eradicated.
+
+        Tiled layers now deal with everything in "layer space", which is a 2d
+        rectangle starting at (0, 0) in the top left of the layer and
+        extending to contentBounds() in the bottom right.
+
+        As no code actually set the tiler position, this change should be a
+        no-op.
+
+        Test: LayoutTests/compositing/
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::isDirty):
+        (WebCore::UpdatableTile::clearDirty):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        (WebCore::TiledLayerChromium::protectTileTextures):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        (WebCore::TiledLayerChromium::prepareToUpdateIdle):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::operator=):
+        (WebCore::CCLayerTilingData::layerRectToTileIndices):
+        (WebCore::CCLayerTilingData::tileRect):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2011-12-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Implement Date and Time Input Value Sanitization
