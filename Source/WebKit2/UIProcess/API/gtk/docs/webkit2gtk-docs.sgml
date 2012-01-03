@@ -14,7 +14,6 @@
     <xi:include href="xml/WebKitWebContext.xml"/>
     <xi:include href="xml/WebKitWebView.xml"/>
     <xi:include href="xml/WebKitWebViewBase.xml"/>
-    <xi:include href="xml/WebKitWebLoaderClient.xml"/>
     <xi:include href="xml/WebKitBackForwardList.xml"/>
     <xi:include href="xml/WebKitBackForwardListItem.xml"/>
     <xi:include href="xml/WebKitSettings.xml"/>

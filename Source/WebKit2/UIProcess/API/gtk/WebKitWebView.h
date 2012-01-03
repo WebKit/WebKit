@@ -31,7 +31,6 @@
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitWebContext.h>
-#include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebViewBase.h>
@@ -46,7 +45,31 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
 
+typedef struct _WebKitWebView WebKitWebView;
+typedef struct _WebKitWebViewClass WebKitWebViewClass;
 typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
+
+/**
+ * WebKitLoadEvent
+ * @WEBKIT_LOAD_STARTED: A new load request has been made.
+ * No data has been received yet, empty structures have
+ * been allocated to perform the load; the load may still
+ * fail due to transport issues such as not being able to
+ * resolve a name, or connect to a port.
+ * @WEBKIT_LOAD_REDIRECTED: A provisional data source received
+ * a server redirect.
+ * @WEBKIT_LOAD_COMMITTED: The content started arriving for a page load.
+ * The necessary transport requirements are stabilished, and the
+ * load is being performed.
+ * @WEBKIT_LOAD_FINISHED: Load completed. All resources are done loading
+ * or there was an error during the load operation.
+ */
+typedef enum {
+    WEBKIT_LOAD_STARTED,
+    WEBKIT_LOAD_REDIRECTED,
+    WEBKIT_LOAD_COMMITTED,
+    WEBKIT_LOAD_FINISHED
+} WebKitLoadEvent;
 
 struct _WebKitWebView {
     WebKitWebViewBase parent;
@@ -58,19 +81,26 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    GtkWidget *(* create)         (WebKitWebView *web_view);
-    void       (* ready_to_show)  (WebKitWebView *web_view);
-    void       (* close)          (WebKitWebView *web_view);
+    void       (* load_changed)   (WebKitWebView  *web_view,
+                                   WebKitLoadEvent load_event);
+    gboolean   (* load_failed)    (WebKitWebView  *web_view,
+                                   WebKitLoadEvent load_event,
+                                   const gchar    *failing_uri,
+                                   GError         *error);
 
-    gboolean   (* script_alert)   (WebKitWebView *web_view,
-                                   const gchar   *message);
-    gboolean   (* script_confirm) (WebKitWebView *web_view,
-                                   const gchar   *message,
-                                   gboolean      *confirmed);
-    gboolean   (* script_prompt)  (WebKitWebView *web_view,
-                                   const gchar   *message,
-                                   const gchar   *default_text,
-                                   gchar        **text);
+    GtkWidget *(* create)         (WebKitWebView  *web_view);
+    void       (* ready_to_show)  (WebKitWebView  *web_view);
+    void       (* close)          (WebKitWebView  *web_view);
+
+    gboolean   (* script_alert)   (WebKitWebView  *web_view,
+                                   const gchar    *message);
+    gboolean   (* script_confirm) (WebKitWebView  *web_view,
+                                   const gchar    *message,
+                                   gboolean       *confirmed);
+    gboolean   (* script_prompt)  (WebKitWebView  *web_view,
+                                   const gchar    *message,
+                                   const gchar    *default_text,
+                                   gchar         **text);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
@@ -94,13 +124,6 @@ webkit_web_view_new_with_context             (WebKitWebContext          *context
 
 WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                  (WebKitWebView             *web_view);
-
-WEBKIT_API WebKitWebLoaderClient *
-webkit_web_view_get_loader_client            (WebKitWebView             *web_view);
-
-WEBKIT_API void
-webkit_web_view_set_loader_client            (WebKitWebView             *web_view,
-                                              WebKitWebLoaderClient     *loader_client);
 
 WEBKIT_API void
 webkit_web_view_load_uri                     (WebKitWebView             *web_view,

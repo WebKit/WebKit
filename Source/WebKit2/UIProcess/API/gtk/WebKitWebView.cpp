@@ -22,12 +22,13 @@
 #include "WebKitWebView.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitEnumTypes.h"
+#include "WebKitError.h"
 #include "WebKitMarshal.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
-#include "WebKitWebLoaderClientPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
@@ -46,6 +47,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 enum {
+    LOAD_CHANGED,
+    LOAD_FAILED,
+
     CREATE,
     READY_TO_SHOW,
     CLOSE,
@@ -83,6 +87,19 @@ struct _WebKitWebViewPrivate {
 static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
+
+static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, const char* failingURI, GError* error)
+{
+    if (g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED)
+        || g_error_matches(error, WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE)
+        || g_error_matches(error, WEBKIT_PLUGIN_ERROR, WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD))
+        return FALSE;
+
+    GOwnPtr<char> htmlString(g_strdup_printf("<html><body>%s</body></html>", error->message));
+    webkit_web_view_load_alternate_html(webView, htmlString.get(), 0, failingURI);
+
+    return TRUE;
+}
 
 static GtkWidget* webkitWebViewCreate(WebKitWebView*)
 {
@@ -229,6 +246,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gObjectClass->get_property = webkitWebViewGetProperty;
     gObjectClass->finalize = webkitWebViewFinalize;
 
+    webViewClass->load_failed = webkitWebViewLoadFail;
     webViewClass->create = webkitWebViewCreate;
     webViewClass->script_alert = webkitWebViewScriptAlert;
     webViewClass->script_confirm = webkitWebViewScriptConfirm;
@@ -294,6 +312,96 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         _("The current active URI of the view"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView::load-changed:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @load_event: the #WebKitLoadEvent
+     *
+     * Emitted when the a load operation in @web_view changes.
+     * The signal is always emitted with %WEBKIT_LOAD_STARTED when a
+     * new load request is made and %WEBKIT_LOAD_FINISHED when the load
+     * finishes successfully or due to an error. When the ongoing load
+     * operation fails #WebKitWebView::load-failed signal is emitted
+     * before #WebKitWebView::load-changed is emitted with
+     * %WEBKIT_LOAD_FINISHED.
+     * If a redirection is received from the server, this signal is emitted
+     * with %WEBKIT_LOAD_REDIRECTED after the initial emission with
+     * %WEBKIT_LOAD_STARTED and before %WEBKIT_LOAD_COMMITTED.
+     * When the page content starts arriving the signal is emitted with
+     * %WEBKIT_LOAD_COMMITTED event.
+     *
+     * You can handle this signal and use a switch to track any ongoing
+     * load operation.
+     *
+     * <informalexample><programlisting>
+     * static void web_view_load_changed (WebKitWebView  *web_view,
+     *                                    WebKitLoadEvent load_event,
+     *                                    gpointer        user_data)
+     * {
+     *     switch (load_event) {
+     *     case WEBKIT_LOAD_STARTED:
+     *         /<!-- -->* New load, we have now a provisional URI *<!-- -->/
+     *         provisional_uri = webkit_web_view_get_uri (web_view);
+     *         /<!-- -->* Here we could start a spinner or update the
+     *          <!-- -->* location bar with the provisional URI *<!-- -->/
+     *         break;
+     *     case WEBKIT_LOAD_REDIRECTED:
+     *         redirected_uri = webkit_web_view_get_uri (web_view);
+     *         break;
+     *     case WEBKIT_LOAD_COMMITTED:
+     *         /<!-- -->* The load is being performed. Current URI is
+     *          <!-- -->* the final one and it won't change unless a new
+     *          <!-- -->* load is requested or a navigation within the
+     *          <!-- -->* same page is performed *<!-- -->/
+     *         uri = webkit_web_view_get_uri (web_view);
+     *         break;
+     *     case WEBKIT_LOAD_FINISHED:
+     *         /<!-- -->* Load finished, we can now stop the spinner *<!-- -->/
+     *         break;
+     *     }
+     * }
+     * </programlisting></informalexample>
+     */
+    signals[LOAD_CHANGED] =
+        g_signal_new("load-changed",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, load_changed),
+                     0, 0,
+                     g_cclosure_marshal_VOID__ENUM,
+                     G_TYPE_NONE, 1,
+                     WEBKIT_TYPE_LOAD_EVENT);
+
+    /**
+     * WebKitWebView::load-failed:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @load_event: the #WebKitLoadEvent of the load operation
+     * @failing_uri: the URI that failed to load
+     * @error: the #GError that was triggered
+     *
+     * Emitted when an error occurs during a load operation.
+     * If the error happened when starting to load data for a page
+     * @load_event will be %WEBKIT_LOAD_STARTED. If it happened while
+     * loading a committed data source @load_event will be %WEBKIT_LOAD_COMMITTED.
+     * Since a load error causes the load operation to finish, the signal
+     * WebKitWebView::load-changed will always be emitted with
+     * %WEBKIT_LOAD_FINISHED event right after this one.
+     *
+     * By default, if the signal is not handled, a stock error page will be displayed.
+     * You need to handle the signal if you want to provide your own error page.
+     */
+    signals[LOAD_FAILED] =
+        g_signal_new("load-failed",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, load_failed),
+                     g_signal_accumulator_true_handled, 0,
+                     webkit_marshal_BOOLEAN__ENUM_STRING_POINTER,
+                     G_TYPE_BOOLEAN, 3,
+                     WEBKIT_TYPE_LOAD_EVENT,
+                     G_TYPE_STRING,
+                     G_TYPE_POINTER);
 
     /**
      * WebKitWebView::create:
@@ -429,6 +537,20 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
 }
 
+void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
+{
+    if (loadEvent != WEBKIT_LOAD_FINISHED)
+        webkitWebViewUpdateURI(webView);
+    g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
+}
+
+void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
+    g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
+}
+
 void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -549,50 +671,13 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
 }
 
 /**
- * webkit_web_view_get_loader_client:
- * @web_view: a #WebKitWebView
- *
- * Returns the #WebKitWebLoaderClient of @web_view. You can use it
- * to monitor the status of load operations happening on @web_view.
- *
- * Returns: (transfer none): the #WebKitWebLoaderClient of @web_view.
- */
-WebKitWebLoaderClient* webkit_web_view_get_loader_client(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    return webView->priv->loaderClient.get();
-}
-
-/**
- * webkit_web_view_set_loader_client:
- * @web_view: a #WebKitWebView
- * @loader_client: a #WebKitWebLoaderClient
- *
- * Sets the #WebKitWebLoaderClient that the view will use during
- * load operations.
- */
-void webkit_web_view_set_loader_client(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(WEBKIT_IS_WEB_LOADER_CLIENT(loaderClient));
-
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->loaderClient.get() == loaderClient)
-        return;
-
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    webkitWebViewSetLoaderClient(webView, loaderClient, toAPI(page));
-}
-
-/**
  * webkit_web_view_load_uri:
  * @web_view: a #WebKitWebView
  * @uri: an URI string
  *
  * Requests loading of the specified URI string.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
 {
@@ -614,9 +699,8 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
  * Load the given @content string with the specified @base_uri.
  * Relative URLs in the @content will be resolved against @base_uri.
  * When @base_uri is %NULL, it defaults to "about:blank". The mime type
- * of the document will be "text/html". You can monitor the status of
- * the load operation using the #WebKitWebLoaderClient of @web_view.
- * See webkit_web_view_get_loader_client().
+ * of the document will be "text/html". You can monitor the load operation
+ * by connecting to #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI)
 {
@@ -635,9 +719,8 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
  * @plain_text: The plain text to load
  *
  * Load the specified @plain_text string into @web_view. The mime type of
- * document will be "text/plain". You can monitor  the status of the load
- * operation using the #WebKitWebLoaderClient of @web_view.
- * See webkit_web_view_get_loader_client().
+ * document will be "text/plain". You can monitor the load
+ * operation by connecting to #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainText)
 {
@@ -658,12 +741,11 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
  *
  * Request loading of an alternate content for a URI that is unreachable. This allows clients
  * to display page-loading errors in the #WebKitWebView itself. This is typically called from
- * #WebKitWebLoaderClient::provisional-load-failed or #WebKitWebLoaderClient::load-failed
- * signals.
- * When called from those signals this method will preserve the back-forward list. The URI passed in
+ * #WebKitWebView::load-failed signal.
+ * When called from that signal this method will preserve the back-forward list. The URI passed in
  * @base_uri has to be an absolute URI.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI, const gchar* unreachableURI)
 {
@@ -684,8 +766,8 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
  * @request: a #WebKitURIRequest to load
  *
  * Requests loading of the specified #WebKitURIRequest.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* request)
 {
@@ -753,10 +835,8 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
  * Stops any ongoing loading operation in @web_view.
  * This method does nothing if no content is being loaded.
  * If there is a loading operation in progress, it will be cancelled and
- * #WebKitWebLoaderClient::provisional-load-failed or
- * #WebKitWebLoaderClient::load-failed will be emitted on the current
- * #WebKitWebLoaderClient with %WEBKIT_NETWORK_ERROR_CANCELLED error.
- * See also webkit_web_view_get_loader_client().
+ * #WebKitWebView::load-failed signal will be emitted with
+ * %WEBKIT_NETWORK_ERROR_CANCELLED error.
  */
 void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
@@ -770,8 +850,8 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
  * @web_view: a #WebKitWebView
  *
  * Loads the previous history item.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_go_back(WebKitWebView* webView)
 {
@@ -801,8 +881,8 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
  * @web_view: a #WebKitWebView
  *
  * Loads the next history item.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_go_forward(WebKitWebView* webView)
 {
@@ -864,14 +944,14 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
  * <listitem><para>
  *   If there is a server redirection during the load operation,
  *   the active URI is the redirected URI. When the signal
- *   #WebKitWebLoaderClient::provisional-load-received-server-redirect
- *   is emitted, the active URI is already updated to the redirected URI.
+ *   #WebKitWebView::load-changed is emitted with %WEBKIT_LOAD_REDIRECTED
+ *   event, the active URI is already updated to the redirected URI.
  * </para></listitem>
  * <listitem><para>
- *   When the signal #WebKitWebLoaderClient::load-committed is emitted,
- *   the active URI is the final one and it will not change unless
- *   a new load operation is started or a navigation action within the
- *   same page is performed.
+ *   When the signal #WebKitWebView::load-changed is emitted
+ *   with %WEBKIT_LOAD_COMMITTED event, the active URI is the final
+ *   one and it will not change unless a new load operation is started
+ *   or a navigation action within the same page is performed.
  * </para></listitem>
  * </orderedlist>
  *
@@ -969,8 +1049,8 @@ WebKitBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webV
  * @list_item: a #WebKitBackForwardListItem
  *
  * Loads the specific history item @list_item.
- * You can monitor the status of the load operation using the
- * #WebKitWebLoaderClient of @web_view. See webkit_web_view_get_loader_client().
+ * You can monitor the load operation by connecting to
+ * #WebKitWebView::load-changed signal.
  */
 void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKitBackForwardListItem* listItem)
 {

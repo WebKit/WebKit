@@ -17,15 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
-#error "Only <webkit2/webkit2.h> can be included directly."
-#endif
-
 #ifndef WebKitWebLoaderClient_h
 #define WebKitWebLoaderClient_h
 
 #include <glib-object.h>
-#include <webkit2/WebKitDefines.h>
+#include <WebKit2/WebKit2.h>
 
 G_BEGIN_DECLS
 
@@ -36,34 +32,19 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_LOADER_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_LOADER_CLIENT))
 #define WEBKIT_WEB_LOADER_CLIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_LOADER_CLIENT, WebKitWebLoaderClientClass))
 
+typedef struct _WebKitWebLoaderClient      WebKitWebLoaderClient;
+typedef struct _WebKitWebLoaderClientClass WebKitWebLoaderClientClass;
+
 struct _WebKitWebLoaderClient {
     GObject parent;
 };
 
 struct _WebKitWebLoaderClientClass {
-    GObjectClass parent_class;
-
-    /* virtual table */
-    gboolean (* provisional_load_started)                  (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view);
-    gboolean (* provisional_load_received_server_redirect) (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view);
-    gboolean (* provisional_load_failed)                   (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view,
-                                                            const gchar           *failing_uri,
-                                                            GError                *error);
-    gboolean (* load_committed)                            (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view);
-    gboolean (* load_finished)                             (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view);
-    gboolean (* load_failed)                               (WebKitWebLoaderClient *loader_client,
-                                                            WebKitWebView         *web_view,
-                                                            const gchar           *failing_uri,
-                                                            GError                *error);
+    GObjectClass parentClass;
 };
 
-WEBKIT_API GType
-webkit_web_loader_client_get_type (void);
+GType webkit_web_loader_client_get_type (void);
+void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient*, WKPageRef);
 
 G_END_DECLS
 

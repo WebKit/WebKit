@@ -32,7 +32,6 @@
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitURIResponse.h>
 #include <webkit2/WebKitWebContext.h>
-#include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWebView.h>
 #include <webkit2/WebKitWindowProperties.h>

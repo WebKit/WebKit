@@ -1,3 +1,13 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify loader client WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=74605
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/generate-gtkdoc: Ignore WebKitWebLoaderClient since it's now
+        private API.
+
 2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Clean up detection of fontconfig

@@ -46,11 +46,10 @@ webkit_web_context_get_type
 <FILE>WebKitWebView</FILE>
 <TITLE>WebKitWebView</TITLE>
 WebKitWebView
+WebKitLoadEvent
 webkit_web_view_new
 webkit_web_view_new_with_context
 webkit_web_view_get_context
-webkit_web_view_get_loader_client
-webkit_web_view_set_loader_client
 webkit_web_view_load_uri
 webkit_web_view_load_html
 webkit_web_view_load_plain_text
@@ -86,24 +85,6 @@ WEBKIT_WEB_VIEW_GET_CLASS
 <SUBSECTION Private>
 webkit_web_view_get_type
 WebKitWebViewPrivate
-</SECTION>
-
-<SECTION>
-<FILE>WebKitWebLoaderClient</FILE>
-<TITLE>WebKitWebLoaderClient</TITLE>
-WebKitWebLoaderClient
-
-<SUBSECTION Standard>
-WebKitWebLoaderClientClass
-WEBKIT_WEB_LOADER_CLIENT
-WEBKIT_IS_WEB_LOADER_CLIENT
-WEBKIT_TYPE_WEB_LOADER_CLIENT
-WEBKIT_WEB_LOADER_CLIENT_CLASS
-WEBKIT_IS_WEB_LOADER_CLIENT_CLASS
-WEBKIT_WEB_LOADER_CLIENT_GET_CLASS
-
-<SUBSECTION Private>
-webkit_web_loader_client_get_type
 </SECTION>
 
 <SECTION>

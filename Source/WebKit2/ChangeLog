@@ -1,3 +1,74 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify loader client WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=74605
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove WebKitWebLoaderClient from public API keeping it as a
+        private object. Loading API has been reduced to two signals in
+        WebKitWebView.
+
+        * GNUmakefile.am: Remove WebKitWebLoaderClientPrivate.h.
+        * UIProcess/API/gtk/WebKitDefines.h: Remove forward delcarations
+        that are no longer needed.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.cpp:
+        (didStartProvisionalLoadForFrame): Emit
+        WebKitWebView::load-changed signal with Started event.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Emit
+        WebKitWebView::load-changed signal with Redirected event.
+        (didFailProvisionalLoadWithErrorForFrame): Emit
+        WebKitWebView::load-failed signal with Started event.
+        (didCommitLoadForFrame): Emit WebKitWebView::load-changed signal
+        with Committed event.
+        (didFinishLoadForFrame): Emit WebKitWebView::load-changed signal
+        with Finished event.
+        (didFailLoadWithErrorForFrame): Emit WebKitWebView::load-failed
+        signal with Committed event.
+        (webkit_web_loader_client_init):
+        (webkit_web_loader_client_class_init):
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h: Remove public API and
+        move private API here.
+        * UIProcess/API/gtk/WebKitWebLoaderClientPrivate.h: Removed.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadFail): Default implementation of
+        WebKitWebView::load-failed signal to show a custom error page.
+        (webkit_web_view_class_init): Add load-changed and load-failed
+        signals.
+        (webkitWebViewLoadChanged): Emit WebKitWebView::load-changed with
+        the given event.
+        (webkitWebViewLoadFailed): Emit WebKitWebView::load-failed signal
+        with the given event, failing uri and error.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Remove loader
+        client section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Remove loader
+        client symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Remove
+        webkit_web_loader_client_get_type.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (loadChangedCallback):
+        (loadFailedCallback):
+        (LoadTrackingTest::LoadTrackingTest):
+        (LoadTrackingTest::~LoadTrackingTest):
+        (LoadTrackingTest::provisionalLoadStarted):
+        (LoadTrackingTest::provisionalLoadReceivedServerRedirect):
+        (LoadTrackingTest::provisionalLoadFailed):
+        (LoadTrackingTest::loadCommitted):
+        (LoadTrackingTest::loadFinished):
+        (LoadTrackingTest::loadFailed):
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (testLoadingError):
+        (LoadStopTrackingTest::loadCommitted):
+        (LoadStopTrackingTest::loadFailed):
+        (testLoadCancelled):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h: Remove loader client header.
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2012-01-03  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] tst_favIconLoad.qml crashes on debug mode

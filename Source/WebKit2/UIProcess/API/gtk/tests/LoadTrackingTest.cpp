@@ -22,50 +22,51 @@
 
 #include <webkit2/webkit2.h>
 
-static gboolean provisionalLoadStartedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
+static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, LoadTrackingTest* test)
 {
-    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
-    test->provisionalLoadStarted(client);
-    return TRUE;
+    switch (loadEvent) {
+    case WEBKIT_LOAD_STARTED:
+        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        test->provisionalLoadStarted();
+        break;
+    case WEBKIT_LOAD_REDIRECTED:
+        test->m_activeURI = webkit_web_view_get_uri(webView);
+        if (!test->m_redirectURI.isNull())
+            g_assert_cmpstr(test->m_redirectURI.data(), ==, test->m_activeURI.data());
+        test->provisionalLoadReceivedServerRedirect();
+        break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        test->loadCommitted();
+        break;
+    case WEBKIT_LOAD_FINISHED:
+        if (!test->m_loadFailed)
+            g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        test->loadFinished();
+        break;
+    default:
+        g_assert_not_reached();
+    }
 }
 
-static gboolean provisionalLoadReceivedServerRedirectCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
+static void loadFailedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError* error, LoadTrackingTest* test)
 {
-    test->m_activeURI = webkit_web_view_get_uri(test->m_webView);
-    if (!test->m_redirectURI.isNull())
-        g_assert_cmpstr(test->m_redirectURI.data(), ==, test->m_activeURI.data());
-    test->provisionalLoadReceivedServerRedirect(client);
-    return TRUE;
-}
+    test->m_loadFailed = true;
 
-static gboolean provisionalLoadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
-{
-    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
-    g_assert(error);
-    test->provisionalLoadFailed(client, failingURI, error);
-    return TRUE;
-}
-
-static gboolean loadCommittedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
-{
-    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
-    test->loadCommitted(client);
-    return TRUE;
-}
-
-static gboolean loadFinishedCallback(WebKitWebLoaderClient* client, WebKitWebView*, LoadTrackingTest* test)
-{
-    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
-    test->loadFinished(client);
-    return TRUE;
-}
-
-static gboolean loadFailedCallback(WebKitWebLoaderClient* client, WebKitWebView*, const gchar* failingURI, GError* error, LoadTrackingTest* test)
-{
-    g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(test->m_webView));
-    g_assert(error);
-    test->loadFailed(client, failingURI, error);
-    return TRUE;
+    switch (loadEvent) {
+    case WEBKIT_LOAD_STARTED:
+        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        g_assert(error);
+        test->provisionalLoadFailed(failingURI, error);
+        break;
+    case WEBKIT_LOAD_COMMITTED:
+        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        g_assert(error);
+        test->loadFailed(failingURI, error);
+        break;
+    default:
+        g_assert_not_reached();
+    }
 }
 
 static void estimatedProgressChangedCallback(GObject*, GParamSpec*, LoadTrackingTest* test)
@@ -75,14 +76,10 @@ static void estimatedProgressChangedCallback(GObject*, GParamSpec*, LoadTracking
 
 LoadTrackingTest::LoadTrackingTest()
     : m_runLoadUntilCompletion(false)
+    , m_loadFailed(false)
 {
-    WebKitWebLoaderClient* client = webkit_web_view_get_loader_client(m_webView);
-    g_signal_connect(client, "provisional-load-started", G_CALLBACK(provisionalLoadStartedCallback), this);
-    g_signal_connect(client, "provisional-load-received-server-redirect", G_CALLBACK(provisionalLoadReceivedServerRedirectCallback), this);
-    g_signal_connect(client, "provisional-load-failed", G_CALLBACK(provisionalLoadFailedCallback), this);
-    g_signal_connect(client, "load-committed", G_CALLBACK(loadCommittedCallback), this);
-    g_signal_connect(client, "load-finished", G_CALLBACK(loadFinishedCallback), this);
-    g_signal_connect(client, "load-failed", G_CALLBACK(loadFailedCallback), this);
+    g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChangedCallback), this);
+    g_signal_connect(m_webView, "load-failed", G_CALLBACK(loadFailedCallback), this);
     g_signal_connect(m_webView, "notify::estimated-load-progress", G_CALLBACK(estimatedProgressChangedCallback), this);
 
     g_assert(!webkit_web_view_get_uri(m_webView));
@@ -90,8 +87,6 @@ LoadTrackingTest::LoadTrackingTest()
 
 LoadTrackingTest::~LoadTrackingTest()
 {
-    WebKitWebLoaderClient* client = webkit_web_view_get_loader_client(m_webView);
-    g_signal_handlers_disconnect_matched(client, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
     g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
 }
 
@@ -102,40 +97,38 @@ void LoadTrackingTest::waitUntilLoadFinished()
     g_main_loop_run(m_mainLoop);
 }
 
-void LoadTrackingTest::provisionalLoadStarted(WebKitWebLoaderClient* client)
+void LoadTrackingTest::provisionalLoadStarted()
 {
     m_loadEvents.append(ProvisionalLoadStarted);
 }
 
-void LoadTrackingTest::provisionalLoadReceivedServerRedirect(WebKitWebLoaderClient* client)
+void LoadTrackingTest::provisionalLoadReceivedServerRedirect()
 {
     m_loadEvents.append(ProvisionalLoadReceivedServerRedirect);
 }
 
-void LoadTrackingTest::provisionalLoadFailed(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error)
+void LoadTrackingTest::provisionalLoadFailed(const gchar* failingURI, GError* error)
 {
     m_loadEvents.append(ProvisionalLoadFailed);
     if (m_runLoadUntilCompletion)
         g_main_loop_quit(m_mainLoop);
 }
 
-void LoadTrackingTest::loadCommitted(WebKitWebLoaderClient* client)
+void LoadTrackingTest::loadCommitted()
 {
     m_loadEvents.append(LoadCommitted);
 }
 
-void LoadTrackingTest::loadFinished(WebKitWebLoaderClient* client)
+void LoadTrackingTest::loadFinished()
 {
     m_loadEvents.append(LoadFinished);
     if (m_runLoadUntilCompletion)
         g_main_loop_quit(m_mainLoop);
 }
 
-void LoadTrackingTest::loadFailed(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error)
+void LoadTrackingTest::loadFailed(const gchar* failingURI, GError* error)
 {
     m_loadEvents.append(LoadFailed);
-    if (m_runLoadUntilCompletion)
-        g_main_loop_quit(m_mainLoop);
 }
 
 void LoadTrackingTest::estimatedProgressChanged()

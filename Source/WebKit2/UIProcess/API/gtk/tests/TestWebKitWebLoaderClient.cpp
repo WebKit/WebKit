@@ -49,9 +49,10 @@ static void testLoadingError(LoadTrackingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
-    g_assert_cmpint(events.size(), ==, 2);
+    g_assert_cmpint(events.size(), ==, 3);
     g_assert_cmpint(events[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(events[1], ==, LoadTrackingTest::ProvisionalLoadFailed);
+    g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFinished);
 }
 
 static void assertNormalLoadHappenedAndClearEvents(Vector<LoadTrackingTest::LoadEvents>& events)
@@ -96,19 +97,15 @@ class LoadStopTrackingTest : public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(LoadStopTrackingTest);
 
-    virtual void loadCommitted(WebKitWebLoaderClient* client)
+    virtual void loadCommitted()
     {
-        LoadTrackingTest::loadCommitted(client);
+        LoadTrackingTest::loadCommitted();
         webkit_web_view_stop_loading(m_webView);
     }
-    virtual void loadFailed(WebKitWebLoaderClient* client, const gchar* failingURI, GError* error)
+    virtual void loadFailed(const gchar* failingURI, GError* error)
     {
         g_assert(g_error_matches(error, WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED));
-        LoadTrackingTest::loadFailed(client, failingURI, error);
-    }
-    virtual void loadFinished(WebKitWebLoaderClient* client)
-    {
-        g_assert_not_reached();
+        LoadTrackingTest::loadFailed(failingURI, error);
     }
 };
 
@@ -118,10 +115,11 @@ static void testLoadCancelled(LoadStopTrackingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
-    g_assert_cmpint(events.size(), ==, 3);
+    g_assert_cmpint(events.size(), ==, 4);
     g_assert_cmpint(events[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(events[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFailed);
+    g_assert_cmpint(events[3], ==, LoadTrackingTest::LoadFinished);
 }
 
 static void testWebViewTitle(LoadTrackingTest* test, gconstpointer)
@@ -171,25 +169,25 @@ public:
         g_signal_connect(m_webView, "notify::uri", G_CALLBACK(uriChanged), this);
     }
 
-    void provisionalLoadStarted(WebKitWebLoaderClient*)
+    void provisionalLoadStarted()
     {
         checkActiveURI("/redirect");
     }
 
-    void provisionalLoadReceivedServerRedirect(WebKitWebLoaderClient*)
+    void provisionalLoadReceivedServerRedirect()
     {
         checkActiveURI("/normal");
     }
 
-    void loadCommitted(WebKitWebLoaderClient*)
+    void loadCommitted()
     {
         checkActiveURI("/normal");
     }
 
-    void loadFinished(WebKitWebLoaderClient* client)
+    void loadFinished()
     {
         checkActiveURI("/normal");
-        LoadTrackingTest::loadFinished(client);
+        LoadTrackingTest::loadFinished();
     }
 
     CString m_activeURI;

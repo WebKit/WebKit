@@ -31,6 +31,8 @@
 #include <WebKit2/WebKit2.h>
 #include <wtf/text/CString.h>
 
+void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
+void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
 void webkitWebViewSetTitle(WebKitWebView*, const CString&);
 void webkitWebViewUpdateURI(WebKitWebView*);

@@ -31,12 +31,12 @@ public:
     virtual ~LoadTrackingTest();
     void waitUntilLoadFinished();
 
-    virtual void provisionalLoadStarted(WebKitWebLoaderClient*);
-    virtual void provisionalLoadReceivedServerRedirect(WebKitWebLoaderClient*);
-    virtual void provisionalLoadFailed(WebKitWebLoaderClient*, const gchar* failingURI, GError*);
-    virtual void loadCommitted(WebKitWebLoaderClient*);
-    virtual void loadFinished(WebKitWebLoaderClient*);
-    virtual void loadFailed(WebKitWebLoaderClient*, const char* failingURI, GError*);
+    virtual void provisionalLoadStarted();
+    virtual void provisionalLoadReceivedServerRedirect();
+    virtual void provisionalLoadFailed(const gchar* failingURI, GError*);
+    virtual void loadCommitted();
+    virtual void loadFinished();
+    virtual void loadFailed(const char* failingURI, GError*);
     virtual void estimatedProgressChanged();
 
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
@@ -50,6 +50,7 @@ public:
         LoadFailed
     };
     bool m_runLoadUntilCompletion;
+    bool m_loadFailed;
     Vector<LoadEvents> m_loadEvents;
     float m_estimatedProgress;
     CString m_redirectURI;
