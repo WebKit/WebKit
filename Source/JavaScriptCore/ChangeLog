@@ -1,5 +1,42 @@
 2012-01-03  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=75140
+
+        Reviewed by Sam Weinig.
+
+        Rewrite JSArray::putSlowCase to be much cleaner & simpler.
+
+        This rewrite only significantly changes behaviour for sparse array, specifically
+        in how sparse arrays are reified back to vector form. This does not affect arrays
+        with less than 10000 entries (since these always use a vector). The more common
+        cases of sparse array behavior (though large sparse arrays are rare) - arrays that
+        always remain sparse, and arrays that are filled in reverse sequential order -
+        should be just as fast or faster (since reification is simpler & no longer
+        requires map lookups) after these changes.
+
+        Simplifying this code allows all cases of putByIndex that need to grow the vector
+        to do so via increaseVectorLength, which means that this method can encapsulate
+        the policy of determining how the vector should be grown.
+
+        No performance impact.
+
+        * runtime/JSArray.cpp:
+        (JSC::isDenseEnoughForVector):
+            - any array of length <= MIN_SPARSE_ARRAY_INDEX is dense enough for a vector.
+        (JSC::JSArray::putByIndex):
+            - simplify & comment.
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+            - Re-written to be much clearer & simpler.
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::increaseVectorPrefixLength):
+            - add explicit checks against MAX_STORAGE_VECTOR_LENGTH, so clients do not need do so.
+        (JSC::JSArray::push):
+            - simplify & comment.
+        * runtime/JSArray.h:
+            - removed SparseArrayValueMap::take.
+
+2012-01-03  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

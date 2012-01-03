@@ -69,6 +69,7 @@ namespace JSC {
         iterator find(unsigned);
         // This should ASSERT the remove is valid (check the result of the find).
         void remove(iterator it) { m_map.remove(it); }
+        void remove(unsigned i) { m_map.remove(i); }
 
         // These methods do not mutate the contents of the map.
         iterator notFound() { return m_map.end(); }
@@ -78,17 +79,6 @@ namespace JSC {
         // Only allow const begin/end iteration.
         const_iterator begin() const { return m_map.begin(); }
         const_iterator end() const { return m_map.end(); }
-
-        // These are only used in non-SparseMode paths.
-        JSValue take(unsigned i)
-        {
-            ASSERT(!sparseMode());
-            return m_map.take(i).get();
-        }
-        void remove(unsigned i)
-        {
-            m_map.remove(i);
-        }
 
     private:
         Map m_map;
@@ -256,7 +246,7 @@ namespace JSC {
 
     private:
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
-        void putSlowCase(ExecState*, unsigned propertyName, JSValue);
+        void putByIndexBeyondVectorLength(JSGlobalData&, unsigned propertyName, JSValue);
 
         unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(unsigned newLength);

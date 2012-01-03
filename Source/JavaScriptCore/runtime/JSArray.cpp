@@ -116,7 +116,7 @@ static inline size_t storageSize(unsigned vectorLength)
 
 static inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {
-    return length / minDensityMultiplier <= numValues;
+    return length <= MIN_SPARSE_ARRAY_INDEX || length / minDensityMultiplier <= numValues;
 }
 
 #if !CHECK_ARRAY_CONSISTENCY
@@ -214,8 +214,6 @@ void JSArray::destroy(JSCell* cell)
 
 SparseArrayValueMap::iterator SparseArrayValueMap::find(unsigned i)
 {
-    if (i < MIN_SPARSE_ARRAY_INDEX && !sparseMode())
-        return notFound();
     return m_map.find(i);
 }
 
@@ -348,129 +346,94 @@ void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue valu
 
     ArrayStorage* storage = thisObject->m_storage;
 
-    unsigned length = storage->m_length;
-    if (i >= length && i <= MAX_ARRAY_INDEX) {
-        length = i + 1;
-        storage->m_length = length;
-    }
-
+    // Fast case - store to the vector.
     if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
-        if (valueSlot) {
-            valueSlot.set(exec->globalData(), thisObject, value);
-            thisObject->checkConsistency();
-            return;
-        }
+        unsigned length = storage->m_length;
+
+        // Update m_length & m_numValuesInVector as necessary.
+        if (i >= length) {
+            length = i + 1;
+            storage->m_length = length;
+            ++storage->m_numValuesInVector;
+        } else if (!valueSlot)
+            ++storage->m_numValuesInVector;
+
         valueSlot.set(exec->globalData(), thisObject, value);
-        ++storage->m_numValuesInVector;
         thisObject->checkConsistency();
         return;
     }
 
-    thisObject->putSlowCase(exec, i, value);
+    // Handle 2^32-1 - this is not an array index (see ES5.1 15.4), and is treated as a regular property.
+    if (UNLIKELY(i > MAX_ARRAY_INDEX)) {
+        PutPropertySlot slot;
+        thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, i), value, slot);
+        return;
+    }
+
+    // For all other cases, call putByIndexBeyondVectorLength.
+    thisObject->putByIndexBeyondVectorLength(exec->globalData(), i, value);
+    thisObject->checkConsistency();
 }
 
-NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue value)
+NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(JSGlobalData& globalData, unsigned i, JSValue value)
 {
+    // i should be a valid array index that is outside of the current vector.
     ASSERT(i >= m_vectorLength);
+    ASSERT(i <= MAX_ARRAY_INDEX);
 
     ArrayStorage* storage = m_storage;
-    
     SparseArrayValueMap* map = storage->m_sparseValueMap;
 
-    if ((map && map->sparseMode())
-        || ((i >= MIN_SPARSE_ARRAY_INDEX)
-            && ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)))) {
-        // We miss some cases where we could compact the storage, such as a large array that is being filled from the end
-        // (which will only be compacted as we reach indices that are less than MIN_SPARSE_ARRAY_INDEX) - but this makes the check much faster.
+    // Update m_length if necessary.
+    unsigned length = storage->m_length;
+    if (i >= length) {
+        length = i + 1;
+        storage->m_length = length;
+    }
 
-        if (i > MAX_ARRAY_INDEX) {
-            PutPropertySlot slot;
-            methodTable()->put(this, exec, Identifier::from(exec, i), value, slot);
+    // First, handle cases where we don't currently have a sparse map.
+    if (LIKELY(!map)) {
+        // Check that it is sensible to still be using a vector, and then try to grow the vector.
+        if (LIKELY((isDenseEnoughForVector(i, storage->m_numValuesInVector)) && increaseVectorLength(i + 1))) {
+            // success! - reread m_storage since it has likely been reallocated, and store to the vector.
+            storage = m_storage;
+            storage->m_vector[i].set(globalData, this, value);
+            ++storage->m_numValuesInVector;
             return;
         }
-
-        if (!map) {
-            map = new SparseArrayValueMap;
-            storage->m_sparseValueMap = map;
-        }
-
-        map->put(exec->globalData(), this, i, value);
+        // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
+        map = new SparseArrayValueMap;
+        storage->m_sparseValueMap = map;
+        map->put(globalData, this, i, value);
         return;
     }
 
-    // We have decided that we'll put the new item into the vector.
-    // Fast case is when there is no sparse map, so we can increase the vector size without moving values from it.
-    if (!map || map->isEmpty()) {
-        if (increaseVectorLength(i + 1)) {
-            storage = m_storage;
-            storage->m_vector[i].set(exec->globalData(), this, value);
-            ++storage->m_numValuesInVector;
-            checkConsistency();
-        } else
-            throwOutOfMemoryError(exec);
+    // We are currently using a map - check whether we still want to be doing so.
+    // We will continue  to use a sparse map if SparseMode is set, a vector would be too sparse, or if allocation fails.
+    unsigned numValuesInArray = storage->m_numValuesInVector + map->size();
+    if (map->sparseMode() || !isDenseEnoughForVector(length, numValuesInArray) || !increaseVectorLength(length)) {
+        map->put(globalData, this, i, value);
         return;
     }
 
-    // Decide how many values it would be best to move from the map.
-    unsigned newNumValuesInVector = storage->m_numValuesInVector + 1;
-    unsigned newVectorLength = getNewVectorLength(i + 1);
-    for (unsigned j = max(m_vectorLength, MIN_SPARSE_ARRAY_INDEX); j < newVectorLength; ++j)
-        newNumValuesInVector += map->contains(j);
-    if (i >= MIN_SPARSE_ARRAY_INDEX)
-        newNumValuesInVector -= map->contains(i);
-    if (isDenseEnoughForVector(newVectorLength, newNumValuesInVector)) {
-        unsigned needLength = max(i + 1, storage->m_length);
-        unsigned proposedNewNumValuesInVector = newNumValuesInVector;
-        // If newVectorLength is already the maximum - MAX_STORAGE_VECTOR_LENGTH - then do not attempt to grow any further.
-        while ((newVectorLength < needLength) && (newVectorLength < MAX_STORAGE_VECTOR_LENGTH)) {
-            unsigned proposedNewVectorLength = getNewVectorLength(newVectorLength + 1);
-            for (unsigned j = max(newVectorLength, MIN_SPARSE_ARRAY_INDEX); j < proposedNewVectorLength; ++j)
-                proposedNewNumValuesInVector += map->contains(j);
-            if (!isDenseEnoughForVector(proposedNewVectorLength, proposedNewNumValuesInVector))
-                break;
-            newVectorLength = proposedNewVectorLength;
-            newNumValuesInVector = proposedNewNumValuesInVector;
-        }
-    }
-
-    void* baseStorage = storage->m_allocBase;
-    
-    if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage)) {
-        throwOutOfMemoryError(exec);
-        return;
-    }
-
-    m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
-    m_storage->m_allocBase = baseStorage;
+    // Reread m_storage afterincreaseVectorLength, update m_numValuesInVector.
     storage = m_storage;
-    
-    unsigned vectorLength = m_vectorLength;
+    storage->m_numValuesInVector = numValuesInArray;
+
+    // Copy all values from the map into the vector, and delete the map.
     WriteBarrier<Unknown>* vector = storage->m_vector;
+    SparseArrayValueMap::const_iterator end = map->end();
+    for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
+        vector[it->first].set(globalData, this, it->second.get());
+    delete map;
+    storage->m_sparseValueMap = 0;
 
-    if (newNumValuesInVector == storage->m_numValuesInVector + 1) {
-        for (unsigned j = vectorLength; j < newVectorLength; ++j)
-            vector[j].clear();
-        if (i > MIN_SPARSE_ARRAY_INDEX)
-            map->remove(i);
-    } else {
-        for (unsigned j = vectorLength; j < max(vectorLength, MIN_SPARSE_ARRAY_INDEX); ++j)
-            vector[j].clear();
-        JSGlobalData& globalData = exec->globalData();
-        for (unsigned j = max(vectorLength, MIN_SPARSE_ARRAY_INDEX); j < newVectorLength; ++j)
-            vector[j].set(globalData, this, map->take(j));
-    }
-
-    ASSERT(i < newVectorLength);
-
-    m_vectorLength = newVectorLength;
-    storage->m_numValuesInVector = newNumValuesInVector;
-
-    storage->m_vector[i].set(exec->globalData(), this, value);
-
-    checkConsistency();
-
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
+    // Store the new property into the vector.
+    WriteBarrier<Unknown>& valueSlot = vector[i];
+    if (!valueSlot)
+        ++storage->m_numValuesInVector;
+    valueSlot.set(globalData, this, value);
 }
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
@@ -581,12 +544,13 @@ bool JSArray::increaseVectorLength(unsigned newLength)
 {
     // This function leaves the array in an internally inconsistent state, because it does not move any values from sparse value map
     // to the vector. Callers have to account for that, because they can do it more efficiently.
+    if (newLength > MAX_STORAGE_VECTOR_LENGTH)
+        return false;
 
     ArrayStorage* storage = m_storage;
 
     unsigned vectorLength = m_vectorLength;
     ASSERT(newLength > vectorLength);
-    ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = getNewVectorLength(newLength);
     void* baseStorage = storage->m_allocBase;
 
@@ -611,7 +575,9 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
 {
     // This function leaves the array in an internally inconsistent state, because it does not move any values from sparse value map
     // to the vector. Callers have to account for that, because they can do it more efficiently.
-    
+    if (newLength > MAX_STORAGE_VECTOR_LENGTH)
+        return false;
+
     ArrayStorage* storage = m_storage;
     
     unsigned vectorLength = m_vectorLength;
@@ -723,44 +689,35 @@ JSValue JSArray::pop()
     return result;
 }
 
+// Push & putIndex are almost identical, with two small differences.
+//  - we always are writing beyond the current array bounds, so it is always necessary to update m_length & m_numValuesInVector.
+//  - pushing to an array of length 2^32-1 stores the property, but throws a range error.
 void JSArray::push(ExecState* exec, JSValue value)
 {
     checkConsistency();
-    
     ArrayStorage* storage = m_storage;
 
-    if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
-        methodTable()->putByIndex(this, exec, storage->m_length, value);
-        throwError(exec, createRangeError(exec, "Invalid array length"));
-        return;
-    }
-
-    if (storage->m_length < m_vectorLength) {
-        storage->m_vector[storage->m_length].set(exec->globalData(), this, value);
+    // Fast case - push within vector, always update m_length & m_numValuesInVector.
+    unsigned length = storage->m_length;
+    if (length < m_vectorLength) {
+        storage->m_vector[length].set(exec->globalData(), this, value);
+        storage->m_length = length + 1;
         ++storage->m_numValuesInVector;
-        ++storage->m_length;
         checkConsistency();
         return;
     }
 
-    if (storage->m_length < MIN_SPARSE_ARRAY_INDEX) {
-        SparseArrayValueMap* map = storage->m_sparseValueMap;
-        if (!map || map->isEmpty()) {
-            if (increaseVectorLength(storage->m_length + 1)) {
-                storage = m_storage;
-                storage->m_vector[storage->m_length].set(exec->globalData(), this, value);
-                ++storage->m_numValuesInVector;
-                ++storage->m_length;
-                checkConsistency();
-                return;
-            }
-            checkConsistency();
-            throwOutOfMemoryError(exec);
-            return;
-        }
+    // Pushing to an array of length 2^32-1 stores the property, but throws a range error.
+    if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
+        methodTable()->putByIndex(this, exec, storage->m_length, value);
+        // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
+        throwError(exec, createRangeError(exec, "Invalid array length"));
+        return;
     }
 
-    putSlowCase(exec, storage->m_length++, value);
+    // Handled the same as putIndex.
+    putByIndexBeyondVectorLength(exec->globalData(), storage->m_length, value);
+    checkConsistency();
 }
 
 void JSArray::shiftCount(ExecState* exec, int count)
