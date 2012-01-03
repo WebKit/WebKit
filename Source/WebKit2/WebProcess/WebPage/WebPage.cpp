@@ -2700,7 +2700,7 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
     if (coreFrame) {
-#if !USE(GC)
+#if !USE(CG)
         UNUSED_PARAM(printInfo);
 
         ASSERT(coreFrame->document()->printing());
