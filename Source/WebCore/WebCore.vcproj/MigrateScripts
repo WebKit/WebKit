@@ -31,6 +31,7 @@ all : \
     $(WEBKIT_OUTPUT)/IDLStructure.pm \
     $(WEBKIT_OUTPUT)/generate-bindings.pl \
     $(WEBKIT_OUTPUT)/preprocessor.pm \
+    $(WEBKIT_OUTPUT)/resolve-supplemental.pl \
 #
 
 MIGRATE_CMD = cp $< $@

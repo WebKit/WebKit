@@ -68628,6 +68628,10 @@
 					RelativePath="..\bindings\scripts\IDLStructure.pm"
 					>
 				</File>
+				<File
+					RelativePath="..\bindings\scripts\resolve-supplemental.pl"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

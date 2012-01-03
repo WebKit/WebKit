@@ -1,3 +1,19 @@
+2012-01-02  Kentaro Hara  <haraken@chromium.org>
+
+        Add resolve-supplemental.pl to build scripts of AppleWin
+        https://bugs.webkit.org/show_bug.cgi?id=75412
+
+        Reviewed by Adam Barth.
+
+        We should have added "resolve-supplemental.pl" to build scripts of AppleWin
+        when we enabled the [Supplemental] IDL on AppleWin at r103519.
+        This is a follow-up patch for it.
+
+        No tests. Just confirm that the AppleWin build passes.
+
+        * WebCore.vcproj/MigrateScripts:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2012-01-02  Sam Weinig  <sam@webkit.org>
 
         Fix the build.
