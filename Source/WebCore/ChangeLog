@@ -1,3 +1,12 @@
+2012-01-03  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/10637779> REGRESSION (r102247): Focus ring is not drawn around a button
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/mac/ThemeMac.mm: (WebCore::updateStates): Flip an incorrect conditional, this code
+        should run on Snow Leopard and Lion.
+
 2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle should return shorthands property with the minimum number of sides possible.

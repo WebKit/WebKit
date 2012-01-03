@@ -175,7 +175,7 @@ static void updateStates(NSCell* cell, ControlStates states)
     if (enabled != oldEnabled)
         [cell setEnabled:enabled];
     
-#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
+#if BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
     // Focused state
     bool oldFocused = [cell showsFirstResponder];
     bool focused = states & FocusState;
