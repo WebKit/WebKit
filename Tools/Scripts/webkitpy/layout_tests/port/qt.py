@@ -63,7 +63,7 @@ class QtPort(WebKitPort):
         port_name = port_name or self.port_name
         WebKitPort.__init__(self, host, port_name=None, **kwargs)
         self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
-        self._version = self._operating_system
+        self._version = self.operating_system()
 
         # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths
         # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
@@ -72,8 +72,8 @@ class QtPort(WebKitPort):
             self._name = port_name
         else:
             name_components = [self.port_name]
-            if self._operating_system:
-                name_components.append(self._operating_system)
+            if self.operating_system():
+                name_components.append(self.operating_system())
             self._name = "-".join(name_components)
 
     def _generate_all_test_configurations(self):
@@ -94,7 +94,7 @@ class QtPort(WebKitPort):
         return self._build_path('bin/ImageDiff')
 
     def _path_to_webcore_library(self):
-        if self._operating_system == 'mac':
+        if self.operating_system() == 'mac':
             return self._build_path('lib/QtWebKit.framework/QtWebKit')
         else:
             return self._build_path('lib/libQtWebKit.so')
@@ -155,3 +155,6 @@ class QtPort(WebKitPort):
             run_launcher_args.append('-2')
         run_launcher_args.append("file://%s" % results_filename)
         self._run_script("run-launcher", run_launcher_args)
+
+    def operating_system(self):
+        return self._operating_system

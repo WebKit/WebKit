@@ -348,6 +348,9 @@ class PortTest(unittest.TestCase):
             'bar/test-2.html': [('!=', 'bar/test-notref.html')],
             'bar/test-3.html': [('==', 'bar/test-ref.html'), ('==', 'bar/test-ref2.html'), ('!=', 'bar/test-notref.html')]})
 
+    def test_operating_system(self):
+        self.assertEqual('mac', self.make_port().operating_system())
+
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""

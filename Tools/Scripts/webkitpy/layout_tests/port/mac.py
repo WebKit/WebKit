@@ -75,7 +75,6 @@ class MacPort(ApplePort):
         return os_version(os_version_string)
 
     def __init__(self, host, **kwargs):
-        self._operating_system = 'mac'
         ApplePort.__init__(self, host, **kwargs)
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
@@ -104,6 +103,9 @@ class MacPort(ApplePort):
                 env['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
+
+    def operating_system(self):
+        return 'mac'
 
     # Belongs on a Platform object.
     def is_leopard(self):

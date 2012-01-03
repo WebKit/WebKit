@@ -95,7 +95,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
         else:
             self._version = port_name[port_name.index('-win-') + len('-win-'):]
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
-        self._operating_system = 'win'
 
 
     def setup_environ_for_server(self, server_name=None):
@@ -130,6 +129,9 @@ class ChromiumWinPort(chromium.ChromiumPort):
             _log.error('')
             _log.error('    http://dev.chromium.org/developers/how-tos/build-instructions-windows')
         return result
+
+    def operating_system(self):
+        return 'win'
 
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]

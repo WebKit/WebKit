@@ -377,6 +377,9 @@ class TestPort(Port):
     def name(self):
         return self._name
 
+    def operating_system(self):
+        return self._operating_system
+
     def _path_to_wdiff(self):
         return None
 

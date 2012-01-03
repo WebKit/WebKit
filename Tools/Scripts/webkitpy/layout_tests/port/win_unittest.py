@@ -103,3 +103,6 @@ class WinPortTest(port_testcase.PortTestCase):
         # This hack doesn't exist in WK2.
         port._options = MockOptions(webkit_test_runner=True)
         self.assertTrue(port.compare_text(expected, "foo\n"))
+
+    def test_operating_system(self):
+        self.assertEqual('win', self.make_port().operating_system())

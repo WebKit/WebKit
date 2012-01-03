@@ -74,10 +74,6 @@ class WinPort(ApplePort):
             version_tuple = tuple(map(int, match_object.groups()))
             return self._version_string_from_windows_version_tuple(version_tuple)
 
-    def __init__(self, host, **kwargs):
-        self._operating_system = 'win'
-        ApplePort.__init__(self, host, **kwargs)
-
     def compare_text(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
         if self.get_option('webkit_test_runner'):
@@ -107,6 +103,9 @@ class WinPort(ApplePort):
         # FIXME: Perhaps we should get this list from MacPort?
         fallback_names.extend(['mac-lion', 'mac'])
         return map(self._webkit_baseline_path, fallback_names)
+
+    def operating_system(self):
+        return 'win'
 
     # This port may need to override setup_environ_for_server
     # to match behavior of setPathForRunningWebKitApp from ORWT.

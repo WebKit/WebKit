@@ -126,3 +126,6 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assertEquals(
             '/mock-checkout/Source/WebKit/chromium/build/Debug/DumpRenderTree.exe',
             port._path_to_driver('Debug'))
+
+    def test_operating_system(self):
+        self.assertEqual('win', self.make_port().operating_system())

@@ -74,7 +74,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                              'chromium-linux-x86', 'chromium-linux-x86_64',
                              'chromium-gpu-linux-x86_64')
         self._name = port_name
-        self._operating_system = 'linux'
         self._version = 'lucid'  # We only support lucid right now.
 
     def _determine_architecture(self):
@@ -110,6 +109,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             _log.error('')
             _log.error('    http://code.google.com/p/chromium/wiki/LinuxBuildInstructions')
         return result
+
+    def operating_system(self):
+        return 'linux'
 
     #
     # PROTECTED METHODS

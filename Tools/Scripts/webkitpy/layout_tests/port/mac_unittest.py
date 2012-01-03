@@ -162,3 +162,6 @@ java/
         port._executive = MockExecutive(should_log=True)
         expected_stderr = "MOCK run_command: ['Tools/Scripts/run-safari', '--release', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
+
+    def test_operating_system(self):
+        self.assertEqual('mac', self.make_port().operating_system())

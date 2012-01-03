@@ -1,3 +1,72 @@
+2012-01-03  Adam Roben  <aroben@apple.com>
+
+        Make Port subclasses override the operating_system method rather than setting an attribute
+
+        Without this patch, any use of Port.operating_system() within a port's __init__ method would
+        return the default value ("mac"). This was confusing the version-checking logic inside
+        ApplePort.__init__ on Windows.
+
+        Fixes <http://webkit.org/b/75479> <rdar://problem/10637385> REGRESSION (r102161): NRWT
+        crashes on launch on Windows 7 SP1
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__): Replaced uses of self._operating_system with self.operating_system().
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__): Removed code that set the self._operating_system attribute. Subclasses
+        should now override the operating_system method instead.
+        (Port.operating_system): Changed to always return "mac". Subclasses should override to
+        return something else.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.__init__):
+        (ChromiumLinuxPort.operating_system):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.__init__):
+        (ChromiumMacPort.operating_system):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.__init__):
+        (ChromiumWinPort.operating_system):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.__init__):
+        (MacPort.operating_system):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.__init__):
+        (WinPort.operating_system):
+        Changed to override the operating_system method rather than setting the _operating_system
+        attribute, since setting the attribute isn't sufficient for code inside __init__ methods.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.__init__):
+        (QtPort._path_to_webcore_library):
+        Changed to use self.operating_system() instead of self._operating_system, for consistency
+        with other Port-related code.
+
+        (QtPort.operating_system): Added this override of Port.operating_system that returns the
+        value we determined in our __init__ method.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.operating_system): Added this override of Port.operating_system that returns the
+        value we determined in our __init__ method.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_operating_system):
+        Test that all ports return the expected operating system string.
+
 2012-01-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] run-gtk-test should ignore files with names without a "test" or "Test" prefix

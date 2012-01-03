@@ -125,7 +125,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
             self._graphics_type = 'cpu-cg'
         else:
             self._graphics_type = 'cpu'
-        self._operating_system = 'mac'
 
     def baseline_search_path(self):
         fallback_paths = self.FALLBACK_PATHS
@@ -149,6 +148,9 @@ class ChromiumMacPort(chromium.ChromiumPort):
             # https://bugs.webkit.org/show_bug.cgi?id=38553 for more info).
             return 1
         return chromium.ChromiumPort.default_child_processes(self)
+
+    def operating_system(self):
+        return 'mac'
 
     #
     # PROTECTED METHODS

@@ -92,7 +92,6 @@ class Port(object):
 
         # These are default values that should be overridden in a subclasses.
         self._name = port_name or self.port_name  # Subclasses may append a -VERSION (like mac-leopard) or other qualifiers.
-        self._operating_system = 'mac'
         self._version = ''
         self._architecture = 'x86'
         self._graphics_type = 'cpu'
@@ -635,7 +634,8 @@ class Port(object):
         return self.name()
 
     def operating_system(self):
-        return self._operating_system
+        # Subclasses should override this default implementation.
+        return 'mac'
 
     def version(self):
         """Returns a string indicating the version of a given platform, e.g.

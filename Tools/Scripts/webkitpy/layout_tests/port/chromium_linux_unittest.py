@@ -86,6 +86,9 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
         host.executive = executive_mock.MockExecutive2(exception=AssertionError)
         self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, host)
 
+    def test_operating_system(self):
+        self.assertEqual('linux', self.make_port().operating_system())
+
 
 if __name__ == '__main__':
     port_testcase.main()
