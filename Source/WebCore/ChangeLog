@@ -1,3 +1,17 @@
+2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle for list-style is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=75443
+
+        Reviewed by Tony Chang.
+
+        Implement getComputedStyle for list-style.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2012-01-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove unneeded content vs. layer space distinction in tiled layers

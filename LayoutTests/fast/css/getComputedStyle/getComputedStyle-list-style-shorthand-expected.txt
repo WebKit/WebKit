@@ -1,0 +1,44 @@
+Test to make sure list-style shorthand property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('list-style') is 'circle outside url(dummy://test.png)'
+PASS computedStyle.getPropertyCSSValue('list-style').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('list-style').length is 3
+PASS computedStyle.getPropertyCSSValue('list-style').cssText is 'circle outside url(dummy://test.png)'
+PASS computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue() is 'circle'
+PASS computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue() is 'outside'
+PASS computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyValue('list-style') is 'disc outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('list-style').length is 3
+PASS computedStyle.getPropertyCSSValue('list-style').cssText is 'disc outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue() is 'disc'
+PASS computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue() is 'outside'
+PASS computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue() is 'none'
+PASS computedStyle.getPropertyValue('list-style') is 'circle outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('list-style').length is 3
+PASS computedStyle.getPropertyCSSValue('list-style').cssText is 'circle outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue() is 'circle'
+PASS computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue() is 'outside'
+PASS computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue() is 'none'
+PASS computedStyle.getPropertyValue('list-style') is 'none outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('list-style').length is 3
+PASS computedStyle.getPropertyCSSValue('list-style').cssText is 'none outside none'
+PASS computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue() is 'outside'
+PASS computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue() is 'none'
+PASS computedStyle.getPropertyValue('list-style') is 'circle outside url(dummy://test.png)'
+PASS computedStyle.getPropertyCSSValue('list-style').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('list-style').length is 3
+PASS computedStyle.getPropertyCSSValue('list-style').cssText is 'circle outside url(dummy://test.png)'
+PASS computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue() is 'circle'
+PASS computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue() is 'outside'
+PASS computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue() is 'dummy://test.png'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2186,8 +2186,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                                         CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth };
             return getCSSPropertyValuesForSidesShorthand(properties);
         }
-        case CSSPropertyListStyle:
-            break;
+        case CSSPropertyListStyle: {
+            const int properties[3] = { CSSPropertyListStyleType, CSSPropertyListStylePosition,
+                                        CSSPropertyListStyleImage };
+            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+        }
         case CSSPropertyMargin: {
             const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
                                         CSSPropertyMarginBottom, CSSPropertyMarginLeft };
