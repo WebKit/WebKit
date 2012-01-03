@@ -3,14 +3,12 @@ Test to make sure border-style shorthand property returns CSSValueList properly.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS computedStyle.getPropertyValue('border-style') is 'solid dotted solid dotted'
+PASS computedStyle.getPropertyValue('border-style') is 'solid dotted'
 PASS computedStyle.getPropertyCSSValue('border-style').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('border-style').length is 4
-PASS computedStyle.getPropertyCSSValue('border-style').cssText is 'solid dotted solid dotted'
+PASS computedStyle.getPropertyCSSValue('border-style').length is 2
+PASS computedStyle.getPropertyCSSValue('border-style').cssText is 'solid dotted'
 PASS computedStyle.getPropertyCSSValue('border-style').item(0).getStringValue() is 'solid'
 PASS computedStyle.getPropertyCSSValue('border-style').item(1).getStringValue() is 'dotted'
-PASS computedStyle.getPropertyCSSValue('border-style').item(2).getStringValue() is 'solid'
-PASS computedStyle.getPropertyCSSValue('border-style').item(3).getStringValue() is 'dotted'
 PASS computedStyle.getPropertyValue('border-style') is 'solid dotted groove dashed'
 PASS computedStyle.getPropertyCSSValue('border-style').toString() is '[object CSSValueList]'
 PASS computedStyle.getPropertyCSSValue('border-style').length is 4

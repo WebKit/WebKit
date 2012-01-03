@@ -2156,7 +2156,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderColor: {
             const int properties[4] = { CSSPropertyBorderTopColor, CSSPropertyBorderRightColor,
                                         CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor };
-            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+            return getCSSPropertyValuesForSidesShorthand(properties);
         }
         case CSSPropertyBorderLeft: {
             const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
@@ -2174,7 +2174,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderStyle: {
             const int properties[4] = { CSSPropertyBorderTopStyle, CSSPropertyBorderRightStyle,
                                         CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
-            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+            return getCSSPropertyValuesForSidesShorthand(properties);
         }
         case CSSPropertyBorderTop: {
             const int properties[3] = { CSSPropertyBorderTopWidth, CSSPropertyBorderTopStyle,
@@ -2184,14 +2184,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderWidth: {
             const int properties[4] = { CSSPropertyBorderTopWidth, CSSPropertyBorderRightWidth,
                                         CSSPropertyBorderBottomWidth, CSSPropertyBorderLeftWidth };
-            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+            return getCSSPropertyValuesForSidesShorthand(properties);
         }
         case CSSPropertyListStyle:
             break;
         case CSSPropertyMargin: {
             const int properties[4] = { CSSPropertyMarginTop, CSSPropertyMarginRight,
                                         CSSPropertyMarginBottom, CSSPropertyMarginLeft };
-            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+            return getCSSPropertyValuesForSidesShorthand(properties);
         }
         case CSSPropertyOutline: {
             const int properties[3] = { CSSPropertyOutlineColor, CSSPropertyOutlineStyle,
@@ -2201,7 +2201,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyPadding: {
             const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
                                         CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
-            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+            return getCSSPropertyValuesForSidesShorthand(properties);
         }
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
@@ -2422,6 +2422,34 @@ PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSho
         RefPtr<CSSValue> value = getPropertyCSSValue(properties[i], DoNotUpdateLayout);
         list->append(value);
     }
+    return list.release();
+}
+
+PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSidesShorthand(const int* properties) const
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    // Assume the properties are in the usual order top, right, bottom, left.
+    RefPtr<CSSValue> topValue = getPropertyCSSValue(properties[0], DoNotUpdateLayout);
+    RefPtr<CSSValue> rightValue = getPropertyCSSValue(properties[1], DoNotUpdateLayout);
+    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(properties[2], DoNotUpdateLayout);
+    RefPtr<CSSValue> leftValue = getPropertyCSSValue(properties[3], DoNotUpdateLayout);
+
+    // All 4 properties must be specified.
+    if (!topValue || !rightValue || !bottomValue || !leftValue)
+        return 0;
+
+    bool showLeft = rightValue->cssText() != leftValue->cssText();
+    bool showBottom = (topValue->cssText() != bottomValue->cssText()) || showLeft;
+    bool showRight = (topValue->cssText() != rightValue->cssText()) || showBottom;
+
+    list->append(topValue);
+    if (showRight)
+        list->append(rightValue);
+    if (showBottom)
+        list->append(bottomValue);
+    if (showLeft)
+        list->append(leftValue);
+
     return list.release();
 }
 

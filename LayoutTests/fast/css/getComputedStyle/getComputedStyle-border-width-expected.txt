@@ -19,30 +19,23 @@ PASS computedStyle.getPropertyCSSValue('border-width').item(0).getFloatValue(CSS
 PASS computedStyle.getPropertyCSSValue('border-width').item(1).getFloatValue(CSSPrimitiveValue.CSS_PX) is 160
 PASS computedStyle.getPropertyCSSValue('border-width').item(2).getFloatValue(CSSPrimitiveValue.CSS_PX) is 64
 PASS computedStyle.getPropertyCSSValue('border-width').item(3).getFloatValue(CSSPrimitiveValue.CSS_PX) is 80
-PASS computedStyle.getPropertyValue('border-width') is '10px 0px 0px 0px'
+PASS computedStyle.getPropertyValue('border-width') is '10px 0px 0px'
 PASS computedStyle.getPropertyCSSValue('border-width').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('border-width').cssText is '10px 0px 0px 0px'
-PASS computedStyle.getPropertyCSSValue('border-width').length is 4
+PASS computedStyle.getPropertyCSSValue('border-width').cssText is '10px 0px 0px'
+PASS computedStyle.getPropertyCSSValue('border-width').length is 3
 PASS computedStyle.getPropertyCSSValue('border-width').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
 PASS computedStyle.getPropertyCSSValue('border-width').item(1).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
 PASS computedStyle.getPropertyCSSValue('border-width').item(2).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(3).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyValue('border-width') is '0px 0px 0px 0px'
+PASS computedStyle.getPropertyValue('border-width') is '0px'
 PASS computedStyle.getPropertyCSSValue('border-width').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('border-width').cssText is '0px 0px 0px 0px'
-PASS computedStyle.getPropertyCSSValue('border-width').length is 4
+PASS computedStyle.getPropertyCSSValue('border-width').cssText is '0px'
+PASS computedStyle.getPropertyCSSValue('border-width').length is 1
 PASS computedStyle.getPropertyCSSValue('border-width').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(1).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(2).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(3).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyValue('border-width') is '0px 0px 0px 0px'
+PASS computedStyle.getPropertyValue('border-width') is '0px'
 PASS computedStyle.getPropertyCSSValue('border-width').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('border-width').cssText is '0px 0px 0px 0px'
-PASS computedStyle.getPropertyCSSValue('border-width').length is 4
+PASS computedStyle.getPropertyCSSValue('border-width').cssText is '0px'
+PASS computedStyle.getPropertyCSSValue('border-width').length is 1
 PASS computedStyle.getPropertyCSSValue('border-width').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(1).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(2).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
-PASS computedStyle.getPropertyCSSValue('border-width').item(3).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,20 @@
+2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle should return shorthands property with the minimum number of sides possible.
+        https://bugs.webkit.org/show_bug.cgi?id=75434
+
+        Reviewed by Tony Chang.
+
+        As stated in http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSS2Properties we should
+        return shorthands properties with the minimum number of sides possible.
+
+        Existing tests have been updated accordingly.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getCSSPropertyValuesForSidesShorthand):
+        * css/CSSComputedStyleDeclaration.h:
+
 2012-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] GTK+ 3 theming code does not use the GtkOrientable style class

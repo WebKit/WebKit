@@ -88,6 +88,7 @@ private:
 #endif
 
     PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const int* properties, size_t) const;
+    PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const int* properties) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;

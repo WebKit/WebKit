@@ -19,14 +19,12 @@ e = document.getElementById('test');
 computedStyle = window.getComputedStyle(e, null);
 
 e.style.borderStyle = "solid dotted";
-shouldBe("computedStyle.getPropertyValue('border-style')", "'solid dotted solid dotted'");
+shouldBe("computedStyle.getPropertyValue('border-style')", "'solid dotted'");
 shouldBe("computedStyle.getPropertyCSSValue('border-style').toString()", "'[object CSSValueList]'");
-shouldBe("computedStyle.getPropertyCSSValue('border-style').length", "4");
-shouldBe("computedStyle.getPropertyCSSValue('border-style').cssText", "'solid dotted solid dotted'");
+shouldBe("computedStyle.getPropertyCSSValue('border-style').length", "2");
+shouldBe("computedStyle.getPropertyCSSValue('border-style').cssText", "'solid dotted'");
 shouldBe("computedStyle.getPropertyCSSValue('border-style').item(0).getStringValue()", "'solid'");
 shouldBe("computedStyle.getPropertyCSSValue('border-style').item(1).getStringValue()", "'dotted'");
-shouldBe("computedStyle.getPropertyCSSValue('border-style').item(2).getStringValue()", "'solid'");
-shouldBe("computedStyle.getPropertyCSSValue('border-style').item(3).getStringValue()", "'dotted'");
 
 e.style.borderStyle = "solid dotted groove dashed";
 shouldBe("computedStyle.getPropertyValue('border-style')", "'solid dotted groove dashed'");
