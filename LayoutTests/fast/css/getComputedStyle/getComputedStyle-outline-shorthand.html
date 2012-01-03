@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test to make sure outline shorthand property returns CSSValueList properly.")
+
+var testContainer = document.createElement("div");
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = '<div style="width:100px;height:100px"><div id="test">hello</div></div>';
+
+e = document.getElementById('test');
+computedStyle = window.getComputedStyle(e, null);
+
+e.style.outline = "thick solid red";
+shouldBe("computedStyle.getPropertyValue('outline')", "'rgb(255, 0, 0) solid 5px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('outline').cssText", "'rgb(255, 0, 0) solid 5px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(1).getStringValue()", "'solid'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "5");
+
+e.style.outline = "2em solid";
+shouldBe("computedStyle.getPropertyValue('outline')", "'rgb(0, 0, 0) solid 32px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('outline').cssText", "'rgb(0, 0, 0) solid 32px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(1).getStringValue()", "'solid'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "32");
+
+e.style.outline = "4px none red";
+shouldBe("computedStyle.getPropertyValue('outline')", "'rgb(255, 0, 0) none 0px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').length", "3");
+shouldBe("computedStyle.getPropertyCSSValue('outline').cssText", "'rgb(255, 0, 0) none 0px'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(1).getStringValue()", "'none'");
+shouldBe("computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+
+document.body.removeChild(testContainer);
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

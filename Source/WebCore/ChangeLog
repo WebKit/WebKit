@@ -1,3 +1,17 @@
+2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle for outline is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=75441
+
+        Reviewed by Antonio Gomes.
+
+        Implement getComputedStyle for outline.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use gdk_screen_get_monitor_workarea() when available for screenAvailableRect()

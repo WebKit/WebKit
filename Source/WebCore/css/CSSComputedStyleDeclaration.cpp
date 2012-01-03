@@ -2184,8 +2184,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                                         CSSPropertyMarginBottom, CSSPropertyMarginLeft };
             return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
         }
-        case CSSPropertyOutline:
-            break;
+        case CSSPropertyOutline: {
+            const int properties[3] = { CSSPropertyOutlineColor, CSSPropertyOutlineStyle,
+                                        CSSPropertyOutlineWidth };
+            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+        }
         case CSSPropertyPadding: {
             const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
                                         CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
