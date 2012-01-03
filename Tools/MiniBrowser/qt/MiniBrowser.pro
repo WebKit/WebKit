@@ -29,10 +29,4 @@ macx: QT += xml
 
 RESOURCES += MiniBrowser.qrc
 
-OTHER_FILES += \
-    qml/AlertDialog.qml \
-    qml/BrowserWindow.qml \
-    qml/Dialog.qml \
-    qml/DialogButton.qml \
-    qml/ItemSelector.qml \
-    qml/ViewportInfoItem.qml
+OTHER_FILES += qml/*

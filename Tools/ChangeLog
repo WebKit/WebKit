@@ -1,5 +1,17 @@
 2012-01-03  Alexander Færøy  <alexander.faeroy@nokia.com>
 
+        [Qt] Add UI for JavaScript Confirmation dialog in the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=75472
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/ConfirmDialog.qml: Added.
+
+2012-01-03  Alexander Færøy  <alexander.faeroy@nokia.com>
+
         [Qt] Add UI for JavaScript Alert dialog in the Qt MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=75471
 

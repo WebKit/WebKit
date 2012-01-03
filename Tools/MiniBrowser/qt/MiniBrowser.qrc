@@ -8,6 +8,7 @@
         <file>icons/touchpoint.png</file>
         <file>qml/AlertDialog.qml</file>
         <file>qml/BrowserWindow.qml</file>
+        <file>qml/ConfirmDialog.qml</file>
         <file>qml/Dialog.qml</file>
         <file>qml/DialogButton.qml</file>
         <file>qml/ItemSelector.qml</file>
