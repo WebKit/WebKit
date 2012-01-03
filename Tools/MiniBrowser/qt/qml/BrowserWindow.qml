@@ -218,7 +218,6 @@ Rectangle {
             }
             TextInput {
                 id: addressLine
-                clip: true
                 selectByMouse: true
                 font {
                     pointSize: 11
