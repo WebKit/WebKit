@@ -1,3 +1,15 @@
+2012-01-03  Tony Chang  <tony@chromium.org>
+
+        [chromium] Fix compilation with clang and the shared build
+        https://bugs.webkit.org/show_bug.cgi?id=75492
+
+        Reviewed by Ojan Vafai.
+
+        * WebKit.gyp: Turn off -Wglobal-constructors because test files using
+        GTEST have global constructors.
+        * tests/InnerGestureRecognizerTest.cpp:
+        (TEST_F): Move global into test function.
+
 2012-01-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Revert accidentally removed chrome client compositing check

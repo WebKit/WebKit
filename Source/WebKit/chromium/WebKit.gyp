@@ -745,6 +745,13 @@
                                         '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
                                     ],
                                 }],
+                                ['clang==1', {
+                                    # FIXME: It would be nice to enable this in shared builds too,
+                                    # but the test files have global constructors from the GTEST macro
+                                    # and we pull in the test files into the webkit target in the
+                                    # shared build.
+                                    'cflags!': ['-Wglobal-constructors'],
+                                }],
                             ],
                             'msvs_settings': {
                               'VCLinkerTool': {
