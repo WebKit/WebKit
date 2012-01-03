@@ -58,3 +58,4 @@ class Options(object):
     suggest_reviewers = make_option("--suggest-reviewers", action="store_true", default=False, help="Offer to CC appropriate reviewers.")
     test = make_option("--test", action="store_true", dest="test", default=False, help="Run run-webkit-tests before committing.")
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
+    changelog_count = make_option("--changelog-count", action="store", type="int", dest="changelog_count", help="Number of changelogs to parse.")

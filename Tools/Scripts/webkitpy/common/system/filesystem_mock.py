@@ -398,5 +398,11 @@ class ReadableTextFileObject(ReadableBinaryFileObject):
     def readline(self, length=None):
         return self.data.readline(length)
 
+    def __iter__(self):
+        return self.data.__iter__()
+
+    def next(self):
+        return self.data.next()
+
     def seek(self, offset, whence=os.SEEK_SET):
         self.data.seek(offset, whence)

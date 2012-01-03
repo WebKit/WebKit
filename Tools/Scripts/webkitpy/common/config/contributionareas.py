@@ -177,6 +177,12 @@ class ContributionAreas(object):
         self._filesystem = filesystem
         self._contribution_areas = table
 
+    def names(self):
+        return [area.name() for area in self._contribution_areas]
+
+    def names(self):
+        return [area.name() for area in self._contribution_areas]
+
     def _split_path(self, path):
         result = []
         while path and len(path):

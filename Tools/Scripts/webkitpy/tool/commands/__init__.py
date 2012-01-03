@@ -1,6 +1,7 @@
 # Required for Python to search this directory for module files
 
 from webkitpy.tool.commands.adduserstogroups import AddUsersToGroups
+from webkitpy.tool.commands.analyzechangelog import AnalyzeChangeLog
 from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 from webkitpy.tool.commands.bugfortest import BugForTest
 from webkitpy.tool.commands.bugsearch import BugSearch
