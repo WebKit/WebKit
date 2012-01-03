@@ -1,4 +1,4 @@
-This is a test case for bug 55346 and bug 70889.
+This is a test case for bugs 55346, 70889, and 75452.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS ({}).toString.call(Error.prototype) is "[object Error]"
 PASS ({}).toString.call(RangeError.prototype) is "[object Error]"
 PASS err.toString() is "message"
+PASS err.hasOwnProperty('message') is false
+PASS err.hasOwnProperty('message') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
