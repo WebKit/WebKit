@@ -125,6 +125,12 @@ JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGloba
     return JSTestMediaQueryListListenerPrototype::create(exec->globalData(), globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
+void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
+{
+    JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(cell);
+    thisObject->releaseImplIfNotNull();
+}
+
 bool JSTestMediaQueryListListener::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(cell);

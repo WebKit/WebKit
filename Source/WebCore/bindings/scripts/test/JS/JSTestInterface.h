@@ -45,6 +45,7 @@ public:
     static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
     static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
+    static void destroy(JSC::JSCell*);
     static const JSC::ClassInfo s_info;
 
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -58,6 +59,8 @@ public:
     JSC::JSValue str3(TestInterface*, JSC::ExecState*) const;
     TestInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
+
+    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }
 
 private:
     TestInterface* m_impl;

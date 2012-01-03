@@ -113,6 +113,12 @@ JSObject* JSTestSerializedScriptValueInterface::createPrototype(ExecState* exec,
     return JSTestSerializedScriptValueInterfacePrototype::create(exec->globalData(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
+void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
+{
+    JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
+    thisObject->releaseImplIfNotNull();
+}
+
 bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);

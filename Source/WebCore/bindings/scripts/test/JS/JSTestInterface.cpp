@@ -158,6 +158,12 @@ JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* glob
     return JSTestInterfacePrototype::create(exec->globalData(), globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
+void JSTestInterface::destroy(JSC::JSCell* cell)
+{
+    JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
+    thisObject->releaseImplIfNotNull();
+}
+
 bool JSTestInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);

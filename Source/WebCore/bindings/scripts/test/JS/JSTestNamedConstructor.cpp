@@ -154,6 +154,12 @@ JSObject* JSTestNamedConstructor::createPrototype(ExecState* exec, JSGlobalObjec
     return JSTestNamedConstructorPrototype::create(exec->globalData(), globalObject, JSTestNamedConstructorPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
+void JSTestNamedConstructor::destroy(JSC::JSCell* cell)
+{
+    JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(cell);
+    thisObject->releaseImplIfNotNull();
+}
+
 bool JSTestNamedConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(cell);

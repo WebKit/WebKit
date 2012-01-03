@@ -1,3 +1,32 @@
+2012-01-03  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::destroy):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::destroy):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::destroy):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructor::destroy):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructor::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::destroy):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::releaseImplIfNotNull):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::destroy):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::releaseImplIfNotNull):
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix scrollbars size with GTK+ 3.x

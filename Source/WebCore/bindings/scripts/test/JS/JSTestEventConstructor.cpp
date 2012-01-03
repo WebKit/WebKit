@@ -156,6 +156,12 @@ JSObject* JSTestEventConstructor::createPrototype(ExecState* exec, JSGlobalObjec
     return JSTestEventConstructorPrototype::create(exec->globalData(), globalObject, JSTestEventConstructorPrototype::createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype()));
 }
 
+void JSTestEventConstructor::destroy(JSC::JSCell* cell)
+{
+    JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(cell);
+    thisObject->releaseImplIfNotNull();
+}
+
 bool JSTestEventConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(cell);
