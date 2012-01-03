@@ -1,3 +1,15 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix scrollbars size with GTK+ 3.x
+        https://bugs.webkit.org/show_bug.cgi?id=75467
+
+        Reviewed by Xan Lopez.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::getStyleContext): Add the style class for the given
+        widget type to the GtkWidgetPath when creating GtkStyleContext
+        objects.
+
 2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for outline is not implemented.

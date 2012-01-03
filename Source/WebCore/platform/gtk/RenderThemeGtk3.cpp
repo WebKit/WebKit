@@ -84,6 +84,29 @@ static GtkStyleContext* getStyleContext(GType widgetType)
     GtkWidgetPath* path = gtk_widget_path_new();
     gtk_widget_path_append_type(path, widgetType);
 
+    if (widgetType == GTK_TYPE_SCROLLBAR)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCROLLBAR);
+    else if (widgetType == GTK_TYPE_ENTRY)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_ENTRY);
+    else if (widgetType == GTK_TYPE_ARROW)
+        gtk_widget_path_iter_add_class(path, 0, "arrow");
+    else if (widgetType == GTK_TYPE_BUTTON)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_BUTTON);
+    else if (widgetType == GTK_TYPE_SCALE)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCALE);
+    else if (widgetType == GTK_TYPE_SEPARATOR)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SEPARATOR);
+    else if (widgetType == GTK_TYPE_PROGRESS_BAR)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_PROGRESSBAR);
+    else if (widgetType == GTK_TYPE_SPIN_BUTTON)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SPINBUTTON);
+    else if (widgetType == GTK_TYPE_TREE_VIEW)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_VIEW);
+    else if (widgetType == GTK_TYPE_CHECK_BUTTON)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_CHECK);
+    else if (widgetType == GTK_TYPE_RADIO_BUTTON)
+        gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_RADIO);
+
     GRefPtr<GtkStyleContext> context = adoptGRef(gtk_style_context_new());
     gtk_style_context_set_path(context.get(), path);
     gtk_widget_path_free(path);
