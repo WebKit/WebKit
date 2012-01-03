@@ -22,9 +22,7 @@ for(library, libraries) {
 # Help keep the build tree clean
 MOC_DIR = moc
 RCC_DIR = rcc
-
-!CONFIG(release, debug|release): OBJECTS_DIR = obj/debug
-else: OBJECTS_DIR = obj/release
+OBJECTS_DIR = obj/$$activeBuildConfig()
 
 # General default build tweaks
 DEFINES += \

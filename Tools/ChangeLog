@@ -1,3 +1,12 @@
+2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Introduce qmake replace function for the active build config
+
+        Reviewed by Ossy.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use gdk_screen_get_monitor_workarea() when available for screenAvailableRect()

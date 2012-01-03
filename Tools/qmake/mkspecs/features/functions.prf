@@ -24,6 +24,11 @@ defineReplace(toEvaluatablePath) {
     return($$replace(1, \\\\, \\\\\\\\))
 }
 
+defineReplace(activeBuildConfig) {
+    isActiveConfig(debug): return(debug)
+    else: return(release)
+}
+
 defineReplace(computeSubdirVariables) {
     unset(subdir)
     subdir = $$1
