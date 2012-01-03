@@ -83,7 +83,7 @@ public:
     {
         setTileSize(IntSize(100, 100));
         setTextureFormat(GraphicsContext3D::RGBA);
-        createTiler(CCLayerTilingData::NoBorderTexels);
+        setBorderTexelOption(CCLayerTilingData::NoBorderTexels);
     }
     virtual ~FakeTiledLayerChromium() { }
 
@@ -259,4 +259,3 @@ TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
 }
 
 } // namespace
-

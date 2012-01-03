@@ -1,3 +1,42 @@
+2012-01-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make tiled layer's tiler always exist
+        https://bugs.webkit.org/show_bug.cgi?id=75329
+
+        Reviewed by James Robinson.
+
+        TiledLayerChromium has some awkward code to handle lazily creating the
+        tiler, including lots of null checks and shadowing the tile size.
+        Instead, always create the tiler up front. As values change that
+        invalidate all tiles, reset it rather than clear the pointer.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setIsNonCompositedContent):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::setTileSize):
+        (WebCore::TiledLayerChromium::setBorderTexelOption):
+        (WebCore::TiledLayerChromium::drawsContent):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::setTilingOption):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::setIsNonCompositedContent):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        (WebCore::TiledLayerChromium::protectTileTextures):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        (WebCore::TiledLayerChromium::prepareToUpdateIdle):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::setBorderTexelOption):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::setHasBorderTexels):
+        * platform/graphics/gpu/TilingData.h:
+
 2012-01-03  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

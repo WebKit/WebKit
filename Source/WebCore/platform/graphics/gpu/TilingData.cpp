@@ -73,6 +73,12 @@ void TilingData::setMaxTextureSize(int maxTextureSize)
     recomputeNumTiles();
 }
 
+void TilingData::setHasBorderTexels(bool hasBorderTexels)
+{
+    m_borderTexels = hasBorderTexels ? 1 : 0;
+    recomputeNumTiles();
+}
+
 int TilingData::tileXIndexFromSrcCoord(int srcPos) const
 {
     if (numTilesX() <= 1)

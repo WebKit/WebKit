@@ -56,6 +56,16 @@ void CCLayerTilingData::setTileSize(const IntSize& size)
     m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
 }
 
+void CCLayerTilingData::setBorderTexelOption(BorderTexelOption borderTexelOption)
+{
+    bool borderTexels = borderTexelOption == HasBorderTexels;
+    if (hasBorderTexels() == borderTexels)
+        return;
+
+    reset();
+    m_tilingData.setHasBorderTexels(borderTexels);
+}
+
 const CCLayerTilingData& CCLayerTilingData::operator=(const CCLayerTilingData& tiler)
 {
     m_tileSize = tiler.m_tileSize;

@@ -76,6 +76,7 @@ TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
     , m_sampledTexelFormat(LayerTextureUpdater::SampledTexelFormatInvalid)
     , m_tilingOption(AutoTile)
 {
+    m_tiler = CCLayerTilingData::create(IntSize(defaultTileSize, defaultTileSize), CCLayerTilingData::HasBorderTexels);
 }
 
 TiledLayerChromium::~TiledLayerChromium()
@@ -91,7 +92,7 @@ void TiledLayerChromium::cleanupResources()
 {
     LayerChromium::cleanupResources();
 
-    m_tiler.clear();
+    m_tiler->reset();
     m_paintRect = IntRect();
     m_requestedUpdateTilesRect = IntRect();
 }
@@ -123,19 +124,18 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
 
 void TiledLayerChromium::setTileSize(const IntSize& size)
 {
-    if (m_tiler && m_tileSize == size)
-        return;
-    m_tileSize = size;
-    m_tiler.clear(); // Changing the tile size invalidates all tiles, so we just throw away the tiling data.
+    m_tiler->setTileSize(size);
+}
+
+void TiledLayerChromium::setBorderTexelOption(CCLayerTilingData::BorderTexelOption borderTexelOption)
+{
+    m_tiler->setBorderTexelOption(borderTexelOption);
 }
 
 bool TiledLayerChromium::drawsContent() const
 {
     if (!m_delegate)
         return false;
-
-    if (!m_tiler)
-        return true;
 
     if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)
         return false;
@@ -171,19 +171,10 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
 }
 
-void TiledLayerChromium::createTiler(CCLayerTilingData::BorderTexelOption borderTexelOption)
-{
-    m_tiler = CCLayerTilingData::create(m_tileSize, borderTexelOption);
-}
-
 void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTextureUpdater& updater)
 {
-    // If this assert is hit, it means that paintContentsIfDirty hasn't been
-    // called on this layer. Any layer that is updated should be painted first.
-    ASSERT(m_skipsDraw || m_tiler);
-
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (m_skipsDraw || m_requestedUpdateTilesRect.isEmpty() || !m_tiler || !m_tiler->numTiles())
+    if (m_skipsDraw || m_requestedUpdateTilesRect.isEmpty() || m_tiler->isEmpty())
         return;
 
     int left = m_requestedUpdateTilesRect.x();
@@ -234,10 +225,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
 
 void TiledLayerChromium::setTilingOption(TilingOption tilingOption)
 {
-    if (m_tiler && m_tilingOption == tilingOption)
-        return;
     m_tilingOption = tilingOption;
-    m_tiler.clear(); // Changing the tiling option invalidates all tiles, so we just throw away the tiling data.
 }
 
 void TiledLayerChromium::setIsMask(bool isMask)
@@ -250,10 +238,6 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     LayerChromium::pushPropertiesTo(layer);
 
     CCTiledLayerImpl* tiledLayer = static_cast<CCTiledLayerImpl*>(layer);
-    if (!m_tiler) {
-        tiledLayer->setSkipsDraw(true);
-        return;
-    }
 
     tiledLayer->setSkipsDraw(m_skipsDraw);
     tiledLayer->setContentsSwizzled(m_sampledTexelFormat != LayerTextureUpdater::SampledTexelFormatRGBA);
@@ -300,9 +284,23 @@ void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 }
 
+void TiledLayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
+{
+    LayerChromium::setIsNonCompositedContent(isNonCompositedContent);
+
+    CCLayerTilingData::BorderTexelOption borderTexelOption;
+#if OS(ANDROID)
+    // Always want border texels and GL_LINEAR due to pinch zoom.
+    borderTexelOption = CCLayerTilingData::HasBorderTexels;
+#else
+    borderTexelOption = isNonCompositedContent ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels;
+#endif
+    setBorderTexelOption(borderTexelOption);
+}
+
 void TiledLayerChromium::invalidateRect(const IntRect& contentRect)
 {
-    if (!m_tiler || contentRect.isEmpty() || m_skipsDraw)
+    if (m_tiler->isEmpty() || contentRect.isEmpty() || m_skipsDraw)
         return;
 
     // Dirty rects are always in layer space, as the layer could be repositioned
@@ -330,7 +328,7 @@ void TiledLayerChromium::protectVisibleTileTextures()
 
 void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
 {
-    if (!m_tiler || contentRect.isEmpty())
+    if (m_tiler->isEmpty() || contentRect.isEmpty())
         return;
 
     int left, top, right, bottom;
@@ -430,19 +428,6 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 
 void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
 {
-    if (!m_tiler) {
-        CCLayerTilingData::BorderTexelOption borderTexelOption;
-#if OS(ANDROID)
-        // Always want border texels and GL_LINEAR due to pinch zoom.
-        borderTexelOption = CCLayerTilingData::HasBorderTexels;
-#else
-        borderTexelOption = isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels;
-#endif
-        createTiler(borderTexelOption);
-    }
-
-    ASSERT(m_tiler);
-
     m_skipsDraw = false;
     m_skipsIdlePaint = false;
     m_requestedUpdateTilesRect = IntRect();
@@ -469,7 +454,7 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& contentRect)
 
     m_tiler->growLayerToContain(IntRect(IntPoint::zero(), contentBounds()));
 
-    if (!m_tiler->numTiles())
+    if (m_tiler->isEmpty())
         return;
 
     // Protect any textures in the pre-paint area so we don't end up just
@@ -515,8 +500,6 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& contentRect)
     if (m_skipsIdlePaint)
         return false;
 
-    ASSERT(m_tiler);
-
     IntRect idlePaintContentRect = idlePaintRect(contentRect);
 
     int left, top, right, bottom;
@@ -535,7 +518,6 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& contentRect)
 
 IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleContentRect)
 {
-    ASSERT(m_tiler);
     IntRect prepaintRect = visibleContentRect;
     // FIXME: This can be made a lot larger if we can:
     // - reserve memory at a lower priority than for visible content

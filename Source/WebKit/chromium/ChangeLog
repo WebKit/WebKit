@@ -1,3 +1,18 @@
+2012-01-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make tiled layer's tiler always exist
+        https://bugs.webkit.org/show_bug.cgi?id=75329
+
+        Reviewed by James Robinson.
+
+        Update test due to changing API. Add a test for changing border
+        texel option on TilingData.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2011-12-30  Ami Fischman  <fischman@chromium.org>
 
         Allow disabling accelerated compositing in WebMediaPlayerClient (so audio-only <video> isn't accelerated).

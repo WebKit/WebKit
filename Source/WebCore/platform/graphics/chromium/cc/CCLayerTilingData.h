@@ -56,6 +56,8 @@ public:
     // Change the tile size. This may invalidate all the existing tiles.
     void setTileSize(const IntSize&);
     const IntSize& tileSize() const { return m_tileSize; }
+    // Change the border texel setting. This may invalidate all existing tiles.
+    void setBorderTexelOption(BorderTexelOption);
     bool hasBorderTexels() const { return m_tilingData.borderTexels(); }
 
     bool isEmpty() const { return !m_tilingData.numTiles() || !tiles().size(); }

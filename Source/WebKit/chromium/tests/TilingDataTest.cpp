@@ -512,4 +512,23 @@ TEST(TilingDataTest, assignment)
     }
 }
 
+TEST(TilingDataTest, setBorderTexels)
+{
+    TilingData data(8, 16, 32, false);
+    EXPECT_EQ(2, data.numTilesX());
+    EXPECT_EQ(4, data.numTilesY());
+
+    data.setHasBorderTexels(true);
+    EXPECT_EQ(3, data.numTilesX());
+    EXPECT_EQ(5, data.numTilesY());
+
+    data.setHasBorderTexels(true);
+    EXPECT_EQ(3, data.numTilesX());
+    EXPECT_EQ(5, data.numTilesY());
+
+    data.setHasBorderTexels(false);
+    EXPECT_EQ(2, data.numTilesX());
+    EXPECT_EQ(4, data.numTilesY());
+}
+
 } // namespace

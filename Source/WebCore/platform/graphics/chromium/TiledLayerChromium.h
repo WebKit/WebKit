@@ -55,6 +55,8 @@ public:
 
     virtual void setNeedsDisplayRect(const FloatRect&);
 
+    virtual void setIsNonCompositedContent(bool);
+
     // Reserves all existing and valid tile textures to protect them from being
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& contentRect);
@@ -67,8 +69,8 @@ protected:
 
     // Exposed to subclasses for testing.
     void setTileSize(const IntSize&);
-    void createTiler(CCLayerTilingData::BorderTexelOption);
     void setTextureFormat(GC3Denum textureFormat) { m_textureFormat = textureFormat; }
+    void setBorderTexelOption(CCLayerTilingData::BorderTexelOption);
 
     virtual void createTextureUpdater(const CCLayerTreeHost*) = 0;
     virtual LayerTextureUpdater* textureUpdater() const = 0;
@@ -116,7 +118,6 @@ private:
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
 
     TilingOption m_tilingOption;
-    IntSize m_tileSize;
     OwnPtr<CCLayerTilingData> m_tiler;
 };
 

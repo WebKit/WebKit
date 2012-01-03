@@ -106,6 +106,11 @@ void LayerChromium::cleanupResourcesRecursive()
     cleanupResources();
 }
 
+void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
+{
+    m_isNonCompositedContent = isNonCompositedContent;
+}
+
 void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     if (m_layerTreeHost == host)

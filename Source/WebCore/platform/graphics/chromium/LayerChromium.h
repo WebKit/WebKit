@@ -147,7 +147,7 @@ public:
     void setUsesLayerClipping(bool usesLayerClipping) { m_usesLayerClipping = usesLayerClipping; }
     bool usesLayerClipping() const { return m_usesLayerClipping; }
 
-    void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
+    virtual void setIsNonCompositedContent(bool);
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
