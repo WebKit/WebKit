@@ -341,7 +341,7 @@ private:
     // same time zone as WTF::currentTime(). Dispatches sent (not posted) messages to the passed-in
     // set of HWNDs until the semaphore is signaled or absoluteTime is reached. Returns true if the
     // semaphore is signaled, false otherwise.
-    static void dispatchSentMessagesUntil(const Vector<HWND>& windows, CoreIPC::BinarySemaphore& semaphore, double absoluteTime);
+    static bool dispatchSentMessagesUntil(const Vector<HWND>& windows, CoreIPC::BinarySemaphore& semaphore, double absoluteTime);
 
     Vector<uint8_t> m_readBuffer;
     OVERLAPPED m_readState;

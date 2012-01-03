@@ -1,3 +1,9 @@
+2012-01-02  Andy Estes  <aestes@apple.com>
+
+        Fix the Windows build (again).
+
+        * Platform/CoreIPC/Connection.h:
+
 2012-01-02  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
