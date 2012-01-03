@@ -33,6 +33,7 @@
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "MathExtras.h"
+#include "Region.h"
 #include "TextStream.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
@@ -120,6 +121,23 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
     const int maxSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     setTileSize(clampedSize);
+}
+
+void TiledLayerChromium::updateBounds()
+{
+    IntSize oldBounds = m_tiler->bounds();
+    IntSize newBounds = contentBounds();
+    if (oldBounds == newBounds)
+        return;
+    m_tiler->setBounds(newBounds);
+
+    // Invalidate any areas that the new bounds exposes.
+    Region oldRegion(IntRect(IntPoint(), oldBounds));
+    Region newRegion(IntRect(IntPoint(), newBounds));
+    newRegion.subtract(oldRegion);
+    Vector<IntRect> rects = newRegion.rects();
+    for (size_t i = 0; i < rects.size(); ++i)
+        invalidateRect(rects[i]);
 }
 
 void TiledLayerChromium::setTileSize(const IntSize& size)
@@ -433,7 +451,7 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     m_requestedUpdateTilesRect = IntRect();
     m_paintRect = IntRect();
 
-    m_tiler->growLayerToContain(IntRect(IntPoint::zero(), contentBounds()));
+    updateBounds();
 
     if (contentRect.isEmpty() || !m_tiler->numTiles())
         return;
@@ -452,7 +470,7 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& contentRect)
 
     ASSERT(m_tiler);
 
-    m_tiler->growLayerToContain(IntRect(IntPoint::zero(), contentBounds()));
+    updateBounds();
 
     if (m_tiler->isEmpty())
         return;

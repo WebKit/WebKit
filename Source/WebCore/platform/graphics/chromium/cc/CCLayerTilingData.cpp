@@ -148,15 +148,14 @@ void CCLayerTilingData::setLayerPosition(const IntPoint& layerPosition)
     m_layerPosition = layerPosition;
 }
 
-void CCLayerTilingData::growLayerToContain(const IntRect& contentRect)
+void CCLayerTilingData::setBounds(const IntSize& size)
 {
-    // Grow the tile array to contain this content rect.
-    IntRect layerRect = contentRectToLayerRect(contentRect);
-    IntSize rectSize = IntSize(layerRect.maxX(), layerRect.maxY());
+    m_tilingData.setTotalSize(size.width(), size.height());
+}
 
-    IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
-    IntSize newSize = rectSize.expandedTo(oldLayerSize);
-    m_tilingData.setTotalSize(newSize.width(), newSize.height());
+IntSize CCLayerTilingData::bounds() const
+{
+    return IntSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
 }
 
 } // namespace WebCore

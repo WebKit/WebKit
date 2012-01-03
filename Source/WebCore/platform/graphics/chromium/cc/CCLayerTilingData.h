@@ -97,8 +97,9 @@ public:
     Tile* tileAt(int, int) const;
     const TileMap& tiles() const { return m_tiles; }
 
-    // Grow layer size to contain this rectangle.
-    void growLayerToContain(const IntRect& contentRect);
+    void setBounds(const IntSize&);
+    IntSize bounds() const;
+
     void contentRectToTileIndices(const IntRect& contentRect, int &left, int &top, int &right, int &bottom) const;
     IntRect contentRectToLayerRect(const IntRect& contentRect) const;
     IntRect layerRectToContentRect(const IntRect& layerRect) const;

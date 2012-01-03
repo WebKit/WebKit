@@ -1,3 +1,24 @@
+2012-01-03  Adrienne Walker  <enne@google.com>
+
+        [chromium] Set tiler bounds explicitly rather than growing them
+        https://bugs.webkit.org/show_bug.cgi?id=75331
+
+        Reviewed by James Robinson.
+
+        Rather than only growing bounds, make the bounds on the tiler be set
+        explicitly by TiledLayerChromium. This patch now properly invalidates
+        regions when the bounds change.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateBounds):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        (WebCore::TiledLayerChromium::prepareToUpdateIdle):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::setBounds):
+        (WebCore::CCLayerTilingData::bounds):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+
 2012-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Slider thumb is not centered on the track with the unico theme

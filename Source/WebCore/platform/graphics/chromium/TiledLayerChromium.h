@@ -66,6 +66,7 @@ protected:
 
     virtual void cleanupResources();
     void updateTileSizeAndTilingOption();
+    void updateBounds();
 
     // Exposed to subclasses for testing.
     void setTileSize(const IntSize&);
