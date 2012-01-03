@@ -1,3 +1,14 @@
+2012-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=55343
+        Global JSON should be configurable but isn't
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+            - make JSON configurable
+
 2012-01-01  Filip Pizlo  <fpizlo@apple.com>
 
         Call instructions should leave room for linking information
