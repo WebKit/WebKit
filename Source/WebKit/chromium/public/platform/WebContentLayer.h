@@ -33,13 +33,10 @@ namespace WebKit {
 class WebContentLayerClient;
 class WebContentLayerImpl;
 struct WebFloatRect;
-class WebLayerClient;
 
 class WebContentLayer : public WebLayer {
 public:
     WEBKIT_EXPORT static WebContentLayer create(WebContentLayerClient*);
-    // FIXME: Remove this as soon as downstream clients are updated.
-    WEBKIT_EXPORT static WebContentLayer create(WebLayerClient*, WebContentLayerClient*);
 
     WebContentLayer() { }
     WebContentLayer(const WebContentLayer& layer) : WebLayer(layer) { }

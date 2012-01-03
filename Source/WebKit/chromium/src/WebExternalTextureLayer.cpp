@@ -31,11 +31,6 @@
 
 namespace WebKit {
 
-WebExternalTextureLayer WebExternalTextureLayer::create(WebLayerClient*)
-{
-    return WebExternalTextureLayer::create();
-}
-
 WebExternalTextureLayer WebExternalTextureLayer::create()
 {
     return WebExternalTextureLayer(WebExternalTextureLayerImpl::create());

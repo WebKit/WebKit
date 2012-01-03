@@ -36,11 +36,6 @@ WebContentLayer WebContentLayer::create(WebContentLayerClient* contentClient)
     return WebContentLayer(WebContentLayerImpl::create(contentClient));
 }
 
-WebContentLayer WebContentLayer::create(WebLayerClient*, WebContentLayerClient* contentClient)
-{
-    return WebContentLayer::create(contentClient);
-}
-
 void WebContentLayer::setDrawsContent(bool drawsContent)
 {
     unwrap<WebContentLayerImpl>()->setDrawsContent(drawsContent);

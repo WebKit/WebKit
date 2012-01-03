@@ -35,14 +35,11 @@ namespace WebCore { class LayerChromium; }
 
 namespace WebKit {
 struct WebFloatPoint;
-class WebLayerClient;
 struct WebSize;
 
 class WebLayer {
 public:
     WEBKIT_EXPORT static WebLayer create();
-    // FIXME: Remove this constructor once downstream clients are updated.
-    WEBKIT_EXPORT static WebLayer create(WebLayerClient*);
 
     WebLayer() { }
     WebLayer(const WebLayer& layer) { assign(layer); }

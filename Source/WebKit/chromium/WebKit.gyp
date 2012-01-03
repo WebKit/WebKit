@@ -307,7 +307,6 @@
                 'public/platform/WebImage.h',
                 'public/platform/WebKitPlatformSupport.h',
                 'public/platform/WebLayer.h',
-                'public/platform/WebLayerClient.h',
                 'public/platform/WebLayerTreeView.h',
                 'public/platform/WebLayerTreeViewClient.h',
                 'public/platform/WebLocalizedString.h',

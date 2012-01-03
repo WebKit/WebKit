@@ -32,7 +32,6 @@
 
 namespace WebKit {
 class WebExternalTextureLayerImpl;
-class WebLayerClient;
 
 // This class represents a layer that renders a texture that is generated
 // externally (not managed by the WebLayerTreeView).
@@ -43,8 +42,6 @@ class WebLayerClient;
 class WebExternalTextureLayer : public WebLayer {
 public:
     WEBKIT_EXPORT static WebExternalTextureLayer create();
-    // FIXME: Remove as soon as downstream clients are updated.
-    WEBKIT_EXPORT static WebExternalTextureLayer create(WebLayerClient*);
 
     WebExternalTextureLayer() { }
     WebExternalTextureLayer(const WebExternalTextureLayer& layer) : WebLayer(layer) { }

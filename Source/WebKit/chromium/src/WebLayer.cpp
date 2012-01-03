@@ -74,11 +74,6 @@ SkMatrix44 skMatrix44FromTransformationMatrix(const TransformationMatrix& matrix
 
 namespace WebKit {
 
-WebLayer WebLayer::create(WebLayerClient*)
-{
-    return WebLayer::create();
-}
-
 WebLayer WebLayer::create()
 {
     return WebLayer(WebLayerImpl::create());

@@ -1,3 +1,19 @@
+2012-01-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebLayerClient
+        https://bugs.webkit.org/show_bug.cgi?id=75481
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/platform/WebContentLayer.h:
+        * public/platform/WebExternalTextureLayer.h:
+        * public/platform/WebLayer.h:
+        * public/platform/WebLayerClient.h: Removed.
+        * src/WebContentLayer.cpp:
+        * src/WebExternalTextureLayer.cpp:
+        * src/WebLayer.cpp:
+
 2012-01-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Support RTL pages and elements in the compositor
