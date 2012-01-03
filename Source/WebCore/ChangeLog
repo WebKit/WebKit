@@ -1,3 +1,11 @@
+2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Sort the WebCore XCode project file
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-01-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Set tiler bounds explicitly rather than growing them
