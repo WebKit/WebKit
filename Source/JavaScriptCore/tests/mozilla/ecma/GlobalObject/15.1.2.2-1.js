@@ -206,20 +206,19 @@ function getTestCases() {
         HEX_VALUE -= Math.pow(16,POWER)*15;
     }
 
-    //  let us do some octal tests.  numbers that start with 0 and do not provid a radix should
-    //  default to using "0" as a radix.
+    //  let us do some 'octal' tests - ES5 does not permit octal, these must be treated as decimal.
 
     var OCT_STRING = "0";
     var OCT_VALUE = 0;
 
     for ( OCT_STRING = "0", OCT_VALUE = 0, POWER = 0; POWER < 15; POWER++, OCT_STRING = OCT_STRING +"7" ) {
         array[item++] = new TestCase( SECTION, "parseInt("+OCT_STRING+")",    OCT_VALUE,  parseInt(OCT_STRING) );
-        OCT_VALUE += Math.pow(8,POWER)*7;
+        OCT_VALUE += Math.pow(10,POWER)*7;
     }
 
     for ( OCT_STRING = "-0", OCT_VALUE = 0, POWER = 0; POWER < 15; POWER++, OCT_STRING = OCT_STRING +"7" ) {
         array[item++] = new TestCase( SECTION, "parseInt("+OCT_STRING+")",    OCT_VALUE,  parseInt(OCT_STRING) );
-        OCT_VALUE -= Math.pow(8,POWER)*7;
+        OCT_VALUE -= Math.pow(10,POWER)*7;
     }
 
     // should get the same results as above if we provid the radix of 8 (or 010)

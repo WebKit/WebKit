@@ -1,5 +1,12 @@
 2012-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        Check in fixes for jsc tests following bug #75455.
+
+        * tests/mozilla/ecma/GlobalObject/15.1.2.2-1.js:
+        * tests/mozilla/ecma/GlobalObject/15.1.2.2-2.js:
+
+2012-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=75452
         If argument to Error is undefined, message is not set
 

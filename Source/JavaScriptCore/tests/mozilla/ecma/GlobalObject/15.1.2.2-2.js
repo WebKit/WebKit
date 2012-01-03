@@ -138,7 +138,7 @@ testcases[tc++] = new TestCase( SECTION,
 
 testcases[tc++] = new TestCase( SECTION,
     'parseInt("0022")',
-    18,
+    22,
     parseInt("0022"));
 
 testcases[tc++] = new TestCase( SECTION,
