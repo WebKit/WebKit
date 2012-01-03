@@ -99,14 +99,12 @@ EXPORTS
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
-    ?constructEmptyArray@JSC@@YAPAVJSArray@1@PAVExecState@1@@Z
     ?constructEmptyObject@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
     ?constructFunctionSkippingEvalEnabledCheck@JSC@@YAPAVJSObject@1@PAVExecState@1@PAVJSGlobalObject@1@ABVArgList@1@ABVIdentifier@1@ABVUString@1@ABVTextPosition@WTF@@@Z
     ?convertLatin1ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBEPBEPAPADPAD@Z
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
-    ?create@JSArray@JSC@@SAPAV12@AAVJSGlobalData@2@PAVStructure@2@ABVArgList@2@@Z
     ?create@JSFunction@JSC@@SAPAV12@PAVExecState@2@PAVJSGlobalObject@2@HABVIdentifier@2@P6I_J0@Z3@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapSize@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
@@ -183,7 +181,6 @@ EXPORTS
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
     ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
-    ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@ABVArgList@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@I@Z
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
