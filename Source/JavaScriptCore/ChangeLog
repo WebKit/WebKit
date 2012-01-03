@@ -1,5 +1,26 @@
 2012-01-03  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=75140
+
+        Reviewed by Sam Weinig.
+
+        Simplify JSArray creation - remove ArgsList/JSValue* create methods
+        (this functionality can be implemented in terms of tryCreateUninitialized).
+
+        * JavaScriptCore.exp:
+        * runtime/ArrayConstructor.cpp:
+            - use constructArray/constructEmptyArray instead of calling JSArray::create directly
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+            - removed ArgsList/JSValue* create methods
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+            - changed to be implemented in terms of JSArray::tryCreateUninitialized
+
+2012-01-03  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=75429
         ThrowTypeError should be a singleton object
 

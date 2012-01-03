@@ -86,11 +86,11 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
         uint32_t n = args.at(0).toUInt32(exec);
         if (n != args.at(0).toNumber(exec))
             return throwError(exec, createRangeError(exec, "Array size is not a small enough positive integer."));
-        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), n);
+        return constructEmptyArray(exec, globalObject, n);
     }
 
     // otherwise the array is constructed with the arguments in it
-    return JSArray::create(exec->globalData(), globalObject->arrayStructure(), args);
+    return constructArray(exec, globalObject, args);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)

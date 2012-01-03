@@ -430,41 +430,32 @@ namespace JSC {
         return constructEmptyObject(exec, exec->lexicalGlobalObject());
     }
 
-    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
-    {
-        return JSArray::create(exec->globalData(), globalObject->arrayStructure());
-    }
-    
-    inline JSArray* constructEmptyArray(ExecState* exec)
-    {
-        return constructEmptyArray(exec, exec->lexicalGlobalObject());
-    }
-
-    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength)
+    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength = 0)
     {
         return JSArray::create(exec->globalData(), globalObject->arrayStructure(), initialLength);
     }
 
-    inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
+    inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength = 0)
     {
         return constructEmptyArray(exec, exec->lexicalGlobalObject(), initialLength);
     }
 
-    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, JSValue singleItemValue)
-    {
-        MarkedArgumentBuffer values;
-        values.append(singleItemValue);
-        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
-    }
-
-    inline JSArray* constructArray(ExecState* exec, JSValue singleItemValue)
-    {
-        return constructArray(exec, exec->lexicalGlobalObject(), singleItemValue);
-    }
-
     inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
     {
-        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
+        JSGlobalData& globalData = exec->globalData();
+        unsigned length = values.size();
+        JSArray* array = JSArray::tryCreateUninitialized(globalData, globalObject->arrayStructure(), length);
+
+        // FIXME: we should probably throw an out of memory error here, but
+        // when making this change we should check that all clients of this
+        // function will correctly handle an exception being thrown from here.
+        if (!array)
+            CRASH();
+
+        for (unsigned i = 0; i < length; ++i)
+            array->initializeIndex(globalData, i, values.at(i));
+        array->completeInitialization(length);
+        return array;
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)
@@ -472,9 +463,26 @@ namespace JSC {
         return constructArray(exec, exec->lexicalGlobalObject(), values);
     }
 
-    inline JSArray* constructArray(ExecState* exec, const JSValue* values, size_t length)
+    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const JSValue* values, unsigned length)
     {
-        return JSArray::create(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), values, length);
+        JSGlobalData& globalData = exec->globalData();
+        JSArray* array = JSArray::tryCreateUninitialized(globalData, globalObject->arrayStructure(), length);
+
+        // FIXME: we should probably throw an out of memory error here, but
+        // when making this change we should check that all clients of this
+        // function will correctly handle an exception being thrown from here.
+        if (!array)
+            CRASH();
+
+        for (unsigned i = 0; i < length; ++i)
+            array->initializeIndex(globalData, i, values[i]);
+        array->completeInitialization(length);
+        return array;
+    }
+
+    inline JSArray* constructArray(ExecState* exec, const JSValue* values, unsigned length)
+    {
+        return constructArray(exec, exec->lexicalGlobalObject(), values, length);
     }
 
     class DynamicGlobalObjectScope {

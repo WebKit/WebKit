@@ -121,8 +121,6 @@ namespace JSC {
 
         void finishCreation(JSGlobalData&, unsigned initialLength = 0);
         JSArray* tryFinishCreationUninitialized(JSGlobalData&, unsigned initialLength);
-        void finishCreation(JSGlobalData&, const ArgList&);
-        void finishCreation(JSGlobalData&, const JSValue*, size_t length);
     
     public:
         typedef JSNonFinalObject Base;
@@ -146,20 +144,6 @@ namespace JSC {
         {
             JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             return array->tryFinishCreationUninitialized(globalData, initialLength);
-        }
-
-        static JSArray* create(JSGlobalData& globalData, Structure* structure, const ArgList& initialValues)
-        {
-            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
-            array->finishCreation(globalData, initialValues);
-            return array;
-        }
-
-        static JSArray* create(JSGlobalData& globalData, Structure* structure, const JSValue* values, size_t length)
-        {
-            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
-            array->finishCreation(globalData, values, length);
-            return array;
         }
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
