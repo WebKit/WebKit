@@ -3697,21 +3697,28 @@ void RenderLayer::parentClipRects(const RenderLayer* rootLayer, RenderRegion* re
     clipRects = *parent()->clipRects();
 }
 
+static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, EPosition position)
+{
+    if (position == FixedPosition)
+        return parentRects.fixedClipRect();
+
+    if (position == AbsolutePosition)
+        return parentRects.posClipRect();
+
+    return parentRects.overflowClipRect();
+}
+
 ClipRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, RenderRegion* region, bool temporaryClipRects, OverlayScrollbarSizeRelevancy relevancy) const
 {
-    ClipRect backgroundRect;
-    if (parent()) {
-        ClipRects parentRects;
-        parentClipRects(rootLayer, region, parentRects, temporaryClipRects, relevancy);
-        backgroundRect = renderer()->style()->position() == FixedPosition ? parentRects.fixedClipRect() :
-                         (renderer()->isPositioned() ? parentRects.posClipRect() : 
-                                                       parentRects.overflowClipRect());
-        RenderView* view = renderer()->view();
-        ASSERT(view);
-        if (view && parentRects.fixed() && rootLayer->renderer() == view)
-            backgroundRect.move(view->frameView()->scrollXForFixedPosition(), view->frameView()->scrollYForFixedPosition());
-    }
-    return backgroundRect;
+    ASSERT(parent());
+    ClipRects parentRects;
+    parentClipRects(rootLayer, region, parentRects, temporaryClipRects, relevancy);
+    ClipRect backgroundClipRect = backgroundClipRectForPosition(parentRects, renderer()->style()->position());
+    RenderView* view = renderer()->view();
+    ASSERT(view);
+    if (parentRects.fixed() && rootLayer->renderer() == view)
+        backgroundClipRect.move(view->frameView()->scrollXForFixedPosition(), view->frameView()->scrollYForFixedPosition());
+    return backgroundClipRect;
 }
 
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* region, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
