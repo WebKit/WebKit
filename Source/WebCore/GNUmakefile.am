@@ -665,7 +665,6 @@ USER_AGENT_STYLE_SHEETS = \
 # new-style JavaScript bindings
 SCRIPTS_FOR_GENERATE_BINDINGS = \
 	$(WebCore)/bindings/scripts/CodeGenerator.pm \
-	$(WebCore)/bindings/scripts/CodeGeneratorJS.pm \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
 	$(WebCore)/bindings/scripts/IDLStructure.pm \
 	$(WebCore)/bindings/scripts/InFilesCompiler.pm \
@@ -781,7 +780,7 @@ $(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_bindi
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
 
 .SECONDARY:
-DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(SUPPLEMENTAL_DEPENDENCY_FILE)
+DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(SUPPLEMENTAL_DEPENDENCY_FILE)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 noinst_LTLIBRARIES += \
