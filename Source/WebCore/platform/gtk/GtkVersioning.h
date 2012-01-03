@@ -117,6 +117,10 @@ GdkCursor* blankCursor();
 gboolean g_signal_accumulator_first_wins(GSignalInvocationHint* invocationHint, GValue* returnAccumulator, const GValue* handlerReturn, gpointer data);
 #endif
 
+#if !GTK_CHECK_VERSION(3, 3, 6)
+void gdk_screen_get_monitor_workarea(GdkScreen *, int monitor, GdkRectangle *area);
+#endif
+
 G_END_DECLS
 
 #endif // GtkVersioning_h

@@ -22,6 +22,11 @@
 
 #include <gtk/gtk.h>
 
+#ifdef GDK_WINDOWING_X11
+#include <X11/Xatom.h>
+#include <gdk/gdkx.h>
+#endif
+
 #if !GTK_CHECK_VERSION(2, 14, 0)
 void gtk_adjustment_set_value(GtkAdjustment* adjusment, gdouble value)
 {
@@ -303,3 +308,74 @@ cairo_surface_t *gdk_window_create_similar_surface(GdkWindow *window, cairo_cont
 }
 #endif // GTK_CHECK_VERSION(2, 22, 0)
 
+#if !GTK_CHECK_VERSION(3, 3, 6)
+#ifdef GDK_WINDOWING_X11
+static int getScreenCurrentDesktop(GdkScreen *screen)
+{
+    Display *display = GDK_DISPLAY_XDISPLAY(gdk_screen_get_display(screen));
+    Window rootWindow = XRootWindow(display, GDK_SCREEN_XNUMBER(screen));
+    Atom currentDesktop = XInternAtom(display, "_NET_CURRENT_DESKTOP", True);
+
+    Atom type;
+    int format;
+    unsigned long itemsCount, bytesAfter;
+    unsigned char *returnedData = NULL;
+    XGetWindowProperty(display, rootWindow, currentDesktop, 0, G_MAXLONG, False, XA_CARDINAL,
+                       &type, &format, &itemsCount, &bytesAfter, &returnedData);
+
+    int workspace = 0;
+    if (type == XA_CARDINAL && format == 32 && itemsCount > 0)
+        workspace = (int)returnedData[0];
+
+    if (returnedData)
+        XFree(returnedData);
+
+    return workspace;
+}
+
+static void getScreenWorkArea(GdkScreen *screen, GdkRectangle *area)
+{
+    Display *display = GDK_DISPLAY_XDISPLAY(gdk_screen_get_display(screen));
+    Atom workArea = XInternAtom(display, "_NET_WORKAREA", True);
+
+    /* Defaults in case of error. */
+    area->x = 0;
+    area->y = 0;
+    area->width = gdk_screen_get_width(screen);
+    area->height = gdk_screen_get_height(screen);
+
+    if (workArea == None)
+        return;
+
+    Window rootWindow = XRootWindow(display, GDK_SCREEN_XNUMBER(screen));
+    Atom type;
+    int format;
+    unsigned long itemsCount, bytesAfter;
+    unsigned char *returnedData = 0;
+    int result = XGetWindowProperty(display, rootWindow, workArea, 0, 4 * 32 /* Max length */, False, AnyPropertyType,
+                                    &type, &format, &itemsCount, &bytesAfter, &returnedData);
+    if (result != Success || type == None || !format || bytesAfter || itemsCount % 4)
+        return;
+
+    int desktop = getScreenCurrentDesktop(screen);
+    long *workAreas = (long *)returnedData;
+    area->x = workAreas[desktop * 4];
+    area->y = workAreas[desktop * 4 + 1];
+    area->width = workAreas[desktop * 4 + 2];
+    area->height = workAreas[desktop * 4 + 3];
+
+    XFree(returnedData);
+}
+#endif // GDK_WINDOWING_X11
+
+void gdk_screen_get_monitor_workarea(GdkScreen *screen, int monitor, GdkRectangle *area)
+{
+    gdk_screen_get_monitor_geometry(screen, monitor, area);
+
+#ifdef GDK_WINDOWING_X11
+    GdkRectangle workArea;
+    getScreenWorkArea(screen, &workArea);
+    gdk_rectangle_intersect(&workArea, area, area);
+#endif
+}
+#endif // GTK_CHECK_VERSION(3, 3, 6)

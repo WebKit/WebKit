@@ -1,3 +1,13 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use gdk_screen_get_monitor_workarea() when available for screenAvailableRect()
+        https://bugs.webkit.org/show_bug.cgi?id=75435
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Make sure DRT links to X11.
+        * WebKitTestRunner/GNUmakefile.am: Make sure WTR links to X11.
+
 2011-12-04  Philippe Normand  <pnormand@igalia.com>
 
         [WK2][GTK] WebSettings support in MiniBrowser

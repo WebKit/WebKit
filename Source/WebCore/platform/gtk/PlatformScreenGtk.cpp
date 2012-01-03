@@ -39,11 +39,6 @@
 
 #include <gtk/gtk.h>
 
-#if PLATFORM(X11)
-#include <gdk/gdkx.h>
-#include <X11/Xatom.h>
-#endif
-
 namespace WebCore {
 
 static GtkWidget* getToplevel(GtkWidget* widget)
@@ -134,7 +129,6 @@ FloatRect screenAvailableRect(Widget* widget)
     if (!widget)
         return FloatRect();
 
-#if PLATFORM(X11)
     GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
     if (container && !gtk_widget_get_realized(container))
         return screenRect(widget);
@@ -143,34 +137,13 @@ FloatRect screenAvailableRect(Widget* widget)
     if (!screen)
         return FloatRect();
 
-    GdkWindow* rootWindow = gdk_screen_get_root_window(screen);
-    GdkDisplay* display = gdk_window_get_display(rootWindow);
-    Atom xproperty = gdk_x11_get_xatom_by_name_for_display(display, "_NET_WORKAREA");
+    gint monitor = container ? gdk_screen_get_monitor_at_window(screen, gtk_widget_get_window(container)) : 0;
 
-    Atom retType;
-    int retFormat;
-    long *workAreaPos = NULL;
-    unsigned long retNItems;
-    unsigned long retAfter;
-    int xRes = XGetWindowProperty(GDK_DISPLAY_XDISPLAY(display), GDK_WINDOW_XWINDOW(rootWindow), xproperty,
-        0, 4, FALSE, XA_CARDINAL, &retType, &retFormat, &retNItems, &retAfter, (guchar**)&workAreaPos);
+    GdkRectangle workArea;
+    gdk_screen_get_monitor_workarea(screen, monitor, &workArea);
 
-    FloatRect rect;
-    if (xRes == Success && workAreaPos != NULL && retType == XA_CARDINAL && retNItems == 4 && retFormat == 32) {
-        rect = FloatRect(workAreaPos[0], workAreaPos[1], workAreaPos[2], workAreaPos[3]);
-        // rect contains the available space in the whole screen not just in the monitor
-        // containing the widget, so we intersect it with the monitor rectangle.
-        rect.intersect(screenRect(widget));
-    } else
-        rect = screenRect(widget);
+    return FloatRect(workArea.x, workArea.y, workArea.width, workArea.height);
 
-    if (workAreaPos)
-        XFree(workAreaPos);
-
-    return rect;
-#else
-    return screenRect(widget);
-#endif
 }
 
 } // namespace WebCore

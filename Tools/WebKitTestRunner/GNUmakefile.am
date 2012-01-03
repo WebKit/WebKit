@@ -51,7 +51,9 @@ Programs_WebKitTestRunner_LDADD = \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(FREETYPE_LIBS) \
-	$(WINMM_LIBS)
+	$(WINMM_LIBS) \
+	$(XRENDER_LIBS) \
+	$(XT_LIBS)
 
 Programs_WebKitTestRunner_LDFLAGS = \
 	-no-fast-install \
