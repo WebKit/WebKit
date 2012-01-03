@@ -1,5 +1,26 @@
 2012-01-03  Adrienne Walker  <enne@google.com>
 
+        [chromium] Support RTL pages and elements in the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=56591
+
+        Reviewed by James Robinson.
+
+        As the noncomposited content host layer is created and managed by the
+        Chromium compositor, adjust its transform appropriately in the layer
+        tree and at paint time to handle the offset required due to the
+        initial containing block of RTL pages.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::allowedCompositingTriggers):
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::setViewport):
+        (WebKit::NonCompositedContentHost::paintContents):
+        * src/NonCompositedContentHost.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+
+2012-01-03  Adrienne Walker  <enne@google.com>
+
         [chromium] Make tiled layer's tiler always exist
         https://bugs.webkit.org/show_bug.cgi?id=75329
 

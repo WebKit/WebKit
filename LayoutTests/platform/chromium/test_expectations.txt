@@ -3299,15 +3299,6 @@ BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-s
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = PASS CRASH
 
-// Broken because Chromium disables compositing for RTL pages
-BUGWK56591 : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-absolute-overflow.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-absolute.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-fixed-overflow.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-fixed.html = TEXT
-BUGWK56591 : compositing/rtl/rtl-relative.html = TEXT
-
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
 

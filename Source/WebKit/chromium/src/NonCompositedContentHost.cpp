@@ -76,7 +76,7 @@ void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
     ASSERT(scrollLayer());
 }
 
-void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale)
+void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale, int layerAdjustX)
 {
     if (!scrollLayer())
         return;
@@ -90,7 +90,16 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     scrollLayer()->setScrollable(true);
     m_graphicsLayer->setSize(contentsSize);
 
-    if (visibleRectChanged)
+    m_layerAdjustX = layerAdjustX;
+    if (m_graphicsLayer->transform().m41() != m_layerAdjustX) {
+        WebCore::TransformationMatrix transform = m_graphicsLayer->transform();
+        transform.setM41(m_layerAdjustX);
+        m_graphicsLayer->setTransform(transform);
+
+        // If a tiled layer is shifted left or right, the content that goes into
+        // each tile will change. Invalidate the entire layer when this happens.
+        m_graphicsLayer->setNeedsDisplay();
+    } else if (visibleRectChanged)
         m_graphicsLayer->setNeedsDisplay();
 
     if (m_graphicsLayer->pageScaleFactor() != pageScale)
@@ -128,7 +137,10 @@ void NonCompositedContentHost::notifySyncRequired(const WebCore::GraphicsLayer*)
 
 void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
-    m_contentPaint->paint(context, clipRect);
+    context.translate(-m_layerAdjustX, 0);
+    WebCore::IntRect adjustedClipRect = clipRect;
+    adjustedClipRect.move(m_layerAdjustX, 0);
+    m_contentPaint->paint(context, adjustedClipRect);
 }
 
 bool NonCompositedContentHost::showDebugBorders() const

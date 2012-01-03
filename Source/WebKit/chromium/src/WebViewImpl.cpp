@@ -3063,7 +3063,15 @@ void WebViewImpl::updateLayerTreeViewport()
     IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor());
+    int layerAdjustX = 0;
+    if (pageHasRTLStyle()) {
+        // The origin of the initial containing block for RTL root layers is not
+        // at the far left side of the layer bounds. Instead, it's one viewport
+        // width (not including scrollbars) to the left of the right side of the
+        // layer.
+        layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
+    }
+    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
     m_layerTreeHost->setViewport(visibleRect.size());
     m_layerTreeHost->setPageScale(pageScaleFactor());
 }

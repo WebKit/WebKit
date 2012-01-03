@@ -57,7 +57,7 @@ public:
     void invalidateRect(const WebCore::IntRect&);
     void setBackgroundColor(const WebCore::Color&);
     void setScrollLayer(WebCore::GraphicsLayer*);
-    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale);
+    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale, int layerAdjustX);
     void protectVisibleTileTextures();
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
@@ -77,6 +77,7 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
     OwnPtr<WebCore::LayerPainterChromium> m_contentPaint;
     WebCore::IntSize m_viewportSize;
+    int m_layerAdjustX;
 };
 
 } // namespace WebKit
