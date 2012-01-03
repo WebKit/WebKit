@@ -29,6 +29,8 @@
 #include "JSValue.h"
 
 namespace JSC {
+    class GetterSetter;
+
     class PropertyDescriptor {
     public:
         PropertyDescriptor()
@@ -48,7 +50,7 @@ namespace JSC {
         JSValue setter() const;
         void setUndefined();
         void setDescriptor(JSValue value, unsigned attributes);
-        void setAccessorDescriptor(JSValue getter, JSValue setter, unsigned attributes);
+        void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
         void setWritable(bool);
         void setEnumerable(bool);
         void setConfigurable(bool);

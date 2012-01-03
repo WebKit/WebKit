@@ -104,8 +104,7 @@ void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
 
     d->overrodeCaller = true;
     PropertyDescriptor descriptor;
-    JSValue thrower = createTypeErrorFunction(exec, "Unable to access caller of strict mode function");
-    descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Getter | Setter);
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().caller, descriptor, false);
 }
 
@@ -116,8 +115,7 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     
     d->overrodeCallee = true;
     PropertyDescriptor descriptor;
-    JSValue thrower = createTypeErrorFunction(exec, "Unable to access callee of strict mode function");
-    descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Getter | Setter);
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
 }
 

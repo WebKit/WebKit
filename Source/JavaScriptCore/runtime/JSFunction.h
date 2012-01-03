@@ -42,8 +42,6 @@ namespace JSC {
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
-    void createDescriptorForThrowingProperty(ExecState*, PropertyDescriptor&, const char* message);
-
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
         friend class DFG::SpeculativeJIT;

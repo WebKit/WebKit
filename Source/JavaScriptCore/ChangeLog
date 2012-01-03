@@ -1,3 +1,43 @@
+2012-01-03  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75429
+        ThrowTypeError should be a singleton object
+
+        Reviewed by Sam Weinig.
+
+        Per section 13.2.3 of the spec.
+        We could change setAccessorDescriptor to be able to share the global
+        GetterSetter object, rather than storing the accessor functions and
+        creating a new GetterSetter in defineProperty - but this won't be a
+        small change to PropertyDescriptors (and would probably mean making
+        GetterSetter objects immutable?) - so I'll leave that for another
+        patch.
+
+        * JavaScriptCore.exp:
+            - don't export setAccessorDescriptor
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+            - call throwTypeErrorGetterSetter instead of createTypeErrorFunction
+        * runtime/Error.cpp:
+        * runtime/Error.h:
+            - remove createTypeErrorFunction
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+            - remove unused createDescriptorForThrowingProperty
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+            - removed m_strictModeTypeErrorFunctionStructure.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::internalFunctionStructure):
+            - removed m_strictModeTypeErrorFunctionStructure.
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+            - changed to take a GetterSetter
+        * runtime/PropertyDescriptor.h:
+            - changed to take a GetterSetter
+
 2012-01-02  Gavin Barraclough  <barraclough@apple.com>
 
         Check in fixes for jsc tests following bug #75455.

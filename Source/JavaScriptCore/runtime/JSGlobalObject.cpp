@@ -204,7 +204,6 @@ void JSGlobalObject::reset(JSValue prototype)
     m_boundFunctionStructure.set(exec->globalData(), this, JSBoundFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     m_namedFunctionStructure.set(exec->globalData(), this, Structure::addPropertyTransition(exec->globalData(), m_functionStructure.get(), exec->globalData().propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
     m_internalFunctionStructure.set(exec->globalData(), this, InternalFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
-    m_strictModeTypeErrorFunctionStructure.set(exec->globalData(), this, StrictModeTypeErrorFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
     m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction);
@@ -384,7 +383,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitIfNeeded(visitor, &thisObject->m_regExpStructure);
     visitIfNeeded(visitor, &thisObject->m_stringObjectStructure);
     visitIfNeeded(visitor, &thisObject->m_internalFunctionStructure);
-    visitIfNeeded(visitor, &thisObject->m_strictModeTypeErrorFunctionStructure);
 
     if (thisObject->m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,

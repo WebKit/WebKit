@@ -114,12 +114,6 @@ void JSFunction::destroy(JSCell* cell)
     thisObject->JSFunction::~JSFunction();
 }
 
-void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
-{
-    JSValue thrower = createTypeErrorFunction(exec, message);
-    descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
-}
-
 const UString& JSFunction::name(ExecState* exec)
 {
     return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();

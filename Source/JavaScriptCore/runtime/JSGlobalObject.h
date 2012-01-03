@@ -132,7 +132,6 @@ namespace JSC {
         WriteBarrier<Structure> m_regExpStructure;
         WriteBarrier<Structure> m_stringObjectStructure;
         WriteBarrier<Structure> m_internalFunctionStructure;
-        WriteBarrier<Structure> m_strictModeTypeErrorFunctionStructure;
 
         Debugger* m_debugger;
 
@@ -262,7 +261,6 @@ namespace JSC {
         size_t functionNameOffset() const { return m_functionNameOffset; }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
         Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
-        Structure* strictModeTypeErrorFunctionStructure() const { return m_strictModeTypeErrorFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
         Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }

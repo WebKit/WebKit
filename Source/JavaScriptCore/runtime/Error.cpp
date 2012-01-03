@@ -175,10 +175,4 @@ void StrictModeTypeErrorFunction::destroy(JSCell* cell)
     jsCast<StrictModeTypeErrorFunction*>(cell)->StrictModeTypeErrorFunction::~StrictModeTypeErrorFunction();
 }
 
-JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
-{
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    return StrictModeTypeErrorFunction::create(exec, globalObject, globalObject->strictModeTypeErrorFunctionStructure(), message);
-}
-
 } // namespace JSC

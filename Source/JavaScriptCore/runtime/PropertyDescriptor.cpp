@@ -108,13 +108,15 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
     }
 }
 
-void PropertyDescriptor::setAccessorDescriptor(JSValue getter, JSValue setter, unsigned attributes)
+void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned attributes)
 {
     ASSERT(attributes & (Getter | Setter));
-    ASSERT(getter || setter);
+    ASSERT(accessor->getter() || accessor->setter());
+    ASSERT(!accessor->getter() == !(attributes & Getter));
+    ASSERT(!accessor->setter() == !(attributes & Setter));
     m_attributes = attributes;
-    m_getter = getter;
-    m_setter = setter;
+    m_getter = accessor->getter();
+    m_setter = accessor->setter();
     m_attributes &= ~ReadOnly;
     m_seenAttributes = EnumerablePresent | ConfigurablePresent;
 }
