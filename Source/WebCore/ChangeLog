@@ -1,3 +1,17 @@
+2012-01-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Slider thumb is not centered on the track with the unico theme
+        https://bugs.webkit.org/show_bug.cgi?id=72802
+
+        Reviewed by Philippe Normand.
+
+        No new tests. This only applies to certain GTK+ themes.
+        Existing tests cover the default GTK+ theme.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintSliderThumb): Do not resize the
+        slider thumb by the trough border.
+
 2012-01-03  Adrienne Walker  <enne@google.com>
 
         [chromium] Make tiled layer's tiler always exist

@@ -663,12 +663,6 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
 
-    gint troughBorder;
-    gtk_style_context_get_style(context, "trough-border", &troughBorder, NULL);
-
-    IntRect sliderRect(rect);
-    sliderRect.inflate(-troughBorder);
-
     guint flags = 0;
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
         flags |= GTK_STATE_FLAG_INSENSITIVE;
@@ -678,7 +672,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
         flags |= GTK_STATE_FLAG_ACTIVE;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_slider(context, paintInfo.context->platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height(),
+    gtk_render_slider(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
                       part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
 
     gtk_style_context_restore(context);
