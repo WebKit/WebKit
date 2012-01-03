@@ -52,6 +52,8 @@ class TestRunner:
             if not os.path.isdir(absolute_test_dir):
                 continue
             for test_file in os.listdir(absolute_test_dir):
+                if not test_file.lower().startswith("test"):
+                    continue
                 test_relative_path = os.path.join(test_dir, test_file)
                 if test_relative_path in self.SKIPPED:
                     sys.stdout.write("Skipping test %s\n" % (test_relative_path))
