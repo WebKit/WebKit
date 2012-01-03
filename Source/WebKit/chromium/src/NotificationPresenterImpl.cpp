@@ -94,6 +94,10 @@ void NotificationPresenterImpl::notificationObjectDestroyed(Notification* notifi
     m_presenter->objectDestroyed(PassRefPtr<Notification>(notification));
 }
 
+void NotificationPresenterImpl::notificationControllerDestroyed()
+{
+}
+
 NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
 {
     int result = m_presenter->checkPermission(WebSecurityOrigin(context->securityOrigin()));

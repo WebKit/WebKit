@@ -311,6 +311,10 @@ void NotificationPresenterClientQt::notificationObjectDestroyed(Notification* no
         delete m_notifications.take(notification);
 }
 
+void NotificationPresenterClientQt::notificationControllerDestroyed()
+{
+}
+
 void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {  
     if (dumpNotification)

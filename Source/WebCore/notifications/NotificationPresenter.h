@@ -62,6 +62,9 @@ public:
     // the notification, but must not attempt to call the event handlers.
     virtual void notificationObjectDestroyed(Notification*) = 0;
 
+    // Informs the presenter the controller attached to the page has been destroyed.
+    virtual void notificationControllerDestroyed() = 0;
+
     // Requests user permission to show desktop notifications from a particular
     // script context. The callback parameter should be run when the user has
     // made a decision.

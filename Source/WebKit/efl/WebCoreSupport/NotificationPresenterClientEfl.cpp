@@ -49,6 +49,11 @@ void NotificationPresenterClientEfl::notificationObjectDestroyed(Notification* n
     notImplemented();
 }
 
+void NotificationPresenterClientEfl::notificationControllerDestroyed()
+{
+    notImplemented();
+}
+
 void NotificationPresenterClientEfl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
     notImplemented();

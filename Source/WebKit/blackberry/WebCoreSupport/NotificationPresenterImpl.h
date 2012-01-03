@@ -47,6 +47,8 @@ public:
     // the notification, but must not attempt to call the event handlers.
     virtual void notificationObjectDestroyed(WebCore::Notification*);
 
+    virtual void notificationControllerDestroyed();
+
     // Requests user permission to show desktop notifications from a particular
     // script context. The callback parameter should be run when the user has
     // made a decision.

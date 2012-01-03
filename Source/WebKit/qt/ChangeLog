@@ -1,3 +1,16 @@
+2012-01-03  Jon Lee  <jonlee@apple.com>
+
+        Leak of WebNotificationClient when page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=74980
+        <rdar://problem/10611231>
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::notificationControllerDestroyed): Empty implementation, because
+        ownership model differs.
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+
 2011-12-20  Adam Klein  <adamk@chromium.org>
 
         Avoid unnecessary work when removing attributes from an element

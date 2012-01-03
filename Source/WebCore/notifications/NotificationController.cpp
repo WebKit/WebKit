@@ -41,6 +41,8 @@ NotificationController::NotificationController(Page* page, NotificationPresenter
 
 NotificationController::~NotificationController()
 {
+    if (m_client)
+        m_client->notificationControllerDestroyed();
 }
 
 PassOwnPtr<NotificationController> NotificationController::create(Page* page, NotificationPresenter* client)

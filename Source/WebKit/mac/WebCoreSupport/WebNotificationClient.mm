@@ -51,6 +51,11 @@ void WebNotificationClient::notificationObjectDestroyed(WebCore::Notification*)
     notImplemented();
 }
 
+void WebNotificationClient::notificationControllerDestroyed()
+{
+    delete this;
+}
+
 void WebNotificationClient::requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>)
 {
     notImplemented();

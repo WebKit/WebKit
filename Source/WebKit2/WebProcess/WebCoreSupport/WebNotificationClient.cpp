@@ -77,6 +77,11 @@ void WebNotificationClient::notificationObjectDestroyed(Notification* notificati
 #endif
 }
 
+void WebNotificationClient::notificationControllerDestroyed()
+{
+    delete this;
+}
+
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
     m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), callback);

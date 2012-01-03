@@ -90,6 +90,7 @@ public:
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
+    virtual void notificationControllerDestroyed();
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
     virtual NotificationPresenter::Permission checkPermission(ScriptExecutionContext*);
     virtual void cancelRequestsForPermission(ScriptExecutionContext*);

@@ -92,6 +92,10 @@ void NotificationPresenterImpl::notificationObjectDestroyed(Notification* notifi
     cancel(notification);
 }
 
+void NotificationPresenterImpl::notificationControllerDestroyed()
+{
+}
+
 void NotificationPresenterImpl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
     ASSERT(context);

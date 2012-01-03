@@ -1,3 +1,16 @@
+2012-01-03  Jon Lee  <jonlee@apple.com>
+
+        Leak of WebNotificationClient when page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=74980
+        <rdar://problem/10611231>
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/NotificationPresenterClientEfl.cpp:
+        (WebCore::NotificationPresenterClientEfl::notificationControllerDestroyed): Stub implementation, because
+        the notification presenter is unimplemented.
+        * WebCoreSupport/NotificationPresenterClientEfl.h:
+
 2012-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove whitespace/declaration style exception

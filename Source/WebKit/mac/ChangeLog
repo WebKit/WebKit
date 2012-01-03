@@ -1,3 +1,15 @@
+2012-01-03  Jon Lee  <jonlee@apple.com>
+
+        Leak of WebNotificationClient when page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=74980
+        <rdar://problem/10611231>
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::notificationControllerDestroyed): Remove the instance.
+
 2012-01-02  Dan Bernstein  <mitz@apple.com>
 
         [mac] Remove -[WebView setHoverFeedbackSuspended:]

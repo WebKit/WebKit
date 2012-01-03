@@ -1,3 +1,17 @@
+2012-01-03  Jon Lee  <jonlee@apple.com>
+
+        Leak of WebNotificationClient when page is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=74980
+        <rdar://problem/10611231>
+
+        Reviewed by Mark Rowe.
+
+        * notifications/NotificationController.cpp:
+        (WebCore::NotificationController::~NotificationController): Notify the client
+        that the controller has been destroyed.
+        * notifications/NotificationPresenter.h: Add notificationControllerDestroyed()
+        callback to the client interface.
+
 2012-01-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for list-style is not implemented.
