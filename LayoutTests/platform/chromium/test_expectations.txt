@@ -970,8 +970,6 @@ BUGCR32392 SKIP : svg/batik/text/smallFonts.svg = FAIL
 // The test is flaky and maybe platform-dependent.
 BUGCR32401 LINUX WIN : svg/custom/marker-changes.svg = IMAGE+TEXT IMAGE
 
-BUGCR89369 MAC : svg/hixie/text/003.html = PASS IMAGE IMAGE+TEXT
-BUGCR32444 LINUX WIN : svg/hixie/text/003.html = FAIL
 
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
