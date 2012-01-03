@@ -27,9 +27,9 @@ WebView {
         name: "WebViewLoadFavIcon"
 
         function init() {
-            if (webView.url != '') {
-                // When we already have done a load before, we must restore the initial state.
-                webView.load('')
+            if (webView.icon != '') {
+                // If this is not the first test, then load a blank page without favicon, restoring the initial state.
+                webView.load('about:blank')
                 spy.wait()
                 loadSpy.wait()
             }
@@ -38,7 +38,6 @@ WebView {
         }
 
         function test_favIconLoad() {
-            init()
             compare(spy.count, 0)
             var url = Qt.resolvedUrl("../common/favicon.html")
             webView.load(url)
@@ -49,7 +48,6 @@ WebView {
         }
 
         function test_favIconLoadEncodedUrl() {
-            init()
             compare(spy.count, 0)
             var url = Qt.resolvedUrl("../common/favicon2.html?favicon=load should work with#whitespace!")
             webView.load(url)

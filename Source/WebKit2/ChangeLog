@@ -1,3 +1,13 @@
+2012-01-03  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] tst_favIconLoad.qml crashes on debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=75448
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml: Loads
+        "about:blank" instead of an empty url between tests to clean favicon.
+
 2012-01-02  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo I made in r103871.
