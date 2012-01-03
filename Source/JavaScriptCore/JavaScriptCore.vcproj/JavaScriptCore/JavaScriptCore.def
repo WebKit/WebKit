@@ -350,6 +350,7 @@ EXPORTS
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
     ?tryFastMalloc@WTF@@YA?AUTryMallocReturnValue@1@I@Z
     ?tryFastRealloc@WTF@@YA?AUTryMallocReturnValue@1@PAXI@Z
+    ?tryFinishCreationUninitialized@JSArray@JSC@@IAEPAV12@AAVJSGlobalData@2@I@Z
     ?tryLock@Mutex@WTF@@QAE_NXZ
     ?type@DebuggerCallFrame@JSC@@QBE?AW4Type@12@XZ
     ?unlock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
