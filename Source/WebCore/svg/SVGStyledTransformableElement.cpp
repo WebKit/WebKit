@@ -64,10 +64,10 @@ AffineTransform SVGStyledTransformableElement::getScreenCTM(StyleUpdateStrategy 
 AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
 {
     AffineTransform matrix;
-    RenderStyle* style = renderer()->style();
+    RenderStyle* style = renderer() ? renderer()->style() : 0;
 
     // if CSS property was set, use that, otherwise fallback to attribute (if set)
-    if (style->hasTransform()) {
+    if (style && style->hasTransform()) {
         TransformationMatrix t;
         // For now, the transform-origin is not taken into account
         // Also, any percentage values will not be taken into account
