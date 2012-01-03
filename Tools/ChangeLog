@@ -1,3 +1,18 @@
+2012-01-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] GtkLauncher settings improvements
+        https://bugs.webkit.org/show_bug.cgi?id=75439
+
+        Reviewed by Martin Robinson.
+
+        * GtkLauncher/main.c:
+        (filenameToURL): We can use NULL in C.
+        (isValidParameterType): Utility function to filter GParamTypes
+        that can be edited.
+        (getOptionEntriesFromWebKitWebSettings): Avoid handling
+        construct-only properties and use the isValidParameterType
+        function. Makes the code a bit cleaner.
+
 2012-01-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove whitespace/declaration style exception

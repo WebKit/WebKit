@@ -230,7 +230,7 @@ static GtkWidget* createWindow(WebKitWebView** outWebView)
 static gchar* filenameToURL(const char* filename)
 {
     if (!g_file_test(filename, G_FILE_TEST_EXISTS))
-        return 0;
+        return NULL;
 
     GFile *gfile = g_file_new_for_path(filename);
     gchar *fileURL = g_file_get_uri(gfile);
@@ -306,6 +306,12 @@ static gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gcha
     return TRUE;
 }
 
+static gboolean isValidParameterType(GType gParamType)
+{
+    return (gParamType == G_TYPE_BOOLEAN || gParamType == G_TYPE_STRING || gParamType == G_TYPE_INT
+            || gParamType == G_TYPE_FLOAT);
+}
+
 static GOptionEntry* getOptionEntriesFromWebKitWebSettings(WebKitWebSettings *webSettings)
 {
     GParamSpec **propertySpecs;
@@ -314,33 +320,33 @@ static GOptionEntry* getOptionEntriesFromWebKitWebSettings(WebKitWebSettings *we
 
     propertySpecs = g_object_class_list_properties(G_OBJECT_GET_CLASS(webSettings), &numProperties);
     if (!propertySpecs)
-        return 0;
+        return NULL;
 
     optionEntries = g_new0(GOptionEntry, numProperties + 1);
     numEntries = 0;
     for (i = 0; i < numProperties; i++) {
         GParamSpec *param = propertySpecs[i];
 
-        /* Fill in structures only for writable properties. */
-        if (!param || !(param->flags & G_PARAM_WRITABLE))
+        /* Fill in structures only for writable and not construct-only properties. */
+        if (!param || !(param->flags & G_PARAM_WRITABLE) || (param->flags & G_PARAM_CONSTRUCT_ONLY))
             continue;
 
         GType gParamType = G_PARAM_SPEC_VALUE_TYPE(param);
-        if (gParamType == G_TYPE_BOOLEAN || gParamType == G_TYPE_STRING || gParamType == G_TYPE_INT
-            || gParamType == G_TYPE_FLOAT) {
-            GOptionEntry *optionEntry = &optionEntries[numEntries++];
-            optionEntry->long_name = g_param_spec_get_name(param);
+        if (!isValidParameterType(gParamType))
+            continue;
 
-            /* There is no easy way to figure our short name for generated option entries.
-               optionEntry.short_name=*/
-            /* For bool arguments "enable" type make option argument not required. */
-            if (gParamType == G_TYPE_BOOLEAN && (strstr(optionEntry->long_name, "enable")))
-                optionEntry->flags = G_OPTION_FLAG_OPTIONAL_ARG;
-            optionEntry->arg = G_OPTION_ARG_CALLBACK;
-            optionEntry->arg_data = parseOptionEntryCallback;
-            optionEntry->description = g_param_spec_get_blurb(param);
-            optionEntry->arg_description = g_type_name(gParamType);
-        }
+        GOptionEntry *optionEntry = &optionEntries[numEntries++];
+        optionEntry->long_name = g_param_spec_get_name(param);
+
+        /* There is no easy way to figure our short name for generated option entries.
+           optionEntry.short_name=*/
+        /* For bool arguments "enable" type make option argument not required. */
+        if (gParamType == G_TYPE_BOOLEAN && (strstr(optionEntry->long_name, "enable")))
+            optionEntry->flags = G_OPTION_FLAG_OPTIONAL_ARG;
+        optionEntry->arg = G_OPTION_ARG_CALLBACK;
+        optionEntry->arg_data = parseOptionEntryCallback;
+        optionEntry->description = g_param_spec_get_blurb(param);
+        optionEntry->arg_description = g_type_name(gParamType);
     }
     g_free(propertySpecs);
 
