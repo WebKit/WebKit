@@ -616,6 +616,15 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
     return false;
 }
 
+static void applySliderStyleContextClasses(GtkStyleContext* context, ControlPart part)
+{
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+    if (part == SliderHorizontalPart || part == SliderThumbHorizontalPart)
+        gtk_style_context_add_class(context, GTK_STYLE_CLASS_HORIZONTAL);
+    else if (part == SliderVerticalPart || part == SliderThumbVerticalPart)
+        gtk_style_context_add_class(context, GTK_STYLE_CLASS_VERTICAL);
+}
+
 bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ControlPart part = renderObject->style()->appearance();
@@ -625,7 +634,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
     gtk_style_context_save(context);
 
     gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
-    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+    applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
@@ -660,7 +669,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
     gtk_style_context_save(context);
 
     gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
-    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+    applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
 
     guint flags = 0;
