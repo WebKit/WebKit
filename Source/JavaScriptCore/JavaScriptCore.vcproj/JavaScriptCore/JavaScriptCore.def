@@ -33,7 +33,7 @@ EXPORTS
     ??1Debugger@JSC@@UAE@XZ
     ??1DropAllLocks@JSLock@JSC@@QAE@XZ
     ??1JSGlobalData@JSC@@QAE@XZ
-   ??1JSGlobalObject@JSC@@QAE@XZ
+    ??1JSGlobalObject@JSC@@QAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
@@ -298,7 +298,6 @@ EXPORTS
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
     ?s_globalObjectMethodTable@JSGlobalObject@JSC@@1UGlobalObjectMethodTable@2@B
     ?s_info@ExecutableBase@JSC@@2UClassInfo@2@B
-    ?setAccessorDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@0I@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
