@@ -27,59 +27,35 @@
 
 import QtQuick 2.0
 
-Rectangle {
+Dialog {
     id: dialog
 
-    property alias title: titleText.text
-    property alias message: messageText.text
+    title: "JavaScript Prompt"
+    message: model.message
 
-    default property alias __children: dynamicColumn.children
+    height: 180
 
-    color: "#efefef"
+    DialogLineInput {
+        id: input
+        width: dialog.width - 30
+        text: model.defaultValue
 
-    width: 300
-    height: 150
-
-    border {
-        width: 1
-        color: "#bfbfbf"
+        onAccepted: model.accept(input.text)
     }
 
-    smooth: true
-    radius: 5
+    Row {
+        id: buttonRow
+        spacing: 5
+        anchors.horizontalCenter: parent.horizontalCenter
 
-    anchors.centerIn: parent
-
-    Item {
-        id: staticContent
-        anchors.centerIn: parent
-        anchors.fill: parent
-        anchors.margins: 10
-
-        Text {
-            id: titleText
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            elide: Text.ElideRight
+        DialogButton {
+            text: "OK"
+            onClicked: model.accept(input.text)
         }
 
-        Text {
-            id: messageText
-            width: parent.width
-            wrapMode: Text.WordWrap
-            anchors.centerIn: parent
-        }
-
-        Column {
-            id: dynamicColumn
-            spacing: 5
-            anchors {
-                margins: 10
-                bottom: staticContent.bottom
-                horizontalCenter: staticContent.horizontalCenter
-            }
+        DialogButton {
+            text: "Cancel"
+            onClicked: model.reject()
         }
     }
 }

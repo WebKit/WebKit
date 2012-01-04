@@ -28,58 +28,28 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: dialog
+    id: dialogLineInput
 
-    property alias title: titleText.text
-    property alias message: messageText.text
+    property alias text: input.text
+    signal accepted()
 
-    default property alias __children: dynamicColumn.children
-
-    color: "#efefef"
-
-    width: 300
-    height: 150
+    height: 20
+    color: "#fefefe"
 
     border {
         width: 1
-        color: "#bfbfbf"
+        color: "#aeaeae"
     }
 
     smooth: true
-    radius: 5
+    radius: 3
+    clip: true
 
-    anchors.centerIn: parent
-
-    Item {
-        id: staticContent
-        anchors.centerIn: parent
+    TextInput {
+        id: input
+        focus: true
         anchors.fill: parent
-        anchors.margins: 10
 
-        Text {
-            id: titleText
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            elide: Text.ElideRight
-        }
-
-        Text {
-            id: messageText
-            width: parent.width
-            wrapMode: Text.WordWrap
-            anchors.centerIn: parent
-        }
-
-        Column {
-            id: dynamicColumn
-            spacing: 5
-            anchors {
-                margins: 10
-                bottom: staticContent.bottom
-                horizontalCenter: staticContent.horizontalCenter
-            }
-        }
+        onAccepted: dialogLineInput.accepted()
     }
 }

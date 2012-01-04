@@ -265,6 +265,7 @@ Rectangle {
         experimental.itemSelector: ItemSelector { }
         experimental.alertDialog: AlertDialog { }
         experimental.confirmDialog: ConfirmDialog { }
+        experimental.promptDialog: PromptDialog { }
     }
 
     ViewportInfoItem {
