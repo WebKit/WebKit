@@ -1,5 +1,22 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 96427
+
+    2011-09-30  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10208291> first-letter in generated before content with display: table is not updated
+
+            Reviewed by Sam Weinig.
+
+            Test: fast/css-generated-content/first-letter-in-nested-before.html
+
+            * rendering/RenderObjectChildList.cpp:
+            (WebCore::RenderObjectChildList::updateBeforeAfterContent): Preserve the style type of anonymous
+            containers around the generated content when updating their style. This preserves the first-letter-ness
+            of the inline wrapping the first letter, which allows updateFirstLetter() to identify it later.
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 96260
 
     2011-09-28  Sergey Glazunov  <serg.glazunov@gmail.com>

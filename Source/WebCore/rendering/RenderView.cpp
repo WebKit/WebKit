@@ -134,6 +134,10 @@ void RenderView::layout()
     ASSERT(m_layoutState == &state);
     m_layoutState = 0;
     setNeedsLayout(false);
+#if !ASSERT_DISABLED
+    for (RenderObject* renderer = this; renderer; renderer = renderer->nextInPreOrder())
+        ASSERT(!renderer->needsLayout());
+#endif
 }
 
 void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
