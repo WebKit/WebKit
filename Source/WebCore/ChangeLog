@@ -1,3 +1,19 @@
+2012-01-04  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Share fractional time code between AnimationBase and KeyframeAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=75549
+
+        Share fractional time calculation between AnimationBase and KeyframeAnimation.
+
+        Reviewed by Simon Fraser.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fractionalTime):
+        (WebCore::AnimationBase::progress):
+        * page/animation/AnimationBase.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+
 2012-01-03  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Bypass the shadow texture copy for accelerated

@@ -1645,6 +1645,36 @@ double AnimationBase::timeToNextService()
     return 0;
 }
 
+// Compute the fractional time, taking into account direction.
+// There is no need to worry about iterations, we assume that we would have
+// short circuited above if we were done.
+
+double AnimationBase::fractionalTime(double scale, double elapsedTime, double offset) const
+{
+    //double fractionalTime = elapsedTime / m_animation->duration();
+    double fractionalTime = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
+    // FIXME: startTime can be before the current animation "frame" time. This is to sync with the frame time
+    // concept in AnimationTimeController. So we need to somehow sync the two. Until then, the possible
+    // error is small and will probably not be noticeable. Until we fix this, remove the assert.
+    // https://bugs.webkit.org/show_bug.cgi?id=52037
+    // ASSERT(fractionalTime >= 0);
+    if (fractionalTime < 0)
+        fractionalTime = 0;
+
+    int integralTime = static_cast<int>(fractionalTime);
+    if (m_animation->iterationCount() != Animation::IterationCountInfinite)
+        integralTime = min(integralTime, m_animation->iterationCount() - 1);
+    fractionalTime -= integralTime;
+
+    if ((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
+        fractionalTime = 1 - fractionalTime;
+
+    if (scale != 1 || offset)
+        fractionalTime = (fractionalTime - offset) * scale;
+
+    return fractionalTime;
+}
+
 double AnimationBase::progress(double scale, double offset, const TimingFunction* tf) const
 {
     if (preActive())
@@ -1661,19 +1691,8 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (m_animation->iterationCount() > 0 && elapsedTime >= dur)
         return (m_animation->iterationCount() % 2) ? 1.0 : 0.0;
 
-    // Compute the fractional time, taking into account direction.
-    // There is no need to worry about iterations, we assume that we would have
-    // short circuited above if we were done.
-    double fractionalTime = elapsedTime / m_animation->duration();
-    int integralTime = static_cast<int>(fractionalTime);
-    fractionalTime -= integralTime;
+    const double fractionalTime = this->fractionalTime(scale, elapsedTime, offset);
 
-    if ((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
-        fractionalTime = 1 - fractionalTime;
-
-    if (scale != 1 || offset)
-        fractionalTime = (fractionalTime - offset) * scale;
-        
     if (!tf)
         tf = m_animation->timingFunction().get();
 

@@ -231,6 +231,8 @@ protected:
     
     void getTimeToNextEvent(double& time, bool& isLooping) const;
 
+    double fractionalTime(double scale, double elapsedTime, double offset) const;
+
     AnimState m_animState;
 
     bool m_isAnimating;       // transition/animation requires continual timer firing

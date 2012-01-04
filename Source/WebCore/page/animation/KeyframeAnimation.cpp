@@ -88,25 +88,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const Re
     if (m_animation->duration() && m_animation->iterationCount() != Animation::IterationCountInfinite)
         elapsedTime = min(elapsedTime, m_animation->duration() * m_animation->iterationCount());
 
-    double fractionalTime = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
-
-    // FIXME: startTime can be before the current animation "frame" time. This is to sync with the frame time
-    // concept in AnimationTimeController. So we need to somehow sync the two. Until then, the possible
-    // error is small and will probably not be noticeable. Until we fix this, remove the assert.
-    // https://bugs.webkit.org/show_bug.cgi?id=52037
-    // ASSERT(fractionalTime >= 0);
-    if (fractionalTime < 0)
-        fractionalTime = 0;
-
-    // FIXME: share this code with AnimationBase::progress().
-    int iteration = static_cast<int>(fractionalTime);
-    if (m_animation->iterationCount() != Animation::IterationCountInfinite)
-        iteration = min(iteration, m_animation->iterationCount() - 1);
-    fractionalTime -= iteration;
-    
-    bool reversing = (m_animation->direction() == Animation::AnimationDirectionAlternate) && (iteration & 1);
-    if (reversing)
-        fractionalTime = 1 - fractionalTime;
+    const double fractionalTime = this->fractionalTime(1, elapsedTime, 0);
 
     size_t numKeyframes = m_keyframes.size();
     if (!numKeyframes)
