@@ -2221,10 +2221,11 @@ void RenderObject::scheduleRelayout()
         if (view)
             view->scheduleRelayout();
     } else {
-        RenderView* renderView;
-        if (isRooted(&renderView)) {
-            if (FrameView* frameView = renderView->frameView())
-                frameView->scheduleRelayoutOfSubtree(this);
+        if (isRooted()) {
+            if (RenderView* renderView = view()) {
+                if (FrameView* frameView = renderView->frameView())
+                    frameView->scheduleRelayoutOfSubtree(this);
+            }
         }
     }
 }
