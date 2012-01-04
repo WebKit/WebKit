@@ -1,3 +1,21 @@
+2012-01-03  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Bypass the shadow texture copy for accelerated
+        canvas when running the compositor in single threaded mode.
+        https://bugs.webkit.org/show_bug.cgi?id=75146
+
+        Modified Canvas2DLayerChromium unit test to test canvas with
+        both threaded and non-threaded compositing.
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerTestCommon.h:
+        (WebKitTests::FakeCCThread::threadID):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::setTextureManager):
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        (WebCore::TEST_F):
+
 2012-01-04  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Re-use TestShellLinux.cpp for Android

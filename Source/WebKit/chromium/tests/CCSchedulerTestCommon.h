@@ -74,7 +74,7 @@ public:
         m_pendingTask = task;
         m_pendingTaskDelay = delay;
     }
-    virtual WTF::ThreadIdentifier threadID() const { ASSERT_NOT_REACHED(); return 0; }
+    virtual WTF::ThreadIdentifier threadID() const { return 0; }
 
 protected:
     OwnPtr<Task> m_pendingTask;
