@@ -196,6 +196,8 @@ BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
 
 BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
 
+BUGCR108798 LINUX : fast/filesystem/workers/file-writer-events.html = CRASH PASS 
+
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
 // Chromium wants those to be separate navigations made via browser process to be able to make decision
