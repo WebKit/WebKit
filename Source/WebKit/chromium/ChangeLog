@@ -1,3 +1,18 @@
+2012-01-04  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Re-use TestShellLinux.cpp for Android
+        https://bugs.webkit.org/show_bug.cgi?id=75169
+
+        Reviewed by Tony Chang.
+
+        TestShellLinux.cpp can be re-used for the test-shell on the WebKit
+        Chromium port for Android. Most custom inclusions for the DumpRenderTree
+        target are done in Tools/DumpRenderTree.gypi, but since *Linux.cpp files
+        are being excluded by a global rule on sources it has to be later in
+        the project generation process.
+
+        * WebKit.gyp:
+
 2012-01-03  Karl Koscher  <supersat@chromium.org>
 
         Give embedders a chance to handle postMessage calls

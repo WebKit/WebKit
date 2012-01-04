@@ -1388,6 +1388,9 @@
                             ]
                         }],
                         ['OS=="android"', {
+                            'sources/': [
+                                ['include', 'chromium/TestShellLinux\\.cpp$'],
+                            ],
                             'dependencies': [
                                 'ImageDiff#host',
                             ],
