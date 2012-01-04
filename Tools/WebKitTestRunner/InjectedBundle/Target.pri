@@ -55,7 +55,7 @@ load(wtf)
 load(javascriptcore)
 load(webcore)
 
-CONFIG += plugin qtwebkit
+CONFIG += plugin qtwebkit rpath
 
 contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 

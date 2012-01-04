@@ -1,5 +1,17 @@
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Use rpath for WTR's InjectedBundle to pick up the right QtWebKit
+
+        It wasn't really a problem at runtime since the right QtWebKit was
+        already loaded as a dependency of the web process, but the ldd output
+        would still be busted.
+
+        Reviewed by Simon Hausmann.
+
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+
+2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Move use of $$qtLibraryTarget() to a single place
 
         Reviewed by Kenneth Rohde Christiansen.
