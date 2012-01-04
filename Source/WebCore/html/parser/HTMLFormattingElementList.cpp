@@ -135,7 +135,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(Element* new
 {
     ASSERT(remainingCandidates.isEmpty());
 
-    if (!m_entries.size())
+    if (m_entries.size() < kNoahsArkCapacity)
         return;
 
     // Use a vector with inline capacity to avoid a malloc in the common case

@@ -1,3 +1,17 @@
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
+        Minor speed improvement in HTML parser
+        https://bugs.webkit.org/show_bug.cgi?id=75517
+
+        Reviewed by Eric Seidel.
+
+        This improves the html-parser.html benchmark by 0.3%.  I don't think
+        that's actually anything to write home about, but this patch makes me
+        feel better about my life.
+
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+
 2012-01-03  Kentaro Hara  <haraken@chromium.org>
 
         Remove temporary code that we've inserted to implement the [Supplemental] IDL incrementally
