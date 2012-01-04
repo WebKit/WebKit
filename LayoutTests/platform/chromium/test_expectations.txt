@@ -3126,6 +3126,7 @@ BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = PASS CRAS
 
 // Flaky since added by r86478
 BUGCR82881 BUGCR109068 LINUX MAC VISTA XP : http/tests/appcache/interrupted-update.html = PASS TEXT CRASH
+BUGCR109077 LINUX : http/tests/inspector/appcache/appcache-swap.html = CRASH
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
