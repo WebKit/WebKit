@@ -123,6 +123,7 @@ TEST_F(Canvas2DLayerChromiumTest, testFullLifecycle)
     }
 
     RefPtr<Canvas2DLayerChromium> canvas = Canvas2DLayerChromium::create(mainContext.get(), size);
+    canvas->setIsDrawable(true);
     setTextureManager(canvas.get(), textureManager.get());
     canvas->setBounds(IntSize(600, 300));
     canvas->setTextureId(backTextureId);

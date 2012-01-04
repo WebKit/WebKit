@@ -122,11 +122,6 @@ void ContentLayerChromium::idlePaintContentsIfDirty()
         setNeedsCommit();
 }
 
-bool ContentLayerChromium::drawsContent() const
-{
-    return m_delegate && m_delegate->drawsContent() && TiledLayerChromium::drawsContent();
-}
-
 void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
 #if USE(SKIA)

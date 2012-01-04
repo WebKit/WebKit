@@ -37,7 +37,6 @@ public:
     static PassRefPtr<WebContentLayerImpl> create(WebContentLayerClient* contentClient);
 
     void setDrawsContent(bool);
-    virtual bool drawsContent() const;
 
 protected:
     explicit WebContentLayerImpl(WebContentLayerClient* contentClient);

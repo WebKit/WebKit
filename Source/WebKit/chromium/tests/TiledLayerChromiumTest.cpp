@@ -84,6 +84,7 @@ public:
         setTileSize(IntSize(100, 100));
         setTextureFormat(GraphicsContext3D::RGBA);
         setBorderTexelOption(CCLayerTilingData::NoBorderTexels);
+        setIsDrawable(true); // So that we don't get false positives if any of these tests expect to return false from drawsContent() for other reasons.
     }
     virtual ~FakeTiledLayerChromium() { }
 

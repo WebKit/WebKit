@@ -1,5 +1,28 @@
 2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
 
+        [chromium] Push drawsContent and contentsVisible into accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=71209
+
+        Reviewed by James Robinson.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::setDrawsContent):
+        * src/WebContentLayerImpl.h:
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::drawsContent):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        * src/WebLayerImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::FakeTiledLayerChromium):
+
+2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
+
         [chromium] Make sure root damage rect gets passed to renderer
         https://bugs.webkit.org/show_bug.cgi?id=74893
 

@@ -436,10 +436,6 @@ TEST_F(LayerChromiumTest, getRootLayerAfterTreeManipulations)
     EXPECT_EQ(m_grandChild3.get(), m_grandChild3->rootLayer());
 }
 
-// FIXME: need to add a test for getDescendantDrawsContent after resolving
-//        some issues with LayerChromium::descendantDrawsContent().
-//        see discussion on issue 67750
-
 TEST_F(LayerChromiumTest, checkSetNeedsDisplayCausesCorrectBehavior)
 {
     // The semantics for setNeedsDisplay which are tested here:

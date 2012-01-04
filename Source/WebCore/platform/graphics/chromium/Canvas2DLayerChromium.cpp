@@ -83,7 +83,7 @@ void Canvas2DLayerChromium::contentChanged()
 
 bool Canvas2DLayerChromium::drawsContent() const
 {
-    return m_backTextureId && !m_size.isEmpty()
+    return LayerChromium::drawsContent() && m_backTextureId && !m_size.isEmpty()
         && m_context && (m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
 }
 

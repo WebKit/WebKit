@@ -188,6 +188,9 @@ void CCLayerImpl::writeIndent(TextStream& ts, int indent)
 void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);
+    ts << "layer ID: " << m_layerId << "\n";
+
+    writeIndent(ts, indent);
     ts << "bounds: " << bounds().width() << ", " << bounds().height() << "\n";
 
     if (m_targetRenderSurface) {
@@ -201,6 +204,9 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     ts << m_drawTransform.m21() << ", " << m_drawTransform.m22() << ", " << m_drawTransform.m23() << ", " << m_drawTransform.m24() << "  //  ";
     ts << m_drawTransform.m31() << ", " << m_drawTransform.m32() << ", " << m_drawTransform.m33() << ", " << m_drawTransform.m34() << "  //  ";
     ts << m_drawTransform.m41() << ", " << m_drawTransform.m42() << ", " << m_drawTransform.m43() << ", " << m_drawTransform.m44() << "\n";
+
+    writeIndent(ts, indent);
+    ts << "drawsContent: " << (m_drawsContent ? "yes" : "no") << "\n";
 }
 
 void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter* layerSorter)

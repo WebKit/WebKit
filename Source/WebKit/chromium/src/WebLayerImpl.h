@@ -38,7 +38,6 @@ public:
 protected:
     WebLayerImpl();
     virtual ~WebLayerImpl();
-    virtual bool drawsContent() const;
     virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
 };
 

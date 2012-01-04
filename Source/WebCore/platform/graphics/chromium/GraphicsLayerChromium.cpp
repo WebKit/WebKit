@@ -218,11 +218,24 @@ void GraphicsLayerChromium::setMasksToBounds(bool masksToBounds)
 
 void GraphicsLayerChromium::setDrawsContent(bool drawsContent)
 {
+    // Note carefully this early-exit is only correct because we also properly initialize
+    // LayerChromium::isDrawable() whenever m_contentsLayer is set to a new layer in setupContentsLayer().
     if (drawsContent == m_drawsContent)
         return;
 
     GraphicsLayer::setDrawsContent(drawsContent);
-    updateLayerDrawsContent();
+    updateLayerIsDrawable();
+}
+
+void GraphicsLayerChromium::setContentsVisible(bool contentsVisible)
+{
+    // Note carefully this early-exit is only correct because we also properly initialize
+    // LayerChromium::isDrawable() whenever m_contentsLayer is set to a new layer in setupContentsLayer().
+    if (contentsVisible == m_contentsVisible)
+        return;
+
+    GraphicsLayer::setContentsVisible(contentsVisible);
+    updateLayerIsDrawable();
 }
 
 void GraphicsLayerChromium::setBackgroundColor(const Color& color)
@@ -316,7 +329,6 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
         if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForImage) {
             RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create(this);
             setupContentsLayer(imageLayer.get());
-            m_contentsLayer = imageLayer;
             m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
         }
@@ -344,7 +356,6 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
         platformLayer->setDelegate(this);
         if (m_contentsLayer.get() != platformLayer) {
             setupContentsLayer(platformLayer);
-            m_contentsLayer = platformLayer;
             m_contentsLayerPurpose = ContentsLayerForCanvas;
             childrenChanged = true;
         }
@@ -369,7 +380,6 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
     if (layer) {
         if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForVideo) {
             setupContentsLayer(layer);
-            m_contentsLayer = layer;
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
@@ -568,8 +578,18 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
     updateNames();
 }
 
-void GraphicsLayerChromium::updateLayerDrawsContent()
+void GraphicsLayerChromium::updateLayerIsDrawable()
 {
+    // For the rest of the accelerated compositor code, there is no reason to make a
+    // distinction between drawsContent and contentsVisible. So, for m_layer, these two
+    // flags are combined here. m_contentsLayer shouldn't receive the drawsContent flag
+    // so it is only given contentsVisible.
+
+    m_layer->setIsDrawable(m_drawsContent && m_contentsVisible);
+
+    if (m_contentsLayer)
+        m_contentsLayer->setIsDrawable(m_contentsVisible);
+
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
 
@@ -626,11 +646,13 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
 
         m_contentsLayer->setAnchorPoint(FloatPoint(0, 0));
 
+        // It is necessary to update setIsDrawable as soon as we receive the new contentsLayer, for
+        // the correctness of early exit conditions in setDrawsContent() and setContentsVisible().
+        m_contentsLayer->setIsDrawable(m_contentsVisible);
+
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
         m_layer->insertChild(m_contentsLayer.get(), 0);
-
-        updateContentsRect();
 
         if (showDebugBorders()) {
             m_contentsLayer->setDebugBorderColor(Color(0, 0, 128, 180));
@@ -653,11 +675,6 @@ void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
     updateContentsScale();
     if (m_layer)
         m_layer->pageScaleChanged();
-}
-
-bool GraphicsLayerChromium::drawsContent() const
-{
-    return GraphicsLayer::drawsContent();
 }
 
 void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)

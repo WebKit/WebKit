@@ -1148,6 +1148,12 @@ BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
 // and then baselined if necessary.
 // ----------------------------------------------------------------------------
 
+// These four expectations can be removed after verifying the correctness / rebaselining on all platforms.
+BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-webgl-layer.html = IMAGE
+BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-canvas2d-layer.html = IMAGE
+BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-video-layer.html = IMAGE
+BUGWK71209 LINUX WIN : compositing/visibility/visibility-image-layers.html = IMAGE
+
 // This test isn't hanging, it just takes 12-13 seconds to run.
 BUGCR30536 SLOW LINUX WIN : http/tests/misc/acid3.html = FAIL // See "SVG Tests" section too
 BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = IMAGE+TEXT PASS
@@ -3660,8 +3666,6 @@ BUGWK70988 SNOWLEOPARD : fast/text/khmer-crash.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragment.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
-
-BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMAGE
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL

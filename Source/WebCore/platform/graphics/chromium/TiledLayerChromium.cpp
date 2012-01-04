@@ -150,7 +150,7 @@ void TiledLayerChromium::setBorderTexelOption(CCLayerTilingData::BorderTexelOpti
 
 bool TiledLayerChromium::drawsContent() const
 {
-    if (!m_delegate)
+    if (!LayerChromium::drawsContent() || !m_delegate)
         return false;
 
     if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)

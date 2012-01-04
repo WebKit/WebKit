@@ -59,7 +59,6 @@ class GraphicsContext3D;
 class CCLayerDelegate {
 public:
     virtual ~CCLayerDelegate() { }
-    virtual bool drawsContent() const = 0;
     virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
 };
 
@@ -154,11 +153,13 @@ public:
 
     void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
+    void setIsDrawable(bool);
+
     void setReplicaLayer(LayerChromium*);
     LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
-    virtual bool drawsContent() const { return false; }
+    virtual bool drawsContent() const { return m_isDrawable; }
     virtual void paintContentsIfDirty() { }
     virtual void idlePaintContentsIfDirty() { }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
@@ -263,6 +264,7 @@ private:
     float m_debugBorderWidth;
     float m_opacity;
     float m_anchorPointZ;
+    bool m_isDrawable;
     bool m_masksToBounds;
     bool m_opaque;
     bool m_doubleSided;

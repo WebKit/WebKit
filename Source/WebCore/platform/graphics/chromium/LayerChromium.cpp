@@ -65,6 +65,7 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     , m_debugBorderWidth(0)
     , m_opacity(1.0)
     , m_anchorPointZ(0)
+    , m_isDrawable(false)
     , m_masksToBounds(false)
     , m_opaque(false)
     , m_doubleSided(true)
@@ -377,6 +378,15 @@ void LayerChromium::setDoubleSided(bool doubleSided)
     if (m_doubleSided == doubleSided)
         return;
     m_doubleSided = doubleSided;
+    setNeedsCommit();
+}
+
+void LayerChromium::setIsDrawable(bool isDrawable)
+{
+    if (m_isDrawable == isDrawable)
+        return;
+
+    m_isDrawable = isDrawable;
     setNeedsCommit();
 }
 

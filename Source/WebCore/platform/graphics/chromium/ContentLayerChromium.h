@@ -57,7 +57,6 @@ protected:
 
 private:
     virtual void cleanupResources();
-    virtual bool drawsContent() const;
     virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 

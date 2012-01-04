@@ -68,6 +68,7 @@ public:
     virtual void setPreserves3D(bool);
     virtual void setMasksToBounds(bool);
     virtual void setDrawsContent(bool);
+    virtual void setContentsVisible(bool);
     virtual void setMaskLayer(GraphicsLayer*);
 
     virtual void setBackgroundColor(const Color&);
@@ -97,7 +98,6 @@ public:
     virtual void deviceOrPageScaleFactorChanged();
 
     // The following functions implement the CCLayerDelegate interface.
-    virtual bool drawsContent() const;
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
 
     // Exposed for tests.
@@ -117,7 +117,7 @@ private:
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateLayerPreserves3D();
-    void updateLayerDrawsContent();
+    void updateLayerIsDrawable();
     void updateLayerBackgroundColor();
 
     void updateContentsImage();

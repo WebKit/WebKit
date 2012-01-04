@@ -51,7 +51,7 @@ WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl()
 
 bool WebExternalTextureLayerImpl::drawsContent() const
 {
-    return !!textureId();
+    return !!textureId() && LayerChromium::drawsContent();
 }
 
 void WebExternalTextureLayerImpl::paintContents(GraphicsContext&, const IntRect&)

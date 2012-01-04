@@ -37,7 +37,6 @@ namespace WebCore {
 class PluginLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<PluginLayerChromium> create(CCLayerDelegate* = 0);
-    virtual bool drawsContent() const { return true; }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();

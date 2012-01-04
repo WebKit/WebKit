@@ -1,5 +1,53 @@
 2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
 
+        [chromium] Push drawsContent and contentsVisible into accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=71209
+
+        Reviewed by James Robinson.
+
+        Tests: compositing/visibility/visibility-simple-canvas2d-layer.html
+               compositing/visibility/visibility-simple-video-layer.html
+               compositing/visibility/visibility-simple-webgl-layer.html
+
+        Rebaselined compositing/visibility/visibility-image-layers.html
+
+        The CSS visibility property was not being properly obeyed by many
+        specialized layer types in the accelerated compositor. The root of
+        the problem was that drawsContent and contentsVisible flags were
+        not properly propagated into the compositor. This patch removes
+        the drawsContent() callback, and instead makes sure that
+        drawsContent and contentsVisible are "pushed" through the
+        accelerated compositor.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setDrawsContent):
+        (WebCore::GraphicsLayerChromium::setContentsVisible):
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        (WebCore::GraphicsLayerChromium::setContentsToMedia):
+        (WebCore::GraphicsLayerChromium::updateLayerIsDrawable):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setIsDrawable):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::drawsContent):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::drawsContent):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::drawsContent):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::dumpLayerProperties):
+
+2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
+
         [chromium] Make sure root damage rect gets passed to renderer
         https://bugs.webkit.org/show_bug.cgi?id=74893
 

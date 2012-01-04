@@ -919,7 +919,6 @@ public:
         m_test->layerTreeHost()->rootLayer()->setOpacity(0);
     }
 
-    virtual bool drawsContent() const { return true; }
     virtual bool preserves3D() { return false; }
 
 private:
@@ -963,6 +962,7 @@ private:
         , m_updateCount(0)
     {
         setBounds(IntSize(10, 10));
+        setIsDrawable(true);
     }
 
     int m_paintContentsCount;

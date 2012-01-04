@@ -51,8 +51,6 @@ public:
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
-    virtual bool drawsContent() const { return true; }
-
 private:
     VideoLayerChromium(CCLayerDelegate*, VideoFrameProvider*);
 
