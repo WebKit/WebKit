@@ -78,7 +78,6 @@ public:
     }
     
     void invalidateCaches();
-    void invalidateCachesThatDependOnAttributes();
 
 #if ENABLE(MICRODATA)
     void invalidateMicrodataItemListCaches();
