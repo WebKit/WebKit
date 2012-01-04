@@ -95,10 +95,8 @@ void RenderTableSection::destroy()
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild) {
-        if (RenderObject* afterContentRenderer = findAfterContentRenderer())
-            beforeChild = anonymousContainer(afterContentRenderer);
-    }
+    if (!beforeChild)
+        beforeChild = findAfterContentRenderer();
 
     if (!child->isTableRow()) {
         RenderObject* last = beforeChild;
