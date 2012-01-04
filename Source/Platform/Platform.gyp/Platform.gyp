@@ -34,7 +34,7 @@
     ],
     'targets': [
         {
-            'target_name': 'platform',
+            'target_name': 'webkit_platform',
             'type': 'static_library',
             'dependencies': [
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',

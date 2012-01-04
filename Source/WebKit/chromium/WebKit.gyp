@@ -67,7 +67,7 @@
             'variables': { 'enable_wexit_time_destructors': 1, },
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                '../../Platform/Platform.gyp/Platform.gyp:platform', # actually WebCore should depend on this
+                '../../Platform/Platform.gyp/Platform.gyp:webkit_platform', # actually WebCore should depend on this
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
