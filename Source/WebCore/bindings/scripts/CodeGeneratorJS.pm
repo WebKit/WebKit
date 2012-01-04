@@ -910,23 +910,9 @@ sub GenerateHeader
             } elsif (($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"})) {
                 my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
                 if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                    # FIXME(haraken): This is a temporal hack to enable the [Supplemental] IDL
-                    # on all build systems incrementally. This hack is going to be removed after all build
-                    # systems support the [Supplemental] IDL. (See bug 74599)
-                    if ($methodName eq "webSocket" or $methodName eq "webkitAudioContext") {
-                        push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
-                    }
-
                     push(@headerContent, "    JSC::JSValue " . $methodName . "(" . $interfaceName . "*, JSC::ExecState*) const;\n");
                 } else {
                     push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
-
-                    # FIXME(haraken): This is a temporal hack to enable the [Supplemental] IDL
-                    # on all build systems incrementally. This hack is going to be removed after all build
-                    # systems support the [Supplemental] IDL. (See bug 74599)
-                    if ($methodName eq "webSocket" or $methodName eq "webkitAudioContext") {
-                        push(@headerContent, "    JSC::JSValue " . $methodName . "(" . $interfaceName . "*, JSC::ExecState*) const;\n");
-                    }
                 }
             } elsif (($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"})) {
                 if ($attribute->type !~ /^readonly/) {

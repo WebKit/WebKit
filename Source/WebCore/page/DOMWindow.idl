@@ -523,9 +523,6 @@ module window {
         attribute Float64ArrayConstructor Float64Array; // Usable with new operator
         attribute DataViewConstructor DataView; // Usable with new operator
 
-        attribute [Supplemented, JSCCustomGetter, Conditional=WEB_AUDIO, EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
-        attribute [Supplemented, Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants
-
         // Event Constructors
         attribute EventConstructor Event;
         attribute BeforeLoadEventConstructor BeforeLoadEvent;
@@ -551,10 +548,7 @@ module window {
         attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
         attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
-        attribute [Supplemented, Conditional=WEB_SOCKETS] CloseEventConstructor CloseEvent;
         attribute StorageEventConstructor StorageEvent;
-        attribute [Supplemented, Conditional=WEB_AUDIO] AudioProcessingEventConstructor AudioProcessingEvent;
-        attribute [Supplemented, Conditional=WEB_AUDIO] OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
         attribute [Conditional=INPUT_SPEECH] SpeechInputEventConstructor SpeechInputEvent;
         attribute [Conditional=MEDIA_STREAM] MediaStreamEventConstructor MediaStreamEvent;
         attribute [Conditional=WEBGL] WebGLContextEventConstructor WebGLContextEvent;
@@ -604,10 +598,6 @@ module window {
 
 #if defined(ENABLE_SHARED_WORKERS) && ENABLE_SHARED_WORKERS
         attribute [JSCCustomGetter, EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
-#endif
-
-#if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
-        attribute [Supplemented, JSCCustomGetter, EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK

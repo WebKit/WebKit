@@ -504,44 +504,6 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 }
 #endif
 
-// FIXME(haraken): This method will be removed, after all build systems support
-// the [Supplemental] IDL and use settingsForWindowWebAudio() in JSDOMWindowWebAudioCustom.cpp
-// and settingsForWindowWebSocket() in JSDOMWindowWebSocketCustom.cpp (See bug 74599)
-#if ENABLE(WEB_AUDIO) || ENABLE(WEB_SOCKETS)
-static Settings* settingsForWindow(const JSDOMWindow* window)
-{
-    ASSERT(window);
-    if (Frame* frame = window->impl()->frame())
-        return frame->settings();
-    return 0;
-}
-#endif
-
-// FIXME(haraken): This method will be removed, after all build systems support
-// the [Supplemental] IDL and use webkitAudioContext() in JSDOMWindowWebAudioCustom.cpp.
-// (See bug 74599)
-#if ENABLE(WEB_AUDIO)
-JSValue JSDOMWindow::webkitAudioContext(ExecState* exec) const
-{
-    Settings* settings = settingsForWindow(this);
-    if (settings && settings->webAudioEnabled())
-        return getDOMConstructor<JSAudioContextConstructor>(exec, this);
-    return jsUndefined();
-}
-#endif
-
-// FIXME(haraken): This method will be removed, after all build systems support
-// the [Supplemental] IDL and use webSocket() in JSDOMWindowWebSocketCustom.cpp.
-// (See bug 74599)
-#if ENABLE(WEB_SOCKETS)
-JSValue JSDOMWindow::webSocket(ExecState* exec) const
-{
-    if (!settingsForWindow(this))
-        return jsUndefined();
-    return getDOMConstructor<JSWebSocketConstructor>(exec, this);
-}
-#endif
-
 // Custom functions
 
 JSValue JSDOMWindow::open(ExecState* exec)
