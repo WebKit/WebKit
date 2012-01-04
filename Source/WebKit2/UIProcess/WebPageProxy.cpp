@@ -3321,21 +3321,29 @@ void WebPageProxy::showNotification(const String& title, const String& body, con
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)
 {
+    if (frame->isDisplayingPDFDocument())
+        return 0;
     return m_uiClient.headerHeight(this, frame);
 }
 
 float WebPageProxy::footerHeight(WebFrameProxy* frame)
 {
+    if (frame->isDisplayingPDFDocument())
+        return 0;
     return m_uiClient.footerHeight(this, frame);
 }
 
 void WebPageProxy::drawHeader(WebFrameProxy* frame, const FloatRect& rect)
 {
+    if (frame->isDisplayingPDFDocument())
+        return;
     m_uiClient.drawHeader(this, frame, rect);
 }
 
 void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 {
+    if (frame->isDisplayingPDFDocument())
+        return;
     m_uiClient.drawFooter(this, frame, rect);
 }
 

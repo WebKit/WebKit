@@ -1,3 +1,18 @@
+2012-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        First sentence is missing or clipped when printing a inline PDF
+        https://bugs.webkit.org/show_bug.cgi?id=75514
+        <rdar://problem/10640680>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::headerHeight):
+        (WebKit::WebPageProxy::footerHeight):
+        (WebKit::WebPageProxy::drawHeader):
+        (WebKit::WebPageProxy::drawFooter):
+        Do not ask the client about headers and footers when printing a PDF.
+
 2012-01-04  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Fix test regressions after r104025
