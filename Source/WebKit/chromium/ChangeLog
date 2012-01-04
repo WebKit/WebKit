@@ -1,3 +1,14 @@
+2012-01-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104052.
+        http://trac.webkit.org/changeset/104052
+        https://bugs.webkit.org/show_bug.cgi?id=75574
+
+        Breaks win builder (Requested by enne on #webkit).
+
+        * WebKit.gypi:
+        * tests/CCTiledLayerImplTest.cpp: Removed.
+
 2012-01-04  Dmitry Lomov  <dslomov@google.com>
 
         Unreviewed:[Chromium]Disable WebPageNewSerializeTest.CSSResources and WebPageNewSerializeTest.TestMHTMLEncoding.
