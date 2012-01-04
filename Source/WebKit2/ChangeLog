@@ -1,3 +1,21 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Scrollbars are drawn behind the window resize grip
+        https://bugs.webkit.org/show_bug.cgi?id=75384
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseNotifyResizerSizeForWindow): Get the size of the
+        main window resize grip and send it to the page proxy if it
+        overlaps with the view.
+        (toplevelWindowResizeGripVisibilityChanged): Call
+        webkitWebViewBaseNotifyResizerSizeForWindow().
+        (webkitWebViewBaseRealize): Get the toplevel window and connect to
+        notify::resize-grip-visible signal.
+        (webkitWebViewBaseSizeAllocate): Call
+        webkitWebViewBaseNotifyResizerSizeForWindow().
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed

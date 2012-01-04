@@ -68,9 +68,36 @@ struct _WebKitWebViewBasePrivate {
     CString tooltipText;
     GtkDragAndDropHelper dragAndDropHelper;
     DragIcon dragIcon;
+    IntSize resizerSize;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
+
+static void webkitWebViewBaseNotifyResizerSizeForWindow(WebKitWebViewBase* webViewBase, GtkWindow* window)
+{
+    gboolean resizerVisible;
+    g_object_get(G_OBJECT(window), "resize-grip-visible", &resizerVisible, NULL);
+
+    IntSize resizerSize;
+    if (resizerVisible) {
+        GdkRectangle resizerRect;
+        gtk_window_get_resize_grip_area(window, &resizerRect);
+        GdkRectangle allocation;
+        gtk_widget_get_allocation(GTK_WIDGET(webViewBase), &allocation);
+        if (gdk_rectangle_intersect(&resizerRect, &allocation, 0))
+            resizerSize = IntSize(resizerRect.width, resizerRect.height);
+    }
+
+    if (resizerSize != webViewBase->priv->resizerSize) {
+        webViewBase->priv->resizerSize = resizerSize;
+        webViewBase->priv->pageProxy->setWindowResizerSize(resizerSize);
+    }
+}
+
+static void toplevelWindowResizeGripVisibilityChanged(GObject* object, GParamSpec*, WebKitWebViewBase* webViewBase)
+{
+    webkitWebViewBaseNotifyResizerSizeForWindow(webViewBase, GTK_WINDOW(object));
+}
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
@@ -110,6 +137,13 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webView->priv;
     gtk_im_context_set_client_window(priv->imContext.get(), window);
+
+    GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
+    if (gtk_widget_is_toplevel(toplevel) && GTK_IS_WINDOW(toplevel)) {
+        webkitWebViewBaseNotifyResizerSizeForWindow(webView, GTK_WINDOW(toplevel));
+        g_signal_connect(toplevel, "notify::resize-grip-visible",
+                         G_CALLBACK(toplevelWindowResizeGripVisibilityChanged), webView);
+    }
 }
 
 static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* widget)
@@ -175,6 +209,10 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->size_allocate(widget, allocation);
     priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
+
+    GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
+    if (gtk_widget_is_toplevel(toplevel) && GTK_IS_WINDOW(toplevel))
+        webkitWebViewBaseNotifyResizerSizeForWindow(webViewBase, GTK_WINDOW(toplevel));
 }
 
 static gboolean webkitWebViewBaseFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
