@@ -1,6 +1,5 @@
 <html>
 <head>
-<script src="resources/clearLocalStorage.js"></script>
 <script>
 
 if (window.layoutTestController) {
@@ -20,6 +19,7 @@ function runTest()
         log("window.localStorage DOES NOT exist");
         return;
     }
+    localStorage.clear();
     
     window.log = log;
     

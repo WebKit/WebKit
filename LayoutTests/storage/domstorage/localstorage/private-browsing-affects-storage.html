@@ -1,6 +1,5 @@
 <html>
 <head>
-<script src="resources/clearLocalStorage.js"></script>
 <script>
 
 if (window.layoutTestController)
@@ -21,6 +20,7 @@ function runTest()
         log("Test only designed to be run under DumpRenderTree");
         return;
     }
+    localStorage.clear();
     
     localStorage.setItem("testItem", "InitialValue");    
     layoutTestController.setPrivateBrowsingEnabled(true);
