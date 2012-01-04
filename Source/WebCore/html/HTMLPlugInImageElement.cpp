@@ -30,6 +30,7 @@
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
@@ -75,9 +76,14 @@ bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
     if (document()->frame()->page()->frameCount() >= Page::maxNumberOfFrames)
         return false;
 
+    KURL completeURL = document()->completeURL(url);
+    
+    if (contentFrame() && protocolIsJavaScript(completeURL)
+        && !document()->securityOrigin()->canAccess(contentDocument()->securityOrigin()))
+        return false;
+    
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
-    KURL completeURL = document()->completeURL(url);
     bool foundSelfReference = false;
     for (Frame* frame = document()->frame(); frame; frame = frame->tree()->parent()) {
         if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
