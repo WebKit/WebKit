@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
+#include "BlobRegistryImpl.h"
 #include <BlackBerryPlatformClient.h>
 #include <network/NetworkRequest.h>
 #include <wtf/text/CString.h>
@@ -108,8 +109,20 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                     else if (element.m_type == FormDataElement::encodedFile)
                         platformRequest.addMultipartFilename(element.m_filename.characters(), element.m_filename.length());
 #if ENABLE(BLOB)
-                    else if (element.m_type == FormDataElement::encodedBlob)
-                        continue; // We don't support blob now!
+                    else if (element.m_type == FormDataElement::encodedBlob) {
+                        RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+                        if (blobData) {
+                            for (size_t j = 0; j < blobData->items().size(); ++j) {
+                                const BlobDataItem& blobItem = blobData->items()[j];
+                                if (blobItem.type == BlobDataItem::Data)
+                                    platformRequest.addMultipartData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
+                                else {
+                                    ASSERT(blobItem.type == BlobDataItem::File);
+                                    platformRequest.addMultipartFilename(blobItem.path.characters(), blobItem.path.length(), blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
+                                }
+                            }
+                        }
+                    }
 #endif
                     else
                         ASSERT_NOT_REACHED(); // unknown type

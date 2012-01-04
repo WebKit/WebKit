@@ -1,3 +1,18 @@
+2012-01-03  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Add support of blob form data to the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=75218
+
+        Pass FormDataElement::encodedBlob type of form data to the BlackBerry
+        platform request to support blob data and blob file range.
+
+        Reviewed by George Staikos.
+
+        The port can't be built now, no new tests so far.
+
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp:
+        (WebCore::ResourceRequest::initializePlatformRequest):
+
 2012-01-03  Adam Barth  <abarth@webkit.org>
 
         Two null crashes in Treebuilder
