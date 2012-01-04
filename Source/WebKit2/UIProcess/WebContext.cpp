@@ -67,7 +67,8 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
+#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
 using namespace WebCore;
 
@@ -434,7 +435,9 @@ void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceU
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == page);
-    
+    MESSAGE_CHECK_URL(sourceURLString);
+    MESSAGE_CHECK_URL(destinationURLString);
+
     m_historyClient.didPerformClientRedirect(this, page, sourceURLString, destinationURLString, frame);
 }
 
@@ -447,7 +450,9 @@ void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceU
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == page);
-    
+    MESSAGE_CHECK_URL(sourceURLString);
+    MESSAGE_CHECK_URL(destinationURLString);
+
     m_historyClient.didPerformServerRedirect(this, page, sourceURLString, destinationURLString, frame);
 }
 
@@ -460,6 +465,7 @@ void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, con
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == page);
+    MESSAGE_CHECK_URL(url);
 
     m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
 }
@@ -550,9 +556,11 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
 
 void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)
 {
+    MESSAGE_CHECK_URL(urlString);
+
     String newMimeType = mimeType.lower();
 
-    PluginInfoStore::Plugin plugin = pluginInfoStore().findPlugin(newMimeType, KURL(ParsedURLString, urlString));
+    PluginInfoStore::Plugin plugin = pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
     if (!plugin.path)
         return;
 

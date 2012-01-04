@@ -104,6 +104,12 @@ public:
 
     void registerNewWebBackForwardListItem(WebBackForwardListItem*);
 
+    void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
+    void willLoadHTMLStringWithBaseURL(const String&);
+
+    bool checkURLReceivedFromWebProcess(const String&);
+    bool checkURLReceivedFromWebProcess(const WebCore::KURL&);
+
     // FIXME: This variant of send is deprecated. All clients should move to an overload that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
 
@@ -174,6 +180,9 @@ private:
     RefPtr<ThreadLauncher> m_threadLauncher;
 
     RefPtr<WebContext> m_context;
+
+    bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
+    HashSet<String> m_localPathsWithAssumedReadAccess;
 
     HashMap<uint64_t, WebPageProxy*> m_pageMap;
     WebFrameProxyMap m_frameMap;
