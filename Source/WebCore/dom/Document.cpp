@@ -544,6 +544,10 @@ Document::~Document()
             (*m_pageGroupUserSheets)[i]->clearOwnerNode();
     }
 
+#if ENABLE(FULLSCREEN_API)
+    m_fullScreenChangeEventTargetQueue.clear();
+#endif
+
     deleteRetiredCustomFonts();
 
     m_weakReference->clear();
