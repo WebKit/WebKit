@@ -914,3 +914,7 @@ editing/selection/drag-in-iframe.html
 # https://bugs.webkit.org/show_bug.cgi?id=74937
 editing/input/caret-at-the-edge-of-contenteditable.html
 editing/input/reveal-caret-of-multiline-contenteditable.html
+
+# [Qt][WK2]http/tests/xmlhttprequest/workers/abort-exception-assert.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=75540
+http/tests/xmlhttprequest/workers/abort-exception-assert.html
