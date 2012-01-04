@@ -526,7 +526,7 @@ void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)
     task.nextChild = 0;
     findFosterSite(task);
     task.child = node;
-    executeTask(task);
+    m_attachmentQueue.append(task);
 }
 
 }

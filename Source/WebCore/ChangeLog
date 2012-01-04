@@ -1,3 +1,16 @@
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
+        Fix assert when foster parenting self-closing elements
+        https://bugs.webkit.org/show_bug.cgi?id=75527
+
+        Unreviewed.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::fosterParent):
+            - We can't execute this task immediately because the code for
+              self-closing elements wants to set the self-closing flag.
+              Instead, we queue the task.
+
 2012-01-03  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Need to support credentials in the URL

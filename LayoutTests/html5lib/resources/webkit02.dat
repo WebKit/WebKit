@@ -104,6 +104,16 @@
 |       "test"
 
 #data
+<table><input>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <input>
+|     <table>
+
+#data
 <b><em><dcell><postfield><postfield><postfield><postfield><missing_glyph><missing_glyph><missing_glyph><missing_glyph><hkern><aside></b></em>
 #errors
 #document-fragment
