@@ -1,5 +1,18 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 95926
+
+    2011-09-25  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10156263> ASSERT in WebCore::FrameView::scheduleRelayoutOfSubtree
+
+            Reviewed by Sam Weinig.
+
+            * fast/dynamic/subtree-unrooted-expected.txt: Added.
+            * fast/dynamic/subtree-unrooted.html: Added.
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 95924
 
     2011-09-24  Abhishek Arya  <inferno@chromium.org>
