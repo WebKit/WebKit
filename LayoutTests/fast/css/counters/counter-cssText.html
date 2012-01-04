@@ -1,0 +1,39 @@
+<html>
+<head>
+<link rel=stylesheet href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+body {
+    counter-reset: section;
+}
+h1 {
+    counter-increment: section;
+}
+h2:before {
+    content: counter(section);
+}
+h2:after {
+    content: counters(section, ":", decimal);
+}
+h3:before {
+    content: counter(section, lower-roman);
+}
+h3:after {
+    content: counters(section, ",", upper-roman);
+}
+</style>
+</head>
+<p id=description></p>
+<div id=console></div>
+<script>
+description("Test the cssText output of counter-valued CSSPrimitiveValues");
+var rules = document.styleSheets[1].cssRules;
+shouldBeEqualToString("rules[2].style.cssText", "content: counter(section, decimal); ");
+shouldBeEqualToString("rules[3].style.cssText", "content: counters(section, ':', decimal); ");
+shouldBeEqualToString("rules[4].style.cssText", "content: counter(section, lower-roman); ");
+shouldBeEqualToString("rules[5].style.cssText", "content: counters(section, ',', upper-roman); ");
+window.successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
