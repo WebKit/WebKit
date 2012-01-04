@@ -214,7 +214,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     WebGLProgram* program = toWebGLProgram(exec->argument(0));
     if (exec->hadException())
         return jsNull();
-    Vector<WebGLShader*> shaders;
+    Vector<RefPtr<WebGLShader> > shaders;
     bool succeed = context->getAttachedShaders(program, shaders, ec);
     if (ec) {
         setDOMException(exec, ec);
@@ -224,7 +224,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
         return jsNull();
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < shaders.size(); ++ii)
-        list.append(toJS(exec, globalObject(), shaders[ii]));
+        list.append(toJS(exec, globalObject(), shaders[ii].get()));
     return constructArray(exec, globalObject(), list);
 }
 
