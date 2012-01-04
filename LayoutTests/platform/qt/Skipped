@@ -2540,11 +2540,6 @@ fast/inline/nested-text-descendants.html
 fast/css/absolute-inline-alignment.html
 fast/css/absolute-inline-alignment-2.html
 
-# Remove unnecessary [Custom] attribute in CanvasRenderingContext2D.idl
-# https://bugs.webkit.org/show_bug.cgi?id=75376
-canvas/philip/tests/2d.pattern.image.string.html
-canvas/philip/tests/2d.pattern.image.undefined.html
-
 # fast/dom/htmlcollection-zombies.html fails on GTK and on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=75431
 fast/dom/htmlcollection-zombies.html

@@ -1,1 +1,1 @@
-Passed
+Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: Type error

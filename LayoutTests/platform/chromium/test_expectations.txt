@@ -2025,11 +2025,9 @@ BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.get.type.html = TEXT
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // Update canvas/philip in WK r71481
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
@@ -2040,7 +2038,6 @@ BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 BUGWK48288 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT

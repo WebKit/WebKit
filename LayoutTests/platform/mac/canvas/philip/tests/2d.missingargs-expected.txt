@@ -25,7 +25,6 @@ Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTE
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
-Failed assertion: expected exception of type TypeError, got: Error: SYNTAX_ERR: DOM Exception 12
 Failed assertion: should throw exception of type TypeError: ctx.clearRect()
 Failed assertion: should throw exception of type TypeError: ctx.clearRect(0)
 Failed assertion: should throw exception of type TypeError: ctx.clearRect(0, 0)
@@ -69,8 +68,6 @@ Failed assertion: should throw exception of type TypeError: ctx.arc(0, 0, 1, 0)
 Failed assertion: should throw exception of type TypeError: ctx.isPointInPath()
 Failed assertion: should throw exception of type TypeError: ctx.isPointInPath(0)
 Failed assertion: should throw exception of type TypeError: ctx.measureText()
-Failed assertion: should throw exception of type TypeError: ctx.createImageData()
-Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
