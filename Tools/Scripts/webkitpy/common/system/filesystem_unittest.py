@@ -60,6 +60,11 @@ class GenericFileSystemTests(object):
         self.fs.chdir(self.orig_cwd)
         self.generic_test_dir = None
 
+    def test_file_path_as_url(self):
+        fs = FileSystem()
+        self.assertEqual(fs.file_path_as_url('/foo'),
+                         'file:///foo')
+
     def test_glob__trailing_asterisk(self):
         self.fs.chdir(self.generic_test_dir)
         self.assertEquals(set(self.fs.glob('fo*')), set(['foo.txt', 'foobar', 'foodir']))

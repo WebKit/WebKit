@@ -40,6 +40,7 @@ import shutil
 import sys
 import tempfile
 import time
+from urllib import pathname2url
 
 from webkitpy.common.system import ospath
 
@@ -81,6 +82,9 @@ class FileSystem(object):
 
     def exists(self, path):
         return os.path.exists(path)
+
+    def file_path_as_url(self, path):
+        return 'file://' + pathname2url(path)
 
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
         """Return the list of all files under the given path in topdown order.

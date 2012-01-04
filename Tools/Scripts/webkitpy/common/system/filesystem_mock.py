@@ -31,6 +31,7 @@ import errno
 import hashlib
 import os
 import re
+from urllib import pathname2url
 
 from webkitpy.common.system import path
 from webkitpy.common.system import ospath
@@ -116,6 +117,9 @@ class MockFileSystem(object):
 
     def exists(self, path):
         return self.isfile(path) or self.isdir(path)
+
+    def file_path_as_url(self, path):
+        return 'file://' + pathname2url(path)
 
     def files_under(self, path, dirs_to_skip=[], file_filter=None):
         def filter_all(fs, dirpath, basename):

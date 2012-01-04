@@ -46,7 +46,7 @@ class WinPortTest(port_testcase.PortTestCase):
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK: user.open_url: test.html\n"
+        expected_stderr = "MOCK: user.open_url: file://...\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
 
     def test_detect_version(self):

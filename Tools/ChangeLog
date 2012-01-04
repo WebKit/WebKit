@@ -1,3 +1,23 @@
+2012-01-03  Jochen Eisinger  <jochen@chromium.org>
+
+        When showing results.html pass a correct URL to webbrowser.open
+        https://bugs.webkit.org/show_bug.cgi?id=75438
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (file_path_as_url):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (file_path_as_url):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (test_file_path_as_url):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (show_results_html_file):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (test_show_results_html_file):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (test_results_directory_relative):
+
 2012-01-03  Ojan Vafai  <ojan@chromium.org>
 
         shrink the header on the flakiness dashboard

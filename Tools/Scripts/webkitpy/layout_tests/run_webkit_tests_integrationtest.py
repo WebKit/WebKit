@@ -431,7 +431,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(res, unexpected_tests_count)
         self.assertFalse(out.empty())
         self.assertFalse(err.empty())
-        self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
+        self.assertEqual(user.opened_urls, ['file:///tmp/layout-test-results/results.html'])
 
     def test_missing_and_unexpected_results(self):
         # Test that we update expectations in place. If the expectation
@@ -604,7 +604,7 @@ class MainTest(unittest.TestCase):
         with host.filesystem.mkdtemp() as tmpdir:
             res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
                                               tests_included=True, host=host)
-            self.assertEqual(user.opened_urls, [host.filesystem.join(tmpdir, 'results.html')])
+            self.assertEqual(user.opened_urls, [host.filesystem.file_path_as_url(host.filesystem.join(tmpdir, 'results.html'))])
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
@@ -612,7 +612,7 @@ class MainTest(unittest.TestCase):
 
         # This is the default location.
         res, out, err, user = logging_run(tests_included=True)
-        self.assertEqual(user.opened_urls, ['/tmp/layout-test-results/results.html'])
+        self.assertEqual(user.opened_urls, ['file:///tmp/layout-test-results/results.html'])
 
     def test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
@@ -622,7 +622,7 @@ class MainTest(unittest.TestCase):
         host.filesystem.chdir('/tmp/cwd')
         res, out, err, user = logging_run(['--results-directory=foo'],
                                           tests_included=True, host=host)
-        self.assertEqual(user.opened_urls, ['/tmp/cwd/foo/results.html'])
+        self.assertEqual(user.opened_urls, ['file:///tmp/cwd/foo/results.html'])
 
     def test_retries_directory(self):
         host = MockHost()

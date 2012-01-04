@@ -751,7 +751,7 @@ class Port(object):
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by
         results_filename in a users' browser."""
-        return self.host.user.open_url(results_filename)
+        return self.host.user.open_url(self._filesystem.file_path_as_url(results_filename))
 
     def create_driver(self, worker_number):
         """Return a newly created Driver subclass for starting/stopping the test driver."""
