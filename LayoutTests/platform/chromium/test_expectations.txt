@@ -3119,7 +3119,7 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = PASS CRASH TIMEOUT
 
 // Flaky since added by r86478
-BUGCR82881 BUGCR109068 LINUX MAC VISTA XP : http/tests/appcache/interrupted-update.html = PASS TEXT CRASH
+BUGCR82881 BUGCR109068 LINUX MAC WIN: http/tests/appcache/interrupted-update.html = PASS TEXT CRASH
 BUGCR109077 LINUX : http/tests/inspector/appcache/appcache-swap.html = CRASH
 
 // Fails on windows - added in r86693
