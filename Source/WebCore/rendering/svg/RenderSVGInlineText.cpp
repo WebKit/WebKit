@@ -87,8 +87,6 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
         // The text metrics may be influenced by style changes.
         if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
             textRenderer->setNeedsPositioningValuesUpdate();
-
-        updateScaledFont();
     }
 
     const RenderStyle* newStyle = style();
@@ -221,6 +219,19 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
 
     int offset = closestDistanceBox->offsetForPositionInFragment(*closestDistanceFragment, absolutePoint.x() - closestDistancePosition, true);
     return createVisiblePosition(offset + closestDistanceBox->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+}
+
+void RenderSVGInlineText::setStyle(PassRefPtr<RenderStyle> style)
+{
+    RenderText::setStyle(style);
+
+    // The cached scaledFont needs to be updated on every style set call. It
+    // is not similar to m_style which can get derived from parent's style and
+    // hence will get automatically updated on ancestor's style change. This is
+    // required, otherwise we will maintain stale font list in cached scaledFont
+    // when custom fonts are retired on Document::recalcStyle. See webkit bug
+    // https://bugs.webkit.org/show_bug.cgi?id=68060.
+    updateScaledFont();
 }
 
 void RenderSVGInlineText::updateScaledFont()

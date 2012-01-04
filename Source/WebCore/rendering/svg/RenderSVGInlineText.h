@@ -49,6 +49,8 @@ private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
     virtual void destroy();
+    
+    virtual void setStyle(PassRefPtr<RenderStyle>);
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
     // FIXME: We need objectBoundingBox for DRT results and filters at the moment.
