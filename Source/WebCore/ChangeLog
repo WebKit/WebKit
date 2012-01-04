@@ -1,3 +1,22 @@
+2012-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r92823): Background color not preserved when copying and pasting a table row
+        https://bugs.webkit.org/show_bug.cgi?id=75330
+
+        Reviewed by Tony Chang.
+
+        The bug was caused by the background color of the wrapping style overriding the background color
+        in a matched rule of a highest element to be serialized. Fixed the bug by removing the conflicting
+        background color prior to the merge.
+
+        Tests: editing/pasteboard/copy-element-with-conflicting-background-color-from-rule-expected.html
+               editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::editingStyleFromComputedStyle):
+        (WebCore::EditingStyle::removeStyleAddedByNode):
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+
 2012-01-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

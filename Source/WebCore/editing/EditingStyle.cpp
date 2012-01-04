@@ -80,9 +80,11 @@ static const int editingProperties[] = {
     CSSPropertyWebkitTextStrokeWidth,
 };
 
-static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style, bool includeNonInheritableProperties = false)
+enum EditingPropertiesType { OnlyInheritableEditingProperties, AllEditingProperties };
+
+static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style, EditingPropertiesType type = OnlyInheritableEditingProperties)
 {
-    if (includeNonInheritableProperties)
+    if (type == AllEditingProperties)
         return style->copyPropertiesInSet(editingProperties, WTF_ARRAY_LENGTH(editingProperties));
     return style->copyPropertiesInSet(editingProperties + 2, WTF_ARRAY_LENGTH(editingProperties) - 2);
 }
@@ -96,11 +98,11 @@ static inline bool isEditingProperty(int id)
     return false;
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(PassRefPtr<CSSComputedStyleDeclaration> style)
+static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(PassRefPtr<CSSComputedStyleDeclaration> style, EditingPropertiesType type = OnlyInheritableEditingProperties)
 {
     if (!style)
         return CSSMutableStyleDeclaration::create();
-    return copyEditingProperties(style.get());
+    return copyEditingProperties(style.get(), type);
 }
 
 static RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
@@ -543,8 +545,8 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
 {
     if (!node || !node->parentNode())
         return;
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
-    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()), AllEditingProperties);
+    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node), AllEditingProperties);
     parentStyle->diff(nodeStyle.get());
     nodeStyle->diff(m_mutableStyle.get());
 }
@@ -553,8 +555,9 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
 {
     if (!node || !node->parentNode() || !m_mutableStyle)
         return;
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
-    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
+
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()), AllEditingProperties);
+    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node), AllEditingProperties);
     parentStyle->diff(nodeStyle.get());
 
     CSSMutableStyleDeclaration::const_iterator end = nodeStyle->end();
@@ -903,8 +906,10 @@ void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSProperty
         mergeStyle(element->inlineStyleDecl(), mode);
         return;
     case OnlyEditingInheritableProperties:
+        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), OnlyInheritableEditingProperties).get(), mode);
+        return;
     case EditingPropertiesInEffect:
-        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), propertiesToInclude == EditingPropertiesInEffect).get(), mode);
+        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), AllEditingProperties).get(), mode);
         return;
     }
 }
