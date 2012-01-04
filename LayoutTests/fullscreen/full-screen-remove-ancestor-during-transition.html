@@ -7,9 +7,9 @@ if (window.layoutTestController) {
 
 function runWithKeyDown(fn)
 {
-    document.addEventListener('mousedown', function() { fn(); }, false);
+    document.addEventListener('keydown', function() { fn(); }, false);
     if (window.layoutTestController) {
-        eventSender.mouseDown();
+        eventSender.keyDown('a');
     }
 }
 

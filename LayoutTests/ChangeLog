@@ -1,5 +1,19 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 95126
+
+    2011-09-14  Jeremy Apthorp  <jeremya@chromium.org>
+
+            Change mousedown events to keydown events, since eventSender.mouseDown
+            wasn't firing onmousedown events on Mac.
+            https://bugs.webkit.org/show_bug.cgi?id=67960
+
+            Reviewed by Adam Barth.
+
+            * fullscreen/full-screen-remove-ancestor-during-transition.html:
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 95074
 
     2011-09-13  Abhishek Arya  <inferno@chromium.org>
