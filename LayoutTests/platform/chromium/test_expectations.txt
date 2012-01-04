@@ -2510,7 +2510,6 @@ BUG_DRT LINUX MAC : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 LINUX MAC : http/tests/multipart/invalid-image-data.html = PASS IMAGE
 BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
-BUGCR31998 LINUX : svg/carto.net/selectionlist.svg = PASS IMAGE
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
 // The test says you should see numbers, but we display letters.
