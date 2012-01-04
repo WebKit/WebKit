@@ -48,8 +48,10 @@ public:
     // and always contains the result of evaluating a javascript: url.
     void replaceDocument(const String&);
 
+    enum SecurityOriginSource { CreateNewSecurityOrigin, InheritSecurityOrigin };
+
     void begin();
-    void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOrigin* forcedSecurityOrigin = 0);
+    void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOriginSource = CreateNewSecurityOrigin);
     void addData(const char* string, int length = -1, bool flush = false);
     void end();
     void endIfNotLoadingMainResource();
