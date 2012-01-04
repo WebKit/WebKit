@@ -112,8 +112,8 @@ public:
         
         bool newValueOfShouldUseDoubleFormat = shouldUseDoubleFormatAccordingToVote();
         if (!newValueOfShouldUseDoubleFormat) {
-            // Assert that we're monotonically converting to force-double.
-            ASSERT(!m_shouldUseDoubleFormat);
+            // We monotonically convert to double. Hence, if the fixpoint leads us to conclude that we should
+            // switch back to int, we instead ignore this and stick with double.
             return false;
         }
         

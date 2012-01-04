@@ -1,5 +1,24 @@
 2012-01-03  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG: The assertion that a double-voted variable cannot become double-unvoted is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=75516
+        <rdar://problem/10640266>
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed the offending assertion, since it was wrong.  Also hardened the code to make
+        this case less likely by first having the propagator fixpoint converge, and then doing
+        double voting combined with a second fixpoint.  This is neutral on benchmarks and
+        fixes the assertion in a fairly low-risk way (i.e. we won't vote a variable double
+        until we've converged to the conclusion that it really is double).
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagatePredictions):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::tallyVotesForShouldUseDoubleFormat):
+
+2012-01-03  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION (r98196-98236): Incorrect layout of iGoogle with RSS feeds
         https://bugs.webkit.org/show_bug.cgi?id=75303
         <rdar://problem/10633533>

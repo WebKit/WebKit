@@ -768,13 +768,14 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
 #endif
+        // Two stage process: first propagate predictions, then propagate while doing double voting.
+        
         do {
             m_changed = false;
             
             // Forward propagation is near-optimal for both topologically-sorted and
             // DFS-sorted code.
             propagatePredictionsForward();
-            doRoundOfDoubleVoting();
             if (!m_changed)
                 break;
             
@@ -784,7 +785,18 @@ private:
             // found a sound solution and (2) short-circuits backward flow.
             m_changed = false;
             propagatePredictionsBackward();
+        } while (m_changed);
+        
+        do {
+            m_changed = false;
             doRoundOfDoubleVoting();
+            propagatePredictionsForward();
+            if (!m_changed)
+                break;
+            
+            m_changed = false;
+            doRoundOfDoubleVoting();
+            propagatePredictionsBackward();
         } while (m_changed);
     }
     
