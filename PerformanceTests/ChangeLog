@@ -1,3 +1,16 @@
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
+        html-parser.html takes too long to run
+        https://bugs.webkit.org/show_bug.cgi?id=75515
+
+        Reviewed by Eric Seidel.
+
+        In working on runner.js, we introduced a factor of 10 increase to the
+        running time of this benchmark.  This patch dials down the number of
+        iterations to something more user-friendly.
+
+        * Parser/html-parser.html:
+
 2011-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: move heap data stats to separate tab.

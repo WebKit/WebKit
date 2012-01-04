@@ -5,7 +5,7 @@
 <script>
 var spec = loadFile("resources/html5.html");
 
-start(20, function() {
+start(10, function() {
     var iframe = document.createElement("iframe");
     iframe.style.display = "none";  // Prevent creation of the rendering tree, so we only test HTML parsing.
     iframe.sandbox = '';  // Prevent external script loads which could cause write() to return before completing the parse.
@@ -14,6 +14,6 @@ start(20, function() {
     iframe.contentDocument.write(spec);
     iframe.contentDocument.close();
     document.body.removeChild(iframe);
-});
+}, 1);
 </script>
 </body>
