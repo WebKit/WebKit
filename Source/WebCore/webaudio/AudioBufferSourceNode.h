@@ -87,6 +87,8 @@ private:
 
     void renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames);
 
+    inline bool renderSilenceAndFinishIfNotLooping(float* destinationL, float* destinationR, size_t framesToProcess);
+
     // m_buffer holds the sample data which this node outputs.
     RefPtr<AudioBuffer> m_buffer;
 

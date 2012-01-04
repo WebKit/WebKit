@@ -1,3 +1,17 @@
+2012-01-03  Wei James  <james.wei@intel.com>
+
+        Optimize AudioBufferSourceNode process by avoiding interpolation when pitchRate==1
+        https://bugs.webkit.org/show_bug.cgi?id=74592
+
+        Reviewed by Kenneth Russell.
+
+        Covered by existing webaudio layout tests, especially webaudio/audiobuffersource-playbackrate.html
+
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        * webaudio/AudioBufferSourceNode.h:
+
 2012-01-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Access to Node Highlighting info without drawing
