@@ -1,3 +1,13 @@
+2012-01-04  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Fix test regressions after r104025
+        https://bugs.webkit.org/show_bug.cgi?id=75545
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-01-04  Andras Becsi  <andras.becsi@nokia.com>
 
         REGRESSION(r104028): Broke editing tests and event coordinates in desktop behaviour

@@ -386,6 +386,7 @@ EditorState WebPage::editorState() const
     result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
     result.isInPasswordField = frame->selection()->isInPasswordField();
     result.hasComposition = frame->editor()->hasComposition();
+    result.shouldIgnoreCompositionSelectionChange = frame->editor()->ignoreCompositionSelectionChange();
 
 #if PLATFORM(QT)
     size_t location = 0;
@@ -393,6 +394,9 @@ EditorState WebPage::editorState() const
 
     Element* selectionRoot = frame->selection()->rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+
+    if (!scope)
+        return result;
 
     RefPtr<Range> range;
     if (result.hasComposition && (range = frame->editor()->compositionRange())) {
@@ -422,8 +426,6 @@ EditorState WebPage::editorState() const
         }
     }
 #endif
-
-    result.shouldIgnoreCompositionSelectionChange = frame->editor()->ignoreCompositionSelectionChange();
 
     return result;
 }
