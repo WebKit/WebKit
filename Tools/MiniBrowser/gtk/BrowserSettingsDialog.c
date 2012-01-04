@@ -146,15 +146,17 @@ static void browserSettingsDialogConstructed(GObject *object)
                                             uIntProperty->maximum, 1, 1, 1);
         }
 
+        char *blurb = g_markup_escape_text(g_param_spec_get_blurb(property), -1);
         GtkTreeIter iter;
         gtk_list_store_append(model, &iter);
         gtk_list_store_set(model, &iter,
                            SETTINGS_LIST_COLUMN_NAME, name,
                            SETTINGS_LIST_COLUMN_NICK, nick,
-                           SETTINGS_LIST_COLUMN_BLURB, g_param_spec_get_blurb(property),
+                           SETTINGS_LIST_COLUMN_BLURB, blurb,
                            SETTINGS_LIST_COLUMN_VALUE, &value,
                            SETTINGS_LIST_COLUMN_ADJUSTMENT, adjustment,
                            -1);
+        g_free(blurb);
         g_value_unset(&value);
     }
     g_free(properties);

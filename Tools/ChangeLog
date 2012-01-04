@@ -1,3 +1,18 @@
+2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix a runtime warning when hovering hyperlink auditing setting in MiniBroweser settings dialog
+        https://bugs.webkit.org/show_bug.cgi?id=75475
+
+        Reviewed by Martin Robinson.
+
+        The problem is that the property blurb contains <a ping> and tree
+        view uses gtk_tooltip_set_markup() internally, so we need to
+        escape the text.
+
+        * MiniBrowser/gtk/BrowserSettingsDialog.c:
+        (browserSettingsDialogConstructed): Escape property blurb before
+        storing it in the GtkTreeModel.
+
 2012-01-03  Jochen Eisinger  <jochen@chromium.org>
 
         When showing results.html pass a correct URL to webbrowser.open
