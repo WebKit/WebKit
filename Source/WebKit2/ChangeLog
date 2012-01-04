@@ -1,3 +1,24 @@
+2012-01-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Clean up Qt specific part of editorState()
+
+        Reviewed by Simon Hausmann.
+
+        Use unsigned instead of int.
+        No need to clone the range as we don't modify it.
+        Support selections which include a composition.
+        If we are not in editable content make sure to use the document element
+        as the scope for calculating the positions and lengths.
+        Remove compositionStart/Length as there cannot be a selection and
+        composition at the same time.
+
+        Only tested manually as we don't have everything in place yet
+        to properly test this.
+
+        * Shared/EditorState.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [Mac]Fix build after changeset 103997

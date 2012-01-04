@@ -390,34 +390,36 @@ EditorState WebPage::editorState() const
 #if PLATFORM(QT)
     size_t location = 0;
     size_t length = 0;
-    Element* scope = frame->selection()->rootEditableElement();
+
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
 
     RefPtr<Range> range;
     if (result.hasComposition && (range = frame->editor()->compositionRange())) {
-        TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
-        result.compositionStart = location;
-        result.compositionLength = length;
-        result.compositionRect = range->boundingBox();
+        frame->editor()->getCompositionSelection(result.anchorPosition, result.cursorPosition);
+
+        result.compositionRect = frame->view()->contentsToWindow(range->boundingBox());
     }
 
-    if (!result.selectionIsNone && (range = frame->selection()->selection().firstRange())) {
+    if (!result.hasComposition && !result.selectionIsNone && (range = frame->selection()->selection().firstRange())) {
         TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
-
-        ExceptionCode ec = 0;
-        RefPtr<Range> tempRange = range->cloneRange(ec);
-        tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + location, ec);
-        IntRect rect = frame->editor()->firstRectForRange(tempRange.get());
         bool baseIsFirst = frame->selection()->selection().isBaseFirst();
 
         result.cursorPosition = (baseIsFirst) ? location + length : location;
         result.anchorPosition = (baseIsFirst) ? location : location + length;
-        result.microFocus = frame->view()->contentsToWindow(rect);
         result.selectedText = range->text();
     }
 
-    if (scope && result.isContentEditable && !result.isInPasswordField) {
+    if (range)
+        result.microFocus = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(range.get()));
+
+    // FIXME: We should only transfer innerText when it changes and do this on the UI side.
+    if (result.isContentEditable && !result.isInPasswordField) {
         result.surroundingText = scope->innerText();
-        result.surroundingText.remove(result.compositionStart, result.compositionLength);
+        if (result.hasComposition) {
+            // The anchor is always the left position when they represent a composition.
+            result.surroundingText.remove(result.anchorPosition, result.cursorPosition - result.anchorPosition);
+        }
     }
 #endif
 

@@ -45,8 +45,6 @@ struct EditorState {
 #if PLATFORM(QT)
         , cursorPosition(0)
         , anchorPosition(0)
-        , compositionStart(0)
-        , compositionLength(0)
 #endif
     {
     }
@@ -60,12 +58,13 @@ struct EditorState {
     bool isInPasswordField;
     bool hasComposition;
 #if PLATFORM(QT)
-    int cursorPosition;
-    int anchorPosition;
+    // The anchor, cursor represent either the selection or composition, depending
+    // whether a composition exists or not.
+    unsigned cursorPosition;
+    unsigned anchorPosition;
+
     WebCore::IntRect microFocus;
     WebCore::IntRect compositionRect;
-    int compositionStart;
-    int compositionLength;
     WTF::String selectedText;
     WTF::String surroundingText;
 #endif
