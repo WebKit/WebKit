@@ -478,6 +478,9 @@ void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)
 
     m_parser->tokenizer()->setForceNullCharacterReplacement(m_insertionMode == TextMode || inForeignContent);
     m_parser->tokenizer()->setShouldAllowCDATA(inForeignContent);
+
+    m_tree.executeQueuedTasks();
+    // We might be detached now.
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)

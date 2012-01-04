@@ -1,5 +1,67 @@
 2012-01-03  Adam Barth  <abarth@webkit.org>
 
+        Two null crashes in Treebuilder
+        https://bugs.webkit.org/show_bug.cgi?id=66101
+
+        Reviewed by Eric Seidel.
+
+        The underly issue with causing the crash is that we're re-entering the
+        tree builder.  We've done a bunch of point fixes around tree builder
+        re-entrancy, but neither the implementation nor the specification are
+        really designed to handle re-entrancy.
+
+        Firefox avoids this problem by putting the parser on its own thread.  I
+        don't think we're quite ready to do that yet (although we will
+        eventually, presumably, as computers become ever more parallel).  The
+        approach in this patch is to queue up the DOM mutations and actually
+        perform them on a shallower stack.  That's essentially the approach
+        we've used for executing <scripts>.
+
+        This patch queues up DOM modifications and executes them from a clean
+        call stack, stopping us from re-entering the tree builder.  We might
+        need to experiment with exactly where to kick off the queue, but this
+        location seems reasonable and fixes the crash.
+
+        Test: fast/parser/re-enter-and-crash.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+            - Add a helper function for actually executing a queue DOM
+              mutation.
+        (WebCore::HTMLConstructionSite::attach):
+            - Instead of actually attaching the element to the DOM, this
+              function now queues the element for attachment.  In a follow-up
+              patch, I plan to change this function to return void (and I'll
+              probably rename it to something that makes it clear that it only
+              queues the attachment).
+        (WebCore::HTMLConstructionSite::executeQueuedTasks):
+        (WebCore::HTMLConstructionSite::insertDoctype):
+            - Setting the compatmode from the Doctype requires the doctype to
+              actually be in the DOM, so we need to execute our queued tasks
+              synchronously.  We can likely improve this function by passing
+              the Doctype element explicitly in a follow-up patch.
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        (WebCore::HTMLConstructionSite::fosterParent):
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSiteTask::HTMLConstructionSiteTask):
+            - Add a task object that holds on to the relevant elements.  We
+              define some vector traits for this object to match the traits on
+              RefPtr (which make Vector operations faster by explaining that
+              this type is moveable without having to churn reference counts).
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::pushCommon):
+            - We delay the "begin parsing" call until we actually attach the
+              element to the DOM.  That splits the responsibility for calling
+              begin/finished, which is less than ideal, but I didn't see
+              another solution.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+            - Kick off the queued mutations.
+
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
         view-source doesn't colorize </script> correctly
         https://bugs.webkit.org/show_bug.cgi?id=62971
 

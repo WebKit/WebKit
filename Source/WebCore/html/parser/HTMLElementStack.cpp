@@ -585,7 +585,6 @@ void HTMLElementStack::pushCommon(PassRefPtr<ContainerNode> node)
 
     m_stackDepth++;
     m_top = adoptPtr(new ElementRecord(node, m_top.release()));
-    topNode()->beginParsingChildren();
 }
 
 void HTMLElementStack::popCommon()
