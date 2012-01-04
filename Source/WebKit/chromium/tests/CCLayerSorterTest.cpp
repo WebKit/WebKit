@@ -26,6 +26,8 @@
 
 #include "cc/CCLayerSorter.h"
 
+#include "cc/CCLayerImpl.h"
+#include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
@@ -154,6 +156,78 @@ TEST(CCLayerSorterTest, CalculateZDiff)
     EXPECT_GT(CCLayerSorter::calculateZDiff(layerC, layerA, threshold), 0.0);
     EXPECT_LT(CCLayerSorter::calculateZDiff(layerC, layerB, threshold), 0.0);
     EXPECT_EQ(CCLayerSorter::calculateZDiff(layerC, layerC, threshold), 0.0);
+}
+
+TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)
+{
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    // If there is no reason to re-sort the layers (i.e. no 3d z difference), then the
+    // existing ordering provided on input should be retained. This test covers the fix in
+    // https://bugs.webkit.org/show_bug.cgi?id=75046. Before this fix, ordering was
+    // accidentally reversed, causing bugs in z-index ordering on websites when
+    // preserves3D triggered the CCLayerSorter.
+
+    // Input list of layers: [1, 2, 3, 4, 5].
+    // Expected output: [3, 4, 1, 2, 5].
+    //    - 1, 2, and 5 do not have a 3d z difference, and therefore their relative ordering should be retained.
+    //    - 3 and 4 do not have a 3d z difference, and therefore their relative ordering should be retained.
+    //    - 3 and 4 should be re-sorted so they are in front of 1, 2, and 5.
+
+    RefPtr<CCLayerImpl> layer1 = CCLayerImpl::create(1);
+    RefPtr<CCLayerImpl> layer2 = CCLayerImpl::create(2);
+    RefPtr<CCLayerImpl> layer3 = CCLayerImpl::create(3);
+    RefPtr<CCLayerImpl> layer4 = CCLayerImpl::create(4);
+    RefPtr<CCLayerImpl> layer5 = CCLayerImpl::create(5);
+
+    TransformationMatrix BehindMatrix;
+    BehindMatrix.translate3d(0, 0, 2);
+    TransformationMatrix FrontMatrix;
+    FrontMatrix.translate3d(0, 0, 1);
+
+    layer1->setBounds(IntSize(10, 10));
+    layer1->setDrawTransform(BehindMatrix);
+    layer1->setDrawsContent(true);
+
+    layer2->setBounds(IntSize(20, 20));
+    layer2->setDrawTransform(BehindMatrix);
+    layer2->setDrawsContent(true);
+
+    layer3->setBounds(IntSize(30, 30));
+    layer3->setDrawTransform(FrontMatrix);
+    layer3->setDrawsContent(true);
+
+    layer4->setBounds(IntSize(40, 40));
+    layer4->setDrawTransform(FrontMatrix);
+    layer4->setDrawsContent(true);
+
+    layer5->setBounds(IntSize(50, 50));
+    layer5->setDrawTransform(BehindMatrix);
+    layer5->setDrawsContent(true);
+
+    Vector<RefPtr<CCLayerImpl> > layerList;
+    layerList.append(layer1);
+    layerList.append(layer2);
+    layerList.append(layer3);
+    layerList.append(layer4);
+    layerList.append(layer5);
+
+    ASSERT_EQ(static_cast<size_t>(5), layerList.size());
+    EXPECT_EQ(1, layerList[0]->id());
+    EXPECT_EQ(2, layerList[1]->id());
+    EXPECT_EQ(3, layerList[2]->id());
+    EXPECT_EQ(4, layerList[3]->id());
+    EXPECT_EQ(5, layerList[4]->id());
+
+    CCLayerSorter layerSorter;
+    layerSorter.sort(layerList.begin(), layerList.end());
+
+    ASSERT_EQ(static_cast<size_t>(5), layerList.size());
+    EXPECT_EQ(3, layerList[0]->id());
+    EXPECT_EQ(4, layerList[1]->id());
+    EXPECT_EQ(1, layerList[2]->id());
+    EXPECT_EQ(2, layerList[3]->id());
+    EXPECT_EQ(5, layerList[4]->id());
 }
 
 } // namespace

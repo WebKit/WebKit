@@ -1,3 +1,13 @@
+2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] CCLayerSorter accidentally reverses order of some layers.
+        https://bugs.webkit.org/show_bug.cgi?id=75046
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerSorterTest.cpp:
+        (WebCore::TEST):
+
 2012-01-03  David Levin  <levin@chromium.org>
 
         [chromium] LocalFileSystemChromium needs some thread safety fixes.

@@ -1,3 +1,26 @@
+2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] CCLayerSorter accidentally reverses order of some layers.
+        https://bugs.webkit.org/show_bug.cgi?id=75046
+
+        Reviewed by James Robinson.
+
+        Unit test added to CCLayerSorterTest.cpp
+
+        Fixes two related bugs that were causing z-ordering problems in
+        layers when preserves3D triggers the need for layer sorting.
+
+        The first problem was that CCLayerSorter accidentally reversed the
+        order of layers when there was no sorting dependency between them.
+
+        The second problem was that zDiff had numerical precision problems
+        that forced sorting dependencies that were sometimes incorrect,
+        when the dependencies should not have existed.
+
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::checkOverlap):
+        (WebCore::CCLayerSorter::sort):
+
 2012-01-03  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Add support of blob form data to the BlackBerry port

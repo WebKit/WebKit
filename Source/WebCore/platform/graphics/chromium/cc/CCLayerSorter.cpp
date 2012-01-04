@@ -29,6 +29,7 @@
 #include "TransformationMatrix.h"
 #include "cc/CCRenderSurface.h"
 #include <limits.h>
+#include <wtf/Deque.h>
 
 using namespace std;
 
@@ -259,13 +260,17 @@ CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(GraphNode* a, GraphNo
     if (!a->shape.boundingBox.intersects(b->shape.boundingBox))
         return None;
 
-    // Make the early exit threshold proportional to the total Z range.
+    // These thresholds are defined relative to the total Z range. If further Z-fighting
+    // bugs come up due to precision errors, it may be worth considering doing an ulp
+    // error measurement instead.
     float exitThreshold = m_zRange * 0.01;
+    float nonZeroThreshold = max(exitThreshold, 0.001f);
+
     float zDiff = calculateZDiff(a->shape, b->shape, exitThreshold);
 
-    if (zDiff > 0)
+    if (zDiff > nonZeroThreshold)
         return BBeforeA;
-    if (zDiff < 0)
+    if (zDiff < -nonZeroThreshold)
         return ABeforeB;
 
     return None;
@@ -388,13 +393,20 @@ void CCLayerSorter::removeEdgeFromList(GraphEdge* edge, Vector<GraphEdge*>& list
 // cyclical order dependencies. Cycles and intersections are broken aribtrarily.
 // Sorting of layers is done via a topological sort of a directed graph whose nodes are
 // the layers themselves. An edge from node A to node B signifies that layer A needs to
-// be drawn before layer B.
+// be drawn before layer B. If A and B have no dependency between each other, then we
+// preserve the ordering of those layers as they were in the original list.
+//
 // The draw order between two layers is determined by projecting the two triangles making
 // up each layer quad to the Z = 0 plane, finding points of intersection between the triangles
 // and backprojecting those points to the plane of the layer to determine the corresponding Z
 // coordinate. The layer with the lower Z coordinate (farther from the eye) needs to be rendered
-// first. If the layer projections don't intersect then the layers can drawn in any order and no
-// edges are created between them in the graph.
+// first.
+//
+// If the layer projections don't intersect, then no edges (dependencies) are created
+// between them in the graph. HOWEVER, in this case we still need to preserve the ordering
+// of the original list of layers, since that list should already have proper z-index
+// ordering of layers.
+//
 void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
 {
 #if !defined( NDEBUG )
@@ -405,7 +417,7 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
     createGraphEdges();
 
     Vector<GraphNode*> sortedList;
-    Vector<GraphNode*> noIncomingEdgeNodeList;
+    Deque<GraphNode*> noIncomingEdgeNodeList;
 
     // Find all the nodes that don't have incoming edges.
     for (NodeList::iterator la = m_nodes.begin(); la < m_nodes.end(); la++) {
@@ -418,9 +430,12 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
 #endif
     while (m_activeEdges.size() || noIncomingEdgeNodeList.size()) {
         while (noIncomingEdgeNodeList.size()) {
-            // Pop the last entry from the list.
-            GraphNode* fromNode = noIncomingEdgeNodeList[noIncomingEdgeNodeList.size() - 1];
-            noIncomingEdgeNodeList.removeLast();
+
+            // It is necessary to preserve the existing ordering of layers, when there are
+            // no explicit dependencies (because this existing ordering has correct
+            // z-index/layout ordering). To preserve this ordering, we process Nodes in
+            // the same order that they were added to the list.
+            GraphNode* fromNode = noIncomingEdgeNodeList.takeFirst();
 
             // Add it to the final list.
             sortedList.append(fromNode);
