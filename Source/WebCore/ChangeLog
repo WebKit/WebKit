@@ -1,5 +1,37 @@
 2012-01-03  Adam Barth  <abarth@webkit.org>
 
+        HTMLConstructionSite::attach shouldn't return a value
+        https://bugs.webkit.org/show_bug.cgi?id=75520
+
+        Reviewed by Eric Seidel.
+
+        We used to return a value to avoid some refchurn, but now that we're
+        using tasks, we always need to take that reference.  Removing the
+        return value lets us remove the template parameter, which is a boon.
+        This patch has no impact on the html-parser.html benchmark.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachLater):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements):
+        (WebCore::HTMLConstructionSite::fosterParent):
+        * html/parser/HTMLConstructionSite.h:
+
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
         Fix assert when foster parenting self-closing elements
         https://bugs.webkit.org/show_bug.cgi?id=75527
 
