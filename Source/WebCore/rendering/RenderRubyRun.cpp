@@ -167,6 +167,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
                 moveChildTo(rightRun, base);
                 rightRun->moveChildTo(this, rightBase);
                 // The now empty ruby base will be removed below.
+                ASSERT(!rubyBase()->firstChild());
             }
         }
     }
