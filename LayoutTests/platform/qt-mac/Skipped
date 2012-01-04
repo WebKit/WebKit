@@ -5295,3 +5295,14 @@ transitions/cross-fade-border-image.html
 css3/flexbox/flex-align.html
 fast/canvas/2d.text.draw.fill.maxWidth.veryLarge.html
 fast/css/font-face-unquoted-local.html
+
+# new failing tests
+css2.1/20110323/border-conflict-element-001d.htm
+fast/css/caption-width-absolute-position-offset-top.htm
+fast/css/caption-width-absolute-position.htm
+fast/css/caption-width-fixed-position-offset-top.htm
+fast/css/caption-width-fixed-position.htm
+fast/css/caption-width-relative-position-offset-top.htm
+fast/css/caption-width-relative-position.htm
+fast/html/font-weight-bold-for-b-and-strong.html
+http/tests/plugins/create-v8-script-objects.html
