@@ -1,3 +1,10 @@
+2012-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert unintentional changes to Element.cpp in r104068.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyleIfNeededAfterAttributeChanged):
+
 2012-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r92823): Background color not preserved when copying and pasting a table row

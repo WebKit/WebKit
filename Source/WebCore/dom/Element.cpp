@@ -706,10 +706,7 @@ void Element::updateAfterAttributeChanged(Attribute* attr)
     
 void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
 {
-    if (!needsStyleRecalc())
-        return;
-
-    if (document()->attached() && document()->styleSelectorIfExists() && document()->styleSelectorIfExists()->hasSelectorForAttribute(attr->name().localName()))
+    if (document()->attached() && document()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
         setNeedsStyleRecalc();
 }
 
