@@ -63,7 +63,6 @@ class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;
 class Node;
-class RenderRegion;
 class RuleData;
 class RuleSet;
 class Settings;
@@ -105,11 +104,11 @@ public:
     void pushParent(Element* parent) { m_checker.pushParent(parent); }
     void popParent(Element* parent) { m_checker.popParent(parent); }
 
-    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, RenderRegion* regionForStyling = 0);
+    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false);
 
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
-    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0, RenderRegion* regionForStyling = 0);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
@@ -131,8 +130,6 @@ public:
 private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
-    void initForRegionStyling(RenderRegion*);
-    void initRegionRules(RenderRegion*);
     RenderStyle* locateSharedStyle();
     bool matchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
@@ -140,9 +137,6 @@ private:
     bool canShareStyleWithElement(StyledElement*) const;
 
     PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
-
-    void setRegionForStyling(RenderRegion* region) { m_regionForStyling = region; }
-    RenderRegion* regionForStyling() const { return m_regionForStyling; }
 
 public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -242,7 +236,7 @@ private:
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll, bool regionStyleRule = false);
+    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     struct MatchResult {
         MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1), isCacheable(true) { }
@@ -278,7 +272,6 @@ private:
 
     OwnPtr<RuleSet> m_authorStyle;
     OwnPtr<RuleSet> m_userStyle;
-    OwnPtr<RuleSet> m_regionRules;
 
     Features m_features;
 
@@ -302,7 +295,6 @@ public:
 
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
-    bool applyPropertyToRegionStyle() const { return m_applyPropertyToRegionStyle; }
 
 private:
     static RenderStyle* s_styleNotYetAvailable;
@@ -350,7 +342,6 @@ private:
         MatchedStyleDeclaration();
         CSSMutableStyleDeclaration* styleDeclaration;
         unsigned linkMatchType;
-        bool regionStyleRule;
     };
     static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
     struct MatchedStyleDeclarationCacheItem {
@@ -391,7 +382,6 @@ private:
     RenderStyle* m_rootElementStyle;
     Element* m_element;
     StyledElement* m_styledElement;
-    RenderRegion* m_regionForStyling;
     EInsideLink m_elementLinkState;
     ContainerNode* m_parentNode;
     CSSValue* m_lineHeightValue;
@@ -404,7 +394,6 @@ private:
 
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
-    bool m_applyPropertyToRegionStyle;
     const CSSStyleApplyProperty& m_applyProperty;
     
 #if ENABLE(CSS_SHADERS)

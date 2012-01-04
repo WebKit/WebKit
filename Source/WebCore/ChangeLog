@@ -1,3 +1,43 @@
+2012-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Rollout support for background-color region styling
+        https://bugs.webkit.org/show_bug.cgi?id=75007
+
+        Reviewed by Tony Chang.
+
+        Removed functionality, therefore no new tests. Since this is a temporary rollout,
+        the tests for region-style with background-color are not removed in this patch, just skipped.
+
+        * WebCore.exp.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Introduce new qmake variable 'WEBKIT' for signaling dependencies

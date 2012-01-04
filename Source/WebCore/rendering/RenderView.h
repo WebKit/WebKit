@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class RenderFlowThread;
-class RenderRegion;
 class RenderWidget;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -188,9 +187,6 @@ public:
     RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
     void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
 
-    RenderRegion* currentRenderRegion() const { return m_currentRenderRegion; }
-    void setCurrentRenderRegion(RenderRegion* region) { m_currentRenderRegion = region; }
-
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     IntervalArena* intervalArena();
@@ -280,7 +276,6 @@ private:
 #endif
     OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
     RenderFlowThread* m_currentRenderFlowThread;
-    RenderRegion* m_currentRenderRegion;
     RefPtr<IntervalArena> m_intervalArena;
 };
 

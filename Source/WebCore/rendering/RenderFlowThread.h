@@ -123,10 +123,6 @@ public:
     void setRegionRangeForBox(const RenderBox*, LayoutUnit offsetFromLogicalTopOfFirstPage);
     void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
-    void clearRenderObjectCustomStyle(const RenderObject*,
-                                      const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
-                                      const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
-
     WebKitNamedFlow* ensureNamedFlow();
 
 private:
