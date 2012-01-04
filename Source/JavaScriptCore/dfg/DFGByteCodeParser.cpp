@@ -80,6 +80,7 @@ private:
     
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
+    void emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
@@ -940,7 +941,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 
         if (intrinsic != NoIntrinsic) {
             if (!certainAboutExpectedFunction)
-                addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
+                emitFunctionCheck(expectedFunction, callTarget, registerOffset, kind);
             
             if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
                 if (!certainAboutExpectedFunction) {
@@ -957,6 +958,16 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     }
             
     addCall(interpreter, currentInstruction, op);
+}
+
+void ByteCodeParser::emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind kind)
+{
+    NodeIndex thisArgument;
+    if (kind == CodeForCall)
+        thisArgument = get(registerOffset + argumentToOperand(0));
+    else
+        thisArgument = NoNode;
+    addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget, thisArgument);
 }
 
 bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
@@ -1008,7 +1019,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // by checking the callee (if necessary) and making sure that arguments and the callee
     // are flushed.
     if (!certainAboutExpectedFunction)
-        addToGraph(CheckFunction, OpInfo(expectedFunction), callTargetNodeIndex);
+        emitFunctionCheck(expectedFunction, callTargetNodeIndex, registerOffset, kind);
     
     // FIXME: Don't flush constants!
     
