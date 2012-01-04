@@ -1,3 +1,11 @@
+2012-01-04  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Adding myself to committers list.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-04  David Kilzer  <ddkilzer@apple.com>
 
         Revert fix for Bug 75064: TestWebKitAPI: initialize the main thread before running tests
