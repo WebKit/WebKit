@@ -280,7 +280,7 @@ void tst_QQuickWebView::scrollRequest()
     // COMPARE with the position requested in the html
     // Use qRound as that is also used when calculating the position
     // in WebKit.
-    int y = -qRound(50 * webView()->page()->contentScale());
+    int y = -qRound(50 * webView()->page()->scale());
     QVERIFY(webView()->page()->pos().y() == y);
 }
 

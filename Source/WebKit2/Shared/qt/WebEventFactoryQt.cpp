@@ -29,7 +29,6 @@
 #include <qgraphicssceneevent.h>
 #include <QApplication>
 #include <QKeyEvent>
-#include <QTransform>
 #include <WebCore/IntPoint.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -107,7 +106,7 @@ static inline WebEvent::Modifiers modifiersForEvent(Qt::KeyboardModifiers modifi
     return (WebEvent::Modifiers)result;
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(QMouseEvent* event, const QTransform& fromItemTransform, int eventClickCount)
+WebMouseEvent WebEventFactory::createWebMouseEvent(QMouseEvent* event, int eventClickCount)
 {
     static FloatPoint lastPos = FloatPoint(0, 0);
 
@@ -120,10 +119,10 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(QMouseEvent* event, const QTr
     double timestamp                = currentTimeForEvent(event);
     lastPos.set(event->localPos().x(), event->localPos().y());
 
-    return WebMouseEvent(type, button, fromItemTransform.map(event->localPos()).toPoint(), event->screenPos().toPoint(), deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, event->localPos().toPoint(), event->screenPos().toPoint(), deltaX, deltaY, 0.0f, clickCount, modifiers, timestamp);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e, const QTransform& fromItemTransform)
+WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e)
 {
     float deltaX                            = 0;
     float deltaY                            = 0;
@@ -152,7 +151,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e, const QTransf
     deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
     deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
 
-    return WebWheelEvent(WebEvent::Wheel, fromItemTransform.map(e->posF()).toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
+    return WebWheelEvent(WebEvent::Wheel, e->posF().toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
@@ -175,7 +174,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event, const QTransform& fromItemTransform)
+WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event)
 {
     WebEvent::Type type  = webEventTypeForEvent(event);
     WebPlatformTouchPoint::TouchPointState state = static_cast<WebPlatformTouchPoint::TouchPointState>(0);
@@ -185,11 +184,10 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event, con
 
     const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
     
-    Vector<WebPlatformTouchPoint, 6> m_touchPoints;
+    Vector<WebPlatformTouchPoint> m_touchPoints;
     for (int i = 0; i < points.count(); ++i) {
-        const QTouchEvent::TouchPoint& touchPoint = points.at(i);
-        id = static_cast<unsigned>(touchPoint.id());
-        switch (touchPoint.state()) {
+        id = static_cast<unsigned>(points.at(i).id());
+        switch (points.at(i).state()) {
         case Qt::TouchPointReleased: 
             state = WebPlatformTouchPoint::TouchReleased; 
             break;
@@ -207,7 +205,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event, con
             break;
         }
 
-        m_touchPoints.append(WebPlatformTouchPoint(id, state, touchPoint.screenPos().toPoint(), fromItemTransform.map(touchPoint.pos()).toPoint()));
+        m_touchPoints.append(WebPlatformTouchPoint(id, state, points.at(i).screenPos().toPoint(), points.at(i).pos().toPoint()));
     }
 
     return WebTouchEvent(type, m_touchPoints, modifiers, timestamp);

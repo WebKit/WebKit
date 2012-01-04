@@ -1,3 +1,111 @@
+2012-01-04  Andras Becsi  <andras.becsi@nokia.com>
+
+        REGRESSION(r104028): Broke editing tests and event coordinates in desktop behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=75542
+
+
+        [Qt][WK2] Pinch zoom should affect the page size
+        https://bugs.webkit.org/show_bug.cgi?id=74601
+
+        Unreviewed roll-out.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/qt/NativeWebMouseEventQt.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/qt/NativeWebTouchEventQt.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/qt/NativeWebWheelEventQt.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::keyPressEvent):
+        (QQuickWebPage::keyReleaseEvent):
+        (QQuickWebPage::inputMethodEvent):
+        (QQuickWebPage::focusInEvent):
+        (QQuickWebPage::focusOutEvent):
+        (QQuickWebPage::mousePressEvent):
+        (QQuickWebPage::mouseMoveEvent):
+        (QQuickWebPage::mouseReleaseEvent):
+        (QQuickWebPage::mouseDoubleClickEvent):
+        (QQuickWebPage::wheelEvent):
+        (QQuickWebPage::hoverEnterEvent):
+        (QQuickWebPage::hoverMoveEvent):
+        (QQuickWebPage::hoverLeaveEvent):
+        (QQuickWebPage::dragMoveEvent):
+        (QQuickWebPage::dragEnterEvent):
+        (QQuickWebPage::dragLeaveEvent):
+        (QQuickWebPage::dropEvent):
+        (QQuickWebPage::geometryChanged):
+        (QQuickWebPage::event):
+        (QQuickWebPage::touchEvent):
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::enableMouseEvents):
+        (QQuickWebViewPrivate::disableMouseEvents):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::pageDidRequestScroll):
+        (QQuickWebViewPrivate::updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::PostTransitionState::apply):
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewExperimental::useTraditionalDesktopBehaviour):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::focusInEvent):
+        (QQuickWebView::focusOutEvent):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::contentsSize):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemAtScale):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::currentCSSScale):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleEvent):
+        (QtWebPageEventHandler::handleMouseMoveEvent):
+        (QtWebPageEventHandler::handleMousePressEvent):
+        (QtWebPageEventHandler::handleMouseReleaseEvent):
+        (QtWebPageEventHandler::handleWheelEvent):
+        (QtWebPageEventHandler::handleHoverLeaveEvent):
+        (QtWebPageEventHandler::handleHoverMoveEvent):
+        (QtWebPageEventHandler::handleDragEnterEvent):
+        (QtWebPageEventHandler::handleDragMoveEvent):
+        (QtWebPageEventHandler::handleDropEvent):
+        (QtWebPageEventHandler::handleSingleTapEvent):
+        (QtWebPageEventHandler::handleDoubleTapEvent):
+        (QtWebPageEventHandler::touchEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Introduce new qmake variable 'WEBKIT' for signaling dependencies

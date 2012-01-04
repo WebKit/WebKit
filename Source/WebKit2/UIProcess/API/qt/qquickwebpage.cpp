@@ -25,7 +25,6 @@
 #include "QtWebPageEventHandler.h"
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
-#include "qquickwebview_p.h"
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
@@ -51,15 +50,112 @@ QtSGUpdateQueue *QQuickWebPage::sceneGraphUpdateQueue() const
     return &d->sgUpdateQueue;
 }
 
+void QQuickWebPage::keyPressEvent(QKeyEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::keyReleaseEvent(QKeyEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::inputMethodEvent(QInputMethodEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::focusInEvent(QFocusEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::focusOutEvent(QFocusEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::mousePressEvent(QMouseEvent* event)
+{
+    forceActiveFocus();
+    this->event(event);
+}
+
+void QQuickWebPage::mouseMoveEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::mouseReleaseEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::wheelEvent(QWheelEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::hoverEnterEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::hoverMoveEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::hoverLeaveEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::dragMoveEvent(QDragMoveEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::dragEnterEvent(QDragEnterEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::dragLeaveEvent(QDragLeaveEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebPage::dropEvent(QDropEvent* event)
+{
+    this->event(event);
+}
+
 void QQuickWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
-
-    if (!d->useTraditionalDesktopBehaviour)
-        return;
-
     if (newGeometry.size() != oldGeometry.size())
         d->setDrawingAreaSize(newGeometry.size().toSize());
+}
+
+bool QQuickWebPage::event(QEvent* ev)
+{
+    if (d->eventHandler.data()->handleEvent(ev))
+        return true;
+    if (ev->type() == QEvent::InputMethod)
+        return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
+    return QQuickItem::event(ev);
+}
+
+void QQuickWebPage::touchEvent(QTouchEvent* event)
+{
+    forceActiveFocus();
+    this->event(event);
 }
 
 QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q)
@@ -68,8 +164,6 @@ QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q)
     , sgUpdateQueue(q)
     , paintingIsInitialized(false)
     , m_paintNode(0)
-    , contentScale(1)
-    , useTraditionalDesktopBehaviour(false)
 {
 }
 
@@ -105,7 +199,6 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
         return;
 
     QTransform transform = q->itemTransform(0, 0);
-    transform.scale(contentScale, contentScale);
 
     float opacity = computeEffectiveOpacity(q);
     QRectF clipRect = q->parentItem()->mapRectToScene(q->parentItem()->boundingRect());
@@ -227,65 +320,6 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     }
 
     return proxyNode;
-}
-
-bool QQuickWebPage::usesTraditionalDesktopBehaviour() const
-{
-    return d->useTraditionalDesktopBehaviour;
-}
-
-void QQuickWebPage::setUsesTraditionalDesktopBehaviour(bool enable)
-{
-    d->useTraditionalDesktopBehaviour = enable;
-}
-
-QtWebPageEventHandler* QQuickWebPage::eventHandler() const
-{
-    return d->eventHandler.data();
-}
-
-void QQuickWebPage::setContentSize(const QSizeF& size)
-{
-    if (size.isEmpty() || d->contentSize == size)
-        return;
-
-    d->contentSize = size;
-    d->updateSize();
-    d->setDrawingAreaSize(d->contentSize.toSize());
-}
-
-const QSizeF& QQuickWebPage::contentSize() const
-{
-    return d->contentSize;
-}
-
-void QQuickWebPage::setContentScale(qreal scale)
-{
-    ASSERT(scale > 0);
-    d->contentScale = scale;
-    d->updateSize();
-}
-
-qreal QQuickWebPage::contentScale() const
-{
-    ASSERT(d->contentScale > 0);
-    return d->contentScale;
-}
-
-QTransform QQuickWebPage::transformFromItem() const
-{
-    return transformToItem().inverted();
-}
-
-QTransform QQuickWebPage::transformToItem() const
-{
-    return QTransform(d->contentScale, 0, 0, 0, d->contentScale, 0, x(), y(), 1);
-}
-
-void QQuickWebPagePrivate::updateSize()
-{
-    QSizeF scaledSize = contentSize * contentScale;
-    q->setSize(scaledSize);
 }
 
 void QQuickWebPagePrivate::resetPaintNode()

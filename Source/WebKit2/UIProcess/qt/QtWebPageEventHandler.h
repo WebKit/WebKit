@@ -88,7 +88,7 @@ private:
     void touchEvent(QTouchEvent*);
     void inputMethodEvent(QInputMethodEvent*);
 
-    QPointF m_lastClick;
+    QPoint m_lastClick;
     QBasicTimer m_clickTimer;
     Qt::MouseButton m_previousClickButton;
     int m_clickCount;

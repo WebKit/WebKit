@@ -37,7 +37,7 @@ namespace WebKit {
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
 #if PLATFORM(QT)
-    explicit NativeWebTouchEvent(const QTouchEvent*, const QTransform& fromItemTransform);
+    explicit NativeWebTouchEvent(const QTouchEvent*);
 #endif
 
 #if PLATFORM(QT)
