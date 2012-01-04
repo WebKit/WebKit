@@ -23,6 +23,7 @@
 
 #include "QtSGUpdateQueue.h"
 #include "qquickwebpage_p.h"
+#include <QTransform>
 
 namespace WebKit {
 class WebPageProxy;
@@ -39,6 +40,8 @@ public:
     void initialize(WebKit::WebPageProxy*);
     void setDrawingAreaSize(const QSize&);
 
+    void updateSize();
+
     void paintToCurrentGLContext();
     void resetPaintNode();
 
@@ -48,6 +51,10 @@ public:
     WebKit::QtSGUpdateQueue sgUpdateQueue;
     bool paintingIsInitialized;
     QSGNode* m_paintNode;
+
+    QSizeF contentSize;
+    qreal contentScale;
+    bool useTraditionalDesktopBehaviour;
 };
 
 #endif // qquickwebpage_p_p_h

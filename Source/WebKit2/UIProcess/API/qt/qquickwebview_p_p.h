@@ -159,8 +159,6 @@ private:
 
     bool isTransitioningToNewPage;
     bool pageIsSuspended;
-
-    bool useTraditionalDesktopBehaviour;
     bool m_navigatorQtObjectEnabled;
     QUrl m_iconURL;
 };

@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(QMouseEvent* event, int eventClickCount)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, eventClickCount))
+NativeWebMouseEvent::NativeWebMouseEvent(QMouseEvent* event, const QTransform& fromItemTransform, int eventClickCount)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, fromItemTransform, eventClickCount))
     , m_nativeEvent(event)
 {
 }

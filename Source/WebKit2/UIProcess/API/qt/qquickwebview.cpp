@@ -112,8 +112,6 @@ void QQuickWebViewPrivate::enableMouseEvents()
     Q_Q(QQuickWebView);
     q->setAcceptedMouseButtons(Qt::MouseButtonMask);
     q->setAcceptHoverEvents(true);
-    pageView->setAcceptedMouseButtons(Qt::MouseButtonMask);
-    pageView->setAcceptHoverEvents(true);
 }
 
 void QQuickWebViewPrivate::disableMouseEvents()
@@ -121,8 +119,6 @@ void QQuickWebViewPrivate::disableMouseEvents()
     Q_Q(QQuickWebView);
     q->setAcceptedMouseButtons(Qt::NoButton);
     q->setAcceptHoverEvents(false);
-    pageView->setAcceptedMouseButtons(Qt::NoButton);
-    pageView->setAcceptHoverEvents(false);
 }
 
 void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
@@ -153,7 +149,7 @@ void QQuickWebViewPrivate::loadDidCommit()
     // Due to entering provisional load before committing, we
     // might actually be suspended here.
 
-    if (useTraditionalDesktopBehaviour)
+    if (pageView->usesTraditionalDesktopBehaviour())
         return;
 
     isTransitioningToNewPage = true;
@@ -161,7 +157,7 @@ void QQuickWebViewPrivate::loadDidCommit()
 
 void QQuickWebViewPrivate::didFinishFirstNonEmptyLayout()
 {
-    if (useTraditionalDesktopBehaviour)
+    if (pageView->usesTraditionalDesktopBehaviour())
         return;
 
     if (!pageIsSuspended) {
@@ -199,7 +195,7 @@ void QQuickWebViewPrivate::_q_resume()
 void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
 {
     Q_Q(QQuickWebView);
-    if (useTraditionalDesktopBehaviour)
+    if (pageView->usesTraditionalDesktopBehaviour())
         return;
 
     // FIXME: We probably want to handle suspend here as well
@@ -208,15 +204,13 @@ void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
         return;
     }
 
-    pageView->setWidth(newSize.width());
-    pageView->setHeight(newSize.height());
-
+    pageView->setContentSize(newSize);
     q->m_experimental->viewportInfo()->didUpdateContentsSize();
 }
 
 void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    if (useTraditionalDesktopBehaviour)
+    if (pageView->usesTraditionalDesktopBehaviour())
         return;
 
     viewportArguments = args;
@@ -234,7 +228,7 @@ void QQuickWebViewPrivate::didChangeBackForwardList()
 
 void QQuickWebViewPrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    if (useTraditionalDesktopBehaviour)
+    if (pageView->usesTraditionalDesktopBehaviour())
         return;
 
     if (isTransitioningToNewPage) {
@@ -286,10 +280,10 @@ void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
         return;
 
     Q_Q(QQuickWebView);
-    const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
-    float scale = pageView->scale();
+    const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
+    float scale = pageView->contentScale();
 
-    QRect alignedVisibleContentRect = visibleRectInPageViewCoordinates.toAlignedRect();
+    QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
     drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
@@ -344,8 +338,7 @@ void QQuickWebViewPrivate::PostTransitionState::apply()
     p->interactionEngine->pagePositionRequest(position);
 
     if (contentsSize.isValid()) {
-        p->pageView->setWidth(contentsSize.width());
-        p->pageView->setHeight(contentsSize.height());
+        p->pageView->setContentSize(contentsSize);
         p->q_ptr->experimental()->viewportInfo()->didUpdateContentsSize();
     }
 
@@ -501,9 +494,8 @@ void QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour(bool enable)
     // Do not guard, testing for the same value, as we call this from the constructor.
 
     webPageProxy->setUseFixedLayout(!enable);
-
-    useTraditionalDesktopBehaviour = enable;
-    if (useTraditionalDesktopBehaviour)
+    pageView->setUsesTraditionalDesktopBehaviour(enable);
+    if (enable)
         initializeDesktop(q);
     else
         initializeTouch(q);
@@ -607,7 +599,7 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
 {
     Q_D(QQuickWebView);
 
-    if (enable == d->useTraditionalDesktopBehaviour)
+    if (enable == d->pageView->usesTraditionalDesktopBehaviour())
         return;
 
     d->setUseTraditionalDesktopBehaviour(enable);
@@ -695,7 +687,7 @@ void QQuickWebViewExperimental::setItemSelector(QDeclarativeComponent* itemSelec
 bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const
 {
     Q_D(const QQuickWebView);
-    return d->useTraditionalDesktopBehaviour;
+    return d->pageView->usesTraditionalDesktopBehaviour();
 }
 
 void QQuickWebViewExperimental::goForwardTo(int index)
@@ -827,6 +819,30 @@ bool QQuickWebView::canReload() const
     return d->webPageProxy->backForwardList()->currentItem();
 }
 
+QPointF QQuickWebView::mapToWebContent(const QPointF& pointInViewCoordinates) const
+{
+    Q_D(const QQuickWebView);
+    return d->pageView->transformFromItem().map(pointInViewCoordinates);
+}
+
+QRectF QQuickWebView::mapRectToWebContent(const QRectF& rectInViewCoordinates) const
+{
+    Q_D(const QQuickWebView);
+    return d->pageView->transformFromItem().mapRect(rectInViewCoordinates);
+}
+
+QPointF QQuickWebView::mapFromWebContent(const QPointF& pointInCSSCoordinates) const
+{
+    Q_D(const QQuickWebView);
+    return d->pageView->transformToItem().map(pointInCSSCoordinates);
+}
+
+QRectF QQuickWebView::mapRectFromWebContent(const QRectF& rectInCSSCoordinates) const
+{
+    Q_D(const QQuickWebView);
+    return d->pageView->transformToItem().mapRect(rectInCSSCoordinates);
+}
+
 QString QQuickWebView::title() const
 {
     Q_D(const QQuickWebView);
@@ -854,7 +870,7 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     Q_D(QQuickWebView);
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
-        if (d->useTraditionalDesktopBehaviour) {
+        if (d->pageView->usesTraditionalDesktopBehaviour()) {
             d->pageView->setWidth(newGeometry.width());
             d->pageView->setHeight(newGeometry.height());
         } else
@@ -862,16 +878,130 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     }
 }
 
+void QQuickWebView::keyPressEvent(QKeyEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::keyReleaseEvent(QKeyEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::inputMethodEvent(QInputMethodEvent* event)
+{
+    this->event(event);
+}
+
 void QQuickWebView::focusInEvent(QFocusEvent* event)
 {
-    Q_D(QQuickWebView);
-    d->pageView->event(event);
+    this->event(event);
 }
 
 void QQuickWebView::focusOutEvent(QFocusEvent* event)
 {
+    this->event(event);
+}
+
+void QQuickWebView::touchEvent(QTouchEvent* event)
+{
+    forceActiveFocus();
+    this->event(event);
+}
+
+void QQuickWebView::mousePressEvent(QMouseEvent* event)
+{
+    forceActiveFocus();
+    this->event(event);
+}
+
+void QQuickWebView::mouseMoveEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::mouseReleaseEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::wheelEvent(QWheelEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::hoverEnterEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::hoverMoveEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::hoverLeaveEvent(QHoverEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::dragMoveEvent(QDragMoveEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::dragEnterEvent(QDragEnterEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::dragLeaveEvent(QDragLeaveEvent* event)
+{
+    this->event(event);
+}
+
+void QQuickWebView::dropEvent(QDropEvent* event)
+{
+    this->event(event);
+}
+
+bool QQuickWebView::event(QEvent* ev)
+{
     Q_D(QQuickWebView);
-    d->pageView->event(event);
+
+    switch (ev->type()) {
+    case QEvent::MouseMove:
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseButtonDblClick:
+    case QEvent::Wheel:
+    case QEvent::HoverLeave:
+    case QEvent::HoverEnter:
+    case QEvent::HoverMove:
+    case QEvent::DragEnter:
+    case QEvent::DragLeave:
+    case QEvent::DragMove:
+    case QEvent::Drop:
+    case QEvent::KeyPress:
+    case QEvent::KeyRelease:
+    case QEvent::FocusIn:
+    case QEvent::FocusOut:
+    case QEvent::TouchBegin:
+    case QEvent::TouchEnd:
+    case QEvent::TouchUpdate:
+        if (d->pageView->eventHandler()->handleEvent(ev))
+            return true;
+    }
+
+    if (ev->type() == QEvent::InputMethod)
+        return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
+
+    return QQuickItem::event(ev);
 }
 
 WKPageRef QQuickWebView::pageRef() const

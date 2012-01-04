@@ -33,6 +33,8 @@
 QT_BEGIN_NAMESPACE
 class QPointF;
 class QQuickItem;
+class QQuickWebPage;
+class QQuickWebView;
 class QWheelEvent;
 QT_END_NAMESPACE
 
@@ -44,7 +46,7 @@ class QtViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
-    QtViewportInteractionEngine(const QQuickItem*, QQuickItem*);
+    QtViewportInteractionEngine(const QQuickWebView*, QQuickWebPage*);
     ~QtViewportInteractionEngine();
 
     struct Constraints {
@@ -80,17 +82,17 @@ public:
     void interruptScrollAnimation();
 
     bool panGestureActive() const;
-    void panGestureStarted(const QPointF& touchPoint, qint64 eventTimestampMillis);
-    void panGestureRequestUpdate(const QPointF& touchPoint, qint64 eventTimestampMillis);
+    void panGestureStarted(const QPointF&  viewportTouchPoint, qint64 eventTimestampMillis);
+    void panGestureRequestUpdate(const QPointF&  viewportTouchPoint, qint64 eventTimestampMillis);
     void panGestureCancelled();
-    void panGestureEnded(const QPointF& touchPoint, qint64 eventTimestampMillis);
+    void panGestureEnded(const QPointF&  viewportTouchPoint, qint64 eventTimestampMillis);
 
     bool scaleAnimationActive() const;
     void interruptScaleAnimation();
 
     bool pinchGestureActive() const;
-    void pinchGestureStarted(const QPointF& pinchCenterInContentCoordinates);
-    void pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinates, qreal totalScaleFactor);
+    void pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates);
+    void pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
 
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
@@ -127,14 +129,14 @@ private:
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
     bool ensureContentWithinViewportBoundary(bool immediate = false);
 
-    void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);
+    void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
 
     // As long as the object exists this function will always return the same QScroller instance.
     QScroller* scroller() { return QScroller::scroller(this); }
 
 
-    const QQuickItem* const m_viewport;
-    QQuickItem* const m_content;
+    const QQuickWebView* const m_viewport;
+    QQuickWebPage* const m_content;
 
     Constraints m_constraints;
 

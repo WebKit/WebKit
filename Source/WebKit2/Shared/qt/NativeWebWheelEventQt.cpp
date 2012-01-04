@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(QWheelEvent* event)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
+NativeWebWheelEvent::NativeWebWheelEvent(QWheelEvent* event, const QTransform& fromItemTransform)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, fromItemTransform))
     , m_nativeEvent(event)
 {
 }
