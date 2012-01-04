@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -79,7 +79,7 @@ static const char openFileSystemMode[] = "openFileSystemMode";
 // call back to the worker context.
 class AllowFileSystemMainThreadBridge : public ThreadSafeRefCounted<AllowFileSystemMainThreadBridge> {
 public:
-    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient)
     {
         return adoptRef(new AllowFileSystemMainThreadBridge(workerLoaderProxy, mode, commonClient));
     }
@@ -97,30 +97,26 @@ public:
     }
 
     // This method is invoked on the main thread.
-    void signalCompleted(bool result)
+    void signalCompleted(const String& mode, bool result)
     {
         MutexLocker locker(m_mutex);
-        if (m_workerLoaderProxy)
-            m_workerLoaderProxy->postTaskForModeToWorkerContext(
-                createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), m_mode);
+        if (!m_workerLoaderProxy)
+            return;
+        m_workerLoaderProxy->postTaskForModeToWorkerContext(
+            createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), mode);
     }
 
 private:
-    AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+    AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient)
         : m_workerLoaderProxy(workerLoaderProxy)
-        , m_mode(mode)
     {
-        WebWorkerBase::dispatchTaskToMainThread(
-            createCallbackTask(&allowFileSystemTask, AllowCrossThreadAccess(commonClient),
-                               AllowCrossThreadAccess(this)));
+        WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&allowFileSystemTask, mode, AllowCrossThreadAccess(commonClient), this));
     }
 
-    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
+    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, const String& mode, WebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
     {
-        if (commonClient)
-            bridge->signalCompleted(commonClient->allowFileSystem());
-        else
-            bridge->signalCompleted(false);
+        bool allowFileSystem = commonClient ? commonClient->allowFileSystem() : false;
+        bridge->signalCompleted(mode, allowFileSystem);
     }
 
     static void didComplete(WebCore::ScriptExecutionContext* context, PassRefPtr<AllowFileSystemMainThreadBridge> bridge, bool result)
@@ -131,7 +127,6 @@ private:
     bool m_result;
     Mutex m_mutex;
     WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
-    WTF::String m_mode;
 };
 
 bool allowFileSystemForWorker(WebCommonWorkerClient* commonClient)

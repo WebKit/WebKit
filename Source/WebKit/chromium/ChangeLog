@@ -1,3 +1,21 @@
+2012-01-03  David Levin  <levin@chromium.org>
+
+        [chromium] LocalFileSystemChromium needs some thread safety fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=75494
+
+        Reviewed by Dmitry Titov.
+
+        This is essentially the same fix as r102894 except in slightly different code.
+
+        The important part of this fix is the removal of AllowCrossThreadAccess so
+        that ref counting happens appropriately.
+
+        Minor clean up throughout: Removed unnecessary WTF prefix in many
+        of these places and unnecessary String().
+
+        * src/LocalFileSystemChromium.cpp: See r102894 since this
+        is basically the same thing.
+
 2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Push drawsContent and contentsVisible into accelerated compositor
