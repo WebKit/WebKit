@@ -1371,7 +1371,7 @@
 		4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */; };
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
 		4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */; };
-		4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */; };
+		4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DD11B532EC0021FD86 /* EditingBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F2D205212EAE7B3005C2874 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };

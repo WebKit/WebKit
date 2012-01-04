@@ -285,6 +285,11 @@ void InspectorController::drawHighlight(GraphicsContext& context) const
     m_domAgent->drawHighlight(context);
 }
 
+void InspectorController::getHighlight(Highlight* highlight) const
+{
+    m_domAgent->getHighlight(highlight);
+}
+
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())

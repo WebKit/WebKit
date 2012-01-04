@@ -1,3 +1,35 @@
+2012-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Access to Node Highlighting info without drawing
+        https://bugs.webkit.org/show_bug.cgi?id=75504
+
+        Provide a "getHighlight" method alongside "drawHighlight" that
+        gets most of the important node highlighting information. This
+        can be used by a port to do its own node highlighting or provide
+        extra content without interfering with the highlight rects.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Privately expose the Highlight struct in DOMNodeHighlighter.h.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawHighlight):
+        (WebCore::DOMNodeHighlighter::getHighlight):
+        * inspector/DOMNodeHighlighter.h:
+        Reuse the existing draw code to instead populate
+        the Highlight struct with the information it is
+        about to draw, and only draw if there is a context.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getHighlight):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getHighlight):
+        * inspector/InspectorDOMAgent.h:
+        Get highlight information by going through getHighlight
+        in InspectorController. This is alongside drawHighlight.
+
 2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Push drawsContent and contentsVisible into accelerated compositor

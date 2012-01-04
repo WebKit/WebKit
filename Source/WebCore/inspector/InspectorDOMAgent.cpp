@@ -1506,6 +1506,14 @@ void InspectorDOMAgent::drawHighlight(GraphicsContext& context) const
     DOMNodeHighlighter::drawHighlight(context, m_highlightData->node ? m_highlightData->node->document() : m_document.get(), m_highlightData.get());
 }
 
+void InspectorDOMAgent::getHighlight(Highlight* highlight) const
+{
+    if (!m_highlightData)
+        return;
+
+    DOMNodeHighlighter::getHighlight(m_highlightData->node ? m_highlightData->node->document() : m_document.get(), m_highlightData.get(), highlight);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

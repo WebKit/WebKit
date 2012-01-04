@@ -62,13 +62,15 @@ class InspectorPageAgent;
 class IntRect;
 class HitTestResult;
 class HTMLElement;
-struct HighlightData;
 class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
 class RevalidateStyleAttributeTask;
 class ScriptValue;
+
+struct Highlight;
+struct HighlightData;
 
 typedef String ErrorString;
 
@@ -173,6 +175,7 @@ public:
     void focusNode();
 
     void drawHighlight(GraphicsContext&) const;
+    void getHighlight(Highlight*) const;
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.

@@ -223,7 +223,6 @@ TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
 
 void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& visibleRect, WebCore::Settings* settings)
 {
-
     DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
     DEFINE_STATIC_LOCAL(Color, tagColor, (136, 18, 128)); // Same as .webkit-html-tag.
     DEFINE_STATIC_LOCAL(Color, attrColor, (26, 26, 166)); // Same as .webkit-html-attribute-value.
@@ -359,7 +358,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     drawSubstring(nodeTitleRun, currentPos, pxString.length(), pxAndBorderColor, font, context, titleRect);
 }
 
-void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
+static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* highlightData, Highlight* highlight)
 {
     Node* node = highlightData->node.get();
     RenderObject* renderer = node->renderer();
@@ -378,8 +377,8 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
     FrameView* view = containingFrame->page()->mainFrame()->view();
     FloatRect visibleRect = view->visibleContentRect();
     // Don't translate the context if the frame is rendered in page coordinates.
-    if (!view->delegatesScrolling())
-        context.translate(-visibleRect.x(), -visibleRect.y());
+    if (context && !view->delegatesScrolling())
+        context->translate(-visibleRect.x(), -visibleRect.y());
 
     // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
 #if ENABLE(SVG)
@@ -389,12 +388,13 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
 #endif
 
     if (isSVGRenderer) {
-        Vector<FloatQuad> absoluteQuads;
-        renderer->absoluteQuads(absoluteQuads);
-        for (unsigned i = 0; i < absoluteQuads.size(); ++i)
-            absoluteQuads[i] += mainFrameOffset;
+        highlight->type = HighlightTypeRects;
+        renderer->absoluteQuads(highlight->quads);
+        for (size_t i = 0; i < highlight->quads.size(); ++i)
+            highlight->quads[i] += mainFrameOffset;
 
-        drawHighlightForSVGRenderer(context, absoluteQuads, highlightData);
+        if (context)
+            drawHighlightForSVGRenderer(*context, highlight->quads, highlightData);
     } else if (renderer->isBox() || renderer->isRenderInline()) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
@@ -441,7 +441,14 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
 
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
-        drawHighlightForBox(context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightData);
+        highlight->type = HighlightTypeNode;
+        highlight->quads.append(absMarginQuad);
+        highlight->quads.append(absBorderQuad);
+        highlight->quads.append(absPaddingQuad);
+        highlight->quads.append(absContentQuad);
+
+        if (context)
+            drawHighlightForBox(*context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightData);
     }
 
     // Draw node title if necessary.
@@ -449,22 +456,29 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
     if (!node->isElementNode())
         return;
 
-    if (highlightData->showInfo)
-        drawElementTitle(context, node, renderer, boundingBox, titleAnchorBox, visibleRect, containingFrame->settings());
+    if (context && highlightData->showInfo)
+        drawElementTitle(*context, node, renderer, boundingBox, titleAnchorBox, visibleRect, containingFrame->settings());
 }
 
-void drawRectHighlight(GraphicsContext& context, Document* document, HighlightData* highlightData)
+static void getOrDrawRectHighlight(GraphicsContext* context, Document* document, HighlightData* highlightData, Highlight *highlight)
 {
     if (!document)
         return;
-    FrameView* view = document->frame()->view();
-
-    FloatRect visibleRect = view->visibleContentRect();
-    if (!view->delegatesScrolling())
-        context.translate(-visibleRect.x(), -visibleRect.y());
 
     FloatRect highlightRect(*(highlightData->rect));
-    drawOutlinedQuad(context, highlightRect, highlightData->content, highlightData->contentOutline);
+
+    highlight->type = HighlightTypeRects;
+    highlight->quads.append(highlightRect);
+
+    if (context) {
+        FrameView* view = document->frame()->view();
+        if (!view->delegatesScrolling()) {
+            FloatRect visibleRect = view->visibleContentRect();
+            context->translate(-visibleRect.x(), -visibleRect.y());
+        }
+
+        drawOutlinedQuad(*context, highlightRect, highlightData->content, highlightData->contentOutline);
+    }
 }
 
 } // anonymous namespace
@@ -476,10 +490,28 @@ void drawHighlight(GraphicsContext& context, Document* document, HighlightData* 
     if (!highlightData)
         return;
 
+    Highlight highlight;
     if (highlightData->node)
-        drawNodeHighlight(context, highlightData);
+        getOrDrawNodeHighlight(&context, highlightData, &highlight);
     else if (highlightData->rect)
-        drawRectHighlight(context, document, highlightData);
+        getOrDrawRectHighlight(&context, document, highlightData, &highlight);
+}
+
+void getHighlight(Document* document, HighlightData* highlightData, Highlight* highlight)
+{
+    if (!highlightData)
+        return;
+
+    highlight->contentColor = highlightData->content;
+    highlight->paddingColor = highlightData->padding;
+    highlight->borderColor = highlightData->border;
+    highlight->marginColor = highlightData->margin;
+    highlight->type = HighlightTypeRects;
+
+    if (highlightData->node)
+        getOrDrawNodeHighlight(0, highlightData, highlight);
+    else if (highlightData->rect)
+        getOrDrawRectHighlight(0, document, highlightData, highlight);
 }
 
 } // namespace DOMNodeHighlighter
