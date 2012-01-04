@@ -811,7 +811,18 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
         if (!m_frame || !m_frame->loader() || !m_frame->loader()->client())
             return false;
-        m_frame->loader()->client()->authenticationChallenge(realm, username, password);
+
+        // Before asking the user for credentials, we check if the URL contains that.
+        if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
+            username = m_handle->getInternal()->m_user.utf8().data();
+            password = m_handle->getInternal()->m_pass.utf8().data();
+
+            // Prevent them from been used again if they are wrong.
+            // If they are correct, they will the put into CredentialStorage.
+            m_handle->getInternal()->m_user = "";
+            m_handle->getInternal()->m_pass = "";
+        } else
+            m_frame->loader()->client()->authenticationChallenge(realm, username, password);
 
         if (username.isEmpty() && password.isEmpty())
             return false;

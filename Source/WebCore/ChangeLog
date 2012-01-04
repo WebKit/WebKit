@@ -1,3 +1,15 @@
+2012-01-03  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Need to support credentials in the URL
+        https://bugs.webkit.org/show_bug.cgi?id=75341
+
+        Reviewed by George Staikos.
+
+        No new tests required.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-01-03  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Use data decoding swizzle for turbo JPEG grayscale images
