@@ -928,7 +928,7 @@ private:
                 node.op = GetFloat64ArrayLength;
             else
                 ASSERT_NOT_REACHED();
-            node.deref(); // No longer MustGenerate
+            m_graph.deref(m_compileIndex); // No longer MustGenerate
             break;
         }
         case GetIndexedPropertyStorage: {

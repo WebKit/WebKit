@@ -836,9 +836,13 @@ struct Node {
         m_refCount = refCount;
     }
     
-    void deref()
+    // Derefs the node and returns true if the ref count reached zero.
+    // In general you don't want to use this directly; use Graph::deref
+    // instead.
+    bool deref()
     {
-        m_refCount--;
+        ASSERT(m_refCount);
+        return !--m_refCount;
     }
     
     NodeIndex child1()

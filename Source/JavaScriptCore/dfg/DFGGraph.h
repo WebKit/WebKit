@@ -80,11 +80,17 @@ public:
             refChildren(nodeIndex);
     }
     
+    void deref(NodeIndex nodeIndex)
+    {
+        if (at(nodeIndex).deref())
+            derefChildren(nodeIndex);
+    }
+    
     void clearAndDerefChild1(Node& node)
     {
         if (node.children.fixed.child1 == NoNode)
             return;
-        at(node.children.fixed.child1).deref();
+        deref(node.children.fixed.child1);
         node.children.fixed.child1 = NoNode;
     }
 
@@ -92,7 +98,7 @@ public:
     {
         if (node.children.fixed.child2 == NoNode)
             return;
-        at(node.children.fixed.child2).deref();
+        deref(node.children.fixed.child2);
         node.children.fixed.child2 = NoNode;
     }
 
@@ -100,7 +106,7 @@ public:
     {
         if (node.children.fixed.child3 == NoNode)
             return;
-        at(node.children.fixed.child3).deref();
+        deref(node.children.fixed.child3);
         node.children.fixed.child3 = NoNode;
     }
 
@@ -259,6 +265,7 @@ private:
     
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
+    void derefChildren(NodeIndex);
 
     PredictionTracker m_predictions;
 };
