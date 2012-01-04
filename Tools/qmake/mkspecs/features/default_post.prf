@@ -130,6 +130,8 @@ contains(TEMPLATE, lib) {
     # Build both debug and release configurations
     mac: CONFIG += build_all
 
+    TARGET = $$qtLibraryTarget($$TARGET)
+
     DEFINES += QT_ASCII_CAST_WARNINGS
 
     win32-msvc*|win32-icc: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32

@@ -7,8 +7,6 @@
 TEMPLATE = lib
 TARGET = WTRInjectedBundle
 
-mac:debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
-
 SOURCES += \
     AccessibilityController.cpp \
     AccessibilityTextMarker.cpp \

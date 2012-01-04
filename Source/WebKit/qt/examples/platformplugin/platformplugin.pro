@@ -1,6 +1,7 @@
-QT       += core gui
-TARGET = $$qtLibraryTarget(platformplugin)
 TEMPLATE = lib
+TARGET = platformplugin
+
+QT += core gui
 CONFIG += plugin
 
 ## load mobilityconfig if mobility is available

@@ -215,7 +215,6 @@ contains(CONFIG, texmap) {
 
 win32-*|wince* {
     DLLDESTDIR = $${ROOT_BUILD_DIR}/bin
-    isEmpty(QT_SOURCE_TREE):build_pass: TARGET = $$qtLibraryTarget($$TARGET)
 
     dlltarget.commands = $(COPY_FILE) $(DESTDIR_TARGET) $$[QT_INSTALL_BINS]
     dlltarget.CONFIG = no_path

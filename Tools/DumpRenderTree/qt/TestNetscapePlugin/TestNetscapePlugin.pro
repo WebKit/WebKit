@@ -49,7 +49,6 @@ mac {
     QMAKE_BUNDLE_LOCATION += "Contents/MacOS"
 
     !build_pass:CONFIG += build_all
-    debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
 
     OBJECTIVE_SOURCES += PluginObjectMac.mm
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore

@@ -1,3 +1,13 @@
+2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move use of $$qtLibraryTarget() to a single place
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * declarative/experimental/experimental.pri:
+        * declarative/public.pri:
+        * examples/platformplugin/platformplugin.pro:
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed

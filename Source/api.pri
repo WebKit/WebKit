@@ -203,14 +203,8 @@ unix {
 }
 
 mac {
-    !static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
-        !build_pass {
-            message("Building QtWebKit as a framework, as that's how Qt was built. You can")
-            message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
-        } else {
-            isEmpty(QT_SOURCE_TREE):debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
-        }
-
+    !static:contains(QT_CONFIG, qt_framework) {
+        # Build QtWebKit as a framework, to match how Qt was built
         CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
 
         # For debug_and_release configs, only copy headers in release
