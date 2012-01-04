@@ -248,14 +248,15 @@ static CachedImage* imageFromElement(DOMElement *domElement)
             [self setData:[element _imageTIFFRepresentation] forType:NSTIFFPboardType];
     }
     
-    if (archive)
+    if (archive) {
         if ([types containsObject:WebArchivePboardType])
             [self setData:[archive data] forType:WebArchivePboardType];
-    else {
-        // We should not have declared types that we aren't going to write (4031826).
-        ASSERT(![types containsObject:NSRTFDPboardType]);
-        ASSERT(![types containsObject:WebArchivePboardType]);
+        return;
     }
+
+    // We should not have declared types that we aren't going to write (4031826).
+    ASSERT(![types containsObject:NSRTFDPboardType]);
+    ASSERT(![types containsObject:WebArchivePboardType]);
 }
 
 - (id)_web_declareAndWriteDragImageForElement:(DOMElement *)element

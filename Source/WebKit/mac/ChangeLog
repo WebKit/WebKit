@@ -1,3 +1,15 @@
+2012-01-04  Anders Carlsson  <andersca@apple.com>
+
+        Ambiguous if-then-else in Source/WebKit/mac/Misc/WebNSPasteboardExtras.mm
+        https://bugs.webkit.org/show_bug.cgi?id=75447
+
+        Reviewed by Brian Weinstein.
+
+        Resolve the ambiguity.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:source:]):
+
 2012-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [Mac]Fix build after changeset 103997
