@@ -1,3 +1,20 @@
+2012-01-04  Adam Roben  <aroben@apple.com>
+
+        Use one big printf command instead of many chained echo commands to generate idl_files.tmp
+
+        This works around a bug in Cygwin where sh.exe will crash if given a too-long sequence of
+        &&-chained commands.
+
+        Fixes <http://webkit.org/b/75546> <rdar://problem/10622193> REGRESSION (r103519): WebCore's
+        DerivedSources.make crashes sh.exe if path to WebKit source tree is long enough
+
+        Reviewed by Antti Koivisto.
+
+        * DerivedSources.make: Change the '(echo foo && echo bar && echo baz && echo -n) >
+        ./idl_files.tmp' command to 'printf "foo\nbar\nbaz\n" > ./idl_files.tmp'. We use the
+        patsubst function to append "\n" to each IDL filename, then use the subst function to remove
+        the spaces between the filenames.
+
 2012-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Rollout support for background-color region styling

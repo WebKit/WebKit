@@ -914,9 +914,13 @@ SUPPLEMENTAL_DEPENDENCY_FILE = ./supplemental_dependency.tmp
 IDL_FILES_TMP = ./idl_files.tmp
 ADDITIONAL_IDLS = $(WebCore)/inspector/JavaScriptCallFrame.idl
 
+# The following two lines get a space character stored in a variable.
+# See <http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html>.
+space :=
+space +=
+
 $(SUPPLEMENTAL_DEPENDENCY_FILE) : $(RESOLVE_SUPPLEMENTAL_SCRIPTS) $(BINDING_IDLS) $(ADDITIONAL_IDLS)
-	echo -n > $(IDL_FILES_TMP)
-	($(foreach idl, $(BINDING_IDLS) $(ADDITIONAL_IDLS), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
+	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS) $(ADDITIONAL_IDLS)))" > $(IDL_FILES_TMP)
 	$(call resolve_supplemental_script, $(RESOLVE_SUPPLEMENTAL_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
 	rm -f $(IDL_FILES_TMP)
 
