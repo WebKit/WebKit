@@ -47,6 +47,7 @@
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"  // needed by FormState.h
 #include "HTMLNames.h"
+#include "MessageEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -58,6 +59,7 @@
 #include "ResourceLoader.h"
 #include "Settings.h"
 #include "StringExtras.h"
+#include "WebDOMEvent.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebDocument.h"
@@ -1615,6 +1617,16 @@ PassOwnPtr<WebPluginLoadObserver> FrameLoaderClientImpl::pluginLoadObserver()
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientImpl::createNetworkingContext()
 {
     return FrameNetworkingContextImpl::create(m_webFrame->frame());
+}
+
+bool FrameLoaderClientImpl::willCheckAndDispatchMessageEvent(
+    SecurityOrigin* target, MessageEvent* event) const
+{
+    if (!m_webFrame->client())
+        return false;
+
+    return m_webFrame->client()->willCheckAndDispatchMessageEvent(
+        m_webFrame, WebSecurityOrigin(target), WebDOMMessageEvent(event));
 }
 
 } // namespace WebKit
