@@ -74,6 +74,7 @@
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',
             'tests/CCSchedulerTest.cpp',
+            'tests/CCTiledLayerImplTest.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CompositorFakeGraphicsContext3D.h',
             'tests/CompositorFakeWebGraphicsContext3D.h',
