@@ -1648,7 +1648,7 @@ void FrameSelection::updateAppearance()
     if (!view)
         return;
 
-    VisibleSelection selection = this->selection();
+    VisibleSelection selection(m_selection.visibleStart(), m_selection.visibleEnd());
 
     if (!selection.isRange()) {
         view->clearSelection();

@@ -1,5 +1,21 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 96834
+
+    2011-10-06  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10232866> Assertion failure beneath blockSelectionGaps() when a selected node is removed
+
+            Reviewed by Ryosuke Niwa.
+
+            Test: editing/selection/invalid-in-RenderView.html
+
+            * editing/FrameSelection.cpp:
+            (WebCore::FrameSelection::updateAppearance): Ensure that the VisibleSelection used to set the selection
+            in the RenderView is valid, by reconstructing it from the current selection.
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 96826
 
     2011-10-06  Sergey Glazunov  <serg.glazunov@gmail.com>
