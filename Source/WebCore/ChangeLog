@@ -1,3 +1,15 @@
+2012-01-03  Eric Penner  <epenner@google.com>
+
+        [chromium] Prevent crashing due to NULL texture updater.
+        https://bugs.webkit.org/show_bug.cgi?id=75288
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        * platform/graphics/chromium/ImageLayerChromium.h:
+
 2012-01-03  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] CCLayerSorter accidentally reverses order of some layers.

@@ -144,12 +144,6 @@ ImageLayerChromium::~ImageLayerChromium()
 {
 }
 
-void ImageLayerChromium::cleanupResources()
-{
-    m_textureUpdater.clear();
-    TiledLayerChromium::cleanupResources();
-}
-
 void ImageLayerChromium::setContents(Image* contents)
 {
     // setContents() currently gets called whenever there is any

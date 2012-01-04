@@ -56,7 +56,6 @@ protected:
     explicit ContentLayerChromium(CCLayerDelegate*);
 
 private:
-    virtual void cleanupResources();
     virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 

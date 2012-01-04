@@ -61,7 +61,6 @@ public:
 private:
     explicit ImageLayerChromium(CCLayerDelegate*);
 
-    virtual void cleanupResources();
     virtual void createTextureUpdater(const CCLayerTreeHost*);
     void setTilingOption(TilingOption);
 

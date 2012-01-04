@@ -87,12 +87,6 @@ ContentLayerChromium::~ContentLayerChromium()
 {
 }
 
-void ContentLayerChromium::cleanupResources()
-{
-    m_textureUpdater.clear();
-    TiledLayerChromium::cleanupResources();
-}
-
 void ContentLayerChromium::paintContentsIfDirty()
 {
     updateTileSizeAndTilingOption();
