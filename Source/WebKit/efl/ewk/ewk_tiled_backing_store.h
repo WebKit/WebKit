@@ -67,10 +67,6 @@ struct _Ewk_Tile {
     unsigned long col, row; /**< tile tile position */
     Evas_Coord x, y;        /**< tile coordinate position */
 
-    /* TODO: does it worth to keep those or create on demand? */
-    cairo_surface_t* surface;
-    cairo_t* cairo;
-
     /** Never ever change those after tile is created (respect const!) */
     const Evas_Coord width, height;        /**< tile size (see TILE_SIZE_AT_ZOOM()) */
     const Evas_Colorspace cspace; /**< colorspace */

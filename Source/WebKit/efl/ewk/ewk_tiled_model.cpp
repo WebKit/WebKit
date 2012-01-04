@@ -237,23 +237,16 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
     Ewk_Tile* tile;
     unsigned int area;
     size_t bytes;
-    cairo_format_t format;
-    cairo_status_t status;
-    int stride;
     Ecore_Evas* ecoreEvas;
     const char* engine;
 
     area = width * height;
 
-    if (colorSpace == EVAS_COLORSPACE_ARGB8888) {
+    if (colorSpace == EVAS_COLORSPACE_ARGB8888)
         bytes = area * 4;
-        stride = width * 4;
-        format = CAIRO_FORMAT_ARGB32;
-    } else if (colorSpace == EVAS_COLORSPACE_RGB565_A5P) {
+    else if (colorSpace == EVAS_COLORSPACE_RGB565_A5P)
         bytes = area * 2;
-        stride = width * 2;
-        format = CAIRO_FORMAT_RGB16_565;
-    } else {
+    else {
         ERR("unknown color space: %d", colorSpace);
         return 0;
     }
@@ -296,25 +289,6 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
     evas_object_image_size_set(tile->image, tile->width, tile->height);
     evas_object_image_colorspace_set(tile->image, tile->cspace);
     tile->pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, true));
-    tile->surface = cairo_image_surface_create_for_data(tile->pixels, format, width, height, stride);
-    status = cairo_surface_status(tile->surface);
-    if (status != CAIRO_STATUS_SUCCESS) {
-        ERR("failed to create cairo surface: %s",
-            cairo_status_to_string(status));
-        free(tile);
-        return 0;
-    }
-
-    tile->cairo = cairo_create(tile->surface);
-    status = cairo_status(tile->cairo);
-    if (status != CAIRO_STATUS_SUCCESS) {
-        ERR("failed to create cairo: %s", cairo_status_to_string(status));
-        cairo_surface_destroy(tile->surface);
-        evas_object_del(tile->image);
-        free(tile);
-        return 0;
-    }
-
     _ewk_tile_account_allocated(tile);
 
     return tile;
@@ -330,8 +304,6 @@ void ewk_tile_free(Ewk_Tile* tile)
     if (tile->updates)
         eina_tiler_free(tile->updates);
 
-    cairo_surface_destroy(tile->surface);
-    cairo_destroy(tile->cairo);
     evas_object_del(tile->image);
     free(tile);
 }

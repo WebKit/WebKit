@@ -25,6 +25,7 @@
 #include "ewk_private.h"
 
 #include <Evas.h>
+#include <RefPtrCairo.h>
 #include <eina_safety_checks.h>
 #include <ewk_tiled_backing_store.h>
 
@@ -33,9 +34,38 @@ static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* tile, const Eina_Rectangle* area)
 {
     Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
-    Eina_Rectangle rect = {area->x + tile->x, area->y + tile->y, area->w, area->h};
+    Eina_Rectangle rect = {area->x + tile->x, area->y + tile->y, area->w, area->h};    
+    int stride;
+    cairo_format_t format;
 
-    return ewk_view_paint_contents(priv, tile->cairo, &rect);
+    if (tile->cspace == EVAS_COLORSPACE_ARGB8888) {
+        stride = tile->width * 4;
+        format = CAIRO_FORMAT_ARGB32;
+    } else if (tile->cspace == EVAS_COLORSPACE_RGB565_A5P) {
+        stride = tile->width * 2;
+        format = CAIRO_FORMAT_RGB16_565;
+    } else {
+        ERR("unknown color space: %d", tile->cspace);
+        return false;
+    }
+
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(tile->pixels, format, tile->width, tile->height, stride));
+    cairo_status_t status = cairo_surface_status(surface.get());
+    if (status != CAIRO_STATUS_SUCCESS) {
+        ERR("failed to create cairo surface: %s", cairo_status_to_string(status));
+        return false;
+    }
+
+    RefPtr<cairo_t> cairo = adoptRef(cairo_create(surface.get()));
+    status = cairo_status(cairo.get());
+    if (status != CAIRO_STATUS_SUCCESS) {
+        ERR("failed to create cairo: %s", cairo_status_to_string(status));
+        return false;
+    }
+
+    cairo_translate(cairo.get(), -tile->x, -tile->y);
+
+    return ewk_view_paint_contents(priv, cairo.get(), &rect);
 }
 
 static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* ewkView)

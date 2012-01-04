@@ -1,3 +1,23 @@
+2012-01-04  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Refactor the way using cairo in ewk_tiled_backing_store.
+        https://bugs.webkit.org/show_bug.cgi?id=74993
+
+        Reviewed by Nikolas Zimmermann.
+
+        For now there are cairo related code scattered around the ewk_tiled_backing_store.
+        From the point of code complexity view, it doesn't look good and I couldn't notice any benefit of it.
+        So, this patch will let cairo related code be used only for painting operation.
+
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_tile_new):
+        * ewk/ewk_tiled_model.cpp:
+        (ewk_tile_new):
+        (ewk_tile_free):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_render_cb):
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed

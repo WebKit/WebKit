@@ -463,9 +463,6 @@ Ewk_Tile* ewk_tile_matrix_tile_new(Ewk_Tile_Matrix* tileMatrix, Evas* canvas, un
     tile->row = row;
     tile->x = column * tileWidth;
     tile->y = row * tileHeight;
-
-    cairo_translate(tile->cairo, -tile->x, -tile->y);
-
     tile->stats.full_update = true;
     tileMatrix->updates = eina_list_append(tileMatrix->updates, tile);
 
