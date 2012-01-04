@@ -144,7 +144,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PageGroup.h>
-#import <WebCore/PlatformEventFactory.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>

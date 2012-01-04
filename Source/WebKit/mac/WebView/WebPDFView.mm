@@ -58,7 +58,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
-#import <WebCore/PlatformEventFactory.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>

@@ -1,3 +1,15 @@
+2012-01-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [Mac]Fix build after changeset 103997
+        https://bugs.webkit.org/show_bug.cgi?id=75530
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFView.mm:
+        * WebView/WebView.mm:
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed

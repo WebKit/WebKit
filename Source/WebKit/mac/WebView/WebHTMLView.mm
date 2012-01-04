@@ -104,7 +104,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
-#import <WebCore/PlatformEventFactory.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>

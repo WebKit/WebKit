@@ -76,7 +76,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
-#import <WebCore/PlatformEventFactory.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderLayer.h>
