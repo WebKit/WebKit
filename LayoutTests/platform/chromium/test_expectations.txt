@@ -994,7 +994,7 @@ BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIME
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
-BUGCR10304 LINUX : svg/carto.net/button.svg = CRASH FAIL
+BUGCR10304 LINUX : svg/carto.net/button.svg = CRASH FAIL      
 
 // Probably need to change the test upstream to describe it better and use no
 // hard coded numbers.
@@ -1525,7 +1525,6 @@ BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 BUGCR99500 WIN : compositing/geometry/fixed-position-composited-page-scale.html = IMAGE
 BUGCR99500 WIN : compositing/geometry/fixed-position-iframe-composited-page-scale.html = IMAGE
 BUGCR99500 WIN : compositing/geometry/fixed-position-transform-composited-page-scale.html = IMAGE
-BUGCR99500 WIN : fast/backgrounds/animated-svg-as-mask.html = IMAGE
 BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
@@ -1577,7 +1576,6 @@ BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
-BUGCR99500 WIN : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
@@ -1603,10 +1601,8 @@ BUGCR99500 WIN : svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.htm
 BUGCR99500 WIN : svg/hixie/mixed/009.xml = IMAGE
 BUGCR99500 WIN : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
 BUGCR99500 WIN : svg/text/scaling-font-with-geometric-precision.html = IMAGE
-BUGCR99500 WIN : svg/text/text-align-01-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/text-align-05-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/text-align-06-b.svg = IMAGE
-BUGCR99500 WIN : svg/text/text-path-01-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/textPathBoundsBug.svg = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
@@ -3119,7 +3115,7 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = PASS CRASH TIMEOUT
 
 // Flaky since added by r86478
-BUGCR82881 BUGCR109068 LINUX MAC WIN: http/tests/appcache/interrupted-update.html = PASS TEXT CRASH
+BUGCR82881 BUGCR109068 LINUX MAC WIN : http/tests/appcache/interrupted-update.html = PASS TEXT CRASH
 BUGCR109077 LINUX : http/tests/inspector/appcache/appcache-swap.html = CRASH
 
 // Fails on windows - added in r86693
