@@ -544,10 +544,6 @@ Document::~Document()
             (*m_pageGroupUserSheets)[i]->clearOwnerNode();
     }
 
-#if ENABLE(FULLSCREEN_API)
-    m_fullScreenChangeEventTargetQueue.clear();
-#endif
-
     deleteRetiredCustomFonts();
 
     m_weakReference->clear();
@@ -1783,6 +1779,9 @@ void Document::detach()
     clearAXObjectCache();
     stopActiveDOMObjects();
     m_eventQueue->cancelQueuedEvents();
+#if ENABLE(FULLSCREEN_API)
+    m_fullScreenChangeEventTargetQueue.clear();
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     // FIXME: consider using ActiveDOMObject.
