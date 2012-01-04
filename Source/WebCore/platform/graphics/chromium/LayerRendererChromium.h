@@ -105,7 +105,7 @@ public:
     void finish();
 
     // puts backbuffer onscreen
-    void swapBuffers();
+    void swapBuffers(const IntRect& subBuffer);
 
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
@@ -242,8 +242,6 @@ private:
     FloatQuad m_sharedGeometryQuad;
 
     bool m_isViewportChanged;
-
-    FloatRect m_rootDamageRect;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

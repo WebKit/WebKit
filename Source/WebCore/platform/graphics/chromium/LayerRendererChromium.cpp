@@ -55,13 +55,13 @@
 #include "cc/CCCustomLayerDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCLayerImpl.h"
+#include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCProxy.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCProxy.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
 #include "GrContext.h"
@@ -751,18 +751,18 @@ void LayerRendererChromium::finish()
     m_context->finish();
 }
 
-void LayerRendererChromium::swapBuffers()
+void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 {
     TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
     // We're done! Time to swapbuffers!
 
     if (m_capabilities.usingPartialSwap) {
         // If supported, we can save significant bandwidth by only swapping the damaged/scissored region (clamped to the viewport)
-        IntRect subBuffer = enclosingIntRect(m_rootDamageRect);
-        subBuffer.intersect(IntRect(IntPoint::zero(), viewportSize()));
+        IntRect clippedSubBuffer = subBuffer;
+        clippedSubBuffer.intersect(IntRect(IntPoint::zero(), viewportSize()));
         Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-        int flippedYPosOfRectBottom = viewportHeight() - subBuffer.y() - subBuffer.height();
-        extensions3DChromium->postSubBufferCHROMIUM(subBuffer.x(), flippedYPosOfRectBottom, subBuffer.width(), subBuffer.height());
+        int flippedYPosOfRectBottom = viewportHeight() - clippedSubBuffer.y() - clippedSubBuffer.height();
+        extensions3DChromium->postSubBufferCHROMIUM(clippedSubBuffer.x(), flippedYPosOfRectBottom, clippedSubBuffer.width(), clippedSubBuffer.height());
     } else
         // Note that currently this has the same effect as swapBuffers; we should
         // consider exposing a different entry point on GraphicsContext3D.

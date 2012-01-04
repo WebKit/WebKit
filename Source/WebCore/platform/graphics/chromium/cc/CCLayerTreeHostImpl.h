@@ -154,6 +154,8 @@ private:
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
 
     CCLayerSorter m_layerSorter;
+
+    FloatRect m_rootDamageRect;
 };
 
 };

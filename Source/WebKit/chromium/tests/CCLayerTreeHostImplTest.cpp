@@ -38,7 +38,7 @@ using namespace WebKit;
 
 namespace {
 
-class CCLayerTreeHostImplTest : public testing::Test, CCLayerTreeHostImplClient {
+class CCLayerTreeHostImplTest : public testing::Test, public CCLayerTreeHostImplClient {
 public:
     CCLayerTreeHostImplTest()
         : m_didRequestCommit(false)
@@ -308,7 +308,7 @@ private:
 
 class FakeDrawableCCLayerImpl: public CCLayerImpl {
 public:
-    FakeDrawableCCLayerImpl() : CCLayerImpl(0) { }
+    explicit FakeDrawableCCLayerImpl(int id) : CCLayerImpl(id) { }
     virtual void draw(LayerRendererChromium* renderer) { }
 };
 
@@ -323,7 +323,7 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewport(IntSize(10, 10));
 
-    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl());
+    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setBounds(IntSize(10, 10));
     root->setDrawsContent(true);
@@ -334,5 +334,94 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
     EXPECT_TRUE(reshapeTracker->reshapeCalled());
 }
 
+class PartialSwapTrackerContext : public FakeWebGraphicsContext3D {
+public:
+    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
+
+    virtual void postSubBufferCHROMIUM(int x, int y, int width, int height)
+    {
+        m_partialSwapRect = IntRect(x, y, width, height);
+    }
+
+    virtual WebString getString(WGC3Denum name)
+    {
+        if (name == GraphicsContext3D::EXTENSIONS)
+            return WebString("GL_CHROMIUM_post_sub_buffer");
+
+        return WebString();
+    }
+
+    IntRect partialSwapRect() const { return m_partialSwapRect; }
+
+private:
+    IntRect m_partialSwapRect;
+};
+
+// Make sure damage tracking propagates all the way to the graphics context,
+// where it should request to swap only the subBuffer that is damaged.
+TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
+{
+    GraphicsContext3D::Attributes attrs;
+    PartialSwapTrackerContext* partialSwapTracker = new PartialSwapTrackerContext();
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+
+    // This test creates its own CCLayerTreeHostImpl, so
+    // that we can force partial swap enabled.
+    CCSettings settings;
+    settings.partialSwapEnabled = true;
+    OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
+    layerTreeHostImpl->initializeLayerRenderer(context);
+    layerTreeHostImpl->setViewport(IntSize(500, 500));
+
+    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
+    RefPtr<CCLayerImpl> child = adoptRef(new FakeDrawableCCLayerImpl(2));
+    child->setPosition(FloatPoint(12, 13));
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setBounds(IntSize(14, 15));
+    child->setDrawsContent(true);
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setBounds(IntSize(500, 500));
+    root->setDrawsContent(true);
+    root->addChild(child);
+    layerTreeHostImpl->setRootLayer(root);
+
+    // First frame, the entire screen should get swapped.
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+    IntRect actualSwapRect = partialSwapTracker->partialSwapRect();
+    IntRect expectedSwapRect = IntRect(IntPoint::zero(), IntSize(500, 500));
+    EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
+    EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
+    EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
+    EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
+
+    // Second frame, only the damaged area should get swapped. Damage should be the union
+    // of old and new child rects.
+    // expected damage rect: IntRect(IntPoint::zero(), IntSize(26, 28));
+    // expected swap rect: vertically flipped, with origin at bottom left corner.
+    child->setPosition(FloatPoint(0, 0));
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+    actualSwapRect = partialSwapTracker->partialSwapRect();
+    expectedSwapRect = IntRect(IntPoint(0, 500-28), IntSize(26, 28));
+    EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
+    EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
+    EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
+    EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
+
+    // Make sure that partial swap is constrained to the viewport dimensions
+    // expected damage rect: IntRect(IntPoint::zero(), IntSize(500, 500));
+    // expected swap rect: flipped damage rect, but also clamped to viewport
+    layerTreeHostImpl->setViewport(IntSize(10, 10));
+    root->setOpacity(0.7); // this will damage everything
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+    actualSwapRect = partialSwapTracker->partialSwapRect();
+    expectedSwapRect = IntRect(IntPoint::zero(), IntSize(10, 10));
+    EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
+    EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
+    EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
+    EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
+}
 
 } // namespace

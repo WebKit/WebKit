@@ -31,8 +31,8 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCDamageTracker.h"
-#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCThreadTask.h"
@@ -207,7 +207,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >& p
 
     if (layerRendererCapabilities().usingPartialSwap)
         trackDamageForAllSurfaces(rootLayer(), renderSurfaceLayerList);
-    FloatRect rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
+    m_rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
 
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
@@ -217,7 +217,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >& p
 
         FloatRect surfaceDamageRect;
         if (layerRendererCapabilities().usingPartialSwap)
-            surfaceDamageRect = damageInSurfaceSpace(renderSurfaceLayer, rootDamageRect);
+            surfaceDamageRect = damageInSurfaceSpace(renderSurfaceLayer, m_rootDamageRect);
         pass->setSurfaceDamageRect(surfaceDamageRect);
 
         const CCLayerList& layerList = renderSurface->layerList();
@@ -284,7 +284,7 @@ TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
 void CCLayerTreeHostImpl::swapBuffers()
 {
     ASSERT(m_layerRenderer && !isContextLost());
-    m_layerRenderer->swapBuffers();
+    m_layerRenderer->swapBuffers(enclosingIntRect(m_rootDamageRect));
 }
 
 void CCLayerTreeHostImpl::onSwapBuffersComplete()
