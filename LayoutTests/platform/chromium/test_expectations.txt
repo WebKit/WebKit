@@ -2957,10 +2957,6 @@ BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = IMAGE MISSING
 
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TIMEOUT TEXT
 
-
-// Added in Webkit r83470 without expected results.
-BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
-
 // Regression caused by r83514.
 BUGCR79110 LINUX WIN : fast/block/float/021.html = TEXT
 BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
