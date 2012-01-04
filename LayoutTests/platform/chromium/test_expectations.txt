@@ -930,8 +930,6 @@ BUGWK62974 LINUX WIN : svg/batik/text/textEffect3.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/batik/text/textEffect3.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
 BUGWK62974 LEOPARD : svg/batik/text/xmlSpace.svg = IMAGE
-BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
-BUGWK62974 LINUX : svg/custom/glyph-selection-lang-attribute.svg = IMAGE
 BUGWK62974 : svg/text/text-altglyph-01-b.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/text/text-text-04-t.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
@@ -994,7 +992,7 @@ BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIME
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
-BUGCR10304 LINUX : svg/carto.net/button.svg = CRASH FAIL
+BUGCR10304 WIN LINUX : svg/carto.net/button.svg = CRASH FAIL
 
 // Probably need to change the test upstream to describe it better and use no
 // hard coded numbers.
@@ -1748,7 +1746,6 @@ BUGCR24182 SLOW DEBUG : fast/forms/input-maxlength.html = PASS
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
 // WebKit Roll 49640:49684
-BUGCR25202 LINUX WIN : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
 
 // WebKit Roll 49684:49761
