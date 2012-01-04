@@ -5248,8 +5248,8 @@
 		BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */; };
 		BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */; };
 		BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCAA486F14A052530088FAC4 /* PlatformEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */; };
-		BCAA487014A052530088FAC4 /* PlatformEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */; };
+		BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAB417F13E356E800D8AAF3 /* Region.cpp */; };
 		BCAB418213E356E800D8AAF3 /* Region.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAB418013E356E800D8AAF3 /* Region.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12619,8 +12619,8 @@
 		BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardController.cpp; sourceTree = "<group>"; };
 		BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardListImpl.cpp; sourceTree = "<group>"; };
 		BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardListImpl.h; sourceTree = "<group>"; };
-		BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformEventFactory.mm; sourceTree = "<group>"; };
-		BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEventFactory.h; sourceTree = "<group>"; };
+		BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformEventFactoryMac.mm; sourceTree = "<group>"; };
+		BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEventFactoryMac.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Scrollbar.cpp; sourceTree = "<group>"; };
 		BCAB417F13E356E800D8AAF3 /* Region.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Region.cpp; sourceTree = "<group>"; };
 		BCAB418013E356E800D8AAF3 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
@@ -15616,8 +15616,8 @@
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
 				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
-				BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */,
-				BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */,
+				BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */,
+				BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
@@ -24067,7 +24067,7 @@
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
-				BCAA487014A052530088FAC4 /* PlatformEventFactory.h in Headers */,
+				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
 				BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
@@ -27158,7 +27158,7 @@
 				4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */,
 				CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */,
 				BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */,
-				BCAA486F14A052530088FAC4 /* PlatformEventFactory.mm in Sources */,
+				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,

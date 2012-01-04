@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformEventFactory.h"
+#include "PlatformEventFactoryMac.h"
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"

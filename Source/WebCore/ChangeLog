@@ -1,3 +1,43 @@
+2012-01-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Exclude Mac's PlatformEventFactory from iOS
+        https://bugs.webkit.org/show_bug.cgi?id=75493
+
+        Reviewed by Sam Weinig.
+
+        Move PlatformEventFactory.(h|cpp) to PlatformEventFactoryMac(h|cpp) and exclude the file
+        from iOS build.
+
+        * Configurations/WebCore.xcconfig: Also exclude EventHandlerMac for consistency.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/EventHandlerMac.mm:
+        * platform/mac/PlatformEventFactoryMac.h: Renamed from Source/WebCore/platform/mac/PlatformEventFactory.h.
+        * platform/mac/PlatformEventFactoryMac.mm: Renamed from Source/WebCore/platform/mac/PlatformEventFactory.mm.
+        (WebCore::globalPoint):
+        (WebCore::globalPointForEvent):
+        (WebCore::pointForEvent):
+        (WebCore::mouseButtonForEvent):
+        (WebCore::mouseEventTypeForEvent):
+        (WebCore::clickCountForEvent):
+        (WebCore::momentumPhaseForEvent):
+        (WebCore::phaseForEvent):
+        (WebCore::gestureEventTypeForEvent):
+        (WebCore::textFromEvent):
+        (WebCore::unmodifiedTextFromEvent):
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::isKeypadEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::isKeyUpEvent):
+        (WebCore::modifiersForEvent):
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformMouseEvent):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformWheelEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformKeyboardEvent):
+        (WebCore::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformGestureEvent):
+
 2012-01-03  Wei James  <james.wei@intel.com>
 
         Optimize AudioBufferSourceNode process by avoiding interpolation when pitchRate==1

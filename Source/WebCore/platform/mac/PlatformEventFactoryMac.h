@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformEventFactory_h
-#define PlatformEventFactory_h
+#ifndef PlatformEventFactoryMac_h
+#define PlatformEventFactoryMac_h
 
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -54,4 +54,4 @@ IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 
 } // namespace WebCore
 
-#endif // PlatformEventFactory_h
+#endif // PlatformEventFactoryMac_h
