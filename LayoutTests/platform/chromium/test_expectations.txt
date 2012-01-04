@@ -3690,8 +3690,6 @@ BUGWK59552 SNOWLEOPARD DEBUG : storage/domstorage/events/basic-body-attribute.ht
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 
-BUGWK72037 : storage/indexeddb/factory-deletedatabase-interactions.html = TEXT TIMEOUT PASS
-
 BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/regexp-caching.html = TEXT
