@@ -193,6 +193,8 @@ label {
     -moz-column-count: 3;
     -moz-column-gap: 25px;
     -moz-column-rule: 1px dashed black;
+    border-top: 1px dashed black;
+    border-bottom: 1px dashed black;
 }
 .not-found {
     color: red;
@@ -1328,33 +1330,33 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
 {
     var tests = g_perBuilderWithExpectationsButNoFailures[builder];
     var skippedPaths = g_perBuilderSkippedPaths[builder];
+    var showUnexpectedPassesLink =  linkHTMLToToggleState('showUnexpectedPasses', 'tests that have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs');
+    var showSkippedLink = linkHTMLToToggleState('showSkipped', 'skipped tests in test_expectations.txt');
+    
 
     var html = '';
     if (tests.length || skippedPaths.length) {
         var buildInfo = platformAndBuildType(builder);
-        html += '<h2>Expectations for ' + buildInfo.platform + '-' + buildInfo.buildType + ':</h2>';
+        html += '<h2 style="display:inline-block">Expectations for ' + buildInfo.platform + '-' + buildInfo.buildType + '</h2> ';
+        if (!g_currentState.showUnexpectedPasses && tests.length)
+            html += showUnexpectedPassesLink;
+        html += ' ';
+        if (!g_currentState.showSkipped && skippedPaths.length)
+            html += showSkippedLink;
     }
 
     var open = '<div onclick="selectContents(this)">';
 
-    if (tests.length) {
-        html +=  '<h3>' + linkHTMLToToggleState('showUnexpectedPasses', 'tests that have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs.') + '</h3>';
-        
-        if (g_currentState.showUnexpectedPasses) {
-            html += '<div id="passing-tests">';
-            for (var i = 0; i < tests.length; i++)
-                html += open + tests[i].test + '</div>';
-            html += '</div>';
-        }
+    if (g_currentState.showUnexpectedPasses && tests.length) {
+        html += '<div id="passing-tests">' + showUnexpectedPassesLink;
+        for (var i = 0; i < tests.length; i++)
+            html += open + tests[i].test + '</div>';
+        html += '</div>';
     }
 
-    if (skippedPaths.length) {
-        html += '<h3>' + linkHTMLToToggleState('showSkipped', 'skipped tests in test_expectations.txt') + '</h3>';
-
-        if (g_currentState.showSkipped)
-            html += '<div id="skipped-tests">' + open + skippedPaths.join('</div>' + open) + '</div></div>';
-    }
-    return html;
+    if (g_currentState.showSkipped && skippedPaths.length)
+        html += '<div id="skipped-tests">' + showSkippedLink + open + skippedPaths.join('</div>' + open) + '</div></div>';
+    return html + '<br>';
 }
 
 // Returns whether we should exclude test results from the test table.

@@ -1,3 +1,18 @@
+2012-01-03  Ojan Vafai  <ojan@chromium.org>
+
+        shrink the header on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=65153
+
+        Reviewed by Adam Roben.
+
+        Move some of the "show" links to be to the right of the header
+        instead of below the header when they content they're showing
+        is hidden. That way we don't waste vertical space on them.
+
+        No new tests. This code is covered by existing tests.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2012-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a tool to analyze change logs
