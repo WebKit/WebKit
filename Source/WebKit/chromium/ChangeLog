@@ -1,3 +1,11 @@
+2012-01-04  Dmitry Lomov  <dslomov@google.com>
+
+        Unreviewed:[Chromium]Disable WebPageNewSerializeTest.CSSResources and WebPageNewSerializeTest.TestMHTMLEncoding.
+        https://bugs.webkit.org/show_bug.cgi?id=75567
+
+        * tests/WebPageNewSerializerTest.cpp:
+        (WebKit::TEST_F):
+
 2012-01-04  Adrienne Walker  <enne@google.com>
 
         [chromium] Create unit tests for CCTiledLayerImpl
