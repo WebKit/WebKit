@@ -1,3 +1,12 @@
+2012-01-04  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Enable DOWNLOAD_ATTRIBUTE in BlackBerry porting
+        https://bugs.webkit.org/show_bug.cgi?id=75238
+
+        Reviewed by Antonio Gomes.
+
+        * Source/cmakeconfig.h.cmake: Modified to add a new cmakedefine ENABLE_DOWNLOAD_ATTRIBUTE.
+
 2012-01-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Clean up detection of fontconfig

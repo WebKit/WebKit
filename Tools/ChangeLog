@@ -1,3 +1,18 @@
+2012-01-04  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Enable DOWNLOAD_ATTRIBUTE in BlackBerry porting
+        https://bugs.webkit.org/show_bug.cgi?id=75238
+
+        Reviewed by Antonio Gomes.
+
+        Add ENABLE_DOWNLOAD_ATTRIBUTE webkit feature into the build script so that 
+        it could initiate download directly if it has the download attribute in the link 
+        and doesn't need to open new blank page for the target="_blank". Enabling this 
+        feature in the BlackBerry porting also prepares for later blob feature implementation.
+
+        * Scripts/build-webkit: Modified to handle ENABLE_DOWNLOAD_ATTRIBUTE. Make it default on
+        for the BlackBerry porting.
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix a runtime warning when hovering hyperlink auditing setting in MiniBroweser settings dialog

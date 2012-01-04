@@ -83,6 +83,7 @@ my (
     $detailsSupport,
     $deviceOrientationSupport,
     $directoryUploadSupport,
+    $downloadAttributeSupport,
     $fileSystemSupport,
     $filtersSupport,
     $fullscreenAPISupport,
@@ -137,6 +138,9 @@ my (
 my @features = (
     { option => "request-animation-frame", desc => "Toggle requestAnimationFrame support",
       define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit()), value => \$requestAnimationFrameSupport },
+
+    { option => "download-attribute", desc => "Toggle download attribute support",
+      define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value =>\$downloadAttributeSupport },
 
     { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
       define => "ENABLE_WEBGL", default => (isAppleMacWebKit() && !isLeopard()), value => \$threeDCanvasSupport },
