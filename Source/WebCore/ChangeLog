@@ -1,5 +1,24 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 96868
+
+    2011-10-06  Abhishek Arya  <inferno@chromium.org>
+
+            Crash in VisiblePosition::canonicalPosition.
+            https://bugs.webkit.org/show_bug.cgi?id=69568
+
+            Reviewed by Ryosuke Niwa.
+
+            Move the position's containerNode calculation after layout is
+            complete(in updateLayoutIgnorePendingStylesheets).        
+
+            Test: editing/selection/selection-plugin-clear-crash.html
+
+            * editing/VisiblePosition.cpp:
+            (WebCore::VisiblePosition::canonicalPosition):
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 96834
 
     2011-10-06  Dan Bernstein  <mitz@apple.com>

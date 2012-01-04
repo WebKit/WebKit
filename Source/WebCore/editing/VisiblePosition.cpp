@@ -483,10 +483,10 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     if (position.isNull())
         return Position();
 
-    Node* node = position.containerNode();
-
     ASSERT(position.document());
     position.document()->updateLayoutIgnorePendingStylesheets();
+
+    Node* node = position.containerNode();
 
     Position candidate = position.upstream();
     if (candidate.isCandidate())
