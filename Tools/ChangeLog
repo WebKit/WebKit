@@ -1,5 +1,19 @@
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Fix link order of static libraries and unbreak QtWin32
+
+        We were keeping the correct static link order between the intermediate
+        WebKit libraries, but not the internal dependencies for each of those
+        libraries. The load() will in some instances mess with LIBS, so we need
+        to ensure that the dependent libraries are added after the library we
+        are linking against.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Introduce new qmake variable 'WEBKIT' for signaling dependencies
 
         The custom qmake variable 'WEBKIT' is used for signaling that a

@@ -50,17 +50,27 @@ defineTest(needToLink) {
     return(false)
 }
 
-existing_libs = $$LIBS
-unset(LIBS)
 for(library, WEBKIT) {
+    # Juggle LIBS to keep the static link order correct
+    existing_libs = $$LIBS
+    unset(LIBS)
+
     # We definitly need include paths and such (this will set
     # SOURCE_DIR to the right path so we can use it below).
     load($$lower($$library))
 
+    # More juggling
+    dependent_libs = $$LIBS
+    unset(LIBS)
+
     # But we might also need to link against it
-    needToLink(): linkAgainstLibrary($$library, $$SOURCE_DIR)
+    needToLink() {
+        linkAgainstLibrary($$library, $$SOURCE_DIR)
+        LIBS += $$dependent_libs
+    }
+
+    LIBS = $$existing_libs $$LIBS
 }
-LIBS += $$existing_libs
 
 # Help keep the build tree clean
 MOC_DIR = moc
