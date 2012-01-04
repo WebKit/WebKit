@@ -5,17 +5,12 @@
 # -------------------------------------------------------------------
 
 TEMPLATE = lib
-
-DEFINES += BUILDING_WTF
+TARGET = WTF
 
 load(wtf)
 
-
 CONFIG += staticlib
-# Don't use WTF as the target name. qmake would create a
-# WTF.vcproj for msvc which already exists as a directory
-TARGET = $$WTF_TARGET
-DESTDIR = $$WTF_DESTDIR
+
 QT += core
 QT -= gui
 

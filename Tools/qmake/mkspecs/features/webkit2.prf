@@ -5,71 +5,58 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source
-
-# Use a config-specific target to prevent parallel builds file clashes on Mac
-mac: CONFIG(debug, debug|release): WEBKIT2_TARGET = webkit2d
-else: WEBKIT2_TARGET = webkit2
-
-# Output in WebKit2/<config>
-CONFIG(debug, debug|release) : WEBKIT2_DESTDIR = debug
-else: WEBKIT2_DESTDIR = release
+SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WebKit2
 
 WEBKIT2_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebKit2/$${GENERATED_SOURCES_DESTDIR}
 
-WEBKIT2_INCLUDEPATH = \
-    $$SOURCE_DIR/WebKit2 \
-    $$SOURCE_DIR/WebKit2/Platform \
-    $$SOURCE_DIR/WebKit2/Platform/CoreIPC \
-    $$SOURCE_DIR/WebKit2/Platform/qt \
-    $$SOURCE_DIR/WebKit2/Shared \
-    $$SOURCE_DIR/WebKit2/Shared/API/c \
-    $$SOURCE_DIR/WebKit2/Shared/CoreIPCSupport \
-    $$SOURCE_DIR/WebKit2/Shared/Plugins \
-    $$SOURCE_DIR/WebKit2/Shared/Plugins/Netscape \
-    $$SOURCE_DIR/WebKit2/Shared/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/C \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess/API/qt \
-    $$SOURCE_DIR/WebKit2/UIProcess/Authentication \
-    $$SOURCE_DIR/WebKit2/UIProcess/Downloads \
-    $$SOURCE_DIR/WebKit2/UIProcess/Launcher \
-    $$SOURCE_DIR/WebKit2/UIProcess/Notifications \
-    $$SOURCE_DIR/WebKit2/UIProcess/Plugins \
-    $$SOURCE_DIR/WebKit2/UIProcess/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess \
-    $$SOURCE_DIR/WebKit2/WebProcess/ApplicationCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/Authentication \
-    $$SOURCE_DIR/WebKit2/WebProcess/Cookies \
-    $$SOURCE_DIR/WebKit2/WebProcess/Cookies/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/Downloads \
-    $$SOURCE_DIR/WebKit2/WebProcess/Downloads/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/FullScreen \
-    $$SOURCE_DIR/WebKit2/WebProcess/Geolocation \
-    $$SOURCE_DIR/WebKit2/WebProcess/IconDatabase \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \
-    $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c \
-    $$SOURCE_DIR/WebKit2/WebProcess/KeyValueStorage \
-    $$SOURCE_DIR/WebKit2/WebProcess/MediaCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/Notifications \
-    $$SOURCE_DIR/WebKit2/WebProcess/Plugins \
-    $$SOURCE_DIR/WebKit2/WebProcess/Plugins/Netscape \
-    $$SOURCE_DIR/WebKit2/WebProcess/ResourceCache \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebCoreSupport/qt \
-    $$SOURCE_DIR/WebKit2/WebProcess/WebPage \
-    $$SOURCE_DIR/WebKit2/WebProcess/qt \
-    $$SOURCE_DIR/WebKit2/PluginProcess
+INCLUDEPATH += \
+    $$SOURCE_DIR \
+    $$SOURCE_DIR/Platform \
+    $$SOURCE_DIR/Platform/CoreIPC \
+    $$SOURCE_DIR/Platform/qt \
+    $$SOURCE_DIR/Shared \
+    $$SOURCE_DIR/Shared/API/c \
+    $$SOURCE_DIR/Shared/CoreIPCSupport \
+    $$SOURCE_DIR/Shared/Plugins \
+    $$SOURCE_DIR/Shared/Plugins/Netscape \
+    $$SOURCE_DIR/Shared/qt \
+    $$SOURCE_DIR/UIProcess \
+    $$SOURCE_DIR/UIProcess/API/C \
+    $$SOURCE_DIR/UIProcess/API/cpp \
+    $$SOURCE_DIR/UIProcess/API/cpp/qt \
+    $$SOURCE_DIR/UIProcess/API/qt \
+    $$SOURCE_DIR/UIProcess/Authentication \
+    $$SOURCE_DIR/UIProcess/Downloads \
+    $$SOURCE_DIR/UIProcess/Launcher \
+    $$SOURCE_DIR/UIProcess/Notifications \
+    $$SOURCE_DIR/UIProcess/Plugins \
+    $$SOURCE_DIR/UIProcess/qt \
+    $$SOURCE_DIR/WebProcess \
+    $$SOURCE_DIR/WebProcess/ApplicationCache \
+    $$SOURCE_DIR/WebProcess/Authentication \
+    $$SOURCE_DIR/WebProcess/Cookies \
+    $$SOURCE_DIR/WebProcess/Cookies/qt \
+    $$SOURCE_DIR/WebProcess/Downloads \
+    $$SOURCE_DIR/WebProcess/Downloads/qt \
+    $$SOURCE_DIR/WebProcess/FullScreen \
+    $$SOURCE_DIR/WebProcess/Geolocation \
+    $$SOURCE_DIR/WebProcess/IconDatabase \
+    $$SOURCE_DIR/WebProcess/InjectedBundle \
+    $$SOURCE_DIR/WebProcess/InjectedBundle/DOM \
+    $$SOURCE_DIR/WebProcess/InjectedBundle/API/c \
+    $$SOURCE_DIR/WebProcess/KeyValueStorage \
+    $$SOURCE_DIR/WebProcess/MediaCache \
+    $$SOURCE_DIR/WebProcess/Notifications \
+    $$SOURCE_DIR/WebProcess/Plugins \
+    $$SOURCE_DIR/WebProcess/Plugins/Netscape \
+    $$SOURCE_DIR/WebProcess/ResourceCache \
+    $$SOURCE_DIR/WebProcess/WebCoreSupport \
+    $$SOURCE_DIR/WebProcess/WebCoreSupport/qt \
+    $$SOURCE_DIR/WebProcess/WebPage \
+    $$SOURCE_DIR/WebProcess/qt \
+    $$SOURCE_DIR/PluginProcess
 
 # The WebKit2 Qt APIs depend on qwebkitglobal.h, which lives in WebKit
-WEBKIT2_INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api
+INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api
 
-INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
-
-needToLinkLibrary(WebKit2) {
-    pathToWebKit2Output = $${ROOT_BUILD_DIR}/Source/WebKit2/$$WEBKIT2_DESTDIR
-    linkLibrary($$pathToWebKit2Output, $$WEBKIT2_TARGET)
-}
+INCLUDEPATH += $$WEBKIT2_GENERATED_SOURCES_DIR

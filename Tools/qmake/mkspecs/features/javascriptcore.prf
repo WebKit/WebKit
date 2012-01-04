@@ -5,60 +5,43 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-JAVASCRIPTCORE_SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore
-
-# Use a config-specific target to prevent parallel builds file clashes on Mac
-mac: CONFIG(debug, debug|release): JAVASCRIPTCORE_TARGET = jscored
-else: JAVASCRIPTCORE_TARGET = jscore
-
-# Output in JavaScriptCore/<config>
-CONFIG(debug, debug|release) : JAVASCRIPTCORE_DESTDIR = debug
-else: JAVASCRIPTCORE_DESTDIR = release
+SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore
 
 JAVASCRIPTCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/$${GENERATED_SOURCES_DESTDIR}
 
-JAVASCRIPTCORE_INCLUDEPATH = \
-    $$JAVASCRIPTCORE_SOURCE_DIR \
-    $$JAVASCRIPTCORE_SOURCE_DIR/.. \
-    $$JAVASCRIPTCORE_SOURCE_DIR/assembler \
-    $$JAVASCRIPTCORE_SOURCE_DIR/bytecode \
-    $$JAVASCRIPTCORE_SOURCE_DIR/bytecompiler \
-    $$JAVASCRIPTCORE_SOURCE_DIR/heap \
-    $$JAVASCRIPTCORE_SOURCE_DIR/dfg \
-    $$JAVASCRIPTCORE_SOURCE_DIR/debugger \
-    $$JAVASCRIPTCORE_SOURCE_DIR/interpreter \
-    $$JAVASCRIPTCORE_SOURCE_DIR/jit \
-    $$JAVASCRIPTCORE_SOURCE_DIR/parser \
-    $$JAVASCRIPTCORE_SOURCE_DIR/profiler \
-    $$JAVASCRIPTCORE_SOURCE_DIR/runtime \
-    $$JAVASCRIPTCORE_SOURCE_DIR/yarr \
-    $$JAVASCRIPTCORE_SOURCE_DIR/API \
-    $$JAVASCRIPTCORE_SOURCE_DIR/ForwardingHeaders \
+INCLUDEPATH += \
+    $$SOURCE_DIR \
+    $$SOURCE_DIR/.. \
+    $$SOURCE_DIR/assembler \
+    $$SOURCE_DIR/bytecode \
+    $$SOURCE_DIR/bytecompiler \
+    $$SOURCE_DIR/heap \
+    $$SOURCE_DIR/dfg \
+    $$SOURCE_DIR/debugger \
+    $$SOURCE_DIR/interpreter \
+    $$SOURCE_DIR/jit \
+    $$SOURCE_DIR/parser \
+    $$SOURCE_DIR/profiler \
+    $$SOURCE_DIR/runtime \
+    $$SOURCE_DIR/yarr \
+    $$SOURCE_DIR/API \
+    $$SOURCE_DIR/ForwardingHeaders \
     $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
 
-VPATH += $$JAVASCRIPTCORE_SOURCE_DIR
+VPATH += $$SOURCE_DIR
 
-INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
+win32-* {
+    DEFINES += _HAS_TR1=0
+    LIBS += -lwinmm
 
-win32-g++* {
-    LIBS += -lpthreadGC2
-} else:win32-msvc* {
-    LIBS += -lpthreadVC2
-}
-
-win32-*: DEFINES += _HAS_TR1=0
-
-wince* {
-    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
-    INCLUDEPATH += $$JAVASCRIPTCORE_SOURCE_DIR/os-win32
-}
-
-needToLinkLibrary(JavaScriptCore) {
-    pathToJavaScriptCoreOutput = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/$$JAVASCRIPTCORE_DESTDIR
-    linkLibrary($$pathToJavaScriptCoreOutput, $$JAVASCRIPTCORE_TARGET)
-
-    win32-* {
-        LIBS += -lwinmm
+    win32-g++* {
+        LIBS += -lpthreadGC2
+    } else:win32-msvc* {
+        LIBS += -lpthreadVC2
     }
 }
 
+wince* {
+    INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
+    INCLUDEPATH += $$SOURCE_DIR/os-win32
+}

@@ -6,26 +6,16 @@
 
 load(features)
 
-WTF_SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf
+SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf
 
-# Use a config-specific target to prevent parallel builds file clashes on Mac
-mac: CONFIG(debug, debug|release): WTF_TARGET = wtfd
-else: WTF_TARGET = wtf
+INCLUDEPATH += \
+    $$SOURCE_DIR/.. \
+    $$SOURCE_DIR \
+    $$SOURCE_DIR/gobject \
+    $$SOURCE_DIR/qt \
+    $$SOURCE_DIR/unicode
 
-# Output in WTF/<config>
-CONFIG(debug, debug|release) : WTF_DESTDIR = debug
-else: WTF_DESTDIR = release
-
-WTF_INCLUDEPATH = \
-    $$WTF_SOURCE_DIR/.. \
-    $$WTF_SOURCE_DIR \
-    $$WTF_SOURCE_DIR/gobject \
-    $$WTF_SOURCE_DIR/qt \
-    $$WTF_SOURCE_DIR/unicode
-
-INCLUDEPATH = $$WTF_INCLUDEPATH $$INCLUDEPATH
-
-VPATH += $$WTF_SOURCE_DIR
+VPATH += $$SOURCE_DIR
 
 contains(CONFIG, use_system_icu) {
     DEFINES += WTF_USE_ICU_UNICODE=1
@@ -49,9 +39,3 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
         PKGCONFIG += glib-2.0 gio-2.0
     }
 }
-
-needToLinkLibrary(WTF) {
-    pathToWTFOutput = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/wtf/$$WTF_DESTDIR
-    linkLibrary($$pathToWTFOutput, $$WTF_TARGET)
-}
-

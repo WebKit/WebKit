@@ -223,44 +223,39 @@ defineTest(prependEach) {
     return(true)
 }
 
-defineTest(needToLinkLibrary) {
-    unset(name)
-
-    name = $$1
-
-    config_step {
-        return(true)
-    } else:force_static_libs_as_shared {
-        contains(DEFINES, BUILDING_$$name): return(false)
-        return(true)
-    }
-    return(false)
-}
-
-defineTest(linkLibrary) {
-    unset(path)
+defineTest(linkAgainstLibrary) {
     unset(target)
+    target = $$1
 
-    path = $$1
-    target = $$2
+    unset(source_dir)
+    source_dir = $$2
+
+    library = $$lower($$target)
+
+    original_template = $$TEMPLATE
+    TEMPLATE = lib # So that qtLibraryTarget works
+    target = $$qtLibraryTarget($$target)
+    TEMPLATE = $$original_template
+
+    path = $$replace(source_dir, $${ROOT_WEBKIT_DIR}, $${ROOT_BUILD_DIR})/$$activeBuildConfig()
 
     force_static_libs_as_shared {
-            LIBS = -L$${ROOT_BUILD_DIR}/lib -l$$target $$LIBS
+            LIBS += -L$${ROOT_BUILD_DIR}/lib -l$$target
     } else {
 
         mac {
-            LIBS = -Wl,-force_load,$${path}$${QMAKE_DIR_SEP}lib$${target}.a $$LIBS
+            LIBS += -Wl,-force_load,$${path}$${QMAKE_DIR_SEP}lib$${target}.a
         } else:win32-msvc*|wince*|win32-icc {
-            LIBS = /OPT:REF -l$$target $$LIBS
+            LIBS += /OPT:REF -l$$target
         } else {
-            LIBS = -Wl,-whole-archive -l$$target -Wl,-no-whole-archive $$LIBS
+            LIBS += -Wl,-whole-archive -l$$target -Wl,-no-whole-archive
         }
 
         win32-msvc*|wince*|win32-icc {
-            LIBS = -L$$path $$LIBS
+            LIBS += -L$$path
             POST_TARGETDEPS += $${path}$${QMAKE_DIR_SEP}$${target}.lib
         } else {
-            QMAKE_LIBDIR = $$path $$QMAKE_LIBDIR
+            QMAKE_LIBDIR += $$path
             POST_TARGETDEPS += $${path}$${QMAKE_DIR_SEP}lib$${target}.a
         }
 
@@ -269,7 +264,6 @@ defineTest(linkLibrary) {
         # statically in applications (which isn't used often because, among other things, of licensing obstacles).
         CONFIG -= explicitlib
         CONFIG -= staticlib
-
     }
 
     export(LIBS)

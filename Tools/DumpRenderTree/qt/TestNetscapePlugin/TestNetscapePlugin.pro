@@ -30,7 +30,7 @@ SOURCES += \
     Tests/PluginScriptableNPObjectInvokeDefault.cpp \
     Tests/PrivateBrowsing.cpp
 
-load(webcore)
+WEBKIT += webcore # For NPAPI headers
 
 VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
 

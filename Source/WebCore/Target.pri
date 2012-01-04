@@ -5,17 +5,14 @@
 # -------------------------------------------------------------------
 
 TEMPLATE = lib
-
-DEFINES += BUILDING_WebCore
+TARGET = WebCore
 
 load(webcore)
-!v8: load(javascriptcore)
-load(wtf)
+
+WEBKIT += wtf
+!v8: WEBKIT += javascriptcore
 
 CONFIG += staticlib
-
-TARGET = $$WEBCORE_TARGET
-DESTDIR = $$WEBCORE_DESTDIR
 
 DEFINES += QT_MAKEDLL
 

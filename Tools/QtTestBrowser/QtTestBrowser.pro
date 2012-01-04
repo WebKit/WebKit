@@ -37,7 +37,7 @@ HEADERS += \
 
 CONFIG += uitools
 
-load(webcore)
+WEBKIT += webcore
 
 CONFIG += qtwebkit
 

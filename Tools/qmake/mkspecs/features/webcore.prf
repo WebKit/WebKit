@@ -7,115 +7,102 @@
 
 load(features)
 
+SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WebCore
+
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
 CONFIG += texmap
 
 QT *= network sql
 
-SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source
-
-# Use a config-specific target to prevent parallel builds file clashes on Mac
-mac: CONFIG(debug, debug|release): WEBCORE_TARGET = webcored
-else: WEBCORE_TARGET = webcore
-
-# Output in WebCore/<config>
-CONFIG(debug, debug|release) : WEBCORE_DESTDIR = debug
-else: WEBCORE_DESTDIR = release
-
 WEBCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebCore/$${GENERATED_SOURCES_DESTDIR}
+
+INCLUDEPATH += \
+    $$SOURCE_DIR \
+    $$SOURCE_DIR/accessibility \
+    $$SOURCE_DIR/bindings \
+    $$SOURCE_DIR/bindings/generic \
+    $$SOURCE_DIR/bridge \
+    $$SOURCE_DIR/bridge/qt \
+    $$SOURCE_DIR/css \
+    $$SOURCE_DIR/dom \
+    $$SOURCE_DIR/dom/default \
+    $$SOURCE_DIR/editing \
+    $$SOURCE_DIR/fileapi \
+    $$SOURCE_DIR/history \
+    $$SOURCE_DIR/html \
+    $$SOURCE_DIR/html/canvas \
+    $$SOURCE_DIR/html/parser \
+    $$SOURCE_DIR/html/shadow \
+    $$SOURCE_DIR/html/track \
+    $$SOURCE_DIR/inspector \
+    $$SOURCE_DIR/loader \
+    $$SOURCE_DIR/loader/appcache \
+    $$SOURCE_DIR/loader/archive \
+    $$SOURCE_DIR/loader/cache \
+    $$SOURCE_DIR/loader/icon \
+    $$SOURCE_DIR/mathml \
+    $$SOURCE_DIR/notifications \
+    $$SOURCE_DIR/page \
+    $$SOURCE_DIR/page/qt \
+    $$SOURCE_DIR/page/animation \
+    $$SOURCE_DIR/platform \
+    $$SOURCE_DIR/platform/animation \
+    $$SOURCE_DIR/platform/audio \
+    $$SOURCE_DIR/platform/graphics \
+    $$SOURCE_DIR/platform/graphics/filters \
+    $$SOURCE_DIR/platform/graphics/filters/arm \
+    $$SOURCE_DIR/platform/graphics/opengl \
+    $$SOURCE_DIR/platform/graphics/qt \
+    $$SOURCE_DIR/platform/graphics/texmap \
+    $$SOURCE_DIR/platform/graphics/transforms \
+    $$SOURCE_DIR/platform/image-decoders \
+    $$SOURCE_DIR/platform/leveldb \
+    $$SOURCE_DIR/platform/mock \
+    $$SOURCE_DIR/platform/network \
+    $$SOURCE_DIR/platform/network/qt \
+    $$SOURCE_DIR/platform/qt \
+    $$SOURCE_DIR/platform/sql \
+    $$SOURCE_DIR/platform/text \
+    $$SOURCE_DIR/platform/text/transcoder \
+    $$SOURCE_DIR/plugins \
+    $$SOURCE_DIR/rendering \
+    $$SOURCE_DIR/rendering/mathml \
+    $$SOURCE_DIR/rendering/style \
+    $$SOURCE_DIR/rendering/svg \
+    $$SOURCE_DIR/storage \
+    $$SOURCE_DIR/svg \
+    $$SOURCE_DIR/svg/animation \
+    $$SOURCE_DIR/svg/graphics \
+    $$SOURCE_DIR/svg/graphics/filters \
+    $$SOURCE_DIR/svg/properties \
+    $$SOURCE_DIR/testing \
+    $$SOURCE_DIR/webaudio \
+    $$SOURCE_DIR/websockets \
+    $$SOURCE_DIR/workers \
+    $$SOURCE_DIR/xml \
+    $$SOURCE_DIR/xml/parser \
+    $$SOURCE_DIR/../ThirdParty
 
 v8 {
     DEFINES *= V8_BINDING=1
 
-    WEBCORE_INCLUDEPATH = \
-        $$SOURCE_DIR/WebCore/bindings/v8 \
-        $$SOURCE_DIR/WebCore/bindings/v8/custom \
-        $$SOURCE_DIR/WebCore/bindings/v8/specialization \
-        $$SOURCE_DIR/WebCore/bridge/qt/v8 \
-        $$SOURCE_DIR/WebCore/testing/v8
+    INCLUDEPATH += \
+        $$SOURCE_DIR/bindings/v8 \
+        $$SOURCE_DIR/bindings/v8/custom \
+        $$SOURCE_DIR/bindings/v8/specialization \
+        $$SOURCE_DIR/bridge/qt/v8 \
+        $$SOURCE_DIR/testing/v8
 
 } else {
-    WEBCORE_INCLUDEPATH = \
-        $$SOURCE_DIR/WebCore/bridge/jsc \
-        $$SOURCE_DIR/WebCore/bindings/js \
-        $$SOURCE_DIR/WebCore/bindings/js/specialization \
-        $$SOURCE_DIR/WebCore/bridge/c \
-        $$SOURCE_DIR/WebCore/testing/js
+    INCLUDEPATH += \
+        $$SOURCE_DIR/bridge/jsc \
+        $$SOURCE_DIR/bindings/js \
+        $$SOURCE_DIR/bindings/js/specialization \
+        $$SOURCE_DIR/bridge/c \
+        $$SOURCE_DIR/testing/js
 }
 
-WEBCORE_INCLUDEPATH = \
-    $$SOURCE_DIR/WebCore \
-    $$SOURCE_DIR/WebCore/accessibility \
-    $$SOURCE_DIR/WebCore/bindings \
-    $$SOURCE_DIR/WebCore/bindings/generic \
-    $$SOURCE_DIR/WebCore/bridge \
-    $$SOURCE_DIR/WebCore/css \
-    $$SOURCE_DIR/WebCore/dom \
-    $$SOURCE_DIR/WebCore/dom/default \
-    $$SOURCE_DIR/WebCore/editing \
-    $$SOURCE_DIR/WebCore/fileapi \
-    $$SOURCE_DIR/WebCore/history \
-    $$SOURCE_DIR/WebCore/html \
-    $$SOURCE_DIR/WebCore/html/canvas \
-    $$SOURCE_DIR/WebCore/html/parser \
-    $$SOURCE_DIR/WebCore/html/shadow \
-    $$SOURCE_DIR/WebCore/html/track \
-    $$SOURCE_DIR/WebCore/inspector \
-    $$SOURCE_DIR/WebCore/loader \
-    $$SOURCE_DIR/WebCore/loader/appcache \
-    $$SOURCE_DIR/WebCore/loader/archive \
-    $$SOURCE_DIR/WebCore/loader/cache \
-    $$SOURCE_DIR/WebCore/loader/icon \
-    $$SOURCE_DIR/WebCore/mathml \
-    $$SOURCE_DIR/WebCore/notifications \
-    $$SOURCE_DIR/WebCore/page \
-    $$SOURCE_DIR/WebCore/page/animation \
-    $$SOURCE_DIR/WebCore/platform \
-    $$SOURCE_DIR/WebCore/platform/animation \
-    $$SOURCE_DIR/WebCore/platform/audio \
-    $$SOURCE_DIR/WebCore/platform/graphics \
-    $$SOURCE_DIR/WebCore/platform/graphics/filters \
-    $$SOURCE_DIR/WebCore/platform/graphics/filters/arm \
-    $$SOURCE_DIR/WebCore/platform/graphics/texmap \
-    $$SOURCE_DIR/WebCore/platform/graphics/transforms \
-    $$SOURCE_DIR/WebCore/platform/image-decoders \
-    $$SOURCE_DIR/WebCore/platform/leveldb \
-    $$SOURCE_DIR/WebCore/platform/mock \
-    $$SOURCE_DIR/WebCore/platform/network \
-    $$SOURCE_DIR/WebCore/platform/sql \
-    $$SOURCE_DIR/WebCore/platform/text \
-    $$SOURCE_DIR/WebCore/platform/text/transcoder \
-    $$SOURCE_DIR/WebCore/plugins \
-    $$SOURCE_DIR/WebCore/rendering \
-    $$SOURCE_DIR/WebCore/rendering/mathml \
-    $$SOURCE_DIR/WebCore/rendering/style \
-    $$SOURCE_DIR/WebCore/rendering/svg \
-    $$SOURCE_DIR/WebCore/storage \
-    $$SOURCE_DIR/WebCore/svg \
-    $$SOURCE_DIR/WebCore/svg/animation \
-    $$SOURCE_DIR/WebCore/svg/graphics \
-    $$SOURCE_DIR/WebCore/svg/graphics/filters \
-    $$SOURCE_DIR/WebCore/svg/properties \
-    $$SOURCE_DIR/WebCore/testing \
-    $$SOURCE_DIR/WebCore/webaudio \
-    $$SOURCE_DIR/WebCore/websockets \
-    $$SOURCE_DIR/WebCore/workers \
-    $$SOURCE_DIR/WebCore/xml \
-    $$SOURCE_DIR/WebCore/xml/parser \
-    $$SOURCE_DIR/ThirdParty \
-    $$WEBCORE_INCLUDEPATH
-
-WEBCORE_INCLUDEPATH = \
-    $$SOURCE_DIR/WebCore/bridge/qt \
-    $$SOURCE_DIR/WebCore/page/qt \
-    $$SOURCE_DIR/WebCore/platform/graphics/opengl \
-    $$SOURCE_DIR/WebCore/platform/graphics/qt \
-    $$SOURCE_DIR/WebCore/platform/network/qt \
-    $$SOURCE_DIR/WebCore/platform/qt \
-    $$WEBCORE_INCLUDEPATH
-
-
-INCLUDEPATH = $$WEBCORE_INCLUDEPATH $$WEBCORE_GENERATED_SOURCES_DIR $$INCLUDEPATH
+INCLUDEPATH += $$WEBCORE_GENERATED_SOURCES_DIR
 
 contains(DEFINES, ENABLE_XSLT=1) {
     contains(DEFINES, WTF_USE_LIBXML2=1) {
@@ -171,7 +158,7 @@ contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     contains(DEFINES, WTF_USE_QTKIT=1) {
-        INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/graphics/mac
+        INCLUDEPATH += $$SOURCE_DIR/platform/graphics/mac
 
         LIBS += -framework AppKit -framework AudioUnit \
                 -framework AudioToolbox -framework CoreAudio \
@@ -180,7 +167,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     } else:contains(DEFINES, WTF_USE_GSTREAMER=1) {
         DEFINES += ENABLE_GLIB_SUPPORT=1
 
-        INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/graphics/gstreamer
+        INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gstreamer
 
         PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
     } else:contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
@@ -225,7 +212,7 @@ mac {
 }
 
 win32-* {
-    INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/win
+    INCLUDEPATH += $$SOURCE_DIR/platform/win
     LIBS += -lgdi32
     LIBS += -lole32
     LIBS += -luser32
@@ -269,7 +256,3 @@ unix|win32-g++* {
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
-needToLinkLibrary(WebCore) {
-    pathToWebCoreOutput = $${ROOT_BUILD_DIR}/Source/WebCore/$$WEBCORE_DESTDIR
-    linkLibrary($$pathToWebCoreOutput, $$WEBCORE_TARGET)
-}

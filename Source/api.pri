@@ -15,14 +15,14 @@ load(features)
 
 include(WebKit/WebKit.pri)
 
-CONFIG += wtf
+WEBKIT += wtf
 
-!v8:CONFIG += javascriptcore
+!v8:WEBKIT += javascriptcore
 
-CONFIG += webcore
+WEBKIT += webcore
 
 !no_webkit2 {
-    CONFIG += webkit2
+    WEBKIT += webkit2
     QT += declarative
 
     # Ensure that changes to the WebKit2 API will trigger a qmake of this

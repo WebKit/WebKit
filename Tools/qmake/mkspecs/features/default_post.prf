@@ -10,14 +10,57 @@
 # or include() and a CONFIG += feature.
 CONFIG += config_step
 
-# Reorder CONFIG so that the link and include order is correct
-libraries = webkit2 webcore javascriptcore wtf
+# In addition to the main shared QtWebKit library we also
+# need to link to any intermediate shared libraries. We do
+# this check here instead of in qtwebkit.prf to take advantage
+# of the WEBKIT variable processing below.
+CONFIG(qtwebkit):force_static_libs_as_shared {
+    WEBKIT += wtf webcore
+    !v8: WEBKIT += javascriptcore
+    !no_webkit2: WEBKIT += webkit2
+}
+
+# Reorder libraries so that the link and include order is correct,
+# and make sure the case matches the original case.
+libraries = WebKit2 WebCore JavaScriptCore WTF
 for(library, libraries) {
-    contains(CONFIG, $$library) {
-        CONFIG -= $$library
-        CONFIG += $$library
+    contains(WEBKIT, $$lower($$library)) {
+        WEBKIT -= $$lower($$library)
+        WEBKIT *= $$library
     }
 }
+
+defineTest(needToLink) {
+    # The main dynamic library always needs to link in the intermediate libraries
+    contains(TARGET, QtWebKit): return(true)
+
+    force_static_libs_as_shared {
+        # So do the individual libraries if they are dynamic
+        contains(libraries, $$TARGET): return(true)
+
+        # Or anything that uses QtWebKit in this special config
+        CONFIG(qtwebkit): return(true)
+    }
+
+    # Lastly, we allow apps (jsc) to link directly to the intermediate
+    # libraries intead of using the exported symbols from QtWebKit.
+    contains(TEMPLATE, app):!CONFIG(qtwebkit): return(true)
+
+    # Anything else should just get include paths, etc, not link
+    return(false)
+}
+
+existing_libs = $$LIBS
+unset(LIBS)
+for(library, WEBKIT) {
+    # We definitly need include paths and such (this will set
+    # SOURCE_DIR to the right path so we can use it below).
+    load($$lower($$library))
+
+    # But we might also need to link against it
+    needToLink(): linkAgainstLibrary($$library, $$SOURCE_DIR)
+}
+LIBS += $$existing_libs
 
 # Help keep the build tree clean
 MOC_DIR = moc
@@ -124,6 +167,9 @@ contains(TEMPLATE, derived) {
 }
 
 contains(TEMPLATE, lib) {
+    # Triggers the right export macros for WebKit internals
+    DEFINES += BUILDING_$${TARGET}
+
     # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
     DEFINES += BUILDING_WEBKIT
 
@@ -131,6 +177,8 @@ contains(TEMPLATE, lib) {
     mac: CONFIG += build_all
 
     TARGET = $$qtLibraryTarget($$TARGET)
+
+    isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
 
     DEFINES += QT_ASCII_CAST_WARNINGS
 

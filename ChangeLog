@@ -1,5 +1,30 @@
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Introduce new qmake variable 'WEBKIT' for signaling dependencies
+
+        The custom qmake variable 'WEBKIT' is used for signaling that a
+        target depends in some way on other subproject of the WebKit
+        project. For now this is limited to the set of intermediate
+        libraries: wtf, javascriptcore, webcore, and webkit2.
+
+        This replaces the previous convension of using load(foo) for
+        just include paths, and CONFIG += foo to also link against foo.
+
+        Adding a dependency results in additional include paths being
+        available, and potentially linking to the library. This is
+        decided by the build system based on conditions such as what
+        kind of target is being built and the general build config.
+
+        An advantage to his approach is that it simplifies the individual
+        foo.prf files, for example by allowing us to use INCLUDEPATH +=
+        and LIBS += as normal instead of prepending.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
+2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Move use of $$qtLibraryTarget() to a single place
 
         Reviewed by Kenneth Rohde Christiansen.

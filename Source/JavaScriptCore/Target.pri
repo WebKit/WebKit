@@ -5,20 +5,15 @@
 # -------------------------------------------------------------------
 
 TEMPLATE = lib
-
-DEFINES += BUILDING_JavaScriptCore
+TARGET = JavaScriptCore
 
 load(javascriptcore)
-load(wtf)
 
-CONFIG += staticlib
-
-# Don't use JavaScriptCore as the target name. qmake would create a
-# JavaScriptCore.vcproj for msvc which already exists as a directory
-TARGET = $$JAVASCRIPTCORE_TARGET
-DESTDIR = $$JAVASCRIPTCORE_DESTDIR
+WEBKIT += wtf
 QT += core
 QT -= gui
+
+CONFIG += staticlib
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3

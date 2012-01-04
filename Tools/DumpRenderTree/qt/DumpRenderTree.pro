@@ -12,8 +12,7 @@ DESTDIR = $$ROOT_BUILD_DIR/bin
 load(features)
 CONFIG += uitools
 
-load(wtf)
-load(webcore)
+WEBKIT += wtf webcore
 
 CONFIG += qtwebkit
 

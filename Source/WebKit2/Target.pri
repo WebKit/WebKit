@@ -5,20 +5,15 @@
 # -------------------------------------------------------------------
 
 TEMPLATE = lib
+TARGET = WebKit2
 
-DEFINES += BUILDING_WebKit2
-
-load(wtf)
-load(javascriptcore)
-load(webcore)
+load(features)
 load(webkit2)
 
-CONFIG += staticlib
-
-TARGET = $$WEBKIT2_TARGET
-DESTDIR = $$WEBKIT2_DESTDIR
-
+WEBKIT += wtf javascriptcore webcore
 QT += declarative
+
+CONFIG += staticlib
 
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \

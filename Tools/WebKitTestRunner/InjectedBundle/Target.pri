@@ -51,9 +51,8 @@ DESTDIR = $${ROOT_BUILD_DIR}/lib
 QT += declarative widgets
 
 load(features)
-load(wtf)
-load(javascriptcore)
-load(webcore)
+
+WEBKIT += wtf javascriptcore webcore
 
 CONFIG += plugin qtwebkit rpath
 
