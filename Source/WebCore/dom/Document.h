@@ -211,7 +211,7 @@ enum PageshowEventPersistence {
     PageshowEventPersisted = 1
 };
 
-enum StyleSelectorUpdateFlag { RecalcStyleImmediately, DeferRecalcStyle };
+enum StyleSelectorUpdateFlag { RecalcStyleImmediately, DeferRecalcStyle, RecalcStyleIfNeeded };
 
 class Document : public TreeScope, public ScriptExecutionContext {
 public:
@@ -456,7 +456,7 @@ public:
     }
 
     /**
-     * Updates the pending sheet count and then calls updateStyleSelector.
+     * Updates the pending sheet count and then calls updateActiveStylesheets.
      */
     void removePendingSheet();
 
@@ -491,7 +491,6 @@ public:
      * found and is used to calculate the derived styles for all rendering objects.
      */
     void styleSelectorChanged(StyleSelectorUpdateFlag);
-    void recalcStyleSelector();
 
     bool usesSiblingRules() const { return m_usesSiblingRules || m_usesSiblingRulesOverride; }
     void setUsesSiblingRules(bool b) { m_usesSiblingRulesOverride = b; }
@@ -1161,6 +1160,13 @@ private:
     void buildAccessKeyMap(TreeScope* root);
 
     void createStyleSelector();
+    void combineCSSFeatureFlags();
+    void resetCSSFeatureFlags();
+    
+    bool updateActiveStylesheets(StyleSelectorUpdateFlag);
+    void collectActiveStylesheets(Vector<RefPtr<StyleSheet> >&);
+    bool testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet*);
+    void analyzeStylesheetChange(StyleSelectorUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresStyleRecalc);
 
     void deleteCustomFonts();
 
@@ -1264,6 +1270,7 @@ private:
 #endif
 
     RefPtr<StyleSheetList> m_styleSheets; // All of the stylesheets that are currently in effect for our media type and stylesheet set.
+    bool m_hadActiveLoadingStylesheet;
     
     typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)

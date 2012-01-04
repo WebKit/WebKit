@@ -418,6 +418,16 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         if (sheet->isCSSStyleSheet() && !sheet->disabled())
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
     }
+    m_authorStyle->shrinkToFit();
+
+    collectFeatures();
+    
+    if (document->renderer() && document->renderer()->style())
+        document->renderer()->style()->font().update(fontSelector());
+}
+
+void CSSStyleSelector::collectFeatures()
+{
     // Collect all ids and rules using sibling selectors (:first-child and similar)
     // in the current set of stylesheets. Style sharing code uses this information to reject
     // sharing candidates.
@@ -429,15 +439,29 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     m_authorStyle->collectFeatures(m_features);
     if (m_userStyle)
         m_userStyle->collectFeatures(m_features);
-
-    m_authorStyle->shrinkToFit();
     if (m_features.siblingRules)
         m_features.siblingRules->shrinkToFit();
     if (m_features.uncommonAttributeRules)
         m_features.uncommonAttributeRules->shrinkToFit();
+}
 
-    if (document->renderer() && document->renderer()->style())
-        document->renderer()->style()->font().update(fontSelector());
+void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >& stylesheets)
+{
+    // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
+    // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
+    unsigned size = stylesheets.size();
+    for (unsigned i = firstNew; i < size; ++i) {
+        if (!stylesheets[i]->isCSSStyleSheet() || stylesheets[i]->disabled())
+            continue;
+        m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(stylesheets[i].get()), *m_medium, this);
+    }
+    m_authorStyle->shrinkToFit();
+    // FIXME: This really only needs to collect the features from the newly added sheets.
+    m_features.clear();
+    collectFeatures();
+    
+    if (document()->renderer() && document()->renderer()->style())
+        document()->renderer()->style()->font().update(fontSelector());
 }
 
 void CSSStyleSelector::addRegionRule(PassRefPtr<WebKitCSSRegionRule> regionStyleRule)
@@ -467,6 +491,17 @@ CSSStyleSelector::Features::Features()
 
 CSSStyleSelector::Features::~Features()
 {
+}
+
+void CSSStyleSelector::Features::clear()
+{
+    idsInRules.clear();
+    attrsInRules.clear();
+    siblingRules.clear();
+    uncommonAttributeRules.clear();
+    usesFirstLineRules = false;
+    usesBeforeAfterRules = false;
+    usesLinkRules = false;
 }
 
 static CSSStyleSheet* parseUASheet(const String& str)
@@ -1148,7 +1183,7 @@ void CSSStyleSelector::matchUARules(MatchResult& result)
     }
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document, CSSFontSelector* fontSelector)
 {
     Frame* frame = document->frame();
 
@@ -1204,7 +1239,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     }
 
     documentStyle->setFontDescription(fontDescription);
-    documentStyle->font().update(0);
+    documentStyle->font().update(fontSelector);
 
     return documentStyle.release();
 }
@@ -1799,6 +1834,33 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
         return false;
     return true;
 }
+    
+bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
+{
+    ASSERT(!stylesheet->isLoading());
+    
+    size_t size = stylesheet->length();
+    for (size_t i = 0; i < size; i++) {
+        CSSRule* rule = stylesheet->item(i);
+        if (rule->isStyleRule()) {
+            CSSStyleRule* styleRule = static_cast<CSSStyleRule*>(rule);
+            if (!SelectorChecker::determineSelectorScopes(styleRule->selectorList(), idScopes, classScopes))
+                return false;
+            continue;
+        } 
+        if (rule->isImportRule()) {
+            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
+            if (importRule->styleSheet()) {
+                if (!determineStylesheetSelectorScopes(importRule->styleSheet(), idScopes, classScopes))
+                    return false;
+            }
+            continue;
+        }
+        // FIXME: Media rules and maybe some others could be allowed.
+        return false;
+    }
+    return true;
+}
 
 // -----------------------------------------------------------------
 
@@ -1968,6 +2030,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                         // Add this font face to our set.
                         const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childItem);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
+                        styleSelector->invalidateMatchedDeclarationCache();
                     } else if (childItem->isKeyframesRule() && styleSelector) {
                         // Add this keyframe rule to our set.
                         styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(childItem));
@@ -1978,6 +2041,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             // Add this font face to our set.
             const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(rule);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
+            styleSelector->invalidateMatchedDeclarationCache();
         } else if (rule->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
         else if (rule->isRegionRule() && styleSelector)

@@ -382,6 +382,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_mutationObserverTypes(0)
 #endif
     , m_styleSheets(StyleSheetList::create(this))
+    , m_hadActiveLoadingStylesheet(false)
     , m_readyState(Complete)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_pendingStyleRecalcShouldForce(false)
@@ -1528,7 +1529,7 @@ void Document::recalcStyle(StyleChange change)
         return; // Guard against re-entrancy. -dwh
     
     if (m_hasDirtyStyleSelector)
-        recalcStyleSelector();
+        updateActiveStylesheets(RecalcStyleImmediately);
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
@@ -1553,7 +1554,7 @@ void Document::recalcStyle(StyleChange change)
         // style selector may set this again during recalc
         m_hasNodesWithPlaceholderStyle = false;
         
-        RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(this);
+        RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(this, m_styleSelector ? m_styleSelector->fontSelector() : 0);
         StyleChange ch = diff(documentStyle.get(), renderer()->style());
         if (ch != NoChange)
             renderer()->setStyle(documentStyle.release());
@@ -1584,12 +1585,8 @@ bail_out:
     m_inStyleRecalc = false;
     
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    if (m_styleSelector) {
-        m_usesSiblingRules = m_styleSelector->usesSiblingRules();
-        m_usesFirstLineRules = m_styleSelector->usesFirstLineRules();
-        m_usesBeforeAfterRules = m_styleSelector->usesBeforeAfterRules();
-        m_usesLinkRules = m_styleSelector->usesLinkRules();
-    }
+    if (m_styleSelector)
+        resetCSSFeatureFlags();
 
     if (frameView) {
         frameView->resumeScheduledEvents();
@@ -1778,6 +1775,23 @@ void Document::setIsViewSource(bool isViewSource)
     setSecurityOrigin(SecurityOrigin::createUnique());
 }
 
+void Document::combineCSSFeatureFlags()
+{
+    // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
+    m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
+    m_usesFirstLineRules = m_usesFirstLineRules || m_styleSelector->usesFirstLineRules();
+    m_usesBeforeAfterRules = m_usesBeforeAfterRules || m_styleSelector->usesBeforeAfterRules();
+    m_usesLinkRules = m_usesLinkRules || m_styleSelector->usesLinkRules();
+}
+
+void Document::resetCSSFeatureFlags()
+{
+    m_usesSiblingRules = m_styleSelector->usesSiblingRules();
+    m_usesFirstLineRules = m_styleSelector->usesFirstLineRules();
+    m_usesBeforeAfterRules = m_styleSelector->usesBeforeAfterRules();
+    m_usesLinkRules = m_styleSelector->usesLinkRules();
+}
+
 void Document::createStyleSelector()
 {
     bool matchAuthorAndUserStyles = true;
@@ -1785,11 +1799,7 @@ void Document::createStyleSelector()
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
     m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), m_userSheets.get(),
                                                     !inQuirksMode(), matchAuthorAndUserStyles));
-    // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
-    m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
-    m_usesFirstLineRules = m_usesFirstLineRules || m_styleSelector->usesFirstLineRules();
-    m_usesBeforeAfterRules = m_usesBeforeAfterRules || m_styleSelector->usesBeforeAfterRules();
-    m_usesLinkRules = m_usesLinkRules || m_styleSelector->usesLinkRules();
+    combineCSSFeatureFlags();
 }
 
 void Document::attach()
@@ -2950,7 +2960,7 @@ void Document::removePendingSheet()
     if (m_pendingStylesheets)
         return;
 
-    styleSelectorChanged(RecalcStyleImmediately);
+    styleSelectorChanged(RecalcStyleIfNeeded);
 
     if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheets();
@@ -2971,8 +2981,10 @@ void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
         printf("Beginning update of style selector at time %d.\n", elapsedTime());
 #endif
 
-    recalcStyleSelector();
-    
+    bool stylesheetChangeRequiresStyleRecalc = updateActiveStylesheets(updateFlag);
+    if (!stylesheetChangeRequiresStyleRecalc)
+        return;
+
     if (updateFlag == DeferRecalcStyle) {
         scheduleForcedStyleRecalc();
         return;
@@ -3044,22 +3056,9 @@ void Document::removeStyleSheetCandidateNode(Node* node)
 {
     m_styleSheetCandidateNodes.remove(node);
 }
-
-void Document::recalcStyleSelector()
+    
+void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
 {
-    if (m_inStyleRecalc) {
-        // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
-        // https://bugs.webkit.org/show_bug.cgi?id=54344
-        // FIXME: This should be fixed in SVG and this code replaced with ASSERT(!m_inStyleRecalc).
-        m_hasDirtyStyleSelector = true;
-        scheduleForcedStyleRecalc();
-        return;
-    }
-    if (!renderer() || !attached())
-        return;
-
-    StyleSheetVector sheets;
-
     bool matchAuthorAndUserStyles = true;
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
@@ -3070,9 +3069,7 @@ void Document::recalcStyleSelector()
         end = begin;
     for (StyleSheetCandidateListHashSet::iterator it = begin; it != end; ++it) {
         Node* n = *it;
-
         StyleSheet* sheet = 0;
-
         if (n->nodeType() == PROCESSING_INSTRUCTION_NODE) {
             // Processing instruction (XML documents only).
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
@@ -3089,9 +3086,9 @@ void Document::recalcStyleSelector()
 #endif
         } else if ((n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag)))
 #if ENABLE(SVG)
-            ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
+                   ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
 #endif
-        ) {
+                   ) {
             Element* e = static_cast<Element*>(n);
             AtomicString title = e->getAttribute(titleAttr);
             bool enabledViaScript = false;
@@ -3115,7 +3112,6 @@ void Document::recalcStyleSelector()
                 if (!linkElement->sheet())
                     title = nullAtom;
             }
-
             // Get the current preferred styleset.  This is the
             // set of sheets that will be enabled.
 #if ENABLE(SVG)
@@ -3128,7 +3124,6 @@ void Document::recalcStyleSelector()
             else
                 // <STYLE> element
                 sheet = static_cast<HTMLStyleElement*>(n)->sheet();
-
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
@@ -3143,21 +3138,121 @@ void Document::recalcStyleSelector()
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = m_selectedStylesheetSet = title;
                 }
-
                 if (title != m_preferredStylesheetSet)
                     sheet = 0;
             }
         }
-
         if (sheet)
             sheets.append(sheet);
     }
+}
 
-    m_styleSheets->swap(sheets);
+bool Document::testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet* stylesheet)
+{
+    if (stylesheet->disabled())
+        return false;
+    // See if all rules on the sheet are scoped to some specific ids or classes.
+    // Then test if we actually have any of those in the tree at the moment.
+    // FIXME: Even we if we find some, we could just invalidate those subtrees instead of invalidating the entire style.
+    HashSet<AtomicStringImpl*> idScopes; 
+    HashSet<AtomicStringImpl*> classScopes;
+    if (!CSSStyleSelector::determineStylesheetSelectorScopes(stylesheet, idScopes, classScopes))
+        return true;
+    // Testing for classes is not particularly fast so bail out if there are more than a few.
+    static const int maximumClassScopesToTest = 4;
+    if (classScopes.size() > maximumClassScopesToTest)
+        return true;
+    HashSet<AtomicStringImpl*>::iterator end = idScopes.end();
+    for (HashSet<AtomicStringImpl*>::iterator it = idScopes.begin(); it != end; ++it) {
+        if (hasElementWithId(*it))
+            return true;
+    }
+    end = classScopes.end();
+    for (HashSet<AtomicStringImpl*>::iterator it = classScopes.begin(); it != end; ++it) {
+        // FIXME: getElementsByClassName is not optimal for this. We should handle all classes in a single pass.
+        if (getElementsByClassName(*it)->length())
+            return true;
+    }
+    return false;
+}
+    
+void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresStyleRecalc)
+{
+    requiresStyleSelectorReset = true;
+    requiresStyleRecalc = true;
+    
+    // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
+    bool hasActiveLoadingStylesheet = false;
+    unsigned newStylesheetCount = newStylesheets.size();
+    for (unsigned i = 0; i < newStylesheetCount; ++i) {
+        if (newStylesheets[i]->isLoading())
+            hasActiveLoadingStylesheet = true;
+    }
+    if (m_hadActiveLoadingStylesheet && !hasActiveLoadingStylesheet) {
+        m_hadActiveLoadingStylesheet = false;
+        return;
+    }
+    m_hadActiveLoadingStylesheet = hasActiveLoadingStylesheet;
 
-    m_styleSelector.clear();
+    if (updateFlag != RecalcStyleIfNeeded)
+        return;
+    if (!m_styleSelector)
+        return;
+
+    // See if we are just adding stylesheets.
+    unsigned oldStylesheetCount = m_styleSheets->length();
+    if (newStylesheetCount < oldStylesheetCount)
+        return;
+    for (unsigned i = 0; i < oldStylesheetCount; ++i) {
+        if (m_styleSheets->item(i) != newStylesheets[i])
+            return;
+    }
+    requiresStyleSelectorReset = false;
+
+    // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
+    if (!body() || m_hasNodesWithPlaceholderStyle)
+        return;
+    for (unsigned i = oldStylesheetCount; i < newStylesheetCount; ++i) {
+        if (!newStylesheets[i]->isCSSStyleSheet())
+            return;
+        if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())))
+            return;
+    }
+    requiresStyleRecalc = false;
+}
+
+bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
+{
+    if (m_inStyleRecalc) {
+        // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
+        // https://bugs.webkit.org/show_bug.cgi?id=54344
+        // FIXME: This should be fixed in SVG and this code replaced with ASSERT(!m_inStyleRecalc).
+        m_hasDirtyStyleSelector = true;
+        scheduleForcedStyleRecalc();
+        return false;
+    }
+    if (!renderer() || !attached())
+        return false;
+
+    StyleSheetVector newStylesheets;
+    collectActiveStylesheets(newStylesheets);
+
+    bool requiresStyleSelectorReset;
+    bool requiresStyleRecalc;
+    analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleSelectorReset, requiresStyleRecalc);
+
+    if (requiresStyleSelectorReset)
+        m_styleSelector.clear();
+    else {
+        m_styleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
+        resetCSSFeatureFlags();
+    }
+    m_styleSheets->swap(newStylesheets);
+
     m_didCalculateStyleSelector = true;
     m_hasDirtyStyleSelector = false;
+    
+    return requiresStyleRecalc;
 }
 
 void Document::setHoverNode(PassRefPtr<Node> newHoverNode)

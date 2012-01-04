@@ -1,3 +1,99 @@
+2012-01-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Analyze stylesheet scope to minimize style recalcs
+        https://bugs.webkit.org/show_bug.cgi?id=75508
+        
+        It is a relatively common pattern to use inline stylesheets in document body where all rules are scoped using descendant selector
+
+        <style>
+        #foo {...}
+        #foo div {...}
+        #foo .bar {...}
+        </style>
+
+        When this pattern is used it is also common that the rules only apply to elements that come after the style element. 
+
+        When the set of active stylesheets changes we invalidate and recompute the entire document style. This is very expensive. We can 
+        detect the case above and avoid the style recalc.
+        
+        On engadget.com, this patch cuts the time spent in style recalcs to roughly half. There are further savings from reduced 
+        relayouts. In total the engine CPU time used over the page load is reduced by ~10%.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::collectFeatures):
+        
+            Refactor feature collection from constructor to a separate function.
+        
+        (WebCore::CSSStyleSelector::appendAuthorStylesheets):
+        
+            New function for non-destructively updating the style selector.
+        
+        (WebCore::CSSStyleSelector::Features::clear):
+        
+            Clear the features for another collection.
+            
+        (WebCore::CSSStyleSelector::determineStylesheetSelectorScopes):
+        
+            Find if all rules on a stylesheetare scoped to some set of ids and classes.
+        
+        (WebCore::CSSStyleSelector::styleForDocument):
+        
+            Add optional font selector argument. We updated the correct base style font on style selector construction but that is no longer sufficient
+            as font selector may be updated without reconstructing the style selector.
+        
+        (WebCore::RuleSet::addRulesFromSheet):
+        
+            Invalidate the matched declaration cache in case of new font-face rules.
+        
+        * css/CSSStyleSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::determineSelectorScopes):
+        
+            Find if all rules on a selector list are scoped to some set of ids and classes.
+        
+        * css/SelectorChecker.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        
+            Pass the font selector, if exists, to styleForDocument so we always have the base font up to date.
+        
+        (WebCore::Document::combineCSSFeatureFlags):
+        (WebCore::Document::resetCSSFeatureFlags):
+        (WebCore::Document::createStyleSelector):
+
+            Refactor css feature flag resetting to functions.
+        
+        (WebCore::Document::removePendingSheet):
+        
+            Use new PendingStylesheetCompleted flag when new stylesheets arrive.
+
+        (WebCore::Document::styleSelectorChanged):
+
+            Skip style recalc if it is not needed.
+
+        (WebCore::Document::collectActiveStylesheets):
+        
+            Refactor collecting stylesheets to a separate function.
+        
+        (WebCore::Document::testAddedStylesheetRequiresStyleRecalc):
+        
+            Determine the scopes and use hasElementWithId/getElementsByClassName to figure out if any scoped elements currently exist in the tree.
+        
+        (WebCore::Document::analyzeStylesheetChange):
+        
+            Figure out if we can update the style selector incrementally and if we can skip the style recalc.
+        
+        (WebCore::Document::updateActiveStylesheets):
+        
+            Renamed from recalcStyleSelector.
+            Invoke the new analysis functions.
+        
+        * dom/Document.h:
+
 2012-01-04  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Share fractional time code between AnimationBase and KeyframeAnimation

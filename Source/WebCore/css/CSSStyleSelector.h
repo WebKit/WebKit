@@ -112,7 +112,7 @@ public:
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
-    static PassRefPtr<RenderStyle> styleForDocument(Document*);
+    static PassRefPtr<RenderStyle> styleForDocument(Document*, CSSFontSelector* = 0);
 
     RenderStyle* style() const { return m_style.get(); }
     RenderStyle* parentStyle() const { return m_parentStyle; }
@@ -126,10 +126,16 @@ public:
     void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
     void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
     bool hasParentNode() const { return m_parentNode; }
+    
+    void appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >&);
+    
+    // Find the ids or classes the selectors on a stylesheet are scoped to. The selectors only apply to elements in subtrees where the root element matches the scope.
+    static bool determineStylesheetSelectorScopes(CSSStyleSheet*, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes);
 
 private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
+    void collectFeatures();
     RenderStyle* locateSharedStyle();
     bool matchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
@@ -218,6 +224,7 @@ public:
     struct Features {
         Features();
         ~Features();
+        void clear();
         HashSet<AtomicStringImpl*> idsInRules;
         HashSet<AtomicStringImpl*> attrsInRules;
         OwnPtr<RuleSet> siblingRules;

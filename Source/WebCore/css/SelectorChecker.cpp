@@ -1398,4 +1398,28 @@ bool SelectorChecker::isFrameFocused(const Element* element)
     return element->document()->frame() && element->document()->frame()->selection()->isFocusedAndActive();
 }
 
+bool SelectorChecker::determineSelectorScopes(const CSSSelectorList& selectorList, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
+{
+    for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+        CSSSelector* rightmostSelector = selector;
+        CSSSelector::Relation relation = CSSSelector::Descendant;
+        for (;rightmostSelector->tagHistory(); rightmostSelector = rightmostSelector->tagHistory()) {
+            if (rightmostSelector->relation() != CSSSelector::SubSelector)
+                relation = rightmostSelector->relation();
+        }
+        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
+            return false;
+        if (rightmostSelector->m_match == CSSSelector::Id) {
+            idScopes.add(rightmostSelector->value().impl());
+            continue;
+        }
+        if (rightmostSelector->m_match == CSSSelector::Class) {
+            classScopes.add(rightmostSelector->value().impl());
+            continue;
+        }
+        return false;
+    }
+    return true;
+}
+
 }
