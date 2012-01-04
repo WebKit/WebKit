@@ -3,6 +3,18 @@
         Share fractional time code between AnimationBase and KeyframeAnimation
         https://bugs.webkit.org/show_bug.cgi?id=75549
 
+        Remove left over from changeset 104045.
+
+        Unreviewed trivial fix.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fractionalTime):
+
+2012-01-04  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Share fractional time code between AnimationBase and KeyframeAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=75549
+
         Share fractional time calculation between AnimationBase and KeyframeAnimation.
 
         Reviewed by Simon Fraser.

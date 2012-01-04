@@ -1651,7 +1651,6 @@ double AnimationBase::timeToNextService()
 
 double AnimationBase::fractionalTime(double scale, double elapsedTime, double offset) const
 {
-    //double fractionalTime = elapsedTime / m_animation->duration();
     double fractionalTime = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
     // FIXME: startTime can be before the current animation "frame" time. This is to sync with the frame time
     // concept in AnimationTimeController. So we need to somehow sync the two. Until then, the possible
