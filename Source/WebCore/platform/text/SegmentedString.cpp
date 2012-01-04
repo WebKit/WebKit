@@ -91,6 +91,9 @@ void SegmentedString::clear()
     m_pushedChar2 = 0;
     m_currentChar = 0;
     m_currentString.clear();
+    m_numberOfCharactersConsumedPriorToCurrentString = 0;
+    m_numberOfCharactersConsumedPriorToCurrentLine = 0;
+    m_currentLine = 0;
     m_substrings.clear();
     m_closed = false;
 }

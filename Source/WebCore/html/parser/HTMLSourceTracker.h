@@ -28,8 +28,11 @@
 
 #include "HTMLInputStream.h"
 #include "HTMLToken.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+class HTMLTokenizer;
 
 class HTMLSourceTracker {
     WTF_MAKE_NONCOPYABLE(HTMLSourceTracker);
@@ -39,14 +42,15 @@ public:
     // FIXME: Once we move "end" into HTMLTokenizer, rename "start" to
     // something that makes it obvious that this method can be called multiple
     // times.
-    void start(const HTMLInputStream&, HTMLToken&);
-    void end(const HTMLInputStream&, HTMLToken&);
+    void start(const HTMLInputStream&, HTMLTokenizer*, HTMLToken&);
+    void end(const HTMLInputStream&, HTMLTokenizer*, HTMLToken&);
 
     String sourceForToken(const HTMLToken&);
 
 private:
-    String m_sourceFromPreviousSegments;
-    SegmentedString m_source;
+    SegmentedString m_previousSource;
+    SegmentedString m_currentSource;
+
     String m_cachedSourceForToken;
 };
 

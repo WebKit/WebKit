@@ -16,11 +16,10 @@
     }
     
     function testSection(text, name) {
-        // Closing tags are not correctly formated, so don't check their markup.
         return name + ': ' +
-             found(text, '<span class="webkit-html-tag">&lt;' + name + '&gt') + ' ' +
+             found(text, '<span class="webkit-html-tag">&lt;' + name + '&gt;') + ' ' +
              found(text, '<td class="webkit-line-content">&lt;test' + name + '&gt;') + ' ' +
-             found(text, '&lt;/' + name + '&gt;') + '\n';
+             found(text, '<span class="webkit-html-tag">&lt;/' + name + '&gt;') + '\n';
     }
 
     function report(frame)

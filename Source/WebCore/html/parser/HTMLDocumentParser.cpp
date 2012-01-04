@@ -262,13 +262,13 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
-            m_sourceTracker.start(m_input, m_token);
+            m_sourceTracker.start(m_input, m_tokenizer.get(), m_token);
 
         if (!m_tokenizer->nextToken(m_input.current(), m_token))
             break;
 
         if (!isParsingFragment()) {
-            m_sourceTracker.end(m_input, m_token);
+            m_sourceTracker.end(m_input, m_tokenizer.get(), m_token);
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html

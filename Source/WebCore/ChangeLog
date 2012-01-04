@@ -1,3 +1,78 @@
+2012-01-03  Adam Barth  <abarth@webkit.org>
+
+        view-source doesn't colorize </script> correctly
+        https://bugs.webkit.org/show_bug.cgi?id=62971
+
+        Reviewed by Eric Seidel.
+
+        The reason these tags weren't colorized correctly was because the
+        characters for the end tags where consumed by the tokenizer at the same
+        time as it consumed the text of the script tag.  These characters are
+        buffered internally by the tokenizer because the tokenizer is searching
+        for "an appropriate end tag", which is "</script>" in this case.
+
+        I tried a number of different approaches to fixing this bug.  The
+        approach in this patch adds an accessor to the tokenizer to read out
+        the buffered characters.  This approach makes it easier for the
+        HTMLSourceTracker to get exactly the right value for these buffered
+        characters without having to do a complicated simulation of the
+        buffering itself.
+
+        Tests: fast/frames/viewsource-plain-text-tags.html:
+
+        * html/parser/HTMLViewSourceParser.cpp:
+        (WebCore::HTMLViewSourceParser::pumpTokenizer):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+          - Give the HTMLSourceTracker a pointer to the tokenizer so it can ask
+            for the buffered characters.
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::start):
+          - The idea here is to treat characters buffered internally by the
+            tokenizer the same way we treat characters that were contained in a
+            previous segment of source.  We copy them into our accumulation
+            buffer and adjust the token base offset to account for the extra
+            characters.
+        (WebCore::HTMLSourceTracker::end):
+          - Don't consier the character buffered by the tokenizer to be part of
+            the token we've just finished.
+        (WebCore::HTMLSourceTracker::sourceForToken):
+          - Remove the assumption that all of the m_previousSource is contained
+            in the source for the current token.  Because we now understand
+            that the tokenizer can buffer some characters internally, we might
+            not exhaust the m_previousSource.
+        * html/parser/HTMLSourceTracker.h:
+          - Rename m_sourceFromPreviousSegments to m_previousSource and changed
+            to a SegementedString to avoid extra mallocs we keep appending tiny
+            segments.
+          - Rename m_source to m_currentSource to contrast nicely with
+            m_previousSource.
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::flushBufferedEndTag):
+        (WebCore::HTMLTokenizer::nextToken):
+          - Previously, we cleared the temporary buffer lazily when we needed
+            to add new characters to it.  Now we clear it eagerly so that it's
+            length tells us whether we're currently using it to store
+            characters.
+          - Previously, we weren't storing the character that we used to
+            terminate the appropriate end tag (e.g., the > in </script>)
+            because we didn't need to "unbuffer" that character into the
+            HTMLToken::appendToCharacter.  Now, we do store that character in
+            the temporary buffer so that the HTMLSourceTracker can see that
+            character.
+        (WebCore::HTMLTokenizer::bufferedCharacters):
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::numberOfBufferedCharacters):
+          - Add accessor methods to copy out the buffered characters.
+          - Also, unrelated to the rest of this patch, I made the constructor
+            for HTMLTokenizer explicit because it takes only a single
+            paramater, per the style guide.
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::clear):
+          - SegmentedString::clear wasn't clearing all of its state.  I don't
+            think this issue was actually observable, but I noticed it when
+            working on this patch, so I fixed it.
+
 2012-01-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Exclude Mac's PlatformEventFactory from iOS
