@@ -1,3 +1,15 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebMimeRegistry and dependencies to Source/Platform
+        https://bugs.webkit.org/show_bug.cgi?id=74583
+
+        Reviewed by Darin Fisher.
+
+        Teaches the WEBKIT_EXPORT check about the chromium WebKit platform API header location.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition):
+
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix link order of static libraries and unbreak QtWin32

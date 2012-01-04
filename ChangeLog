@@ -1,3 +1,14 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebMimeRegistry and dependencies to Source/Platform
+        https://bugs.webkit.org/show_bug.cgi?id=74583
+
+        Reviewed by Darin Fisher.
+
+        Update .gitignore for Source/Platform/Platform.gyp/ generated project files.
+
+        * .gitignore:
+
 2012-01-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Introduce new qmake variable 'WEBKIT' for signaling dependencies

@@ -1,3 +1,22 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebMimeRegistry and dependencies to Source/Platform
+        https://bugs.webkit.org/show_bug.cgi?id=74583
+
+        Reviewed by Darin Fisher.
+
+        public/platform/WebMimeRegistry.h is a temporary forwarding header to ease the transition. Once downstream
+        callers are updated to the new location this header can be removed.
+
+        WebString, WebCString, and WebCommon.h will remain in place as forwarding headers for users of the WebKit client
+        API.
+
+        * WebKit.gyp:
+        * public/platform/WebCString.h:
+        * public/platform/WebCommon.h:
+        * public/platform/WebMimeRegistry.h:
+        * public/platform/WebString.h:
+
 2012-01-03  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Bypass the shadow texture copy for accelerated

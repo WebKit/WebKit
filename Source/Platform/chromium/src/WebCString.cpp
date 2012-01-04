@@ -29,19 +29,29 @@
  */
 
 #include "config.h"
-#include "platform/WebString.h"
+#include <public/WebCString.h>
 
-#include "PlatformString.h"
-#include "platform/WebCString.h"
-#include <wtf/text/AtomicString.h>
+#include <public/WebString.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
 
-class WebStringPrivate : public WTF::StringImpl {
+class WebCStringPrivate : public WTF::CStringBuffer {
 };
 
-void WebString::reset()
+int WebCString::compare(const WebCString& other) const
+{
+    // A null string is always less than a non null one.
+    if (isNull() != other.isNull())
+        return isNull() ? -1 : 1;
+
+    if (isNull())
+        return 0; // Both WebStrings are null.
+
+    return strcmp(m_private->data(), other.m_private->data());
+}
+
+void WebCString::reset()
 {
     if (m_private) {
         m_private->deref();
@@ -49,83 +59,59 @@ void WebString::reset()
     }
 }
 
-void WebString::assign(const WebString& other)
+void WebCString::assign(const WebCString& other)
 {
-    assign(const_cast<WebStringPrivate*>(other.m_private));
+    assign(const_cast<WebCStringPrivate*>(other.m_private));
 }
 
-void WebString::assign(const WebUChar* data, size_t length)
+void WebCString::assign(const char* data, size_t length)
 {
-    assign(static_cast<WebStringPrivate*>(
-        WTF::StringImpl::create(data, length).get()));
+    char* newData;
+    RefPtr<WTF::CStringBuffer> buffer =
+        WTF::CString::newUninitialized(length, newData).buffer();
+    memcpy(newData, data, length);
+    assign(static_cast<WebCStringPrivate*>(buffer.get()));
 }
 
-size_t WebString::length() const
+size_t WebCString::length() const
 {
-    return m_private ? const_cast<WebStringPrivate*>(m_private)->length() : 0;
+    if (!m_private)
+        return 0;
+    // NOTE: The buffer's length includes the null byte.
+    return const_cast<WebCStringPrivate*>(m_private)->length() - 1;
 }
 
-const WebUChar* WebString::data() const
+const char* WebCString::data() const
 {
-    return m_private ? const_cast<WebStringPrivate*>(m_private)->characters() : 0;
+    if (!m_private)
+        return 0;
+    return const_cast<WebCStringPrivate*>(m_private)->data();
 }
 
-WebCString WebString::utf8() const
+WebString WebCString::utf16() const
 {
-    return WTF::String(m_private).utf8();
+    return WebString::fromUTF8(data(), length());
 }
 
-WebString WebString::fromUTF8(const char* data, size_t length)
-{
-    return WTF::String::fromUTF8(data, length);
-}
-
-WebString WebString::fromUTF8(const char* data)
-{
-    return WTF::String::fromUTF8(data);
-}
-
-bool WebString::equals(const WebString& s) const
-{
-    return equal(m_private, s.m_private);
-}
-
-WebString::WebString(const WTF::String& s)
-    : m_private(static_cast<WebStringPrivate*>(s.impl()))
+WebCString::WebCString(const WTF::CString& s)
+    : m_private(static_cast<WebCStringPrivate*>(s.buffer()))
 {
     if (m_private)
         m_private->ref();
 }
 
-WebString& WebString::operator=(const WTF::String& s)
+WebCString& WebCString::operator=(const WTF::CString& s)
 {
-    assign(static_cast<WebStringPrivate*>(s.impl()));
+    assign(static_cast<WebCStringPrivate*>(s.buffer()));
     return *this;
 }
 
-WebString::operator WTF::String() const
+WebCString::operator WTF::CString() const
 {
     return m_private;
 }
 
-WebString::WebString(const WTF::AtomicString& s)
-    : m_private(0)
-{
-    assign(s.string());
-}
-
-WebString& WebString::operator=(const WTF::AtomicString& s)
-{
-    assign(s.string());
-    return *this;
-}
-
-WebString::operator WTF::AtomicString() const
-{
-    return WTF::AtomicString(static_cast<WTF::StringImpl *>(m_private));
-}
-
-void WebString::assign(WebStringPrivate* p)
+void WebCString::assign(WebCStringPrivate* p)
 {
     // Take care to handle the case where m_private == p
     if (p)

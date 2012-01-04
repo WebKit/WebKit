@@ -1,3 +1,62 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebMimeRegistry and dependencies to Source/Platform
+        https://bugs.webkit.org/show_bug.cgi?id=74583
+
+        Reviewed by Darin Fisher.
+
+        This creates a skeleton directory structure for the chromium WebKit platform API and moves WebMimeRegistry.h
+        along with its dependencies (WebString and WebCString) to their final location.
+
+        * Platform.gyp/Platform.gyp: Added.
+        * Platform.gypi: Added.
+        * chromium/platform/WebCString.h: Copied from Source/WebKit/chromium/public/platform/WebCString.h.
+        (WebKit::WebCString::~WebCString):
+        (WebKit::WebCString::WebCString):
+        (WebKit::WebCString::operator=):
+        (WebKit::WebCString::isEmpty):
+        (WebKit::WebCString::isNull):
+        (WebKit::WebCString::operator std::string):
+        (WebKit::WebCString::fromUTF16):
+        (WebKit::operator<):
+        * chromium/platform/WebCommon.h: Copied from Source/WebKit/chromium/public/platform/WebCommon.h.
+        * chromium/platform/WebMimeRegistry.h: Copied from Source/WebKit/chromium/public/platform/WebMimeRegistry.h.
+        (WebKit::WebMimeRegistry::~WebMimeRegistry):
+        * chromium/platform/WebString.h: Copied from Source/WebKit/chromium/public/platform/WebString.h.
+        (WebKit::WebString::~WebString):
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+        (WebKit::WebString::isEmpty):
+        (WebKit::WebString::isNull):
+        (WebKit::WebString::operator string16):
+        (WebKit::WebString::operator NullableString16):
+        (WebKit::WebString::fromUTF8):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/src/WebCString.cpp: Renamed from Source/WebKit/chromium/src/WebCString.cpp.
+        (WebKit::WebCString::compare):
+        (WebKit::WebCString::reset):
+        (WebKit::WebCString::assign):
+        (WebKit::WebCString::length):
+        (WebKit::WebCString::data):
+        (WebKit::WebCString::utf16):
+        (WebKit::WebCString::fromUTF16):
+        (WebKit::WebCString::WebCString):
+        (WebKit::WebCString::operator=):
+        (WebKit::WebCString::operator WTF::CString):
+        * chromium/src/WebString.cpp: Renamed from Source/WebKit/chromium/src/WebString.cpp.
+        (WebKit::WebString::reset):
+        (WebKit::WebString::assign):
+        (WebKit::WebString::length):
+        (WebKit::WebString::data):
+        (WebKit::WebString::utf8):
+        (WebKit::WebString::fromUTF8):
+        (WebKit::WebString::equals):
+        (WebKit::WebString::WebString):
+        (WebKit::WebString::operator=):
+        (WebKit::WebString::operator WTF::String):
+        (WebKit::WebString::operator WTF::AtomicString):
+
 2011-11-02  Adam Barth  <abarth@webkit.org>
 
         Add stubs for WTF and Platform

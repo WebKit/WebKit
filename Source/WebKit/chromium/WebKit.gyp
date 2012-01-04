@@ -67,6 +67,7 @@
             'variables': { 'enable_wexit_time_destructors': 1, },
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '../../Platform/Platform.gyp/Platform.gyp:platform', # actually WebCore should depend on this
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -281,7 +282,6 @@
                 'public/platform/WebAudioDevice.h',
                 'public/platform/WebBlobData.h',
                 'public/platform/WebBlobRegistry.h',
-                'public/platform/WebCString.h',
                 'public/platform/WebCanvas.h',
                 'public/platform/WebClipboard.h',
                 'public/platform/WebColor.h',
@@ -494,7 +494,6 @@
                 'src/WebContentLayerImpl.cpp',
                 'src/WebContentLayerImpl.h',
                 'src/WebCrossOriginPreflightResultCache.cpp',
-                'src/WebCString.cpp',
                 'src/WebCursorInfo.cpp',
                 'src/WebDOMEvent.cpp',
                 'src/WebDOMEventListener.cpp',
@@ -647,7 +646,6 @@
                 'src/WebStorageNamespaceImpl.h',
                 'src/WebStorageQuotaCallbacksImpl.cpp',
                 'src/WebStorageQuotaCallbacksImpl.h',
-                'src/WebString.cpp',
                 'src/WebTextRun.cpp',
                 'src/WebThreadSafeData.cpp',
                 'src/WebURL.cpp',

@@ -54,6 +54,10 @@ Source/WebKit/chromium/*.vcproj*
 Source/WebKit/chromium/All.xcodeproj
 Source/WebKit/chromium/WebKit.xcodeproj
 Source/WebKit/chromium/WebKitUnitTests.xcodeproj
+Source/Platform/Platform.gyp/*.Makefile
+Source/Platform/Platform.gyp/*.mk
+Source/Platform/Platform.gyp/*.sln
+Source/Platform/Platform.gyp/*.vcproj*
 Tools/Tools.xcodeproj
 Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 
