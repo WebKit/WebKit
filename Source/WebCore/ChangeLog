@@ -1,3 +1,27 @@
+2012-01-03  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Use data decoding swizzle for turbo JPEG grayscale images
+        https://bugs.webkit.org/show_bug.cgi?id=75189
+
+        Reviewed by Adam Barth.
+
+        No new tests.  Covered by exiting tests, in particular for grayscale
+        images that were corrupted by earlier versions on libjpeg-turbo:
+
+        tables/mozilla/bugs/bug29314.html
+        tables/mozilla/bugs/bug13169.html
+        tables/mozilla/bugs/bug10565.html
+        tables/mozilla/bugs/bug11026.html
+        fast/repaint/backgroundSizeRepaint.html
+        fast/repaint/block-layout-inline-children-replaced.html
+        fast/repaint/clipped-relative.html
+        fast/repaint/selected-replaced.html
+        tables/mozilla/bugs/bug12908-1.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):  Use a data decoding swizzle for
+        JCS_GRAYSCALE images.
+
 2012-01-03  Adam Barth  <abarth@webkit.org>
 
         Minor speed improvement in HTML parser

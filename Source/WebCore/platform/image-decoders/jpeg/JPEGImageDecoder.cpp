@@ -261,13 +261,11 @@ public:
             if (jpeg_read_header(&m_info, true) == JPEG_SUSPENDED)
                 return false; // I/O suspension.
 
-            // Let libjpeg take care of gray->RGB and YCbCr->RGB conversions.
             switch (m_info.jpeg_color_space) {
             case JCS_GRAYSCALE:
-                m_info.out_color_space = JCS_RGB;
-                break;
             case JCS_RGB:
             case JCS_YCbCr:
+                // libjpeg can convert GRAYSCALE and YCbCr image pixels to RGB.
                 m_info.out_color_space = rgbOutputColorSpace();
                 break;
             case JCS_CMYK:
