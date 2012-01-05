@@ -123,6 +123,35 @@ static int fatalError(const wstring& programName, const wstring& message)
     return 1;
 }
 
+static bool modifyPath(const wstring& programName)
+{
+    struct {
+        wstring softwareSubKey;
+        wstring productName;
+    } products[] = {
+        { L"Apple Inc.", L"Apple Application Support" },
+        { L"Apple Computer, Inc.", L"Safari" },
+    };
+
+    wstring pathPrefix;
+    for (size_t i = 0; i < _countof(products); ++i) {
+        wstring directory = applePathFromRegistry(L"SOFTWARE\\" + products[i].softwareSubKey + L"\\" + products[i].productName, L"InstallDir");
+        if (directory.empty()) {
+            fatalError(programName, L"Failed to determine path to " + products[i].productName + L" directory.");
+            return false;
+        }
+        if (i)
+            pathPrefix += L';';
+        pathPrefix += directory;
+    }
+
+    if (prependPath(pathPrefix))
+        return true;
+
+    fatalError(programName, L"Failed to modify PATH environment variable.");
+    return false;
+}
+
 #if USE_CONSOLE_ENTRY_POINT
 int main(int argc, const char* argv[])
 #else
@@ -140,11 +169,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
 
     wstring programName = ::PathFindFileNameW(exePath);
 
-    wstring aasDirectory = appleApplicationSupportDirectory();
-    if (aasDirectory.empty())
-        return fatalError(programName, L"Failed to determine path to Apple Application Support directory.");
-    if (!prependPath(aasDirectory))
-        return fatalError(programName, L"Failed to modify PATH environment variable.");
+    if (!modifyPath(programName))
+        return 1;
 
     // Load our corresponding DLL.
     wstring dllName = programName + L".dll";

@@ -1,3 +1,42 @@
+2012-01-05  Adam Roben  <aroben@apple.com>
+
+        Turn DumpRenderTree into a stub .exe launcher and a .dll that contains all the real code
+
+        This allows us to add the Safari and Apple Application Support directories to PATH before
+        trying to load WebKit so that SafariTheme.dll, CoreGraphics.dll and friends can be found.
+
+        Part of <http://webkit.org/b/75486> <rdar://problem/10638124> NRWT fails to launch Apple's
+        Windows port of DumpRenderTree/WebKitTestRunner
+
+        Reviewed by Steve Falkenburg.
+
+        * DumpRenderTree/DumpRenderTree.sln: Added DumpRenderTreeLauncher and ImageDiffLauncher,
+        which I forgot to add to this .sln when that project was created.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dllLauncherEntryPoint): Renamed from main. This is what the stub launcher calls.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops:
+        Changed to build DumpRenderTree.dll instead of DumpRenderTree.exe.
+
+        * DumpRenderTree/win/DumpRenderTreeLauncher.vcproj: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherCommon.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebug.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebugAll.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebugCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherProduction.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherRelease.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeLauncherReleaseCairoCFLite.vsprops: Added.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (modifyPath): Moved code to modify PATH here from main/wWinMain. Changed to also prepend
+        Safari's directory to PATH so that SafariTheme.dll can be found.
+
+        (main):
+        (wWinMain):
+        Changed to use the new modifyPath function.
+
 2012-01-05  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Never enable FontConfig on Mac OS X

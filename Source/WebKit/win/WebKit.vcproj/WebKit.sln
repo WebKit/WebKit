@@ -100,7 +100,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "..\..
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitLauncherWin", "..\..\..\..\Tools\WebKitLauncherWin\WebKitLauncherWin.vcproj", "{D09806DB-E58B-4646-8C9B-61101906C1E2}"
 	ProjectSection(ProjectDependencies) = postProject
-		{6567DFD4-D6DE-4CD5-825D-17E353D160E1} = {6567DFD4-D6DE-4CD5-825D-17E353D160E1}
+		{2974EA02-840B-4995-8719-8920A61006F1} = {2974EA02-840B-4995-8719-8920A61006F1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\..\Tools\WinLauncher\WinLauncher.vcproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
@@ -171,6 +171,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiffLauncher", "..\..\..\..\Tools\DumpRenderTree\win\ImageDiffLauncher.vcproj", "{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}"
 	ProjectSection(ProjectDependencies) = postProject
 		{59CC0547-70AC-499C-9B19-EC01C6F61137} = {59CC0547-70AC-499C-9B19-EC01C6F61137}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpRenderTreeLauncher", "..\..\..\..\Tools\DumpRenderTree\win\DumpRenderTreeLauncher.vcproj", "{2974EA02-840B-4995-8719-8920A61006F1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6567DFD4-D6DE-4CD5-825D-17E353D160E1} = {6567DFD4-D6DE-4CD5-825D-17E353D160E1}
 	EndProjectSection
 EndProject
 Global
@@ -577,6 +582,18 @@ Global
 		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Release_Cairo_CFLite|Win32.Build.0 = Release_Cairo_CFLite|Win32
 		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Release|Win32.ActiveCfg = Release|Win32
 		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Release|Win32.Build.0 = Release|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug_All|Win32.Build.0 = Debug_All|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug_Cairo_CFLite|Win32.ActiveCfg = Debug_Cairo_CFLite|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug_Cairo_CFLite|Win32.Build.0 = Debug_Cairo_CFLite|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Debug|Win32.Build.0 = Debug|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Production|Win32.ActiveCfg = Production|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Production|Win32.Build.0 = Production|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Release_Cairo_CFLite|Win32.ActiveCfg = Release_Cairo_CFLite|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Release_Cairo_CFLite|Win32.Build.0 = Release_Cairo_CFLite|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Release|Win32.ActiveCfg = Release|Win32
+		{2974EA02-840B-4995-8719-8920A61006F1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -615,5 +632,6 @@ Global
 		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 		{7AF4EBFB-CCBC-448F-A36A-8210E08D6A7D} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
+		{2974EA02-840B-4995-8719-8920A61006F1} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 	EndGlobalSection
 EndGlobal

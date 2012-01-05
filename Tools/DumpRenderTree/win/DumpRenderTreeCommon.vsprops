@@ -15,6 +15,7 @@
 		Name="VCLinkerTool"
 		AdditionalOptions="/NXCOMPAT"
 		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WebCoreTestSupport$(WebKitConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib comsuppw.lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>
