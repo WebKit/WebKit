@@ -135,7 +135,7 @@ static Eina_Bool _ewk_view_tiled_smart_repaints_process(Ewk_View_Smart_Data* sma
 
     ewk_frame_scroll_pos_get(smartData->main_frame, &scrollX, &scrollY);
 
-    paintRect = ewk_view_repaints_get(smartData->_priv, &count);
+    paintRect = ewk_view_repaints_pop(smartData->_priv, &count);
     endOfpaintRect = paintRect + count;
     for (; paintRect < endOfpaintRect; paintRect++) {
         Eina_Rectangle rect;

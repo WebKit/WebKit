@@ -170,7 +170,7 @@ Ewk_Context_Menu* ewk_context_menu_customize(Ewk_Context_Menu* menu);
 void ewk_context_menu_show(Ewk_Context_Menu* menu);
 #endif
 
-const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, size_t* count);
+const Eina_Rectangle* ewk_view_repaints_pop(Ewk_View_Private_Data* priv, size_t* count);
 const Ewk_Scroll_Request* ewk_view_scroll_requests_get(const Ewk_View_Private_Data* priv, size_t* count);
 
 void ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);

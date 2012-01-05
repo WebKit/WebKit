@@ -293,20 +293,19 @@ static Eina_Bool _ewk_view_repaints_resize(Ewk_View_Private_Data* priv, size_t s
 
 static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
 {
-    Eina_Rectangle* rect;
+    size_t newSize = 0;
 
-    // fprintf(stderr, ">>> repaint requested: %d,%d+%dx%d\n", x, y, w, h);
-    if (priv->repaints.allocated == priv->repaints.count) {
-        size_t size;
-        if (!priv->repaints.allocated)
-            size = EWK_VIEW_REPAINTS_SIZE_INITIAL;
-        else
-            size = priv->repaints.allocated + EWK_VIEW_REPAINTS_SIZE_STEP;
-        if (!_ewk_view_repaints_resize(priv, size))
+    if (priv->repaints.allocated == priv->repaints.count)
+        newSize = priv->repaints.allocated + EWK_VIEW_REPAINTS_SIZE_STEP;
+    else if (!priv->repaints.count && priv->repaints.allocated > EWK_VIEW_REPAINTS_SIZE_INITIAL)
+        newSize = EWK_VIEW_REPAINTS_SIZE_INITIAL;
+
+    if (newSize) {
+        if (!_ewk_view_repaints_resize(priv, newSize))
             return;
     }
 
-    rect = priv->repaints.array + priv->repaints.count;
+    Eina_Rectangle* rect = priv->repaints.array + priv->repaints.count;
     priv->repaints.count++;
 
     rect->x = x;
@@ -927,7 +926,6 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
     if (!smartData->api->repaints_process(smartData))
         ERR("failed to process repaints.");
-    _ewk_view_repaints_flush(priv);
 
     if (smartData->changed.frame_rect) {
         WebCore::FrameView* view = priv->mainFrame->view();
@@ -2451,13 +2449,16 @@ Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* ewkView)
  * @note this is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
-const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, size_t* count)
+const Eina_Rectangle* ewk_view_repaints_pop(Ewk_View_Private_Data* priv, size_t* count)
 {
     if (count)
         *count = 0;
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
     if (count)
         *count = priv->repaints.count;
+
+    priv->repaints.count = 0;
+
     return priv->repaints.array;
 }
 

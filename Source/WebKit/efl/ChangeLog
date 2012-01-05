@@ -1,3 +1,31 @@
+2012-01-05  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Invalidation request for ewk_view can be discarded without rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=71564
+
+        Reviewed by Hajime Morita.
+
+        As ewk_view discards a queue for invalidation requests
+        as soon as it proceeds the repaint step, the newly produced invalidation requests
+        from ewk_view_layout_if_needed_recursive API can be discarded
+        and unpainted dirty area can occur.
+        As this issue is just caused by use of flush API in repaint step,
+        (internal API) ewk_view_repaints_get is replaced with ewk_view_repaints_pop
+        in order to make sure that old invalidation requests are removed from queue.
+        And in addition to that, ewk_view_repaint_add is modified
+        in order to let queue of invalidation requests keep a proper size.
+        As a result flush API won't be used for the repaint step.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_repaint_add):
+        (_ewk_view_smart_calculate):
+        (ewk_view_repaints_pop):
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_smart_repaints_process):
+
 2012-01-04  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Refactor the way using cairo in ewk_tiled_backing_store.

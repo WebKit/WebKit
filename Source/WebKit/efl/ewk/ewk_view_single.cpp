@@ -435,7 +435,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
 
     ewk_view_layout_if_needed_recursive(smartData->_priv);
 
-    pr = ewk_view_repaints_get(smartData->_priv, &count);
+    pr = ewk_view_repaints_pop(smartData->_priv, &count);
     pr_end = pr + count;
     for (; pr < pr_end; pr++)
         eina_tiler_rect_add(tiler, pr);
