@@ -31,7 +31,33 @@ import chromium_mac
 import chromium_win
 
 
-# FIXME: This whole file needs to go away and we need to eliminate the GPU configuration.
+def get(host, platform=None, port_name='chromium-gpu', **kwargs):
+    """Some tests have slightly different results when run while using
+    hardware acceleration.  In those cases, we prepend an additional directory
+    to the baseline paths."""
+    platform = platform or sys.platform
+    if port_name == 'chromium-gpu':
+        if platform in ('cygwin', 'win32'):
+            port_name = 'chromium-gpu-win'
+        elif platform.startswith('linux'):
+            port_name = 'chromium-gpu-linux'
+        elif platform == 'darwin':
+            port_name = 'chromium-gpu-mac'
+        else:
+            raise NotImplementedError('unsupported platform: %s' % platform)
+
+    if port_name.startswith('chromium-gpu-linux'):
+        return ChromiumGpuLinuxPort(host, port_name=port_name, **kwargs)
+    if port_name.startswith('chromium-gpu-cg-mac'):
+        return ChromiumGpuCgMacPort(host, port_name=port_name, **kwargs)
+    if port_name.startswith('chromium-gpu-mac'):
+        return ChromiumGpuMacPort(host, port_name=port_name, **kwargs)
+    if port_name.startswith('chromium-gpu-win'):
+        return ChromiumGpuWinPort(host, port_name=port_name, **kwargs)
+    raise NotImplementedError('unsupported port: %s' % port_name)
+
+
+# FIXME: These should really be a mixin class.
 
 def _set_gpu_options(port, graphics_type='gpu'):
     port._graphics_type = graphics_type
@@ -64,7 +90,7 @@ def _default_tests_paths(port):
         paths += ['fast/canvas', 'canvas/philip']
 
     if not paths:
-        # FIXME: This is a hack until we can turn off the webkit_gpu
+        # FIXME: This is a hack until we can turn of the webkit_gpu
         # tests on the bots. If paths is empty, port.tests()
         # finds *everything*. However, we have to return something,
         # or NRWT thinks there's something wrong. So, we return a single

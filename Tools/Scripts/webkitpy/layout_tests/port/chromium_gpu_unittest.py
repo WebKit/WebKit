@@ -27,12 +27,12 @@
 import sys
 import unittest
 
-from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.layout_tests.port import chromium_gpu
-from webkitpy.layout_tests.port import port_testcase
-from webkitpy.layout_tests.port.factory import PortFactory
+import chromium_gpu
+
 from webkitpy.tool.mocktool import MockOptions
+from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests.port import port_testcase
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class ChromiumGpuTest(unittest.TestCase):
@@ -62,9 +62,9 @@ class ChromiumGpuTest(unittest.TestCase):
                                    builder_name='foo',
                                    child_processes=None)
         if input_name and platform:
-            port = PortFactory(host).get(host, platform=platform, port_name=input_name, options=mock_options)
+            port = chromium_gpu.get(host, platform=platform, port_name=input_name, options=mock_options)
         else:
-            port = PortFactory(host).get(host, port_name=port_name, options=mock_options)
+            port = chromium_gpu.get(host, port_name=port_name, options=mock_options)
         self.assertTrue(port._options.accelerated_2d_canvas)
         self.assertTrue(port._options.accelerated_video)
         self.assertTrue(port._options.experimental_fully_parallel)

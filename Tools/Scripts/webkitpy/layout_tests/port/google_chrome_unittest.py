@@ -27,6 +27,7 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests.port import google_chrome
 
 
 class GetGoogleChromePortTest(unittest.TestCase):
@@ -41,7 +42,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
 
     def _verify_baseline_path(self, expected_path, port_name):
-        port = MockHost().port_factory.get(port_name=port_name)
+        port = google_chrome.GetGoogleChromePort(MockHost(), port_name=port_name)
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, port._filesystem.basename(path))
 
@@ -54,7 +55,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         host = MockHost()
         chromium_port = host.port_factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
-        port = host.port_factory.get(port_name=port_name, options=None)
+        port = google_chrome.GetGoogleChromePort(host, port_name=port_name, options=None)
 
         expected_chromium_overrides = '// chromium overrides\n'
         expected_chrome_overrides = '// chrome overrides\n'

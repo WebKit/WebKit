@@ -1,3 +1,44 @@
+2012-01-05  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r104159.
+        http://trac.webkit.org/changeset/104159
+        https://bugs.webkit.org/show_bug.cgi?id=75590
+
+        Chromium port GPU tests cannot be executed.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (get):
+        (_default_tests_paths):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        (ChromiumGpuTest.assert_port_works):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._port_name_from_arguments_and_options):
+        (PortFactory):
+        (PortFactory._get_kwargs):
+        (PortFactory.get):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_google_chrome.names):
+        (FactoryTest.test_google_chrome):
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        (GetGoogleChromePort):
+        (GetGoogleChromePort.GoogleChromeLinux32Port):
+        (GetGoogleChromePort.GoogleChromeLinux32Port.baseline_search_path):
+        (GetGoogleChromePort.GoogleChromeLinux32Port.test_expectations_overrides):
+        (GetGoogleChromePort.GoogleChromeLinux32Port.architecture):
+        (GetGoogleChromePort.GoogleChromeLinux64Port):
+        (GetGoogleChromePort.GoogleChromeLinux64Port.baseline_search_path):
+        (GetGoogleChromePort.GoogleChromeLinux64Port.test_expectations_overrides):
+        (GetGoogleChromePort.GoogleChromeLinux64Port.architecture):
+        (GetGoogleChromePort.GoogleChromeMacPort):
+        (GetGoogleChromePort.GoogleChromeMacPort.baseline_search_path):
+        (GetGoogleChromePort.GoogleChromeMacPort.test_expectations_overrides):
+        (GetGoogleChromePort.GoogleChromeWinPort):
+        (GetGoogleChromePort.GoogleChromeWinPort.baseline_search_path):
+        (GetGoogleChromePort.GoogleChromeWinPort.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (GetGoogleChromePortTest._verify_baseline_path):
+        (GetGoogleChromePortTest._verify_expectations_overrides):
+
 2012-01-05  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up port factory methods
