@@ -1,3 +1,32 @@
+2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename webkit_web_view_load_alternate_html as webkit_web_view_replace_content in WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=75433
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadFail): Use webkit_web_view_replace_content().
+        (webkitWebViewLoadChanged): Do not emit load-changed signal when
+        replacing content.
+        (webkitWebViewLoadFailed): Do not emit load-failed signal when
+        replacing content.
+        (webkitWebViewSetEstimatedLoadProgress): Do not emit
+        notify::estimated-load-progress signal when replacing content.
+        (webkit_web_view_replace_content):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (beforeAll):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (replaceContentTitleChangedCallback):
+        (replaceContentLoadCallback):
+        (testWebViewReplaceContent):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::replaceContent):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2012-01-05  Keunsoon Lee  <keunsoon.lee@samsung.com>
 
         [WK2][EFL] creating dummy functions for Download class on Efl port.

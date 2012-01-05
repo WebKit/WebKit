@@ -78,13 +78,6 @@ static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
 }
 
-static void testLoadAlternateContent(LoadTrackingTest* test, gconstpointer)
-{
-    test->loadAlternateHTML("<html><body>Alternate Content</body></html>", 0, kServer->getURIForPath("/alternate").data());
-    test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
-}
-
 static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
 {
     GRefPtr<WebKitURIRequest> request(webkit_uri_request_new(kServer->getURIForPath("/normal").data()));
@@ -251,7 +244,6 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
-    LoadTrackingTest::add("WebKitWebView", "load-alternate-content", testLoadAlternateContent);
     LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "title", testWebViewTitle);

@@ -34,8 +34,8 @@ public:
     void loadURI(const char* uri);
     void loadHtml(const char* html, const char* baseURI);
     void loadPlainText(const char* plainText);
-    void loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI);
     void loadRequest(WebKitURIRequest*);
+    void replaceContent(const char* html, const char* contentURI, const char* baseURI);
     void goBack();
     void goForward();
     void goToBackForwardListItem(WebKitBackForwardListItem*);

@@ -1,3 +1,14 @@
+2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename webkit_web_view_load_alternate_html as webkit_web_view_replace_content in WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=75433
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewLoadFailed): Reset the progress bar when load fails.
+        (browserWindowConstructed): Connect to load-failed signal.
+
 2012-01-04  Dan Bernstein  <mitz@apple.com>
 
         Add a --target-web-process option to the debug-* scripts. When specified, the scripts will

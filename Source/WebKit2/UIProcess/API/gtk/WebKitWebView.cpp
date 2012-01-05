@@ -76,6 +76,7 @@ struct _WebKitWebViewPrivate {
     CString customTextEncoding;
     double estimatedLoadProgress;
     CString activeURI;
+    bool replacingContent;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
     GRefPtr<WebKitUIClient> uiClient;
@@ -96,7 +97,7 @@ static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, c
         return FALSE;
 
     GOwnPtr<char> htmlString(g_strdup_printf("<html><body>%s</body></html>", error->message));
-    webkit_web_view_load_alternate_html(webView, htmlString.get(), 0, failingURI);
+    webkit_web_view_replace_content(webView, htmlString.get(), failingURI, 0);
 
     return TRUE;
 }
@@ -539,6 +540,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
+    if (webView->priv->replacingContent) {
+        if (loadEvent == WEBKIT_LOAD_FINISHED)
+            webView->priv->replacingContent = false;
+        return;
+    }
+
     if (loadEvent != WEBKIT_LOAD_FINISHED)
         webkitWebViewUpdateURI(webView);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
@@ -546,6 +553,9 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
+    if (webView->priv->replacingContent)
+        return;
+
     gboolean returnValue;
     g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
@@ -563,8 +573,12 @@ void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
 {
+    if (webView->priv->replacingContent)
+        return;
+
     if (webView->priv->estimatedLoadProgress == estimatedLoadProgress)
         return;
+
     webView->priv->estimatedLoadProgress = estimatedLoadProgress;
     g_object_notify(G_OBJECT(webView), "estimated-load-progress");
 }
@@ -733,34 +747,6 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
 }
 
 /**
- * webkit_web_view_load_alternate_html:
- * @web_view: a #WebKitWebView
- * @content: the alternate content to display as the main page of the @web_view
- * @base_uri: the base URI for relative locations
- * @unreachable_uri: the URI for the alternate page content
- *
- * Request loading of an alternate content for a URI that is unreachable. This allows clients
- * to display page-loading errors in the #WebKitWebView itself. This is typically called from
- * #WebKitWebView::load-failed signal.
- * When called from that signal this method will preserve the back-forward list. The URI passed in
- * @base_uri has to be an absolute URI.
- * You can monitor the load operation by connecting to
- * #WebKitWebView::load-changed signal.
- */
-void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI, const gchar* unreachableURI)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(content);
-
-    WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
-    WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
-    WKRetainPtr<WKURLRef> unreachableURL = unreachableURI ? adoptWK(WKURLCreateWithUTF8CString(unreachableURI)) : 0;
-    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
-    WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), unreachableURL.get());
-    webkitWebViewUpdateURI(webView);
-}
-
-/**
  * webkit_web_view_load_request:
  * @web_view: a #WebKitWebView
  * @request: a #WebKitURIRequest to load
@@ -778,6 +764,36 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
     WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKPageLoadURLRequest(toAPI(page), wkRequest.get());
+    webkitWebViewUpdateURI(webView);
+}
+
+/**
+ * webkit_web_view_replace_content:
+ * @web_view: a #WebKitWebView
+ * @content: the new content to display as the main page of the @web_view
+ * @content_uri: the URI for the page content
+ * @base_uri: (allow-none): the base URI for relative locations or %NULL
+ *
+ * Replace the content of @web_view with @content using @content_uri as page URI.
+ * This allows clients to display page-loading errors in the #WebKitWebView itself.
+ * This is typically called from #WebKitWebView::load-failed signal. The URI passed in
+ * @base_uri has to be an absolute URI. The mime type of the document will be "text/html".
+ * Signals #WebKitWebView::load-changed and #WebKitWebView::load-failed are not emitted
+ * when replacing content of a #WebKitWebView using this method.
+ */
+void webkit_web_view_replace_content(WebKitWebView* webView, const gchar* content, const gchar* contentURI, const gchar* baseURI)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(content);
+    g_return_if_fail(contentURI);
+
+    webView->priv->replacingContent = true;
+
+    WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
+    WKRetainPtr<WKURLRef> contentURL(AdoptWK, WKURLCreateWithUTF8CString(contentURI));
+    WKRetainPtr<WKURLRef> baseURL = baseURI ? adoptWK(WKURLCreateWithUTF8CString(baseURI)) : 0;
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    WKPageLoadAlternateHTMLString(toAPI(page), htmlString.get(), baseURL.get(), contentURL.get());
     webkitWebViewUpdateURI(webView);
 }
 
@@ -926,7 +942,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
  *     the requested URI is the given one.
  *   </para></listitem>
  *   <listitem><para>
- *     If the load operation was started by webkit_web_view_load_alternate_html(),
+ *     If the load operation was started by webkit_web_view_load_html(),
  *     the requested URI is "about:blank".
  *   </para></listitem>
  *   <listitem><para>
@@ -952,6 +968,10 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
  *   with %WEBKIT_LOAD_COMMITTED event, the active URI is the final
  *   one and it will not change unless a new load operation is started
  *   or a navigation action within the same page is performed.
+ * </para></listitem>
+ * <listitem><para>
+ *   When the page content is replaced using webkit_web_view_replace_content(),
+ *   the active URI is the content_uri provided.
  * </para></listitem>
  * </orderedlist>
  *

@@ -67,6 +67,26 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_settings_get_enable_javascript(settings));
 }
 
+static void replaceContentTitleChangedCallback(WebViewTest* test)
+{
+    g_main_loop_quit(test->m_mainLoop);
+}
+
+static void replaceContentLoadCallback()
+{
+    g_assert_not_reached();
+}
+
+static void testWebViewReplaceContent(WebViewTest* test, gconstpointer)
+{
+    g_signal_connect_swapped(test->m_webView, "notify::title", G_CALLBACK(replaceContentTitleChangedCallback), test);
+    g_signal_connect(test->m_webView, "load-changed", G_CALLBACK(replaceContentLoadCallback), test);
+    g_signal_connect(test->m_webView, "load-failed", G_CALLBACK(replaceContentLoadCallback), test);
+    test->replaceContent("<html><head><title>Content Replaced</title></head><body>New Content</body></html>",
+                         "http://foo.com/bar", 0);
+    g_main_loop_run(test->m_mainLoop);
+}
+
 static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";
 static const char* kConfirmDialogMessage = "WebKitGTK+ confirm dialog message";
 static const char* kPromptDialogMessage = "WebKitGTK+ prompt dialog message";
@@ -342,6 +362,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
+    WebViewTest::add("WebKitWebView", "replace-content", testWebViewReplaceContent);
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);

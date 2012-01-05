@@ -58,16 +58,24 @@ void WebViewTest::loadPlainText(const char* plainText)
     webkit_web_view_load_plain_text(m_webView, plainText);
 }
 
-void WebViewTest::loadAlternateHTML(const char* html, const char* baseURI, const char* unreachableURI)
-{
-    m_activeURI = "about:blank";
-    webkit_web_view_load_alternate_html(m_webView, html, baseURI, unreachableURI);
-}
-
 void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
     m_activeURI = webkit_uri_request_get_uri(request);
     webkit_web_view_load_request(m_webView, request);
+}
+
+void WebViewTest::replaceContent(const char* html, const char* contentURI, const char* baseURI)
+{
+    // FIXME: The active uri should be the contentURI,
+    // but WebPageProxy doesn't return the unreachableURL
+    // when the page has been loaded with AlternateHTML()
+    // See https://bugs.webkit.org/show_bug.cgi?id=75465.
+#if 0
+    m_activeURI = contentURI;
+#else
+    m_activeURI = "about:blank";
+#endif
+    webkit_web_view_replace_content(m_webView, html, contentURI, baseURI);
 }
 
 void WebViewTest::goBack()

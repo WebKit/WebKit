@@ -229,6 +229,12 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, BrowserWindow *window)
     return GTK_WIDGET(newWebView);
 }
 
+static gboolean webViewLoadFailed(WebKitWebView *webView, WebKitLoadEvent loadEvent, const char *failingURI, GError *error, BrowserWindow *window)
+{
+    gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), 0.);
+    return FALSE;
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
@@ -326,6 +332,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
     g_signal_connect(window->webView, "notify::title", G_CALLBACK(webViewTitleChanged), window);
     g_signal_connect(window->webView, "create", G_CALLBACK(webViewCreate), window);
+    g_signal_connect(window->webView, "load-failed", G_CALLBACK(webViewLoadFailed), window);
 
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
