@@ -554,19 +554,50 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     unsigned newVectorLength = getNewVectorLength(newLength);
     void* baseStorage = storage->m_allocBase;
 
-    if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
+    // Fast case - there is no precapacity. In these cases a realloc makes sense.
+    if (LIKELY(!m_indexBias)) {
+        if (!tryFastRealloc(baseStorage, storageSize(newVectorLength)).getValue(baseStorage))
+            return false;
+
+        storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(baseStorage);
+        m_storage->m_allocBase = baseStorage;
+
+        WriteBarrier<Unknown>* vector = storage->m_vector;
+        for (unsigned i = vectorLength; i < newVectorLength; ++i)
+            vector[i].clear();
+
+        m_vectorLength = newVectorLength;
+        
+        Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
+        return true;
+    }
+
+    // Remove some, but not all of the precapacity. Atomic decay, & capped to not overflow array length.
+    unsigned newIndexBias = min(m_indexBias >> 1, MAX_STORAGE_VECTOR_LENGTH - newVectorLength);
+    // Calculate new stoarge capcity, allowing room for the pre-capacity.
+    unsigned newStorageCapacity = newVectorLength + newIndexBias;
+    void* newAllocBase;
+    if (!tryFastMalloc(storageSize(newStorageCapacity)).getValue(newAllocBase))
         return false;
-
-    storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(WriteBarrier<Unknown>));
-    m_storage->m_allocBase = baseStorage;
-
-    WriteBarrier<Unknown>* vector = storage->m_vector;
-    for (unsigned i = vectorLength; i < newVectorLength; ++i)
-        vector[i].clear();
+    // The sum of m_vectorLength and m_indexBias will never exceed MAX_STORAGE_VECTOR_LENGTH.
+    ASSERT(m_vectorLength <= MAX_STORAGE_VECTOR_LENGTH && (MAX_STORAGE_VECTOR_LENGTH - m_vectorLength) >= m_indexBias);
+    unsigned currentCapacity = m_vectorLength + m_indexBias;
+    // Currently there is no way to report to the heap that the extra capacity is shrinking!
+    if (newStorageCapacity > currentCapacity)
+        Heap::heap(this)->reportExtraMemoryCost((newStorageCapacity - currentCapacity) * sizeof(WriteBarrier<Unknown>));
 
     m_vectorLength = newVectorLength;
-    
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
+    m_indexBias = newIndexBias;
+    m_storage = reinterpret_cast_ptr<ArrayStorage*>(reinterpret_cast<WriteBarrier<Unknown>*>(newAllocBase) + m_indexBias);
+
+    // Copy the ArrayStorage header & current contents of the vector, clear the new post-capacity.
+    memmove(m_storage, storage, storageSize(vectorLength));
+    for (unsigned i = vectorLength; i < m_vectorLength; ++i)
+        m_storage->m_vector[i].clear();
+
+    // Free the old allocation, update m_allocBase.
+    fastFree(m_storage->m_allocBase);
+    m_storage->m_allocBase = newAllocBase;
 
     return true;
 }
