@@ -72,6 +72,8 @@ webkit_web_view_get_uri
 webkit_web_view_set_settings
 webkit_web_view_get_settings
 webkit_web_view_get_window_properties
+webkit_web_view_set_zoom_level
+webkit_web_view_get_zoom_level
 
 <SUBSECTION Standard>
 WebKitWebViewClass

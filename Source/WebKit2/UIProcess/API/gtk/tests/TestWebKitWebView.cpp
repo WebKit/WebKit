@@ -357,6 +357,13 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
+{
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 1);
+    webkit_web_view_set_zoom_level(test->m_webView, 2.5);
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 2.5);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -366,6 +373,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
+    WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
 }
 
 void afterAll()

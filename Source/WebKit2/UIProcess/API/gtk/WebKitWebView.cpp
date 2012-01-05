@@ -67,7 +67,8 @@ enum {
     PROP_WEB_CONTEXT,
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
-    PROP_URI
+    PROP_URI,
+    PROP_ZOOM_LEVEL
 };
 
 struct _WebKitWebViewPrivate {
@@ -187,6 +188,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_WEB_CONTEXT:
         webView->priv->context = WEBKIT_WEB_CONTEXT(g_value_get_object(value));
         break;
+    case PROP_ZOOM_LEVEL:
+        webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -208,6 +212,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_URI:
         g_value_set_string(value, webkit_web_view_get_uri(webView));
+        break;
+    case PROP_ZOOM_LEVEL:
+        g_value_set_double(value, webkit_web_view_get_zoom_level(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -403,6 +410,20 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_LOAD_EVENT,
                      G_TYPE_STRING,
                      G_TYPE_POINTER);
+
+    /**
+     * WebKitWebView:zoom-level:
+     *
+     * The zoom level of the #WebKitWebView content.
+     * See webkit_web_view_set_zoom_level() for more details.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ZOOM_LEVEL,
+                                    g_param_spec_double("zoom-level",
+                                                        "Zoom level",
+                                                        "The zoom level of the view content",
+                                                        0, G_MAXDOUBLE, 1,
+                                                        WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView::create:
@@ -1146,4 +1167,41 @@ WebKitWindowProperties* webkit_web_view_get_window_properties(WebKitWebView* web
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     return webView->priv->windowProperties.get();
+}
+
+/**
+ * webkit_web_view_set_zoom_level:
+ * @web_view: a #WebKitWebView
+ * @zoom_level: the zoom level
+ *
+ * Set the zoom level of @web_view, i.e. the factor by which the
+ * view contents are scaled with respect to their original size.
+ */
+void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    if (WKPageGetPageZoomFactor(wkPage) == zoomLevel)
+        return;
+
+    WKPageSetPageZoomFactor(wkPage, zoomLevel);
+    g_object_notify(G_OBJECT(webView), "zoom-level");
+}
+
+/**
+ * webkit_web_view_get_zoom_level:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the zoom level of @web_view, i.e. the factor by which the
+ * view contents are scaled with respect to their original size.
+ *
+ * Returns: the current zoom level of @web_view
+ */
+gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1);
+
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    return WKPageGetPageZoomFactor(wkPage);
 }

@@ -1,5 +1,27 @@
 2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add methods to get/set the WebView zoom level to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=75248
+
+        Reviewed by Gustavo Noronha Silva.
+
+        It uses the page zoom factor unconditionally for now.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init): Add WebKitWebView:zoom-level
+        property.
+        (webkit_web_view_set_zoom_level): Set current zoom level.
+        (webkit_web_view_get_zoom_level): Get current zoom level.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewZoomLevel):
+        (beforeAll):
+
+2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Rename webkit_web_view_load_alternate_html as webkit_web_view_replace_content in WebKit2 GTK+
         https://bugs.webkit.org/show_bug.cgi?id=75433
 

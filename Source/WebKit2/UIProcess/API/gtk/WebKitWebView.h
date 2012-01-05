@@ -201,6 +201,12 @@ webkit_web_view_get_settings                 (WebKitWebView             *web_vie
 WEBKIT_API WebKitWindowProperties *
 webkit_web_view_get_window_properties        (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_set_zoom_level               (WebKitWebView             *web_view,
+                                              gdouble                    zoom_level);
+WEBKIT_API gdouble
+webkit_web_view_get_zoom_level               (WebKitWebView             *web_view);
+
 G_END_DECLS
 
 #endif
