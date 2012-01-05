@@ -1,3 +1,45 @@
+2012-01-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104084.
+        http://trac.webkit.org/changeset/104084
+        https://bugs.webkit.org/show_bug.cgi?id=75600
+
+        Likely kills dom-perf benchmark in chromium
+        http://build.chromium.org/f/chromium/perf/linux-
+        release/dom_perf/report.html?history=150&rev=116444 (Requested
+        by dslomov on #webkit).
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        (WebCore::DynamicSubtreeNodeList::invalidateCache):
+        (WebCore::DynamicSubtreeNodeList::Caches::create):
+        (WebCore::DynamicSubtreeNodeList::Caches::reset):
+        * dom/DynamicNodeList.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::setTreeScopeRecursively):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged):
+        (WebCore::Node::notifyLocalNodeListsLabelChanged):
+        (WebCore::Node::itemTypeAttributeChanged):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::parseMappedAttribute):
+        * html/HTMLLabelElement.h:
+
 2012-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove chromium compositor support for unused zoomAnimatorTransform

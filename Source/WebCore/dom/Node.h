@@ -521,8 +521,9 @@ public:
 
     void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
-    void invalidateNodeListsCacheAfterAttributeChanged();
+    void invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName&);
     void invalidateNodeListsCacheAfterChildrenChanged();
+    void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
 
     void removeCachedNameNodeList(NameNodeList*, const String&);
@@ -590,6 +591,8 @@ public:
     virtual EventTargetData* ensureEventTargetData();
 
 #if ENABLE(MICRODATA)
+    void itemTypeAttributeChanged();
+
     DOMSettableTokenList* itemProp();
     DOMSettableTokenList* itemRef();
     DOMSettableTokenList* itemType();
