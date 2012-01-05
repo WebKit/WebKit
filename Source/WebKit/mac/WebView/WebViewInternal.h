@@ -108,6 +108,7 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 #ifdef __cplusplus
 - (WebCore::Page*)page;
 - (void)_setGlobalHistoryItem:(WebCore::HistoryItem*)historyItem;
+- (WTF::String)_userAgentString;
 #endif
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;

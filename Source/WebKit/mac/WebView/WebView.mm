@@ -3874,17 +3874,18 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     return coreFrame->script()->windowScriptObject();
 }
 
-// Get the appropriate user-agent string for a particular URL.
-- (NSString *)userAgentForURL:(NSURL *)url
+- (String)_userAgentString
 {
-    if (_private->useSiteSpecificSpoofing) {
-        // No current site-specific spoofs.
-    }
-
     if (_private->userAgent.isNull())
         _private->userAgent = [[self class] _standardUserAgentWithApplicationName:_private->applicationNameForUserAgent];
 
     return _private->userAgent;
+}
+
+// Get the appropriate user-agent string for a particular URL.
+- (NSString *)userAgentForURL:(NSURL *)url
+{
+    return [self _userAgentString];
 }
 
 - (void)setHostWindow:(NSWindow *)hostWindow
