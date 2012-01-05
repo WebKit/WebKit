@@ -1,3 +1,15 @@
+2012-01-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium][aura] WebExternalTextureLayerImpl::drawsContent() returns incorrect value, causing accelerated content to not display in Aura desktop
+        https://bugs.webkit.org/show_bug.cgi?id=75551
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        * tests/WebExternalTextureLayerImplTest.cpp: Copied from Source/WebKit/chromium/src/WebExternalTextureLayerImpl.cpp.
+
 2012-01-05  Tien Ren Chen  <trchen@chromium.org>
 
         [chromium] Add CCTimer class for the compositor

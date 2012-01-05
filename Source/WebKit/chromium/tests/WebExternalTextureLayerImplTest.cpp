@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,28 @@
  */
 
 #include "config.h"
+
 #include "WebExternalTextureLayerImpl.h"
 
-#include "GraphicsContext.h"
-#include "platform/WebCanvas.h"
+#include <gtest/gtest.h>
+#include <wtf/RefPtr.h>
 
-using namespace WebCore;
+namespace {
 
-namespace WebKit {
+using namespace WebKit;
+using WTF::RefPtr;
 
-PassRefPtr<WebExternalTextureLayerImpl> WebExternalTextureLayerImpl::create()
+class WebExternalTextureLayerImplTest : public WebExternalTextureLayerImpl {
+public:
+    bool isDrawable() const { return drawsContent(); }
+};
+
+TEST(WebExternalTextureLayerImpl, testIsDrawable)
 {
-    return adoptRef(new WebExternalTextureLayerImpl());
+    RefPtr<WebExternalTextureLayerImplTest> textureLayer = adoptRef(new WebExternalTextureLayerImplTest());
+
+    textureLayer->setTextureId(1);
+    EXPECT_TRUE(textureLayer->isDrawable());
 }
 
-WebExternalTextureLayerImpl::WebExternalTextureLayerImpl()
-    : PluginLayerChromium(this)
-{
-    setFlipped(false);
-    setIsDrawable(true);
 }
-
-WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl()
-{
-    setDelegate(0);
-}
-
-bool WebExternalTextureLayerImpl::drawsContent() const
-{
-    return !!textureId() && LayerChromium::drawsContent();
-}
-
-void WebExternalTextureLayerImpl::paintContents(GraphicsContext&, const IntRect&)
-{
-}
-
-} // namespace WebKit
