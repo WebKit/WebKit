@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 771x36
+        text run at (0,0) width 497: "Because we're in quirks mode, you should see a 100x100 green square below. "
+        text run at (497,0) width 274: "If the square is only a couple of pixels wide"
+        text run at (0,18) width 187: "or tall, then the test has failed."
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,50) size 100x50
+  RenderBlock (positioned) {DIV} at (8,50) size 100x50
+    RenderBlock (floating) {DIV} at (0,0) size 6x50 [bgcolor=#008000]
+      RenderTable {TABLE} at (0,0) size 6x6
+        RenderTableSection {TBODY} at (0,0) size 6x6
+          RenderTableRow {TR} at (0,2) size 6x2
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+layer at (8,100) size 6x50
+  RenderBlock (positioned) {DIV} at (0,50) size 6x50 [bgcolor=#008000]
+    RenderTable {TABLE} at (0,0) size 6x6
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
+          RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
