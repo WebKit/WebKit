@@ -52,7 +52,6 @@ enum ValueSourceKind {
     Int32InRegisterFile,
     CellInRegisterFile,
     BooleanInRegisterFile,
-    DoubleInRegisterFile,
     HaveNode
 };
 

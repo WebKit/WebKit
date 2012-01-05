@@ -778,9 +778,6 @@ void ValueSource::dump(FILE* out) const
     case BooleanInRegisterFile:
         fprintf(out, "Bool");
         break;
-    case DoubleInRegisterFile:
-        fprintf(out, "Double");
-        break;
     case HaveNode:
         fprintf(out, "Node(%d)", m_nodeIndex);
         break;
@@ -943,8 +940,6 @@ void SpeculativeJIT::compile(BasicBlock& block)
         NodeIndex nodeIndex = block.variablesAtHead.local(i);
         if (nodeIndex == NoNode)
             m_variables[i] = ValueSource(ValueInRegisterFile);
-        else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
-            m_variables[i] = ValueSource(DoubleInRegisterFile);
         else
             m_variables[i] = ValueSource::forPrediction(at(nodeIndex).variableAccessData()->prediction());
     }
@@ -1231,9 +1226,6 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
 
     case BooleanInRegisterFile:
         return ValueRecovery::alreadyInRegisterFileAsUnboxedBoolean();
-        
-    case DoubleInRegisterFile:
-        return ValueRecovery::alreadyInRegisterFileAsUnboxedDouble();
 
     case HaveNode: {
         if (m_jit.isConstant(valueSource.nodeIndex()))

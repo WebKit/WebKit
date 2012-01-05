@@ -266,11 +266,8 @@ public:
                 entry->m_expectedValues.argument(argument).makeTop();
         }
         for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
-            NodeIndex nodeIndex = basicBlock.variablesAtHead.local(local);
-            if (nodeIndex == NoNode)
+            if (basicBlock.variablesAtHead.local(local) == NoNode)
                 entry->m_expectedValues.local(local).makeTop();
-            else if (m_graph[nodeIndex].variableAccessData()->shouldUseDoubleFormat())
-                entry->m_localsForcedDouble.set(local);
         }
 #else
         UNUSED_PARAM(basicBlock);
