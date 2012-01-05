@@ -1,5 +1,22 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Remove some unnecessary code from old-run-webkit-tests
+
+        Thanks to r104187/r104188, we no longer need to set PATH before launching DumpRenderTree or
+        WebKitTestRunner.
+
+        Fixes <http://webkit.org/b/75640> ORWT unnecessarily sets PATH before launching DRT/WTR on
+        Windows
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/old-run-webkit-tests:
+        (top level):
+        (openDumpTool):
+        Removed calls to setPathForRunningWebKitApp.
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Teach NRWT to use run-safari to open results.html on Apple's Windows port
 
         NRWT was trying to use User.open_url, which doesn't work on Cygwin. But run-safari is

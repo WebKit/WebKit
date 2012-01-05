@@ -547,7 +547,6 @@ my $supportedFeaturesResult = "";
 
 if (isCygwin()) {
     # Collect supported features list
-    setPathForRunningWebKitApp(\%ENV);
     my $supportedFeaturesCommand = "\"$dumpTool\" --print-supported-features 2>&1";
     $supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
 }
@@ -1509,8 +1508,6 @@ sub openDumpTool()
         $CLEAN_ENV{HOMEDRIVE} = $ENV{'HOMEDRIVE'};
         $CLEAN_ENV{HOMEPATH} = $ENV{'HOMEPATH'};
         $CLEAN_ENV{_NT_SYMBOL_PATH} = $ENV{_NT_SYMBOL_PATH};
-
-        setPathForRunningWebKitApp(\%CLEAN_ENV);
     }
 
     # Port specifics
