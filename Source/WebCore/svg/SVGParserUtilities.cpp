@@ -151,6 +151,8 @@ bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip)
 // and might not have any whitespace/comma after it
 bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag)
 {
+    if (ptr >= end)
+        return false;
     const UChar flagChar = *ptr++;
     if (flagChar == '0')
         flag = false;
