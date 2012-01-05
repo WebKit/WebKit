@@ -1,3 +1,38 @@
+2012-01-05  Kentaro Hara  <haraken@chromium.org>
+
+        prepare-ChangeLog cannot parse python code that nests classes and defs
+        https://bugs.webkit.org/show_bug.cgi?id=75524
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch fixes the python parser of prepare-ChangeLog so that it can parse
+        python code that nests classes and defs, like this:
+
+        class C:
+            pass
+            def f():
+                pass
+            pass
+
+        Also, this patch fixes the python parser so that it inserts a dummy line
+        at the end of the file to pop out all popped scopes.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_python):
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests.py:
+        Added test cases that nest classes and defs.
+        (func7):
+        (func7.func8):
+        (func7.func8.func9):
+        (Class2):
+        (Class2.Class3):
+        (Class2.Class3.Class4):
+        (Class5):
+        (Class5.func10):
+        (Class5.func11):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests-expected.txt:
+
 2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename webkit_web_view_load_alternate_html as webkit_web_view_replace_content in WebKit2 GTK+

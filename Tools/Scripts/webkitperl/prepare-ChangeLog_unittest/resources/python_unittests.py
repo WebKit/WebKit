@@ -57,6 +57,41 @@ def funcOverloaded(a, b, c=100):
     return
 
 
+def func7():
+    pass
+
+    def func8():
+        pass
+
+        def func9():
+            pass
+        pass
+    pass
+
+
 class Class1:
     pass
 
+
+class Class2:
+    pass
+
+    class Class3:
+        pass
+
+        class Class4:
+            pass
+        pass
+    pass
+
+
+class Class5:
+    pass
+
+    def func10():
+        pass
+    pass
+
+    def func11():
+        pass
+    pass

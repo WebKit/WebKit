@@ -1324,11 +1324,21 @@ sub get_function_line_ranges_for_python($$)
     my @ranges;
 
     my @scopeStack = ({ line => 0, indent => -1, name => undef });
-    while (<$fileHandle>) {
+    my $lastLine = 0;
+    until ($lastLine) {
+        $_ = <$fileHandle>;
+        unless ($_) {
+            # To pop out all popped scopes, run the loop once more after
+            # we encountered the end of the file.
+            $_ = "pass\n";
+            $.++;
+            $lastLine = 1;
+        }
+        chomp;
         next unless /^(\s*)([^#].*)$/;
+
         my $indent = length $1;
         my $rest = $2;
-
         my $scope = $scopeStack[-1];
 
         if ($indent <= $scope->{indent}) {
@@ -1356,9 +1366,12 @@ sub get_function_line_ranges_for_python($$)
 
         next unless $rest =~ /(?:class|def)\s+(\w+)/;
         my $name = $1;
-
         my $fullName = $scope->{name} ? join('.', $scope->{name}, $name) : $name;
         push @scopeStack, { line => $., indent => $indent, name => $fullName };
+
+        if ($scope->{indent} >= 0) {
+            push @ranges, [$scope->{line}, $. - 1, $scope->{name}];
+        }
     }
 
     return @ranges;
