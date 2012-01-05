@@ -49,6 +49,7 @@ fast/events/prevent-drag-to-navigate.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
+fast/files/file-reader-event-listener.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
 fast/files/workers/worker-apply-blob-url-to-xhr.html
