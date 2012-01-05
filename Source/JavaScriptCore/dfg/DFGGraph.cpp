@@ -312,18 +312,18 @@ void Graph::dump(CodeBlock* codeBlock)
             if (_node.child1() == NoNode) {                             \
                 ASSERT(_node.child2() == NoNode                         \
                        && _node.child3() == NoNode);                    \
-                return;                                                 \
+                break;                                                  \
             }                                                           \
             thingToDo(_node.child1());                                  \
                                                                         \
             if (_node.child2() == NoNode) {                             \
                 ASSERT(_node.child3() == NoNode);                       \
-                return;                                                 \
+                break;                                                  \
             }                                                           \
             thingToDo(_node.child2());                                  \
                                                                         \
             if (_node.child3() == NoNode)                               \
-                return;                                                 \
+                break;                                                  \
             thingToDo(_node.child3());                                  \
         }                                                               \
     } while (false)

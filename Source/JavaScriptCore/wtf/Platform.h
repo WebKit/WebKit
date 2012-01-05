@@ -31,6 +31,8 @@
 /* Include compiler specific macros */
 #include "Compiler.h"
 
+#define ENABLE_JIT 0
+
 /* ==== PLATFORM handles OS, operating environment, graphics API, and
    CPU. This macro will be phased out in favor of platform adaptation
    macros, policy decision macros, and top-level port definitions. ==== */

@@ -1,3 +1,14 @@
+2012-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Changed "return" to "break" in some macrology I introduced in
+        http://trac.webkit.org/changeset/104086. This is a benign change, as
+        "return" was technically correct for all uses of the macro.
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGGraph.cpp:
+        * wtf/Platform.h:
+
 2012-01-04  Michael Saboff  <msaboff@apple.com>
 
         StructureStubInfo not reset when corresponding MethodCallLinkInfo is reset
