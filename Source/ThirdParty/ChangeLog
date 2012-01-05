@@ -1,3 +1,35 @@
+2012-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        TestWebKitAPI has issues due to FastMalloc incompatibility
+        <http://webkit.org/b/66521>
+        <rdar://problem/10607911>
+
+        Reviewed by David Levin.
+
+        Original patch by Dmitry Lomov <dslomov@google.com>.
+
+        This patch ensures that gtest uses the FastMalloc new and delete
+        operators that are defined in JavaScriptCore.
+
+        * gtest/README.WebKit: Update with project changes.
+        * gtest/include/gtest/internal/gtest-port.h: Import necessary
+        headers to use FastMalloc in gtest.
+        * gtest/msvc/gtest-md.vcproj: Add include directories to find
+        WTF headers.
+        * gtest/xcode/Config/DebugProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Debug builds.
+        * gtest/xcode/Config/General.xcconfig: Define
+        HEADER_SEARCH_PATHS in terms of WEBCORE_PRIVATE_HEADERS_DIR.
+        * gtest/xcode/Config/ProductionProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Production builds.  This
+        overrides the value in ReleaseProject.xcconfig.
+        * gtest/xcode/Config/ReleaseProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Release builds.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+        - Remove local HEADER_SEARCH_PATHS definitions.
+        - Link to JavaScriptCore.framework when building
+          gtest.framework.
+
 2012-01-03  David Kilzer  <ddkilzer@apple.com>
 
         Add Production configuration to gtest Xcode project

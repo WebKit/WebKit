@@ -74,6 +74,7 @@
 		40C84993101A36A60083642A /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40C8490B101A217E0083642A /* libgtest_main.a */; };
 		40C849A2101A37050083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
 		40C849A4101A37150083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
+		444D117514A262FB009FEC3F /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 444D117414A262FB009FEC3F /* JavaScriptCore.framework */; };
 		4539C9340EC280AE00A70F4C /* gtest-param-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4539C9330EC280AE00A70F4C /* gtest-param-test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4539C9380EC280E200A70F4C /* gtest-linked_ptr.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */; };
 		4539C9390EC280E200A70F4C /* gtest-param-util-generated.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9360EC280E200A70F4C /* gtest-param-util-generated.h */; };
@@ -237,6 +238,7 @@
 		40D4CDF30E30E07400294801 /* General.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = General.xcconfig; sourceTree = "<group>"; };
 		40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseProject.xcconfig; sourceTree = "<group>"; };
 		40D4CF510E30F5E200294801 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		444D117414A262FB009FEC3F /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ProductionProject.xcconfig; sourceTree = "<group>"; };
 		4539C8FF0EC27F6400A70F4C /* gtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4539C9330EC280AE00A70F4C /* gtest-param-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-test.h"; sourceTree = "<group>"; };
@@ -282,6 +284,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		444D117214A2628F009FEC3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				444D117514A262FB009FEC3F /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -302,6 +312,7 @@
 		0867D691FE84028FC02AAC07 /* gtest */ = {
 			isa = PBXGroup;
 			children = (
+				444D117414A262FB009FEC3F /* JavaScriptCore.framework */,
 				40D4CDF00E30E07400294801 /* Config */,
 				08FB77ACFE841707C02AAC07 /* Source */,
 				40D4CF4E0E30F5E200294801 /* Resources */,
@@ -559,6 +570,7 @@
 				8D07F2BD0486CC7A007CD1D0 /* Headers */,
 				404884A50E2F7C0400CF7658 /* Copy Headers Internal */,
 				8D07F2BF0486CC7A007CD1D0 /* Resources */,
+				444D117214A2628F009FEC3F /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -809,7 +821,6 @@
 		40899F450FFA7185000B29AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Debug;
@@ -817,7 +828,6 @@
 		40899F460FFA7185000B29AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Release;
@@ -858,10 +868,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest;
 			};
 			name = Debug;
@@ -872,10 +878,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest;
 			};
 			name = Release;
@@ -884,10 +886,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Debug;
@@ -896,10 +894,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Release;
@@ -907,7 +901,6 @@
 		40C84985101A36850083642A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Debug;
@@ -915,7 +908,6 @@
 		40C84986101A36850083642A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Release;
@@ -1040,10 +1032,6 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
 				INFOPLIST_PREPROCESS = YES;
@@ -1058,10 +1046,6 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
 				INFOPLIST_PREPROCESS = YES;

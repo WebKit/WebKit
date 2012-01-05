@@ -177,6 +177,14 @@
 #include <sys/stat.h>
 #endif  // !_WIN32_WCE
 
+#include <wtf/Platform.h>
+#include <wtf/ExportMacros.h>
+#if USE(JSC)
+#include <runtime/JSExportMacros.h>
+#endif
+#include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
+
 #include <iostream>  // NOLINT
 #include <sstream>  // NOLINT
 #include <string>  // NOLINT

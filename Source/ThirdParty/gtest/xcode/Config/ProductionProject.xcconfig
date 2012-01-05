@@ -10,3 +10,5 @@
 
 #include "ReleaseProject.xcconfig"
 
+// Used by HEADER_SEARCH_PATHS in General.xcconfig
+WEBCORE_PRIVATE_HEADERS_DIR = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/PrivateHeaders;

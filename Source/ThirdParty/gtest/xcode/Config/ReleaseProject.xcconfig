@@ -30,3 +30,6 @@ OTHER_CFLAGS = $(OTHER_CFLAGS) -DNDEBUG=1 -Wno-unused-variable
 
 // When we strip we want to strip all symbols in release, but save externals.
 STRIP_STYLE = all
+
+// Used by HEADER_SEARCH_PATHS in General.xcconfig
+WEBCORE_PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;

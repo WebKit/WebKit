@@ -28,3 +28,6 @@ OTHER_CFLAGS = $(OTHER_CFLAGS) -DDEBUG=1
 // These are turned off to avoid STL incompatibilities with client code
 // // Turns on special C++ STL checks to "encourage" good STL use
 // GCC_PREPROCESSOR_DEFINITIONS = $(GCC_PREPROCESSOR_DEFINITIONS) _GLIBCXX_DEBUG_PEDANTIC _GLIBCXX_DEBUG _GLIBCPP_CONCEPT_CHECKS
+
+// Used by HEADER_SEARCH_PATHS in General.xcconfig
+WEBCORE_PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
