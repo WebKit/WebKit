@@ -46,7 +46,7 @@ isEmpty(HAVE_QRAWFONT) {
 }
 
 # We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
-haveQt(5):contains(config_test_fontconfig, yes) {
+haveQt(5):contains(config_test_fontconfig, yes):!mac {
     DEFINES += HAVE_FONTCONFIG=1
 }
 haveQt(4):unix:!mac:!embedded {

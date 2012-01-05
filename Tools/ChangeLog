@@ -1,3 +1,12 @@
+2012-01-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Never enable FontConfig on Mac OS X
+        https://bugs.webkit.org/show_bug.cgi?id=75616
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-01-05  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r104159.
