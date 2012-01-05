@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WinLauncher"
-	ProjectGUID="{114FCA11-216B-4C8C-957E-30A75AE80443}"
-	RootNamespace="WinLauncher"
+	Name="WinLauncherLauncher"
+	ProjectGUID="{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}"
+	RootNamespace="WinLauncherLauncher"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherDebug.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -78,8 +78,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherRelease.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -139,8 +139,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherDebugCairoCFLite.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -200,8 +200,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_All|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherDebugAll.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -261,8 +261,8 @@
 		</Configuration>
 		<Configuration
 			Name="Production|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherProduction.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -323,8 +323,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WinLauncherReleaseCairoCFLite.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WinLauncherLauncherReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -392,89 +392,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PrintWebUIDelegate.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\WinLauncher.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\DOMDefaultImpl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PrintWebUIDelegate.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WinLauncher.h"
+				RelativePath="..\win\DLLLauncher\DLLLauncherMain.cpp"
 				>
 			</File>
 		</Filter>
@@ -484,18 +402,18 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\small.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\WinLauncher.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\WinLauncher.rc"
+				RelativePath=".\WinLauncherLauncher.rc"
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\WinLauncherLauncherResource.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

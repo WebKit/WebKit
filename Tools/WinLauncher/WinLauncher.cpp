@@ -65,7 +65,6 @@ bool s_fullDesktop = false;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
@@ -231,18 +230,20 @@ static void computeFullDesktopFrame()
     s_windowSize.cy = desktop.bottom - desktop.top;
 }
 
-int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
+{
+    if (reason == DLL_PROCESS_ATTACH)
+        hInst = dllInstance;
+
+    return TRUE;
+}
+
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HINSTANCE, LPTSTR, int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
 #endif
-
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
 
      // TODO: Place code here.
     MSG msg = {0};
@@ -264,16 +265,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     }
 
     // Initialize global strings
-    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadString(hInstance, IDC_WINLAUNCHER, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+    LoadString(hInst, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    LoadString(hInst, IDC_WINLAUNCHER, szWindowClass, MAX_LOADSTRING);
+    MyRegisterClass(hInst);
 
     if (shouldUseFullDesktop())
         computeFullDesktopFrame();
-
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
-        return FALSE;
 
     // Init COM
     OleInitialize(NULL);
@@ -284,14 +281,23 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
                     s_windowPosition.x, s_windowPosition.y + s_windowSize.cy, s_windowSize.cx, URLBAR_HEIGHT,
                     0,
                     0,
-                    hInstance, 0);
+                    hInst, 0);
     } else {
+        hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+                       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 0, 0, hInst, 0);
+
+        if (!hMainWnd)
+            return FALSE;
+
         hURLBarWnd = CreateWindow(L"EDIT", 0,
                     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
                     0, 0, 0, 0,
                     hMainWnd,
                     0,
-                    hInstance, 0);
+                    hInst, 0);
+
+        ShowWindow(hMainWnd, nCmdShow);
+        UpdateWindow(hMainWnd);
     }
 
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hURLBarWnd, GWL_WNDPROC));
@@ -367,7 +373,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     ShowWindow(gViewWindow, nCmdShow);
     UpdateWindow(gViewWindow);
 
-    hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINLAUNCHER));
+    hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_WINLAUNCHER));
 
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -416,25 +422,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
     return RegisterClassEx(&wcex);
-}
-
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
-    hInst = hInstance; // Store instance handle in our global variable
-
-    if (usesLayeredWebView())
-        return TRUE;
-
-    hMainWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-                   CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 0, 0, hInstance, 0);
-
-    if (!hMainWnd)
-        return FALSE;
-
-    ShowWindow(hMainWnd, nCmdShow);
-    UpdateWindow(hMainWnd);
-
-    return TRUE;
 }
 
 static BOOL CALLBACK AbortProc(HDC hDC, int Error)

@@ -95,7 +95,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "record-memory-win", "..\..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "..\..\..\..\Tools\DumpRenderTree\TestNetscapePlugIn\win\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{114FCA11-216B-4C8C-957E-30A75AE80443} = {114FCA11-216B-4C8C-957E-30A75AE80443}
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4} = {767B10FB-76C1-44D0-8005-85ED7F9AA5E4}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitLauncherWin", "..\..\..\..\Tools\WebKitLauncherWin\WebKitLauncherWin.vcproj", "{D09806DB-E58B-4646-8C9B-61101906C1E2}"
@@ -156,6 +156,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRegExp", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\testRegExp\testRegExp.vcproj", "{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C59E5129-B453-49B7-A52B-1E104715F76E} = {C59E5129-B453-49B7-A52B-1E104715F76E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncherLauncher", "..\..\..\..\Tools\WinLauncher\WinLauncherLauncher.vcproj", "{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{114FCA11-216B-4C8C-957E-30A75AE80443} = {114FCA11-216B-4C8C-957E-30A75AE80443}
 	EndProjectSection
 EndProject
 Global
@@ -526,6 +531,18 @@ Global
 		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release_Cairo_CFLite|Win32.Build.0 = Release_Cairo_CFLite|Win32
 		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release|Win32.ActiveCfg = Release|Win32
 		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release|Win32.Build.0 = Release|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug_All|Win32.Build.0 = Debug_All|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug_Cairo_CFLite|Win32.ActiveCfg = Debug_Cairo_CFLite|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug_Cairo_CFLite|Win32.Build.0 = Debug_Cairo_CFLite|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Debug|Win32.Build.0 = Debug|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Production|Win32.ActiveCfg = Production|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Production|Win32.Build.0 = Production|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Release_Cairo_CFLite|Win32.ActiveCfg = Release_Cairo_CFLite|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Release_Cairo_CFLite|Win32.Build.0 = Release_Cairo_CFLite|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Release|Win32.ActiveCfg = Release|Win32
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -561,5 +578,6 @@ Global
 		{45C45411-7F0E-404D-919A-4EE9BB60BE86} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 		{B0101604-B483-4F8C-9C51-90B46A2B1CD3} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
+		{767B10FB-76C1-44D0-8005-85ED7F9AA5E4} = {62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}
 	EndGlobalSection
 EndGlobal

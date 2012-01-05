@@ -1,3 +1,16 @@
+2012-01-04  Adam Roben  <aroben@apple.com>
+
+        Add WinLauncherLauncher to WebKit.sln
+
+        It builds just after WinLauncher.
+
+        Part of <http://webkit.org/b/68578> <rdar://problem/10163861> WinLauncher fails to launch
+        when double-clicked
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcproj/WebKit.sln: Added WinLauncherLauncher.
+
 2011-12-21  Jessie Berlin  <jberlin@apple.com>
 
         Expose to Windows the way to allow a scheme access to Local Storage and Databases while

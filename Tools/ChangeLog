@@ -1,3 +1,58 @@
+2012-01-04  Adam Roben  <aroben@apple.com>
+
+        Turn WinLauncher into a stub .exe launcher and a .dll that contains all the real code
+
+        This allows us to add the Apple Application Support directory to PATH before trying to load
+        WebKit so that CoreGraphics.dll and friends can be found. Eventually all our WebKit apps
+        should use this mechanism.
+
+        Fixes <http://webkit.org/b/68578> <rdar://problem/10163861> WinLauncher fails to launch when
+        double-clicked
+
+        Reviewed by Anders Carlsson.
+
+        * WinLauncher/WinLauncher.cpp: Removed InitInstance.
+        (DllMain): Added. Stores the DLL HINSTANCE in the global hInst variable. This used to be
+        done by the now-removed InitInstance function.
+        (dllLauncherEntryPoint): Renamed from _tWinMain. This is the function that our stub launcher
+        calls. Merged code from InitInstance into this function, and change to use the global hInst
+        variable, which corresponds to WinLauncher.dll, rather than the HINSTANCE passed into this
+        function, which corresponds to WinLauncher.exe.
+
+        * WinLauncher/WinLauncher.vcproj:
+        * WinLauncher/WinLauncherCommon.vsprops:
+        Changed to build WinLauncher.dll instead of WinLauncher.exe.
+
+        * WinLauncher/WinLauncherLauncher.rc: Added.
+        * WinLauncher/WinLauncherLauncherResource.h: Added.
+        This just references the WinLauncher.ico file to set the application icon (though it looks
+        like that's a default icon).
+
+        * WinLauncher/WinLauncherLauncher.vcproj: Copied from Tools/WinLauncher/WinLauncher.vcproj
+        but changed to build WinLauncher.exe using the new DLLLauncherMain.cpp file.
+
+        * WinLauncher/WinLauncherLauncherCommon.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherDebug.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherDebugAll.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherDebugCairoCFLite.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherProduction.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherRelease.vsprops: Added.
+        * WinLauncher/WinLauncherLauncherReleaseCairoCFLite.vsprops: Added.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp: Added.
+        (enableTerminationOnHeapCorruption): Uses HeapSetInformation to tell Windows to kill the
+        program if it detects heap corruption.
+        (getStringValue): Helper function to read a string value from the registry.
+        (applePathFromRegistry): Helper function to read the InstallDir for a given Apple
+        application from the registry.
+        (appleApplicationSupportDirectory): Helper function to return the path to the Apple
+        Application Support directory.
+        (copyEnvironmentVariable): Helper function to copy an environment variable's value.
+        (prependPath): Helper function to prepend a directory to the PATH.
+        (fatalError): Helper function to display an error to the user.
+        (wWinMain): Add Apple Application Support to the PATH, then load our DLL and call its
+        dllLauncherEntryPoint function.
+
 2012-01-05  Kentaro Hara  <haraken@chromium.org>
 
         prepare-ChangeLog cannot parse python code that nests classes and defs

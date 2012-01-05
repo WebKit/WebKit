@@ -12,5 +12,6 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="comdlg32.lib gdi32.lib comctl32.lib shlwapi.lib user32.lib ole32.lib oleaut32.lib WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 	/>
 </VisualStudioPropertySheet>
