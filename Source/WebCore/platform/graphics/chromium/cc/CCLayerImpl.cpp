@@ -383,16 +383,6 @@ void CCLayerImpl::setPreserves3D(bool preserves3D)
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::setZoomAnimatorTransform(const TransformationMatrix& zoomAnimatorTransform)
-{
-    if (m_zoomAnimatorTransform == zoomAnimatorTransform)
-        return;
-
-    m_zoomAnimatorTransform = zoomAnimatorTransform;
-    noteLayerPropertyChangedForSubtree();
-}
-
-
 void CCLayerImpl::setSublayerTransform(const TransformationMatrix& sublayerTransform)
 {
     if (m_sublayerTransform == sublayerTransform)

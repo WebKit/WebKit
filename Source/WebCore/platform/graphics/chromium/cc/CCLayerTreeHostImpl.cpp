@@ -442,14 +442,6 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
     // TODO(aelias): Also update sublayers.
 }
 
-void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& zoom)
-{
-    if (!m_scrollLayerImpl)
-        return;
-
-    m_scrollLayerImpl->setZoomAnimatorTransform(zoom);
-}
-
 double CCLayerTreeHostImpl::currentTimeMs() const
 {
     return monotonicallyIncreasingTime() * 1000.0;

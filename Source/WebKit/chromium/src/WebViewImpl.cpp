@@ -1897,9 +1897,6 @@ double WebViewImpl::zoomLevel()
 
 double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
 {
-    if (m_layerTreeHost)
-        m_layerTreeHost->setZoomAnimatorTransform(TransformationMatrix());
-
     if (zoomLevel < m_minimumZoomLevel)
         m_zoomLevel = m_minimumZoomLevel;
     else if (zoomLevel > m_maximumZoomLevel)
@@ -2831,13 +2828,6 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 
 void WebViewImpl::setRootLayerNeedsDisplay()
 {
-    if (m_layerTreeHost) {
-        TransformationMatrix zoomMatrix;
-        FloatPoint trans = m_page->mainFrame()->view()->scrollAnimator()->zoomTranslation();
-        zoomMatrix.translate(trans.x(), trans.y());
-        zoomMatrix.scale(m_page->mainFrame()->view()->scrollAnimator()->zoomScale());
-        m_layerTreeHost->setZoomAnimatorTransform(zoomMatrix);
-    }
     if (m_layerTreeHost)
         m_layerTreeHost->setNeedsCommit();
 }

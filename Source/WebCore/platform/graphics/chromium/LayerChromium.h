@@ -119,8 +119,6 @@ public:
     void setSublayerTransform(const TransformationMatrix&);
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    TransformationMatrix zoomAnimatorTransform() const { return TransformationMatrix(); }
-
     void setTransform(const TransformationMatrix&);
     const TransformationMatrix& transform() const { return m_transform; }
 

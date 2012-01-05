@@ -109,7 +109,6 @@ public:
 
     void setViewport(const IntSize& viewportSize);
     const IntSize& viewportSize() const { return m_viewportSize; }
-    void setZoomAnimatorTransform(const TransformationMatrix&);
 
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }

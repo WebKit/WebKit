@@ -155,8 +155,6 @@ public:
 
     int frameNumber() const { return m_frameNumber; }
 
-    void setZoomAnimatorTransform(const TransformationMatrix&);
-
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
     // Test-only hook
@@ -229,7 +227,6 @@ private:
     CCSettings m_settings;
 
     IntSize m_viewportSize;
-    TransformationMatrix m_zoomAnimatorTransform;
     bool m_visible;
     bool m_haveWheelEventHandlers;
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;

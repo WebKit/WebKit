@@ -151,7 +151,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
-    hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
     hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
 
@@ -206,16 +205,6 @@ void CCLayerTreeHost::finishAllRendering()
 const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() const
 {
     return m_proxy->layerRendererCapabilities();
-}
-
-void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
-{
-    bool zoomChanged = m_zoomAnimatorTransform != zoom;
-
-    m_zoomAnimatorTransform = zoom;
-
-    if (zoomChanged)
-        setNeedsCommit();
 }
 
 void CCLayerTreeHost::setNeedsAnimate()

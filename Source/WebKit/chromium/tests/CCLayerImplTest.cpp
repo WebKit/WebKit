@@ -100,7 +100,6 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPosition(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPreserves3D(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setTransform(arbitraryTransform));
-    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setZoomAnimatorTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setDoubleSided(false)); // constructor initializes it to "true".
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->scrollBy(arbitraryIntSize));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setScrollDelta(arbitraryIntSize));
@@ -136,7 +135,6 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setReplicaLayer(dummyReplica));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setPosition(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setPreserves3D(true));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setZoomAnimatorTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDoubleSided(false)); // constructor initializes it to "true".
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setScrollDelta(arbitraryIntSize));

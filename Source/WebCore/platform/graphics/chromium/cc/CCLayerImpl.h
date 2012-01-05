@@ -124,9 +124,6 @@ public:
     void setTransform(const TransformationMatrix&);
     const TransformationMatrix& transform() const { return m_transform; }
 
-    void setZoomAnimatorTransform(const TransformationMatrix&);
-    const TransformationMatrix& zoomAnimatorTransform() const { return m_zoomAnimatorTransform; }
-
     void setName(const String& name) { m_name = name; }
     const String& name() const { return m_name; }
 
@@ -248,7 +245,6 @@ private:
     float m_opacity;
     FloatPoint m_position;
     bool m_preserves3D;
-    TransformationMatrix m_zoomAnimatorTransform;
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
     bool m_usesLayerClipping;
