@@ -1,5 +1,21 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97124
+
+    2011-10-10  Abhishek Arya  <inferno@chromium.org>
+
+            Style not updated on text fragment in :first-letter
+            nested in :before table.
+            https://bugs.webkit.org/show_bug.cgi?id=69540
+
+            Reviewed by Dan Bernstein.
+
+            * fast/css-generated-content/first-letter-in-nested-before-table-expected.png: Added.
+            * fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Added.
+            * fast/css-generated-content/first-letter-in-nested-before-table.html: Added.
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97114
 
     2011-10-10  Dan Bernstein  <mitz@apple.com>
