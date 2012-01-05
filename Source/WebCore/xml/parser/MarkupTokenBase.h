@@ -410,7 +410,7 @@ public:
         }
     }
 
-    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
+    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, PassOwnPtr<NamedNodeMap> attributes = nullptr)
         : m_type(type)
         , m_name(name)
         , m_attributes(attributes)
@@ -452,7 +452,7 @@ public:
         return m_attributes.get();
     }
 
-    PassRefPtr<NamedNodeMap> takeAttributes()
+    PassOwnPtr<NamedNodeMap> takeAttributes()
     {
         ASSERT(usesAttributes());
         return m_attributes.release();
@@ -516,7 +516,7 @@ protected:
     // For StartTag and EndTag
     bool m_selfClosing;
 
-    RefPtr<NamedNodeMap> m_attributes;
+    OwnPtr<NamedNodeMap> m_attributes;
 };
 
 template<typename Token>

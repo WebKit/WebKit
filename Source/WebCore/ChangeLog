@@ -1,3 +1,45 @@
+2012-01-05  Andreas Kling  <awesomekling@apple.com>
+
+        Make elements with attributes smaller by eliminating the ref count in NamedNodeMap.
+        <http://webkit.org/b/75068>
+
+        Reviewed by Antti Koivisto.
+
+        Remove NamedNodeMap's inheritance from RefCounted and forward the ref()/deref()
+        calls to its owner Element, effectively reducing the size of an element that has
+        attributes by 4 bytes.
+
+        This reduces memory consumption by 311 kB when viewing the full HTML5 spec.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::ref):
+        (WebCore::NamedNodeMap::deref):
+
+            Added. Forwards the operation to m_element. Only ever used by the DOM wrappers.
+
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::create):
+        * dom/DocumentType.h:
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributeMap):
+        * dom/Element.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        * html/parser/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processFakeStartTag):
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput):
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::AtomicMarkupTokenBase::AtomicMarkupTokenBase):
+        (WebCore::AtomicMarkupTokenBase::takeAttributes):
+        * xml/parser/XMLToken.h:
+        (WebCore::AtomicXMLToken::AtomicXMLToken):
+
+            Store NamedNodeMap in OwnPtr/PassOwnPtr, rather than RefPtr/PassRefPtr.
+
 2012-01-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve charactersAreAllASCII() to compare multiple characters at a time

@@ -421,13 +421,13 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromElementRecord(HTM
 namespace {
 
 // FIXME: Move this function to the top of the file.
-inline PassRefPtr<NamedNodeMap> cloneAttributes(Element* element)
+inline PassOwnPtr<NamedNodeMap> cloneAttributes(Element* element)
 {
     NamedNodeMap* attributes = element->attributes(true);
     if (!attributes)
-        return 0;
+        return nullptr;
 
-    RefPtr<NamedNodeMap> newAttributes = NamedNodeMap::create();
+    OwnPtr<NamedNodeMap> newAttributes = NamedNodeMap::create();
     for (size_t i = 0; i < attributes->length(); ++i) {
         Attribute* attribute = attributes->attributeItem(i);
         RefPtr<Attribute> clone = Attribute::createMapped(attribute->name(), attribute->value());

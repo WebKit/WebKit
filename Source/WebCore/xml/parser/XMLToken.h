@@ -431,7 +431,7 @@ public:
         }
     }
 
-    AtomicXMLToken(XMLTokenTypes::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
+    AtomicXMLToken(XMLTokenTypes::Type type, AtomicString name, PassOwnPtr<NamedNodeMap> attributes = nullptr)
         : AtomicMarkupTokenBase<XMLToken>(type, name, attributes)
     {
     }

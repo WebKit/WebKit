@@ -61,7 +61,7 @@ void TextDocumentParser::insertFakePreElement()
     // distrubing the line/column number calculations.
 
     RefPtr<Attribute> styleAttribute = Attribute::createMapped("style", "word-wrap: break-word; white-space: pre-wrap;");
-    RefPtr<NamedNodeMap> attributes = NamedNodeMap::create();
+    OwnPtr<NamedNodeMap> attributes = NamedNodeMap::create();
     attributes->insertAttribute(styleAttribute.release(), false);
     AtomicHTMLToken fakePre(HTMLTokenTypes::StartTag, preTag.localName(), attributes.release());
 

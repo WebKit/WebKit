@@ -739,7 +739,7 @@ static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& v
     return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
-void Element::parserSetAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
+void Element::parserSetAttributeMap(PassOwnPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());

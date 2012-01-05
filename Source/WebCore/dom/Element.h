@@ -219,7 +219,7 @@ public:
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributeMap(PassRefPtr<NamedNodeMap>, FragmentScriptingPermission);
+    void parserSetAttributeMap(PassOwnPtr<NamedNodeMap>, FragmentScriptingPermission);
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
 
@@ -444,7 +444,7 @@ private:
     void updateExtraNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
 
 private:
-    mutable RefPtr<NamedNodeMap> m_attributeMap;
+    mutable OwnPtr<NamedNodeMap> m_attributeMap;
 };
     
 inline Element* toElement(Node* node)

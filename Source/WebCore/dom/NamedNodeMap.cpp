@@ -49,6 +49,18 @@ inline void NamedNodeMap::detachAttributesFromElement()
     }
 }
 
+void NamedNodeMap::ref()
+{
+    ASSERT(m_element);
+    m_element->ref();
+}
+
+void NamedNodeMap::deref()
+{
+    ASSERT(m_element);
+    m_element->deref();
+}
+
 NamedNodeMap::~NamedNodeMap()
 {
     detachAttributesFromElement();

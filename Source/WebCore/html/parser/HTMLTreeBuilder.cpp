@@ -531,7 +531,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     parseError(token);
 }
 
-void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassRefPtr<NamedNodeMap> attributes)
+void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassOwnPtr<NamedNodeMap> attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, tagName.localName(), attributes);
@@ -560,9 +560,9 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
     processEndTag(endP);
 }
 
-PassRefPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
+PassOwnPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
-    RefPtr<NamedNodeMap> attributes = token.takeAttributes();
+    OwnPtr<NamedNodeMap> attributes = token.takeAttributes();
     if (!attributes)
         attributes = NamedNodeMap::create();
     else {

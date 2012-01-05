@@ -56,8 +56,8 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
-    RefPtr<NamedNodeMap> m_entities;
-    RefPtr<NamedNodeMap> m_notations;
+    OwnPtr<NamedNodeMap> m_entities;
+    OwnPtr<NamedNodeMap> m_notations;
 
     String m_name;
     String m_publicId;

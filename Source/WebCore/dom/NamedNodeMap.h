@@ -35,15 +35,18 @@ class Node;
 
 typedef int ExceptionCode;
 
-class NamedNodeMap : public RefCounted<NamedNodeMap> {
+class NamedNodeMap {
     friend class Element;
 public:
-    static PassRefPtr<NamedNodeMap> create(Element* element = 0)
+    static PassOwnPtr<NamedNodeMap> create(Element* element = 0)
     {
-        return adoptRef(new NamedNodeMap(element));
+        return adoptPtr(new NamedNodeMap(element));
     }
 
     ~NamedNodeMap();
+
+    void ref();
+    void deref();
 
     // Public DOM interface.
 

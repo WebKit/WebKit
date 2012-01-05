@@ -151,7 +151,7 @@ private:
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
     inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
 
-    void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
+    void processFakeStartTag(const QualifiedName&, PassOwnPtr<NamedNodeMap> attributes = nullptr);
     void processFakeEndTag(const QualifiedName&);
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
@@ -172,7 +172,7 @@ private:
     inline bool shouldProcessTokenInForeignContent(AtomicHTMLToken&);
     void processTokenInForeignContent(AtomicHTMLToken&);
 
-    PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
+    PassOwnPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
     void callTheAdoptionAgency(AtomicHTMLToken&);
