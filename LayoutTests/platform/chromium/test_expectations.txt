@@ -1643,7 +1643,7 @@ BUGCR11251 SLOW WIN RELEASE : fast/forms/textarea-width.html = FAIL
 BUGCR11251 LINUX WIN RELEASE : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = FAIL
-BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
+BUGCR11251 : fast/forms/textarea-metrics.html = FAIL
 
 // Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.
 BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
