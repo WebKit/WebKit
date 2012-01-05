@@ -1,3 +1,42 @@
+2012-01-05  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Upstream the RenderTheme and ScrollbarTheme for Android
+        https://bugs.webkit.org/show_bug.cgi?id=74614
+
+        Reviewed by Adam Barth.
+
+        Upstream the RenderTheme and ScrollbarTheme for Android. These are
+        mostly derived from their Linux variants.
+
+        RenderThemeChromiumAndroid inherits from RenderThemeChromiumLinux and
+        only overrides the three methods which have different behavior.
+        Scrollbars will be drawn in the threaded compositor for Android (which
+        will be upstreamed later), but for increased layout test parity we'll
+        match Chromium-Linux.
+
+        No new tests. This code will be exercised by existing layout tests, and
+        by manually verifying that theme parts render as expected.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/ScrollbarThemeChromiumAndroid.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeChromiumAndroid::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumAndroid::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeChromiumAndroid::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeChromiumAndroid::buttonSize):
+        (WebCore::ScrollbarThemeChromiumAndroid::minimumThumbLength):
+        * platform/chromium/ScrollbarThemeChromiumAndroid.h: Added.
+        * rendering/RenderThemeChromiumAndroid.cpp: Added.
+        (WebCore::RenderThemeChromiumAndroid::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeChromiumAndroid::~RenderThemeChromiumAndroid):
+        (WebCore::RenderThemeChromiumAndroid::systemColor):
+        (WebCore::RenderThemeChromiumAndroid::adjustInnerSpinButtonStyle):
+        * rendering/RenderThemeChromiumAndroid.h: Added.
+        * rendering/RenderThemeChromiumLinux.cpp:
+        * rendering/RenderThemeChromiumLinux.h:
+
 2012-01-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Fix potential superlinear runtime of multiple indirect adjenceny combinators.

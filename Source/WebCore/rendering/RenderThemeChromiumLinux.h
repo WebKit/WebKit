@@ -83,10 +83,11 @@ namespace WebCore {
                                        unsigned inactiveBackgroundColor,
                                        unsigned inactiveForegroundColor);
 
-    private:
+    protected:
         RenderThemeChromiumLinux();
         virtual ~RenderThemeChromiumLinux();
 
+    private:
         // A general method asking if any control tinting is supported at all.
         virtual bool supportsControlTints() const;
 

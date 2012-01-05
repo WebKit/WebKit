@@ -68,11 +68,14 @@ PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
     return adoptRef(new RenderThemeChromiumLinux());
 }
 
+// RenderTheme::themeForPage for Android is defined in RenderThemeChromiumAndroid.cpp.
+#if !OS(ANDROID)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     static RenderTheme* rt = RenderThemeChromiumLinux::create().leakRef();
     return rt;
 }
+#endif
 
 RenderThemeChromiumLinux::RenderThemeChromiumLinux()
 {

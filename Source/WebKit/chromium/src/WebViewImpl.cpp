@@ -2549,7 +2549,7 @@ void WebViewImpl::setDomainRelaxationForbidden(bool forbidden, const WebString& 
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned activeColor,
                                      unsigned trackColor) {
-#if OS(UNIX) && !OS(DARWIN)
+#if OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
     PlatformThemeChromiumLinux::setScrollbarColors(inactiveColor, activeColor, trackColor);
 #endif
 }
@@ -2558,7 +2558,7 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
                                      unsigned activeForegroundColor,
                                      unsigned inactiveBackgroundColor,
                                      unsigned inactiveForegroundColor) {
-#if OS(UNIX) && !OS(DARWIN)
+#if OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
     RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor,
                                                  activeForegroundColor,
                                                  inactiveBackgroundColor,

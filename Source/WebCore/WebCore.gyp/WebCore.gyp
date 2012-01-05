@@ -1771,7 +1771,7 @@
         ['OS=="mac"', {
           'sources/': [
             # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
-            # does not reference the Skia code that is used by Windows and Linux.
+            # does not reference the Skia code that is used by Windows, Linux and Android.
             ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
           ],
         }],
@@ -1796,6 +1796,15 @@
         ['OS!="win"', {
           'sources/': [
             ['exclude', 'Win\\.cpp$'],
+          ],
+        }],
+        ['OS=="android"', {
+          'sources/': [
+            ['include', 'rendering/RenderThemeChromiumLinux\\.cpp$'],
+          ],
+        }, {
+          'sources/': [
+            ['exclude', 'Android\\.cpp$'],
           ],
         }],
       ],

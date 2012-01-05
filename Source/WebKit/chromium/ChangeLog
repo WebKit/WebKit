@@ -1,3 +1,14 @@
+2012-01-05  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Upstream the RenderTheme and ScrollbarTheme for Android
+        https://bugs.webkit.org/show_bug.cgi?id=74614
+
+        Reviewed by Adam Barth.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setScrollbarColors):
+        (WebKit::WebViewImpl::setSelectionColors):
+
 2012-01-05  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Expose Fixed Position Layout to WebViewImpl
