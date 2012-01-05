@@ -1,3 +1,29 @@
+2012-01-05  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/75605> WTF logging functions should call vprintf_stderr_common only once per line
+
+        Several of the WTF logging functions make multiple calls to vprintf_stderr_common to output a
+        single line of text. This results in strangely formatted output if vprintf_stderr_common is
+        retargeted to an output device that is message-oriented (such as ASL) rather than stream-oriented
+        like stderr.
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Assertions.cpp:
+        (vprintf_stderr_with_prefix): Helper function to prepend a given prefix on to the given format
+        string before handing it off to vprintf_stderr_common. This requires disabling warnings about
+        calling a printf-like function with a non-literal format string for this piece of code. It's
+        safe in this particular case as vprintf_stderr_with_prefix is only ever given a literal prefix.
+        (vprintf_stderr_with_trailing_newline): Helper function to append a trailling newline on to the
+        given format string if one does not already exist. It requires the same treatment with regards
+        to the non-literal format string warning.
+        (WTFReportAssertionFailureWithMessage): Switch to using vprintf_stderr_with_prefix.
+        (WTFReportBacktrace): Switch from calling fprintf directly to using fprintf_stderr_common.
+        (WTFReportFatalError): Switch to using vprintf_stderr_with_prefix.
+        (WTFReportError): Ditto.
+        (WTFLog): Switch to using vprintf_stderr_with_trailing_newline.
+        (WTFLogVerbose): Ditto.
+
 2012-01-04  Gavin Barraclough  <barraclough@apple.com>
 
         unshift/pop fifo may consume excessive memory

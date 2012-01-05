@@ -33,6 +33,8 @@
 #include "config.h"
 #include "Assertions.h"
 
+#include "OwnArrayPtr.h"
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -120,6 +122,43 @@ static void vprintf_stderr_common(const char* format, va_list args)
     vfprintf(stderr, format, args);
 }
 
+#if COMPILER(GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
+static void vprintf_stderr_with_prefix(const char* prefix, const char* format, va_list args)
+{
+    size_t prefixLength = strlen(prefix);
+    size_t formatLength = strlen(format);
+    OwnArrayPtr<char> formatWithPrefix = adoptArrayPtr(new char[prefixLength + formatLength + 1]);
+    memcpy(formatWithPrefix.get(), prefix, prefixLength);
+    memcpy(formatWithPrefix.get() + prefixLength, format, formatLength);
+    formatWithPrefix[prefixLength + formatLength] = 0;
+
+    vprintf_stderr_common(formatWithPrefix.get(), args);
+}
+
+static void vprintf_stderr_with_trailing_newline(const char* format, va_list args)
+{
+    size_t formatLength = strlen(format);
+    if (formatLength && format[formatLength - 1] == '\n') {
+        vprintf_stderr_common(format, args);
+        return;
+    }
+
+    OwnArrayPtr<char> formatWithNewline = adoptArrayPtr(new char[formatLength + 2]);
+    memcpy(formatWithNewline.get(), format, formatLength);
+    formatWithNewline[formatLength] = '\n';
+    formatWithNewline[formatLength + 1] = 0;
+
+    vprintf_stderr_common(formatWithNewline.get(), args);
+}
+
+#if COMPILER(GCC)
+#pragma GCC diagnostic pop
+#endif
+
 WTF_ATTRIBUTE_PRINTF(1, 2)
 static void printf_stderr_common(const char* format, ...)
 {
@@ -152,10 +191,9 @@ void WTFReportAssertionFailure(const char* file, int line, const char* function,
 
 void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...)
 {
-    printf_stderr_common("ASSERTION FAILED: ");
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_with_prefix("ASSERTION FAILED: ", format, args);
     va_end(args);
     printf_stderr_common("\n%s\n", assertion);
     printCallSite(file, line, function);
@@ -214,19 +252,18 @@ void WTFReportBacktrace()
 #endif
         const int frameNumber = i - framesToSkip + 1;
         if (mangledName || cxaDemangled)
-            fprintf(stderr, "%-3d %p %s\n", frameNumber, samples[i], cxaDemangled ? cxaDemangled : mangledName);
+            printf_stderr_common("%-3d %p %s\n", frameNumber, samples[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            fprintf(stderr, "%-3d %p\n", frameNumber, samples[i]);
+            printf_stderr_common("%-3d %p\n", frameNumber, samples[i]);
         free(cxaDemangled);
     }
 }
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)
 {
-    printf_stderr_common("FATAL ERROR: ");
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_with_prefix("FATAL ERROR: ", format, args);
     va_end(args);
     printf_stderr_common("\n");
     printCallSite(file, line, function);
@@ -234,10 +271,9 @@ void WTFReportFatalError(const char* file, int line, const char* function, const
 
 void WTFReportError(const char* file, int line, const char* function, const char* format, ...)
 {
-    printf_stderr_common("ERROR: ");
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_with_prefix("ERROR: ", format, args);
     va_end(args);
     printf_stderr_common("\n");
     printCallSite(file, line, function);
@@ -250,12 +286,8 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
 
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_with_trailing_newline(format, args);
     va_end(args);
-    
-    size_t formatLength = strlen(format);
-    if (formatLength && format[formatLength - 1] != '\n')
-        printf_stderr_common("\n");
 }
 
 void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...)
@@ -265,12 +297,8 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_with_trailing_newline(format, args);
     va_end(args);
-
-    size_t formatLength = strlen(format);
-    if (formatLength && format[formatLength - 1] != '\n')
-        printf_stderr_common("\n");
 
     printCallSite(file, line, function);
 }
