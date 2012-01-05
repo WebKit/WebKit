@@ -111,9 +111,8 @@ public:
     void makePresentationCopy();
     void clearPresentationCopy();
 
-    IntRect convertLogicalToDevice(const FloatRect&) const;
-    IntSize convertLogicalToDevice(const FloatSize&) const;
-    IntSize convertToValidDeviceSize(float width, float height) const;
+    FloatRect convertLogicalToDevice(const FloatRect&) const;
+    FloatSize convertLogicalToDevice(const FloatSize&) const;
 
     const SecurityOrigin& securityOrigin() const;
     void setOriginTainted() { m_originClean = false; }
@@ -141,6 +140,7 @@ private:
 
     void setSurfaceSize(const IntSize&);
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
+    bool shouldAccelerate(const IntSize&) const;
 
     HashSet<CanvasObserver*> m_observers;
 

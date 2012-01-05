@@ -36,6 +36,7 @@
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/OwnArrayPtr.h>
@@ -108,21 +109,24 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     , m_accelerateRendering(renderingMode == Accelerated)
 {
     success = false;  // Make early return mean failure.
-    if (size.width() < 0 || size.height() < 0)
+    if (size.width() <= 0 || size.height() <= 0)
         return;
+
+    Checked<int, RecordOverflow> width = size.width();
+    Checked<int, RecordOverflow> height = size.height();
+
+    // Prevent integer overflows
+    m_data.m_bytesPerRow = 4 * width;
+    Checked<size_t, RecordOverflow> dataSize = height * m_data.m_bytesPerRow;
+    if (dataSize.hasOverflowed())
+        return;
+
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (size.width() >= maxIOSurfaceDimension || size.height() >= maxIOSurfaceDimension || size.width() * size.height() < minIOSurfaceArea)
+    if (width.unsafeGet() >= maxIOSurfaceDimension || height.unsafeGet() >= maxIOSurfaceDimension || (width * height).unsafeGet() < minIOSurfaceArea)
         m_accelerateRendering = false;
 #else
     ASSERT(renderingMode == Unaccelerated);
 #endif
-
-    unsigned bytesPerRow = size.width();
-    if (bytesPerRow > 0x3FFFFFFF) // Protect against overflow
-        return;
-    bytesPerRow *= 4;
-    m_data.m_bytesPerRow = bytesPerRow;
-    size_t dataSize = size.height() * bytesPerRow;
 
     switch (imageColorSpace) {
     case ColorSpaceDeviceRGB:
@@ -137,22 +141,24 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     }
 
     RetainPtr<CGContextRef> cgContext;
+    if (m_accelerateRendering) {
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+        m_data.m_surface = createIOSurface(size);
+        cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), width.unsafeGet(), height.unsafeGet(), m_data.m_colorSpace));
+#endif
+        if (!cgContext)
+            m_accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
+    }
+
     if (!m_accelerateRendering) {
-        if (!tryFastCalloc(size.height(), bytesPerRow).getValue(m_data.m_data))
+        if (!tryFastCalloc(height.unsafeGet(), m_data.m_bytesPerRow.unsafeGet()).getValue(m_data.m_data))
             return;
         ASSERT(!(reinterpret_cast<size_t>(m_data.m_data) & 2));
 
         m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
-        cgContext.adoptCF(CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow, m_data.m_colorSpace, m_data.m_bitmapInfo));
+        cgContext.adoptCF(CGBitmapContextCreate(m_data.m_data, width.unsafeGet(), height.unsafeGet(), 8, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo));
         // Create a live image that wraps the data.
-        m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize, releaseImageData));
-    } else {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        m_data.m_surface = createIOSurface(size);
-        cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), size.width(), size.height(), m_data.m_colorSpace));
-#else
-        m_accelerateRendering = false; // Force to false on older platforms
-#endif
+        m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize.unsafeGet(), releaseImageData));
     }
 
     if (!cgContext)
@@ -160,8 +166,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
 
     m_context = adoptPtr(new GraphicsContext(cgContext.get()));
     m_context->scale(FloatSize(1, -1));
-    m_context->translate(0, -size.height());
-    m_data.m_lastFlushTime = currentTimeMS(); 
+    m_context->translate(0, -height.unsafeGet());
     success = true;
 }
 
@@ -171,7 +176,7 @@ ImageBuffer::~ImageBuffer()
 
 size_t ImageBuffer::dataSize() const
 {
-    return m_size.height() * m_data.m_bytesPerRow;
+    return m_size.height() * m_data.m_bytesPerRow.unsafeGet();
 }
 
 GraphicsContext* ImageBuffer::context() const
@@ -213,7 +218,7 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
 
 static CGImageRef cgImage(const IntSize& size, const ImageBufferData& data)
 {
-    return CGImageCreate(size.width(), size.height(), 8, 32, data.m_bytesPerRow,
+    return CGImageCreate(size.width(), size.height(), 8, 32, data.m_bytesPerRow.unsafeGet(),
                          data.m_colorSpace, data.m_bitmapInfo, data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
 }
 

@@ -101,6 +101,8 @@ public:
     void setHeight(float height) { m_size.setHeight(height); }
 
     bool isEmpty() const { return m_size.isEmpty(); }
+    bool isZero() const { return m_size.isZero(); }
+    bool isExpressibleAsIntRect() const;
 
     FloatPoint center() const { return FloatPoint(x() + width() / 2, y() + height() / 2); }
 

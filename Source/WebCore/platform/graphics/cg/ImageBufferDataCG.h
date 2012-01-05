@@ -26,6 +26,7 @@
 
 #include "Image.h"
 #include <wtf/ByteArray.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -50,7 +51,7 @@ public:
     
     RetainPtr<CGDataProviderRef> m_dataProvider;
     CGBitmapInfo m_bitmapInfo;
-    unsigned m_bytesPerRow;
+    Checked<unsigned, RecordOverflow> m_bytesPerRow;
     CGColorSpaceRef m_colorSpace;
     RetainPtr<IOSurfaceRef> m_surface;
     mutable double m_lastFlushTime;

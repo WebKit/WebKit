@@ -1,0 +1,14 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText(false);
+
+var canvas = document.createElement("canvas");
+canvas.getContext("2d").getImageData(10, 0xffffffff, 2147483647,10);
+</script>
+</head>
+<body>
+PASSED (If this page did not crash.)
+</body>
+</html>
