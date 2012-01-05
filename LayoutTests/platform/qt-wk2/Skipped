@@ -918,3 +918,7 @@ editing/input/reveal-caret-of-multiline-contenteditable.html
 # [Qt][WK2]http/tests/xmlhttprequest/workers/abort-exception-assert.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=75540
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
+
+# [Qt][WK2]REGRESSION(r104068): It made editing/pasteboard/copy-in-password-field.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=75615
+editing/pasteboard/copy-in-password-field.html
