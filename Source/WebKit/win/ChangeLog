@@ -1,5 +1,18 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Add WebKitTestRunnerLauncher to WebKit.sln.
+
+        It builds just after WebKitTestRunner.
+
+        Part of <http://webkit.org/b/75486> <rdar://problem/10638124> NRWT fails to launch Apple's
+        Windows port of DumpRenderTree/WebKitTestRunner
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.sln:
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Add DumpRenderTreeLauncher to WebKit.sln.
 
         It builds just after DumpRenderTree.

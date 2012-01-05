@@ -20,6 +20,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "win\Injec
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "..\DumpRenderTree\TestNetscapePlugIn\win\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017} = {DD7949B6-F2B4-47C2-9C42-E21E84CB1017}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitTestRunnerLauncher", "win\WebKitTestRunnerLauncher.vcproj", "{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3B99669B-1817-443B-BCBE-835580146668} = {3B99669B-1817-443B-BCBE-835580146668}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiffLauncher", "..\DumpRenderTree\win\ImageDiffLauncher.vcproj", "{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}"
+	ProjectSection(ProjectDependencies) = postProject
 		{59CC0547-70AC-499C-9B19-EC01C6F61137} = {59CC0547-70AC-499C-9B19-EC01C6F61137}
 	EndProjectSection
 EndProject
@@ -71,6 +81,22 @@ Global
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Production|Win32.Build.0 = Production|Win32
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Release|Win32.ActiveCfg = Release|Win32
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C}.Release|Win32.Build.0 = Release|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Debug_All|Win32.Build.0 = Debug_All|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Debug|Win32.Build.0 = Debug|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Production|Win32.ActiveCfg = Production|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Production|Win32.Build.0 = Production|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Release|Win32.ActiveCfg = Release|Win32
+		{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}.Release|Win32.Build.0 = Release|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Debug_All|Win32.Build.0 = Debug_All|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Debug|Win32.Build.0 = Debug|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Production|Win32.ActiveCfg = Production|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Production|Win32.Build.0 = Production|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Release|Win32.ActiveCfg = Release|Win32
+		{DD7949B6-F2B4-47C2-9C42-E21E84CB1017}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

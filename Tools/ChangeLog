@@ -1,5 +1,39 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Turn WebKitTestRunner into a stub .exe launcher and a .dll that contains all the real code
+
+        This allows us to add the Safari and Apple Application Support directories to PATH before
+        trying to load WebKit so that SafariTheme.dll, CoreGraphics.dll and friends can be found.
+
+        Fixes <http://webkit.org/b/75486> <rdar://problem/10638124> NRWT fails to launch Apple's
+        Windows port of DumpRenderTree/WebKitTestRunner
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKitTestRunner/WebKitTestRunner.sln: Added WebKitTestRunnerLauncher and
+        ImageDiffLauncher, which I forgot to add to this .sln when that project was created.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        Changed to build WebKitTestRunner.dll instead of WebKitTestRunner.exe.
+
+        * WebKitTestRunner/win/WebKitTestRunnerLauncher.vcproj: Copied from
+        Tools/WebKitTestRunner/win/WebKitTestRunner.vcproj but changed to build
+        the stub launcher.
+
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherCommon.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebug.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugAll.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugCairoCFLite.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherProduction.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherRelease.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherReleaseCairoCFLite.vsprops: Added.
+
+        * WebKitTestRunner/win/main.cpp:
+        (dllLauncherEntryPoint): Renamed from main. This is what the stub launcher calls.
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Turn DumpRenderTree into a stub .exe launcher and a .dll that contains all the real code
 
         This allows us to add the Safari and Apple Application Support directories to PATH before

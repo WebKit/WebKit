@@ -27,7 +27,7 @@
 
 #include "TestController.h"
 
-int main(int argc, const char* argv[])
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
 {
     {
         WTR::TestController controller(argc, argv);

@@ -15,6 +15,7 @@
 		Name="VCLinkerTool"
 		AdditionalOptions="/NXCOMPAT"
 		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib shlwapi.lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>

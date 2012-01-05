@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WebKitTestRunner"
-	ProjectGUID="{3B99669B-1817-443B-BCBE-835580146668}"
-	RootNamespace="WebKitTestRunner"
+	Name="WebKitTestRunnerLauncher"
+	ProjectGUID="{C13FA6EF-B531-4BAD-9A23-18E2BEB8B040}"
+	RootNamespace="WebKitTestRunnerLauncher"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerDebug.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -78,69 +78,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerRelease.vsprops"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug_All|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerDebugAll.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -200,8 +139,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerDebugCairoCFLite.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -260,9 +199,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerReleaseCairoCFLite.vsprops"
+			Name="Debug_All|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -322,10 +261,71 @@
 		</Configuration>
 		<Configuration
 			Name="Production|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKitTestRunnerProduction.vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Cairo_CFLite|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\WebKitTestRunnerLauncherReleaseCairoCFLite.vsprops"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -386,128 +386,8 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="win"
-			>
-			<File
-				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PlatformWebViewWin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TestControllerWin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TestInvocationWin.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="cg"
-			>
-			<File
-				RelativePath="..\cg\TestInvocationCG.cpp"
-				>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="cairo"
-			>
-			<File
-				RelativePath="..\cairo\TestInvocationCairo.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
 		<File
-			RelativePath="..\CyclicRedundancyCheck.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\CyclicRedundancyCheck.h"
-			>
-		</File>
-		<File
-			RelativePath="..\PixelDumpSupport.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\PixelDumpSupport.h"
-			>
-		</File>
-		<File
-			RelativePath="..\PlatformWebView.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TestController.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TestController.h"
-			>
-		</File>
-		<File
-			RelativePath="..\TestInvocation.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\TestInvocation.h"
-			>
-		</File>
-		<File
-			RelativePath="..\WebKitTestRunnerPrefix.h"
+			RelativePath="..\..\win\DLLLauncher\DLLLauncherMain.cpp"
 			>
 		</File>
 	</Files>
