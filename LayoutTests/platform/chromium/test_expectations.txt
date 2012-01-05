@@ -3878,4 +3878,4 @@ BUGWK75083 RELEASE : perf/nested-combined-selectors.html = MISSING
 BUGCR109276 LINUX : http/tests/appcache/simple.html = PASS CRASH
 BUGCR109276 LINUX : http/tests/appcache/resource-redirect.html = PASS CRASH
 
-BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE TEXT
+BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
