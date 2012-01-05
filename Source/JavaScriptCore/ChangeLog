@@ -1,3 +1,11 @@
+2012-01-05  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Unreviewed gardening after r75605.
+
+        Rubber stamped by NOBODY Csaba Osztrogonác.
+
+        * wtf/Assertions.cpp:
+
 2012-01-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Improve charactersAreAllASCII() to compare multiple characters at a time

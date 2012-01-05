@@ -136,7 +136,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
     vfprintf(stderr, format, args);
 }
 
-#if COMPILER(GCC)
+#if COMPILER(GCC) && GCC_VERSION_AT_LEAST(4, 6, 0)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
@@ -169,7 +169,7 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
     vprintf_stderr_common(formatWithNewline.get(), args);
 }
 
-#if COMPILER(GCC)
+#if COMPILER(GCC) && GCC_VERSION_AT_LEAST(4, 6, 0)
 #pragma GCC diagnostic pop
 #endif
 
