@@ -1,3 +1,26 @@
+2012-01-05  Tien Ren Chen  <trchen@chromium.org>
+
+        [chromium] Add CCTimer class for the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=74769
+
+        Reviewed by James Robinson.
+
+        Add a simple timer class for CCThread that the timered task can be
+        manually cancelled.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCTimer.cpp: Added.
+        (WebCore::CCTimerTask::CCTimerTask):
+        (WebCore::CCTimerTask::~CCTimerTask):
+        (WebCore::CCTimerTask::performTask):
+        (WebCore::CCTimer::CCTimer):
+        (WebCore::CCTimer::~CCTimer):
+        (WebCore::CCTimer::startOneShot):
+        (WebCore::CCTimer::stop):
+        * platform/graphics/chromium/cc/CCTimer.h: Added.
+        (WebCore::CCTimerClient::~CCTimerClient):
+        (WebCore::CCTimer::isActive):
+
 2012-01-05  Eric Carlson  <eric.carlson@apple.com>
 
         Implement temporal dimension portion of Media Fragments URI specification for video/audio

@@ -3658,6 +3658,8 @@
             'platform/graphics/chromium/cc/CCThreadTask.h',
             'platform/graphics/chromium/cc/CCTiledLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCTiledLayerImpl.h',
+            'platform/graphics/chromium/cc/CCTimer.cpp',
+            'platform/graphics/chromium/cc/CCTimer.h',
             'platform/graphics/chromium/cc/CCTimeSource.h',
             'platform/graphics/chromium/cc/CCVideoLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCVideoLayerImpl.h',
