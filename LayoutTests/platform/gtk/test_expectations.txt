@@ -21,7 +21,6 @@ BUGWK67408 : fast/forms/textarea-placeholder-visibility-2.html = FAIL
 
 // Flaky tests
 
-BUGWK68536 : media/media-blocked-by-beforeload.html = PASS TEXT
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
 BUGWK36165 : media/video-played-collapse.html = PASS TEXT
 BUGWK54637 : media/video-display-toggle.html = PASS TEXT
