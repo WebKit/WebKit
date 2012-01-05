@@ -1,3 +1,17 @@
+2012-01-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove duplicate file references from WebCore.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=75581
+
+        Reviewed by Andreas Kling.
+
+        Many generated DOMSVG files had two references.
+
+        In platform/graphics, there was two arm directory
+        with the same files related to ARM Neon.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-01-05  Antti Koivisto  <antti@apple.com>
 
         Improve SelectorChecker::determineSelectorScopes
