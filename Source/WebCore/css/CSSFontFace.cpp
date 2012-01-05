@@ -118,19 +118,6 @@ SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription,
     return 0;
 }
 
-void CSSFontFace::retireCustomFont(SimpleFontData* fontData)
-{
-    if (m_segmentedFontFaces.isEmpty()) {
-        GlyphPageTreeNode::pruneTreeCustomFontData(fontData);
-        delete fontData;
-        return;
-    }
-
-    // Use one of the CSSSegmentedFontFaces' font selector. They all have
-    // the same font selector.
-    (*m_segmentedFontFaces.begin())->fontSelector()->retireCustomFont(fontData);
-}
-
 #if ENABLE(SVG_FONTS)
 bool CSSFontFace::hasSVGFontFaceSource() const
 {

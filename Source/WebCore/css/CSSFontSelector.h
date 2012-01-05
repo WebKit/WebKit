@@ -59,14 +59,14 @@ public:
     void fontLoaded();
     virtual void fontCacheInvalidated();
 
-    void retireCustomFont(FontData*);
-
     bool isEmpty() const;
 
     CachedResourceLoader* cachedResourceLoader() const;
 
     virtual void registerForInvalidationCallbacks(FontSelectorClient*);
     virtual void unregisterForInvalidationCallbacks(FontSelectorClient*);
+    
+    Document* document() const { return m_document; }
 
 private:
     CSSFontSelector(Document*);
