@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,7 +38,6 @@
 #include "WebFileError.h"
 #include "platform/WebFileSystem.h"
 #include "platform/WebVector.h"
-#include "WorkerContext.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
@@ -54,10 +53,11 @@ class MainThreadFileSystemCallbacks;
 class WebCommonWorkerClient;
 class ThreadableCallbacksBridgeWrapper;
 class WebFileSystemCallbacks;
+class WorkerFileSystemContextObserver;
 struct WebFileInfo;
 struct WebFileSystemEntry;
 
-// This class is used to post a openFileSystem request to the main thread and get called back for the request. This must be destructed on the worker thread.
+// Used to post a openFileSystem request to the main thread and get called back for the request.
 //
 // A typical flow for openFileSystem would look like this:
 // Bridge::postOpenFileSystemToMainThread() on WorkerThread
@@ -69,16 +69,8 @@ struct WebFileSystemEntry;
 //  --> Bridge::didXxxOnWorkerThread is called on WorkerThread
 //      This calls the original callbacks (m_callbacksOnWorkerThread) and
 //      releases a self-reference to the bridge.
-class WorkerFileSystemCallbacksBridge : public ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge>, public WebCore::WorkerContext::Observer {
+class WorkerFileSystemCallbacksBridge : public ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge> {
 public:
-    ~WorkerFileSystemCallbacksBridge();
-
-    // WorkerContext::Observer method.
-    virtual void notifyStop()
-    {
-        stop();
-    }
-
     void stop();
 
     static PassRefPtr<WorkerFileSystemCallbacksBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, WebCore::ScriptExecutionContext* workerContext, WebFileSystemCallbacks* callbacks)
@@ -107,7 +99,10 @@ public:
     void didReadDirectoryOnMainThread(const WebVector<WebFileSystemEntry>&, bool hasMore, const String& mode);
 
 private:
+    friend class ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge>;
+
     WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacks*);
+    ~WorkerFileSystemCallbacksBridge();
 
     // Methods that are to be called on the main thread.
     static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, WorkerFileSystemCallbacksBridge*, const String& mode);
@@ -137,9 +132,15 @@ private:
     void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     void mayPostTaskToWorker(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode);
 
-    Mutex m_mutex;
+    void cleanUpAfterCallback();
+
+    Mutex m_loaderProxyMutex;
     WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
+
     WebCore::ScriptExecutionContext* m_workerContext;
+
+    // Must be deleted on the WorkerContext thread.
+    WorkerFileSystemContextObserver* m_workerContextObserver;
 
     // This is self-destructed and must be fired on the worker thread.
     WebFileSystemCallbacks* m_callbacksOnWorkerThread;

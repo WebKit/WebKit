@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -144,15 +144,55 @@ private:
     const String m_mode;
 };
 
+// Observes the worker context. By keeping this separate, it is easier to verify
+// that it only gets deleted on the worker context thread which is verified by ~Observer.
+class WorkerFileSystemContextObserver : public WebCore::WorkerContext::Observer {
+public:
+    static PassOwnPtr<WorkerFileSystemContextObserver> create(WorkerContext* context, WorkerFileSystemCallbacksBridge* bridge)
+    {
+        return adoptPtr(new WorkerFileSystemContextObserver(context, bridge));
+    }
+
+    // WorkerContext::Observer method.
+    virtual void notifyStop()
+    {
+        m_bridge->stop();
+    }
+
+private:
+    WorkerFileSystemContextObserver(WorkerContext* context, WorkerFileSystemCallbacksBridge* bridge)
+        : WebCore::WorkerContext::Observer(context)
+        , m_bridge(bridge)
+    {
+    }
+
+    // Since WorkerFileSystemCallbacksBridge manages the lifetime of this class,
+    // m_bridge will be valid throughout its lifetime.
+    WorkerFileSystemCallbacksBridge* m_bridge;
+};
+
 void WorkerFileSystemCallbacksBridge::stop()
 {
     ASSERT(m_workerContext->isContextThread());
-    MutexLocker locker(m_mutex);
-    m_workerLoaderProxy = 0;
+    {
+        MutexLocker locker(m_loaderProxyMutex);
+        m_workerLoaderProxy = 0;
+    }
 
-    if (m_callbacksOnWorkerThread) {
+    if (m_callbacksOnWorkerThread)
         m_callbacksOnWorkerThread->didFail(WebFileErrorAbort);
-        m_callbacksOnWorkerThread = 0;
+
+    cleanUpAfterCallback();
+}
+
+void WorkerFileSystemCallbacksBridge::cleanUpAfterCallback()
+{
+    ASSERT(m_workerContext->isContextThread());
+
+    m_callbacksOnWorkerThread = 0;
+    if (m_workerContextObserver) {
+        delete m_workerContextObserver;
+        m_workerContextObserver = 0;
     }
 }
 
@@ -339,9 +379,9 @@ void WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread(const WebVect
 }
 
 WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacks* callbacks)
-    : WorkerContext::Observer(static_cast<WorkerContext*>(scriptExecutionContext))
-    , m_workerLoaderProxy(workerLoaderProxy)
+    : m_workerLoaderProxy(workerLoaderProxy)
     , m_workerContext(scriptExecutionContext)
+    , m_workerContextObserver(WorkerFileSystemContextObserver::create(static_cast<WorkerContext*>(m_workerContext), this).leakPtr())
     , m_callbacksOnWorkerThread(callbacks)
 {
     ASSERT(m_workerContext->isContextThread());
@@ -394,8 +434,11 @@ void WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread(WebCore::ScriptExecu
         return;
     ASSERT(bridge->m_workerContext->isContextThread());
     taskToRun->performTask(scriptExecutionContext);
-    bridge->m_callbacksOnWorkerThread = 0;
-    bridge->stopObserving();
+
+    // taskToRun does the callback.
+    bridge->cleanUpAfterCallback();
+
+    // WorkerFileSystemCallbacksBridge may be deleted here when bridge goes out of scope.
 }
 
 void WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task> task)
@@ -413,9 +456,11 @@ void WorkerFileSystemCallbacksBridge::mayPostTaskToWorker(PassOwnPtr<ScriptExecu
     // in the destruction of WorkerFileSystemCallbacksBridge, the ordering of the RefPtr and the MutexLocker
     // is very important, to ensure that the m_mutex is still valid when it gets unlocked.)
     RefPtr<WorkerFileSystemCallbacksBridge> bridge = adoptRef(this);
-    MutexLocker locker(m_mutex);
+    MutexLocker locker(m_loaderProxyMutex);
     if (m_workerLoaderProxy)
         m_workerLoaderProxy->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, bridge, task), mode);
+
+    // WorkerFileSystemCallbacksBridge may be deleted here when bridge goes out of scope.
 }
 
 } // namespace WebCore

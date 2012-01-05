@@ -1,3 +1,27 @@
+2012-01-04  David Levin  <levin@chromium.org>
+
+        [chromium] Make it safe to delete WorkerFileSystemContextObserver on any thread.
+        https://bugs.webkit.org/show_bug.cgi?id=75573
+
+        Reviewed by Dmitry Titov.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemContextObserver): Move the WorkerContextObserver
+        out of the WorkerFileSystemCallbacksBridge since an observer should be
+        destroyed on the WorkerContext thread. (Actually, it could be destroyed on either
+        thread if you are careful to make a certain method call on it while on the WorkerContext
+        thread but trying that is a more fragile pattern.)
+        (WebKit::WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge):
+        (WebKit::WorkerFileSystemCallbacksBridge::stop): Factor out the clean up and make it
+        clear what the mutex is guarding.
+        (WebKit::WorkerFileSystemCallbacksBridge::cleanUpAfterCallback): Delete
+        the observer. Due to where this is called from, it is always called on the WorkerContext thread.
+        (WebKit::WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread): Replace some code with
+        the cleanUpAfterCallback call.
+        (WebKit::WorkerFileSystemCallbacksBridge::mayPostTaskToWorker):
+        * src/WorkerFileSystemCallbacksBridge.h: In addition to some comment clean ups and code factoring,
+        I made the desctructor private since no one should call it directly.
+
 2012-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove chromium compositor support for unused zoomAnimatorTransform
