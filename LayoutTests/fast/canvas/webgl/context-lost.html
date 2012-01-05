@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"></script>
@@ -45,6 +47,10 @@ function init()
         window.initNonKhronosFramework(true);
     }
 
+    // call testValidContext() before checking for the extension, because this is where we check
+    // for the isContextLost() method, which we want to do regardless of the extension's presence.
+    testValidContext();
+
     for (var ii = 0; ii < extensionNames.length; ++ii) {
         extension = gl.getExtension(extensionNames[ii]);
         if (extension) {
@@ -54,12 +60,12 @@ function init()
     }
     if (!extension) {
         debug("Could not find lose_context extension under the following names: " + extensionNames.join(" "));
+        finishTest();
         return false;
     }
 
-    canvas.addEventListener("webglcontextlost", testLostContext);
+    canvas.addEventListener("webglcontextlost", testLostContext, false);
 
-    testValidContext();
     loseContext();
 }
 
@@ -68,9 +74,9 @@ function loseContext()
     debug("");
     debug("Lose context");
 
-    // Note: this will cause the context to be lost, and the
-    // webglcontextlost event listener to be called, immediately.
-    shouldGenerateGLError(gl, gl.NO_ERROR, "extension.loseContext()");
+    // Note: this will cause the context to be lost, but the
+    // webglcontextlost event listener to be queued.
+    extension.loseContext();
     debug("");
 }
 
@@ -305,18 +311,9 @@ function testLostContext()
 
     debug("");
 
-    finish();
+    finishTest();
 }
 
-function finish() {
-    var epilogue = document.createElement("script");
-    epilogue.onload = function() {
-        if (window.nonKhronosFrameworkNotifyDone)
-            window.nonKhronosFrameworkNotifyDone();
-    };
-    epilogue.src = "../../js/resources/js-test-post.js";
-    document.body.appendChild(epilogue);
-}
 </script>
 </head>
 <body onload="init()">

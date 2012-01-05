@@ -1,8 +1,11 @@
 Test that the event passed to a listener of webglcontextlost is a WebGLContextEvent.
 PASS evt.toString() is '[object WebGLContextEvent]'
 PASS evt.statusMessage is ''
+PASS context.getError() is context.NO_ERROR
 Test that the event passed to a listener of webglcontextrestored is a WebGLContextEvent.
 PASS evt.toString() is '[object WebGLContextEvent]'
 PASS evt.statusMessage is ''
-PASS extension.restoreContext() was expected value: NO_ERROR.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

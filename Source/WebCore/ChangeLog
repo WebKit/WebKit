@@ -1,3 +1,31 @@
+2012-01-04  Kenneth Russell  <kbr@google.com>
+
+        Fix semantics of WEBKIT_WEBGL_lose_context
+        https://bugs.webkit.org/show_bug.cgi?id=75053
+
+        Reviewed by James Robinson.
+
+        Updated WEBGL_lose_context extension to match WebGL spec's
+        behavior:
+
+          - loseContext() causes the context to be lost immediately, but
+            the webglcontextlost event isn't dispatched until JavaScript
+            returns.
+          - restoreContext() may only be called once dispatch of the
+            webglcontextlost event has completed, *and* if that event handler
+            prevented the default behavior of the event.
+          - restoreContext() performs its work asynchronously. The context
+            is not restored until just before the webglcontextrestored event
+            is dispatched.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::forceLostContext):
+        (WebCore::WebGLRenderingContext::forceRestoreContext):
+        (WebCore::WebGLRenderingContext::dispatchContextLostEvent):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+
 2011-12-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Inserting nodes is slow due to Node::notifyNodeListsAttributeChanged (20%+)

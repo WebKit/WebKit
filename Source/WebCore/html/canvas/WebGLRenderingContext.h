@@ -367,16 +367,14 @@ public:
     // to the back-buffer of m_context.
     RefPtr<DrawingBuffer> m_drawingBuffer;
 
-    class WebGLRenderingContextRestoreTimer : public TimerBase {
-    public:
-        explicit WebGLRenderingContextRestoreTimer(WebGLRenderingContext* context) : m_context(context) { }
-    private:
-        virtual void fired();
-        WebGLRenderingContext* m_context;
-    };
-
+    // Dispatches a context lost event once it is determined that one is needed.
+    // This is used both for synthetic and real context losses. For real ones, it's
+    // likely that there's no JavaScript on the stack, but that might be dependent
+    // on how exactly the platform discovers that the context was lost. For better
+    // portability we always defer the dispatch of the event.
+    Timer<WebGLRenderingContext> m_dispatchContextLostEventTimer;
     bool m_restoreAllowed;
-    WebGLRenderingContextRestoreTimer m_restoreTimer;
+    Timer<WebGLRenderingContext> m_restoreTimer;
 
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
@@ -460,6 +458,7 @@ public:
     bool m_unpackPremultiplyAlpha;
     GC3Denum m_unpackColorspaceConversion;
     bool m_contextLost;
+    LostContextMode m_contextLostMode;
     GraphicsContext3D::Attributes m_attributes;
 
     bool m_layerCleared;
@@ -636,9 +635,9 @@ public:
     bool simulateVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
-    void loseContext();
+    void dispatchContextLostEvent(Timer<WebGLRenderingContext>*);
     // Helper for restoration after context lost.
-    void maybeRestoreContext(LostContextMode);
+    void maybeRestoreContext(Timer<WebGLRenderingContext>*);
 
     // Determine if we are running privileged code in the browser, for example,
     // a Safari or Chrome extension.

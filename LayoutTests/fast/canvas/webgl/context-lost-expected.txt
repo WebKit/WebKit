@@ -15,6 +15,7 @@ PASS gl.isShader(shader) is true
 PASS gl.isTexture(texture) is true
 
 Lose context
+
 Test lost context
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
@@ -177,8 +178,6 @@ PASS gl.isRenderbuffer(renderbuffer) is false
 PASS gl.isShader(shader) is false
 PASS gl.isTexture(texture) is false
 PASS gl.getError() is gl.NO_ERROR
-
-PASS extension.loseContext() was expected value: NO_ERROR.
 
 PASS successfullyParsed is true
 

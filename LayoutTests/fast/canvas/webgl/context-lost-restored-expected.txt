@@ -9,9 +9,14 @@ PASS gl.getError() is gl.NO_ERROR
 PASS shouldBe 255,10,20
 PASS gl.getError() is gl.NO_ERROR
 
-Test lost context
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP) was expected value: NO_ERROR.
+PASS contextLostEventFired is false
+Test lost context
+PASS contextLostEventFired is false
+PASS gl.isContextLost() is true
 PASS gl.getError() is gl.NO_ERROR
 
 PASS extension.restoreContext() was expected value: INVALID_OPERATION.
@@ -23,12 +28,22 @@ PASS gl.getError() is gl.NO_ERROR
 PASS shouldBe 255,10,20
 PASS gl.getError() is gl.NO_ERROR
 
-Test lost context
 PASS gl.isContextLost() is true
 PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
 PASS gl.getError() is gl.NO_ERROR
+PASS gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP) was expected value: NO_ERROR.
+PASS contextLostEventFired is false
+Test lost context
+PASS contextLostEventFired is false
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.NO_ERROR
 
+PASS extension.restoreContext() was expected value: NO_ERROR.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP) was expected value: NO_ERROR.
 Test restored context
+PASS contextRestoredEventFired is false
 PASS gl.isContextLost() is false
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.bindTexture(gl.TEXTURE_2D, texture) was expected value: INVALID_OPERATION.
@@ -39,8 +54,6 @@ PASS gl.getError() is gl.NO_ERROR
 PASS gl.bindTexture(gl.TEXTURE_2D, texture) was expected value: NO_ERROR.
 PASS gl.useProgram(program) was expected value: NO_ERROR.
 PASS gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0]) was expected value: NO_ERROR.
-
-PASS extension.restoreContext() was expected value: NO_ERROR.
 
 PASS successfullyParsed is true
 

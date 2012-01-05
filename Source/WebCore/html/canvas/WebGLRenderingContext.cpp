@@ -364,11 +364,6 @@ private:
     bool m_changed;
 };
 
-void WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired()
-{
-    m_context->maybeRestoreContext(RealLostContext);
-}
-
 class WebGLRenderingContextLostCallback : public GraphicsContext3D::ContextLostCallback {
 public:
     explicit WebGLRenderingContextLostCallback(WebGLRenderingContext* cb) : m_context(cb) { }
@@ -412,10 +407,12 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     : CanvasRenderingContext(passedCanvas)
     , m_context(context)
     , m_drawingBuffer(0)
+    , m_dispatchContextLostEventTimer(this, &WebGLRenderingContext::dispatchContextLostEvent)
     , m_restoreAllowed(false)
-    , m_restoreTimer(this)
+    , m_restoreTimer(this, &WebGLRenderingContext::maybeRestoreContext)
     , m_videoCache(4)
     , m_contextLost(false)
+    , m_contextLostMode(SyntheticLostContext)
     , m_attributes(attributes)
 {
     ASSERT(m_context);
@@ -4093,10 +4090,28 @@ void WebGLRenderingContext::forceLostContext(WebGLRenderingContext::LostContextM
         return;
     }
 
-    loseContext();
+    m_contextLost = true;
+    m_contextLostMode = mode;
 
-    if (mode == RealLostContext)
-        m_restoreTimer.startOneShot(0);
+    detachAndRemoveAllObjects();
+
+    // There is no direct way to clear errors from a GL implementation and
+    // looping until getError() becomes NO_ERROR might cause an infinite loop if
+    // the driver or context implementation had a bug. So, loop a reasonably
+    // large number of times to clear any existing errors.
+    for (int i = 0; i < 100; ++i) {
+        if (m_context->getError() == GraphicsContext3D::NO_ERROR)
+            break;
+    }
+    m_context->synthesizeGLError(GraphicsContext3D::CONTEXT_LOST_WEBGL);
+
+    // Don't allow restoration unless the context lost event has both been
+    // dispatched and its default behavior prevented.
+    m_restoreAllowed = false;
+
+    // Always defer the dispatch of the context lost event, to implement
+    // the spec behavior of queueing a task.
+    m_dispatchContextLostEventTimer.startOneShot(0);
 }
 
 void WebGLRenderingContext::forceRestoreContext()
@@ -4106,7 +4121,14 @@ void WebGLRenderingContext::forceRestoreContext()
         return;
     }
 
-    maybeRestoreContext(SyntheticLostContext);
+    if (!m_restoreAllowed) {
+        if (m_contextLostMode == SyntheticLostContext)
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+
+    if (!m_restoreTimer.isActive())
+        m_restoreTimer.startOneShot(0);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -4951,42 +4973,29 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
 }
 
-void WebGLRenderingContext::loseContext()
+void WebGLRenderingContext::dispatchContextLostEvent(Timer<WebGLRenderingContext>*)
 {
-    m_contextLost = true;
-
-    detachAndRemoveAllObjects();
-
-    // There is no direct way to clear errors from a GL implementation and
-    // looping until getError() becomes NO_ERROR might cause an infinite loop if
-    // the driver or context implementation had a bug. So, loop a reasonably
-    // large number of times to clear any existing errors.
-    for (int i = 0; i < 100; ++i) {
-        if (m_context->getError() == GraphicsContext3D::NO_ERROR)
-            break;
-    }
-    m_context->synthesizeGLError(GraphicsContext3D::CONTEXT_LOST_WEBGL);
-
     RefPtr<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, "");
     canvas()->dispatchEvent(event);
     m_restoreAllowed = event->defaultPrevented();
+    if (m_contextLostMode == RealLostContext && m_restoreAllowed)
+        m_restoreTimer.startOneShot(0);
 }
 
-void WebGLRenderingContext::maybeRestoreContext(WebGLRenderingContext::LostContextMode mode)
+void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
 {
-    if (!m_contextLost) {
-        ASSERT(mode == SyntheticLostContext);
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+    ASSERT(m_contextLost);
+    if (!m_contextLost)
         return;
-    }
 
-    // The rendering context is not restored unless the default
-    // behavior of the webglcontextlost event was prevented earlier.
-    if (!m_restoreAllowed) {
-        if (mode == SyntheticLostContext)
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+    // The rendering context is not restored unless the default behavior of the
+    // webglcontextlost event was prevented earlier.
+    //
+    // Because of the way m_restoreTimer is set up for real vs. synthetic lost
+    // context events, we don't have to worry about this test short-circuiting
+    // the retry loop for real context lost events.
+    if (!m_restoreAllowed)
         return;
-    }
 
     int contextLostReason = m_context->getExtensions()->getGraphicsResetStatusARB();
 
@@ -5017,7 +5026,7 @@ void WebGLRenderingContext::maybeRestoreContext(WebGLRenderingContext::LostConte
 
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(m_attributes, canvas()->document()->view()->root()->hostWindow()));
     if (!context) {
-        if (mode == RealLostContext)
+        if (m_contextLostMode == RealLostContext)
             m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
         else
             // This likely shouldn't happen but is the best way to report it to the WebGL app.

@@ -24,32 +24,46 @@ function createNewCanvas()
     }
 }
 
-function runTest()
+function runTest1()
 {
+    if (window.initNonKhronosFramework)
+        window.initNonKhronosFramework(true);
     createNewCanvas();
     canvas.addEventListener("webglcontextlost", function(e) {
         evt = e;
         debug("Test that the event passed to a listener of webglcontextlost is a WebGLContextEvent.")
         shouldBe("evt.toString()", "'[object WebGLContextEvent]'");
         shouldBe("evt.statusMessage", "''");
+        // Start the next test when event dispatch has finished.
+        setTimeout(function() {
+          runTest2();
+        }, 0);
     }, false);
     extension.loseContext();
+}
 
-
+function runTest2()
+{
     createNewCanvas();
     canvas.addEventListener("webglcontextlost", function(e) {
         e.preventDefault();
+        // Restore the context after event dispatch has finished.
+        setTimeout(function() {
+          // Because context restoration is specified as being asynchronous, we can not verify
+          // that the GL error state is empty here.
+          extension.restoreContext();
+        }, 0);
     }, false);
     canvas.addEventListener("webglcontextrestored", function(e) {
         evt = e;
+        shouldBe("context.getError()", "context.NO_ERROR");
         debug("Test that the event passed to a listener of webglcontextrestored is a WebGLContextEvent.")
         shouldBe("evt.toString()", "'[object WebGLContextEvent]'");
         shouldBe("evt.statusMessage", "''");
+
+        setTimeout(finish, 0);
     }, false);
     extension.loseContext();
-    WebGLTestUtils.shouldGenerateGLError(context, context.NO_ERROR, "extension.restoreContext()");
-
-    finish();
 }
 
 function finish() {
@@ -65,7 +79,7 @@ function finish() {
 </script>
 
 </head>
-<body onload="runTest()">
+<body onload="runTest1()">
 <div id="description"></div>
 <div id="console"></div>
 <canvas id="canvas">
