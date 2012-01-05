@@ -1,5 +1,17 @@
 2012-01-04  Adam Roben  <aroben@apple.com>
 
+        Add ImageDiffLauncher to WebKit.sln
+
+        It builds just after ImageDiff.
+
+        Part of <http://webkit.org/b/75572> ImageDiff.exe can't be run without first munging PATH
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcproj/WebKit.sln:
+
+2012-01-04  Adam Roben  <aroben@apple.com>
+
         Add MiniBrowserLauncher to WebKit.sln
 
         It builds just after MiniBrowser.

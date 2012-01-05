@@ -1,5 +1,42 @@
 2012-01-04  Adam Roben  <aroben@apple.com>
 
+        Turn ImageDiff into a stub .exe launcher and a .dll that contains all the real code
+
+        This allows us to add the Apple Application Support directory to PATH before trying to load
+        WebKit so that CoreGraphics.dll and friends can be found.
+
+        Fixes <http://webkit.org/b/75572> ImageDiff.exe can't be run without first munging PATH
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/ImageDiffCommon.vsprops:
+        Changed to build ImageDiff.dll instead of ImageDiff.exe.
+
+        * DumpRenderTree/win/ImageDiffLauncher.vcproj: Copied from
+        Tools/DumpRenderTree/win/ImageDiff.vcproj but changed to build the stub launcher.
+
+        * DumpRenderTree/win/ImageDiffLauncherCommon.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherDebug.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherDebugAll.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherDebugCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherProduction.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherRelease.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffLauncherReleaseCairoCFLite.vsprops: Added.
+
+        * DumpRenderTree/win/ImageDiffWin.cpp: Added.
+        (dllLauncherEntryPoint): This function is called by the stub launcher and just calls through
+        to main.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (main):
+        (wWinMain):
+        Added support for launching console programs. When USE_CONSOLE_ENTRY_POINT is defined, the
+        stub launcher acts as a console program and calls a console version of
+        dllLauncherEntryPoint.
+
+2012-01-04  Adam Roben  <aroben@apple.com>
+
         Turn MiniBrowser into a stub .exe launcher and a .dll that contains all the real code
 
         This allows us to add the Apple Application Support directory to PATH before trying to load

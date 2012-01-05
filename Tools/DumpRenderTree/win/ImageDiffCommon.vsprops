@@ -13,6 +13,7 @@
 		Name="VCLinkerTool"
 		AdditionalOptions="/NXCOMPAT"
 		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>

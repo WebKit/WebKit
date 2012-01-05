@@ -27,6 +27,8 @@
 // will set PATH so that Apple Application Support DLLs can be found, then will load foo.dll and
 // call its dllLauncherEntryPoint function, which should be declared like so:
 //     extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstCmdLine, int nCmdShow);
+// If USE_CONSOLE_ENTRY_POINT is defined, this function will be called instead:
+//     extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[]);
 
 #include <shlwapi.h>
 #include <string>
@@ -121,7 +123,11 @@ static int fatalError(const wstring& programName, const wstring& message)
     return 1;
 }
 
+#if USE_CONSOLE_ENTRY_POINT
+int main(int argc, const char* argv[])
+#else
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
+#endif
 {
     enableTerminationOnHeapCorruption();
 
@@ -150,10 +156,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
     if (!module)
         return fatalError(programName, L"::LoadLibraryW failed.");
 
+#if USE_CONSOLE_ENTRY_POINT
+    typedef int (WINAPI*EntryPoint)(int, const char*[]);
+    const char* entryPointName = "_dllLauncherEntryPoint@8";
+#else
     typedef int (WINAPI*EntryPoint)(HINSTANCE, HINSTANCE, LPWSTR, int);
-    EntryPoint entryPoint = reinterpret_cast<EntryPoint>(::GetProcAddress(module, "_dllLauncherEntryPoint@16"));
+    const char* entryPointName = "_dllLauncherEntryPoint@16";
+#endif
+
+    EntryPoint entryPoint = reinterpret_cast<EntryPoint>(::GetProcAddress(module, entryPointName));
     if (!entryPoint)
         return fatalError(programName, L"Failed to find dllLauncherEntryPoint function.");
 
+#if USE_CONSOLE_ENTRY_POINT
+    return entryPoint(argc, argv);
+#else
     return entryPoint(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
+#endif
 }
