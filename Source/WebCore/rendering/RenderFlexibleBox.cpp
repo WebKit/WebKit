@@ -91,7 +91,7 @@ public:
             if (m_currentChild && m_currentChild->style()->boxOrdinalGroup() > m_lastOrdinal)
                 m_lastOrdinal = m_currentChild->style()->boxOrdinalGroup();
         } while (!m_currentChild || (!m_currentChild->isAnonymous()
-                 && (m_currentChild->style()->boxOrdinalGroup() != m_currentOrdinal || m_currentChild->style()->visibility() == COLLAPSE)));
+                 && m_currentChild->style()->boxOrdinalGroup() != m_currentOrdinal));
         return m_currentChild;
     }
 
@@ -128,12 +128,15 @@ static int marginWidthForChild(RenderBox* child)
         margin += marginRight.value();
     return margin;
 }
-
+static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
+{
+    // Positioned children and collapsed children don't affect the min/max width.
+    return child->isPositioned() || child->style()->visibility() == COLLAPSE;
+}
 void RenderFlexibleBox::calcHorizontalPrefWidths()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        // Positioned children and collapsed children don't affect the min/max width.
-        if (child->isPositioned() || child->style()->visibility() == COLLAPSE)
+        if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
         int margin = marginWidthForChild(child);
@@ -145,8 +148,7 @@ void RenderFlexibleBox::calcHorizontalPrefWidths()
 void RenderFlexibleBox::calcVerticalPrefWidths()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        // Positioned children and collapsed children don't affect the min/max width.
-        if (child->isPositioned() || child->style()->visibility() == COLLAPSE)
+        if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
         int margin = marginWidthForChild(child);
@@ -291,7 +293,7 @@ static void gatherFlexChildrenInfo(FlexBoxIterator& iterator, bool relayoutChild
 {
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         // Check to see if this child flexes.
-        if (!child->isPositioned() && child->style()->boxFlex() > 0.0f) {
+        if (!childDoesNotAffectWidthOrFlexing(child) && child->style()->boxFlex() > 0.0f) {
             // We always have to lay out flexible objects again, since the flex distribution
             // may have changed, and we need to reallocate space.
             child->setOverrideSize(-1);
@@ -403,6 +405,11 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                         child->setChildNeedsLayout(true, false);
                 }
                 continue;
+            } else if (child->style()->visibility() == COLLAPSE) {
+                // visibility: collapsed children do not participate in our positioning.
+                // But we need to lay them down. 
+                child->layoutIfNeeded(); 
+                continue;
             }
 
             // We need to see if this child's height has changed, since we make block elements
@@ -494,6 +501,10 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
                     // Now distribute the space to objects.
                     for (RenderBox* child = iterator.first(); child && spaceAvailableThisPass && totalFlex; child = iterator.next()) {
+                        
+                        if (child->style()->visibility() == COLLAPSE)
+                            continue;
+                        
                         if (allowedChildFlex(child, expanding, i)) {
                             int spaceAdd = (int)(spaceAvailableThisPass * (child->style()->boxFlex()/totalFlex));
                             if (spaceAdd) {
@@ -543,7 +554,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // Determine the total number of children.
             int totalChildren = 0;
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                if (child->isPositioned())
+                if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
                 ++totalChildren;
             }
@@ -554,7 +565,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                 --totalChildren;
                 bool firstChild = true;
                 for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                    if (child->isPositioned())
+                    if (childDoesNotAffectWidthOrFlexing(child))
                         continue;
 
                     if (firstChild) {
@@ -575,7 +586,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             else // END for LTR, START for RTL
                 offset += remainingSpace;
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                if (child->isPositioned())
+                if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
 
                 placeChild(child, child->location() + IntSize(offset, 0));
@@ -635,6 +646,11 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                         child->setChildNeedsLayout(true, false);
                 }
                 continue;
+                } else if (child->style()->visibility() == COLLAPSE) { 
+                    // visibility: collapsed children do not participate in our positioning.
+                    // But we need to lay them down.
+                     child->layoutIfNeeded(); 
+                     continue;
             }
 
             // Compute the child's vertical margins.
@@ -786,7 +802,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             // Determine the total number of children.
             int totalChildren = 0;
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                if (child->isPositioned())
+                if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
 
                 ++totalChildren;
@@ -798,7 +814,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 --totalChildren;
                 bool firstChild = true;
                 for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                    if (child->isPositioned())
+                    if (childDoesNotAffectWidthOrFlexing(child))
                         continue;
 
                     if (firstChild) {
@@ -818,7 +834,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             else // END
                 offset += remainingSpace;
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-                if (child->isPositioned())
+                if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
                 placeChild(child, child->location() + IntSize(0, offset));
             }
@@ -835,7 +851,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
 {
     int maxLineCount = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (child->isPositioned())
+        if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
         if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
@@ -861,7 +877,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
         return;
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (child->isPositioned() || !child->style()->height().isAuto() || !child->isBlockFlow())
+        if (childDoesNotAffectWidthOrFlexing(child) || !child->style()->height().isAuto() || !child->isBlockFlow())
             continue;
 
         RenderBlock* blockChild = toRenderBlock(child);
@@ -949,7 +965,7 @@ void RenderFlexibleBox::placeChild(RenderBox* child, const IntPoint& location)
 
 int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsigned int group)
 {
-    if (child->isPositioned() || child->style()->boxFlex() == 0.0f || child->style()->boxFlexGroup() != group)
+    if (childDoesNotAffectWidthOrFlexing(child) || child->style()->boxFlex() == 0.0f || child->style()->boxFlexGroup() != group)
         return 0;
 
     if (expanding) {
