@@ -64,7 +64,7 @@ class FactoryTest(unittest.TestCase):
     def tearDown(self):
         sys.platform = self.real_sys_platform
 
-    def assert_port(self, port_name, expected_port, port_obj=None):
+    def assert_port(self, port_name, expected_port, port_obj=None, platform=None):
         """Helper assert for port_name.
 
         Args:
@@ -72,7 +72,7 @@ class FactoryTest(unittest.TestCase):
           expected_port: class of expected port object.
           port_obj: optional port object
         """
-        port_obj = port_obj or self.factory.get(port_name=port_name)
+        port_obj = port_obj or self.factory.get(port_name=port_name, platform=platform)
         self.assertTrue(isinstance(port_obj, expected_port))
 
     def assert_platform_port(self, platform, options, expected_port):
@@ -104,18 +104,23 @@ class FactoryTest(unittest.TestCase):
         self.assert_platform_port("cygwin", self.webkit_options, win.WinPort)
 
     def test_google_chrome(self):
-        # The actual Chrome class names aren't available so we test that the
-        # objects we get are at least subclasses of the Chromium versions.
-        self.assert_port("google-chrome-linux32", chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-linux64", chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-win", chromium_win.ChromiumWinPort)
-        self.assert_port("google-chrome-mac", chromium_mac.ChromiumMacPort)
+        self.assert_port("google-chrome-linux32", google_chrome.GoogleChromeLinux32Port)
+        self.assert_port("google-chrome-linux64", google_chrome.GoogleChromeLinux64Port)
+        self.assert_port("google-chrome-win", google_chrome.GoogleChromeWinPort)
+        self.assert_port("google-chrome-mac", google_chrome.GoogleChromeMacPort)
 
     def test_gtk(self):
         self.assert_port("gtk", gtk.GtkPort)
 
     def test_qt(self):
         self.assert_port("qt", qt.QtPort)
+
+    def test_chromium_gpu(self):
+        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuMacPort, platform='darwin')
+        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuWinPort, platform='win32')
+        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuWinPort, platform='cygwin')
+        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuLinuxPort, platform='linux2')
+        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuLinuxPort, platform='linux3')
 
     def test_chromium_gpu_linux(self):
         self.assert_port("chromium-gpu-linux", chromium_gpu.ChromiumGpuLinuxPort)

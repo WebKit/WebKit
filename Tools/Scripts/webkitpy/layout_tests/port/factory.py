@@ -45,31 +45,38 @@ class PortFactory(object):
     def __init__(self, host):
         self._host = host
 
-    def _port_name_from_arguments_and_options(self, **kwargs):
-        port_to_use = kwargs.get('port_name', None)
-        options = kwargs.get('options', None)
-        if port_to_use is None:
-            if sys.platform == 'win32' or sys.platform == 'cygwin':
-                if options and hasattr(options, 'chromium') and options.chromium:
-                    port_to_use = 'chromium-win'
-                else:
-                    port_to_use = 'win'
-            elif sys.platform.startswith('linux'):
-                port_to_use = 'chromium-linux'
-            elif sys.platform == 'darwin':
-                if options and hasattr(options, 'chromium') and options.chromium:
-                    port_to_use = 'chromium-cg-mac'
-                    # FIXME: Add a way to select the chromium-mac port.
-                else:
-                    port_to_use = 'mac'
+    def _port_name_from_arguments_and_options(self, port_name, options, platform):
+        if port_name == 'chromium-gpu':
+            if platform in ('cygwin', 'win32'):
+                return 'chromium-gpu-win'
+            if platform.startswith('linux'):
+                return 'chromium-gpu-linux'
+            if platform == 'darwin':
+                return 'chromium-gpu-mac'
 
-        if port_to_use is None:
-            raise NotImplementedError('unknown port; sys.platform = "%s"' % sys.platform)
-        return port_to_use
+        if port_name:
+            return port_name
 
-    def _get_kwargs(self, **kwargs):
-        port_to_use = self._port_name_from_arguments_and_options(**kwargs)
+        if platform in ('win32', 'cygwin'):
+            if options and hasattr(options, 'chromium') and options.chromium:
+                return 'chromium-win'
+            return 'win'
+        if platform.startswith('linux'):
+            return 'chromium-linux'
+        if platform == 'darwin':
+            if options and hasattr(options, 'chromium') and options.chromium:
+                return 'chromium-cg-mac'
+                # FIXME: Add a way to select the chromium-mac port.
+            return 'mac'
 
+        raise NotImplementedError('unknown port; platform = "%s"' % platform)
+
+    def get(self, port_name=None, options=None, platform=None, **kwargs):
+        """Returns an object implementing the Port interface. If
+        port_name is None, this routine attempts to guess at the most
+        appropriate port on this platform."""
+        platform = platform or sys.platform
+        port_to_use = self._port_name_from_arguments_and_options(port_name, options, platform)
         if port_to_use.startswith('test'):
             import test
             maker = test.TestPort
@@ -91,11 +98,25 @@ class PortFactory(object):
         elif port_to_use.startswith('qt'):
             import qt
             maker = qt.QtPort
-        elif port_to_use.startswith('chromium-gpu'):
+        elif port_to_use.startswith('chromium-gpu-linux'):
             import chromium_gpu
-            maker = chromium_gpu.get
+            port_name = port_to_use
+            maker = chromium_gpu.ChromiumGpuLinuxPort
+        elif port_to_use.startswith('chromium-gpu-cg-mac'):
+            import chromium_gpu
+            port_name = port_to_use
+            maker = chromium_gpu.ChromiumGpuCgMacPort
+        elif port_to_use.startswith('chromium-gpu-mac'):
+            import chromium_gpu
+            port_name = port_to_use
+            maker = chromium_gpu.ChromiumGpuMacPort
+        elif port_to_use.startswith('chromium-gpu-win'):
+            import chromium_gpu
+            port_name = port_to_use
+            maker = chromium_gpu.ChromiumGpuWinPort
         elif port_to_use.startswith('chromium-mac') or port_to_use.startswith('chromium-cg-mac'):
             import chromium_mac
+            port_name = port_to_use
             maker = chromium_mac.ChromiumMacPort
         elif port_to_use.startswith('chromium-linux'):
             import chromium_linux
@@ -103,16 +124,27 @@ class PortFactory(object):
         elif port_to_use.startswith('chromium-win'):
             import chromium_win
             maker = chromium_win.ChromiumWinPort
-        elif port_to_use.startswith('google-chrome'):
+        elif port_to_use == 'google-chrome-linux32':
             import google_chrome
-            maker = google_chrome.GetGoogleChromePort
+            port_name = 'chromium-linux-x86'
+            maker = google_chrome.GoogleChromeLinux32Port
+        elif port_to_use == 'google-chrome-linux64':
+            import google_chrome
+            port_name = 'chromium-linux-x86_64'
+            maker = google_chrome.GoogleChromeLinux64Port
+        elif port_to_use.startswith('google-chrome-win'):
+            import google_chrome
+            maker = google_chrome.GoogleChromeWinPort
+        elif port_to_use.startswith('google-chrome-mac'):
+            import google_chrome
+            maker = google_chrome.GoogleChromeMacPort
         elif port_to_use.startswith('efl'):
             import efl
             maker = efl.EflPort
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
 
-        return maker(self._host, **kwargs)
+        return maker(self._host, port_name=port_name, options=options, **kwargs)
 
     def all_port_names(self):
         """Return a list of all valid, fully-specified, "real" port names.
@@ -122,17 +154,6 @@ class PortFactory(object):
         or "mock-mac", and it does not include any directories that are not ."""
         # FIXME: There's probably a better way to generate this list ...
         return builders.all_port_names()
-
-    def get(self, port_name=None, options=None, **kwargs):
-        """Returns an object implementing the Port interface. If
-        port_name is None, this routine attempts to guess at the most
-        appropriate port on this platform."""
-        # Wrapped for backwards-compatibility
-        if port_name:
-            kwargs['port_name'] = port_name
-        if options:
-            kwargs['options'] = options
-        return self._get_kwargs(**kwargs)
 
     def get_from_builder_name(self, builder_name):
         port_name = builders.port_name_for_builder_name(builder_name)

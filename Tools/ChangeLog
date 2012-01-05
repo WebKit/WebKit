@@ -1,3 +1,37 @@
+2012-01-05  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up port factory methods
+        https://bugs.webkit.org/show_bug.cgi?id=75590
+
+        Reviewed by Eric Seidel.
+
+        This change consolidates much of the "factory method" logic
+        of determining which port objects to create for a given set
+        of configurations by merging the separate factory methods in
+        chromium_gpu and google_chrome into PortFactory so that at least
+        all of the logic is in one place.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (_port_name_from_arguments_and_options):
+        (get):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (test_google_chrome):
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        (GoogleChromeLinux32Port):
+        (GoogleChromeLinux32Port.baseline_search_path):
+        (test_expectations_overrides):
+        (architecture):
+        (GoogleChromeLinux64Port):
+        (GoogleChromeLinux64Port.baseline_search_path):
+        (GoogleChromeMacPort):
+        (GoogleChromeMacPort.baseline_search_path):
+        (GoogleChromeWinPort):
+        (GoogleChromeWinPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (_verify_baseline_path):
+
 2012-01-05  Jochen Eisinger  <jochen@chromium.org>
 
         Replace webkitpy.common.system.filesystem.file_path_as_url with webkitpy.common.system.path.abspath_to_uri
