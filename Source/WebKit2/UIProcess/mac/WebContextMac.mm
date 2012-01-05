@@ -69,9 +69,11 @@ String WebContext::applicationCacheDirectory()
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    // We want to use a PDF view in the UI process for PDF MIME types.
-    HashSet<String, CaseFoldingHash> mimeType = pdfAndPostScriptMIMETypes();
-    parameters.mimeTypesWithCustomRepresentation.appendRange(mimeType.begin(), mimeType.end());
+    if (!omitPDFSupport()) {
+        // We want to use a PDF view in the UI process for PDF MIME types.
+        HashSet<String, CaseFoldingHash> mimeType = pdfAndPostScriptMIMETypes();
+        parameters.mimeTypesWithCustomRepresentation.appendRange(mimeType.begin(), mimeType.end());
+    }
 
     RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
     if (!cachePath)
