@@ -1,3 +1,16 @@
+2012-01-05  Bruno Dilly  <bdilly@profusion.mobi>
+
+        [EFL] Undefined references to ICU_I18N symbols on WTF
+        https://bugs.webkit.org/show_bug.cgi?id=75642
+
+        Unreviewed build fix.
+
+        Add ${ICU_I18N_LIBRARIES} to WTF_LIBRARIES on wtf efl platform cmake.
+        Some undefined references were ucol_setAttribute_44, ucol_close_44,
+        ucol_getAttribute_44...
+
+        * wtf/PlatformEfl.cmake:
+
 2012-01-05  Geoffrey Garen  <ggaren@apple.com>
 
         Refined the fast path for StringImpl::hash()
