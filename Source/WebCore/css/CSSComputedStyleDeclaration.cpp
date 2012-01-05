@@ -2136,8 +2136,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return valueForFilter(style.get());
 #endif
         /* Shorthand properties, currently not supported see bug 13658*/
-        case CSSPropertyBackground:
-            break;
+        case CSSPropertyBackground: {
+            const int properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
+                                        CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,
+                                        CSSPropertyBackgroundPosition };
+            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+        }
         case CSSPropertyBorder: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyBorderTop, DoNotUpdateLayout);
             const int properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
