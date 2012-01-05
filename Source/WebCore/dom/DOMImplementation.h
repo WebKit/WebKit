@@ -37,6 +37,7 @@ class DocumentType;
 class Frame;
 class HTMLDocument;
 class KURL;
+class RegularExpression;
 
 typedef int ExceptionCode;
 
@@ -72,6 +73,18 @@ private:
 
     Document* m_document;
 };
+
+class XMLMIMETypeRegExp {
+public:
+    XMLMIMETypeRegExp();
+    ~XMLMIMETypeRegExp();
+    bool isXMLMIMEType(const String& mimeType);
+
+    WTF_MAKE_NONCOPYABLE(XMLMIMETypeRegExp);
+private:
+    OwnPtr<RegularExpression> m_regex;
+};
+
 
 } // namespace WebCore
 

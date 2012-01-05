@@ -44,6 +44,7 @@ namespace WebCore {
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
     class ThreadTimers;
+    class XMLMIMETypeRegExp;
 
     class ThreadGlobalData {
         WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
@@ -54,6 +55,7 @@ namespace WebCore {
 
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
+        XMLMIMETypeRegExp& xmlTypeRegExp() { return *m_xmlTypeRegExp; } 
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
@@ -66,6 +68,7 @@ namespace WebCore {
     private:
         EventNames* m_eventNames;
         ThreadTimers* m_threadTimers;
+        XMLMIMETypeRegExp* m_xmlTypeRegExp; 
 
 #ifndef NDEBUG
         bool m_isMainThread;
