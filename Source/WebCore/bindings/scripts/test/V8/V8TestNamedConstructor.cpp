@@ -71,13 +71,14 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str3, MAYBE_MISSING_PARAMETER(args, 2, MissingIsEmpty));
 
-    RefPtr<TestNamedConstructor> obj = TestNamedConstructor::createForJSConstructor(document, str1, str2, str3, ec);
+    RefPtr<TestNamedConstructor> impl = TestNamedConstructor::createForJSConstructor(document, str1, str2, str3, ec);
+    v8::Handle<v8::Object> wrapper = args.Holder();
     if (ec)
         goto fail;
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &V8TestNamedConstructorConstructor::info, obj.get());
-    obj->ref();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setDOMWrapper(wrapper, &V8TestNamedConstructorConstructor::info, impl.get());
+    impl->ref();
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
   fail:
     return throwError(ec);

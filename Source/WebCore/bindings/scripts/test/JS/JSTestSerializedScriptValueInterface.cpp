@@ -24,8 +24,11 @@
 
 #include "JSTestSerializedScriptValueInterface.h"
 
+#include "ExceptionCode.h"
+#include "JSDOMBinding.h"
 #include "SerializedScriptValue.h"
 #include "TestSerializedScriptValueInterface.h"
+#include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -77,6 +80,27 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSCell*
 bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, &JSTestSerializedScriptValueInterfaceConstructorTable, static_cast<JSTestSerializedScriptValueInterfaceConstructor*>(object), propertyName, descriptor);
+}
+
+EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface(ExecState* exec)
+{
+    JSTestSerializedScriptValueInterfaceConstructor* jsConstructor = static_cast<JSTestSerializedScriptValueInterfaceConstructor*>(exec->callee());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    const String& hello(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    RefPtr<SerializedScriptValue> value(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    RefPtr<TestSerializedScriptValueInterface> object = TestSerializedScriptValueInterface::create(hello, value);
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), object.get())));
+}
+
+ConstructType JSTestSerializedScriptValueInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)
+{
+    constructData.native.function = constructJSTestSerializedScriptValueInterface;
+    return ConstructTypeHost;
 }
 
 /* Hash table for prototype */

@@ -45,6 +45,7 @@ public:
     inline static v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
+    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static v8::Handle<v8::Object> existingWrapper(TestSerializedScriptValueInterface*);
 

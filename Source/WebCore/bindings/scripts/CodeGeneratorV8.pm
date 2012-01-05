@@ -208,6 +208,26 @@ sub GenerateConditionalString
     }
 }
 
+sub GenerateEagerDeserialization
+{
+    my $serializedAttribute = shift;
+
+    # Eagerly deserialize attributes of type SerializedScriptValue while we're
+    # in the right context.
+
+    die "Attribute of type SerializedScriptValue expected" if $serializedAttribute->signature->type ne "SerializedScriptValue";
+    my $attrName = $serializedAttribute->signature->name;
+    my $attrAttr = "v8::DontDelete";
+    if ($serializedAttribute->type =~ /^readonly/) {
+        $attrAttr .= " | v8::ReadOnly";
+    }
+    $attrAttr = "static_cast<v8::PropertyAttribute>($attrAttr)";
+    my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
+    push(@implContent, <<END);
+    SerializedScriptValue::deserializeAndSetProperty(wrapper, "${attrName}", ${attrAttr}, impl->${getterFunc}());
+END
+}
+
 sub GetSVGPropertyTypes
 {
     my $implType = shift;
@@ -1561,6 +1581,7 @@ sub GenerateConstructorCallback
     my $function = shift;
     my $dataNode = shift;
     my $implClassName = shift;
+    my $serializedAttribute = shift;
 
     my $raisesExceptions = @{$function->raisesExceptions};
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -1623,7 +1644,8 @@ END
 
     my $argumentString = join(", ", @beforeArgumentList, @argumentList, @afterArgumentList);
     push(@implContent, "\n");
-    push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::create(${argumentString});\n");
+    push(@implContent, "    RefPtr<${implClassName}> impl = ${implClassName}::create(${argumentString});\n");
+    push(@implContent, "    v8::Handle<v8::Object> wrapper = args.Holder();\n");
 
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
         push(@implContent, "    if (ec)\n");
@@ -1633,9 +1655,14 @@ END
     my $DOMObject = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "ActiveDOMObject" : "DOMObject";
     push(@implContent, <<END);
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
-    obj->ref();
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
+    impl->ref();
+END
+    if ($serializedAttribute) {
+        GenerateEagerDeserialization($serializedAttribute);
+    }
+    push(@implContent, <<END);
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
 
@@ -1715,6 +1742,7 @@ sub GenerateNamedConstructorCallback
     my $function = shift;
     my $dataNode = shift;
     my $implClassName = shift;
+    my $serializedAttribute = shift;
 
     my $raisesExceptions = @{$function->raisesExceptions};
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -1793,7 +1821,8 @@ END
 
     my $argumentString = join(", ", @beforeArgumentList, @argumentList, @afterArgumentList);
     push(@implContent, "\n");
-    push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::createForJSConstructor(${argumentString});\n");
+    push(@implContent, "    RefPtr<${implClassName}> impl = ${implClassName}::createForJSConstructor(${argumentString});\n");
+    push(@implContent, "    v8::Handle<v8::Object> wrapper = args.Holder();\n");
 
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
         push(@implContent, "    if (ec)\n");
@@ -1810,9 +1839,14 @@ END
     }
     push(@implContent, <<END);
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &V8${implClassName}Constructor::info, obj.get());
-    obj->ref();
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
+    impl->ref();
+END
+    if ($serializedAttribute) {
+        GenerateEagerDeserialization($serializedAttribute);
+    }
+    push(@implContent, <<END);
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 END
 
@@ -2409,9 +2443,9 @@ END
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
     if ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName, $serializedAttribute);
     } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName, $serializedAttribute);
     } elsif (IsConstructorTemplate($dataNode, "Event")) {
         GenerateEventConstructorCallback($dataNode, $interfaceName);
     }
@@ -3044,20 +3078,8 @@ END
 END
     push(@implContent, "\n    impl->ref();\n") if IsRefPtrType($interfaceName);
 
-    # Eagerly deserialize attributes of type SerializedScriptValue
-    # while we're in the right context.
     if ($serializedAttribute) {
-        die "Attribute of type SerializedScriptValue expected" if $serializedAttribute->signature->type ne "SerializedScriptValue";
-        my $attrName = $serializedAttribute->signature->name;
-        my $attrAttr = "v8::DontDelete";
-        if ($serializedAttribute->type =~ /^readonly/) {
-            $attrAttr .= " | v8::ReadOnly";
-        }
-        $attrAttr = "static_cast<v8::PropertyAttribute>($attrAttr)";
-        my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
-        push(@implContent, <<END);
-    SerializedScriptValue::deserializeAndSetProperty(wrapper, "${attrName}", ${attrAttr}, impl->${getterFunc}());
-END
+        GenerateEagerDeserialization($serializedAttribute);
     }
 
     push(@implContent, <<END);

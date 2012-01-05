@@ -23,9 +23,11 @@
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
+#include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
@@ -42,6 +44,33 @@ template <typename T> void V8_USE(T) { }
 
 } // namespace TestSerializedScriptValueInterfaceInternal
 
+v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestSerializedScriptValueInterface.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+    if (args.Length() < 2)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, hello, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    bool valueDidThrow = false;
+    RefPtr<SerializedScriptValue> value = SerializedScriptValue::create(args[1], 0, 0, valueDidThrow);
+    if (valueDidThrow)
+        return v8::Undefined();
+
+    RefPtr<TestSerializedScriptValueInterface> impl = TestSerializedScriptValueInterface::create(hello, value);
+    v8::Handle<v8::Object> wrapper = args.Holder();
+
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
+    impl->ref();
+    SerializedScriptValue::deserializeAndSetProperty(wrapper, "value", static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly), impl->value());
+    V8DOMWrapper::setJSWrapperForDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
+    return args.Holder();
+}
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();
@@ -51,6 +80,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
         0, 0,
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
+    desc->SetCallHandler(V8TestSerializedScriptValueInterface::constructorCallback);
     
 
     // Custom toString template

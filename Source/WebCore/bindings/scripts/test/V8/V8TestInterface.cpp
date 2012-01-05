@@ -115,13 +115,14 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     if (!context)
         return throwError("TestInterface constructor's associated context is not available", V8Proxy::ReferenceError);
 
-    RefPtr<TestInterface> obj = TestInterface::create(context, str1, str2, ec);
+    RefPtr<TestInterface> impl = TestInterface::create(context, str1, str2, ec);
+    v8::Handle<v8::Object> wrapper = args.Holder();
     if (ec)
         goto fail;
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
-    obj->ref();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
+    impl->ref();
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
   fail:
     return throwError(ec);

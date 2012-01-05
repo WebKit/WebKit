@@ -1,5 +1,47 @@
 2012-01-05  Adam Barth  <abarth@webkit.org>
 
+        [V8] CodeGeneration for SerializedScriptValue doesn't play nice with [Constructor]
+        https://bugs.webkit.org/show_bug.cgi?id=75641
+
+        Reviewed by David Levin.
+
+        Rather than generate getters for SerializedScriptValues, we eagerly
+        deserialize them into JavaScript objects.  However, previously, we were
+        only doing that for DOM wrappers created by taking an existing C++
+        object and wrapping it.  For objects created with Constructors (e.g.,
+        those with the [Constructor] attribute), we need to do this eager
+        deserialization during the constructor as well.
+
+        This bug isn't observable yet, but it is causing the WebIntent test
+        being added in Bug 73051 to fail.
+
+        Test: TestSerializedScriptValueInterface.idl
+              webintents/web-intents-api.html (after Bug 73051 lands)
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateEagerDeserialization):
+        (GenerateConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateImplementation):
+        (GenerateToV8Converters):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::getConstructData):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::constructorCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        (WebCore::ConfigureV8TestSerializedScriptValueInterfaceTemplate):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+
+2012-01-05  Adam Barth  <abarth@webkit.org>
+
         Introduce Platform namespace for WebCore/platform
         https://bugs.webkit.org/show_bug.cgi?id=75653
 

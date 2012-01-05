@@ -1548,11 +1548,12 @@ v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    RefPtr<TestObj> obj = TestObj::create();
+    RefPtr<TestObj> impl = TestObj::create();
+    v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
-    obj->ref();
-    V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
+    impl->ref();
+    V8DOMWrapper::setJSWrapperForDOMObject(impl.get(), v8::Persistent<v8::Object>::New(wrapper));
     return args.Holder();
 }
 

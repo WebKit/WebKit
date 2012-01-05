@@ -131,6 +131,8 @@ public:
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
+    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestSerializedScriptValueInterface(JSC::ExecState*);
+    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
 // Attributes
