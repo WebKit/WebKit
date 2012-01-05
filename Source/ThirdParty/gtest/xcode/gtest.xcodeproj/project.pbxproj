@@ -939,10 +939,6 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_PREFIX_HEADER = "$(PROJECT_TEMP_DIR)/Version.h";
 				INFOPLIST_PREPROCESS = YES;
@@ -957,10 +953,6 @@
 			buildSettings = {
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest;
 			};
 			name = Production;
@@ -969,10 +961,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					../,
-					../include/,
-				);
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Production;
@@ -980,7 +968,6 @@
 		44C48E0814A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Production;
@@ -988,7 +975,6 @@
 		44C48E0914A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = ../;
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Production;

@@ -1,5 +1,15 @@
 2012-01-04  David Kilzer  <ddkilzer@apple.com>
 
+        Remove HEADER_SEARCH_PATHS from Production configurations for gtest
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Remove
+        HEADER_SEARCH_PATHS from Production configurations to match
+        changes made for Debug and Release configurations in r104091.
+
+2012-01-04  David Kilzer  <ddkilzer@apple.com>
+
         TestWebKitAPI has issues due to FastMalloc incompatibility
         <http://webkit.org/b/66521>
         <rdar://problem/10607911>
