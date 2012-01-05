@@ -1,5 +1,11 @@
 2012-01-04  David Levin  <levin@chromium.org>
 
+        Attempt Chromium build fix.
+
+        * src/WorkerFileSystemCallbacksBridge.h:
+
+2012-01-04  David Levin  <levin@chromium.org>
+
         [chromium] Remove AllowCrossThreadAccess in WorkerFileSystemCallbacksBridge.
         https://bugs.webkit.org/show_bug.cgi?id=75579
 

@@ -73,6 +73,8 @@ struct WebFileSystemEntry;
 //      This calls the original callbacks (m_callbacksOnWorkerThread).
 class WorkerFileSystemCallbacksBridge : public ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge> {
 public:
+    ~WorkerFileSystemCallbacksBridge();
+
     void stop();
 
     static PassRefPtr<WorkerFileSystemCallbacksBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, WebCore::ScriptExecutionContext* workerContext, WebFileSystemCallbacks* callbacks)
@@ -101,10 +103,7 @@ public:
     void didReadDirectoryOnMainThread(const WebVector<WebFileSystemEntry>&, bool hasMore, const String& mode);
 
 private:
-    friend class ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge>;
-
     WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacks*);
-    ~WorkerFileSystemCallbacksBridge();
 
     // Methods that are to be called on the main thread.
     static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
