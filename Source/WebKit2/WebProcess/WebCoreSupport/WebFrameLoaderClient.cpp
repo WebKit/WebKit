@@ -1438,7 +1438,7 @@ void WebFrameLoaderClient::didChangeScrollOffset()
 
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
-    return WebFrameNetworkingContext::create(m_frame->coreFrame());
+    return WebFrameNetworkingContext::create(m_frame);
 }
 
 } // namespace WebKit

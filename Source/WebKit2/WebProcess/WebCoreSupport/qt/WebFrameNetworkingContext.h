@@ -22,21 +22,28 @@
 
 #include <WebCore/FrameNetworkingContext.h>
 
+#include <wtf/OwnPtr.h>
+
+namespace WebKit {
+class WebFrame;
+}
+
 namespace WebCore {
 
 class WebFrameNetworkingContext : public FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(Frame*);
+    static PassRefPtr<WebFrameNetworkingContext> create(WebKit::WebFrame*);
 
 private:
-    WebFrameNetworkingContext(Frame*);
+    WebFrameNetworkingContext(WebKit::WebFrame*);
+    virtual ~WebFrameNetworkingContext();
 
     virtual QObject* originatingObject() const;
     virtual QNetworkAccessManager* networkAccessManager() const;
     virtual bool mimeSniffingEnabled() const;
     virtual bool thirdPartyCookiePolicyPermission(const QUrl&) const;
 
-    QObject* m_originatingObject;
+    OwnPtr<QObject> m_originatingObject;
     bool m_mimeSniffingEnabled;
 };
 

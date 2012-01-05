@@ -20,20 +20,22 @@
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
+#include "WebFrame.h"
+
 #import <WebCore/FrameNetworkingContext.h>
 
 namespace WebKit {
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame)
+    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame* frame)
     {
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
 private:
-    WebFrameNetworkingContext(WebCore::Frame* frame)
-        : WebCore::FrameNetworkingContext(frame)
+    WebFrameNetworkingContext(WebFrame* frame)
+        : WebCore::FrameNetworkingContext(frame->coreFrame())
     {
     }
 

@@ -20,20 +20,22 @@
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
+#include "WebFrame.h"
+
 #include <WebCore/FrameNetworkingContext.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame)
+    static PassRefPtr<WebFrameNetworkingContext> create(WebKit::WebFrame* frame)
     {
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
 private:
-    WebFrameNetworkingContext(WebCore::Frame* frame)
-        : WebCore::FrameNetworkingContext(frame)
+    WebFrameNetworkingContext(WebKit::WebFrame* frame)
+        : WebCore::FrameNetworkingContext(frame->coreFrame())
     {
     }
 

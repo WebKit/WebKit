@@ -1,3 +1,44 @@
+2012-01-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Pass WebFrame instead of WebCore::Frame to the WebKit2 specific FrameNetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=75550
+
+        Make the WebKit2 FrameNetworkingContext implementation store the
+        WebFrame instead of the WebCore::Frame as this is needed for the Qt
+        port to implement a.o. HTTP autentication and SSL support.
+
+        As the WebFrameNetworkingContext is partly shared across all WebKit2 ports,
+        all port specific files have been modified.
+
+        For the Qt implementation of FrameNetworkingContext, we also set a
+        property to the originatingObject for the page ID. We also switch to
+        using an OwnPtr instead of a raw C++ pointer for the
+        m_originatingObject member.
+
+        Based on original patch by Peter Hartmann.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/WebCoreSupport/efl/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        (WebKit::WebFrameNetworkingContext::create):
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp:
+        (WebCore::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebCore::WebFrameNetworkingContext::~WebFrameNetworkingContext):
+        (WebCore::WebFrameNetworkingContext::create):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2012-01-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Implement QQuickWebView::inputMethodQuery
