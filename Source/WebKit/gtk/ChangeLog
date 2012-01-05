@@ -1,3 +1,27 @@
+2012-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [AC] Introduce AcceleratedCompositingContext to isolate different accelerated compositing implementations
+        https://bugs.webkit.org/show_bug.cgi?id=75519
+
+        Reviewed by Alejandro G. Castro.
+
+        Add an AcceleratedCompositingContext which will isolate all the different accelerated compositing
+        implementations from one another. For right now this just includes the Clutter version.
+
+        * GNUmakefile.am: Add the new files to the source list.
+        * WebCoreSupport/AcceleratedCompositingContext.h: Added.
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp: Added. Existing
+        clutter AC code has moved here.
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::attachRootGraphicsLayer): Use the new AccleratedCompositingContext now
+        instead of calling into the WebView.
+        (WebKit::ChromeClient::setNeedsOneShotDrawingSynchronization):Ditto.
+        (WebKit::ChromeClient::scheduleCompositingLayerSync): Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_size_allocate): Call in the ACContext.
+        (webkit_web_view_init): Initialize the ACContext.
+        * webkit/webkitwebviewprivate.h: Add the ACContext as a private member.
+
 2012-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use gdk_screen_get_monitor_workarea() when available for screenAvailableRect()

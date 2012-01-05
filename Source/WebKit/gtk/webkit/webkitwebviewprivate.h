@@ -23,6 +23,7 @@
 #ifndef webkitwebviewprivate_h
 #define webkitwebviewprivate_h
 
+#include "AcceleratedCompositingContext.h"
 #include "FullscreenVideoController.h"
 #include "GtkClickCounter.h"
 #include "GtkDragAndDropHelper.h"
@@ -31,11 +32,6 @@
 #include "ResourceHandle.h"
 #include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
-
-#if USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)
-#include <clutter-gtk/clutter-gtk.h>
-#include <clutter/clutter.h>
-#endif
 
 namespace WebKit {
 WebCore::Page* core(WebKitWebView*);
@@ -97,9 +93,9 @@ struct _WebKitWebViewPrivate {
     WebCore::GtkClickCounter clickCounter;
     WebCore::GtkDragAndDropHelper dragAndDropHelper;
     bool selfScrolling;
-#if USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)
-    WebCore::GraphicsLayer* rootGraphicsLayer;
-    GtkWidget* rootLayerEmbedder;
+
+#if USE(ACCELERATED_COMPOSITING)
+    OwnPtr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
 #endif
 };
 
@@ -120,12 +116,6 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);
-
-#if USE(ACCELERATED_COMPOSITING)
-void webViewSetRootGraphicsLayer(WebKitWebView*, WebCore::GraphicsLayer*);
-void webViewDetachRootGraphicsLayer(WebKitWebView*);
-void webViewMarkForSync(WebKitWebView*, gboolean);
-#endif
 }
 
 #endif
