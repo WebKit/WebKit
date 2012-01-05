@@ -76,7 +76,8 @@ public:
 #endif
 
 #if ENABLE(GAMEPAD)
-    GamepadList* webkitGamepads();
+    // FIXME: This method should be in WebCore/Modules/gamepad.
+    GamepadList* gamepads();
 #endif
 
 private:
@@ -86,6 +87,7 @@ private:
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable RefPtr<Geolocation> m_geolocation;
 #if ENABLE(GAMEPAD)
+    // FIXME: This state should be in WebCore/Modules/gamepad.
     mutable RefPtr<GamepadList> m_gamepads;
 #endif
 #if ENABLE(POINTER_LOCK)

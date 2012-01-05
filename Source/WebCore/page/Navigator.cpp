@@ -310,7 +310,7 @@ void Navigator::webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUs
 #endif
 
 #if ENABLE(GAMEPAD)
-GamepadList* Navigator::webkitGamepads()
+GamepadList* Navigator::gamepads()
 {
     if (!m_gamepads)
         m_gamepads = GamepadList::create();

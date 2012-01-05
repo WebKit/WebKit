@@ -1147,6 +1147,7 @@
         'webcore_bindings_idl_files': [
             'Modules/gamepad/Gamepad.idl',
             'Modules/gamepad/GamepadList.idl',
+            'Modules/gamepad/NavigatorGamepad.idl',
             'css/CSSCharsetRule.idl',
             'css/CSSFontFaceRule.idl',
             'css/CSSImportRule.idl',
@@ -1691,6 +1692,8 @@
             'Modules/gamepad/Gamepad.h',
             'Modules/gamepad/GamepadList.cpp',
             'Modules/gamepad/GamepadList.h',
+            'Modules/gamepad/NavigatorGamepad.cpp',
+            'Modules/gamepad/NavigatorGamepad.h',
             'accessibility/AXObjectCache.cpp',
             'accessibility/AccessibilityARIAGrid.cpp',
             'accessibility/AccessibilityARIAGrid.h',

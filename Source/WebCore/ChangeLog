@@ -1,3 +1,26 @@
+2012-01-05  Adam Barth  <abarth@webkit.org>
+
+        Move Gamepad declarations from Navigator.idl into Modules/gamepad
+        https://bugs.webkit.org/show_bug.cgi?id=75559
+
+        Reviewed by Eric Seidel.
+
+        This patch moves the gamepad-related declarations in Navigator.idl into
+        Modules/gamepad.  The next step is to move the state into
+        Modules/gamepad as well.
+
+        * Modules/gamepad/NavigatorGamepad.cpp: Added.
+        (WebCore::NavigatorGamepad::NavigatorGamepad):
+        (WebCore::NavigatorGamepad::~NavigatorGamepad):
+        (WebCore::NavigatorGamepad::webkitGamepads):
+        * Modules/gamepad/NavigatorGamepad.h: Added.
+        * Modules/gamepad/NavigatorGamepad.idl: Added.
+        * WebCore.gypi:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::gamepads):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+
 2012-01-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for border-image is not implemented.
