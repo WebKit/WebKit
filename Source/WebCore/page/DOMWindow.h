@@ -417,6 +417,12 @@ namespace WebCore {
     private:
         DOMWindow(Frame*);
 
+        // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
+        // when its document is no longer the document that is displayed in its
+        // frame), we would like to zero out m_frame to avoid being confused
+        // by the document that is currently active in m_frame.
+        bool isCurrentlyDisplayedInFrame() const;
+
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
         virtual EventTargetData* eventTargetData();
