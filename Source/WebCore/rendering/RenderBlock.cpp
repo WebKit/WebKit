@@ -5442,29 +5442,6 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
                 floatRightWidth += w;
         } else
             m_maxPreferredLogicalWidth = max(w, m_maxPreferredLogicalWidth);
-
-        // A very specific WinIE quirk.
-        // Example:
-        /*
-           <div style="position:absolute; width:100px; top:50px;">
-              <div style="position:absolute;left:0px;top:50px;height:50px;background-color:green">
-                <table style="width:100%"><tr><td></table>
-              </div>
-           </div>
-        */
-        // In the above example, the inner absolute positioned block should have a computed width
-        // of 100px because of the table.
-        // We can achieve this effect by making the maxwidth of blocks that contain tables
-        // with percentage widths be infinite (as long as they are not inside a table cell).
-        // FIXME: There is probably a bug here with orthogonal writing modes since we check logicalWidth only using the child's writing mode.
-        if (containingBlock && document()->inQuirksMode() && child->style()->logicalWidth().isPercent()
-            && !isTableCell() && child->isTable() && m_maxPreferredLogicalWidth < BLOCK_MAX_WIDTH) {
-            RenderBlock* cb = containingBlock;
-            while (!cb->isRenderView() && !cb->isTableCell())
-                cb = cb->containingBlock();
-            if (!cb->isTableCell())
-                m_maxPreferredLogicalWidth = BLOCK_MAX_WIDTH;
-        }
         
         child = child->nextSibling();
     }

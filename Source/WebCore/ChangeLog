@@ -1,3 +1,20 @@
+2012-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        IE quirk for percentage size on a table element doesn't work with orthogonal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=70195
+
+        Reviewed by Eric Seidel.
+
+        Remove this quirk entirely. Mozilla and Opera don't implement it and IE
+        doesn't restrict the quirk to standards mode. As it's unlikely for
+        webkit-only content to hit this quirk (e.g. use tables for layout),
+        it should be relatively safe to match Mozilla/Opera here.
+
+        Test: fast/writing-mode/table-percent-width-quirk.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+
 2012-01-05  Tien Ren Chen  <trchen@chromium.org>
 
         [chromium] Add CCTimer class for the compositor
