@@ -440,6 +440,10 @@
 			Name="text"
 			>
 			<File
+				RelativePath="..\..\wtf\text\ASCIIFastPath.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtf\text\AtomicString.cpp"
 				>
 			</File>

@@ -245,7 +245,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 if (isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
                         MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
-                        if (!isAllASCII(chunk))
+                        if (!isAllASCII<LChar>(chunk))
                             break;
                         copyASCIIMachineWord(destination, source);
                         source += sizeof(MachineWord);

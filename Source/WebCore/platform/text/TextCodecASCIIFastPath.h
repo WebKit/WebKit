@@ -27,25 +27,11 @@
 #ifndef TextCodecASCIIFastPath_h
 #define TextCodecASCIIFastPath_h
 
-#include <stdint.h>
+#include <wtf/text/ASCIIFastPath.h>
+
+using namespace WTF;
 
 namespace WebCore {
-
-// Assuming that a pointer is the size of a "machine word", then
-// uintptr_t is an integer type that is also a machine word.
-typedef uintptr_t MachineWord;
-
-// This constant has type uintptr_t since we will use it to align
-// pointers. Not because MachineWord is uintptr_t.
-const uintptr_t machineWordAlignmentMask = sizeof(MachineWord) - 1;
-
-template<size_t size> struct NonASCIIMask;
-template<> struct NonASCIIMask<4> {
-    static unsigned value() { return 0x80808080U; }
-};
-template<> struct NonASCIIMask<8> {
-    static unsigned long long value() { return 0x8080808080808080ULL; }
-};
 
 template<size_t size> struct UCharByteFiller;
 template<> struct UCharByteFiller<4> {
@@ -71,24 +57,9 @@ template<> struct UCharByteFiller<8> {
     }
 };
 
-inline bool isAllASCII(MachineWord word)
-{
-    return !(word & NonASCIIMask<sizeof(MachineWord)>::value());
-}
-
 inline void copyASCIIMachineWord(UChar* destination, const uint8_t* source)
 {
-    UCharByteFiller<sizeof(MachineWord)>::copy(destination, source);
-}
-
-inline bool isAlignedToMachineWord(const void* pointer)
-{
-    return !(reinterpret_cast<uintptr_t>(pointer) & machineWordAlignmentMask);
-}
-
-template<typename T> inline T* alignToMachineWord(T* pointer)
-{
-    return reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(pointer) & ~machineWordAlignmentMask);
+    UCharByteFiller<sizeof(WTF::MachineWord)>::copy(destination, source);
 }
 
 } // namespace WebCore

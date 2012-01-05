@@ -232,6 +232,7 @@
             'wtf/dtoa/fixed-dtoa.h',
             'wtf/dtoa/strtod.h',
             'wtf/dtoa/utils.h',
+            'wtf/text/ASCIIFastPath.h',
             'wtf/text/AtomicString.h',
             'wtf/text/AtomicStringHash.h',
             'wtf/text/AtomicStringImpl.h',

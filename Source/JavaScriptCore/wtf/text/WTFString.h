@@ -25,6 +25,7 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
+#include "ASCIIFastPath.h"
 #include "StringImpl.h"
 
 #ifdef __OBJC__
@@ -61,7 +62,6 @@ struct StringHash;
 
 // Declarations of string operations
 
-template<typename CharType> inline bool charactersAreAllASCII(const CharType* characters, size_t length);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
@@ -481,17 +481,6 @@ inline bool String::containsOnlyLatin1() const
 // entrenched clients
 inline NSString* nsStringNilIfEmpty(const String& str) {  return str.isEmpty() ? nil : (NSString*)str; }
 #endif
-
-template<typename CharType>
-inline bool charactersAreAllASCII(const CharType* characters, size_t length)
-{
-    CharType ored = 0;
-    for (size_t i = 0; i < length; ++i)
-        ored |= characters[i];
-
-    CharType lowBits = 0x7F;
-    return !(ored & ~lowBits);
-}
 
 inline bool String::containsOnlyASCII() const
 {

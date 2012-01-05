@@ -269,6 +269,7 @@
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41359CF40FDD89CB00206180 /* DateMath.cpp */; };
 		41359CF70FDD89CB00206180 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 41359CF50FDD89CB00206180 /* DateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		434A8E7114956A50009126F7 /* ASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 434A8E7014956A50009126F7 /* ASCIIFastPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4409D8470FAF80A200523B87 /* OwnPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44DD48530FAEA85000D6B4EB /* PassOwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1019,6 +1020,7 @@
 		2CFC5B7A12F44714004914E2 /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		41359CF40FDD89CB00206180 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		41359CF50FDD89CB00206180 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
+		434A8E7014956A50009126F7 /* ASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ASCIIFastPath.h; path = text/ASCIIFastPath.h; sourceTree = "<group>"; };
 		440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtrCommon.h; sourceTree = "<group>"; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnPtr.h; sourceTree = "<group>"; };
@@ -2319,6 +2321,7 @@
 		8656573E115BE35200291F40 /* text */ = {
 			isa = PBXGroup;
 			children = (
+				434A8E7014956A50009126F7 /* ASCIIFastPath.h */,
 				868BFA00117CEFD100B908B1 /* AtomicString.cpp */,
 				868BFA01117CEFD100B908B1 /* AtomicString.h */,
 				86F38858121130CA007A7CE3 /* AtomicStringHash.h */,
@@ -2576,6 +2579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */,
+				434A8E7114956A50009126F7 /* ASCIIFastPath.h in Headers */,
 				860161E30F3A83C100F84710 /* AbstractMacroAssembler.h in Headers */,
 				BC18C3E40E16F5CD00B34460 /* AlwaysInline.h in Headers */,
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,

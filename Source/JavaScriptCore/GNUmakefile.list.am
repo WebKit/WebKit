@@ -656,6 +656,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.cpp \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.h \
 	Source/JavaScriptCore/wtf/TemporaryChange.h \
+	Source/JavaScriptCore/wtf/text/ASCIIFastPath.h \
 	Source/JavaScriptCore/wtf/text/AtomicString.cpp \
 	Source/JavaScriptCore/wtf/text/AtomicString.h \
 	Source/JavaScriptCore/wtf/text/AtomicStringHash.h \

@@ -1,3 +1,14 @@
+2012-01-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve charactersAreAllASCII() to compare multiple characters at a time
+        https://bugs.webkit.org/show_bug.cgi?id=74063
+
+        Reviewed by Darin Adler.
+
+        Add forwarding header for ASCIIFastPath.h.
+
+        * ForwardingHeaders/wtf/text/ASCIIFastPath.h: Added.
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize destructors

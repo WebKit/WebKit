@@ -127,6 +127,7 @@ HEADERS += \
     TCPackedCache.h \
     TCSpinLock.h \
     TCSystemAlloc.h \
+    text/ASCIIFastPath.h \
     text/AtomicString.h \
     text/AtomicStringHash.h \
     text/AtomicStringImpl.h \

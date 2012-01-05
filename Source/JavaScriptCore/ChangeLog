@@ -1,3 +1,32 @@
+2012-01-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve charactersAreAllASCII() to compare multiple characters at a time
+        https://bugs.webkit.org/show_bug.cgi?id=74063
+
+        Reviewed by Darin Adler.
+
+        A new header ASCIIFastPath.h contains the functions related to
+        the detection of ASCII by using machine words. Part of it comes from
+        WebCore's TextCodecASCIIFastPath.h.
+
+        The function charactersAreAllASCII() is moved to TextCodecASCIIFastPath.h
+        and is implemented with computer word comparison.
+        The gain over the previous implementation of charactersAreAllASCII() is of
+        the order of how many comparison are avoided (4x, 8x, 16x depending on the
+        format and the CPU type).
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/text/ASCIIFastPath.h: Added.
+        (WTF::isAlignedToMachineWord):
+        (WTF::alignToMachineWord):
+        (WTF::isAllASCII):
+        (WTF::charactersAreAllASCII):
+        * wtf/text/WTFString.h:
+        * wtf/wtf.pro:
+
 2012-01-05  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/75606> [Mac] WTF logging functions should output to both stderr and ASL
