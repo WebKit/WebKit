@@ -5376,6 +5376,7 @@ void RenderBlock::updateFirstLetter()
         RenderObject* firstLetter = currChild->parent();
         RenderObject* firstLetterContainer = firstLetter->parent();
         RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+        ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
         if (Node::diff(firstLetter->style(), pseudoStyle) == Node::Detach) {
             // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
@@ -5406,7 +5407,7 @@ void RenderBlock::updateFirstLetter()
                 next = next->nextSibling();
             }
             if (remainingText) {
-                ASSERT(remainingText->node()->renderer() == remainingText);
+                ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
                 // Replace the old renderer with the new one.
                 remainingText->setFirstLetter(newFirstLetter);
             }
