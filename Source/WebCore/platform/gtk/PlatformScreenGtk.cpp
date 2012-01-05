@@ -49,10 +49,7 @@ static GtkWidget* getToplevel(GtkWidget* widget)
 
 static GdkVisual* getVisual(Widget* widget)
 {
-    if (!widget)
-        return 0;
-
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
+    GtkWidget* container = widget ? GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()) : 0;
     if (!container) {
         GdkScreen* screen = gdk_screen_get_default();
         return screen ? gdk_screen_get_system_visual(screen) : 0;
@@ -105,10 +102,7 @@ static GdkScreen* getScreen(GtkWidget* widget)
 
 FloatRect screenRect(Widget* widget)
 {
-    if (!widget)
-        return FloatRect();
-
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
+    GtkWidget* container = widget ? GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()) : 0;
     if (container)
         container = getToplevel(container);
 
@@ -126,10 +120,7 @@ FloatRect screenRect(Widget* widget)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    if (!widget)
-        return FloatRect();
-
-    GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
+    GtkWidget* container = widget ? GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()) : 0;
     if (container && !gtk_widget_get_realized(container))
         return screenRect(widget);
 

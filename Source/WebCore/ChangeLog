@@ -1,3 +1,18 @@
+2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use the default screen in PlatformScreenGtk methods when they are called with a NULL widget
+        https://bugs.webkit.org/show_bug.cgi?id=75620
+
+        Reviewed by Philippe Normand.
+
+        We are currently retuning an empty rectangle for
+        screenRect/screenAvailableRect and 0 for getVisual.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getVisual):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2012-01-05  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.
