@@ -1,5 +1,19 @@
 2011-1-4  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97114
+
+    2011-10-10  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10246137> Duplicate ::after content when both ::before and ::after are styled as table parts
+
+            Reviewed by Sam Weinig.
+
+            * fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+            * fast/css-generated-content/table-parts-before-and-after-expected.txt: Added.
+            * fast/css-generated-content/table-parts-before-and-after.html: Added.
+
+2011-1-4  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97075
 
     2011-10-10  Abhishek Arya  <inferno@chromium.org>

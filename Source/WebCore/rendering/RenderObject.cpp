@@ -304,7 +304,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (needsTable) {
         RenderTable* table;
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children->lastChild();
-        if (afterChild && afterChild->isAnonymous() && afterChild->isTable())
+        if (afterChild && afterChild->isAnonymous() && afterChild->isTable() && !afterChild->isBeforeContent())
             table = toRenderTable(afterChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
