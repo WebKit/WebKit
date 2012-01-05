@@ -868,20 +868,6 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
-// These are temprorary while we figure out a Skia behavior change after a Skia roll to 2918.
-BUGWK75019 : svg/custom/dasharrayOrigin.svg = PASS IMAGE+TEXT
-BUGWK75019 : svg/custom/marker-empty-path.svg = PASS IMAGE+TEXT
-BUGWK75019 : svg/custom/marker-overflow-clip.svg = PASS IMAGE+TEXT
-BUGWK75019 : svg/W3C-SVG-1.1/paths-data-01-t.svg = PASS IMAGE
-BUGWK75019 : svg/custom/animate-path-morphing.svg = PASS IMAGE
-BUGWK75019 : svg/custom/dynamic-svg-document-creation.svg = PASS IMAGE
-BUGWK75019 : svg/custom/js-update-path-changes.svg = PASS IMAGE
-BUGWK75019 : svg/custom/js-update-path-removal.svg = PASS IMAGE
-BUGWK75019 : fast/canvas/canvas-fillPath-alpha-shadow.html = PASS TEXT
-BUGWK75019 : fast/canvas/canvas-fillPath-gradient-shadow.html = PASS TEXT
-BUGWK75019 : fast/canvas/canvas-fillPath-pattern-shadow.html = PASS TEXT
-BUGWK75019 : svg/custom/subpaths-moveto-only-rendering.svg = PASS TEXT
-
 // We show reduced version of the entire SVN image rather than an image
 BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
