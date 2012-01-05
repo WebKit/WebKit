@@ -48,55 +48,29 @@ namespace WebCore {
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
 
-#if PLATFORM(WIN)
-#ifdef DEBUG_ALL
-SOFT_LINK_DEBUG_LIBRARY(CFNetwork)
-#else
-SOFT_LINK_LIBRARY(CFNetwork)
-#endif
-#else
-SOFT_LINK_FRAMEWORK_IN_CORESERVICES_UMBRELLA(CFNetwork)
-#endif
-
-SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyDomain, CFStringRef, __cdecl, (CFHTTPCookieRef))
-SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieGetExpirationTime, CFAbsoluteTime, __cdecl, (CFHTTPCookieRef))
-SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyName, CFStringRef, __cdecl, (CFHTTPCookieRef))
-SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyPath, CFStringRef, __cdecl, (CFHTTPCookieRef))
-SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyValue, CFStringRef, __cdecl, (CFHTTPCookieRef))
-
 static inline RetainPtr<CFStringRef> cookieDomain(CFHTTPCookieRef cookie)
 {
-    if (CFHTTPCookieCopyDomainPtr())
-        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyDomainPtr()(cookie));
-    return CFHTTPCookieGetDomain(cookie);
+    return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyDomain(cookie));
 }
 
 static inline CFAbsoluteTime cookieExpirationTime(CFHTTPCookieRef cookie)
 {
-    if (CFHTTPCookieGetExpirationTimePtr())
-        return CFHTTPCookieGetExpirationTimePtr()(cookie);
-    return CFDateGetAbsoluteTime(CFHTTPCookieGetExpiratonDate(cookie));
+    return CFHTTPCookieGetExpirationTime(cookie);
 }
 
 static inline RetainPtr<CFStringRef> cookieName(CFHTTPCookieRef cookie)
 {
-    if (CFHTTPCookieCopyNamePtr())
-        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyNamePtr()(cookie));
-    return CFHTTPCookieGetName(cookie);
+    return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyName(cookie));
 }
 
 static inline RetainPtr<CFStringRef> cookiePath(CFHTTPCookieRef cookie)
 {
-    if (CFHTTPCookieCopyPathPtr())
-        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyPathPtr()(cookie));
-    return CFHTTPCookieGetPath(cookie);
+    return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyPath(cookie));
 }
 
 static inline RetainPtr<CFStringRef> cookieValue(CFHTTPCookieRef cookie)
 {
-    if (CFHTTPCookieCopyValuePtr())
-        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyValuePtr()(cookie));
-    return CFHTTPCookieGetValue(cookie);
+    return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyValue(cookie));
 }
 
 static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
