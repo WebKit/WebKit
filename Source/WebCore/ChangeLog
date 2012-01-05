@@ -1,3 +1,18 @@
+2012-01-05  Max Vujovic  <mvujovic@adobe.com>
+
+        WebKit adds vertical paddings and borders to the fixed width of CSS tables
+        https://bugs.webkit.org/show_bug.cgi?id=74955
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/table/css-table-width.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+
+            Changed the width calculation for CSS tables to take into account horizontal
+            paddings and borders instead of vertical paddings and borders.
+
 2012-01-05  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Upstream the RenderTheme and ScrollbarTheme for Android

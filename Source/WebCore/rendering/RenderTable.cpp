@@ -233,11 +233,9 @@ void RenderTable::computeLogicalWidth()
         // HTML tables size as though CSS width includes border/padding, CSS tables do not.
         LayoutUnit borders = 0;
         if (logicalWidthType != Percent && (!node() || !node()->hasTagName(tableTag))) {
-            bool collapsing = collapseBorders();
-            LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0 : paddingBefore());
-            LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0 : paddingAfter());
-            borders = borderAndPaddingBefore + borderAndPaddingAfter;
-        }
+            recalcBordersInRowDirection();
+            borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
+         }
         setLogicalWidth(style()->logicalWidth().calcMinValue(containerWidthInInlineDirection) + borders);
         setLogicalWidth(max(minPreferredLogicalWidth(), logicalWidth()));
     } else {
