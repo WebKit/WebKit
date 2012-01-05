@@ -3870,3 +3870,4 @@ BUGWK75418 : css2.1/20110323/border-collapse-offset-002.htm = MISSING
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
+BUGWK75083 : perf/nested-combined-selectors.html = MISSING
