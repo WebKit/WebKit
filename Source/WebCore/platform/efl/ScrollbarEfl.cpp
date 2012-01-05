@@ -160,8 +160,8 @@ void ScrollbarEfl::updateThumbPositionAndProportion()
     m_lastTotalSize = tSize;
     m_lastVisibleSize = vSize;
 
-    Edje_Message_Float_Set* message = static_cast<Edje_Message_Float_Set*>
-        (alloca(sizeof(Edje_Message_Float_Set) + sizeof(float)));
+    char buffer[sizeof(Edje_Message_Float_Set) + sizeof(double)];
+    Edje_Message_Float_Set* message = reinterpret_cast<Edje_Message_Float_Set*>(buffer);
     message->count = 2;
 
     if (tSize - vSize > 0)

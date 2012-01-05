@@ -1,3 +1,18 @@
+2012-01-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Replace alloca to C++ new placement.
+        https://bugs.webkit.org/show_bug.cgi?id=72017
+
+        Reviewed by Andreas Kling.
+
+        Replaces alloca to C++ new placement as it is not very portable.
+        It allows to skip checking of memory allocation as new never returns NULL.
+        According to Edje's documentation type of val (member of Edje_Message_Float_Set)
+        is double so I changed it to avoid undefined behaviour.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::updateThumbPositionAndProportion):
+
 2012-01-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove duplicate file references from WebCore.xcodeproj
