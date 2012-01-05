@@ -710,13 +710,17 @@ RenderBlock* RenderObject::containingBlock() const
             o = o->parent();
     } else if (!isText() && m_style->position() == AbsolutePosition) {
         while (o && (o->style()->position() == StaticPosition || (o->isInline() && !o->isReplaced())) && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
-            // For relpositioned inlines, we return the nearest enclosing block.  We don't try
+            // For relpositioned inlines, we return the nearest non-anonymous enclosing block. We don't try
             // to return the inline itself.  This allows us to avoid having a positioned objects
             // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
             // from this method.  The container() method can actually be used to obtain the
             // inline directly.
-            if (o->style()->position() == RelativePosition && o->isInline() && !o->isReplaced())
-                return o->containingBlock();
+            if (o->style()->position() == RelativePosition && o->isInline() && !o->isReplaced()) {
+                RenderBlock* relPositionedInlineContainingBlock = o->containingBlock();
+                while (relPositionedInlineContainingBlock->isAnonymousBlock())
+                    relPositionedInlineContainingBlock = relPositionedInlineContainingBlock->containingBlock();
+                return relPositionedInlineContainingBlock;
+            }
 #if ENABLE(SVG)
             if (o->isSVGForeignObject()) //foreignObject is the containing block for contents inside it
                 break;
