@@ -1,3 +1,20 @@
+2012-01-05  Cary Clark  <caryclark@google.com>
+
+        [Skia Mac] Rounded bezel style button needs one more local graphics context to scale
+        https://bugs.webkit.org/show_bug.cgi?id=75623
+        http://code.google.com/p/chromium/issues/detail?id=108749
+
+        In paintButton(), the local context is set up first, and later the context is
+        scaled if there's a zoomFactor. Skia creates the CoreGraphics context to draw the
+        button into without that scale factor. To fix this, another local context is added
+        after the parameter context scale, before the button draw. The first local context
+        is still required to restore the parameter context state.
+
+        Reviewed by Stephen White.
+
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::paintButton):
+
 2012-01-05  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for background is not implemented.

@@ -595,6 +595,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     }
 
     {
+        LocalCurrentGraphicsContext localContext(context);
         FocusIndicationFix::ScopedFixer fix;
         [buttonCell drawWithFrame:NSRect(inflatedRect) inView:FlippedView()];
     }
