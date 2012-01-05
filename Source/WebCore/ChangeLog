@@ -1,3 +1,23 @@
+2012-01-05  Antti Koivisto  <antti@apple.com>
+
+        Improve SelectorChecker::determineSelectorScopes
+        https://bugs.webkit.org/show_bug.cgi?id=75619
+
+        Reviewed by Andreas Kling.
+
+        SelectorChecker::determineSelectorScopes currently searches to the end of the selector chain and
+        then sees if the last one is suitable to be a scope. A better algorithm will find a scope from
+        anywhere in the chain.
+        
+        With this patch we search the whole chain for potential scopes. We now prefer id scopes
+        over class scopes. Scopes can be found for rules using sibling selectors too.
+        
+        On both engadget.com and nytimes.com, we can now skip one more full style recalc due to 
+        the improved stylesheet analysis. 
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::determineSelectorScopes):
+
 2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use the default screen in PlatformScreenGtk methods when they are called with a NULL widget

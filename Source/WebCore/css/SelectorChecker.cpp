@@ -1402,23 +1402,25 @@ bool SelectorChecker::isFrameFocused(const Element* element)
 bool SelectorChecker::determineSelectorScopes(const CSSSelectorList& selectorList, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
 {
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-        CSSSelector* rightmostSelector = selector;
-        CSSSelector::Relation relation = CSSSelector::Descendant;
-        for (;rightmostSelector->tagHistory(); rightmostSelector = rightmostSelector->tagHistory()) {
-            if (rightmostSelector->relation() != CSSSelector::SubSelector)
-                relation = rightmostSelector->relation();
+        CSSSelector* scopeSelector = 0;
+        // This picks the widest scope, not the narrowest, to minimize the number of found scopes.
+        for (CSSSelector* current = selector; current; current = current->tagHistory()) {
+            // Prefer ids over classes.
+            if (current->m_match == CSSSelector::Id)
+                scopeSelector = current;
+            else if (current->m_match == CSSSelector::Class && (!scopeSelector || scopeSelector->m_match != CSSSelector::Id))
+                scopeSelector = current;
+            CSSSelector::Relation relation = current->relation();
+            if (relation != CSSSelector::Descendant && relation != CSSSelector::Child && relation != CSSSelector::SubSelector)
+                break;
         }
-        if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
+        if (!scopeSelector)
             return false;
-        if (rightmostSelector->m_match == CSSSelector::Id) {
-            idScopes.add(rightmostSelector->value().impl());
-            continue;
-        }
-        if (rightmostSelector->m_match == CSSSelector::Class) {
-            classScopes.add(rightmostSelector->value().impl());
-            continue;
-        }
-        return false;
+        ASSERT(scopeSelector->m_match == CSSSelector::Class || scopeSelector->m_match == CSSSelector::Id);
+        if (scopeSelector->m_match == CSSSelector::Id)
+            idScopes.add(scopeSelector->value().impl());
+        else
+            classScopes.add(scopeSelector->value().impl());
     }
     return true;
 }
