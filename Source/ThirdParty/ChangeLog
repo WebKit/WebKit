@@ -1,3 +1,13 @@
+2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Made Debug/Release builds of gtest build only for the active architecture.
+
+        Reviewed by Dave Kilzer.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ProductionProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
 2012-01-04  David Kilzer  <ddkilzer@apple.com>
 
         Remove HEADER_SEARCH_PATHS from Production configurations for gtest

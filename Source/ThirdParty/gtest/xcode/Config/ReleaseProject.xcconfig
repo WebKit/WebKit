@@ -33,3 +33,5 @@ STRIP_STYLE = all
 
 // Used by HEADER_SEARCH_PATHS in General.xcconfig
 WEBCORE_PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
+
+ONLY_ACTIVE_ARCH = YES
