@@ -61,6 +61,16 @@ module html {
 
         readonly attribute FileError error;
 
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in [Optional] boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in [Optional] boolean useCapture);
+        boolean dispatchEvent(in Event evt)
+            raises(EventException);
+
         attribute EventListener onloadstart;
         attribute EventListener onprogress;
         attribute EventListener onload;
