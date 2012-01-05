@@ -44,6 +44,8 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/Plugins/efl/PluginInfoStoreEfl.cpp
     UIProcess/Plugins/efl/PluginProcessProxyEfl.cpp
 
+    WebProcess/Downloads/efl/DownloadEfl.cpp
+
     WebProcess/efl/WebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
 
@@ -116,7 +118,6 @@ IF (WTF_USE_SOUP)
     LIST(APPEND WebKit2_LIBRARIES ${LIBSOUP24_LIBRARIES})
     LIST(APPEND WebKit2_SOURCES
         WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
-        WebProcess/Downloads/soup/DownloadSoup.cpp
     )
 
     ADD_CUSTOM_TARGET(forwarding-headerSoup
@@ -133,7 +134,6 @@ IF (WTF_USE_CURL)
     LIST(APPEND WebKit2_LIBRARIES ${CURL_LIBRARIES})
     LIST(APPEND WebKit2_SOURCES
         WebProcess/Cookies/curl/WebCookieManagerCurl.cpp
-        WebProcess/Downloads/curl/DownloadCurl.cpp
     )
 ENDIF ()
 

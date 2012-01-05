@@ -1,3 +1,28 @@
+2012-01-05  Keunsoon Lee  <keunsoon.lee@samsung.com>
+
+        [WK2][EFL] creating dummy functions for Download class on Efl port.
+        https://bugs.webkit.org/show_bug.cgi?id=75246
+
+        dummy functions for Download class on Efl port
+
+        Reviewed by Hajime Morita.
+
+        * PlatformEfl.cmake: add new file to compile
+        * WebProcess/Downloads/efl: Added.
+        * WebProcess/Downloads/efl/DownloadEfl.cpp: Added.
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::didDecideDestination):
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+        (WebKit::Download::useCredential):
+        (WebKit::Download::continueWithoutCredential):
+        (WebKit::Download::cancelAuthenticationChallenge):
+
 2012-01-04  Dan Bernstein  <mitz@apple.com>
 
         Allow WebProcess to launch a client process and become its first WebProcess.
