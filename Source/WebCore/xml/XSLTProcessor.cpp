@@ -84,7 +84,13 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
     if (frame) {
         if (FrameView* view = frame->view())
             view->clear();
-        result->setTransformSourceDocument(frame->document());
+
+        if (Document* oldDocument = frame->document()) {
+            result->setTransformSourceDocument(oldDocument);
+            result->setSecurityOrigin(oldDocument->securityOrigin());
+            result->setCookieURL(oldDocument->cookieURL());
+        }
+
         frame->setDocument(result);
     }
 
