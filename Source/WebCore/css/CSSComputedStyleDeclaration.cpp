@@ -2164,6 +2164,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
         }
         case CSSPropertyBorderImage:
+            return valueForNinePieceImage(style->borderImage(), cssValuePool);
         case CSSPropertyBorderRadius:
             break;
         case CSSPropertyBorderRight: {
