@@ -1,3 +1,9 @@
+2012-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from 116031 to 116459.
+
+        * DEPS:
+
 2012-01-04  David Levin  <levin@chromium.org>
 
         Attempt Chromium build fix.
