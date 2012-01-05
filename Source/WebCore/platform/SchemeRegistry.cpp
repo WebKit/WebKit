@@ -125,6 +125,18 @@ const URLSchemesMap& SchemeRegistry::localSchemes()
     return localURLSchemes();
 }
 
+static URLSchemesMap& schemesAllowingLocalStorageAccessInPrivateBrowsing()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, schemesAllowingLocalStorageAccessInPrivateBrowsing, ());
+    return schemesAllowingLocalStorageAccessInPrivateBrowsing;
+}
+
+static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, schemesAllowingDatabaseAccessInPrivateBrowsing, ());
+    return schemesAllowingDatabaseAccessInPrivateBrowsing;
+}
+
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isEmpty())
@@ -190,6 +202,30 @@ bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
 void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
 {
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(const String& scheme)
+{
+    schemesAllowingLocalStorageAccessInPrivateBrowsing().add(scheme);
+}
+
+bool SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return schemesAllowingLocalStorageAccessInPrivateBrowsing().contains(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme)
+{
+    schemesAllowingDatabaseAccessInPrivateBrowsing().add(scheme);
+}
+
+bool SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
 }
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "Page.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageAreaSync.h"
@@ -94,7 +95,7 @@ StorageAreaImpl::StorageAreaImpl(StorageAreaImpl* area)
     ASSERT(!m_isShutdown);
 }
 
-static bool privateBrowsingEnabled(Frame* frame)
+bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
 {
 #if PLATFORM(CHROMIUM)
     // The frame pointer can be NULL in Chromium since this call is made in a different
@@ -103,7 +104,11 @@ static bool privateBrowsingEnabled(Frame* frame)
     ASSERT(!frame);
     return false;
 #else
-    return frame->page()->settings()->privateBrowsingEnabled();
+    if (!frame->page() || !frame->page()->settings()->privateBrowsingEnabled())
+        return false;
+    if (m_storageType != LocalStorage)
+        return true;
+    return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(frame->document()->securityOrigin()->protocol());
 #endif
 }
 
@@ -137,7 +142,7 @@ String StorageAreaImpl::setItem(const String& key, const String& value, Exceptio
     ASSERT(!value.isNull());
     blockUntilImportComplete();
 
-    if (privateBrowsingEnabled(frame)) {
+    if (disabledByPrivateBrowsingInFrame(frame)) {
         ec = QUOTA_EXCEEDED_ERR;
         return String();
     }
@@ -167,7 +172,7 @@ String StorageAreaImpl::removeItem(const String& key, Frame* frame)
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
-    if (privateBrowsingEnabled(frame))
+    if (disabledByPrivateBrowsingInFrame(frame))
         return String();
 
     String oldValue;
@@ -189,7 +194,7 @@ bool StorageAreaImpl::clear(Frame* frame)
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
-    if (privateBrowsingEnabled(frame))
+    if (disabledByPrivateBrowsingInFrame(frame))
         return false;
 
     if (!m_storageMap->length())

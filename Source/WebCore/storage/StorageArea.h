@@ -54,6 +54,8 @@ namespace WebCore {
         virtual String removeItem(const String& key, Frame* sourceFrame) = 0;
         virtual bool clear(Frame* sourceFrame) = 0;
         virtual bool contains(const String& key) const = 0;
+
+        virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const = 0;
     };
 
 } // namespace WebCore

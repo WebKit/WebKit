@@ -550,6 +550,8 @@ Could be worth adding to the API.
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme;
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme;
++ (void)_registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:(NSString *)scheme;
++ (void)_registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:(NSString *)scheme;
 
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin;
 - (float)_viewScaleFactor;

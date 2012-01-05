@@ -63,6 +63,13 @@ public:
     // passed to SecurityOrigin::canDisplay.
     static bool canDisplayOnlyIfCanRequest(const String& scheme);
     static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme);
+
+    // Let some schemes opt-out of Private Browsing's default behavior of prohibiting read/write
+    // access to Local Storage and Databases.
+    static void registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(const String& scheme);
+    static bool allowsLocalStorageAccessInPrivateBrowsing(const String& scheme);
+    static void registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme);
+    static bool allowsDatabaseAccessInPrivateBrowsing(const String& scheme);
 };
 
 } // namespace WebCore
