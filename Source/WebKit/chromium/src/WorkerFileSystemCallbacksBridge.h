@@ -59,6 +59,9 @@ struct WebFileSystemEntry;
 
 // Used to post a openFileSystem request to the main thread and get called back for the request.
 //
+// Lifetime for this class is maintained by posted "tasks" which ref count it and by MainThreadFileSystemCallbacks.
+// Either a task finishing or the MainThreadFileSystemCallbacks being deleted may release the last ref on WorkerFileSystemCallbacksBridge.
+//
 // A typical flow for openFileSystem would look like this:
 // Bridge::postOpenFileSystemToMainThread() on WorkerThread
 //  --> Bridge::openFileSystemOnMainThread() is called on MainThread
@@ -67,8 +70,7 @@ struct WebFileSystemEntry;
 //  --> MainThreadFileSystemCallbacks::didXxx is called on MainThread
 //  --> Bridge::didXxxOnMainThread is called on MainThread
 //  --> Bridge::didXxxOnWorkerThread is called on WorkerThread
-//      This calls the original callbacks (m_callbacksOnWorkerThread) and
-//      releases a self-reference to the bridge.
+//      This calls the original callbacks (m_callbacksOnWorkerThread).
 class WorkerFileSystemCallbacksBridge : public ThreadSafeRefCounted<WorkerFileSystemCallbacksBridge> {
 public:
     void stop();
@@ -105,26 +107,26 @@ private:
     ~WorkerFileSystemCallbacksBridge();
 
     // Methods that are to be called on the main thread.
-    static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void createFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, bool exclusive, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void createDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, bool exclusive, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void fileExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void directoryExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
-    static void readDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, WorkerFileSystemCallbacksBridge*, const String& mode);
+    static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void createFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, bool exclusive, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void createDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, bool exclusive, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void fileExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void directoryExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void readDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
 
     friend class MainThreadFileSystemCallbacks;
 
     // Methods that dispatch WebFileSystemCallbacks on the worker threads.
-    static void didFailOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, WebFileError);
-    static void didOpenFileSystemOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const String& name, const WebCore::KURL& rootPath);
-    static void didSucceedOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*);
-    static void didReadMetadataOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const WebFileInfo&);
-    static void didReadDirectoryOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const WebVector<WebFileSystemEntry>&, bool hasMore);
+    static void didFailOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, WebFileError);
+    static void didOpenFileSystemOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& name, const WebCore::KURL& rootPath);
+    static void didSucceedOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>);
+    static void didReadMetadataOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, const WebFileInfo&);
+    static void didReadDirectoryOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, const WebVector<WebFileSystemEntry>&, bool hasMore);
 
     static void runTaskOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     static void runTaskOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);

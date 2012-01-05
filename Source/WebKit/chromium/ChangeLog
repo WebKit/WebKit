@@ -1,5 +1,56 @@
 2012-01-04  David Levin  <levin@chromium.org>
 
+        [chromium] Remove AllowCrossThreadAccess in WorkerFileSystemCallbacksBridge.
+        https://bugs.webkit.org/show_bug.cgi?id=75579
+
+        Reviewed by Dmitry Titov.
+
+        This code doesn't have lifetime issues, but this change is
+        about getting rid of AllowCrossThreadAccess and getting rid of a leakRef.
+        This allows the code to follow a more common pattern and be more easily
+        verified as being correct.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::MainThreadFileSystemCallbacks::createLeakedPtr):
+        (WebKit::MainThreadFileSystemCallbacks::MainThreadFileSystemCallbacks):
+        (WebKit::WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postMoveToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCopyToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postRemoveToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateFileToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postFileExistsToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::moveOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::copyOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::removeOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::removeRecursivelyOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::readMetadataOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::createFileOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::createDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::fileExistsOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::directoryExistsOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didFailOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didOpenFileSystemOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didSucceedOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadMetadataOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didFailOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didOpenFileSystemOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didSucceedOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadMetadataOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didReadDirectoryOnWorkerThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::runTaskOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::mayPostTaskToWorker):
+        * src/WorkerFileSystemCallbacksBridge.h:
+
+2012-01-04  David Levin  <levin@chromium.org>
+
         [chromium] Make it safe to delete WorkerFileSystemContextObserver on any thread.
         https://bugs.webkit.org/show_bug.cgi?id=75573
 
