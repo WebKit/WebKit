@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='sandbox'></div>
+<div id="console"></div>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var list;
+var stack;
+var sandbox = document.getElementById('sandbox');
+
+// Check that long sequences of combined selectors has linear performance (per styled element)
+
+function setupList(magnitude)
+{
+    if (sandbox.firstChild)
+        sandbox.removeChild(sandbox.firstChild);
+    list = document.createElement('ul');
+
+    for (var i = 0; i < magnitude; ++i) {
+        var li = document.createElement('li');
+        li.setAttribute('id','unique'+i); // add unique id ensure the styles are not auto-shared
+        list.appendChild(li);
+    }
+    sandbox.appendChild(list);
+}
+
+function setupStack(magnitude)
+{
+    if (sandbox.firstChild)
+        sandbox.removeChild(sandbox.firstChild);
+    stack = document.createElement('div');
+    var cur = stack;
+
+    for (var i = 0; i < magnitude; ++i) {
+        var div = document.createElement('div');
+        div.setAttribute('id','unique'+i);
+        cur.appendChild(div);
+        cur = div;
+    }
+    sandbox.appendChild(stack);
+}
+
+function testListStyling(magnitude)
+{
+    document.querySelectorAll("la ~ li ~ li");
+}
+
+function testStackStyling(magnitude)
+{
+    document.querySelectorAll("dav div div");
+}
+
+Magnitude.description('Tests styling multiple combinators have linear performance');
+Magnitude.run(setupStack, testStackStyling, Magnitude.LINEAR);
+sandbox.removeChild(sandbox.firstChild);
+Magnitude._numPoints=9; // Limit the max test magnitude since it triggers a test timeout
+Magnitude.run(setupList, testListStyling, Magnitude.LINEAR);
+sandbox.removeChild(sandbox.firstChild);
+</script>
+</body>
+</html>

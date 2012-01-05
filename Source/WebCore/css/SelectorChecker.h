@@ -49,7 +49,7 @@ class SelectorChecker {
 public:
     SelectorChecker(Document*, bool strictParsing);
 
-    enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
+    enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
     SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;

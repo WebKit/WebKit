@@ -445,10 +445,11 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
 }
 
 // Recursive check of selectors and combinators
-// It can return 3 different values:
-// * SelectorMatches         - the selector matches the element e
-// * SelectorFailsLocally    - the selector fails for the element e
-// * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
+// It can return 4 different values:
+// * SelectorMatches          - the selector matches the element e
+// * SelectorFailsLocally     - the selector fails for the element e
+// * SelectorFailsAllSiblings - the selector fails for e and any sibling of e
+// * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
 SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, VisitedMatchType visitedMatchType, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
@@ -488,7 +489,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
             SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
-            if (match != SelectorFailsLocally)
+            if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
         }
         break;
@@ -511,7 +512,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             while (n && !n->isElementNode())
                 n = n->previousSibling();
             if (!n)
-                return SelectorFailsLocally;
+                return SelectorFailsAllSiblings;
             e = static_cast<Element*>(n);
             return checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
         }
@@ -526,10 +527,10 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
             while (n && !n->isElementNode())
                 n = n->previousSibling();
             if (!n)
-                return SelectorFailsLocally;
+                return SelectorFailsAllSiblings;
             e = static_cast<Element*>(n);
             SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, visitedMatchType);
-            if (match != SelectorFailsLocally)
+            if (match == SelectorMatches || match == SelectorFailsAllSiblings || match == SelectorFailsCompletely)
                 return match;
         };
         break;

@@ -1,3 +1,22 @@
+2012-01-05  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Fix potential superlinear runtime of multiple indirect adjenceny combinators.
+        https://bugs.webkit.org/show_bug.cgi?id=75083
+
+        Reviewed by Antti Koivisto.
+
+        A sequence of indirect adjencency combinator such as "li ~ li ~ la" could with the
+        former algorithm potentially do an quadratic number of element matches.
+        The recursive matching algorithm now detects cases where all siblings have
+        failed one indirect sibling match and fails the entire selector.
+
+        Test: perf/nested-combined-selectors.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector): Return SelectorFailsAllSiblings when
+        all siblings have failed a selector component.
+        * css/SelectorChecker.h: Add SelectorFailsAllSiblings enum value
+
 2012-01-05  Andreas Kling  <awesomekling@apple.com>
 
         InspectorStyleSheet: Avoid cloning CSSRuleLists.
