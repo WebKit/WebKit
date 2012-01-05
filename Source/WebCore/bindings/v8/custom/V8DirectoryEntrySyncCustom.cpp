@@ -40,7 +40,6 @@
 #include "V8EntryCallback.h"
 #include "V8ErrorCallback.h"
 #include "V8FileEntrySync.h"
-#include "V8WebKitFlags.h"
 #include "V8Proxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -67,8 +66,6 @@ static PassRefPtr<WebKitFlags> getFlags(const v8::Local<v8::Value>& arg, Excepti
     ec = 0;
     if (isUndefinedOrNull(arg) || !arg->IsObject())
         return 0;
-    if (V8WebKitFlags::HasInstance(arg))
-        return V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(arg));
 
     v8::Handle<v8::Object> object;
     {

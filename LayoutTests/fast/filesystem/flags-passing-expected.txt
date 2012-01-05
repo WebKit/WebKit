@@ -1,16 +1,14 @@
-Passing Flags parameter tests. This test checks if passing Flags parameters (in Object format or in JSON format) to DirectoryEntry.getFile does not crash and works as expected.
+Passing Flags parameter tests. This test checks if passing Flags parameters to DirectoryEntry.getFile does not crash and works as expected.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-* Passing a WebKitFlags object.
-* Recycling the same WebKitFlags object.
-* Passing a WebKitFlags object (with exclusive=true).
 * Passing JSON Flags object.
 * Passing JSON Flags object (with exclusive=true).
 * Passing null as a WebKitFlags parameter.
+* Passing a number as a WebKitFlags parameter.
 Finished running tests.
-PASS expectedCallbacksCount is 3
+PASS expectedCallbacksCount is 1
 PASS unexpectedCallbacksCount is 0
 PASS successfullyParsed is true
 

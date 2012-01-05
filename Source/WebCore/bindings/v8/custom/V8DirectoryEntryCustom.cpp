@@ -39,7 +39,6 @@
 #include "V8BindingMacros.h"
 #include "V8EntryCallback.h"
 #include "V8ErrorCallback.h"
-#include "V8WebKitFlags.h"
 #include "V8Proxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -60,7 +59,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
         return v8::Handle<v8::Value>();
     }
     RefPtr<WebKitFlags> flags;
-    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8WebKitFlags::HasInstance(args[1])) {
+    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject()) {
         EXCEPTION_BLOCK(v8::Handle<v8::Object>, object, v8::Handle<v8::Object>::Cast(args[1]));
         flags = WebKitFlags::create();
         v8::Local<v8::Value> v8Create = object->Get(v8::String::New("create"));
@@ -73,9 +72,6 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
             EXCEPTION_BLOCK(bool, isExclusive, v8Exclusive->BooleanValue());
             flags->setExclusive(isExclusive);
         }
-    } else {
-        EXCEPTION_BLOCK(WebKitFlags*, tmp_flags, V8WebKitFlags::HasInstance(args[1]) ? V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
-        flags = tmp_flags;
     }
     RefPtr<EntryCallback> successCallback;
     if (args.Length() > 2 && !args[2]->IsNull() && !args[2]->IsUndefined()) {
@@ -107,7 +103,7 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
         return v8::Handle<v8::Value>();
     }
     RefPtr<WebKitFlags> flags;
-    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject() && !V8WebKitFlags::HasInstance(args[1])) {
+    if (!isUndefinedOrNull(args[1]) && args[1]->IsObject()) {
         EXCEPTION_BLOCK(v8::Handle<v8::Object>, object, v8::Handle<v8::Object>::Cast(args[1]));
         flags = WebKitFlags::create();
         v8::Local<v8::Value> v8Create = object->Get(v8::String::New("create"));
@@ -120,9 +116,6 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
             EXCEPTION_BLOCK(bool, isExclusive, v8Exclusive->BooleanValue());
             flags->setExclusive(isExclusive);
         }
-    } else {
-       EXCEPTION_BLOCK(WebKitFlags*, tmp_flags, V8WebKitFlags::HasInstance(args[1]) ? V8WebKitFlags::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
-       flags = tmp_flags;
     }
     RefPtr<EntryCallback> successCallback;
     if (args.Length() > 2 && !args[2]->IsNull() && !args[2]->IsUndefined()) {

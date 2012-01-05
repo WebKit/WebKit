@@ -38,7 +38,6 @@
 #include "JSEntryCallback.h"
 #include "JSErrorCallback.h"
 #include "JSFileEntrySync.h"
-#include "JSWebKitFlags.h"
 #include <wtf/Assertions.h>
 
 using namespace JSC;
@@ -49,8 +48,6 @@ static PassRefPtr<WebKitFlags> getFlags(ExecState* exec, const JSValue& argument
 {
     if (argument.isNull() || argument.isUndefined() || !argument.isObject())
         return 0;
-    if (argument.inherits(&JSWebKitFlags::s_info))
-        return toFlags(argument);
 
     RefPtr<WebKitFlags> flags;
     JSObject* object = argument.getObject();

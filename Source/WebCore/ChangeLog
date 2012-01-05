@@ -1,3 +1,35 @@
+2012-01-05  Eric Uhrhane  <ericu@chromium.org>
+
+       [fileapi] WebKitFlags should not be constructable per Directories & System spec
+       https://bugs.webkit.org/show_bug.cgi?id=68916
+
+       Reviewed by Eric Seidel.
+
+       Remove IDL for the object and all DOM references to it.
+       * fileapi/WebKitFlags.idl: Removed.
+       * page/DOMWindow.idl:
+       * workers/WorkerContext.idl:
+       Remove references to the JSC/V8 objects compiled from the IDL.
+       * bindings/js/JSDirectoryEntryCustom.cpp:
+       (WebCore::JSDirectoryEntry::getFile):
+       (WebCore::JSDirectoryEntry::getDirectory):
+       * bindings/js/JSDirectoryEntrySyncCustom.cpp:
+       (WebCore::getFlags):
+       * bindings/v8/custom/V8DirectoryEntryCustom.cpp:
+       (WebCore::V8DirectoryEntry::getDirectoryCallback):
+       (WebCore::V8DirectoryEntry::getFileCallback):
+       * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp:
+       (WebCore::getFlags):
+       Fix up build files.
+       * WebCore.gypi:
+       * WebCore.vcproj/WebCore.vcproj:
+       * WebCore.xcodeproj/project.pbxproj:
+       * WebCore/CMakeLists.txt:
+       * WebCore/CodeGenerators.pri:
+       * WebCore/DerivedSources.cpp:
+       * WebCore/DerivedSources.make:
+       * WebCore/GNUmakefile.list.am:
+
 2012-01-05  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to first-letter block processing

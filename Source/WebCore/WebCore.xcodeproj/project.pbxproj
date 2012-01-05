@@ -2932,8 +2932,6 @@
 		898785B1122CA2A7003AABDA /* JSFileEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859B122CA2A7003AABDA /* JSFileEntry.h */; };
 		898785B2122CA2A7003AABDA /* JSFileSystemCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987859C122CA2A7003AABDA /* JSFileSystemCallback.cpp */; };
 		898785B3122CA2A7003AABDA /* JSFileSystemCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859D122CA2A7003AABDA /* JSFileSystemCallback.h */; };
-		898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */; };
-		898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8987859F122CA2A7003AABDA /* JSWebKitFlags.h */; };
 		898785B6122CA2A7003AABDA /* JSMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785A0122CA2A7003AABDA /* JSMetadata.cpp */; };
 		898785B7122CA2A7003AABDA /* JSMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785A1122CA2A7003AABDA /* JSMetadata.h */; };
 		898785B8122CA2A7003AABDA /* JSMetadataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */; };
@@ -10190,8 +10188,6 @@
 		8987859B122CA2A7003AABDA /* JSFileEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileEntry.h; sourceTree = "<group>"; };
 		8987859C122CA2A7003AABDA /* JSFileSystemCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemCallback.cpp; sourceTree = "<group>"; };
 		8987859D122CA2A7003AABDA /* JSFileSystemCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemCallback.h; sourceTree = "<group>"; };
-		8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitFlags.cpp; sourceTree = "<group>"; };
-		8987859F122CA2A7003AABDA /* JSWebKitFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitFlags.h; sourceTree = "<group>"; };
 		898785A0122CA2A7003AABDA /* JSMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadata.cpp; sourceTree = "<group>"; };
 		898785A1122CA2A7003AABDA /* JSMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMetadata.h; sourceTree = "<group>"; };
 		898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMetadataCallback.cpp; sourceTree = "<group>"; };
@@ -17027,8 +17023,6 @@
 				2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */,
 				89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */,
 				89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */,
-				8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */,
-				8987859F122CA2A7003AABDA /* JSWebKitFlags.h */,
 			);
 			name = FileAPI;
 			sourceTree = "<group>";
@@ -23833,7 +23827,6 @@
 				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
 				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
-				898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSWebKitMutationObserver.h in Headers */,
 				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
@@ -26947,7 +26940,6 @@
 				E1AD14B5129734CA00ACA989 /* JSWebKitCSSKeyframesRuleCustom.cpp in Sources */,
 				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
-				898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */,
 				C6F0902C14327D4F00685849 /* JSWebKitMutationObserver.cpp in Sources */,
 				C6F0917F143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp in Sources */,
 				D7613AC414753E5600DB8606 /* JSWebKitNamedFlow.cpp in Sources */,
