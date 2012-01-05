@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2010, 2012 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
@@ -98,6 +98,7 @@ my $isChromiumMacMake;
 my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
+my $shouldTargetWebProcess;
 my $xcodeVersion;
 
 # Variables for Win32 support
@@ -1306,6 +1307,18 @@ sub isWindowsNT()
     return $ENV{'OS'} eq 'Windows_NT';
 }
 
+sub shouldTargetWebProcess
+{
+    determineShouldTargetWebProcess();
+    return $shouldTargetWebProcess;
+}
+
+sub determineShouldTargetWebProcess
+{
+    return if defined($shouldTargetWebProcess);
+    $shouldTargetWebProcess = checkForArgumentAndRemoveFromARGV("--target-web-process");
+}
+
 sub relativeScriptsDir()
 {
     my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel($FindBin::Bin, getcwd()), "");
@@ -2329,11 +2342,21 @@ sub execMacWebKitAppForDebugging($)
     die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
 
     my $productDir = productDir();
-    print "Starting @{[basename($appPath)]} under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
     my @architectureFlags = ("-arch", architecture());
-    exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
+    if (!shouldTargetWebProcess()) {
+        print "Starting @{[basename($appPath)]} under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+        exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
+    } else {
+        my $webProcessShimPath = File::Spec->catfile($productDir, "WebProcessShim.dylib");
+        my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
+        my $webKit2ExecutablePath = File::Spec->catfile($productDir, "WebKit2.framework", "WebKit2");
+        $ENV{DYLD_INSERT_LIBRARIES} = $webProcessShimPath;
+
+        print "Starting WebProcess under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+        exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $webProcessPath, $webKit2ExecutablePath, "-type", "webprocess", "-client-executable", $appPath or die;
+    }
 }
 
 sub debugSafari

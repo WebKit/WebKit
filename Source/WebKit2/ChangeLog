@@ -1,3 +1,31 @@
+2012-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Allow WebProcess to launch a client process and become its first WebProcess.
+
+        This is the WebKit2 part of fixing <http://webkit.org/b/75444> Debugging WebProcess requires running a UI process first and waiting to attach
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Added a newline to stderr output.
+        * UIProcess/Launcher/mac/EnvironmentVariables.cpp:
+        (WebKit::EnvironmentVariables::preexistingProcessServiceNameKey): Added. Returns the name
+        of the environment variable that optionally tells a UI processs to look for a preexisting
+        web process instead of launching a new one.
+        (WebKit::EnvironmentVariables::preexistingProcessTypeKey): Added. Returns the name of the
+        environment variable that tells a UI process the type of the preexisting web process
+        indicated by the other variable.
+        * UIProcess/Launcher/mac/EnvironmentVariables.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Changed to look for a preexisting web process if
+        the aforementioned environment variables are set and the preexisting process has not been
+        used yet.
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Changed to look for the -client-executable command-line option,
+        and if present, launch the specified executable, setting variables in its environment that
+        tell it to use this preexisting web process, then wait for it to send a send right to its
+        listening port.
+
 2012-01-04  Alexey Proskuryakov  <ap@apple.com>
 
         First sentence is missing or clipped when printing a inline PDF

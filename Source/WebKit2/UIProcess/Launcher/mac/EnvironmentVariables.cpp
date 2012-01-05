@@ -136,4 +136,18 @@ void EnvironmentVariables::copyEnvironmentVariables()
     m_environmentPointer = m_environmentVariables.data();
 }
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+
+const char* EnvironmentVariables::preexistingProcessServiceNameKey()
+{
+    return "WEBKIT_PREEXISTING_PROCESS_SERVICE_NAME";
+}
+
+const char* EnvironmentVariables::preexistingProcessTypeKey()
+{
+    return "WEBKIT_PREEXISTING_PROCESS_TYPE";
+}
+
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+
 } // namespace WebKit

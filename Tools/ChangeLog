@@ -1,3 +1,18 @@
+2012-01-04  Dan Bernstein  <mitz@apple.com>
+
+        Add a --target-web-process option to the debug-* scripts. When specified, the scripts will
+        start WebProcess under gdb and WebProcess will then run the client executable.
+
+        This is the Tools part of fixing <http://webkit.org/b/75444> Debugging WebProcess requires running a UI process first and waiting to attach
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (shouldTargetWebProcess): Added.
+        (determineShouldTargetWebProcess): Added. Checks for --target-web-process.
+        (execMacWebKitAppForDebugging): Changed to target gdb at WebProcess and pass the path to the
+        app using the -client-executable option if targeting the web process.
+
 2012-01-04  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Adding myself to committers list.

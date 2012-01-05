@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "CommandLine.h"
 #import "EnvironmentUtilities.h"
+#import "EnvironmentVariables.h"
 #import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
@@ -38,6 +39,7 @@
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <signal.h>
+#import <spawn.h>
 #import <stdio.h>
 #import <sysexits.h>
 #import <unistd.h>
@@ -45,6 +47,10 @@
 #import <wtf/MainThread.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
+#endif
 
 @interface NSApplication (WebNSApplicationDetails)
 -(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
@@ -58,25 +64,79 @@ namespace WebKit {
 
 int WebProcessMain(const CommandLine& commandLine)
 {
-#ifdef BUILDING_ON_SNOW_LEOPARD
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
-#endif
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     String serviceName = commandLine["servicename"];
-    if (serviceName.isEmpty())
+    String clientExecutable;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    clientExecutable = commandLine["client-executable"];
+#endif
+
+    if (serviceName.isEmpty() && clientExecutable.isEmpty())
         return EXIT_FAILURE;
 
     // Get the server port.
     mach_port_t serverPort;
-    kern_return_t kr = bootstrap_look_up(bootstrap_port, serviceName.utf8().data(), &serverPort);
-    if (kr) {
-        fprintf(stderr, "bootstrap_look_up result: %s (%x)", mach_error_string(kr), kr);
-        return 2;
+    if (clientExecutable.isEmpty()) {
+        kern_return_t kr = bootstrap_look_up(bootstrap_port, serviceName.utf8().data(), &serverPort);
+        if (kr) {
+            fprintf(stderr, "bootstrap_look_up result: %s (%x)\n", mach_error_string(kr), kr);
+            return 2;
+        }
     }
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    else {
+        mach_port_name_t publishedService;
+        mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &publishedService);
+        mach_port_insert_right(mach_task_self(), publishedService, publishedService, MACH_MSG_TYPE_MAKE_SEND);
+        // Make it possible to look up.
+        serviceName = String::format("com.apple.WebKit.WebProcess-%d", getpid());
+        if (kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.utf8().data()), publishedService, 0)) {
+            fprintf(stderr, "Failed to register service name \"%s\". %s (%x)\n", serviceName.utf8().data(), mach_error_string(kr), kr);
+            return EXIT_FAILURE;
+        }
+
+        CString command = clientExecutable.utf8();
+        const char* args[] = { command.data(), 0 };
+
+        EnvironmentVariables environmentVariables;
+        environmentVariables.set(EnvironmentVariables::preexistingProcessServiceNameKey(), serviceName.utf8().data());
+        environmentVariables.set(EnvironmentVariables::preexistingProcessTypeKey(), commandLine["type"].utf8().data());
+
+        posix_spawn_file_actions_t fileActions;
+        posix_spawn_file_actions_init(&fileActions);
+        posix_spawn_file_actions_addinherit_np(&fileActions, STDIN_FILENO);
+        posix_spawn_file_actions_addinherit_np(&fileActions, STDOUT_FILENO);
+        posix_spawn_file_actions_addinherit_np(&fileActions, STDERR_FILENO);
+
+        posix_spawnattr_t attributes;
+        posix_spawnattr_init(&attributes);
+        posix_spawnattr_setflags(&attributes, POSIX_SPAWN_CLOEXEC_DEFAULT | POSIX_SPAWN_SETPGROUP);
+
+        int spawnResult = posix_spawn(0, command.data(), &fileActions, &attributes, const_cast<char**>(args), environmentVariables.environmentPointer());
+        if (spawnResult)
+            return 2;
+
+        mach_msg_empty_rcv_t message;
+        if (kern_return_t kr = mach_msg(&message.header, MACH_RCV_MSG, 0, sizeof(message), publishedService, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL)) {
+            fprintf(stderr, "Failed to receive port from the UI process. %s (%x)\n", mach_error_string(kr), kr);
+            return EXIT_FAILURE;
+        }
+
+        mach_port_mod_refs(mach_task_self(), publishedService, MACH_PORT_RIGHT_RECEIVE, -1);
+        serverPort = message.header.msgh_remote_port;
+        mach_port_type_t portType;
+        kern_return_t kr = mach_port_type(mach_task_self(), serverPort, &portType);
+        if (kr || !(portType & MACH_PORT_TYPE_SEND)) {
+            fprintf(stderr, "Failed to obtain send right for port received from the UI process.\n");
+            return EXIT_FAILURE;
+        }
+    }
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 
     String localization = commandLine["localization"];
     RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
