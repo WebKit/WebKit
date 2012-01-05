@@ -2188,8 +2188,8 @@ BUGWK67921 RELEASE SLOW : perf/show-hide-table-rows.html = PASS
 BUGWK44199 RELEASE : perf/clone-with-focus.html = PASS TEXT
 BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
 BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = MISSING PASS TEXT
-BUGWK44199 BUGWK63057 DEBUG : perf/array-binary-search.html = MISSING PASS TEXT
 BUGWK72901 RELEASE SLOW : perf/array-push-pop.html = PASS
+BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
@@ -3873,7 +3873,7 @@ BUGWK75418 : css2.1/20110323/border-collapse-offset-002.htm = MISSING
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
-BUGWK75083 : perf/nested-combined-selectors.html = MISSING
+BUGWK75083 RELEASE : perf/nested-combined-selectors.html = MISSING
 
 BUGCR109276 LINUX : http/tests/appcache/simple.html = PASS CRASH
 BUGCR109276 LINUX : http/tests/appcache/resource-redirect.html = PASS CRASH
