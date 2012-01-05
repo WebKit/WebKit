@@ -1,3 +1,59 @@
+2012-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Inserting nodes is slow due to Node::notifyNodeListsAttributeChanged (20%+)
+        https://bugs.webkit.org/show_bug.cgi?id=73853
+
+        Reviewed by Antti Koivisto.
+
+        Lazily invalidate the node list caches instead of invaliding them at the time of modification. We use
+        the DOM tree version to detect whether caches need to be invalidated or not. We now invalidate caches more
+        frequently after this patch (in particular, invalidates caches that are stored on nodes not present in
+        the ancestry of the modified nodes); however, our study on major Web sites such as Gmail, Facebook, Twitter,
+        etc... indicate that about 1% of real-world usage benefits from keeping the caches alive across different
+        DOM tree versions.
+
+        In order to invalidate caches lazily, this patch adds replaces the type of m_caches in DynamicSubtreeNodeList
+        by DynamicSubtreeNodeList::SubtreeCaches which encapsulates member variables in DynamicNodeList::Caches and
+        invalidates values as needed. Also this change allows m_caches to be allocated as a part of
+        DynamicSubtreeNodeList instead of a separate ref-counted object.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        (WebCore::DynamicSubtreeNodeList::invalidateCache):
+        (WebCore::DynamicNodeList::Caches::create):
+        (WebCore::DynamicNodeList::Caches::reset):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::SubtreeCaches): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::isLengthCacheValid): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::isItemCacheValid): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::cachedLength): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::cachedItem): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::cachedItemOffset): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::setLengthCache): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::setItemCache): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::reset): Added.
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::domVersionIsConsistent): Added.
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::setTreeScopeRecursively): Clear caches when a node moves from one document to another.
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged): Only clears child node list of Attr.
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged): Only clears child node list.
+        (WebCore::NodeListsNodeData::invalidateCaches): Merged with invalidateCachesThatDependOnAttributes.
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLLabelElement.h:
+
 2012-01-05  Ojan Vafai  <ojan@chromium.org>
 
         IE quirk for percentage size on a table element doesn't work with orthogonal writing modes

@@ -24,6 +24,7 @@
 #ifndef DynamicNodeList_h
 #define DynamicNodeList_h
 
+#include "Document.h"
 #include "NodeList.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
@@ -45,9 +46,11 @@ public:
         unsigned lastItemOffset;
         bool isLengthCacheValid : 1;
         bool isItemCacheValid : 1;
+
     protected:
         Caches();
     };
+
     DynamicNodeList(PassRefPtr<Node> node)
         : m_node(node)
     { }
@@ -76,9 +79,40 @@ public:
 
 protected:
     DynamicSubtreeNodeList(PassRefPtr<Node> rootNode);
-    mutable RefPtr<Caches> m_caches;
 
 private:
+
+    class SubtreeCaches {
+    public:
+        SubtreeCaches();
+
+        bool isLengthCacheValid() const { return m_isLengthCacheValid && domVersionIsConsistent(); }
+        bool isItemCacheValid() const { return m_isItemCacheValid && domVersionIsConsistent(); }
+
+        unsigned cachedLength() const { return m_cachedLength; }
+        Node* cachedItem() const { return m_cachedItem; }
+        unsigned cachedItemOffset() const { return m_cachedItemOffset; }
+
+        void setLengthCache(Node* nodeForDocumentVersion, unsigned length);
+        void setItemCache(Node*, unsigned offset);
+        void reset();
+
+    private:
+        Node* m_cachedItem;
+        unsigned m_cachedItemOffset;
+        unsigned m_cachedLength;
+        bool m_isLengthCacheValid : 1;
+        bool m_isItemCacheValid : 1;
+
+        bool domVersionIsConsistent() const
+        {
+            return m_cachedItem && m_cachedItem->document()->domTreeVersion() == m_domTreeVersionAtTimeOfCaching;
+        }
+        uint64_t m_domTreeVersionAtTimeOfCaching;
+    };
+
+    mutable SubtreeCaches m_caches;
+
     virtual bool isDynamicNodeList() const;
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
     Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
