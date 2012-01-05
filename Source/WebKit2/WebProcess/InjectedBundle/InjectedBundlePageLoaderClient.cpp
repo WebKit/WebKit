@@ -158,7 +158,7 @@ void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page
 
 void InjectedBundlePageLoaderClient::didDetectXSSForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
 {
-    if (!m_client.didRunInsecureContentForFrame)
+    if (!m_client.didDetectXSSForFrame)
         return;
 
     WKTypeRef userDataToPass = 0;
