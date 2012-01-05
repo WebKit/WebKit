@@ -1,0 +1,94 @@
+
+Title: TC0080
+Fragment: 't=00:00.'
+Comment: A valid media fragment: { starting at 0 seconds. Thus, the UA will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0081
+Fragment: 't=0:00:00.'
+Comment: A valid media fragment: { starting at 0 seconds. Thus, the UA will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0082
+Fragment: 't=0:00:10e-1'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0083
+Fragment: 't=0:00:60.000'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0084
+Fragment: 't=0:60:00.000'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0085
+Fragment: 't=3,7&t=foo'
+Comment: The media is requested from a to b.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0086
+Fragment: 'foo&t=3,7'
+Comment: Rubbish before & is ignored.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0087
+Fragment: 't=3,7&foo'
+Comment: Rubbish after & is ignored.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0088
+Fragment: 't=3,7&&'
+Comment: Sprinkling & is OK.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0089
+Fragment: '&t=3,7'
+Comment: Sprinkling & is OK.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+END OF TEST
+

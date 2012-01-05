@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -440,6 +440,9 @@ private:
     bool createMediaControls();
     void configureMediaControls();
 
+    void prepareMediaFragmentURI();
+    void applyMediaFragmentURI();
+
     virtual void* preDispatchEventHandler(Event*);
 
 #if ENABLE(MICRODATA)
@@ -513,7 +516,10 @@ private:
     mutable float m_cachedTime;
     mutable double m_cachedTimeWallClockUpdateTime;
     mutable double m_minimumWallClockTimeToCacheMediaTime;
-    
+
+    double m_fragmentStartTime;
+    double m_fragmentEndTime;
+
     typedef unsigned PendingLoadFlags;
     PendingLoadFlags m_pendingLoadFlags;
 

@@ -1,3 +1,55 @@
+2012-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Implement temporal dimension portion of Media Fragments URI specification for video/audio
+        https://bugs.webkit.org/show_bug.cgi?id=65838
+
+        Reviewed by Sam Weinig.
+
+        Tests: media/media-fragments/TC0001-TC0009.html
+               media/media-fragments/TC0010-TC0019.html
+               media/media-fragments/TC0020-TC0029.html
+               media/media-fragments/TC0030-TC0039.html
+               media/media-fragments/TC0040-TC0049.html
+               media/media-fragments/TC0050-TC0059.html
+               media/media-fragments/TC0060-TC0069.html
+               media/media-fragments/TC0070-TC0079.html
+               media/media-fragments/TC0080-TC0089.html
+               media/media-fragments/TC0090-TC0099.html
+
+        * CMakeLists.txt: Add fragment parser files.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_fragmentStartTime and m_fragmentEndTime.
+        (WebCore::HTMLMediaElement::setReadyState): Check for and parse a media fragment once readyState
+            reaches HAVE_METADATA, apply it once it reaches HAVE_CURRENT_DATA.
+        (WebCore::HTMLMediaElement::initialTime): Return the fragment start time if possible.
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Pause if the time is >= the fragment
+            end time.
+        (WebCore::HTMLMediaElement::prepareMediaFragmentURI): Look for a temporal fragment.
+        (WebCore::HTMLMediaElement::applyMediaFragmentURI): Apply the fragment, if any.
+        * html/HTMLMediaElement.h:
+
+        * html/MediaFragmentURIParser.cpp: Added.
+        (WebCore::skipWhiteSpace):
+        (WebCore::collectDigits):
+        (WebCore::collectFraction):
+        (WebCore::MediaFragmentURIParser::invalidTimeValue):
+        (WebCore::MediaFragmentURIParser::MediaFragmentURIParser):
+        (WebCore::MediaFragmentURIParser::startTime):
+        (WebCore::MediaFragmentURIParser::endTime):
+        (WebCore::MediaFragmentURIParser::parseFragments):
+        (WebCore::MediaFragmentURIParser::parseTimeFragment):
+        (WebCore::MediaFragmentURIParser::parseNPTFragment):
+        (WebCore::MediaFragmentURIParser::parseNPTTime):
+        * html/MediaFragmentURIParser.h: Added.
+        (WebCore::MediaFragmentURIParser::~MediaFragmentURIParser):
+        (WebCore::MediaFragmentURIParser::create):
+
 2012-01-05  ChangSeok Oh  <shivamidow@gmail.com>
 
         Remove style warning in GraphicsContext3DOpenGL.cpp

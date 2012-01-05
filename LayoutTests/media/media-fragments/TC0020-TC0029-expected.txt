@@ -1,0 +1,34 @@
+
+Title: TC0024
+Fragment: 't=npt:3,7'
+Comment: equivalent to #t=3,7
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0027
+Fragment: 't=banana'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0028
+Fragment: 't=3,banana'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0029
+Fragment: 't=banana,7'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+END OF TEST
+

@@ -1,0 +1,88 @@
+
+Title: TC0030
+Fragment: 't='3''
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0031
+Fragment: 't=3-7'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0032
+Fragment: 't=3:7'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0033
+Fragment: 't=3,7,9'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0034
+Fragment: 't%3D3'
+Comment: UA does not identify this as a media fragment, so it will play the entire media resource. Note: %3D is equivalent to =.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0035
+Fragment: '%74=3'
+Comment: The media is requested from 3 seconds to the end. Note: %74 is equivalent to t.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0036
+Fragment: 't=%33'
+Comment: The media is requested from 3 seconds to the end. Note: %33 is equivalent to 3.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0037
+Fragment: 't=3%2C7'
+Comment: The media is requested from 3 to 7 seconds. Note: %2C is equivalent to ,.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0038
+Fragment: 't=%6Ept:3'
+Comment: The media is requested from 3 seconds to the end. %6E is equivalent to n.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0039
+Fragment: 't=npt%3A3'
+Comment: The media is requested from 3 seconds to the end. Note: %3A is equivalent to :.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+END OF TEST
+

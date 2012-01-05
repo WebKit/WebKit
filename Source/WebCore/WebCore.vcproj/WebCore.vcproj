@@ -60474,6 +60474,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\MediaFragmentURIParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\MediaFragmentURIParser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\Metadata.h"
 				>
 			</File>

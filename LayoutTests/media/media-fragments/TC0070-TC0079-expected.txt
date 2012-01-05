@@ -1,0 +1,82 @@
+
+Title: TC0070
+Fragment: 't=1e-1'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0071
+Fragment: 't=00:00:01.1e-1'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0072
+Fragment: 't=3.'
+Comment: Equivalent to #t=a,e. The media is requested from a to e.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0073
+Fragment: 't=0:0:0'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0074
+Fragment: 't=0:00:60'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0075
+Fragment: 't=0:01:60'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0076
+Fragment: 't=0:60:00'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0077
+Fragment: 't=0:000:000'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0078
+Fragment: 't=00:00:03,00:00:07'
+Comment: The media is requested from a to b.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+Title: TC0079
+Fragment: 't=3,00:00:07'
+Comment: The media is requested from a to b.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '3') OK
+EXPECTED (video.initialTime == '3') OK
+RUN(video.play())
+EVENT(pause)
+EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK
+
+END OF TEST
+

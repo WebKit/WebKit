@@ -1,0 +1,66 @@
+
+Title: TC0061
+Fragment: 't='
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0062
+Fragment: 't=.'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0063
+Fragment: 't=.0'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0064
+Fragment: 't=0s'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0065
+Fragment: 't=,0s'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0066
+Fragment: 't=0s,0s'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0067
+Fragment: 't=00:00:00s'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0068
+Fragment: 't=s'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+Title: TC0069
+Fragment: 't=npt:'
+Comment: UA knows that this is an invalid media fragment, so it will play the entire media resource.
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.initialTime == '0') OK
+
+END OF TEST
+

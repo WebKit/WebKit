@@ -5704,6 +5704,8 @@
             'html/MediaDocument.cpp',
             'html/MediaDocument.h',
             'html/MediaError.h',
+            'html/MediaFragmentURIParser.cpp',
+            'html/MediaFragmentURIParser.h',
             'html/MicroDataItemValue.cpp',
             'html/MicroDataItemValue.h',
             'html/MonthInputType.cpp',

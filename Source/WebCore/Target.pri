@@ -1863,6 +1863,7 @@ HEADERS += \
     html/LoadableTextTrack.h \
     html/MediaController.h \
     html/MediaDocument.h \
+    html/MediaFragmentURIParser.h \
     html/MicroDataItemValue.h \
     html/PluginDocument.h \
     html/StepRange.h \
@@ -3115,6 +3116,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         html/HTMLSourceElement.cpp \
         html/HTMLVideoElement.cpp \
         html/MediaController.cpp \
+        html/MediaFragmentURIParser.cpp \
         html/shadow/MediaControlElements.cpp \
         html/TimeRanges.cpp \
         platform/graphics/MediaPlayer.cpp \

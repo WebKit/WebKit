@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@
 #include "MediaControls.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
+#include "MediaFragmentURIParser.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
@@ -205,6 +206,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_cachedTime(invalidMediaTime)
     , m_cachedTimeWallClockUpdateTime(0)
     , m_minimumWallClockTimeToCacheMediaTime(0)
+    , m_fragmentStartTime(invalidMediaTime)
+    , m_fragmentEndTime(invalidMediaTime)
     , m_pendingLoadFlags(0)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
@@ -1338,6 +1341,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     }
 
     if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA && tracksAreReady) {
+        prepareMediaFragmentURI();
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
         if (hasMediaControls())
@@ -1353,6 +1357,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         shouldUpdateDisplayState = true;
         scheduleEvent(eventNames().loadeddataEvent);
         setShouldDelayLoadEvent(false);
+        applyMediaFragmentURI();
     }
 
     bool isPotentiallyPlaying = potentiallyPlaying();
@@ -1705,8 +1710,12 @@ float HTMLMediaElement::startTime() const
 
 double HTMLMediaElement::initialTime() const
 {
+    if (m_fragmentStartTime != invalidMediaTime)
+        return m_fragmentStartTime;
+
     if (!m_player)
         return 0;
+
     return m_player->initialTime();
 }
 
@@ -2115,13 +2124,22 @@ void HTMLMediaElement::startPlaybackProgressTimer()
 void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
+
+    if (m_fragmentEndTime != invalidMediaTime && currentTime() >= m_fragmentEndTime && m_playbackRate > 0) {
+        m_fragmentEndTime = invalidMediaTime;
+        if (!m_mediaController && !m_paused) {
+            // changes paused to true and fires a simple event named pause at the media element.
+            pauseInternal();
+        }
+    }
+    
+    scheduleTimeupdateEvent(true);
+
     if (!m_playbackRate)
         return;
 
-    scheduleTimeupdateEvent(true);
-    if (hasMediaControls())
+    if (!m_paused && hasMediaControls())
         mediaControls()->playbackProgressed();
-    // FIXME: deal with cue ranges here
     
 #if ENABLE(VIDEO_TRACK)
     updateActiveTextTrackCues(currentTime());
@@ -3668,6 +3686,40 @@ bool HTMLMediaElement::isBlockedOnMediaController() const
         return true;
 
     return false;
+}
+
+void HTMLMediaElement::prepareMediaFragmentURI()
+{
+    MediaFragmentURIParser fragmentParser(m_currentSrc);
+    float dur = duration();
+    
+    double start = fragmentParser.startTime();
+    if (start != MediaFragmentURIParser::invalidTimeValue() && start > 0) {
+        m_fragmentStartTime = start;
+        if (m_fragmentStartTime > dur)
+            m_fragmentStartTime = dur;
+    } else
+        m_fragmentStartTime = invalidMediaTime;
+    
+    double end = fragmentParser.endTime();
+    if (end != MediaFragmentURIParser::invalidTimeValue() && end > 0 && end > m_fragmentStartTime) {
+        m_fragmentEndTime = end;
+        if (m_fragmentEndTime > dur)
+            m_fragmentEndTime = dur;
+    } else
+        m_fragmentEndTime = invalidMediaTime;
+    
+    if (m_fragmentStartTime != invalidMediaTime && m_readyState < HAVE_FUTURE_DATA)
+        prepareToPlay();
+}
+
+void HTMLMediaElement::applyMediaFragmentURI()
+{
+    if (m_fragmentStartTime != invalidMediaTime) {
+        ExceptionCode ignoredException;
+        m_sentEndEvent = false;
+        seek(m_fragmentStartTime, ignoredException);
+    }
 }
 
 }
