@@ -47,6 +47,14 @@ static CounterMaps& counterMaps()
     return staticCounterMaps;
 }
 
+static RenderObject* rendererOfAfterPseudoElement(RenderObject* renderer)
+{
+    RenderObject* lastContinuation = renderer;
+    while (RenderObject* continuation = lastContinuation->virtualContinuation())
+        lastContinuation = continuation;
+    return lastContinuation->afterPseudoElementRenderer();
+}
+
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
 // Anonymous renderers are skipped except for those representing pseudo elements.
@@ -73,7 +81,7 @@ static RenderObject* previousInPreOrder(const RenderObject* object)
     }
     while (sibling) {
         if (RenderObject* renderer = sibling->renderer()) {
-            if (RenderObject* after = renderer->afterPseudoElementRenderer())
+            if (RenderObject* after = rendererOfAfterPseudoElement(renderer))
                 return after;
             parent = sibling;
             sibling = sibling->lastElementChild();
@@ -185,7 +193,7 @@ static RenderObject* nextInPreOrder(const RenderObject* object, const Element* s
                 return result;
             child = child->nextElementSibling();
         }
-        result = self->renderer()->afterPseudoElementRenderer();
+        result = rendererOfAfterPseudoElement(self->renderer());
         if (result)
             return result;
 nextsibling:
