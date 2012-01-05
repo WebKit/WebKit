@@ -77,10 +77,10 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
     DSPSplitComplex sc1;
     DSPSplitComplex sc2;
     DSPSplitComplex dest;
-    sc1.realp = real1P;
-    sc1.imagp = imag1P;
-    sc2.realp = real2P;
-    sc2.imagp = imag2P;
+    sc1.realp = const_cast<float*>(real1P);
+    sc1.imagp = const_cast<float*>(imag1P);
+    sc2.realp = const_cast<float*>(real2P);
+    sc2.imagp = const_cast<float*>(imag2P);
     dest.realp = realDestP;
     dest.imagp = imagDestP;
 #if defined(__ppc__) || defined(__i386__)
