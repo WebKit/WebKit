@@ -318,7 +318,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
+    ASSERT(currentPoisonIndex == numberOfPoisonedVirtualRegisters);
     
     // 9) Reshuffle displaced virtual registers. Optimize for the case that
     //    the number of displaced virtual registers is not more than the number
