@@ -2578,10 +2578,8 @@ BUGWK52414 MAC : fast/body-propagation/overflow/005.html = IMAGE
 BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
-// MAC not passing the CSS3 elliptical gradient tests.
-BUGWK55745 LEOPARD : fast/gradients/css3-color-stop-units.html = IMAGE
-BUGWK55745 LEOPARD : fast/gradients/css3-color-stops.html = IMAGE
-BUGWK55745 LEOPARD : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+// MAC CoreGraphics CG not passing the CSS3 elliptical gradient tests. Skia on the
+// mac passes, refer to https://bugs.webkit.org/show_bug.cgi?id=56736 
 BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients2.html = IMAGE
 BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients3.html = IMAGE
