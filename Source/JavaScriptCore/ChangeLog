@@ -1,5 +1,17 @@
 2012-01-04  Michael Saboff  <msaboff@apple.com>
 
+        StructureStubInfo not reset when corresponding MethodCallLinkInfo is reset
+        https://bugs.webkit.org/show_bug.cgi?id=75583
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally): Find the corresponding
+        StructureStubInfo and reset the appropriate JIT and
+        the StructureStubInfo itself when reseting a MethodCallLinkInfo.
+
+2012-01-04  Michael Saboff  <msaboff@apple.com>
+
         Invalid ASSERT() in DFGRepatch.cpp near line 385
         https://bugs.webkit.org/show_bug.cgi?id=75584
 
