@@ -1,5 +1,24 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Stop using explicit memory management in WebKitLauncherWin
+
+        We now use stack-allocated STL objects instead.
+
+        Prep work for <http://webkit.org/b/56571> First argument passed to WebKit.exe is ignored by
+        Safari
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKitLauncherWin/WebKitLauncherWin.cpp:
+        (getStringValue):
+        (applePathFromRegistry):
+        (safariInstallDir):
+        (safariBrowserExe):
+        (_tWinMain):
+        Changed to use stack-allocated STL objects instead of malloc/free.
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Turn WebKitTestRunner into a stub .exe launcher and a .dll that contains all the real code
 
         This allows us to add the Safari and Apple Application Support directories to PATH before

@@ -25,51 +25,55 @@
 
 #include "resource.h"
 #include <shlwapi.h>
+#include <string>
 #include <tchar.h>
+#include <vector>
 #include <windows.h>
 
-static LPTSTR getStringValue(HKEY key, LPCTSTR valueName)
+using namespace std;
+
+typedef basic_string<TCHAR> tstring;
+
+static tstring getStringValue(HKEY key, const tstring& valueName)
 {
     DWORD type = 0;
     DWORD bufferSize = 0;
-    if (RegQueryValueEx(key, valueName, 0, &type, 0, &bufferSize) != ERROR_SUCCESS || type != REG_SZ)
-        return 0;
+    if (RegQueryValueEx(key, valueName.c_str(), 0, &type, 0, &bufferSize) != ERROR_SUCCESS || type != REG_SZ)
+        return tstring();
 
-    LPTSTR buffer = static_cast<LPTSTR>(malloc(bufferSize));
-    if (RegQueryValueEx(key, valueName, 0, &type, reinterpret_cast<LPBYTE>(buffer), &bufferSize) != ERROR_SUCCESS) {
-        free(buffer);
-        return 0;
-    }
+    vector<TCHAR> buffer(bufferSize / sizeof(TCHAR));
+    if (RegQueryValueEx(key, valueName.c_str(), 0, &type, reinterpret_cast<LPBYTE>(&buffer[0]), &bufferSize) != ERROR_SUCCESS)
+        return tstring();
 
-    return buffer;
+    return &buffer[0];
 }
 
-static LPTSTR applePathFromRegistry(LPCTSTR key, LPCTSTR value)
+static tstring applePathFromRegistry(const tstring& key, const tstring& value)
 {
     HKEY applePathKey = 0;
-    LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_READ, &applePathKey);
+    LONG error = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key.c_str(), 0, KEY_READ, &applePathKey);
     if (error != ERROR_SUCCESS)
-        return 0;
-    LPTSTR path = getStringValue(applePathKey, value);
+        return tstring();
+    tstring path = getStringValue(applePathKey, value);
     RegCloseKey(applePathKey);
     return path;
 }
 
-static LPTSTR safariInstallDir()
+static tstring safariInstallDir()
 {
     return applePathFromRegistry(TEXT("SOFTWARE\\Apple Computer, Inc.\\Safari"), TEXT("InstallDir"));
 }
 
-static LPTSTR safariBrowserExe()
+static tstring safariBrowserExe()
 {
     return applePathFromRegistry(TEXT("SOFTWARE\\Apple Computer, Inc.\\Safari"), TEXT("BrowserExe"));
 }
 
 int APIENTRY _tWinMain(HINSTANCE instance, HINSTANCE, LPTSTR commandLine, int)
 {
-    LPTSTR path = safariInstallDir();
-    LPTSTR browserExe = safariBrowserExe();
-    if (!path || !browserExe) {
+    tstring path = safariInstallDir();
+    tstring browserExe = safariBrowserExe();
+    if (path.empty() || browserExe.empty()) {
         MessageBox(0, TEXT("Safari must be installed to run a WebKit nightly. You can download Safari from http://www.apple.com/safari/download"), TEXT("Safari not found"), MB_ICONSTOP);
         return 1;
     }
@@ -86,10 +90,8 @@ int APIENTRY _tWinMain(HINSTANCE instance, HINSTANCE, LPTSTR commandLine, int)
     STARTUPINFO startupInfo = {0};
     startupInfo.cb = sizeof(startupInfo);
     PROCESS_INFORMATION processInfo = {0};
-    if (!CreateProcess(browserExe, commandLine, 0, 0, FALSE, NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT, 0, path, &startupInfo, &processInfo))
+    if (!CreateProcess(browserExe.c_str(), commandLine, 0, 0, FALSE, NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT, 0, path.c_str(), &startupInfo, &processInfo))
         MessageBox(0, TEXT("Safari could not be launched. Please make sure you have the latest version of Safari installed and try again. You can download Safari from http://www.apple.com/safari/download"), TEXT("Safari launch failed"), MB_ICONSTOP);
 
-    free(browserExe);
-    free(path);
     return 0;
 }
