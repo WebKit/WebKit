@@ -358,11 +358,6 @@ void WebSettingsImpl::setAcceleratedCompositingForAnimationEnabled(bool enabled)
     m_settings->setAcceleratedCompositingForAnimationEnabled(enabled);
 }
 
-void WebSettingsImpl::setAcceleratedDrawingEnabled(bool enabled)
-{
-    m_settings->setAcceleratedDrawingEnabled(enabled);
-}
-
 void WebSettingsImpl::setAcceleratedFiltersEnabled(bool enabled)
 {
     m_settings->setAcceleratedFiltersEnabled(enabled);

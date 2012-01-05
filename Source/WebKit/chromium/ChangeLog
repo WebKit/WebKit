@@ -1,3 +1,16 @@
+2012-01-05  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Remove WebSettings::setAcceleratedDrawingEnabled from public API.
+        https://bugs.webkit.org/show_bug.cgi?id=74125
+
+        Reviewed by James Robinson.
+
+        Remove setAcceleratedDrawingEnabled method from WebSettings class.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2012-01-05  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Upstream the RenderTheme and ScrollbarTheme for Android
