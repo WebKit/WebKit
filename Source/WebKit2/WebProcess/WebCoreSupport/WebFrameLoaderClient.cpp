@@ -1438,7 +1438,14 @@ void WebFrameLoaderClient::didChangeScrollOffset()
 
 PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
 {
-    return WebFrameNetworkingContext::create(m_frame);
+    RefPtr<WebFrameNetworkingContext> context = WebFrameNetworkingContext::create(m_frame);
+#if PLATFORM(QT)
+    // We encapsulate the WebPage pointer as a property of the originating QObject.
+    QObject* originatingObject = context->originatingObject();
+    ASSERT(originatingObject);
+    originatingObject->setProperty("PagePointer", QVariant::fromValue(static_cast<void*>(m_frame->page())));
+#endif
+    return context.release();
 }
 
 } // namespace WebKit

@@ -33,12 +33,12 @@ namespace WebCore {
 class WebFrameNetworkingContext : public FrameNetworkingContext {
 public:
     static PassRefPtr<WebFrameNetworkingContext> create(WebKit::WebFrame*);
+    virtual QObject* originatingObject() const;
 
 private:
     WebFrameNetworkingContext(WebKit::WebFrame*);
     virtual ~WebFrameNetworkingContext();
 
-    virtual QObject* originatingObject() const;
     virtual QNetworkAccessManager* networkAccessManager() const;
     virtual bool mimeSniffingEnabled() const;
     virtual bool thirdPartyCookiePolicyPermission(const QUrl&) const;

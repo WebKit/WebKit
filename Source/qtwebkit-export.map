@@ -148,6 +148,12 @@ qwk_1.0 {
         *QWebNavigationRequest;
         non-virtual?thunk?to?QWebNavigationRequest*;
         QWebNavigationRequest::*;
+        *QQuickUrlSchemeDelegate;
+        QQuickUrlSchemeDelegate::*;
+        *QQuickNetworkRequest;
+        QQuickNetworkRequest::*;
+        *QQuickNetworkReply;
+        QQuickNetworkReply::*;
 
 
         # WebKit 2 C API mangled in C++

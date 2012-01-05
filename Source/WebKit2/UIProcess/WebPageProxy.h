@@ -36,6 +36,9 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "NativeWebTouchEvent.h"
 #endif
+#if PLATFORM(QT)
+#include "QtNetworkRequestData.h"
+#endif
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
@@ -91,6 +94,10 @@ namespace WebCore {
     struct ViewportArguments;
     struct WindowFeatures;
 }
+
+#if PLATFORM(QT)
+class QQuickNetworkReply;
+#endif
 
 #if PLATFORM(MAC)
 #ifdef __OBJC__
@@ -303,6 +310,11 @@ public:
     
     bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
     void setMaintainsInactiveSelection(bool);
+#if PLATFORM(QT)
+    void registerApplicationScheme(const String& scheme);
+    void resolveApplicationSchemeRequest(QtNetworkRequestData);
+    void sendApplicationSchemeReply(const QQuickNetworkReply*);
+#endif
 
 #if PLATFORM(QT)
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
@@ -984,6 +996,10 @@ private:
     static WKPageDebugPaintFlags s_debugPaintFlags;
 
     bool m_shouldSendEventsSynchronously;
+
+#if PLATFORM(QT)
+    WTF::HashSet<RefPtr<QtNetworkRequestData> > m_applicationSchemeRequests;
+#endif
 };
 
 } // namespace WebKit

@@ -28,6 +28,7 @@
 
 #include "InjectedBundle.h"
 #include "QtBuiltinBundle.h"
+#include "QtNetworkAccessManager.h"
 #include "WKBundleAPICast.h"
 #include "WebProcessCreationParameters.h"
 
@@ -67,7 +68,7 @@ static void parentProcessDiedCallback(void*)
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder* arguments)
 {
-    m_networkAccessManager = new QNetworkAccessManager;
+    m_networkAccessManager = new QtNetworkAccessManager(this);
     ASSERT(!parameters.cookieStorageDirectory.isEmpty() && !parameters.cookieStorageDirectory.isNull());
     WebCore::SharedCookieJarQt* jar = WebCore::SharedCookieJarQt::create(parameters.cookieStorageDirectory);
     m_networkAccessManager->setCookieJar(jar);

@@ -1,3 +1,14 @@
+2012-01-05  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Implement custom URL schemes defined in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=74931
+
+        Add new classes to the export map.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/qtwebkit-export.map:
+
 2012-01-05  Fady Samuel  <fsamuel@chromium.org>
 
         Move scalePageBy from eventSender to window.internals

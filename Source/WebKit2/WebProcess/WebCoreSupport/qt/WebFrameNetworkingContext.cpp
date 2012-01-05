@@ -25,6 +25,7 @@
 #include "WebProcess.h"
 #include <QNetworkAccessManager>
 #include <QObject>
+#include <QVariant>
 
 namespace WebCore {
 

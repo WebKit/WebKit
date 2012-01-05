@@ -100,6 +100,13 @@ void QtPageClient::handleDownloadRequest(DownloadProxy* download)
     QQuickWebViewPrivate::get(m_webView)->handleDownloadRequest(download);
 }
 
+void QtPageClient::handleApplicationSchemeRequest(PassRefPtr<QtNetworkRequestData> requestData)
+{
+    if (!m_webView || !m_webView->experimental())
+        return;
+    m_webView->experimental()->invokeApplicationSchemeHandler(requestData.get());
+}
+
 void QtPageClient::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: This is a temporary fix until we get cursor support in QML items.

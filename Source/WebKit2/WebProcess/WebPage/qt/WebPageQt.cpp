@@ -30,6 +30,8 @@
 #include "NotImplemented.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
@@ -386,6 +388,31 @@ void WebPage::cancelComposition()
     frame->editor()->cancelComposition();
 
     // FIXME: static_cast<WebEditorClient*>(targetFrame->editor()->client())->sendSelectionChangedMessage();
+}
+
+void WebPage::registerApplicationScheme(const String& scheme)
+{
+    QtNetworkAccessManager* qnam = qobject_cast<QtNetworkAccessManager*>(WebProcess::shared().networkAccessManager());
+    if (!qnam)
+        return;
+    qnam->registerApplicationScheme(this, QString(scheme));
+}
+
+void WebPage::receivedApplicationSchemeRequest(const QNetworkRequest& request, QtNetworkReply* reply)
+{
+    QtNetworkRequestData requestData(request, reply);
+    m_applicationSchemeReplies.add(requestData.m_replyUuid, reply);
+    send(Messages::WebPageProxy::ResolveApplicationSchemeRequest(requestData));
+}
+
+void WebPage::applicationSchemeReply(const QtNetworkReplyData& replyData)
+{
+    if (!m_applicationSchemeReplies.contains(replyData.m_replyUuid))
+        return;
+
+    QtNetworkReply* networkReply = m_applicationSchemeReplies.take(replyData.m_replyUuid);
+    networkReply->setReplyData(replyData);
+    networkReply->finalize();
 }
 
 } // namespace WebKit

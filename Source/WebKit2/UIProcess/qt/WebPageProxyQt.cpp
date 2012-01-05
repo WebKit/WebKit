@@ -27,6 +27,9 @@
 #include "WebPageProxy.h"
 
 #include "PageClient.h"
+#include "QtNetworkReplyData.h"
+#include "QtPageClient.h"
+#include "qquicknetworkreply_p.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Editor.h>
@@ -75,6 +78,28 @@ void WebPageProxy::cancelComposition()
         return;
 
     process()->send(Messages::WebPage::CancelComposition(), m_pageID);
+}
+
+void WebPageProxy::registerApplicationScheme(const String& scheme)
+{
+    process()->send(Messages::WebPage::RegisterApplicationScheme(scheme), m_pageID);
+}
+
+void WebPageProxy::resolveApplicationSchemeRequest(QtNetworkRequestData request)
+{
+    RefPtr<QtNetworkRequestData> requestData = adoptRef(new QtNetworkRequestData(request));
+    m_applicationSchemeRequests.add(requestData);
+    static_cast<QtPageClient*>(m_pageClient)->handleApplicationSchemeRequest(requestData);
+}
+
+void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
+{
+    RefPtr<QtNetworkRequestData> requestData = reply->networkRequestData();
+    if (m_applicationSchemeRequests.contains(requestData)) {
+        RefPtr<QtNetworkReplyData> replyData = reply->networkReplyData();
+        process()->send(Messages::WebPage::ApplicationSchemeReply(*replyData), pageID());
+        m_applicationSchemeRequests.remove(requestData);
+    }
 }
 
 } // namespace WebKit

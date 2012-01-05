@@ -36,7 +36,16 @@ RPATHDIR_RELATIVE_TO_DESTDIR = ../../lib
 SOURCES += plugin.cpp
 
 DEFINES += HAVE_WEBKIT2
-INCLUDEPATH += ../../../../WebKit2/UIProcess/API/qt
+
+INCLUDEPATH += \
+    ../../../../WebKit2/UIProcess/API/qt \
+    ../../../../WebKit2/Shared/qt \
+    ../../../../JavaScriptCore \
+    ../../../../JavaScriptCore/wtf \
+    ../../../../JavaScriptCore/wtf/unicode \
+    ../../../../JavaScriptCore/runtime \
+    ../../../../WebKit2/Platform \
+    ../../../../WebKit2/Platform/CoreIPC
 
 target.path = $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 

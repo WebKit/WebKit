@@ -33,6 +33,7 @@
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
+#include "qquicknetworkreply_p.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p_p.h"
@@ -595,6 +596,7 @@ QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     : QObject(webView)
     , q_ptr(webView)
     , d_ptr(webView->d_ptr.data())
+    , schemeParent(new QObject(this))
     , m_viewportInfo(new QWebViewportInfo(webView->d_ptr.data(), this))
 {
 }
@@ -696,6 +698,69 @@ bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const
 {
     Q_D(const QQuickWebView);
     return d->useTraditionalDesktopBehaviour;
+}
+
+QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)
+{
+    const QObjectList children = property->object->children();
+    if (index < children.count())
+        return static_cast<QQuickUrlSchemeDelegate*>(children.at(index));
+    return 0;
+}
+
+void QQuickWebViewExperimental::schemeDelegates_Append(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, QQuickUrlSchemeDelegate *scheme)
+{
+    QObject* schemeParent = property->object;
+    scheme->setParent(schemeParent);
+    QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(property->object->parent());
+    if (!webViewExperimental)
+        return;
+    QQuickWebViewPrivate* d = webViewExperimental->d_func();
+    d->webPageProxy->registerApplicationScheme(scheme->scheme());
+}
+
+int QQuickWebViewExperimental::schemeDelegates_Count(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property)
+{
+    return property->object->children().count();
+}
+
+void QQuickWebViewExperimental::schemeDelegates_Clear(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property)
+{
+    const QObjectList children = property->object->children();
+    for (int index = 0; index < children.count(); index++) {
+        QObject* child = children.at(index);
+        child->setParent(0);
+        delete child;
+    }
+}
+
+QDeclarativeListProperty<QQuickUrlSchemeDelegate> QQuickWebViewExperimental::schemeDelegates()
+{
+    return QDeclarativeListProperty<QQuickUrlSchemeDelegate>(schemeParent, 0,
+            QQuickWebViewExperimental::schemeDelegates_Append,
+            QQuickWebViewExperimental::schemeDelegates_Count,
+            QQuickWebViewExperimental::schemeDelegates_At,
+            QQuickWebViewExperimental::schemeDelegates_Clear);
+}
+
+void QQuickWebViewExperimental::invokeApplicationSchemeHandler(PassRefPtr<QtNetworkRequestData> request)
+{
+    const QObjectList children = schemeParent->children();
+    for (int index = 0; index < children.count(); index++) {
+        QQuickUrlSchemeDelegate* delegate = qobject_cast<QQuickUrlSchemeDelegate*>(children.at(index));
+        if (!delegate)
+            continue;
+        if (!delegate->scheme().compare(QString(request->m_scheme), Qt::CaseInsensitive)) {
+            delegate->reply()->setNetworkRequestData(request);
+            emit delegate->receivedRequest();
+            return;
+        }
+    }
+}
+
+void QQuickWebViewExperimental::sendApplicationSchemeReply(QQuickNetworkReply* reply)
+{
+    d_ptr->webPageProxy->sendApplicationSchemeReply(reply);
 }
 
 void QQuickWebViewExperimental::goForwardTo(int index)

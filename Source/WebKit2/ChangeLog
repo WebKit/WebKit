@@ -1,3 +1,113 @@
+2012-01-05  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Implement custom URL schemes defined in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=74931
+
+        Allow creation of custom UrlSchemeDelegates from QML.
+        A UrlSchemeDelegate contains a handler signal that is triggered
+        when a url matching the defined scheme is requested.
+        To allow for this a derivation of QNetworkAccessManager
+        is necessary.
+        The request is then handled in QML/JS and a reply
+        is sent back from the UIProcess to the WebProcess.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/qt/QtNetworkReplyData.cpp: Added.
+        (WebKit::QtNetworkReplyData::QtNetworkReplyData):
+        (WebKit::QtNetworkReplyData::encode):
+        (WebKit::QtNetworkReplyData::decode):
+        * Shared/qt/QtNetworkReplyData.h: Added.
+        * Shared/qt/QtNetworkRequestData.cpp: Added.
+        (WebKit::QtNetworkRequestData::QtNetworkRequestData):
+        (WebKit::QtNetworkRequestData::encode):
+        (WebKit::QtNetworkRequestData::decode):
+        * Shared/qt/QtNetworkRequestData.h: Added.
+        * Target.pri:
+        * UIProcess/API/qt/qquicknetworkreply.cpp: Added.
+        (QQuickNetworkReply::QQuickNetworkReply):
+        (QQuickNetworkReply::contentType):
+        (QQuickNetworkReply::setContentType):
+        (QQuickNetworkReply::operation):
+        (QQuickNetworkReply::setOperation):
+        (QQuickNetworkReply::contentDisposition):
+        (QQuickNetworkReply::setContentDisposition):
+        (QQuickNetworkReply::location):
+        (QQuickNetworkReply::setLocation):
+        (QQuickNetworkReply::lastModified):
+        (QQuickNetworkReply::setLastModified):
+        (QQuickNetworkReply::cookie):
+        (QQuickNetworkReply::setCookie):
+        (QQuickNetworkReply::userAgent):
+        (QQuickNetworkReply::setUserAgent):
+        (QQuickNetworkReply::server):
+        (QQuickNetworkReply::setServer):
+        (QQuickNetworkReply::data):
+        (QQuickNetworkReply::setData):
+        (QQuickNetworkReply::send):
+        (QQuickNetworkReply::networkRequestData):
+        (QQuickNetworkReply::setNetworkRequestData):
+        (QQuickNetworkReply::networkReplyData):
+        * UIProcess/API/qt/qquicknetworkreply_p.h: Added.
+        * UIProcess/API/qt/qquicknetworkrequest_p.h: Added.
+        * UIProcess/API/qt/qquickurlschemedelegate.cpp: Added.
+        (QQuickUrlSchemeDelegate::QQuickUrlSchemeDelegate):
+        (QQuickUrlSchemeDelegate::scheme):
+        (QQuickUrlSchemeDelegate::setScheme):
+        (QQuickUrlSchemeDelegate::request):
+        (QQuickUrlSchemeDelegate::reply):
+        * UIProcess/API/qt/qquickurlschemedelegate_p.h: Added.
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebViewExperimental::schemeDelegates_At):
+        (QQuickWebViewExperimental::schemeDelegates_Append):
+        (QQuickWebViewExperimental::schemeDelegates_Count):
+        (QQuickWebViewExperimental::schemeDelegates_Clear):
+        (QQuickWebViewExperimental::schemeDelegates):
+        (QQuickWebViewExperimental::invokeApplicationSchemeHandler):
+        (QQuickWebViewExperimental::sendApplicationSchemeReply):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::handleApplicationSchemeRequest):
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::registerApplicationScheme):
+        (WebKit::WebPageProxy::resolveApplicationSchemeRequest):
+        (WebKit::WebPageProxy::sendApplicationSchemeReply):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp:
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::registerApplicationScheme):
+        (WebKit::WebPage::receivedApplicationSchemeRequest):
+        (WebKit::WebPage::applicationSchemeReply):
+        * WebProcess/qt/QtNetworkAccessManager.cpp: Added.
+        (WebKit::QtNetworkAccessManager::QtNetworkAccessManager):
+        (WebKit::QtNetworkAccessManager::obtainOriginatingWebPage):
+        (WebKit::QtNetworkAccessManager::createRequest):
+        (WebKit::QtNetworkAccessManager::registerApplicationScheme):
+        * WebProcess/qt/QtNetworkAccessManager.h: Added.
+        * WebProcess/qt/QtNetworkReply.cpp: Added.
+        (WebKit::QtNetworkReply::QtNetworkReply):
+        (WebKit::QtNetworkReply::setData):
+        (WebKit::QtNetworkReply::setReplyData):
+        (WebKit::QtNetworkReply::readData):
+        (WebKit::QtNetworkReply::bytesAvailable):
+        (WebKit::QtNetworkReply::setHeader):
+        (WebKit::QtNetworkReply::abort):
+        (WebKit::QtNetworkReply::close):
+        (WebKit::QtNetworkReply::setReadBufferSize):
+        (WebKit::QtNetworkReply::canReadLine):
+        (WebKit::QtNetworkReply::finalize):
+        * WebProcess/qt/QtNetworkReply.h: Added.
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-01-05  Fady Samuel  <fsamuel@chromium.org>
 
         Move scalePageBy from eventSender to window.internals

@@ -60,6 +60,12 @@
 
 #if PLATFORM(QT)
 #include "ArgumentCodersQt.h"
+#include "QtNetworkAccessManager.h"
+#include "QtNetworkReply.h"
+#include "QtNetworkReplyData.h"
+#include "QtNetworkRequestData.h"
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #endif
 
 #if PLATFORM(GTK)
@@ -468,6 +474,11 @@ public:
 
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 
+#if PLATFORM(QT)
+    void registerApplicationScheme(const String& scheme);
+    void applicationSchemeReply(const QtNetworkReplyData&);
+    void receivedApplicationSchemeRequest(const QNetworkRequest&, QtNetworkReply*);
+#endif
     void wheelEvent(const WebWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     void gestureEvent(const WebGestureEvent&);
@@ -726,6 +737,9 @@ private:
 
 #if PLATFORM(WIN)
     bool m_gestureReachedScrollingLimit;
+#endif
+#if PLATFORM(QT)
+    HashMap<String, QtNetworkReply*> m_applicationSchemeReplies;
 #endif
 };
 

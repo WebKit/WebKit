@@ -60,6 +60,11 @@ messages -> WebPage {
     Reload(bool reloadFromOrigin)
     StopLoading()
 
+#if PLATFORM(QT)
+    ApplicationSchemeReply(WebKit::QtNetworkReplyData reply)
+    RegisterApplicationScheme(WTF::String scheme)
+#endif
+
     StopLoadingFrame(uint64_t frameID)
     
     RestoreSession(WebKit::SessionState state)

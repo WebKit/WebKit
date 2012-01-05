@@ -123,6 +123,10 @@ messages -> WebPageProxy {
     DidReceiveContentLengthForResource(uint64_t frameID, uint64_t resourceIdentifier, uint64_t contentLength)
     DidFinishLoadForResource(uint64_t frameID, uint64_t resourceIdentifier)
     DidFailLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceError error)
+#if PLATFORM(QT)
+    ResolveApplicationSchemeRequest(WebKit::QtNetworkRequestData request)
+#endif
+
 
     # Custom representations
     DidFinishLoadingDataForCustomRepresentation(WTF::String suggestedFilename, CoreIPC::DataReference data)

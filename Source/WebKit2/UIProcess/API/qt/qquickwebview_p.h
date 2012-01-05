@@ -21,7 +21,9 @@
 #ifndef qquickwebview_p_h
 #define qquickwebview_p_h
 
+#include "qquickurlschemedelegate_p.h"
 #include "qwebkitglobal.h"
+#include <QtDeclarative/qdeclarativelist.h>
 #include <QtQuick/qquickitem.h>
 
 class QWebNavigationRequest;
@@ -35,9 +37,18 @@ class QWebNavigationHistory;
 class QWebPreferences;
 class QWebPermissionRequest;
 class QWebViewportInfo;
+class QQuickNetworkReply;
 
 namespace WTR {
 class PlatformWebView;
+}
+
+namespace WebKit {
+class QtNetworkRequestData;
+}
+
+namespace WTF {
+template<class T> class PassRefPtr;
 }
 
 typedef const struct OpaqueWKContext* WKContextRef;
@@ -178,6 +189,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
+    Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
     Q_ENUMS(NavigationRequestAction)
 
 public:
@@ -204,6 +216,14 @@ public:
     QWebNavigationHistory* navigationHistory() const;
     QQuickWebPage* page();
 
+    static QQuickUrlSchemeDelegate* schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*, int index);
+    static void schemeDelegates_Append(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*, QQuickUrlSchemeDelegate*);
+    static int schemeDelegates_Count(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
+    static void schemeDelegates_Clear(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
+    QDeclarativeListProperty<QQuickUrlSchemeDelegate> schemeDelegates();
+    void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtNetworkRequestData>);
+    void sendApplicationSchemeReply(QQuickNetworkReply*);
+
 public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);
     void goBackTo(int index);
@@ -222,6 +242,7 @@ Q_SIGNALS:
 private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
+    QObject* schemeParent;
     QWebViewportInfo* m_viewportInfo;
 
     friend class QtWebPageUIClient;

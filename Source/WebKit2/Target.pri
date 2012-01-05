@@ -127,6 +127,8 @@ HEADERS += \
     Shared/qt/ArgumentCodersQt.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/WebEventFactoryQt.h \
+    Shared/qt/QtNetworkReplyData.h \
+    Shared/qt/QtNetworkRequestData.h \
     UIProcess/API/C/WKAPICast.h \
     UIProcess/API/C/WKAuthenticationChallenge.h \
     UIProcess/API/C/WKAuthenticationDecisionListener.h \
@@ -178,6 +180,9 @@ HEADERS += \
     UIProcess/API/qt/qwebnavigationhistory_p_p.h \
     UIProcess/API/qt/qquickwebview_p.h \
     UIProcess/API/qt/qquickwebview_p_p.h \
+    UIProcess/API/qt/qquicknetworkreply_p.h \
+    UIProcess/API/qt/qquicknetworkrequest_p.h \
+    UIProcess/API/qt/qquickurlschemedelegate_p.h \
     UIProcess/API/qt/qwebviewportinfo_p.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
@@ -353,7 +358,9 @@ HEADERS += \
     WebProcess/WebConnectionToUIProcess.h \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
-    WebProcess/qt/QtBuiltinBundlePage.h
+    WebProcess/qt/QtBuiltinBundlePage.h \
+    WebProcess/qt/QtNetworkAccessManager.h \
+    WebProcess/qt/QtNetworkReply.h
 
 SOURCES += \
     Platform/CoreIPC/ArgumentCoders.cpp \
@@ -460,6 +467,8 @@ SOURCES += \
     Shared/qt/NativeWebWheelEventQt.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
+    Shared/qt/QtNetworkReplyData.cpp \
+    Shared/qt/QtNetworkRequestData.cpp \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
     UIProcess/API/C/WKAuthenticationChallenge.cpp \
@@ -499,6 +508,8 @@ SOURCES += \
     UIProcess/API/qt/qwebnavigationhistory.cpp \
     UIProcess/API/qt/qquickwebview.cpp \
     UIProcess/API/qt/qwebiconimageprovider.cpp \
+    UIProcess/API/qt/qquicknetworkreply.cpp \
+    UIProcess/API/qt/qquickurlschemedelegate.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/API/qt/qwebviewportinfo.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
@@ -708,6 +719,8 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/QtBuiltinBundle.cpp \
     WebProcess/qt/QtBuiltinBundlePage.cpp \
+    WebProcess/qt/QtNetworkAccessManager.cpp \
+    WebProcess/qt/QtNetworkReply.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp
 

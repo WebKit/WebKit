@@ -38,6 +38,12 @@ DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
 CONFIG += rpath
 RPATHDIR_RELATIVE_TO_DESTDIR = ../../lib
 
+INCLUDEPATH += \
+    ../../../WebKit2/Shared/qt \
+    ../../../JavaScriptCore \
+    ../../../JavaScriptCore/runtime \
+    ../../../JavaScriptCore/wtf
+
 SOURCES += qdeclarativewebview.cpp plugin.cpp
 HEADERS += qdeclarativewebview_p.h
 

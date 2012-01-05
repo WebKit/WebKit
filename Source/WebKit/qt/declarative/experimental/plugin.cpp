@@ -17,6 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "config.h"
+
+#include "qquicknetworkreply_p.h"
+#include "qquicknetworkrequest_p.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include "qwebdownloaditem_p.h"
@@ -52,6 +56,11 @@ public:
             QObject::tr("Cannot create separate instance of WebViewExperimental"));
         qmlRegisterUncreatableType<QWebViewportInfo>(uri, 3, 0, "QWebViewportInfo",
             QObject::tr("Cannot create separate instance of QWebViewportInfo"));
+        qmlRegisterType<QQuickUrlSchemeDelegate>(uri, 3, 0, "UrlSchemeDelegate");
+        qmlRegisterUncreatableType<QQuickNetworkRequest>(uri, 3, 0, "NetworkRequest",
+            QObject::tr("NetworkRequest should not be created from QML"));
+        qmlRegisterUncreatableType<QQuickNetworkReply>(uri, 3, 0, "NetworkReply",
+            QObject::tr("NetworkReply should not be created from QML"));
     }
 };
 
