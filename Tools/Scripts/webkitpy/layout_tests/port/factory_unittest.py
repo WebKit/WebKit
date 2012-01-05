@@ -104,12 +104,10 @@ class FactoryTest(unittest.TestCase):
         self.assert_platform_port("cygwin", self.webkit_options, win.WinPort)
 
     def test_google_chrome(self):
-        # The actual Chrome class names aren't available so we test that the
-        # objects we get are at least subclasses of the Chromium versions.
-        self.assert_port("google-chrome-linux32", chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-linux64", chromium_linux.ChromiumLinuxPort)
-        self.assert_port("google-chrome-win", chromium_win.ChromiumWinPort)
-        self.assert_port("google-chrome-mac", chromium_mac.ChromiumMacPort)
+        self.assert_port("google-chrome-linux32", google_chrome.GoogleChromeLinux32Port)
+        self.assert_port("google-chrome-linux64", google_chrome.GoogleChromeLinux64Port)
+        self.assert_port("google-chrome-win", google_chrome.GoogleChromeWinPort)
+        self.assert_port("google-chrome-mac", google_chrome.GoogleChromeMacPort)
 
     def test_gtk(self):
         self.assert_port("gtk", gtk.GtkPort)
