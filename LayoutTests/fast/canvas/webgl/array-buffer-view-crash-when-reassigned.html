@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description('Verify that reassigning typed array constructor does not crash.');
+
+<!-- The following used to cause a crash in Chrome -->
+Uint8Array = 0;
+Uint16Array = "string";
+Uint32Array = function() {};
+Int16Array = function() {};
+Int16Array.prototype.set = 0;
+new Float64Array(function () {});
+new Float32Array([1, 2, 3], 1);
+new Int16Array(function() {});
+testPassed("reassigning typed array constructor did not crash");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

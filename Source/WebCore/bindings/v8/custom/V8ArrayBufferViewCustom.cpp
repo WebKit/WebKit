@@ -47,6 +47,8 @@ bool fastSetInstalled(v8::Handle<v8::Object> array)
 
 void installFastSet(v8::Handle<v8::Object> array)
 {
+    v8::TryCatch tryCatch;
+    tryCatch.SetVerbose(true);
     v8::Handle<v8::Object> global = array->CreationContext()->Global();
     v8::Handle<v8::String> key = v8::String::New(fastSetFlagName);
     global->SetHiddenValue(key, v8::Boolean::New(true));
