@@ -1,3 +1,16 @@
+2012-01-05  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Expose Fixed Position Layout to WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=75556
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::shouldLayoutFixedElementsRelativeToFrame):
+        (WebKit::WebViewImpl::setShouldLayoutFixedElementsRelativeToFrame):
+        * src/WebViewImpl.h:
+
 2012-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll Chromium DEPS from 116031 to 116459.

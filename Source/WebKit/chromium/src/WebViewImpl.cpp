@@ -2026,6 +2026,30 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
     page()->setDeviceScaleFactor(scaleFactor);
 }
 
+bool WebViewImpl::shouldLayoutFixedElementsRelativeToFrame() const
+{
+    if (!page())
+        return false;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame || !frame->view())
+        return false;
+
+    return frame->view()->shouldLayoutFixedElementsRelativeToFrame();
+}
+
+void WebViewImpl::setShouldLayoutFixedElementsRelativeToFrame(bool enable)
+{
+    if (!page())
+        return;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame || !frame->view())
+        return;
+
+    frame->view()->setShouldLayoutFixedElementsRelativeToFrame(enable);
+}
+
 bool WebViewImpl::isFixedLayoutModeEnabled() const
 {
     if (!page())

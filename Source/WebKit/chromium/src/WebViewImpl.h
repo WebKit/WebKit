@@ -173,6 +173,8 @@ public:
 
     virtual float deviceScaleFactor() const;
     virtual void setDeviceScaleFactor(float);
+    virtual bool shouldLayoutFixedElementsRelativeToFrame() const;
+    virtual void setShouldLayoutFixedElementsRelativeToFrame(bool);
     virtual bool isFixedLayoutModeEnabled() const;
     virtual void enableFixedLayoutMode(bool enable);
     virtual WebSize fixedLayoutSize() const;
