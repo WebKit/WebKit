@@ -269,15 +269,10 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
     // generated inline run-in in the next level of children.
     RenderObject* first = const_cast<RenderObject*>(owner);
     do {
-        // Skip list markers and generated run-ins
         first = first->firstChild();
-        while (first && first->isListMarker()) {
-            if (first->parent() != owner && first->parent()->isAnonymousBlock())
-                first = first->parent();
-            first = first->nextSibling();
-        }
-        while (first && first->isRenderInline() && first->isRunIn())
-            first = first->nextSibling();
+        // Skip list markers and generated run-ins.
+        while (first && (first->isListMarker() || (first->isRenderInline() && first->isRunIn())))
+            first = first->nextInPreOrderAfterChildren(owner);
     } while (first && first->isAnonymous() && first->style()->styleType() == NOPSEUDO);
 
     if (!first)
@@ -287,20 +282,17 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
         return first;
 
     // Check for a possible generated run-in, using run-in positioning rules.
-    // Skip inlines and floating / positioned blocks, and place as the first child.
     first = owner->firstChild();
     if (!first->isRenderBlock())
         return 0;
-    while (first && first->isFloatingOrPositioned())
+    
+    first = first->firstChild();
+    // We still need to skip any list markers that could exist before the run-in.
+    while (first && first->isListMarker())
         first = first->nextSibling();
-    if (first) {
-        first = first->firstChild();
-        // We still need to skip any list markers that could exist before the run-in.
-        while (first && first->isListMarker())
-            first = first->nextSibling();
-        if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn())
-            return first;
-    }
+    if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn())
+        return first;
+    
     return 0;
 }
 
