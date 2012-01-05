@@ -16,7 +16,8 @@
 
     function scalePage()
     {
-      eventSender.scalePageBy(1.50025, 0, 0);
+      if (window.internals)
+        window.internals.setPageScaleFactor(document, 1.50025, 0, 0);
     }
   
     window.addEventListener('load', scalePage, false);
