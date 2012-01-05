@@ -36,6 +36,8 @@
 
 #include "FFTFrame.h"
 
+#include "VectorMath.h"
+
 namespace WebCore {
 
 const int kMaxFFTPow2Size = 24;
@@ -106,31 +108,23 @@ void FFTFrame::multiply(const FFTFrame& frame)
     const float* realP2 = frame2.realData();
     const float* imagP2 = frame2.imagData();
 
+    unsigned halfSize = m_FFTSize / 2;
+    float real0 = realP1[0];
+    float imag0 = imagP1[0];
+
+    // Complex multiply
+    VectorMath::zvmul(realP1, imagP1, realP2, imagP2, realP1, imagP1, halfSize); 
+
+    // Multiply the packed DC/nyquist component
+    realP1[0] = real0 * realP2[0];
+    imagP1[0] = imag0 * imagP2[0];
+
     // Scale accounts for vecLib's peculiar scaling
     // This ensures the right scaling all the way back to inverse FFT
     float scale = 0.5f;
 
-    // Multiply packed DC/nyquist component
-    realP1[0] *= scale * realP2[0];
-    imagP1[0] *= scale * imagP2[0];
-
-    // Multiply the rest, skipping packed DC/Nyquist components
-    DSPSplitComplex sc1 = frame1.dspSplitComplex();
-    sc1.realp++;
-    sc1.imagp++;
-
-    DSPSplitComplex sc2 = frame2.dspSplitComplex();
-    sc2.realp++;
-    sc2.imagp++;
-
-    unsigned halfSize = m_FFTSize / 2;
-
-    // Complex multiply
-    vDSP_zvmul(&sc1, 1, &sc2, 1, &sc1, 1, halfSize - 1, 1 /* normal multiplication */);
-
-    // We've previously scaled the packed part, now scale the rest.....
-    vDSP_vsmul(sc1.realp, 1, &scale, sc1.realp, 1, halfSize - 1);
-    vDSP_vsmul(sc1.imagp, 1, &scale, sc1.imagp, 1, halfSize - 1);
+    VectorMath::vsmul(realP1, 1, &scale, realP1, 1, halfSize);
+    VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, halfSize);
 }
 
 void FFTFrame::doFFT(float* data)

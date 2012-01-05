@@ -72,6 +72,24 @@ void vmul(const float* source1P, int sourceStride1, const float* source2P, int s
 #endif
 }
 
+void zvmul(const float* real1P, const float* imag1P, const float* real2P, const float* imag2P, float* realDestP, float* imagDestP, size_t framesToProcess)
+{
+    DSPSplitComplex sc1;
+    DSPSplitComplex sc2;
+    DSPSplitComplex dest;
+    sc1.realp = real1P;
+    sc1.imagp = imag1P;
+    sc2.realp = real2P;
+    sc2.imagp = imag2P;
+    dest.realp = realDestP;
+    dest.imagp = imagDestP;
+#if defined(__ppc__) || defined(__i386__)
+    ::zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
+#else
+    vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
+#endif
+}
+
 #else
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
@@ -295,6 +313,41 @@ void vmul(const float* source1P, int sourceStride1, const float* source2P, int s
         source2P += sourceStride2;
         destP += destStride;
         n--;
+    }
+}
+
+void zvmul(const float* real1P, const float* imag1P, const float* real2P, const float* imag2P, float* realDestP, float* imagDestP, size_t framesToProcess)
+{
+    unsigned i = 0;
+#ifdef __SSE2__
+    // Only use the SSE optimization in the very common case that all addresses are 16-byte aligned. 
+    // Otherwise, fall through to the scalar code below.
+    if (!(reinterpret_cast<uintptr_t>(real1P) & 0x0F)
+        && !(reinterpret_cast<uintptr_t>(imag1P) & 0x0F)
+        && !(reinterpret_cast<uintptr_t>(real2P) & 0x0F)
+        && !(reinterpret_cast<uintptr_t>(imag2P) & 0x0F)
+        && !(reinterpret_cast<uintptr_t>(realDestP) & 0x0F)
+        && !(reinterpret_cast<uintptr_t>(imagDestP) & 0x0F)) {
+        
+        unsigned endSize = framesToProcess - framesToProcess % 4;
+        while (i < endSize) {
+            __m128 real1 = _mm_load_ps(real1P + i);
+            __m128 real2 = _mm_load_ps(real2P + i);
+            __m128 imag1 = _mm_load_ps(imag1P + i);
+            __m128 imag2 = _mm_load_ps(imag2P + i);
+            __m128 real = _mm_mul_ps(real1, real2);
+            real = _mm_sub_ps(real, _mm_mul_ps(imag1, imag2));
+            __m128 imag = _mm_mul_ps(real1, imag2);
+            imag = _mm_add_ps(imag, _mm_mul_ps(imag1, real2));
+            _mm_store_ps(realDestP + i, real);
+            _mm_store_ps(imagDestP + i, imag);
+            i += 4;
+        }
+    }
+#endif
+    for (; i < framesToProcess; ++i) {
+        realDestP[i] = real1P[i] * real2P[i] - imag1P[i] * imag2P[i];
+        imagDestP[i] = real1P[i] * imag2P[i] + imag1P[i] * real2P[i];
     }
 }
 

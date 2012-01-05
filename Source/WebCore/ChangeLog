@@ -1,3 +1,20 @@
+2012-01-05  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Add a SSE2 optimized function zvmul in VectorMatch
+        https://bugs.webkit.org/show_bug.cgi?id=74842
+
+        Reviewed by Kenneth Russell.
+
+        Use zvmul in FFTFrameFFMPEG.cpp::multiply() and FFTFrameMac.cpp::multiply().
+
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::zvmul):
+        * platform/audio/VectorMath.h:
+        * platform/audio/ffmpeg/FFTFrameFFMPEG.cpp:
+        (WebCore::FFTFrame::multiply):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::multiply):
+
 2012-01-05  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix for Chromium Mac Clang build.

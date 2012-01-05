@@ -115,27 +115,24 @@ void FFTFrame::multiply(const FFTFrame& frame)
     const float* realP2 = frame2.realData();
     const float* imagP2 = frame2.imagData();
 
+    unsigned halfSize = fftSize() / 2;
+    float real0 = realP1[0];
+    float imag0 = imagP1[0];
+
+    VectorMath::zvmul(realP1, imagP1, realP2, imagP2, realP1, imagP1, halfSize); 
+
+    // Multiply the packed DC/nyquist component
+    realP1[0] = real0 * realP2[0];
+    imagP1[0] = imag0 * imagP2[0];
+
     // Scale accounts the peculiar scaling of vecLib on the Mac.
     // This ensures the right scaling all the way back to inverse FFT.
     // FIXME: if we change the scaling on the Mac then this scale
     // factor will need to change too.
     float scale = 0.5f;
 
-    // Multiply the packed DC/nyquist component
-    realP1[0] *= scale * realP2[0];
-    imagP1[0] *= scale * imagP2[0];
-
-    // Complex multiplication. If this loop turns out to be hot then
-    // we should use SSE or other intrinsics to accelerate it.
-    unsigned halfSize = fftSize() / 2;
-
-    for (unsigned i = 1; i < halfSize; ++i) {
-        float realResult = realP1[i] * realP2[i] - imagP1[i] * imagP2[i];
-        float imagResult = realP1[i] * imagP2[i] + imagP1[i] * realP2[i];
-
-        realP1[i] = scale * realResult;
-        imagP1[i] = scale * imagResult;
-    }
+    VectorMath::vsmul(realP1, 1, &scale, realP1, 1, halfSize);
+    VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, halfSize);
 }
 
 void FFTFrame::doFFT(float* data)
