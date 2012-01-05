@@ -1,5 +1,18 @@
 2012-01-04  Adam Roben  <aroben@apple.com>
 
+        Make WinLauncher's window frame respond to clicks/drags again
+
+        Fixes <http://webkit.org/b/75562> REGRESSION (r84990): Can't drag WinLauncher by its title
+        bar when Aero is disabled
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.cpp:
+        (WndProc): Always call up to our parent wndproc when we don't handle WM_NCHITTEST ourselves.
+        Also removed an unnecessary "break" keyword.
+
+2012-01-04  Adam Roben  <aroben@apple.com>
+
         Turn WinLauncher into a stub .exe launcher and a .dll that contains all the real code
 
         This allows us to add the Apple Application Support directory to PATH before trying to load

@@ -526,10 +526,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             if ((y > window.top) && (y < window.top + dragBarHeight))
                 return HTCAPTION;
-
-            return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
         }
-        break;
+        return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
     case WM_COMMAND: {
         int wmId = LOWORD(wParam);
         int wmEvent = HIWORD(wParam);
@@ -560,7 +558,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     default:
         return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
-        break;
     }
 
     return 0;
