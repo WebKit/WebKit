@@ -86,11 +86,13 @@ int APIENTRY _tWinMain(HINSTANCE instance, HINSTANCE, LPTSTR commandLine, int)
         return 1;
     SetEnvironmentVariable(TEXT("WEBKITNIGHTLY"), exePath);
 
+    tstring finalCommandLine = TEXT('"') + browserExe + TEXT("\" ") + commandLine;
+
     // Launch Safari as a child process
     STARTUPINFO startupInfo = {0};
     startupInfo.cb = sizeof(startupInfo);
     PROCESS_INFORMATION processInfo = {0};
-    if (!CreateProcess(browserExe.c_str(), commandLine, 0, 0, FALSE, NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT, 0, path.c_str(), &startupInfo, &processInfo))
+    if (!CreateProcess(browserExe.c_str(), const_cast<LPTSTR>(finalCommandLine.c_str()), 0, 0, FALSE, NORMAL_PRIORITY_CLASS | CREATE_UNICODE_ENVIRONMENT, 0, path.c_str(), &startupInfo, &processInfo))
         MessageBox(0, TEXT("Safari could not be launched. Please make sure you have the latest version of Safari installed and try again. You can download Safari from http://www.apple.com/safari/download"), TEXT("Safari launch failed"), MB_ICONSTOP);
 
     return 0;

@@ -1,5 +1,23 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Prepend Safari.exe's path to the command-line passed to CreateProcess
+
+        Safari expects the first argument in the command-line to be the path to Safari.exe itself.
+        This is how things get set up when Safari is launched normally (e.g., by Explorer). Safari
+        thus ignores the first argument when looking for command-line arguments. WebKitLauncherWin
+        was not including the path to Safari.exe in the command-line, so Safari was ignoring the
+        first argument that WebKitLauncherWin was trying to pass to it.
+
+        Fixes <http://webkit.org/b/56571> First argument passed to WebKit.exe is ignored by Safari
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKitLauncherWin/WebKitLauncherWin.cpp:
+        (_tWinMain): Construct a command-line for CreateProcess that first contains a double-quoted
+        path to Safari.exe, then contains any arguments that were passed to WebKitLauncherWin.
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Stop using explicit memory management in WebKitLauncherWin
 
         We now use stack-allocated STL objects instead.
