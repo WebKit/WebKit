@@ -1,5 +1,17 @@
 2012-01-05  Mark Rowe  <mrowe@apple.com>
 
+        <http://webkit.org/b/75606> [Mac] WTF logging functions should output to both stderr and ASL
+
+        We should always log to both ASL and stderr on platforms where this won't result in launchd
+        duplicating the messages.
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Assertions.cpp:
+        (vprintf_stderr_common):
+
+2012-01-05  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/75605> WTF logging functions should call vprintf_stderr_common only once per line
 
         Several of the WTF logging functions make multiple calls to vprintf_stderr_common to output a

@@ -41,6 +41,7 @@
 
 #if PLATFORM(MAC)
 #include <CoreFoundation/CFString.h>
+#include <asl.h>
 #endif
 
 #if COMPILER(MSVC) && !OS(WINCE)
@@ -76,6 +77,9 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
         CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+        asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
+#endif
         fputs(buffer, stderr);
 
         free(buffer);
@@ -83,6 +87,16 @@ static void vprintf_stderr_common(const char* format, va_list args)
         CFRelease(cfFormat);
         return;
     }
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    va_list copyOfArgs;
+    va_copy(copyOfArgs, args);
+    asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
+    va_end(copyOfArgs);
+#endif
+
+    // Fall through to write to stderr in the same manner as other platforms.
+
 #elif PLATFORM(BLACKBERRY)
     BlackBerry::Platform::logV(BlackBerry::Platform::LogLevelInfo, format, args);
 #elif HAVE(ISDEBUGGERPRESENT)
