@@ -241,9 +241,6 @@ void RenderBox::clearRenderBoxRegionInfo()
         return;
 
     RenderFlowThread* flowThread = enclosingRenderFlowThread();
-    if (!flowThread->hasValidRegions())
-        return;
-
     flowThread->removeRenderBoxRegionInfo(this);
 }
 

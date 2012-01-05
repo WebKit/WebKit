@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #el0 {
+                -webkit-flow-from: a;
+                content: counter(c);
+            }
+            #el2 {
+                -webkit-flow-into: a;
+            }
+        </style>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            function crash() {
+                el0 = document.createElement('div');
+                el0.setAttribute('id', 'el0');
+                document.body.appendChild(el0);
+                el1 = document.createElement('div');
+                document.body.appendChild(el1);
+                el2 = document.createElement('div');
+                el2.setAttribute('id', 'el2');
+                el1.appendChild(el2);
+                el2.appendChild(document.createTextNode('A'));
+                el3 = document.createElement('input');
+                el3.setAttribute('id', 'el3');
+                el2.appendChild(el3);
+                document.body.style.zoom=2;
+                document.execCommand('selectall');
+                el2.style.display='table-header-group';
+                document.body.style.zoom=1;
+            }
+            window.onload=crash
+        </script>
+    </head>
+    <body>
+        <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=74781">74781</a>: Crash in RenderFlowThread::getRegionRangeForBox</p>
+        <p> This test PASSES if it does not CRASH or ASSERT.</p>
+    </body>
+</html>

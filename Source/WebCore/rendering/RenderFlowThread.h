@@ -91,6 +91,7 @@ public:
     bool hasValidRegions() const { ASSERT(!m_regionsInvalidated); return m_hasValidRegions; }
 
     void invalidateRegions() { m_regionsInvalidated = true; setNeedsLayout(true); }
+    bool hasValidRegionInfo() const { return !m_regionsInvalidated && hasValidRegions(); }
 
     static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 

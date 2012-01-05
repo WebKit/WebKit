@@ -6647,7 +6647,7 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
         return 0;
 
     RenderFlowThread* flowThread = enclosingRenderFlowThread();
-    if (!flowThread || !flowThread->hasValidRegions())
+    if (!flowThread || !flowThread->hasValidRegionInfo())
         return 0;
 
     return flowThread->renderRegionForLine(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
@@ -6668,7 +6668,7 @@ bool RenderBlock::logicalWidthChangedInRegions() const
         return false;
     
     RenderFlowThread* flowThread = enclosingRenderFlowThread();
-    if (!flowThread || !flowThread->hasValidRegions())
+    if (!flowThread || !flowThread->hasValidRegionInfo())
         return 0;
     
     return flowThread->logicalWidthChangedInRegions(this, offsetFromLogicalTopOfFirstPage());

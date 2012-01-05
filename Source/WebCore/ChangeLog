@@ -1,3 +1,35 @@
+2012-01-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Crash in RenderRegion::getRegionRangeForBox.
+        https://bugs.webkit.org/show_bug.cgi?id=74781
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/region-range-for-box-crash.html
+
+        This patch fixes 2 issues:
+        1. When removing a region from a flow thread, we clear the region range information for boxes since
+        this information is accurate only after the regions are laid out.
+        2. While the regions are invalidated (content of flow thread is not yet laid out in regions), the
+        functions that ask for properties of content in regions should bail out early.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::regionAtBlockOffset):
+        (WebCore::RenderBlock::logicalWidthChangedInRegions):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clearRenderBoxRegionInfo):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeRegionFromThread):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::contentLogicalWidthOfFirstRegion):
+        (WebCore::RenderFlowThread::contentLogicalHeightOfFirstRegion):
+        (WebCore::RenderFlowThread::contentLogicalLeftOfFirstRegion):
+        (WebCore::RenderFlowThread::firstRegion):
+        (WebCore::RenderFlowThread::lastRegion):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+
 2012-01-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104084.
