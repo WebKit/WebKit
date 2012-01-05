@@ -1,5 +1,18 @@
 2012-01-04  Adam Roben  <aroben@apple.com>
 
+        Add MiniBrowserLauncher to WebKit.sln
+
+        It builds just after MiniBrowser.
+
+        Part of <http://webkit.org/b/68576> <rdar://problem/10163853> MiniBrowser fails to launch
+        when double-clicked
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcproj/WebKit.sln: Added MiniBrowserLauncher.
+
+2012-01-04  Adam Roben  <aroben@apple.com>
+
         Add WinLauncherLauncher to WebKit.sln
 
         It builds just after WinLauncher.

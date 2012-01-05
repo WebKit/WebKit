@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="MiniBrowser"
-	ProjectGUID="{1480CF5F-4160-47B5-A0E6-96AEC8258FB5}"
-	RootNamespace="MiniBrowser"
+	Name="MiniBrowserLauncher"
+	ProjectGUID="{7AF4EBFB-CCBC-448F-A36A-8210E08D6A7D}"
+	RootNamespace="MiniBrowserLauncher"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -17,9 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserDebug.vsprops"
-			UseOfATL="1"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,71 +78,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserRelease.vsprops"
-			UseOfATL="1"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug_All|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserDebugAll.vsprops"
-			UseOfATL="1"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -203,9 +139,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserDebugCairoCFLite.vsprops"
-			UseOfATL="1"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -264,10 +199,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_Cairo_CFLite|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserReleaseCairoCFLite.vsprops"
-			UseOfATL="1"
+			Name="Debug_All|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -327,11 +261,71 @@
 		</Configuration>
 		<Configuration
 			Name="Production|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Configurations\MiniBrowserProduction.vsprops"
-			UseOfATL="1"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_Cairo_CFLite|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Configurations\MiniBrowserLauncherReleaseCairoCFLite.vsprops"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -392,116 +386,10 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+		<File
+			RelativePath="..\win\DLLLauncher\DLLLauncherMain.cpp"
 			>
-			<File
-				RelativePath=".\win\BrowserView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\win\BrowserWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\win\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\win\MiniBrowser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\win\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\win\BrowserView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\win\BrowserWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\win\MiniBrowser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\win\Resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\win\stdafx.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-			<File
-				RelativePath=".\win\MiniBrowser.rc"
-				>
-			</File>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -29,18 +29,6 @@
 #include "MiniBrowser.h"
 #include <string>
 
-#if defined _M_IX86
-#define PROCESSORARCHITECTURE "x86"
-#elif defined _M_IA64
-#define PROCESSORARCHITECTURE "ia64"
-#elif defined _M_X64
-#define PROCESSORARCHITECTURE "amd64"
-#else
-#define PROCESSORARCHITECTURE "*"
-#endif
-
-#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
 static bool shouldTranslateMessage(const MSG& msg)
 {
     // Only these four messages are actually translated by ::TranslateMessage or ::TranslateAccelerator.
@@ -57,10 +45,16 @@ static bool shouldTranslateMessage(const MSG& msg)
     return wcscmp(className, L"WebKit2WebViewWindowClass");
 }
 
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
+BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
 {
-    MiniBrowser::shared().initialize(hInstance);
+    if (reason == DLL_PROCESS_ATTACH)
+        MiniBrowser::shared().initialize(dllInstance);
 
+    return TRUE;
+}
+
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
+{
     // Create and show our initial window.
     MiniBrowser::shared().createNewWindow();
 

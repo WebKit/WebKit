@@ -1,5 +1,41 @@
 2012-01-04  Adam Roben  <aroben@apple.com>
 
+        Turn MiniBrowser into a stub .exe launcher and a .dll that contains all the real code
+
+        This allows us to add the Apple Application Support directory to PATH before trying to load
+        WebKit so that CoreGraphics.dll and friends can be found.
+
+        Fixes <http://webkit.org/b/68576> <rdar://problem/10163853> MiniBrowser fails to launch when
+        double-clicked
+
+        Reviewed by Anders Carlsson.
+
+        * MiniBrowser/MiniBrowser.vcproj:
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops:
+        Changed to build MiniBrowser.dll instead of MiniBrowser.exe.
+
+        * MiniBrowser/Configurations/MiniBrowserLauncherCommon.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebug.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebugAll.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebugCairoCFLite.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherProduction.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherRelease.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserLauncherReleaseCairoCFLite.vsprops: Added.
+
+        * MiniBrowser/MiniBrowserLauncher.vcproj: Copied from Tools/MiniBrowser/MiniBrowser.vcproj
+        but changed to build the stub launcher.
+
+        * MiniBrowser/win/main.cpp: Moved the /manifestdependency code to DLLLauncherMain.cpp, since
+        it needs to be compiled into the .exe instead of the .dll.
+        (DllMain): Added. We use this to store the DLL's HINSTANCE.
+        (dllLauncherEntryPoint): Renamed from _tWinMain. This is what gets called by the
+        DLLLauncherMain code.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp: Moved the /manifestdependency code from MiniBrowser
+        to here.
+
+2012-01-04  Adam Roben  <aroben@apple.com>
+
         Make WinLauncher's window frame respond to clicks/drags again
 
         Fixes <http://webkit.org/b/75562> REGRESSION (r84990): Can't drag WinLauncher by its title

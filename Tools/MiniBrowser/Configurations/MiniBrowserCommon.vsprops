@@ -9,4 +9,8 @@
 		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;"
 		UsePrecompiledHeader="2"
 	/>
+	<Tool
+		Name="VCLinkerTool"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
+	/>
 </VisualStudioPropertySheet>
