@@ -32,6 +32,8 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/PassOwnPtr.h>
 
+using namespace WTF;
+
 namespace WebCore {
 
 static const UChar table[256] = {

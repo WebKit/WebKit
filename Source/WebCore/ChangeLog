@@ -1,3 +1,13 @@
+2012-01-05  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix for Chromium Mac Clang build.
+
+        Push using namespace WTF to .cpp file from .h file.
+
+        * platform/text/TextCodecASCIIFastPath.h:
+        * platform/text/TextCodecLatin1.cpp:
+        * platform/text/TextCodecUTF8.cpp:
+
 2012-01-05  Max Vujovic  <mvujovic@adobe.com>
 
         WebKit adds vertical paddings and borders to the fixed width of CSS tables

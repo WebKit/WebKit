@@ -31,6 +31,7 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
+using namespace WTF;
 using namespace WTF::Unicode;
 using namespace std;
 

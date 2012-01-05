@@ -29,8 +29,6 @@
 
 #include <wtf/text/ASCIIFastPath.h>
 
-using namespace WTF;
-
 namespace WebCore {
 
 template<size_t size> struct UCharByteFiller;
