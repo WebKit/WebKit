@@ -25,15 +25,10 @@
 
 #include "config.h"
 
-#if PLATFORM(QT)
-#include <QtGlobal>
-#endif
-
 #if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
 
-#include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext.h"
@@ -41,6 +36,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "NotImplemented.h"
+#include "WebGLObject.h"
 #include <cstring>
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
@@ -55,6 +51,7 @@
 #elif PLATFORM(GTK)
 #include "OpenGLShims.h"
 #elif PLATFORM(QT)
+#include <QtGlobal>
 #include <cairo/OpenGLShims.h>
 #endif
 
@@ -773,7 +770,7 @@ GC3Denum GraphicsContext3D::getError()
 String GraphicsContext3D::getString(GC3Denum name)
 {
     makeContextCurrent();
-    return String((const char*) ::glGetString(name));
+    return String(reinterpret_cast<const char*>(::glGetString(name)));
 }
 
 void GraphicsContext3D::hint(GC3Denum target, GC3Denum mode)
@@ -887,9 +884,9 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
 void GraphicsContext3D::releaseShaderCompiler()
 {
-    // FIXME: This is not implemented on desktop OpenGL. We need to have ifdefs for the different GL variants
+    // FIXME: This is not implemented on desktop OpenGL. We need to have ifdefs for the different GL variants.
     makeContextCurrent();
-    //::glReleaseShaderCompiler();
+    notImplemented();
 }
 
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
@@ -1245,18 +1242,16 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
     ASSERT(program);
 
     makeContextCurrent();
-    GLint length;
+    GLint length = 0;
     ::glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
     if (!length)
-        return "";
+        return String(); 
 
-    GLsizei size;
-    GLchar* info = (GLchar*) fastMalloc(length);
+    GLsizei size = 0;
+    OwnArrayPtr<GLchar> info = adoptArrayPtr(static_cast<GLchar*>(fastMalloc(length)));
+    ::glGetProgramInfoLog(program, length, &size, info.get());
 
-    ::glGetProgramInfoLog(program, length, &size, info);
-    String s(info);
-    fastFree(info);
-    return s;
+    return String(info.get());
 }
 
 void GraphicsContext3D::getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value)
@@ -1274,37 +1269,29 @@ void GraphicsContext3D::getShaderiv(Platform3DObject shader, GC3Denum pname, GC3
     HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
     
     switch (pname) {
-        case DELETE_STATUS:
-        case SHADER_TYPE:
-            // Let OpenGL handle these.
-        
-            ::glGetShaderiv(shader, pname, value);
-            break;
-        
-        case COMPILE_STATUS:
-            if (result == m_shaderSourceMap.end()) {
-                (*value) = static_cast<int>(false);
-                return;
-            }
-        
-            (*value) = static_cast<int>(result->second.isValid);
-            break;
-        
-        case INFO_LOG_LENGTH:
-            if (result == m_shaderSourceMap.end()) {
-                (*value) = 0;
-                return;
-            }
-        
-            (*value) = getShaderInfoLog(shader).length();
-            break;
-        
-        case SHADER_SOURCE_LENGTH:
-            (*value) = getShaderSource(shader).length();
-            break;
-        
-        default:
-            synthesizeGLError(INVALID_ENUM);
+    case DELETE_STATUS:
+    case SHADER_TYPE:
+        ::glGetShaderiv(shader, pname, value);
+        break;
+    case COMPILE_STATUS:
+        if (result == m_shaderSourceMap.end()) {
+            *value = static_cast<int>(false);
+            return;
+        }
+        *value = static_cast<int>(result->second.isValid);
+        break;
+    case INFO_LOG_LENGTH:
+        if (result == m_shaderSourceMap.end()) {
+            *value = 0;
+            return;
+        }
+        *value = getShaderInfoLog(shader).length();
+        break;
+    case SHADER_SOURCE_LENGTH:
+        *value = getShaderSource(shader).length();
+        break;
+    default:
+        synthesizeGLError(INVALID_ENUM);
     }
 }
 
@@ -1315,28 +1302,23 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     makeContextCurrent();
 
     HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
-
     if (result == m_shaderSourceMap.end())
-         return "";
+        return String(); 
 
-     ShaderSourceEntry entry = result->second;
+    ShaderSourceEntry entry = result->second;
+    if (!entry.isValid)
+        return entry.log;
 
-     if (entry.isValid) {
-         GLint length;
-         ::glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-         if (!length)
-             return "";
+    GLint length = 0;
+    ::glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+    if (!length)
+        return String(); 
 
-         GLsizei size;
-         GLchar* info = (GLchar*) fastMalloc(length);
+    GLsizei size = 0;
+    OwnArrayPtr<GLchar> info = adoptArrayPtr(static_cast<GLchar*>(fastMalloc(length)));
+    ::glGetShaderInfoLog(shader, length, &size, info.get());
 
-         ::glGetShaderInfoLog(shader, length, &size, info);
-
-         String s(info);
-         fastFree(info);
-         return s;
-     } else
-         return entry.log;
+    return String(info.get());
 }
 
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)
@@ -1346,9 +1328,8 @@ String GraphicsContext3D::getShaderSource(Platform3DObject shader)
     makeContextCurrent();
 
     HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
-
     if (result == m_shaderSourceMap.end())
-        return "";
+        return String(); 
 
     return result->second.source;
 }
