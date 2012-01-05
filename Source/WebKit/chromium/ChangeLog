@@ -1,3 +1,23 @@
+2012-01-04  Adrienne Walker  <enne@google.com>
+
+        [chromium] Create unit tests for CCTiledLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=75557
+
+        Reviewed by James Robinson.
+
+        Add some quad generation tests for tiled layers.
+
+        * WebKit.gypi:
+        * tests/CCTiledLayerImplTest.cpp: Added.
+        (WebCore::createLayer):
+        (WebCore::TEST):
+        (WebCore::completelyContains):
+        (WebCore::getQuads):
+        (WebCore::verifyQuadsExactlyCoverRect):
+        (WebCore::coverageVisibleRectOnTileBoundaries):
+        (WebCore::coverageVisibleRectIntersectsTiles):
+        (WebCore::coverageVisibleRectIntersectsBounds):
+
 2012-01-05  David Reveman  <reveman@chromium.org>
 
         [Chromium] Remove WebSettings::setAcceleratedDrawingEnabled from public API.
