@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SchemeRegistry.h"
 
-namespace WebCore {
+namespace Platform {
 
 static URLSchemesMap& localURLSchemes()
 {
@@ -273,4 +273,4 @@ bool SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
     return schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
 }
 
-} // namespace WebCore
+} // namespace Platform
