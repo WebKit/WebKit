@@ -1,3 +1,21 @@
+2012-01-05  Jochen Eisinger  <jochen@chromium.org>
+
+        Replace webkitpy.common.system.filesystem.file_path_as_url with webkitpy.common.system.path.abspath_to_uri
+        https://bugs.webkit.org/show_bug.cgi?id=75617
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.exists):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.exists):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (GenericFileSystemTests.teardown_generic_test_dir):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.show_results_html_file):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_results_directory_absolute):
+
 2012-01-05  Adam Roben  <aroben@apple.com>
 
         Remove some unnecessary code from old-run-webkit-tests

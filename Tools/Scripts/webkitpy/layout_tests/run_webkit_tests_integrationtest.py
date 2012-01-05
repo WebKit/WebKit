@@ -44,6 +44,8 @@ import time
 import threading
 import unittest
 
+from webkitpy.common.system import path
+
 try:
     import multiprocessing
 except ImportError:
@@ -604,7 +606,7 @@ class MainTest(unittest.TestCase):
         with host.filesystem.mkdtemp() as tmpdir:
             res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
                                               tests_included=True, host=host)
-            self.assertEqual(user.opened_urls, [host.filesystem.file_path_as_url(host.filesystem.join(tmpdir, 'results.html'))])
+            self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.filesystem.join(tmpdir, 'results.html'))])
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
