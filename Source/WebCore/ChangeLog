@@ -1,5 +1,22 @@
 2012-01-05  Andreas Kling  <awesomekling@apple.com>
 
+        InspectorStyleSheet: Avoid cloning CSSRuleLists.
+        <http://webkit.org/b/75603>
+
+        Reviewed by Ryosuke Niwa.
+
+        Don't filter out @charset rules from CSSRuleLists. This was forcing us to clone
+        the stylesheet rule list, and is unnecessary since InspectorStyleSheet disregards
+        any rule that isn't either a style rule or a rule with an internal rule list.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+
+            Don't pass omitCharsetRules=true to the CSSRuleList constructor.
+
+2012-01-05  Andreas Kling  <awesomekling@apple.com>
+
         Make elements with attributes smaller by eliminating the ref count in NamedNodeMap.
         <http://webkit.org/b/75068>
 
