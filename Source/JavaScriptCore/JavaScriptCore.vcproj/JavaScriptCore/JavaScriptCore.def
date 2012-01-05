@@ -50,8 +50,8 @@ EXPORTS
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
     ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
-    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
+    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
     ?addBytes@SHA1@WTF@@QAEXPBEI@Z
@@ -128,7 +128,6 @@ EXPORTS
     ?currentThread@WTF@@YAIXZ
     ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
-    ?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
     ?data@CString@WTF@@QBEPBDXZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
     ?dayInMonthFromDayInYear@WTF@@YAHH_N@Z
@@ -167,6 +166,7 @@ EXPORTS
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
     ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVScopeChainNode@1@ABVSourceCode@1@V21@PAV21@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
+    ?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
     ?expand@MarkStackArray@JSC@@AAEXXZ
     ?fastCalloc@WTF@@YAPAXII@Z
     ?fastFree@WTF@@YAXPAX@Z
@@ -217,6 +217,7 @@ EXPORTS
     ?hasInstance@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VJSValue@2@2@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
+    ?hashSlowCase@StringImpl@WTF@@ABEIXZ
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
     ?init@AtomicString@WTF@@SAXXZ
@@ -256,9 +257,9 @@ EXPORTS
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
-    ?numberToString@WTF@@YAPBDNQAD@Z
     ?numberToFixedPrecisionString@WTF@@YAPBDNIQAD_N@Z
     ?numberToFixedWidthString@WTF@@YAPBDNIQAD@Z
+    ?numberToString@WTF@@YAPBDNQAD@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ

@@ -60,6 +60,15 @@ WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom, "*")
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
 
+NEVER_INLINE unsigned StringImpl::hashSlowCase() const
+{
+    if (is8Bit())
+        setHash(StringHasher::computeHash(m_data8, m_length));
+    else
+        setHash(StringHasher::computeHash(m_data16, m_length));
+    return existingHash();
+}
+
 void AtomicString::init()
 {
     static bool initialized;

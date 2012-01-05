@@ -369,13 +369,9 @@ public:
 
     unsigned hash() const
     {
-        if (!hasHash()) {
-            if (is8Bit())
-                setHash(StringHasher::computeHash(m_data8, m_length));
-            else
-                setHash(StringHasher::computeHash(m_data16, m_length));
-        }
-        return existingHash();
+        if (hasHash())
+            return existingHash();
+        return hashSlowCase();
     }
 
     inline bool hasOneRef() const
@@ -516,6 +512,7 @@ private:
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     NEVER_INLINE const UChar* getData16SlowCase() const;
+    NEVER_INLINE unsigned hashSlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;

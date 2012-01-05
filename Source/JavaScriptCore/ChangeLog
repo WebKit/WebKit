@@ -1,3 +1,26 @@
+2012-01-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Refined the fast path for StringImpl::hash()
+        https://bugs.webkit.org/show_bug.cgi?id=75178
+
+        Reviewed by Darin Adler.
+
+        Moved the hash calculation code into an out-of-line function to clean up
+        the hot path.
+
+        No measurable benchmark change, but this knocks some samples off in
+        Instruments, and I think this is a step toward removing -fomit-frame-pointer.
+        
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::hashSlowCase):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::hash): The patch.
+
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashSlowCase): Abide by the cockamamie Windows build
+        scheme, which requires all out-of-line StringImpl functions used by
+        WebCore be defined in this file instead of StringImpl.cpp. (See http://trac.webkit.org/changeset/59187.)
+
 2012-01-05  Gavin Barraclough  <barraclough@apple.com>
 
         Literal tab in JSONString fails
