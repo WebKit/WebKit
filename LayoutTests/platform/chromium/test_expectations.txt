@@ -978,7 +978,10 @@ BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIME
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
-BUGCR10304 WIN LINUX : svg/carto.net/button.svg = CRASH FAIL
+
+// This seems to be correct at this time. Marking flakey to verify that changed
+// expectations are correct and that it no longer crashes.
+BUGCR10304 LINUX WIN : svg/carto.net/button.svg = PASS FAIL CRASH
 
 // Probably need to change the test upstream to describe it better and use no
 // hard coded numbers.
