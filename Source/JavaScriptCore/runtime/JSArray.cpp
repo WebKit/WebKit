@@ -827,12 +827,8 @@ void JSArray::shiftCount(ExecState* exec, unsigned count)
 void JSArray::unshiftCount(ExecState* exec, unsigned count)
 {
     ArrayStorage* storage = m_storage;
-
-    ASSERT(m_indexBias >= 0);
-    ASSERT(count >= 0);
-    
     unsigned length = storage->m_length;
-    
+
     if (length != storage->m_numValuesInVector) {
         // If m_length and m_numValuesInVector aren't the same, we have a sparse vector
         // which means we need to go through each entry looking for the the "empty"

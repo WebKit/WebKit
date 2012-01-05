@@ -1,3 +1,15 @@
+2012-01-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        unshift/pop fifo may consume excessive memory
+        https://bugs.webkit.org/show_bug.cgi?id=75588
+
+        Reviewed by Zoltan Herczeg.
+
+        Buildfix after r104120.
+
+        * runtime/JSArray.cpp: Remove useless asserts, baecause unsigned expression >= 0 is always true
+        (JSC::JSArray::unshiftCount):
+
 2012-01-05  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Unreviewed gardening after r104134.
