@@ -1,5 +1,18 @@
 2012-01-05  Gavin Barraclough  <barraclough@apple.com>
 
+        Literal tab in JSONString fails
+        https://bugs.webkit.org/show_bug.cgi?id=71772
+
+        Reviewed by Oliver Hunt.
+
+        rfc4627 does not allow literal tab characters in JSON source.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::isSafeStringCharacter):
+            - do not allow literal tab in StrictJSON mode.
+
+2012-01-05  Gavin Barraclough  <barraclough@apple.com>
+
         push/shift fifo may consume excessive memory
         https://bugs.webkit.org/show_bug.cgi?id=75610
 

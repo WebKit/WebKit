@@ -330,12 +330,12 @@ ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token,
 
 template <ParserMode mode, typename CharType, LChar terminator> static inline bool isSafeStringCharacter(LChar c)
 {
-    return (c >= ' ' && c != '\\' && c != terminator) || c == '\t';
+    return (c >= ' ' && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
 }
 
 template <ParserMode mode, typename CharType, UChar terminator> static inline bool isSafeStringCharacter(UChar c)
 {
-    return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || c == '\t';
+    return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || (c == '\t' && mode != StrictJSON);
 }
 
 template <typename CharType>

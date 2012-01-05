@@ -145,7 +145,8 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\tz"');
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
+json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('"a\\tz"');
     }

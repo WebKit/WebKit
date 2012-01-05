@@ -131,6 +131,7 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse('"a\tz"');
     });
+    result[result.length - 1].throws = true; // rfc4627 does not allow literal tab characters in JSON source
     result.push(function(jsonObject){
         return jsonObject.parse('"a\\tz"');
     });
