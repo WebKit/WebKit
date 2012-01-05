@@ -68,9 +68,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSArray);
 
 // The definition of MAX_STORAGE_VECTOR_LENGTH is dependant on the definition storageSize
 // function below - the MAX_STORAGE_VECTOR_LENGTH limit is defined such that the storage
-// size calculation cannot overflow.  (sizeof(ArrayStorage) - sizeof(JSValue)) +
-// (vectorLength * sizeof(JSValue)) must be <= 0xFFFFFFFFU (which is maximum value of size_t).
-#define MAX_STORAGE_VECTOR_LENGTH static_cast<unsigned>((0xFFFFFFFFU - (sizeof(ArrayStorage) - sizeof(JSValue))) / sizeof(JSValue))
+// size calculation cannot overflow.  (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>)) +
+// (vectorLength * sizeof(WriteBarrier<Unknown>)) must be <= 0xFFFFFFFFU (which is maximum value of size_t).
+#define MAX_STORAGE_VECTOR_LENGTH static_cast<unsigned>((0xFFFFFFFFU - (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))) / sizeof(WriteBarrier<Unknown>))
 
 // These values have to be macros to be used in max() and min() without introducing
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
@@ -106,10 +106,10 @@ static inline size_t storageSize(unsigned vectorLength)
 
     // MAX_STORAGE_VECTOR_LENGTH is defined such that provided (vectorLength <= MAX_STORAGE_VECTOR_LENGTH)
     // - as asserted above - the following calculation cannot overflow.
-    size_t size = (sizeof(ArrayStorage) - sizeof(JSValue)) + (vectorLength * sizeof(JSValue));
+    size_t size = (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>)) + (vectorLength * sizeof(WriteBarrier<Unknown>));
     // Assertion to detect integer overflow in previous calculation (should not be possible, provided that
     // MAX_STORAGE_VECTOR_LENGTH is correctly defined).
-    ASSERT(((size - (sizeof(ArrayStorage) - sizeof(JSValue))) / sizeof(JSValue) == vectorLength) && (size >= (sizeof(ArrayStorage) - sizeof(JSValue))));
+    ASSERT(((size - (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))) / sizeof(WriteBarrier<Unknown>) == vectorLength) && (size >= (sizeof(ArrayStorage) - sizeof(WriteBarrier<Unknown>))));
 
     return size;
 }
@@ -227,7 +227,7 @@ inline void SparseArrayValueMap::put(JSGlobalData& globalData, JSArray* array, u
 
     size_t capacity = m_map.capacity();
     if (capacity != m_reportedCapacity) {
-        Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(JSValue)));
+        Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
         m_reportedCapacity = capacity;
     }
 }
@@ -557,7 +557,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
         return false;
 
-    storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
+    storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(WriteBarrier<Unknown>));
     m_storage->m_allocBase = baseStorage;
 
     WriteBarrier<Unknown>* vector = storage->m_vector;
@@ -571,41 +571,94 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     return true;
 }
 
-bool JSArray::increaseVectorPrefixLength(unsigned newLength)
+// This method makes room in the vector, but leaves the new space uncleared.
+bool JSArray::unshiftCountSlowCase(unsigned count)
 {
-    // This function leaves the array in an internally inconsistent state, because it does not move any values from sparse value map
-    // to the vector. Callers have to account for that, because they can do it more efficiently.
-    if (newLength > MAX_STORAGE_VECTOR_LENGTH)
-        return false;
+    // If not, we should have handled this on the fast path.
+    ASSERT(count > m_indexBias);
 
     ArrayStorage* storage = m_storage;
-    
-    unsigned vectorLength = m_vectorLength;
-    ASSERT(newLength > vectorLength);
-    ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
-    unsigned newVectorLength = getNewVectorLength(newLength);
 
-    void* newBaseStorage = fastMalloc(storageSize(newVectorLength + m_indexBias));
-    if (!newBaseStorage)
+    // Step 1:
+    // Gather 4 key metrics:
+    //  * usedVectorLength - how many entries are currently in the vector (conservative estimate - fewer may be in use in sparse vectors).
+    //  * requiredVectorLength - how many entries are will there be in the vector, after allocating space for 'count' more.
+    //  * currentCapacity - what is the current size of the vector, including any pre-capacity.
+    //  * desiredCapacity - how large should we like to grow the vector to - based on 2x requiredVectorLength.
+
+    unsigned length = storage->m_length;
+    unsigned usedVectorLength = min(m_vectorLength, length);
+    ASSERT(usedVectorLength <= MAX_STORAGE_VECTOR_LENGTH);
+    // Check that required vector length is possible, in an overflow-safe fashion.
+    if (count > MAX_STORAGE_VECTOR_LENGTH - usedVectorLength)
         return false;
-    
-    m_indexBias += newVectorLength - newLength;
-    
-    m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(newBaseStorage) + m_indexBias * sizeof(JSValue));
+    unsigned requiredVectorLength = usedVectorLength + count;
+    ASSERT(requiredVectorLength <= MAX_STORAGE_VECTOR_LENGTH);
+    // The sum of m_vectorLength and m_indexBias will never exceed MAX_STORAGE_VECTOR_LENGTH.
+    ASSERT(m_vectorLength <= MAX_STORAGE_VECTOR_LENGTH && (MAX_STORAGE_VECTOR_LENGTH - m_vectorLength) >= m_indexBias);
+    unsigned currentCapacity = m_vectorLength + m_indexBias;
+    // The calculation of desiredCapacity won't overflow, due to the range of MAX_STORAGE_VECTOR_LENGTH.
+    unsigned desiredCapacity = min(MAX_STORAGE_VECTOR_LENGTH, max(BASE_VECTOR_LEN, requiredVectorLength) << 1);
 
-    memcpy(m_storage, storage, storageSize(0));
-    memcpy(&m_storage->m_vector[newLength - m_vectorLength], &storage->m_vector[0], vectorLength * sizeof(JSValue));
-    
-    m_storage->m_allocBase = newBaseStorage;
-    m_vectorLength = newLength;
-    
-    fastFree(storage->m_allocBase);
-    ASSERT(newLength > vectorLength);
-    unsigned delta = newLength - vectorLength;
-    for (unsigned i = 0; i < delta; i++)
-        m_storage->m_vector[i].clear();
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));
-    
+    // Step 2:
+    // We're either going to choose to allocate a new ArrayStorage, or we're going to reuse the existing on.
+
+    void* newAllocBase;
+    unsigned newStorageCapacity;
+    // If the current storage array is sufficiently large (but not too large!) then just keep using it.
+    if (currentCapacity > desiredCapacity && isDenseEnoughForVector(currentCapacity, requiredVectorLength)) {
+        newAllocBase = storage->m_allocBase;
+        newStorageCapacity = currentCapacity;
+    } else {
+        if (!tryFastMalloc(storageSize(desiredCapacity)).getValue(newAllocBase))
+            return false;
+        newStorageCapacity = desiredCapacity;
+        // Currently there is no way to report to the heap that the extra capacity is shrinking!
+        if (desiredCapacity > currentCapacity)
+            Heap::heap(this)->reportExtraMemoryCost((desiredCapacity - currentCapacity) * sizeof(WriteBarrier<Unknown>));
+    }
+
+    // Step 3:
+    // Work out where we're going to move things to.
+
+    // Determine how much of the vector to use as pre-capacity, and how much as post-capacity.
+    // If the vector had no free post-capacity (length >= m_vectorLength), don't give it any.
+    // If it did, we calculate the amount that will remain based on an atomic decay - leave the
+    // vector with half the post-capacity it had previously.
+    unsigned postCapacity = 0;
+    if (length < m_vectorLength) {
+        // Atomic decay, + the post-capacity cannot be greater than what is available.
+        postCapacity = min((m_vectorLength - length) >> 1, newStorageCapacity - requiredVectorLength);
+        // If we're moving contents within the same allocation, the post-capacity is being reduced.
+        ASSERT(newAllocBase != storage->m_allocBase || postCapacity < m_vectorLength - length);
+    }
+
+    m_vectorLength = requiredVectorLength + postCapacity;
+    m_indexBias = newStorageCapacity - m_vectorLength;
+    m_storage = reinterpret_cast_ptr<ArrayStorage*>(reinterpret_cast<WriteBarrier<Unknown>*>(newAllocBase) + m_indexBias);
+
+    // Step 4:
+    // Copy array data / header into their new locations, clear post-capacity & free any old allocation.
+
+    // If this is being moved within the existing buffer of memory, we are always shifting data
+    // to the right (since count > m_indexBias). As such this memmove cannot trample the header.
+    memmove(m_storage->m_vector + count, storage->m_vector, sizeof(WriteBarrier<Unknown>) * usedVectorLength);
+    memmove(m_storage, storage, storageSize(0));
+
+    // Are we copying into a new allocation?
+    if (newAllocBase != m_storage->m_allocBase) {
+        // Free the old allocation, update m_allocBase.
+        fastFree(m_storage->m_allocBase);
+        m_storage->m_allocBase = newAllocBase;
+
+        // We need to clear any entries in the vector beyond length. We only need to
+        // do this if this was a new allocation, because if we're using an existing
+        // allocation the post-capacity will already be cleared, and in an existing
+        // allocation we can only beshrinking the amount of post capacity.
+        for (unsigned i = requiredVectorLength; i < m_vectorLength; ++i)
+            m_storage->m_vector[i].clear();
+    }
+
     return true;
 }
 
@@ -720,7 +773,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     checkConsistency();
 }
 
-void JSArray::shiftCount(ExecState* exec, int count)
+void JSArray::shiftCount(ExecState* exec, unsigned count)
 {
     ASSERT(count > 0);
     
@@ -762,7 +815,7 @@ void JSArray::shiftCount(ExecState* exec, int count)
         m_vectorLength -= count;
         
         if (m_vectorLength) {
-            char* newBaseStorage = reinterpret_cast<char*>(storage) + count * sizeof(JSValue);
+            char* newBaseStorage = reinterpret_cast<char*>(storage) + count * sizeof(WriteBarrier<Unknown>);
             memmove(newBaseStorage, storage, storageSize(0));
             m_storage = reinterpret_cast_ptr<ArrayStorage*>(newBaseStorage);
 
@@ -771,7 +824,7 @@ void JSArray::shiftCount(ExecState* exec, int count)
     }
 }
     
-void JSArray::unshiftCount(ExecState* exec, int count)
+void JSArray::unshiftCount(ExecState* exec, unsigned count)
 {
     ArrayStorage* storage = m_storage;
 
@@ -799,17 +852,17 @@ void JSArray::unshiftCount(ExecState* exec, int count)
     
     if (m_indexBias >= count) {
         m_indexBias -= count;
-        char* newBaseStorage = reinterpret_cast<char*>(storage) - count * sizeof(JSValue);
+        char* newBaseStorage = reinterpret_cast<char*>(storage) - count * sizeof(WriteBarrier<Unknown>);
         memmove(newBaseStorage, storage, storageSize(0));
         m_storage = reinterpret_cast_ptr<ArrayStorage*>(newBaseStorage);
         m_vectorLength += count;
-    } else if (!increaseVectorPrefixLength(m_vectorLength + count)) {
+    } else if (!unshiftCountSlowCase(count)) {
         throwOutOfMemoryError(exec);
         return;
     }
 
     WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    for (int i = 0; i < count; i++)
+    for (unsigned i = 0; i < count; i++)
         vector[i].clear();
 }
 
@@ -875,7 +928,7 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
     // For numeric comparison, which is fast, qsort is faster than mergesort. We
     // also don't require mergesort's stability, since there's no user visible
     // side-effect from swapping the order of equal primitive values.
-    qsort(storage->m_vector, size, sizeof(JSValue), compareNumbersForQSort);
+    qsort(storage->m_vector, size, sizeof(WriteBarrier<Unknown>), compareNumbersForQSort);
 
     checkConsistency(SortConsistencyCheck);
 }

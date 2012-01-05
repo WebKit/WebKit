@@ -153,8 +153,8 @@ namespace JSC {
         void push(ExecState*, JSValue);
         JSValue pop();
 
-        void shiftCount(ExecState*, int count);
-        void unshiftCount(ExecState*, int count);
+        void shiftCount(ExecState*, unsigned count);
+        void unshiftCount(ExecState*, unsigned count);
 
         bool canGetIndex(unsigned i) { return i < m_vectorLength && m_storage->m_vector[i]; }
         JSValue getIndex(unsigned i)
@@ -250,7 +250,7 @@ namespace JSC {
 
         unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(unsigned newLength);
-        bool increaseVectorPrefixLength(unsigned newLength);
+        bool unshiftCountSlowCase(unsigned count);
         
         unsigned compactForSorting();
 
@@ -258,7 +258,7 @@ namespace JSC {
         void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);
 
         unsigned m_vectorLength; // The valid length of m_vector
-        int m_indexBias; // The number of JSValue sized blocks before ArrayStorage.
+        unsigned m_indexBias; // The number of JSValue sized blocks before ArrayStorage.
         ArrayStorage *m_storage;
     };
 

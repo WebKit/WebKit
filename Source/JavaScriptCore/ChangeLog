@@ -1,3 +1,36 @@
+2012-01-04  Gavin Barraclough  <barraclough@apple.com>
+
+        unshift/pop fifo may consume excessive memory
+        https://bugs.webkit.org/show_bug.cgi?id=75588
+
+        Reviewed by Sam Weinig.
+
+        The Array object commonly store data in a vector, consisting of a portion that
+        is in use, a pre-capacity (m_indexBias) and a post-capacity (the delta between
+        m_length and m_vectorLength). Calls to pop with grow the post-capacity, and the
+        current algorithm for increasePrefixVectorLength (used by unshift) will never
+        stink the post-capacity, so a unshift/pop fifo may consume an inordinate amount
+        of memory, whilst having a relatively small active length.
+
+        * runtime/JSArray.cpp:
+        (JSC::storageSize):
+            - sizeof(JSValue) should be sizeof(WriteBarrier<Unknown>)
+        (JSC::SparseArrayValueMap::put):
+            - sizeof(JSValue) should be sizeof(WriteBarrier<Unknown>)
+        (JSC::JSArray::increaseVectorLength):
+            - sizeof(JSValue) should be sizeof(WriteBarrier<Unknown>)
+        (JSC::JSArray::unshiftCountSlowCase):
+            - renamed from increaseVectorPrefixLength (this was a bad name, since it
+              also moved the ArrayStorage header), rewritten.
+        (JSC::JSArray::shiftCount):
+            - sizeof(JSValue) should be sizeof(WriteBarrier<Unknown>), count should be unsigned
+        (JSC::JSArray::unshiftCount):
+            - sizeof(JSValue) should be sizeof(WriteBarrier<Unknown>), count should be unsigned,
+              increaseVectorPrefixLength renamed to unshiftCountSlowCase
+        (JSC::JSArray::sortNumeric):
+        * runtime/JSArray.h:
+            - Updated function declarations, m_indexBias should be unsigned.
+
 2012-01-04  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/75604> All instances of JSC::ArgumentsData appear to be leaked by JSC::Arguments
