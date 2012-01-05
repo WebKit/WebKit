@@ -52,6 +52,11 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->d->activation);
 }
 
+void Arguments::destroy(JSCell* cell)
+{
+    jsCast<Arguments*>(cell)->Arguments::~Arguments();
+}
+
 void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
 {
     if (UNLIKELY(d->overrodeLength)) {
