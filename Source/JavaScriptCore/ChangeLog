@@ -1,3 +1,13 @@
+2012-01-04  Michael Saboff  <msaboff@apple.com>
+
+        Invalid ASSERT() in DFGRepatch.cpp near line 385
+        https://bugs.webkit.org/show_bug.cgi?id=75584
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDProtoList): Fixed ASSERT to use ==.
+
 2012-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect use of DFG node reference counts when mutating the graph

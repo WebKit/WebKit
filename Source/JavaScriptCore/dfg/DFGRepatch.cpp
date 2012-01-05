@@ -381,7 +381,7 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
         stubInfo.stubRoutine = MacroAssemblerCodeRef();
         stubInfo.initGetByIdProtoList(polymorphicStructureList, 1);
     } else {
-        ASSERT(stubInfo.accessType = access_get_by_id_proto_list);
+        ASSERT(stubInfo.accessType == access_get_by_id_proto_list);
         polymorphicStructureList = stubInfo.u.getByIdProtoList.structureList;
         listIndex = stubInfo.u.getByIdProtoList.listSize;
     }
