@@ -1,5 +1,25 @@
 2012-01-05  Adam Roben  <aroben@apple.com>
 
+        Teach NRWT to use run-safari to open results.html on Apple's Windows port
+
+        NRWT was trying to use User.open_url, which doesn't work on Cygwin. But run-safari is
+        better, since we always want to open results.html using the user's build of WebKit, not
+        whatever their default browser is.
+
+        Fixes <http://webkit.org/b/75629> <rdar://problem/10648621> NRWT fails to open results.html
+        for Apple's Windows port
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.show_results_html_file): Changed to use run_safari, like MacPort does. Also removed
+        an obsolete comment.
+
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_show_results_html_file): Updated expected results.
+
+2012-01-05  Adam Roben  <aroben@apple.com>
+
         Prepend Safari.exe's path to the command-line passed to CreateProcess
 
         Safari expects the first argument in the command-line to be the path to Safari.exe itself.

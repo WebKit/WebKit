@@ -31,6 +31,7 @@ import re
 import sys
 
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.port.apple import ApplePort
 
 
@@ -107,9 +108,8 @@ class WinPort(ApplePort):
     def operating_system(self):
         return 'win'
 
-    # This port may need to override setup_environ_for_server
-    # to match behavior of setPathForRunningWebKitApp from ORWT.
-    # $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+    def show_results_html_file(self, results_filename):
+        self._run_script('run-safari', [cygpath(results_filename)])
 
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
