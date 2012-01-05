@@ -189,7 +189,7 @@ BUGWK74466 : fast/workers/worker-script-error.html = PASS TIMEOUT FAIL
 
 // Tests timing out because layoutTestController.workerThreadCount is not implemented in DRT
 BUGWK74653 SKIP : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TIMEOUT
-//BUGWK74653 SKIP : http/tests/workers/interrupt-database-sync-open-crash.html = TIMEOUT
+BUGWK74653 SKIP : http/tests/workers/terminate-during-sync-operation.html = TIMEOUT
 BUGWK74653 SKIP : fast/workers/storage/interrupt-database.html = TIMEOUT
 
 BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
