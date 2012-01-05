@@ -1,3 +1,15 @@
+2012-01-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Implement QQuickWebView::inputMethodQuery
+
+        Reviewed by Simon Hausmann.
+
+        Implement the current Qt5 queries of inputMethodQuery.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::inputMethodQuery):
+        * UIProcess/API/qt/qquickwebview_p.h:
+
 2012-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add methods to get/set the WebView zoom level to WebKit2 GTK+ API

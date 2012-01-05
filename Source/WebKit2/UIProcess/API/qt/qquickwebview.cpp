@@ -833,6 +833,32 @@ QString QQuickWebView::title() const
     return d->webPageProxy->pageTitle();
 }
 
+QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
+{
+    Q_D(const QQuickWebView);
+    const EditorState& state = d->webPageProxy->editorState();
+
+    switch(property) {
+    case Qt::ImCursorRectangle:
+        return QRectF(state.microFocus);
+    case Qt::ImFont:
+        return QVariant();
+    case Qt::ImCursorPosition:
+        return QVariant(static_cast<int>(state.cursorPosition));
+    case Qt::ImAnchorPosition:
+        return QVariant(static_cast<int>(state.anchorPosition));
+    case Qt::ImSurroundingText:
+        return QString(state.surroundingText);
+    case Qt::ImCurrentSelection:
+        return QString(state.selectedText);
+    case Qt::ImMaximumTextLength:
+        return QVariant(); // No limit.
+    default:
+        // Rely on the base implementation for ImEnabled, ImHints and ImPreferredLanguage.
+        return QQuickItem::inputMethodQuery(property);
+    }
+}
+
 QQuickWebViewExperimental* QQuickWebView::experimental() const
 {
     return m_experimental;

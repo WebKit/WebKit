@@ -87,6 +87,8 @@ public:
     bool loading() const;
     bool canReload() const;
 
+    virtual QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
+
     QQuickWebPage* page();
 
     QQuickWebViewExperimental* experimental() const;
