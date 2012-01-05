@@ -66,6 +66,11 @@ typedef HashMap<RenderBoxModelObject*, LayerSizeMap> ObjectLayerSizeMap;
 typedef HashMap<const RenderBoxModelObject*, RenderBoxModelObject*> ContinuationMap;
 static ContinuationMap* continuationMap = 0;
 
+// This HashMap is similar to the continuation map, but connects first-letter
+// renderers to their remaining text fragments.
+typedef HashMap<const RenderBoxModelObject*, RenderObject*> FirstLetterRemainingTextMap;
+static FirstLetterRemainingTextMap* firstLetterRemainingTextMap = 0;
+
 class ImageQualityController {
     WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -282,6 +287,11 @@ void RenderBoxModelObject::willBeDestroyed()
 
     // A continuation of this RenderObject should be destroyed at subclasses.
     ASSERT(!continuation());
+
+    // If this is a first-letter object with a remaining text fragment then the
+    // entry needs to be cleared from the map.
+    if (firstLetterRemainingText())
+        setFirstLetterRemainingText(0);
 
     // RenderObject::willBeDestroyed calls back to destroyLayer() for layer destruction
     RenderObject::willBeDestroyed();
@@ -2710,6 +2720,23 @@ void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
         if (continuationMap)
             continuationMap->remove(this);
     }
+}
+
+RenderObject* RenderBoxModelObject::firstLetterRemainingText() const
+{
+    if (!firstLetterRemainingTextMap)
+        return 0;
+    return firstLetterRemainingTextMap->get(this);
+}
+
+void RenderBoxModelObject::setFirstLetterRemainingText(RenderObject* remainingText)
+{
+    if (remainingText) {
+        if (!firstLetterRemainingTextMap)
+            firstLetterRemainingTextMap = new FirstLetterRemainingTextMap;
+        firstLetterRemainingTextMap->set(this, remainingText);
+    } else if (firstLetterRemainingTextMap)
+        firstLetterRemainingTextMap->remove(this);
 }
 
 bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)

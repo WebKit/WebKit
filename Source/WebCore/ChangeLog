@@ -1,3 +1,28 @@
+2012-01-05  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to first-letter block processing
+        https://bugs.webkit.org/show_bug.cgi?id=74009
+
+        Fixing the way updateFirstLetter() finds the remaining text fragment
+        for a given first-letter. Previously this was unreliable in some
+        circumstances.
+
+        This patch provides a reliable mechanism to identify the remaining
+        text by storing first-letter to remaining text associations in a
+        hash map, managed by methods in RenderBoxModelObject.
+
+        Reviewed by David Hyatt.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter)
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::setFirstLetterRemainingText): Added
+        (WebCore::RenderBoxModelObject::firstLetterRemainingText): Added
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::setFirstLetterRemainingText): Added
+        (WebCore::RenderBoxModelObject::firstLetterRemainingText): Added
+
 2012-01-05  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Crash in RenderRegion::getRegionRangeForBox.

@@ -5752,38 +5752,14 @@ void RenderBlock::updateFirstLetter()
 
             RenderTextFragment* remainingText = 0;
             RenderObject* nextSibling = firstLetter->nextSibling();
-            RenderObject* next = nextSibling;
-            while (next) {
-                if (next->isText() && toRenderText(next)->isTextFragment()) {
-                    remainingText = toRenderTextFragment(next);
-                    break;
-                }
-                next = next->nextSibling();
-            }
-            if (!remainingText && firstLetterContainer->isAnonymousBlock()) {
-                // The remaining text fragment could have been wrapped in a different anonymous block since creation
-                RenderObject* nextChild;
-                next = firstLetterContainer->nextSibling();
-                while (next && !remainingText) {
-                    if (next->isAnonymousBlock()) {
-                        nextChild = next->firstChild();
-                        while (nextChild) {
-                            if (nextChild->isText() && toRenderText(nextChild)->isTextFragment()
-                                && (toRenderTextFragment(nextChild)->firstLetter() == firstLetter)) {
-                                remainingText = toRenderTextFragment(nextChild);
-                                break;
-                            }
-                            nextChild = nextChild->nextSibling();
-                        }
-                    } else
-                        break;
-                    next = next->nextSibling();
-                }
-            }
+            RenderObject* remainingTextObject = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText();
+            if (remainingTextObject && remainingTextObject->isText() && toRenderText(remainingTextObject)->isTextFragment())
+                remainingText = toRenderTextFragment(remainingTextObject);
             if (remainingText) {
                 ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
                 // Replace the old renderer with the new one.
                 remainingText->setFirstLetter(newFirstLetter);
+                toRenderBoxModelObject(newFirstLetter)->setFirstLetterRemainingText(remainingText);
             }
             firstLetter->destroy();
             firstLetter = newFirstLetter;
@@ -5861,6 +5837,7 @@ void RenderBlock::updateFirstLetter()
         firstLetterContainer->addChild(remainingText, textObj);
         firstLetterContainer->removeChild(textObj);
         remainingText->setFirstLetter(firstLetter);
+        toRenderBoxModelObject(firstLetter)->setFirstLetterRemainingText(remainingText);
         
         // construct text fragment for the first letter
         RenderTextFragment* letter = 
