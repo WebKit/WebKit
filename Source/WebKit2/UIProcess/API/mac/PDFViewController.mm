@@ -452,12 +452,12 @@ void PDFViewController::setPDFDocumentData(const String& mimeType, const String&
         m_pdfData = convertPostScriptDataSourceToPDF(dataReference);
         if (!m_pdfData)
             return;
+        m_suggestedFilename = String(suggestedFilename + ".pdf");
     } else {
         // Make sure to copy the data.
         m_pdfData.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
+        m_suggestedFilename = suggestedFilename;
     }
-
-    m_suggestedFilename = suggestedFilename;
 
     RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)m_pdfData.get()]);
     [m_wkPDFView.get() setDocument:pdfDocument.get()];
