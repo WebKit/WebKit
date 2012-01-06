@@ -24,6 +24,14 @@ PASS new Date(new Date(1111, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -2710
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
 PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS Number(new Date(new Date(Infinity, 1, 1, 1, 1, 1, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, Infinity, 1, 1, 1, 1, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, Infinity, 1, 1, 1, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, Infinity, 1, 1, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, Infinity, 1, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1))) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity))) is -2174741938999
 PASS testStr is "1234567"
 PASS testStr is "1234567"
 PASS successfullyParsed is true

@@ -1,5 +1,16 @@
 2012-01-05  Gavin Barraclough  <barraclough@apple.com>
 
+        Date constructor handles infinite values incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=70998
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+            - should be checking !finite rather then isnan.
+
+2012-01-05  Gavin Barraclough  <barraclough@apple.com>
+
         date.toISOString produces incorrect results for dates with ms prior to 1970
         https://bugs.webkit.org/show_bug.cgi?id=75684
 
