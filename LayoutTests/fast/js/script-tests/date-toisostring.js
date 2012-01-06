@@ -13,6 +13,7 @@ function throwsRangeError(str)
 shouldThrow("Date.toISOString.call({})");
 shouldThrow("Date.toISOString.call(0)");
 
+shouldBe("new Date(-400).toISOString()", "'1969-12-31T23:59:59.600Z'");
 shouldBe("new Date(0).toISOString()", "'1970-01-01T00:00:00.000Z'");
 shouldBe("new Date('1 January 1500 UTC').toISOString()", "'1500-01-01T00:00:00.000Z'");
 shouldBe("new Date('1 January 2000 UTC').toISOString()", "'2000-01-01T00:00:00.000Z'");
