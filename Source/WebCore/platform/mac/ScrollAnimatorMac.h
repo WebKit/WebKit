@@ -128,6 +128,8 @@ private:
     /// ScrollElasticityControllerClient member functions.
     virtual IntSize stretchAmount() OVERRIDE;
     virtual bool pinnedInDirection(const FloatSize&) OVERRIDE;
+    virtual bool canScrollHorizontally() OVERRIDE;
+    virtual bool canScrollVertically() OVERRIDE;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) OVERRIDE;
     virtual void immediateScrollBy(const FloatSize&) OVERRIDE;
     virtual void startSnapRubberbandTimer() OVERRIDE;

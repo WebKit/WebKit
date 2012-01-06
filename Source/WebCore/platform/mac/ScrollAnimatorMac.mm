@@ -1065,6 +1065,22 @@ bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction)
     return pinnedInDirection(direction.width(), direction.height());
 }
 
+bool ScrollAnimatorMac::canScrollHorizontally()
+{
+    Scrollbar* scrollbar = m_scrollableArea->horizontalScrollbar();
+    if (!scrollbar)
+        return false;
+    return scrollbar->enabled();
+}
+
+bool ScrollAnimatorMac::canScrollVertically()
+{
+    Scrollbar* scrollbar = m_scrollableArea->verticalScrollbar();
+    if (!scrollbar)
+        return false;
+    return scrollbar->enabled();
+}
+
 void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
 {
     m_scrollableArea->setConstrainsScrollingToContentEdge(false);
@@ -1320,9 +1336,9 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
         CFTimeInterval timeDelta = [NSDate timeIntervalSinceReferenceDate] - m_scrollElasticityController.m_startTime;
 
         if (m_scrollElasticityController.m_startStretch == FloatSize()) {
-            m_scrollElasticityController.m_startStretch = m_scrollableArea->overhangAmount();
-            if (m_scrollElasticityController.m_startStretch == FloatSize()) {    
-                m_snapRubberBandTimer.stop();
+            m_scrollElasticityController.m_startStretch = m_scrollElasticityController.m_client->stretchAmount();
+            if (m_scrollElasticityController.m_startStretch == FloatSize()) {
+                m_scrollElasticityController.m_client->stopSnapRubberbandTimer();
 
                 m_scrollElasticityController.m_stretchScrollForce = FloatSize();
                 m_scrollElasticityController.m_startTime = 0;
@@ -1342,13 +1358,11 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
                 m_scrollElasticityController.m_origVelocity.setWidth(0);
             
             // Don't rubber-band horizontally if it's not possible to scroll horizontally
-            Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
-            if (!hScroller || !hScroller->enabled())
+            if (!m_scrollElasticityController.m_client->canScrollHorizontally())
                 m_scrollElasticityController.m_origVelocity.setWidth(0);
             
-            // Don't rubber-band vertically if it's not possible to scroll horizontally
-            Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
-            if (!vScroller || !vScroller->enabled())
+            // Don't rubber-band vertically if it's not possible to scroll vertically
+            if (!m_scrollElasticityController.m_client->canScrollVertically())
                 m_scrollElasticityController.m_origVelocity.setHeight(0);
         }
 
@@ -1358,16 +1372,16 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
         if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
             FloatPoint newOrigin = m_scrollElasticityController.m_origOrigin + delta;
 
-            immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_scrollableArea->overhangAmount());
+            immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_scrollElasticityController.m_client->stretchAmount());
 
-            FloatSize newStretch = m_scrollableArea->overhangAmount();
+            FloatSize newStretch = m_scrollElasticityController.m_client->stretchAmount();
             
             m_scrollElasticityController.m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
             m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
             immediateScrollTo(m_scrollElasticityController.m_origOrigin);
 
-            m_snapRubberBandTimer.stop();
+            m_scrollElasticityController.m_client->stopSnapRubberbandTimer();
 
             m_scrollElasticityController.m_stretchScrollForce = FloatSize();
             m_scrollElasticityController.m_startTime = 0;

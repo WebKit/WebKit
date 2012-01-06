@@ -41,6 +41,8 @@ protected:
 public:
     virtual IntSize stretchAmount() = 0;
     virtual bool pinnedInDirection(const FloatSize&) = 0;
+    virtual bool canScrollHorizontally() = 0;
+    virtual bool canScrollVertically() = 0;
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
     virtual void startSnapRubberbandTimer() = 0;
