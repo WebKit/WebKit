@@ -1,0 +1,5 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Check you can't drag into a data URL
+
+hello
+
