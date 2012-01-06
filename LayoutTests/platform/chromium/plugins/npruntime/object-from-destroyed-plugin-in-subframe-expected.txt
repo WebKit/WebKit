@@ -1,0 +1,10 @@
+Test various operation on an NPObject whose plug-in (that lives in a subframe) has been destroyed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ PASS testObject.gettingProperty threw exception ReferenceError: NPObject deleted.
+PASS testObject.settingProperty = 10 threw exception ReferenceError: NPObject deleted.
+PASS testObject() threw exception ReferenceError: NPObject deleted.
+PASS new testObject(); threw exception ReferenceError: NPObject deleted.
+
