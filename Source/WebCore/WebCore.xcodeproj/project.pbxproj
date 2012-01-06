@@ -5901,8 +5901,6 @@
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
-		E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */; };
-		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E169803D1133542D00894115 /* CRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169803C1133542D00894115 /* CRuntimeObject.h */; };
@@ -13279,8 +13277,6 @@
 		E134F5AA12EE343F004EC58D /* IntRectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectHash.h; sourceTree = "<group>"; };
 		E13F01EA1270E10D00DFBA71 /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
 		E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageMac.mm; sourceTree = "<group>"; };
-		E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlElementWithState.cpp; sourceTree = "<group>"; };
-		E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlElementWithState.h; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E169803C1133542D00894115 /* CRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRuntimeObject.h; sourceTree = "<group>"; };
@@ -17248,8 +17244,6 @@
 				A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */,
 				A81369B3097374F500D74463 /* HTMLFormControlElement.cpp */,
 				A81369B2097374F500D74463 /* HTMLFormControlElement.h */,
-				E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */,
-				E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */,
 				A81369B5097374F500D74463 /* HTMLFormElement.cpp */,
 				A81369B4097374F500D74463 /* HTMLFormElement.h */,
 				A8D064EF0A23BFEA005E7203 /* HTMLFormElement.idl */,
@@ -23041,7 +23035,6 @@
 				977B386F122883E900B81FF8 /* HTMLFormattingElementList.h in Headers */,
 				A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */,
 				A81369CE097374F600D74463 /* HTMLFormControlElement.h in Headers */,
-				E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */,
 				A81369D0097374F600D74463 /* HTMLFormElement.h in Headers */,
 				A871DE2B0A152AC800B12A68 /* HTMLFrameElement.h in Headers */,
 				14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */,
@@ -26059,7 +26052,6 @@
 				977B386E122883E900B81FF8 /* HTMLFormattingElementList.cpp in Sources */,
 				A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */,
 				A81369CF097374F600D74463 /* HTMLFormControlElement.cpp in Sources */,
-				E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */,
 				A81369D1097374F600D74463 /* HTMLFormElement.cpp in Sources */,
 				A871DE230A152AC800B12A68 /* HTMLFrameElement.cpp in Sources */,
 				14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */,
