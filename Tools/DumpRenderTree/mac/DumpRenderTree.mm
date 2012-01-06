@@ -555,6 +555,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setXSSAuditorEnabled:NO];
     [preferences setExperimentalNotificationsEnabled:NO];
     [preferences setPlugInsEnabled:YES];
+    [preferences setTextAreasAreResizable:YES];
 
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];

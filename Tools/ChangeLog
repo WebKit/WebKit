@@ -1,3 +1,15 @@
+2012-01-05  Jon Lee  <jonlee@apple.com>
+
+        Update DRT on Mac to draw resize handles on text areas.
+
+        Reviewed by John Sullivan.
+
+        Enable resize handles on text areas so that we don't have to create two different sets of pixel test results,
+        between WK1 and WK2. This will require rebaselining existing textarea pixel tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+
 2012-01-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move listing of include paths and libs to pri files in sources

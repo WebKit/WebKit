@@ -37,8 +37,6 @@ BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
-BUGWK74270 : fast/forms/basic-selects.html = FAIL
-
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
