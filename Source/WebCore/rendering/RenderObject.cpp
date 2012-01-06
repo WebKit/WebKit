@@ -2061,6 +2061,10 @@ RenderObject* RenderObject::container(RenderBoxModelObject* repaintContainer, bo
         while (o && o->style()->position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
             if (repaintContainerSkipped && o == repaintContainer)
                 *repaintContainerSkipped = true;
+#if ENABLE(SVG)
+                if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
+                    break;
+#endif
             o = o->parent();
         }
     }

@@ -1,5 +1,24 @@
 2011-1-5  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 99731
+
+    2011-11-09  Ken Buchanan <kenrb@chromium.org>
+
+            SVG foreignObject wrong container
+            https://bugs.webkit.org/show_bug.cgi?id=64780
+
+            Reviewed by Simon Fraser.
+
+            Added layout test for 64780 fix, rebaselined a test that it broke.
+            This will cause gtk and qt ports to also need rebaseline.
+
+            * platform/mac/svg/overflow/overflow-on-foreignObject-expected.png: Rebaseline
+            * platform/mac/svg/overflow/overflow-on-foreignObject-expected.txt: Rebaseline
+            * svg/foreignObject/absolute-position-foreign-object-child-crash.html: Added
+            * svg/foreignObject/absolute-position-foreign-object-child-crash-expected.txt: Added
+
+2011-1-5  Lucas Forschler  <lforschler@apple.com>
+
     Merge 99579
 
     2011-11-08  Justin Schuh  <jschuh@chromium.org>
