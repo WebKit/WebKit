@@ -1,3 +1,17 @@
+2012-01-05  Kent Tamura  <tkent@chromium.org>
+
+        Fix a crash by importing an element of which local name ends with ":input".
+        https://bugs.webkit.org/show_bug.cgi?id=75103
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/dom/importNode-confusing-localName.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::importNode): Pass QualifiedName of the source elemnt
+        to createElement() in order to avoid unnecessary serialization and
+        parsing of the qualified name
+
 2012-01-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Move HTMLFormControlElementWithState class in its own header file.

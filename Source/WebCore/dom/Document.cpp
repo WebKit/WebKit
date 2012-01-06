@@ -835,8 +835,13 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         return createComment(importedNode->nodeValue());
     case ELEMENT_NODE: {
         Element* oldElement = static_cast<Element*>(importedNode);
-        RefPtr<Element> newElement = createElementNS(oldElement->namespaceURI(), oldElement->tagQName().toString(), ec);
-                    
+        // FIXME: The following check might be unnecessary. Is it possible that
+        // oldElement has mismatched prefix/namespace?
+        if (hasPrefixNamespaceMismatch(oldElement->tagQName())) {
+            ec = NAMESPACE_ERR;
+            return 0;
+        }
+        RefPtr<Element> newElement = createElement(oldElement->tagQName(), ec);
         if (ec)
             return 0;
 
