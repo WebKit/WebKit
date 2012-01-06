@@ -151,6 +151,7 @@
        (global-name "com.apple.SecurityServer")
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.SystemConfiguration.PPPController")
+       (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
        (global-name "com.apple.audio.VDCAssistant")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
