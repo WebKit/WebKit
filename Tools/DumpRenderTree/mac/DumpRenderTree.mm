@@ -699,7 +699,6 @@ static void crashHandler(int sig)
     char *signalName = strsignal(sig);
     write(STDERR_FILENO, signalName, strlen(signalName));
     write(STDERR_FILENO, "\n", 1);
-    restoreMainDisplayColorProfile(0);
     exit(128 + sig);
 }
 
@@ -810,8 +809,6 @@ static void prepareConsistentTestingEnvironment()
     adjustFonts();
     registerMockScrollbars();
     
-    if (dumpPixels)
-        setupMainDisplayColorProfile();
     allocateGlobalControllers();
     
     makeLargeMallocFailSilently();
@@ -879,9 +876,6 @@ void dumpRenderTree(int argc, const char *argv[])
         CFRelease(disallowedURLs);
         disallowedURLs = 0;
     }
-
-    if (dumpPixels)
-        restoreMainDisplayColorProfile(0);
 }
 
 int main(int argc, const char *argv[])

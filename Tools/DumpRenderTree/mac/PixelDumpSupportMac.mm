@@ -44,63 +44,6 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
-
-// To ensure pixel tests consistency, we need to always render in the same colorspace.
-// Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
-// This implies we have to temporarily change the profile of the main display to the colorspace we want to render into.
-// We also need to make sure the CGBitmapContext we return is in that same colorspace.
-
-#define PROFILE_PATH "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc" // FIXME: This cannot be more than CS_MAX_PATH (256 characters)
-
-static CMProfileLocation sInitialProfileLocation; // The locType field is initialized to 0 which is the same as cmNoProfileBase
-
-void restoreMainDisplayColorProfile(int ignored)
-{
-    // This is used as a signal handler, and thus the calls into ColorSync are unsafe
-    // But we might as well try to restore the user's color profile, we're going down anyway...
-    if (sInitialProfileLocation.locType != cmNoProfileBase) {
-        const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-        int error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &sInitialProfileLocation);
-        if (error)
-            fprintf(stderr, "Failed to restore initial color profile for main display! Open System Preferences > Displays > Color and manually re-select the profile.  (Error: %i)\n", error);
-        sInitialProfileLocation.locType = cmNoProfileBase;
-    }
-}
-
-void setupMainDisplayColorProfile()
-{
-    const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-    int error;
-    
-    CMProfileRef profile = 0;
-    error = CMGetProfileByAVID((CMDisplayIDType)kCGDirectMainDisplay, &profile);
-    if (!error) {
-        UInt32 size = sizeof(CMProfileLocation);
-        error = NCMGetProfileLocation(profile, &sInitialProfileLocation, &size);
-        CMCloseProfile(profile);
-    }
-    if (error) {
-        fprintf(stderr, "Failed to retrieve current color profile for main display, thus it won't be changed.  Many pixel tests may fail as a result.  (Error: %i)\n", error);
-        sInitialProfileLocation.locType = cmNoProfileBase;
-        return;
-    }
-    
-    CMProfileLocation location;
-    location.locType = cmPathBasedProfile;
-    strcpy(location.u.pathLoc.path, PROFILE_PATH);
-    error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
-    if (error) {
-        fprintf(stderr, "Failed to set color profile for main display!  Many pixel tests may fail as a result.  (Error: %i)\n", error);
-        sInitialProfileLocation.locType = cmNoProfileBase;
-        return;
-    }
-    
-    // Other signals are handled in installSignalHandlers() which also calls restoreMainDisplayColorProfile()
-    signal(SIGINT, restoreMainDisplayColorProfile);
-    signal(SIGHUP, restoreMainDisplayColorProfile);
-    signal(SIGTERM, restoreMainDisplayColorProfile);
-}
-
 static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer)
 {
     rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
@@ -109,19 +52,9 @@ static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t p
     if (!buffer)
         return 0;
     
-    static CGColorSpaceRef colorSpace = 0;
-    if (!colorSpace) {
-        CMProfileLocation location;
-        location.locType = cmPathBasedProfile;
-        strcpy(location.u.pathLoc.path, PROFILE_PATH);
-        CMProfileRef profile;
-        if (CMOpenProfile(&profile, &location) == noErr) {
-            colorSpace = CGColorSpaceCreateWithPlatformColorSpace(profile);
-            CMCloseProfile(profile);
-        }
-    }
-    
-    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host); // Use ARGB8 on PPC or BGRA8 on X86 to improve CG performance
+    // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host); // Use ARGB8 on PPC or BGRA8 on X86 to improve CG performance
     if (!context) {
         free(buffer);
         return 0;
@@ -207,7 +140,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             [view display];
 
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
-            // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor
+            // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor.
             CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
             CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
             CGImageRelease(image);

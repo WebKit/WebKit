@@ -59,9 +59,9 @@ static CGContextRef createCGContextFromImage(WKImageRef wkImage, FlipGraphicsCon
     size_t rowBytes = (4 * pixelsWide + 63) & ~63;
     void* buffer = calloc(pixelsHigh, rowBytes);
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace, kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
-    CGColorSpaceRelease(colorSpace);
+    // Creating this bitmap in the device color space should prevent any color conversion when the image of the web view is drawn into it.
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    CGContextRef context = CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
     
     if (flip == FlipGraphicsContext) {
         CGContextSaveGState(context);
@@ -95,15 +95,14 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
             md5.addBytes(buffer);
             bitmapData += bytesPerRow;
         }
-    } else {
+    } else
 #endif
+    {
         for (unsigned row = 0; row < pixelsHigh; row++) {
             md5.addBytes(bitmapData, 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
-#if PLATFORM(MAC)
     }
-#endif
 
     Vector<uint8_t, 16> hash;
     md5.checksum(hash);

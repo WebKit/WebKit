@@ -42,14 +42,4 @@ void dumpBitmap(BitmapContext*, const char* checksum);
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash);
 void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum);
 
-#if PLATFORM(MAC)
-
-// Can be used as a signal handler
-void restoreMainDisplayColorProfile(int ignored);
-
-// May change your color space, requiring a call to restoreMainDisplayColorProfile
-void setupMainDisplayColorProfile();
-
-#endif
-
 #endif // PixelDumpSupport_h
