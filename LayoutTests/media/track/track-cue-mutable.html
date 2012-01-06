@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>           
+
+            var cues;
+            
+            function logSpecURL(url, description)
+            {
+                consoleWrite("<br><i>" + description + "</i>");
+                consoleWrite("<a href=" + url + ">" + url + "<" + "/a>");
+            }
+
+            function trackLoaded()
+            {
+                track = document.getElementById('captions');
+                cues = track.track.cues;
+
+                consoleWrite("** Test initial values.");
+                run("textCue = cues.getCueById('1')");
+
+                testExpected("textCue.startTime", 0);
+                testExpected("textCue.endTime", 1.0);
+                testExpected("textCue.pauseOnExit", false);
+                testExpected("textCue.direction", "horizontal");
+                testExpected("textCue.snapToLines", true);
+                testExpected("textCue.linePosition", -1);
+                testExpected("textCue.textPosition", 50);
+                testExpected("textCue.size", 100);
+                testExpected("textCue.alignment", "middle");
+
+                consoleWrite("<br>** Modify cue values.");
+
+                run("textCue.startTime = 1.1");
+                testExpected("textCue.startTime", 1.1);
+
+                consoleWrite("");
+                run("textCue.endTime = 3.9");
+                testExpected("textCue.endTime", 3.9);
+
+                consoleWrite("");
+                run("textCue.pauseOnExit = true");
+                testExpected("textCue.pauseOnExit", true);
+
+                logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-direction", 
+                           "On setting, the text track cue writing direction must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.");
+                testException("textCue.direction = 'VERTICAL'", "DOMException.SYNTAX_ERR");
+                testExpected("textCue.direction", "horizontal");
+                run("textCue.direction = 'vertical'");
+                testExpected("textCue.direction", "vertical");
+
+                consoleWrite("");
+                run("textCue.snapToLines = false");
+                testExpected("textCue.snapToLines", false);
+
+                logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition",
+                            "On setting, if the text track cue snap-to-lines flag is not set, and the new value is negative or greater than 100, then throw an IndexSizeError exception.");
+                testException("textCue.linePosition = -2", "DOMException.INDEX_SIZE_ERR");
+                testException("textCue.linePosition = 102", "DOMException.INDEX_SIZE_ERR");
+                testExpected("textCue.linePosition", -1);
+                run("textCue.linePosition = 42");
+                testExpected("textCue.linePosition", 42);
+                run("textCue.snapToLines = true");
+                run("textCue.linePosition = -2");
+                testExpected("textCue.linePosition", -2);
+                run("textCue.linePosition = 102");
+                testExpected("textCue.linePosition", 102);
+
+                logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition", 
+                           "On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue text position to the new value.");
+                testException("textCue.textPosition = -200", "DOMException.INDEX_SIZE_ERR");
+                testException("textCue.textPosition = 110", "DOMException.INDEX_SIZE_ERR");
+                run("textCue.textPosition = 11");
+                testExpected("textCue.textPosition", 11);
+
+                logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-size",
+                           "On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue size to the new value.");
+                testException("textCue.size = -200", "DOMException.INDEX_SIZE_ERR");
+                testException("textCue.size = 110", "DOMException.INDEX_SIZE_ERR");
+                run("textCue.size = 57");
+                testExpected("textCue.size", 57);
+
+                logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-alignment",
+                           "On setting, the text track cue alignment must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.");
+                testException("textCue.alignment = 'End'", "DOMException.SYNTAX_ERR");
+                testExpected("textCue.alignment", "middle");
+                run("textCue.alignment = 'end'");
+                testExpected("textCue.alignment", "end");
+
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests modifying attributes of a TextTrackCue</p>
+        <video controls>
+            <track id="captions" src="captions-webvtt/captions.vtt" kind="captions" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>

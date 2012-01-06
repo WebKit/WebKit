@@ -1,0 +1,70 @@
+Tests modifying attributes of a TextTrackCue
+
+** Test initial values.
+RUN(textCue = cues.getCueById('1'))
+EXPECTED (textCue.startTime == '0') OK
+EXPECTED (textCue.endTime == '1') OK
+EXPECTED (textCue.pauseOnExit == 'false') OK
+EXPECTED (textCue.direction == 'horizontal') OK
+EXPECTED (textCue.snapToLines == 'true') OK
+EXPECTED (textCue.linePosition == '-1') OK
+EXPECTED (textCue.textPosition == '50') OK
+EXPECTED (textCue.size == '100') OK
+EXPECTED (textCue.alignment == 'middle') OK
+
+** Modify cue values.
+RUN(textCue.startTime = 1.1)
+EXPECTED (textCue.startTime == '1.1') OK
+
+RUN(textCue.endTime = 3.9)
+EXPECTED (textCue.endTime == '3.9') OK
+
+RUN(textCue.pauseOnExit = true)
+EXPECTED (textCue.pauseOnExit == 'true') OK
+
+On setting, the text track cue writing direction must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.
+http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-direction
+TEST(textCue.direction = 'VERTICAL') THROWS(DOMException.SYNTAX_ERR) OK
+EXPECTED (textCue.direction == 'horizontal') OK
+RUN(textCue.direction = 'vertical')
+EXPECTED (textCue.direction == 'vertical') OK
+
+RUN(textCue.snapToLines = false)
+EXPECTED (textCue.snapToLines == 'false') OK
+
+On setting, if the text track cue snap-to-lines flag is not set, and the new value is negative or greater than 100, then throw an IndexSizeError exception.
+http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition
+TEST(textCue.linePosition = -2) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(textCue.linePosition = 102) THROWS(DOMException.INDEX_SIZE_ERR) OK
+EXPECTED (textCue.linePosition == '-1') OK
+RUN(textCue.linePosition = 42)
+EXPECTED (textCue.linePosition == '42') OK
+RUN(textCue.snapToLines = true)
+RUN(textCue.linePosition = -2)
+EXPECTED (textCue.linePosition == '-2') OK
+RUN(textCue.linePosition = 102)
+EXPECTED (textCue.linePosition == '102') OK
+
+On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue text position to the new value.
+http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition
+TEST(textCue.textPosition = -200) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(textCue.textPosition = 110) THROWS(DOMException.INDEX_SIZE_ERR) OK
+RUN(textCue.textPosition = 11)
+EXPECTED (textCue.textPosition == '11') OK
+
+On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue size to the new value.
+http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-size
+TEST(textCue.size = -200) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(textCue.size = 110) THROWS(DOMException.INDEX_SIZE_ERR) OK
+RUN(textCue.size = 57)
+EXPECTED (textCue.size == '57') OK
+
+On setting, the text track cue alignment must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.
+http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-alignment
+TEST(textCue.alignment = 'End') THROWS(DOMException.SYNTAX_ERR) OK
+EXPECTED (textCue.alignment == 'middle') OK
+RUN(textCue.alignment = 'end')
+EXPECTED (textCue.alignment == 'end') OK
+
+END OF TEST
+

@@ -400,6 +400,10 @@ private:
     bool userIsInterestedInThisLanguage(const String&) const;
     bool userIsInterestedInThisTrack(HTMLTrackElement*) const;
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
+
+    bool ignoreTrackDisplayUpdateRequests() const { return m_ignoreTrackDisplayUpdate > 0; }
+    void beginIgnoringTrackDisplayUpdateRequests() { ++m_ignoreTrackDisplayUpdate; }
+    void endIgnoringTrackDisplayUpdateRequests() { ASSERT(m_ignoreTrackDisplayUpdate); --m_ignoreTrackDisplayUpdate; }
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
@@ -566,6 +570,7 @@ private:
     Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;
     CueIntervalTree m_cueTree;
     CueList m_currentlyActiveCues;
+    int m_ignoreTrackDisplayUpdate;
 #endif
 
 #if ENABLE(WEB_AUDIO)

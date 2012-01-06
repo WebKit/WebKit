@@ -36,18 +36,23 @@ module html {
         CustomIsReachable
     ] TextTrackCue {
         readonly attribute TextTrack track;
-        readonly attribute DOMString id;
 
-        readonly attribute double startTime;
-        readonly attribute double endTime;
-        readonly attribute boolean pauseOnExit;
+        attribute DOMString id;
+        attribute double startTime;
+        attribute double endTime;
+        attribute boolean pauseOnExit;
 
-        readonly attribute DOMString direction;
-        readonly attribute boolean snapToLines;
-        readonly attribute long linePosition;
-        readonly attribute long textPosition;
-        readonly attribute long size;
-        readonly attribute DOMString alignment;
+        attribute DOMString direction
+            setter raises (DOMException);
+        attribute boolean snapToLines;
+        attribute long linePosition
+            setter raises (DOMException);
+        attribute long textPosition
+            setter raises (DOMException);
+        attribute long size
+            setter raises (DOMException);
+        attribute DOMString alignment
+            setter raises (DOMException);
 
         DOMString getCueAsSource();
         DocumentFragment getCueAsHTML();

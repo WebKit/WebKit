@@ -1,3 +1,61 @@
+2012-01-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Make TextTrackCue more mutable
+        https://bugs.webkit.org/show_bug.cgi?id=72555
+
+        Reviewed by Anders Carlsson.
+
+        Test: media/track/track-cue-mutable.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Do nothing if the "ignore cue updates"
+            flag is set
+        (WebCore::HTMLMediaElement::textTrackAddCues): Block cue updates until all of the new cues have
+            been added, then call updateActiveTextTrackCues so update the display if necessary.
+        (WebCore::HTMLMediaElement::textTrackRemoveCues): Block cue updates until all of the new cues have
+            been removed, then call updateActiveTextTrackCues so update the display if necessary.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Call updateActiveTextTrackCues so update the display if necessary.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Ditto.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::ignoreTrackDisplayUpdateRequests):
+        (WebCore::HTMLMediaElement::beginIgnoringTrackDisplayUpdateRequests):
+        (WebCore::HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests):
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::cueWillChange): New, remove the cue from the media element because its
+            position in the interval tree is based on start and end times.
+        (WebCore::TextTrack::cueDidChange): Add the cue to the media element.
+        * html/TextTrack.h:
+
+        * html/TextTrackCue.cpp:
+        (WebCore::startKeyword): New, use a static String for the constant.
+        (WebCore::middleKeyword): Ditto.
+        (WebCore::endKeyword): Ditto.
+        (WebCore::horizontalKeyword): Ditto.
+        (WebCore::verticalKeyword): Ditto.
+        (WebCore::verticallrKeyword): Ditto.
+        (WebCore::TextTrackCue::cueWillChange): New, tell the track the cue is about to change.
+        (WebCore::TextTrackCue::cueDidChange): New, tell the track the cue has changed.
+        (WebCore::TextTrackCue::setId): New, attribute is mutable.
+        (WebCore::TextTrackCue::setStartTime): Ditto.
+        (WebCore::TextTrackCue::setEndTime): Ditto.
+        (WebCore::TextTrackCue::setPauseOnExit): Ditto.
+        (WebCore::TextTrackCue::direction): Ditto.
+        (WebCore::TextTrackCue::setDirection): Ditto.
+        (WebCore::TextTrackCue::setSnapToLines): Ditto.
+        (WebCore::TextTrackCue::setLinePosition): Ditto.
+        (WebCore::TextTrackCue::setTextPosition): Ditto.
+        (WebCore::TextTrackCue::setSize): Ditto.
+        (WebCore::TextTrackCue::alignment): Ditto.
+        (WebCore::TextTrackCue::setAlignment): Ditto.
+        (WebCore::TextTrackCue::parseSettings): Use the static strings.
+        * html/TextTrackCue.h:
+        (WebCore::TextTrackCue::id):
+        (WebCore::TextTrackCue::startTime):
+        (WebCore::TextTrackCue::endTime):
+        (WebCore::TextTrackCue::pauseOnExit):
+        * html/TextTrackCue.idl:
+
 2012-01-06  Oliver Hunt  <oliver@apple.com>
 
         DFG no longer optimises CanvasPixelArray

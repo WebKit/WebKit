@@ -948,6 +948,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 #if ENABLE(VIDEO_TRACK)
 void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
 {
+    if (ignoreTrackDisplayUpdateRequests())
+        return;
+    
     CueList previouslyActiveCues = m_currentlyActiveCues;
     bool activeSetChanged = false;
 
@@ -1030,24 +1033,32 @@ void HTMLMediaElement::textTrackKindChanged(TextTrack*)
 
 void HTMLMediaElement::textTrackAddCues(TextTrack*, const TextTrackCueList* cues) 
 {
+    beginIgnoringTrackDisplayUpdateRequests();
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackAddCue(cues->item(i)->track(), cues->item(i));
+    endIgnoringTrackDisplayUpdateRequests();
+    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* cues) 
 {
+    beginIgnoringTrackDisplayUpdateRequests();
     for (size_t i = 0; i < cues->length(); ++i)
         textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
+    endIgnoringTrackDisplayUpdateRequests();
+    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
 {
     m_cueTree.add(m_cueTree.createInterval(cue->startTime(), cue->endTime(), cue.get()));
+    updateActiveTextTrackCues(currentTime());
 }
 
 void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
 {
     m_cueTree.remove(m_cueTree.createInterval(cue->startTime(), cue->endTime(), cue.get()));
+    updateActiveTextTrackCues(currentTime());
 }
 
 #endif

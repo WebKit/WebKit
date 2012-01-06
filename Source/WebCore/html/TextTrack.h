@@ -98,6 +98,9 @@ public:
 
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
     void removeCue(TextTrackCue*, ExceptionCode&);
+
+    void cueWillChange(TextTrackCue*);
+    void cueDidChange(TextTrackCue*);
     
     virtual void fireCueChangeEvent();
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cuechange);
