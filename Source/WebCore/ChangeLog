@@ -1,3 +1,10 @@
+2012-01-05  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed bad merge fix for r104259 which dropped a line from r104210.
+
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+
 2012-01-05  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75593
