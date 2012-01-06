@@ -27,4 +27,5 @@ OTHER_FILES += \
     WebView/tst_loadProgressSignal.qml \
     WebView/tst_preferences.qml \
     WebView/tst_properties.qml \
-    WebView/tst_titleChanged.qml
+    WebView/tst_titleChanged.qml \
+    WebView/tst_applicationScheme.qml
