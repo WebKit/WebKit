@@ -1068,6 +1068,11 @@ bool ScrollAnimatorMac::canScrollVertically()
     return scrollbar->enabled();
 }
 
+IntPoint ScrollAnimatorMac::absoluteScrollPosition()
+{
+    return m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin();
+}
+
 void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
 {
     m_scrollableArea->setConstrainsScrollingToContentEdge(false);
@@ -1350,7 +1355,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
                 return;
             }
 
-            m_scrollElasticityController.m_origOrigin = (m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin()) - m_scrollElasticityController.m_startStretch;
+            m_scrollElasticityController.m_origOrigin = m_scrollElasticityController.m_client->absoluteScrollPosition() - m_scrollElasticityController.m_startStretch;
             m_scrollElasticityController.m_origVelocity = m_scrollElasticityController.m_momentumVelocity;
 
             // Just like normal scrolling, prefer vertical rubberbanding

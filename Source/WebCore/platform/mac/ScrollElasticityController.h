@@ -43,6 +43,10 @@ public:
     virtual bool pinnedInDirection(const FloatSize&) = 0;
     virtual bool canScrollHorizontally() = 0;
     virtual bool canScrollVertically() = 0;
+
+    // Return the absolute scroll position, not relative to the scroll origin.
+    virtual WebCore::IntPoint absoluteScrollPosition() = 0;
+
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
     virtual void startSnapRubberbandTimer() = 0;
