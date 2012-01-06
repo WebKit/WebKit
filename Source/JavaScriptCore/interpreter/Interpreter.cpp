@@ -556,7 +556,6 @@ void Interpreter::initialize(bool canUseJIT)
         for (int i = 0; i < numOpcodeIDs; ++i) {
             Opcode opcode = bitwise_cast<void*>(static_cast<uintptr_t>(i));
             m_opcodeTable[i] = opcode;
-            m_opcodeIDTable.add(opcode, static_cast<OpcodeID>(i));
         }
     } else {
         privateExecute(InitializeAndReturn, 0, 0);
@@ -669,6 +668,8 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 bool Interpreter::isOpcode(Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_INTERPRETER)
+    if (!m_enabled)
+        return opcode >= 0 && static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && m_opcodeIDTable.contains(opcode);

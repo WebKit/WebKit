@@ -1,3 +1,20 @@
+2012-01-05  Michael Saboff  <msaboff@apple.com>
+
+        Default HashTraits for Opcode don't work for Opcode = 0
+        https://bugs.webkit.org/show_bug.cgi?id=75595
+
+        Reviewed by Oliver Hunt.
+
+        Removed the populating of the m_opcodeIDTable table in the
+        case where the OpcodeID and Opcode are the same (m_enabled is false).
+        Instead we just cast the one type to the other.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::isOpcode):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::getOpcodeID):
+
 2012-01-06  Sam Weinig  <sam@webkit.org>
 
         Add a DecayArray type trait as a first step towards merging OwnPtr and OwnArrayPtr

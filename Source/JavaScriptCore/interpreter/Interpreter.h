@@ -114,11 +114,9 @@ namespace JSC {
             ASSERT(m_initialized);
 #if ENABLE(COMPUTED_GOTO_INTERPRETER)
             ASSERT(isOpcode(opcode));
-            if (!m_enabled) {
-                OpcodeID result = static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
-                ASSERT(result == m_opcodeIDTable.get(opcode));
-                return result;
-            }
+            if (!m_enabled)
+                return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
+
             return m_opcodeIDTable.get(opcode);
 #else
             return opcode;
