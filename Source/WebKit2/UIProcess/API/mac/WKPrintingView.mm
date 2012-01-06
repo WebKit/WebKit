@@ -30,6 +30,7 @@
 #import "PrintInfo.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
 
 using namespace WebKit;
@@ -54,6 +55,14 @@ static BOOL isForcingPreviewUpdate;
     _wkView = wkView;
 
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WKPrintingView class], self))
+        return;
+
+    [super dealloc];
 }
 
 - (BOOL)isFlipped
@@ -110,6 +119,8 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_adjustPrintingMarginsForHeaderAndFooter
 {
+    ASSERT(isMainThread()); // This funciton calls the client, which should only be done on main thread.
+
     NSPrintInfo *info = [_printOperation printInfo];
     NSMutableDictionary *infoDictionary = [info dictionary];
 
@@ -364,7 +375,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
     [self _suspendAutodisplay];
     
-    [self _adjustPrintingMarginsForHeaderAndFooter];
+    [self performSelectorOnMainThread:@selector(_adjustPrintingMarginsForHeaderAndFooter) withObject:nil waitUntilDone:YES];
 
     if ([self _hasPageRects])
         *range = NSMakeRange(1, _printingPageRects.size());
