@@ -1046,8 +1046,7 @@ void WebViewImpl::willStartLiveResize()
 
 void WebViewImpl::resize(const WebSize& newSize)
 {
-    ASSERT(!m_shouldAutoResize);
-    if (m_size == newSize)
+    if (m_shouldAutoResize || m_size == newSize)
         return;
     m_size = newSize;
 
