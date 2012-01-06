@@ -41,7 +41,8 @@ public:
 private:
     WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayerTreeView::Settings&);
     virtual ~WebLayerTreeViewImpl();
-    virtual void animateAndLayout(double frameBeginTime);
+    virtual void updateAnimations(double frameBeginTime);
+    virtual void layout();
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
     virtual void didRecreateGraphicsContext(bool success);

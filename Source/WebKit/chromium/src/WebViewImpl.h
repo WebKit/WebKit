@@ -109,7 +109,7 @@ public:
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
     virtual void animate(double frameBeginTime);
-    virtual void layout();
+    virtual void layout(); // Also implements CCLayerTreeHostClient::layout()
     virtual void paint(WebCanvas*, const WebRect&);
     virtual void themeChanged();
     virtual void composite(bool finish);
@@ -238,7 +238,7 @@ public:
     virtual void removePageOverlay(WebPageOverlay*);
 
     // CCLayerTreeHostClient
-    virtual void animateAndLayout(double frameBeginTime);
+    virtual void updateAnimations(double frameBeginTime);
     virtual void applyScrollAndScale(const WebCore::IntSize&, float);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
     virtual void didCommitAndDrawFrame();

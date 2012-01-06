@@ -1,3 +1,23 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Route all animate calls through CCLayerTreeHost in composited mode to simplify rate limiting logic
+        https://bugs.webkit.org/show_bug.cgi?id=75577
+
+        Reviewed by Darin Fisher.
+
+        Routes WebWidget-initiated animate() calls through the CCLayerTreeHost in composited mode. CCLayerTreeHost's
+        rate limiting logic needs to be aware of when requestAnimationFrame callbacks are run. In threaded mode, the
+        animate calls are driven from CCThreadProxy and so the CCLayerTreeHost can set whatever state it needs. This
+        makes the single-threaded mode where the animate calls are driven through the WebWidget interface outside of the
+        CCProxy's control.
+
+        This is a small step towards inverting the scheduling control from the WebWidget to the compositor.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::updateAnimations):
+        * src/WebViewImpl.h:
+
 2012-01-05  David Levin  <levin@chromium.org>
 
         [chromium] Resize requests at the view level should be ignored when in autoresize mode.

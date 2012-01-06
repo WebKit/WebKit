@@ -33,9 +33,10 @@ class WebThread;
 
 class WebLayerTreeViewClient {
 public:
-    // Updates animation and layout. This is called before the compositing pass
-    // so that layers can be updated at the given frame time.
-    virtual void animateAndLayout(double frameBeginTime) = 0;
+    // Updates animation and layout. These are called before the compositing
+    // pass so that layers can be updated at the given frame time.
+    virtual void updateAnimations(double frameBeginTime) = 0;
+    virtual void layout() = 0;
 
     // Applies a scroll delta to the root layer, which is bundled with a page
     // scale factor that may apply a CSS transform on the whole document (used

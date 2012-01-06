@@ -53,7 +53,8 @@ class TextureManager;
 
 class CCLayerTreeHostClient {
 public:
-    virtual void animateAndLayout(double frameBeginTime) = 0;
+    virtual void updateAnimations(double frameBeginTime) = 0;
+    virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
@@ -121,7 +122,8 @@ public:
     static bool anyLayerTreeHostInstanceExists();
 
     // CCLayerTreeHost interface to CCProxy.
-    void animateAndLayout(double frameBeginTime);
+    void updateAnimations(double frameBeginTime);
+    void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);
     void commitComplete();
@@ -132,10 +134,6 @@ public:
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
-
-    // CCLayerTreeHost interface to WebView.
-    bool animating() const { return m_animating; }
-    void setAnimating(bool animating) { m_animating = animating; } // Can be removed when non-threaded scheduling moves inside.
 
     CCLayerTreeHostClient* client() { return m_client; }
 

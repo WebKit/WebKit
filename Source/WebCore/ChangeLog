@@ -1,3 +1,22 @@
+2012-01-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Route all animate calls through CCLayerTreeHost in composited mode to simplify rate limiting logic
+        https://bugs.webkit.org/show_bug.cgi?id=75577
+
+        Reviewed by Darin Fisher.
+
+        This internalizes the animation rate limiting logic to CCLayerTreeHost and removes the setters/getters for the
+        m_animating flag. This requires that all animation updates have to go through CCLayerTreeHost to get the right
+        rate limiting behavior, regardless of which proxy is being used.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateAnimations):
+        (WebCore::CCLayerTreeHost::layout):
+        (WebCore::CCLayerTreeHost::startRateLimiter):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+
 2012-01-05  Justin Novosad  <junov@chromium.org>
 
         [Chromium] NativeImageSkia should mark SkBitmaps as immutable

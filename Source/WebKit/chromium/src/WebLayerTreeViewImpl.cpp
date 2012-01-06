@@ -60,10 +60,16 @@ WebLayerTreeViewImpl::~WebLayerTreeViewImpl()
 {
 }
 
-void WebLayerTreeViewImpl::animateAndLayout(double frameBeginTime)
+void WebLayerTreeViewImpl::updateAnimations(double frameBeginTime)
 {
     if (m_client)
-        m_client->animateAndLayout(frameBeginTime);
+        m_client->updateAnimations(frameBeginTime);
+}
+
+void WebLayerTreeViewImpl::layout()
+{
+    if (m_client)
+        m_client->layout();
 }
 
 void WebLayerTreeViewImpl::applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale)

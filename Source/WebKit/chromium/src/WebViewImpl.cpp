@@ -1127,24 +1127,34 @@ void WebViewImpl::didExitFullScreen()
 void WebViewImpl::animate(double frameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    TRACE_EVENT("WebViewImpl::animate", this, 0);
     // FIXME: remove this zero-check once render_widget has been modified to
     // pass in a frameBeginTime.
     if (!frameBeginTime)
         frameBeginTime = currentTime();
+
+#if USE(ACCELERATED_COMPOSITING)
+    // In composited mode, we always go through the compositor so it can apply
+    // appropriate flow-control mechanisms.
+    if (isAcceleratedCompositingActive())
+        m_layerTreeHost->updateAnimations(frameBeginTime);
+    else
+#endif
+        updateAnimations(frameBeginTime);
+#endif
+}
+
+void WebViewImpl::updateAnimations(double frameBeginTime)
+{
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    TRACE_EVENT("WebViewImpl::updateAnimations", this, 0);
+
     WebFrameImpl* webframe = mainFrameImpl();
-    if (webframe) {
-        FrameView* view = webframe->frameView();
-        if (view) {
-            if (!CCProxy::hasImplThread() && m_layerTreeHost)
-                m_layerTreeHost->setAnimating(true);
-
-            view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
-
-            if (!CCProxy::hasImplThread() && m_layerTreeHost)
-                m_layerTreeHost->setAnimating(false);
-        }
-    }
+    if (!webframe)
+        return;
+    FrameView* view = webframe->frameView();
+    if (!view)
+        return;
+    view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
 #endif
 }
 
@@ -3001,12 +3011,6 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
             context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
     return context;
-}
-
-void WebViewImpl::animateAndLayout(double frameBeginTime)
-{
-    animate(frameBeginTime);
-    layout();
 }
 
 void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float pageScaleDelta)

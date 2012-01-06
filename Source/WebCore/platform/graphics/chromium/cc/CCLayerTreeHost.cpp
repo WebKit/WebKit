@@ -118,11 +118,16 @@ void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* alloc
         m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
 }
 
-void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
+void CCLayerTreeHost::updateAnimations(double frameBeginTime)
 {
     m_animating = true;
-    m_client->animateAndLayout(frameBeginTime);
+    m_client->updateAnimations(frameBeginTime);
     m_animating = false;
+}
+
+void CCLayerTreeHost::layout()
+{
+    m_client->layout();
 }
 
 void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
@@ -500,7 +505,7 @@ void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
 
 void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
 {
-    if (animating())
+    if (m_animating)
         return;
     ASSERT(context);
     RateLimiterMap::iterator it = m_rateLimiters.find(context);

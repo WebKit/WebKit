@@ -59,7 +59,8 @@ public:
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void applyScrollAndScale(const IntSize&, float) { }
-    virtual void animateAndLayout(double frameBeginTime) { }
+    virtual void updateAnimations(double frameBeginTime) { }
+    virtual void layout() { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -137,9 +138,14 @@ public:
         return adoptPtr(new MockLayerTreeHostClient(testHooks));
     }
 
-    virtual void animateAndLayout(double frameBeginTime)
+    virtual void updateAnimations(double frameBeginTime)
     {
-        m_testHooks->animateAndLayout(frameBeginTime);
+        m_testHooks->updateAnimations(frameBeginTime);
+    }
+
+    virtual void layout()
+    {
+        m_testHooks->layout();
     }
 
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
@@ -696,7 +702,7 @@ public:
         postSetNeedsAnimateToMainThread();
     }
 
-    virtual void animateAndLayout(double)
+    virtual void updateAnimations(double)
     {
         if (!m_numAnimates) {
             m_layerTreeHost->setNeedsAnimate();
@@ -736,7 +742,7 @@ public:
         postSetNeedsCommitToMainThread();
     }
 
-    virtual void animateAndLayout(double frameBeginTime)
+    virtual void layout()
     {
         LayerChromium* root = m_layerTreeHost->rootLayer();
         if (!m_layerTreeHost->frameNumber())

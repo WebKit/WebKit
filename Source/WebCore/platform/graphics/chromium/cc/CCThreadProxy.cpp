@@ -363,15 +363,13 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
     // Re-do the commit flow so that we don't send the scrollInfo on the BFAC message.
     m_layerTreeHost->applyScrollAndScale(*scrollInfo);
 
-    // FIXME: recreate the context if it was requested by the impl thread
-    {
-        TRACE_EVENT("CCLayerTreeHost::animateAndLayout", this, 0);
-        m_layerTreeHost->animateAndLayout(frameBeginTime);
-    }
+    // FIXME: recreate the context if it was requested by the impl thread.
+    m_layerTreeHost->updateAnimations(frameBeginTime);
+    m_layerTreeHost->layout();
 
     ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 
-    // Clear the commit flag after animateAndLayout here --- objects that only
+    // Clear the commit flag after updating animations and layout here --- objects that only
     // layout when painted will trigger another setNeedsCommit inside
     // updateLayers.
     m_commitRequested = false;

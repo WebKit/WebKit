@@ -52,7 +52,8 @@ class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
 public:
     MOCK_METHOD0(scheduleComposite, void());
 
-    virtual void animateAndLayout(double frameBeginTime) { }
+    virtual void updateAnimations(double frameBeginTime) { }
+    virtual void layout() { }
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
     virtual WebGraphicsContext3D* createContext3D() { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
     virtual void didRebindGraphicsContext(bool success) { }
