@@ -16,8 +16,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/qt \
     $$SOURCE_DIR/unicode
 
-VPATH += $$SOURCE_DIR
-
 contains(CONFIG, use_system_icu) {
     DEFINES += WTF_USE_ICU_UNICODE=1
     DEFINES -= WTF_USE_QT4_UNICODE

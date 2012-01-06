@@ -1,5 +1,14 @@
 2012-01-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove un-needed VPATHs from project includes
+
+        Reviewed by Simon Hausmann.
+
+        * JavaScriptCore.pri:
+        * wtf/wtf.pri:
+
+2012-01-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Move listing of include paths and libs to pri files in sources
 
         Includepaths are sometimes modified by non-Qt contributors so keeping

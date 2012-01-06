@@ -28,8 +28,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/ForwardingHeaders \
     $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
 
-VPATH += $$SOURCE_DIR
-
 win32-* {
     DEFINES += _HAS_TR1=0
     LIBS += -lwinmm
