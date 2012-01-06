@@ -1,3 +1,22 @@
+2012-01-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Crash while collecting svg elements in render flow thread.
+        https://bugs.webkit.org/show_bug.cgi?id=73735
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/svg-doc-fragment-not-collected-expected.html
+               fast/regions/svg-doc-fragment-not-collected.html
+               fast/regions/svg-element-not-collected-expected.html
+               fast/regions/svg-element-not-collected.html
+               fast/regions/svg-root-element-collected.html
+
+        By allowing only svg root elements to be collected in a render flow thread,
+        the svg render tree is properly constructed, thus prevented a possible further crash.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+
 2012-01-06  Eric Carlson  <eric.carlson@apple.com>
 
         Make TextTrackCue more mutable

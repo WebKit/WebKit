@@ -36,6 +36,10 @@
 #include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
 
+#if ENABLE(SVG)
+#include "SVGNames.h"
+#endif
+
 namespace WebCore {
 
 NodeRenderingContext::NodeRenderingContext(Node* node)
@@ -276,6 +280,13 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
     if (!m_node->isElementNode() || !m_style || m_style->flowThread().isEmpty())
         return;
+
+#if ENABLE(SVG)
+    // Allow only svg root elements to be directly collected by a render flow thread.
+    if (m_node->isSVGElement()
+        && (!(m_node->hasTagName(SVGNames::svgTag) && m_node->parentNode() && !m_node->parentNode()->isSVGElement())))
+        return;
+#endif
 
     m_flowThread = m_style->flowThread();
     ASSERT(m_node->document()->renderView());

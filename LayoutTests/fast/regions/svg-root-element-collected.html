@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #region {
+                -webkit-flow-from: thread;
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=73735">73735</a>: Collect SVG nodes in render flow thread</p>
+        <p>It should be possible to collect a root "svg" node into a render flow thread.</p>
+        <p>On success, you should see PASS below.</p>
+        <svg xmlns="http://www.w3.org/2000/svg" style="-webkit-flow-into:thread">
+            <text x="0" y="15">SVG text</text>
+        </svg>
+        <div id="region"></div>
+        <script>
+            if (window.layoutTestController)
+                window.layoutTestController.dumpAsText();
+            var regionElement = document.getElementById("region");
+            var pass = regionElement.innerText.length != 0;
+            regionElement.style.display = "none";
+            document.write("<p>" + pass ? "PASS" : "FAIL" + "</p>");
+        </script>
+    </body>
+</html>
