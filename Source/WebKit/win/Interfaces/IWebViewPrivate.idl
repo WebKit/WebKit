@@ -275,4 +275,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setUsesLayeredWindow([in] BOOL usesLayeredWindow);
     HRESULT usesLayeredWindow([out, retval] BOOL* usesLayeredWindow);
+
+    HRESULT registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing([in] BSTR scheme);
+    HRESULT registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing([in] BSTR scheme);
 }
