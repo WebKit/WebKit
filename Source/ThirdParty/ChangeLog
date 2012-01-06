@@ -1,3 +1,12 @@
+2012-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Make JavaScriptCore.framework a reference and put it in a Frameworks group
+        https://bugs.webkit.org/show_bug.cgi?id=75740
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+
 2012-01-05  Dan Bernstein  <mitz@apple.com>
 
         Made Debug/Release builds of gtest build only for the active architecture.

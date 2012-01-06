@@ -37,6 +37,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1A0A4C4514B7A3B500895135 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A0A4C4414B7A3B500895135 /* JavaScriptCore.framework */; };
 		224A12A30E9EADCC00BD17FD /* gtest-test-part.h in Headers */ = {isa = PBXBuildFile; fileRef = 224A12A20E9EADCC00BD17FD /* gtest-test-part.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3BF6F2A00E79B5AD000F2EEE /* gtest-type-util.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 3BF6F29F0E79B5AD000F2EEE /* gtest-type-util.h */; };
 		3BF6F2A50E79B616000F2EEE /* gtest-typed-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BF6F2A40E79B616000F2EEE /* gtest-typed-test.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -74,7 +75,6 @@
 		40C84993101A36A60083642A /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40C8490B101A217E0083642A /* libgtest_main.a */; };
 		40C849A2101A37050083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
 		40C849A4101A37150083642A /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4539C8FF0EC27F6400A70F4C /* gtest.framework */; };
-		444D117514A262FB009FEC3F /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 444D117414A262FB009FEC3F /* JavaScriptCore.framework */; };
 		4539C9340EC280AE00A70F4C /* gtest-param-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 4539C9330EC280AE00A70F4C /* gtest-param-test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4539C9380EC280E200A70F4C /* gtest-linked_ptr.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9350EC280E200A70F4C /* gtest-linked_ptr.h */; };
 		4539C9390EC280E200A70F4C /* gtest-param-util-generated.h in Copy Headers Internal */ = {isa = PBXBuildFile; fileRef = 4539C9360EC280E200A70F4C /* gtest-param-util-generated.h */; };
@@ -199,6 +199,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A0A4C4414B7A3B500895135 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		224A12A10E9EADA700BD17FD /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
 		224A12A20E9EADCC00BD17FD /* gtest-test-part.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "gtest-test-part.h"; sourceTree = "<group>"; };
 		3B238C120E7FE13C00846E11 /* gtest_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_unittest.cc; sourceTree = "<group>"; };
@@ -238,7 +239,6 @@
 		40D4CDF30E30E07400294801 /* General.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = General.xcconfig; sourceTree = "<group>"; };
 		40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ReleaseProject.xcconfig; sourceTree = "<group>"; };
 		40D4CF510E30F5E200294801 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		444D117414A262FB009FEC3F /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ProductionProject.xcconfig; sourceTree = "<group>"; };
 		4539C8FF0EC27F6400A70F4C /* gtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4539C9330EC280AE00A70F4C /* gtest-param-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-test.h"; sourceTree = "<group>"; };
@@ -288,7 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				444D117514A262FB009FEC3F /* JavaScriptCore.framework in Frameworks */,
+				1A0A4C4514B7A3B500895135 /* JavaScriptCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,11 +312,11 @@
 		0867D691FE84028FC02AAC07 /* gtest */ = {
 			isa = PBXGroup;
 			children = (
-				444D117414A262FB009FEC3F /* JavaScriptCore.framework */,
 				40D4CDF00E30E07400294801 /* Config */,
 				08FB77ACFE841707C02AAC07 /* Source */,
 				40D4CF4E0E30F5E200294801 /* Resources */,
 				403EE37B0E377822004BD1E2 /* Scripts */,
+				1A0A4C4614B7A3BC00895135 /* Frameworks */,
 				034768DDFF38A45A11DB9C8B /* Products */,
 			);
 			name = gtest;
@@ -335,6 +335,14 @@
 				3B238BF00E7FE13B00846E11 /* test */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		1A0A4C4614B7A3BC00895135 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A0A4C4414B7A3B500895135 /* JavaScriptCore.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		3B238BF00E7FE13B00846E11 /* test */ = {
