@@ -41,6 +41,7 @@ protected:
 public:
     virtual IntSize stretchAmount() = 0;
     virtual bool pinnedInDirection(const FloatSize&) = 0;
+    virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
     virtual void startSnapRubberbandTimer() = 0;
     virtual void stopSnapRubberbandTimer() = 0;
@@ -55,13 +56,13 @@ public:
     void beginScrollGesture();
 
 private:
-    ScrollElasticityControllerClient* m_client;
-
     void stopSnapRubberbandTimer();
 
     // FIXME: These member variables should be private. They are currently public as a stop-gap measure, while
     // the rubber-band related code from ScrollAnimatorMac is being moved over.
 public:
+    ScrollElasticityControllerClient* m_client;
+
     bool m_inScrollGesture;
     bool m_momentumScrollInProgress;
     bool m_ignoreMomentumScrolls;

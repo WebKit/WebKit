@@ -1144,7 +1144,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
     bool isHorizontallyStretched = false;
     bool shouldStretch = false;
     
-    IntSize stretchAmount = m_scrollableArea->overhangAmount();
+    IntSize stretchAmount = m_scrollElasticityController.m_client->stretchAmount();
 
     isHorizontallyStretched = stretchAmount.width();
     isVerticallyStretched = stretchAmount.height();
@@ -1207,11 +1207,11 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
         if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
             if (deltaY != 0) {
                 deltaY *= scrollWheelMultiplier();
-                immediateScrollBy(FloatSize(0, deltaY));
+                m_scrollElasticityController.m_client->immediateScrollBy(FloatSize(0, deltaY));
             }
             if (deltaX != 0) {
                 deltaX *= scrollWheelMultiplier();
-                immediateScrollBy(FloatSize(deltaX, 0));
+                m_scrollElasticityController.m_client->immediateScrollBy(FloatSize(deltaX, 0));
             }
         } else {
             if (!allowsHorizontalStretching()) {
@@ -1220,7 +1220,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
             } else if ((deltaX != 0) && !isHorizontallyStretched && !pinnedInDirection(deltaX, 0)) {
                 deltaX *= scrollWheelMultiplier();
 
-                immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
+                m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
                 deltaX = 0;
             }
             
@@ -1230,11 +1230,11 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
             } else if ((deltaY != 0) && !isVerticallyStretched && !pinnedInDirection(0, deltaY)) {
                 deltaY *= scrollWheelMultiplier();
 
-                immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
+                m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
                 deltaY = 0;
             }
             
-            IntSize stretchAmount = m_scrollableArea->overhangAmount();
+            IntSize stretchAmount = m_scrollElasticityController.m_client->stretchAmount();
         
             if (m_scrollElasticityController.m_momentumScrollInProgress) {
                 if ((pinnedInDirection(eventCoalescedDeltaX, eventCoalescedDeltaY) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_scrollElasticityController.m_lastMomentumScrollTimestamp) {
@@ -1249,7 +1249,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
 
             FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.height())));
 
-            immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
+            m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
         }
     }
 

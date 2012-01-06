@@ -123,13 +123,13 @@ private:
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
     void immediateScrollTo(const FloatPoint&);
-    void immediateScrollBy(const FloatSize&);
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
     virtual IntSize stretchAmount() OVERRIDE;
     virtual bool pinnedInDirection(const FloatSize&) OVERRIDE;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) OVERRIDE;
+    virtual void immediateScrollBy(const FloatSize&) OVERRIDE;
     virtual void startSnapRubberbandTimer() OVERRIDE;
     virtual void stopSnapRubberbandTimer() OVERRIDE;
 
