@@ -47,6 +47,7 @@ IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> c
     , m_cursorType(cursorType)
     , m_transaction(transaction)
     , m_objectStore(objectStore)
+    , m_closed(false)
 {
     m_transaction->registerOpenCursor(this);
 }
@@ -54,6 +55,11 @@ IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> c
 IDBCursorBackendImpl::~IDBCursorBackendImpl()
 {
     m_transaction->unregisterOpenCursor(this);
+    // Order is important, the cursors have to be destructed before the objectStore.
+    m_cursor.clear();
+    m_savedCursor.clear();
+
+    m_objectStore.clear();
 }
 
 unsigned short IDBCursorBackendImpl::direction() const
@@ -179,6 +185,8 @@ void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetche
     m_cursor = m_savedCursor;
     m_savedCursor = 0;
 
+    if (m_closed)
+        return;
     if (m_cursor) {
         for (int i = 0; i < usedPrefetches; ++i) {
             bool ok = m_cursor->continueFunction();
@@ -189,6 +197,7 @@ void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetche
 
 void IDBCursorBackendImpl::close()
 {
+    m_closed = true;
     if (m_cursor)
         m_cursor->close();
 }

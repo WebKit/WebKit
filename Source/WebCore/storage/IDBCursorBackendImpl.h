@@ -78,6 +78,8 @@ private:
     CursorType m_cursorType;
     RefPtr<IDBTransactionBackendInterface> m_transaction;
     RefPtr<IDBObjectStoreBackendInterface> m_objectStore;
+    
+    bool m_closed;
 };
 
 } // namespace WebCore

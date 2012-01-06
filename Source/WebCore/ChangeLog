@@ -1,3 +1,25 @@
+2012-01-05  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: fix cursor prefetch crash
+        http://crbug.com/108071
+        https://bugs.webkit.org/show_bug.cgi?id=75596
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/prefetch-bugfix-108071.html
+        Note: DumpRenderTree doesn't exercise the bug, it only occurs in
+        multi-process chromium.  The layout test will soon be run as a
+        chromium ui test: http://codereview.chromium.org/9108004
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        (WebCore::IDBCursorBackendImpl::~IDBCursorBackendImpl): Destroy
+        cursors before their objectstores.
+        (WebCore::IDBCursorBackendImpl::prefetchReset): Don't run continue if
+        the cursor is closed.
+        (WebCore::IDBCursorBackendImpl::close): Set a closed flag.
+        * storage/IDBCursorBackendImpl.h:
+
 2012-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Route all animate calls through CCLayerTreeHost in composited mode to simplify rate limiting logic
