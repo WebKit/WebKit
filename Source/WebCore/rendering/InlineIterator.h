@@ -305,7 +305,7 @@ inline void InlineBidiResolver::increment()
 template <>
 inline void InlineBidiResolver::appendRun()
 {
-    if (!m_emptyRun && !m_eor.atEnd()) {
+    if (!m_emptyRun && !m_eor.atEnd() && !m_reachedEndOfLine) {
         int start = m_sor.m_pos;
         RenderObject* obj = m_sor.m_obj;
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
