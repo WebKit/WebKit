@@ -30,12 +30,12 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (435,16) size 0x0
         RenderText {#text} at (0,21) size 158x21
           text run at (0,21) width 158: "No width has been set"
-layer at (8,70) size 792x31
-  RenderBlock (positioned) {DIV} at (8,70) size 792x31 [bgcolor=#CCFFCC]
-    RenderTable {TABLE} at (0,0) size 792x31 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 790x29
-        RenderTableRow {TR} at (0,2) size 790x25
-          RenderTableCell {TD} at (2,2) size 786x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (8,70) size 151x31
+  RenderBlock (positioned) {DIV} at (8,70) size 151x31 [bgcolor=#CCFFCC]
+    RenderTable {TABLE} at (0,0) size 151x31 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 149x29
+        RenderTableRow {TR} at (0,2) size 149x25
+          RenderTableCell {TD} at (2,2) size 145x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (2,2) size 141x21
               text run at (2,2) width 141: "Table width = 100%"
 layer at (8,224) size 784x31
