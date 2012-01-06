@@ -1,3 +1,20 @@
+2012-01-06  Dale Curtis  <dalecurtis@chromium.org>
+
+        Move MediaDocument styles into CSS. Set black background for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=74123
+
+        Reviewed by Eric Seidel.
+
+        Test: platform/chromium/media/video-black-bg-in-media-document.html
+
+        * css/mediaControls.css:
+        (body:-webkit-full-page-media):
+        (video:-webkit-full-page-media):
+        * css/mediaControlsChromium.css:
+        (body:-webkit-full-page-media):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+
 2012-01-06  Alice Boxhall  <aboxhall@chromium.org>
 
         Report correct line number for non-native editable text elements.

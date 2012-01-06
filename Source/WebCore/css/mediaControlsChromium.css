@@ -25,6 +25,10 @@
 
 /* Chromium default media controls */
 
+body:-webkit-full-page-media {
+    background-color: rgb(0, 0, 0);
+}
+
 audio {
     width: 300px;
     height: 32px;

@@ -16,7 +16,7 @@ layer at (8,42) size 384x334
       RenderView at (0,0) size 380x330
     layer at (0,0) size 380x330
       RenderBlock {HTML} at (0,0) size 380x330
-        RenderBody {BODY} at (8,8) size 364x314 [bgcolor=#262626]
+        RenderBody {BODY} at (8,8) size 364x314 [bgcolor=#000000]
     layer at (40,164) size 300x1
       RenderVideo {VIDEO} at (40,164) size 300x1
     layer at (40,164) size 300x1

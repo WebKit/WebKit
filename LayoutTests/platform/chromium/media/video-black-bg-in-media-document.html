@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="../../../media/media-file.js"></script>
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            function iframeLoad() {
+                var iframe = document.querySelector("iframe");
+                var iframeBody = iframe.contentDocument.querySelector("body");
+
+                // Required to be global for testExpected() to work properly.
+                iframeBodyStyle = iframe.contentDocument.defaultView.getComputedStyle(iframeBody, null);
+                testExpected("iframeBodyStyle.backgroundColor", "rgb(0, 0, 0)");
+                endTest();
+            }
+
+            function load() {
+                var iframe = document.querySelector("iframe");
+                iframe.onload = iframeLoad;
+                iframe.src = findMediaFile("video", "../../../media/content/counting");
+            }
+        </script>
+    </head>
+
+    <body onload="load()">
+        <p>Test that video media documents have a black background.</p>
+        <iframe style="width: 200px; height: 200px;"></iframe>
+   </body>
+</html>

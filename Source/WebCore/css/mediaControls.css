@@ -24,6 +24,10 @@
 
 /* media controls */
 
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
 audio {
     width: 200px;
     height: 16px;
@@ -49,6 +53,15 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     overflow: hidden;
     height: 16px;
     text-align: right;
+}
+
+video:-webkit-full-page-media {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
