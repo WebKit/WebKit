@@ -1,3 +1,24 @@
+2012-01-05  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r90797): Full screen video HUD cannot be dragged horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=75200
+
+        Reviewed by Eric Carlson.
+
+        Test: fullscreen/video-controls-drag.html
+
+        The !important rules in fullscreenQuickTime.css are overriding the styles added by the 
+        drag operation in MediaControlElements.cpp.  Give the panel a "dragged" class in setPosition
+        (clearing it in resetPosition) that allows the !important rules to apply only when the 
+        panel is not dragged.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-panel):
+        (video:-webkit-full-screen::-webkit-media-controls-panel:not(.dragged)):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+
 2012-01-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r104060): fast/forms/textarea-metrics.html is failing

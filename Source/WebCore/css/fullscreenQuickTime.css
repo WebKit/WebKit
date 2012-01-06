@@ -29,9 +29,6 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     -webkit-box-pack: end !important;
     -webkit-appearance: none !important;
 
-    bottom: 50px !important;
-    left: 50% !important;
-    margin-left: -220px !important;
     padding: 12px 0 0 10px !important;
     width: 430px !important;
     height: 48px !important;
@@ -56,6 +53,12 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     -webkit-border-radius: 8px !important;
 
     -webkit-transition: opacity 0.3s linear !important;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-panel:not(.dragged) {
+    bottom: 50px !important;
+    left: 50% !important;
+    margin-left: -220px !important;
 }
 
 video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {

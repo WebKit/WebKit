@@ -1,0 +1,41 @@
+<body>
+    <p>This tests that the video element's controls are draggable in full screen.  Press any key to continue.</p>
+    <video id="video" width="300" controls></video>
+    <script src="full-screen-test.js"></script>
+    <script src="../media/media-controls.js"></script>
+    <script>
+        var video = document.getElementById('video');
+        var shadowRoot;
+        var panel;
+        var startBox;
+        var endBox;
+
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        waitForEvent(document, 'webkitfullscreenchange', function() {
+            if (window.internals) {
+                panel = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
+                startBox = internals.boundingBox(panel);
+
+                eventSender.mouseMoveTo(startBox.left + 5, startBox.top + 5);
+                eventSender.mouseDown();
+
+                eventSender.mouseMoveTo(startBox.left + 20, startBox.top + 20);
+                eventSender.mouseUp();
+
+                endBox = internals.boundingBox(panel);
+
+                testExpected("endBox.left - startBox.left", 15);
+                testExpected("endBox.top - startBox.top", 15);
+                endTest();
+            }
+            else
+                logResult(false, "window.internals == undefined");
+        });
+
+        runWithKeyDown(function(){video.webkitRequestFullScreen()});
+    </script>
+</body>
