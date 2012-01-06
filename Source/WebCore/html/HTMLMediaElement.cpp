@@ -3484,6 +3484,8 @@ bool HTMLMediaElement::createMediaControls()
 
     controls->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
     controls->reset();
+    if (isFullscreen())
+        controls->enteredFullscreen();
 
     ensureShadowRoot()->appendChild(controls, ec);
     return true;
