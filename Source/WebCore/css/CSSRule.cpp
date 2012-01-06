@@ -36,6 +36,13 @@
 
 namespace WebCore {
 
+struct SameSizeAsCSSRule : public RefCounted<SameSizeAsCSSRule> {
+    unsigned bitfields;
+    void* pointerUnion;
+};
+
+COMPILE_ASSERT(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), CSSRule_should_stay_small);
+
 void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
 {
     notImplemented();

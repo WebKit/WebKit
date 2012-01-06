@@ -122,12 +122,16 @@ protected:
 
     ~CSSRule() { }
 
-    // Only used by CSSStyleRule but kept here to maximize struct packing.
-    signed m_sourceLine : 26;
-    mutable bool m_hasCachedSelectorText : 1;
+    int sourceLine() const { return m_sourceLine; }
+    void setSourceLine(int sourceLine) { m_sourceLine = sourceLine; }
+    bool hasCachedSelectorText() const { return m_hasCachedSelectorText; }
+    void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
 
 private:
-    bool m_parentIsRule : 1;
+    // Only used by CSSStyleRule but kept here to maximize struct packing.
+    signed m_sourceLine : 26;
+    mutable unsigned m_hasCachedSelectorText : 1;
+    unsigned m_parentIsRule : 1;
     unsigned m_type : 4;
     union {
         CSSRule* m_parentRule;

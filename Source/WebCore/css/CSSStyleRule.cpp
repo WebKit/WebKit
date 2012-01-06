@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type type)
+CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line, CSSRule::Type type)
     : CSSRule(parent, type)
 {
-    m_sourceLine = sourceLine;
+    setSourceLine(line);
 
     // m_sourceLine is a bitfield, so let's catch any overflow early in debug mode.
-    ASSERT(m_sourceLine == sourceLine);
+    ASSERT(sourceLine() == line);
 }
 
 CSSStyleRule::~CSSStyleRule()
@@ -60,9 +60,9 @@ static SelectorTextCache& selectorTextCache()
 
 inline void CSSStyleRule::cleanup()
 {
-    if (m_hasCachedSelectorText) {
+    if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
-        m_hasCachedSelectorText = false;
+        setHasCachedSelectorText(false);
     }
 }
 
@@ -83,7 +83,7 @@ String CSSStyleRule::generateSelectorText() const
 
 String CSSStyleRule::selectorText() const
 {
-    if (m_hasCachedSelectorText) {
+    if (hasCachedSelectorText()) {
         ASSERT(selectorTextCache().contains(this));
         return selectorTextCache().get(this);
     }
@@ -91,7 +91,7 @@ String CSSStyleRule::selectorText() const
     ASSERT(!selectorTextCache().contains(this));
     String text = generateSelectorText();
     selectorTextCache().set(this, text);
-    m_hasCachedSelectorText = true;
+    setHasCachedSelectorText(true);
     return text;
 }
 
@@ -119,7 +119,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     String oldSelectorText = this->selectorText();
     m_selectorList.adopt(selectorList);
 
-    if (m_hasCachedSelectorText) {
+    if (hasCachedSelectorText()) {
         ASSERT(selectorTextCache().contains(this));
         selectorTextCache().set(this, generateSelectorText());
     }

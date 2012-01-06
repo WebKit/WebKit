@@ -55,7 +55,7 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
 
-    int sourceLine() { return m_sourceLine; }
+    using CSSRule::sourceLine;
 
 protected:
     CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type = CSSRule::STYLE_RULE);

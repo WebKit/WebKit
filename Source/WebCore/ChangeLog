@@ -1,3 +1,36 @@
+2012-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        sizeof(CSSRule) is 20 instead of 12 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=75665
+
+        Reviewed by Darin Fisher.
+
+        Unlike gcc and clang, MSVC pads each consecutive member variables of the same type
+        in bitfields. e.g. if you have:
+
+        sturct AB {
+        unsigned m_1 : 31;
+        bool m_2 : 1;
+        }
+
+        then MSVC pads m_1 and allocates sizeof(unsigned) * 2 for AB whereas gcc and clang
+        only allocate sizeof(unsigned) * 1 for AB.
+
+        Fix the bloat by turning all bitfields in CSSRule either signed or unsigned integers.
+
+        * css/CSSRule.cpp:
+        * css/CSSRule.h:
+        (WebCore::CSSRule::sourceLine):
+        (WebCore::CSSRule::setSourceLine):
+        (WebCore::CSSRule::hasCachedSelectorText):
+        (WebCore::CSSRule::setHasCachedSelectorText):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::cleanup):
+        (WebCore::CSSStyleRule::selectorText):
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/CSSStyleRule.h:
+
 2012-01-05  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: fix cursor prefetch crash
