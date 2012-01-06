@@ -1,6 +1,10 @@
 <!doctype html>
 
  <style>
+     html {
+         line-height: 18px;
+     }
+
     #content {
         -webkit-flow-into: flow1;
         text-align: justify;
@@ -15,6 +19,7 @@
     #second-box {
         border: 1px solid green;
         overflow:hidden;
+        height: 216px; /* 12 * line-height */
     }
     
     #region1, #region2, #region3 {
@@ -24,7 +29,7 @@
 
     #region1 {
         width: 400px;
-        height: 150px;
+        height: 143px;
     }
     
     #region2 {
@@ -50,10 +55,8 @@ section sizes itself and clips differently in each region. The green box should 
     <div id="first-box">
         <div class="float left"></div> <div class="float right"></div>
         <div id="second-box">
-            <p>These lines will not spill out of the regions. These lines will not spill out of the regions.
-            These lines will not spill out of the regions. These lines will not spill out of the regions. </p>
-            <p>These lines will not spill out of the regions. These lines will not spill out of the regions.
-            These lines will not spill out of the regions. These lines will not spill out of the regions. </p>
+            <p>This is a paragraph that spans more than one line but less than three lines.</p>
+            <p>1<br>2<br>3<br>4<br>This paragraph spans three lines in region1 and then flows into three lines in region2.</p>
         </div>
     </div>
 </div>

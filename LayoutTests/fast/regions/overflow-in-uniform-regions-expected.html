@@ -1,0 +1,95 @@
+<!doctype html>
+
+ <style>
+     html {
+         line-height: 18px;
+     }
+
+    #content {
+        text-align: justify;
+        padding: 5px;
+    }
+    
+    #first-box {
+        border: 1px solid blue;
+        padding:5px;
+    }
+    
+    #second-box {
+        border: 1px solid green;
+        overflow: hidden;
+    }
+    
+    #content-two {
+        text-align: justify;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    #first-box-two {
+        border: 1px solid blue;
+        padding:5px;
+        border-top: none;
+        padding-top: 0;
+    }
+
+    #second-box-two {
+        border: 1px solid green;
+        height: 85px;
+        border-top: none;
+        padding-top: 0;
+    }
+
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 400px;
+        height: 143px;
+        overflow:hidden; 
+    }
+    
+    #region2 {
+        width: 400px;
+        height: 150px;
+        overflow:hidden; 
+    }
+    
+    #region3 {
+        width: 400px;
+        height: 150px;
+    }
+
+    .float { width:30px; height:50px; background-color: lime }
+    .left { float: left }
+    .right { float: right }
+</style>
+
+<body>
+<p>The first and last lines of text in the regions below should be clipped to the green box. The overflow
+section sizes itself and clips differently in each region. The green box should be even with the lime floats at the top of the first region.</p>
+
+<div id="container">
+    <div id="region1">
+        <div id="content">
+            <div id="first-box">
+                <div class="float left"></div> <div class="float right"></div>
+                <div id="second-box">
+                    <p>This is a paragraph that spans more than one line but less than three lines.</p>
+                    <p>1<br>2<br>3<br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region2">
+        <div id="content-two">
+            <div id="first-box-two">
+                <div id="second-box-two">
+                    4<br>This paragraph spans three lines in region1 and then flows into three lines in region2.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region3"></div>
+</div>
