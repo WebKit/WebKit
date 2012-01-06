@@ -524,7 +524,7 @@ class ChromiumDriver(Driver):
         has_audio = False
         has_base64 = False
 
-        uri = self._port.test_to_uri(driver_input.test_name)
+        uri = self.test_to_uri(driver_input.test_name)
         cmd = self._test_shell_command(uri, driver_input.timeout, driver_input.image_hash)
         line, crash = self._write_command_and_read_line(input=cmd)
 

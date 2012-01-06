@@ -39,6 +39,7 @@ import os
 import re
 
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system import path
 
 
 # Handle Python < 2.6 where multiprocessing isn't available.
@@ -49,7 +50,6 @@ except ImportError:
 
 from webkitpy.common import find_files
 from webkitpy.common.system import logutils
-from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests import read_checksum_from_png
@@ -461,33 +461,6 @@ class Port(object):
         filename = self._filesystem.join(self.layout_tests_dir(), test_name)
         return filename in reftest_list
 
-    def test_to_uri(self, test_name):
-        """Convert a test name to a URI."""
-        LAYOUTTEST_HTTP_DIR = "http/tests/"
-        LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
-
-        port = None
-
-        relative_path = test_name
-        if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
-            or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
-            relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
-            port = 8000
-
-        # Make http/tests/local run as local files. This is to mimic the
-        # logic in run-webkit-tests.
-        #
-        # TODO(dpranke): remove the SSL reference?
-        if (port and not relative_path.startswith("local/")):
-            if relative_path.startswith("ssl/"):
-                port += 443
-                protocol = "https"
-            else:
-                protocol = "http"
-            return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
-
-        return path.abspath_to_uri(self.abspath_for_test(test_name))
-
     def tests(self, paths):
         """Return the list of tests found."""
         # When collecting test cases, skip these directories
@@ -566,32 +539,6 @@ class Port(object):
             data: contents of the baseline.
         """
         self._filesystem.write_binary_file(baseline_path, data)
-
-    def uri_to_test_name(self, uri):
-        """Return the base layout test name for a given URI.
-
-        This returns the test name for a given URI, e.g., if you passed in
-        "file:///src/LayoutTests/fast/html/keygen.html" it would return
-        "fast/html/keygen.html".
-
-        """
-        test = uri
-        if uri.startswith("file:///"):
-            prefix = path.abspath_to_uri(self.layout_tests_dir()) + "/"
-            return test[len(prefix):]
-
-        if uri.startswith("http://127.0.0.1:8880/"):
-            # websocket tests
-            return test.replace('http://127.0.0.1:8880/', '')
-
-        if uri.startswith("http://"):
-            # regular HTTP test
-            return test.replace('http://127.0.0.1:8000/', 'http/tests/')
-
-        if uri.startswith("https://"):
-            return test.replace('https://127.0.0.1:8443/', 'http/tests/')
-
-        raise NotImplementedError('unknown url type: %s' % uri)
 
     def layout_tests_dir(self):
         """Return the absolute path to the top of the LayoutTests directory."""

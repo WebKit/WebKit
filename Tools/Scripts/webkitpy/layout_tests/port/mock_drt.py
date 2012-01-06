@@ -186,6 +186,7 @@ class MockDRT(object):
         if options.platform:
             port_name = options.platform
         self._port = PortFactory(host).get(port_name=port_name, options=options)
+        self._driver = self._port.create_driver(0)
 
     def run(self):
         while True:
@@ -200,8 +201,8 @@ class MockDRT(object):
 
     def run_one_test(self, test_input):
         port = self._port
-        if test_input.uri.startswith('http'):
-            test_name = port.uri_to_test_name(test_input.uri)
+        if test_input.uri.startswith('http://') or test_input.uri.startswith('https://'):
+            test_name = self._driver.uri_to_test(test_input.uri)
         else:
             test_name = port.relative_test_filename(test_input.uri)
 
@@ -256,7 +257,7 @@ class MockChromiumDRT(MockDRT):
 
     def run_one_test(self, test_input):
         port = self._port
-        test_name = self._port.uri_to_test_name(test_input.uri)
+        test_name = self._driver.uri_to_test(test_input.uri)
 
         actual_text = port.expected_text(test_name)
         actual_image = ''

@@ -226,16 +226,6 @@ class PortTest(unittest.TestCase):
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)
 
-    def test_test_to_uri(self):
-        port = self.make_port()
-        layout_test_dir = port.layout_tests_dir()
-        test = 'foo/bar.html'
-        path = port._filesystem.join(layout_test_dir, test)
-        if sys.platform == 'win32':
-            path = path.replace("\\", "/")
-
-        self.assertEqual(port.test_to_uri(test), abspath_to_uri(path))
-
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
         options.foo = 'bar'

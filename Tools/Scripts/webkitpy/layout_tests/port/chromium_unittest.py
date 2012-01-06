@@ -98,7 +98,7 @@ class ChromiumDriverTest(unittest.TestCase):
             raise IOError
         self.driver._proc.stdout.readline = mock_readline
 
-        self.driver._port.test_to_uri = lambda test: 'mocktesturi'
+        self.driver.test_to_uri = lambda test: 'mocktesturi'
         driver_output = self.driver.run_test(DriverInput(test_name='some/test.html', timeout=1, image_hash=None, is_reftest=False))
         self.assertEqual(self.driver._port.driver_name(), driver_output.crashed_process_name)
 

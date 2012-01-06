@@ -521,8 +521,10 @@ class WebKitDriver(Driver):
         return self._crashed_subprocess_name or self._server_process.process_name()
 
     def _command_from_driver_input(self, driver_input):
-        uri = self._port.test_to_uri(driver_input.test_name)
-        command = uri[7:] if uri.startswith("file:///") else uri
+        if self.is_http_test(driver_input.test_name):
+            command = self.test_to_uri(driver_input.test_name)
+        else:
+            command = self._port.abspath_for_test(driver_input.test_name)
 
         if driver_input.image_hash:
             # FIXME: Why the leading quote?

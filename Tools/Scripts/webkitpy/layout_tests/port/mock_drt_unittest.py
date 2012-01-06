@@ -89,7 +89,7 @@ class MockDRTPortTest(port_testcase.PortTestCase):
 
 class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):
-        url = port.test_to_uri(test_name)
+        url = port.create_driver(0).test_to_uri(test_name)
         # FIXME: we shouldn't have to work around platform-specific issues
         # here.
         if url.startswith('file:////'):
@@ -215,13 +215,13 @@ class MockChromiumDRTTest(MockDRTTest):
         return mock_drt.MockChromiumDRT(options, args, host, stdin, stdout, stderr)
 
     def input_line(self, port, test_name, checksum=None):
-        url = port.test_to_uri(test_name)
+        url = port.create_driver(0).test_to_uri(test_name)
         if checksum:
             return url + ' 6000 ' + checksum + '\n'
         return url + ' 6000\n'
 
     def expected_output(self, port, test_name, pixel_tests, text_output, expected_checksum):
-        url = port.test_to_uri(test_name)
+        url = port.create_driver(0).test_to_uri(test_name)
         if pixel_tests and expected_checksum:
             return ['#URL:%s\n' % url,
                     '#MD5:%s\n' % expected_checksum,

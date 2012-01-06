@@ -28,6 +28,8 @@
 
 import shlex
 
+from webkitpy.common.system import path
+
 
 class DriverInput(object):
     def __init__(self, test_name, timeout, image_hash, is_reftest):
@@ -91,6 +93,40 @@ class Driver(object):
         # used by e.g. tools/valgrind/valgrind_tests.py.
         return shlex.split(wrapper_option) if wrapper_option else []
 
+    HTTP_DIR = "http/tests/"
+    HTTP_LOCAL_DIR = "http/tests/local/"
+
+    def is_http_test(self, test_name):
+        return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
+
+    def test_to_uri(self, test_name):
+        """Convert a test name to a URI."""
+        if not self.is_http_test(test_name):
+            return path.abspath_to_uri(self._port.abspath_for_test(test_name))
+
+        relative_path = test_name[len(self.HTTP_DIR):]
+
+        # TODO(dpranke): remove the SSL reference?
+        if relative_path.startswith("ssl/"):
+            return "https://127.0.0.1:8443/" + relative_path
+        return "http://127.0.0.1:8000/" + relative_path
+
+    def uri_to_test(self, uri):
+        """Return the base layout test name for a given URI.
+
+        This returns the test name for a given URI, e.g., if you passed in
+        "file:///src/LayoutTests/fast/html/keygen.html" it would return
+        "fast/html/keygen.html".
+
+        """
+        if uri.startswith("file:///"):
+            return uri[len(path.abspath_to_uri(self._port.layout_tests_dir()) + "/"):]
+        if uri.startswith("http://"):
+            return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
+        if uri.startswith("https://"):
+            return uri.replace('https://127.0.0.1:8443/', self.HTTP_DIR)
+        raise NotImplementedError('unknown url type: %s' % uri)
+
     def has_crashed(self):
         return False
 
@@ -112,6 +148,15 @@ class DriverProxy(object):
             self._reftest_driver = self._driver
         else:
             self._reftest_driver = driver_instance_constructor(port, worker_number, pixel_tests=True)
+
+    def is_http_test(self, test_name):
+        return self._driver.is_http_test(test_name)
+
+    def test_to_uri(self, test_name):
+        return self._driver.test_to_uri(test_name)
+
+    def uri_to_test(self, uri):
+        return self._driver.uri_to_test(uri)
 
     def run_test(self, driver_input):
         if driver_input.is_reftest:

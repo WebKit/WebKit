@@ -450,67 +450,6 @@ class TestPort(Port):
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS
 
-    # FIXME: These next two routines are copied from base.py with
-    # the calls to path.abspath_to_uri() removed. We shouldn't have
-    # to do this.
-    def test_to_uri(self, test_name):
-        """Convert a test file (which is an absolute path) to a URI."""
-        LAYOUTTEST_HTTP_DIR = "http/tests/"
-        LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
-
-        port = None
-        use_ssl = False
-
-        relative_path = test_name
-        if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
-            or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
-            relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
-            port = 8000
-
-        # Make http/tests/local run as local files. This is to mimic the
-        # logic in run-webkit-tests.
-        #
-        # TODO(dpranke): remove the media reference and the SSL reference?
-        if (port and not relative_path.startswith("local/") and
-            not relative_path.startswith("media/")):
-            if relative_path.startswith("ssl/"):
-                port += 443
-                protocol = "https"
-            else:
-                protocol = "http"
-            return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
-
-        return "file://" + self.abspath_for_test(test_name)
-
-    def abspath_for_test(self, test_name):
-        return self.layout_tests_dir() + self.TEST_PATH_SEPARATOR + test_name
-
-    def uri_to_test_name(self, uri):
-        """Return the base layout test name for a given URI.
-
-        This returns the test name for a given URI, e.g., if you passed in
-        "file:///src/LayoutTests/fast/html/keygen.html" it would return
-        "fast/html/keygen.html".
-
-        """
-        test = uri
-        if uri.startswith("file:///"):
-            prefix = "file://" + self.layout_tests_dir() + "/"
-            return test[len(prefix):]
-
-        if uri.startswith("http://127.0.0.1:8880/"):
-            # websocket tests
-            return test.replace('http://127.0.0.1:8880/', '')
-
-        if uri.startswith("http://"):
-            # regular HTTP test
-            return test.replace('http://127.0.0.1:8000/', 'http/tests/')
-
-        if uri.startswith("https://"):
-            return test.replace('https://127.0.0.1:8443/', 'http/tests/')
-
-        raise NotImplementedError('unknown url type: %s' % uri)
-
 
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
