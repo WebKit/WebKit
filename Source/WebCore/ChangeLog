@@ -1,3 +1,29 @@
+2012-01-06  Adam Barth  <abarth@webkit.org>
+
+        FrameDestructionObserver should be more full-service
+        https://bugs.webkit.org/show_bug.cgi?id=75690
+
+        Reviewed by Eric Seidel.
+
+        This patch moves code common to both subclasses of
+        FrameDestructionObserver into FrameDestructionObserver itself.  As we
+        add more subclasses, we don't want to keep copy/pasting this code.
+
+        * page/Frame.cpp:
+        (WebCore::FrameDestructionObserver::FrameDestructionObserver):
+        (WebCore::FrameDestructionObserver::~FrameDestructionObserver):
+        (WebCore::FrameDestructionObserver::frameDestroyed):
+        * page/Frame.h:
+        (WebCore::FrameDestructionObserver::frame):
+        * plugins/DOMMimeType.cpp:
+        (WebCore::DOMMimeType::DOMMimeType):
+        (WebCore::DOMMimeType::~DOMMimeType):
+        * plugins/DOMMimeType.h:
+        * plugins/DOMPlugin.cpp:
+        (WebCore::DOMPlugin::DOMPlugin):
+        (WebCore::DOMPlugin::~DOMPlugin):
+        * plugins/DOMPlugin.h:
+
 2012-01-06  Dale Curtis  <dalecurtis@chromium.org>
 
         Move MediaDocument styles into CSS. Set black background for chromium.

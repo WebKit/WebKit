@@ -26,18 +26,14 @@
 namespace WebCore {
 
 DOMPlugin::DOMPlugin(PluginData* pluginData, Frame* frame, unsigned index)
-    : m_pluginData(pluginData)
-    , m_frame(frame)
+    : FrameDestructionObserver(frame)
+    , m_pluginData(pluginData)
     , m_index(index)
 {
-    if (m_frame)
-        m_frame->addDestructionObserver(this);
 }
 
 DOMPlugin::~DOMPlugin()
 {
-    if (m_frame)
-        m_frame->removeDestructionObserver(this);
 }
 
 String DOMPlugin::name() const

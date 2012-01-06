@@ -30,18 +30,14 @@
 namespace WebCore {
 
 DOMMimeType::DOMMimeType(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index)
-    : m_pluginData(pluginData)
-    , m_frame(frame)
+    : FrameDestructionObserver(frame)
+    , m_pluginData(pluginData)
     , m_index(index)
 {
-    if (m_frame)
-        m_frame->addDestructionObserver(this);
 }
 
 DOMMimeType::~DOMMimeType()
 {
-    if (m_frame)
-        m_frame->removeDestructionObserver(this);
 }
 
 const String &DOMMimeType::type() const
