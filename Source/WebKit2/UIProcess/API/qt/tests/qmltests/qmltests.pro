@@ -22,6 +22,7 @@ OTHER_FILES += \
     WebView/tst_itemSelector.qml \
     WebView/tst_javaScriptDialogs.qml \
     WebView/tst_loadFail.qml \
+    WebView/tst_loadIgnore.qml \
     WebView/tst_loadHtml.qml \
     WebView/tst_loadProgress.qml \
     WebView/tst_loadProgressSignal.qml \

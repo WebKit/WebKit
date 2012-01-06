@@ -814,6 +814,9 @@ QQuickWebPage* QQuickWebView::page()
 
 void QQuickWebView::load(const QUrl& url)
 {
+    if (url.isEmpty())
+        return;
+
     Q_D(QQuickWebView);
     d->webPageProxy->loadURL(url.toString());
 }
