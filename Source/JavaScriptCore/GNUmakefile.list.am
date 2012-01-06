@@ -325,6 +325,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
+	Source/JavaScriptCore/runtime/CommonSlowPaths.h \
 	Source/JavaScriptCore/runtime/Completion.cpp \
 	Source/JavaScriptCore/runtime/Completion.h \
 	Source/JavaScriptCore/runtime/ConstructData.cpp \

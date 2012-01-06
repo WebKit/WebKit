@@ -594,6 +594,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\CommonSlowPaths.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\Completion.cpp"
 				>
 			</File>
