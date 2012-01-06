@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,39 +21,31 @@
  *
  */
 
-#ifndef HTMLKeygenElement_h
-#define HTMLKeygenElement_h
+#ifndef HTMLFormControlElementWithState_h
+#define HTMLFormControlElementWithState_h
 
-#include "HTMLFormControlElementWithState.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
-class HTMLSelectElement;
-
-class HTMLKeygenElement : public HTMLFormControlElementWithState {
+class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
-    static PassRefPtr<HTMLKeygenElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    virtual ~HTMLFormControlElementWithState();
 
-    virtual bool willValidate() const { return false; }
+    virtual bool canContainRangeEndPoint() const { return false; }
 
-private:
-    HTMLKeygenElement(const QualifiedName&, Document*, HTMLFormElement*);
+    bool shouldSaveAndRestoreFormControlState() const;
+    virtual bool saveFormControlState(String&) const { return false; }
+    virtual void restoreFormControlState(const String&) { }
 
-    virtual bool canStartSelection() const { return false; }
+protected:
+    HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
 
-    virtual void parseMappedAttribute(Attribute*);
-
-    virtual bool appendFormData(FormDataList&, bool);
-    virtual const AtomicString& formControlType() const;
-    virtual bool isOptionalFormControl() const { return false; }
-
-    virtual bool isEnumeratable() const { return true; }
-
-    virtual void reset();
-
-    HTMLSelectElement* shadowSelect() const;
+    virtual bool shouldAutocomplete() const;
+    virtual void finishParsingChildren();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 };
 
-} //namespace
+} // namespace
 
 #endif

@@ -27,7 +27,7 @@
 #define HTMLSelectElement_h
 
 #include "Event.h"
-#include "HTMLFormControlElement.h"
+#include "HTMLFormControlElementWithState.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

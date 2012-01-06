@@ -725,6 +725,7 @@ SOURCES += \
     html/HTMLFontElement.cpp \
     html/HTMLFormCollection.cpp \
     html/HTMLFormControlElement.cpp \
+    html/HTMLFormControlElementWithState.cpp \
     html/HTMLFormElement.cpp \
     html/HTMLFrameElement.cpp \
     html/HTMLFrameElementBase.cpp \
@@ -1795,6 +1796,7 @@ HEADERS += \
     html/HTMLFontElement.h \
     html/HTMLFormCollection.h \
     html/HTMLFormControlElement.h \
+    html/HTMLFormControlElementWithState.h \
     html/HTMLFormElement.h \
     html/HTMLFrameElementBase.h \
     html/HTMLFrameElement.h \

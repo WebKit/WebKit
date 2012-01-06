@@ -1,3 +1,28 @@
+2012-01-05  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Move HTMLFormControlElementWithState class in its own header file.
+        https://bugs.webkit.org/show_bug.cgi?id=75482
+
+        Reviewed by Kent Tamura.
+
+        Move HTMLFormControlElementWithState class which was mixed in HTMLFormControlElement
+        files into its own header file and its own implementation file.
+
+        No new tests : the existing ones should cover the refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLKeygenElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextFormControlElement.h:
+
 2012-01-05  Wei James  <james.wei@intel.com>
 
         Optimize with memcpy instead of copying frame by frame in Realtimeanalyser::doFFTAnalysis

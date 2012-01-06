@@ -169,25 +169,6 @@ private:
     bool m_hasAutofocused : 1;
 };
 
-// FIXME: Give this class its own header file.
-class HTMLFormControlElementWithState : public HTMLFormControlElement {
-public:
-    virtual ~HTMLFormControlElementWithState();
-
-    virtual bool canContainRangeEndPoint() const { return false; }
-
-    bool shouldSaveAndRestoreFormControlState() const;
-    virtual bool saveFormControlState(String&) const { return false; }
-    virtual void restoreFormControlState(const String&) { }
-
-protected:
-    HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
-
-    virtual bool shouldAutocomplete() const;
-    virtual void finishParsingChildren();
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
-};
-
 } // namespace
 
 #endif

@@ -25,7 +25,7 @@
 #ifndef HTMLTextFormControlElement_h
 #define HTMLTextFormControlElement_h
 
-#include "HTMLFormControlElement.h"
+#include "HTMLFormControlElementWithState.h"
 
 namespace WebCore {
 
