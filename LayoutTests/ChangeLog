@@ -1,5 +1,21 @@
 2011-1-5  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 99756
+
+    2011-11-09  Ken Buchanan <kenrb@chromium.org>
+
+            Rebaselining gtk and qt results for foreign object overflow
+            https://bugs.webkit.org/show_bug.cgi?id=64780
+
+            Reviewed by Eric Seidel.
+
+            Fix for 64780 changed results for one layoutTest. This is the rebaseline for gtk and qt platforms.
+
+            * platform/gtk/svg/overflow/overflow-on-foreignObject-expected.txt: Rebaseline
+            * platform/qt/svg/overflow/overflow-on-foreignObject-expected.txt: Rebaseline
+
+2011-1-5  Lucas Forschler  <lforschler@apple.com>
+
     Merge 99731
 
     2011-11-09  Ken Buchanan <kenrb@chromium.org>

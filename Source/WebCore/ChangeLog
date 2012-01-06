@@ -1,5 +1,21 @@
 2011-1-5  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 99756
+
+    2011-11-09  Ken Buchanan  <kenrb@chromium.org>
+
+            Indentation error in RenderObject::container
+            https://bugs.webkit.org/show_bug.cgi?id=64780
+
+            Reviewed by Eric Seidel.
+
+            A conditional block was indented too far; correcting.
+
+            * rendering/RenderObject.cpp:
+            (WebCore::RenderObject::container):
+
+2011-1-5  Lucas Forschler  <lforschler@apple.com>
+
     Merge 99731
 
     2011-11-09  Ken Buchanan  <kenrb@chromium.org>
