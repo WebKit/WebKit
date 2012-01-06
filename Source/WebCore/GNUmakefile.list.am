@@ -2018,6 +2018,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLFormCollection.h \
 	Source/WebCore/html/HTMLFormControlElement.cpp \
 	Source/WebCore/html/HTMLFormControlElement.h \
+	Source/WebCore/html/HTMLFormControlElementWithState.cpp \
+	Source/WebCore/html/HTMLFormControlElementWithState.h \
 	Source/WebCore/html/HTMLFormElement.cpp \
 	Source/WebCore/html/HTMLFormElement.h \
 	Source/WebCore/html/HTMLFrameElementBase.cpp \

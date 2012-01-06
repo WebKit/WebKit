@@ -739,6 +739,7 @@ SET(WebCore_SOURCES
     html/HTMLFontElement.cpp
     html/HTMLFormCollection.cpp
     html/HTMLFormControlElement.cpp
+    html/HTMLFormControlElementWithState.cpp
     html/HTMLFormElement.cpp
     html/HTMLFrameElement.cpp
     html/HTMLFrameElementBase.cpp
