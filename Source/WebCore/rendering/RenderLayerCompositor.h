@@ -285,6 +285,7 @@ private:
     bool requiresCompositingForFrame(RenderObject*) const;
     bool requiresCompositingWhenDescendantsAreCompositing(RenderObject*) const;
     bool requiresCompositingForFullScreen(RenderObject*) const;
+    bool requiresCompositingForFilters(RenderObject*) const;
     bool requiresCompositingForScrollableFrame() const;
     bool requiresCompositingForPosition(RenderObject*, const RenderLayer*) const;
 

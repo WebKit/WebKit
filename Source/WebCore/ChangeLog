@@ -1,3 +1,20 @@
+2012-01-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Enable a compositing trigger for filters
+        https://bugs.webkit.org/show_bug.cgi?id=75658
+
+        This will enable forcing the compositing code path when filters exist for a RenderObject.
+
+        Reviewed by Simon Fraser.
+
+        No new functionality so no new tests.
+
+        * page/ChromeClient.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFilters):
+        * rendering/RenderLayerCompositor.h:
+
 2012-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add and use ScrollElasticityControllerClient::absoluteScrollPosition
