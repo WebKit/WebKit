@@ -1,3 +1,18 @@
+2012-01-06  David Kilzer  <ddkilzer@apple.com>
+
+        run-api-tests: change internal representation of tests to array of "SuiteName.TestName" strings
+
+        Reviewed by Adam Roben.
+
+        Part of: <http://webkit.org/b/75065> run-api-tests should be able to run individual suites and tests
+
+        * Scripts/run-api-tests:
+        (dumpTestsBySuite): Update to accept array of tests instead of
+        hash data structure.
+        (runTestsBySuite): Ditto.
+        (listAllTests): Rename from populateTests().  Update to return
+        an array of tests instad of the hash data structure.
+
 2012-01-05  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up test/uri conversion routines
