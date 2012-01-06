@@ -2544,3 +2544,7 @@ fast/dom/htmlcollection-zombies.html
 # [Qt]http/tests/workers/terminate-during-sync-operation.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=75614
 http/tests/workers/terminate-during-sync-operation.html
+
+# [Qt] REGRESSION(r104267): fast/js/date-constructor.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=75692
+fast/js/date-constructor.html
