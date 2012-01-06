@@ -7,7 +7,7 @@
 TEMPLATE = lib
 TARGET = WebCore
 
-load(webcore)
+include(WebCore.pri)
 
 WEBKIT += wtf
 !v8: WEBKIT += javascriptcore

@@ -1,3 +1,31 @@
+2012-01-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move listing of include paths and libs to pri files in sources
+
+        Includepaths are sometimes modified by non-Qt contributors so keeping
+        them in files inside Sources makes it more likely that they are updated
+        along with project files for the other ports.
+
+        Using pri files instead of prf files for this also has the benefit that
+        the include() from the main target file can be parsed and followed by
+        Qt Creator -- something that does not work with load().
+
+        Dependency from a target to a library through the WEBKIT variable are
+        handled through forwarding-files in Tools/qmake/mkspecs/modules, which
+        set the source root of the module and include the right pri file.
+
+        Ideally we'd use the variant of include() that takes an optional
+        namespace to read the variables into, or the fromfile() function,
+        but both of these add an overhead of about 40% on the total qmake
+        runtime, due to making a deep copy of all the variables in the
+        project or re-reading all the prf files from scratch.
+
+        Reviewed by Simon Hausmann.
+        Reviewed by Ossy.
+
+        * Target.pri:
+        * WebCore.pri: Renamed from Tools/qmake/mkspecs/features/webcore.prf.
+
 2012-01-06  Adam Barth  <abarth@webkit.org>
 
         FrameDestructionObserver should be more full-service

@@ -57,7 +57,8 @@ for(library, WEBKIT) {
 
     # We definitly need include paths and such (this will set
     # SOURCE_DIR to the right path so we can use it below).
-    load($$lower($$library))
+    library_identifier = $$lower($$library)
+    include(../modules/$${library_identifier}.prf)
 
     # More juggling
     dependent_libs = $$LIBS
@@ -65,7 +66,7 @@ for(library, WEBKIT) {
 
     # But we might also need to link against it
     needToLink() {
-        linkAgainstLibrary($$library, $$SOURCE_DIR)
+        linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
         LIBS += $$dependent_libs
     }
 

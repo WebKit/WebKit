@@ -7,7 +7,7 @@
 TEMPLATE = lib
 TARGET = JavaScriptCore
 
-load(javascriptcore)
+include(JavaScriptCore.pri)
 
 WEBKIT += wtf
 QT += core

@@ -1,5 +1,6 @@
 # -------------------------------------------------------------------
-# This file contains shared rules used both when building against WTF
+# This file contains shared rules used both when building WTF itself
+# and for targets that depend in some way on WTF.
 #
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------

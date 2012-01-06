@@ -7,7 +7,7 @@
 TEMPLATE = lib
 TARGET = WTF
 
-load(wtf)
+include(wtf.pri)
 
 CONFIG += staticlib
 
