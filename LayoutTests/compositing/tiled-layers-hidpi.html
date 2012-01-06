@@ -1,0 +1,31 @@
+<html>
+	<style>
+		#composited {
+			width: 1800px;
+			height: 10px;
+			-webkit-transform: translateZ(0);
+			background-color: blue;
+		}
+	</style>
+    <script>
+        function startTest() {
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+                layoutTestController.dumpAsText();
+                layoutTestController.setBackingScaleFactor(2, finishTest);
+            }
+        }
+        
+        function finishTest() {
+            setTimeout(function() {
+				document.getElementById('layer-tree').innerText = window.layoutTestController.layerTreeAsText();
+				layoutTestController.notifyDone();
+			}, 0);
+        }
+        </script>
+    </head>
+    <body onload="startTest();">
+        <div id="composited"></div>
+<pre id="layer-tree">Layer tree goes here in DRT</pre>
+    </body>
+</html>
