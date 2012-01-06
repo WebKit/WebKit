@@ -214,9 +214,9 @@ public:
         { return m_impl ? m_impl->reverseFind(str.impl(), start) : notFound; }
 
     // Case insensitive string matching.
-    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const LChar* str, unsigned start = 0) const
+    size_t findIgnoringCase(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str, start) : notFound; }
-    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const String& str, unsigned start = 0) const
+    size_t findIgnoringCase(const String& str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str.impl(), start) : notFound; }
     size_t reverseFindIgnoringCase(const String& str, unsigned start = UINT_MAX) const
         { return m_impl ? m_impl->reverseFindIgnoringCase(str.impl(), start) : notFound; }
@@ -244,7 +244,7 @@ public:
 
     WTF_EXPORT_PRIVATE void append(const String&);
     WTF_EXPORT_PRIVATE void append(LChar);
-    inline WTF_EXPORT_PRIVATE void append(char c) { append(static_cast<LChar>(c)); };
+    void append(char c) { append(static_cast<LChar>(c)); };
     WTF_EXPORT_PRIVATE void append(UChar);
     WTF_EXPORT_PRIVATE void append(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE void insert(const String&, unsigned pos);
@@ -356,12 +356,12 @@ public:
     // the input data contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*, size_t);
     WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
-    inline WTF_EXPORT_PRIVATE static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
-    inline WTF_EXPORT_PRIVATE static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
+    static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
+    static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
-    inline WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
+    static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0) const
@@ -379,7 +379,7 @@ public:
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
-    WTF_EXPORT_PRIVATE bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
+    bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
 #ifndef NDEBUG
     void show() const;
