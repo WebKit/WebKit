@@ -100,9 +100,9 @@ private:
     private:
         Node* m_cachedItem;
         unsigned m_cachedItemOffset;
-        unsigned m_cachedLength;
-        bool m_isLengthCacheValid : 1;
-        bool m_isItemCacheValid : 1;
+        unsigned m_cachedLength : 30;
+        unsigned m_isLengthCacheValid : 1;
+        unsigned m_isItemCacheValid : 1;
 
         bool domVersionIsConsistent() const
         {

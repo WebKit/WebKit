@@ -41,7 +41,8 @@ void DynamicSubtreeNodeList::SubtreeCaches::setLengthCache(Node* node, unsigned 
     if (m_isItemCacheValid && !domVersionIsConsistent()) {
         m_cachedItem = node;
         m_isItemCacheValid = false;
-    }
+    } else if (!m_isItemCacheValid)
+        m_cachedItem = node; // Used in domVersionIsConsistent.
     m_cachedLength = length;
     m_isLengthCacheValid = true;
     m_domTreeVersionAtTimeOfCaching = node->document()->domTreeVersion();

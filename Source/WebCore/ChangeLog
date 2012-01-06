@@ -1,3 +1,20 @@
+2012-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r104210): Dromaeo DOM test score is lower
+        https://bugs.webkit.org/show_bug.cgi?id=75679
+
+        Reviewed by Andreas Kling.
+
+        The regression was caused by isDomVersionConsistent not being able to obtain the tree version
+        inside isLengthCacheValid when m_cachedItem is null. Fix the regression by always setting
+        m_cachedItem to some node when caching the length so that we can obtain the tree version later.
+
+        Also address Antti's review comment to fit m_cachedLength, m_isLengthCacheValid, and
+        m_isItemCacheValid all in 32-bit.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::setLengthCache):
+
 2012-01-05  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed bad merge fix for r104259 which dropped a line from r104210.
