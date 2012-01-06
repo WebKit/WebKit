@@ -25,6 +25,7 @@
 #ifndef Node_h
 #define Node_h
 
+#include "EditingBoundary.h"
 #include "EventTarget.h"
 #include "KURLHash.h"
 #include "LayoutTypes.h"
@@ -276,7 +277,8 @@ public:
     Element* enclosingBlockFlowElement() const;
     
     Element* rootEditableElement() const;
-    
+    Element* rootEditableElement(EditableType) const;
+
     bool inSameContainingBlockFlowElement(Node*);
 
     // Called by the parser when this element's close tag is reached,
@@ -353,8 +355,30 @@ public:
     bool isContentEditable();
     bool isContentRichlyEditable();
 
-    bool rendererIsEditable() const { return rendererIsEditable(Editable); }
-    bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
+    bool rendererIsEditable(EditableType editableType = ContentIsEditable) const
+    {
+        switch (editableType) {
+        case ContentIsEditable:
+            return rendererIsEditable(Editable);
+        case HasEditableAXRole:
+            return isEditableToAccessibility(Editable);
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    bool rendererIsRichlyEditable(EditableType editableType = ContentIsEditable) const
+    {
+        switch (editableType) {
+        case ContentIsEditable:
+            return rendererIsEditable(RichlyEditable);
+        case HasEditableAXRole:
+            return isEditableToAccessibility(RichlyEditable);
+        }
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     virtual bool shouldUseInputMethod();
     virtual LayoutRect getRect() const;
     LayoutRect renderRect(bool* isReplaced);
@@ -702,6 +726,7 @@ private:
 
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel) const;
+    bool isEditableToAccessibility(EditableLevel) const;
 
     void setStyleChange(StyleChangeType);
 

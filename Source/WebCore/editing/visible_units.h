@@ -54,8 +54,8 @@ VisiblePosition nextSentencePosition(const VisiblePosition &);
 // lines
 VisiblePosition startOfLine(const VisiblePosition &);
 VisiblePosition endOfLine(const VisiblePosition &);
-VisiblePosition previousLinePosition(const VisiblePosition &, int lineDirectionPoint);
-VisiblePosition nextLinePosition(const VisiblePosition &, int lineDirectionPoint);
+VisiblePosition previousLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
+VisiblePosition nextLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
 bool inSameLine(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfLine(const VisiblePosition &);
 bool isEndOfLine(const VisiblePosition &);

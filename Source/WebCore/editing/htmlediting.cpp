@@ -26,6 +26,7 @@
 #include "config.h"
 #include "htmlediting.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "EditingText.h"
 #include "HTMLBRElement.h"
@@ -46,6 +47,7 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
+#include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -104,19 +106,19 @@ int comparePositions(const VisiblePosition& a, const VisiblePosition& b)
     return comparePositions(a.deepEquivalent(), b.deepEquivalent());
 }
 
-Node* highestEditableRoot(const Position& position)
+Node* highestEditableRoot(const Position& position, EditableType editableType)
 {
     Node* node = position.deprecatedNode();
     if (!node)
         return 0;
         
-    Node* highestRoot = editableRootForPosition(position);
+    Node* highestRoot = editableRootForPosition(position, editableType);
     if (!highestRoot)
         return 0;
     
     node = highestRoot;
     while (node) {
-        if (node->rendererIsEditable())
+        if (node->rendererIsEditable(editableType))
             highestRoot = node;
         if (node->hasTagName(bodyTag))
             break;
@@ -143,7 +145,7 @@ Node* lowestEditableAncestor(Node* node)
     return lowestRoot;
 }
 
-bool isEditablePosition(const Position& p)
+bool isEditablePosition(const Position& p, EditableType editableType)
 {
     Node* node = p.deprecatedNode();
     if (!node)
@@ -152,7 +154,7 @@ bool isEditablePosition(const Position& p)
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     
-    return node->rendererIsEditable();
+    return node->rendererIsEditable(editableType);
 }
 
 bool isAtUnsplittableElement(const Position& pos)
@@ -162,7 +164,7 @@ bool isAtUnsplittableElement(const Position& pos)
 }
     
     
-bool isRichlyEditablePosition(const Position& p)
+bool isRichlyEditablePosition(const Position& p, EditableType editableType)
 {
     Node* node = p.deprecatedNode();
     if (!node)
@@ -171,10 +173,10 @@ bool isRichlyEditablePosition(const Position& p)
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     
-    return node->rendererIsRichlyEditable();
+    return node->rendererIsRichlyEditable(editableType);
 }
 
-Element* editableRootForPosition(const Position& p)
+Element* editableRootForPosition(const Position& p, EditableType editableType)
 {
     Node* node = p.containerNode();
     if (!node)
@@ -183,7 +185,7 @@ Element* editableRootForPosition(const Position& p)
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     
-    return node->rootEditableElement();
+    return node->rootEditableElement(editableType);
 }
 
 // Finds the enclosing element until which the tree can be split.

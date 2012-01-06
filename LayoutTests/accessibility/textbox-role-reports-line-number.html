@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<div role="textbox" id="ariaTextBox" aria-multiline="false" tabindex="0">Some text in a textbox</div>
+<div role="textbox" id="multilineAriaTextBox" aria-multiline="true" tabindex="0"><div>Some text in a</div><div>multiline textbox.</div></div>
+<div id="console"></div>
+<script>
+description("This tests that the AXSelection property is correctly reported for non-native text boxes.");
+
+if (window.layoutTestController && window.accessibilityController) {
+
+    window.layoutTestController.dumpAsText();
+    var ariaTextBox = document.getElementById("ariaTextBox");
+    ariaTextBox.focus();
+    var axElement = accessibilityController.focusedElement;
+
+    shouldBe("window.getSelection().setBaseAndExtent(ariaTextBox.childNodes[0], 0, ariaTextBox.childNodes[0], 0);"
+        + " axElement.insertionPointLineNumber", "0");
+
+
+    var multilineAriaTextBox = document.getElementById("multilineAriaTextBox");
+    multilineAriaTextBox.focus();
+    axElement = accessibilityController.focusedElement;
+
+    shouldBe("window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[0], 1, multilineAriaTextBox.childNodes[0], 1);"
+        + " axElement.insertionPointLineNumber", "0");
+    shouldBe("window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[1], 1, multilineAriaTextBox.childNodes[1], 1);"
+        + " axElement.insertionPointLineNumber", "1");
+}
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

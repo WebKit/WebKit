@@ -662,5 +662,27 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     
     cache->setNodeInUse(domNode);
 }
-    
+
+const Element* AXObjectCache::rootAXEditableElement(const Node* node)
+{
+    const Element* result = node->rootEditableElement();
+    const Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
+
+    for (; element; element = element->parentElement()) {
+        if (nodeIsTextControl(element))
+            result = element;
+    }
+
+    return result;
+}
+
+bool AXObjectCache::nodeIsTextControl(const Node* node)
+{
+    if (!node)
+        return false;
+
+    const AccessibilityObject* axObject = getOrCreate(node->renderer());
+    return axObject && axObject->isTextControl();
+}
+
 } // namespace WebCore

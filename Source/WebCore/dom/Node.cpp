@@ -789,6 +789,25 @@ bool Node::rendererIsEditable(EditableLevel editableLevel) const
     return false;
 }
 
+bool Node::isEditableToAccessibility(EditableLevel editableLevel) const
+{
+    if (rendererIsEditable(editableLevel))
+        return true;
+
+    // FIXME: Respect editableLevel for ARIA editable elements.
+    if (editableLevel == RichlyEditable)
+        return false;
+
+    ASSERT(document());
+    ASSERT(AXObjectCache::accessibilityEnabled());
+    ASSERT(document()->axObjectCacheExists());
+
+    if (document() && AXObjectCache::accessibilityEnabled() && document()->axObjectCacheExists())
+        return document()->axObjectCache()->rootAXEditableElement(this);
+
+    return false;
+}
+
 bool Node::shouldUseInputMethod()
 {
     return isContentEditable();
@@ -1559,6 +1578,14 @@ Element *Node::enclosingBlockFlowElement() const
             return static_cast<Element *>(n);
     }
     return 0;
+}
+
+Element* Node::rootEditableElement(EditableType editableType) const
+{
+    if (editableType == HasEditableAXRole)
+        return const_cast<Element*>(document()->axObjectCache()->rootAXEditableElement(this));
+
+    return rootEditableElement();
 }
 
 Element* Node::rootEditableElement() const

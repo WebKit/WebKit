@@ -34,6 +34,11 @@ enum EditingBoundaryCrossingRule {
     CanSkipOverEditingBoundary
 };
 
+enum EditableType {
+    ContentIsEditable,
+    HasEditableAXRole
+};
+
 }
 
 #endif // EditingBoundary_h

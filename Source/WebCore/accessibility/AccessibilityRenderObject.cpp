@@ -2545,7 +2545,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
         return 0;
     
     Position indexPosition = pos.deepEquivalent();
-    if (indexPosition.isNull() || rootEditableElementForPosition(indexPosition) != node)
+    if (indexPosition.isNull() || highestEditableRoot(indexPosition, HasEditableAXRole) != node)
         return 0;
     
     ExceptionCode ec = 0;

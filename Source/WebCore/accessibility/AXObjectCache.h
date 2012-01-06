@@ -106,6 +106,11 @@ public:
 
     void removeAXID(AccessibilityObject*);
     bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
+
+    Element* rootAXEditableElement(Node*);
+    const Element* rootAXEditableElement(const Node*);
+    bool nodeIsTextControl(const Node*);
+
     AXID platformGenerateAXID() const;
     AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id).get(); }
 

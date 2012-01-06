@@ -54,7 +54,8 @@ class VisibleSelection;
 // Functions returning Node
 
 Node* highestAncestor(Node*);
-Node* highestEditableRoot(const Position&);
+Node* highestEditableRoot(const Position&, EditableType = ContentIsEditable);
+
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*),
     EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = 0);
 Node* highestNodeToRemoveInPruning(Node*);
@@ -151,8 +152,8 @@ int comparePositions(const Position&, const Position&);
 
 // boolean functions on Position
     
-bool isEditablePosition(const Position&);
-bool isRichlyEditablePosition(const Position&);
+bool isEditablePosition(const Position&, EditableType = ContentIsEditable);
+bool isRichlyEditablePosition(const Position&, EditableType = ContentIsEditable);
 bool isFirstVisiblePositionInSpecialElement(const Position&);
 bool isLastVisiblePositionInSpecialElement(const Position&);
 bool lineBreakExistsAtPosition(const Position&);
@@ -221,7 +222,7 @@ PassRefPtr<Element> createTabSpanElement(Document*, PassRefPtr<Node> tabTextNode
 PassRefPtr<Element> createTabSpanElement(Document*, const String& tabText);
 PassRefPtr<Element> createBlockPlaceholderElement(Document*);
 
-Element* editableRootForPosition(const Position&);
+Element* editableRootForPosition(const Position&, EditableType = ContentIsEditable);
 Element* unsplittableElementForPosition(const Position&);
 
 // Boolean functions on Element
