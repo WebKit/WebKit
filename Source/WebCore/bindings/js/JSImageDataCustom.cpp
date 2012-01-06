@@ -47,10 +47,9 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     
     wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ImageData, imageData);
     Identifier dataName(exec, "data");
-    static const ClassInfo cpaClassInfo = { "CanvasPixelArray", &JSByteArray::s_info, 0, 0, CREATE_METHOD_TABLE(JSByteArray) };
-    Structure* cpaStructure = getCachedDOMStructure(globalObject, &cpaClassInfo);
+    Structure* cpaStructure = getCachedDOMStructure(globalObject, &JSByteArray::s_info);
     if (!cpaStructure)
-        cpaStructure = cacheDOMStructure(globalObject, JSByteArray::createStructure(exec->globalData(), globalObject, jsNull(), &cpaClassInfo), &cpaClassInfo);
+        cpaStructure = cacheDOMStructure(globalObject, JSByteArray::createStructure(exec->globalData(), globalObject, jsNull(), &JSByteArray::s_info), &JSByteArray::s_info);
     wrapper->putDirect(exec->globalData(), dataName, JSByteArray::create(exec, cpaStructure, imageData->data()->data()), DontDelete | ReadOnly);
     exec->heap()->reportExtraMemoryCost(imageData->data()->length());
     
