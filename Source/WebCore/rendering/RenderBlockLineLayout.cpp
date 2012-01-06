@@ -1889,6 +1889,10 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
             }
         } else if (object->isFloating())
             m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
+        else if (object->isText() && object->style()->hasTextCombine() && object->isCombineText()) {
+            toRenderCombineText(object)->combineText();
+            continue;
+        }
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
@@ -2279,7 +2283,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 #endif
 
             RenderStyle* style = t->style(lineInfo.isFirstLine());
-            if (style->hasTextCombine() && current.m_obj->isCombineText())
+            if (style->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined())
                 toRenderCombineText(current.m_obj)->combineText();
 
             const Font& f = style->font();

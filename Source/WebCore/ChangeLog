@@ -1,3 +1,26 @@
+2012-01-06  Ken Buchanan  <kenrb@chromium.org>
+
+        ASSERT failure due to combine-text with preceding spaces
+        https://bugs.webkit.org/show_bug.cgi?id=65147
+
+        Reviewed by David Hyatt.
+
+        A couple of ASSERTs were failing due to a parsing problem when
+        advancing an inline iterator to the next linebreak in a
+        RenderCombineText. skipLeadingWhitespace advances the iterator
+        over leading whitespace but when searching for the line break
+        nextLineBreak would call RenderCombineText::combineText(),
+        collapsing the text so that the iterator is pointing past the
+        end of it.
+
+        This patch causes combineText() to be called during
+        skipLeadingWhiteSpace before iteration over the RenderCombineText
+        begins.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+
 2012-01-06  Anders Carlsson  <andersca@apple.com>
 
         Make ScrollAnimatorMac::snapRubberBandTimerFired use m_scrollElasticityController in more places
