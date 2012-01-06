@@ -78,8 +78,7 @@ class WebKitPort(Port):
 
     def path_to_test_expectations_file(self):
         # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
-        expectations_directory = self._wk2_port_name() if self.get_option('webkit_test_runner') else self.port_name
-        return self._filesystem.join(self._webkit_baseline_path(expectations_directory), 'test_expectations.txt')
+        return self._filesystem.join(self._webkit_baseline_path(self.port_name), 'test_expectations.txt')
 
     def _port_flag_for_scripts(self):
         # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.

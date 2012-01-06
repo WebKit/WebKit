@@ -92,6 +92,13 @@ class WebKitPortTest(port_testcase.PortTestCase):
     def test_baseline_search_path(self):
         pass
 
+    def test_path_to_test_expectations_file(self):
+        port = TestWebKitPort()
+        port._options = MockOptions(webkit_test_runner=False)
+        self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt')
+        port._options = MockOptions(webkit_test_runner=True)
+        self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt')
+
     def test_skipped_directories_for_symbols(self):
         # This first test confirms that the commonly found symbols result in the expected skipped directories.
         symbols_string = " ".join(["GraphicsLayer", "WebCoreHas3DRendering", "isXHTMLMPDocument", "fooSymbol"])
