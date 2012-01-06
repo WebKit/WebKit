@@ -236,12 +236,12 @@ void MediaControlPanelElement::defaultEventHandler(Event* event)
 
     if (event->isMouseEvent()) {
         LayoutPoint location = static_cast<MouseEvent*>(event)->absoluteLocation();
-        if (event->type() == eventNames().mousedownEvent) {
+        if (event->type() == eventNames().mousedownEvent && event->target() == this) {
             startDrag(location);
             event->setDefaultHandled();
-        } else if (event->type() == eventNames().mousemoveEvent)
+        } else if (event->type() == eventNames().mousemoveEvent && m_isBeingDragged)
             continueDrag(location);
-        else if (event->type() == eventNames().mouseupEvent) {
+        else if (event->type() == eventNames().mouseupEvent && m_isBeingDragged) {
             continueDrag(location);
             endDrag();
             event->setDefaultHandled();

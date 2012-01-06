@@ -1,5 +1,19 @@
 2012-01-05  Jer Noble  <jer.noble@apple.com>
 
+        Media Element: scrubbing in full-screen mode breaks playback.
+        https://bugs.webkit.org/show_bug.cgi?id=75650
+
+        Reviewed by John Sullivan.
+
+        Test: fullscreen/video-controls-timeline.html
+
+        Only begin scrubbing if the panel itself is the mousedown event target.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::defaultEventHandler):
+
+2012-01-05  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION (r90797): Full screen video HUD cannot be dragged horizontally
         https://bugs.webkit.org/show_bug.cgi?id=75200
 
