@@ -333,11 +333,20 @@ static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLR
         handle->client()->willCacheResponse(handle, policy);
 
     if (static_cast<CFURLCacheStoragePolicy>(policy) != CFCachedURLResponseGetStoragePolicy(cachedResponse)) {
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+        RetainPtr<CFArrayRef> receiverData(AdoptCF, CFCachedURLResponseCopyReceiverDataArray(cachedResponse));
+        cachedResponse = CFCachedURLResponseCreateWithDataArray(kCFAllocatorDefault,
+                                                                CFCachedURLResponseGetWrappedResponse(cachedResponse),
+                                                                receiverData.get(),
+                                                                CFCachedURLResponseGetUserInfo(cachedResponse),
+                                                                static_cast<CFURLCacheStoragePolicy>(policy));
+#else
         cachedResponse = CFCachedURLResponseCreateWithUserInfo(kCFAllocatorDefault, 
                                                                CFCachedURLResponseGetWrappedResponse(cachedResponse),
                                                                CFCachedURLResponseGetReceiverData(cachedResponse),
                                                                CFCachedURLResponseGetUserInfo(cachedResponse), 
                                                                static_cast<CFURLCacheStoragePolicy>(policy));
+#endif
     } else
         CFRetain(cachedResponse);
 
@@ -1001,7 +1010,7 @@ void ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(const String
     privateBrowsingStorageSessionIdentifierBase() = identifier;
 }
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || USE(CFNETWORK)
 
 String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 {
