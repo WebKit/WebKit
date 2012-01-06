@@ -1,3 +1,15 @@
+2012-01-06  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry WebCoreSupport cache client
+        https://bugs.webkit.org/show_bug.cgi?id=75649
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/CacheClientBlackBerry.cpp: Added.
+        * blackberry/WebCoreSupport/CacheClientBlackBerry.h: Added.
+
 2012-01-03  Jon Lee  <jonlee@apple.com>
 
         Leak of WebNotificationClient when page is destroyed
