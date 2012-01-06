@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+}
+.flexbox div {
+    border: 0;
+}
+
+.flexbox > :nth-child(1) {
+    background-color: blue;
+}
+.flexbox > :nth-child(2) {
+    background-color: green;
+}
+.flexbox > :nth-child(3) {
+    background-color: red;
+}
+
+.absolute {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: yellow !important;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkFlexBoxen()">
+<div class="flexbox" style="width: 600px">
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="50" class="absolute" style="bottom:0;"></div>
+  </div>
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); height: 100px"></div>
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="50" class="absolute" style="bottom:0;"></div>
+  </div>
+</div>
+
+<div style="-webkit-writing-mode: horizontal-bt">
+<div class="flexbox" style="width: 600px">
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="0" class="absolute" style="top:0;"></div>
+  </div>
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); height: 100px"></div>
+  <div data-expected-height="100" style="width: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="50" class="absolute" style="bottom:0;"></div>
+  </div>
+</div>
+</div>
+
+<div style="-webkit-writing-mode: vertical-rl">
+<div class="flexbox" style="height: 200px">
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="0" class="absolute" style="left:0;"></div>
+  </div>
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); width: 100px"></div>
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="0" class="absolute" style="left:0;"></div>
+  </div>
+</div>
+</div>
+
+<div style="-webkit-writing-mode: vertical-lr">
+<div class="flexbox" style="height: 200px">
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="50" data-offset-y="0" class="absolute" style="right:0;"></div>
+  </div>
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); width: 100px"></div>
+  <div data-expected-width="100" style="height: -webkit-flex(1 0 0); position: relative">
+    <div data-offset-x="0" data-offset-y="0" class="absolute" style="left:0;"></div>
+  </div>
+</div>
+</div>
+
+</html>

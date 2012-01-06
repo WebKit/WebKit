@@ -488,8 +488,8 @@ void RenderFlexibleBox::computePreferredMainAxisExtent(bool relayoutChildren, Tr
 
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        child->clearOverrideSize();
         if (mainAxisLengthForChild(child).isAuto()) {
-            child->clearOverrideSize();
             if (!relayoutChildren)
                 child->setChildNeedsLayout(true);
             child->layoutIfNeeded();
@@ -698,10 +698,17 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, LayoutUnit ma
         switch (child->style()->flexAlign()) {
         case AlignStretch: {
             if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
+                LayoutUnit logicalHeightBefore = child->logicalHeight();
                 LayoutUnit stretchedLogicalHeight = child->logicalHeight() + RenderFlexibleBox::availableAlignmentSpaceForChild(child);
                 child->setLogicalHeight(stretchedLogicalHeight);
                 child->computeLogicalHeight();
-                // FIXME: We need to relayout if the height changed.
+
+                if (child->logicalHeight() != logicalHeightBefore) {
+                    child->setOverrideHeight(child->logicalHeight());
+                    child->setLogicalHeight(0);
+                    child->setChildNeedsLayout(true);
+                    child->layoutIfNeeded();
+                }
             }
             break;
         }

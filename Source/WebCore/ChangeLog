@@ -1,3 +1,17 @@
+2012-01-06  Tony Chang  <tony@chromium.org>
+
+        Need to relayout when stretching the height of a flex item
+        https://bugs.webkit.org/show_bug.cgi?id=75661
+
+        Reviewed by Ojan Vafai.
+
+        Test: css3/flexbox/flex-align-stretch.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredMainAxisExtent): Always clear the override size since
+        it may be set when aligning.
+        (WebCore::RenderFlexibleBox::alignChildren): Only relayout if the height changed.
+
 2012-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollElasticityControllerClient::immediateScrollBy
