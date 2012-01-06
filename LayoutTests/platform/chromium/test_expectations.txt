@@ -3879,3 +3879,5 @@ BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 BUGWK75505 : media/media-document-audio-repaint.html = IMAGE
 
 BUGWK75696 MAC LINUX DEBUG: svg/text/text-style-recalc-crash.html = PASS TIMEOUT
+
+BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
