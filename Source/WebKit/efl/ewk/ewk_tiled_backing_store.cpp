@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ewk_tiled_backing_store.h"
 
+#include "ewk_private.h"
 #include "ewk_tiled_matrix.h"
 #include "ewk_tiled_private.h"
 #include <Ecore.h>
@@ -1836,6 +1837,111 @@ void ewk_tiled_backing_store_flush(Evas_Object* ewkBackingStore)
     printf("\nFLUSHED BACKING STORE, STATUS AFTER RECREATING TILE MATRIX:\n");
     _ewk_tiled_backing_store_mem_dbg(priv);
 #endif
+}
+
+Eina_Bool ewk_tiled_backing_store_pre_render_tile_add(Evas_Object* ewkBackingStore, int column, int row, float zoom)
+{
+    PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv, false);
+
+    if (ewk_tile_matrix_tile_exact_exists(priv->model.matrix, column, row, zoom))
+        return false;
+
+    if (!_ewk_tiled_backing_store_pre_render_request_add(priv, column, row, zoom))
+        return false;
+
+    return true;
+}
+
+Eina_Bool ewk_tiled_backing_store_pre_render_spiral_queue(Evas_Object* ewkBackingStore, Eina_Rectangle* viewRect, Eina_Rectangle* renderRect, int maxMemory, float zoom)
+{
+    PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(viewRect, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(renderRect, false);
+
+    const int tileWidth = priv->view.tile.width;
+    const int tileHeight = priv->view.tile.height;
+
+    Eina_Tile_Grid_Slicer viewSlicer;
+    Eina_Tile_Grid_Slicer renderSlicer;
+
+    if (!eina_tile_grid_slicer_setup(&viewSlicer,
+        viewRect->x, viewRect->y, viewRect->w, viewRect->h, tileWidth, tileHeight)) {
+        ERR("could not setup grid viewSlicer for %d,%d+%dx%d tile=%dx%d", viewRect->x, viewRect->y, viewRect->w, viewRect->h, tileWidth, tileHeight);
+        return false;
+    }
+
+    if (!eina_tile_grid_slicer_setup(&renderSlicer,
+        renderRect->x, renderRect->y, renderRect->w, renderRect->h, tileWidth, tileHeight)) {
+        ERR("could not setup grid RenderSlicer for %d,%d+%dx%d tile=%dx%d", renderRect->y, renderRect->y, renderRect->w, renderRect->h, tileWidth, tileHeight);
+        return false;
+    }
+
+    // set limits of the loop.
+    int memoryLimits = maxMemory / (EWK_ARGB_BYTES_SIZE * tileWidth * tileHeight);
+    const int maxViewSideLength = std::max(viewSlicer.col2 - viewSlicer.col1, viewSlicer.row2 - viewSlicer.row1);
+    const int maxRenderSideLength = std::max(renderSlicer.col2 - renderSlicer.col1, renderSlicer.row2 - renderSlicer.row1);
+    const int maxLoopCount = maxViewSideLength + maxRenderSideLength;
+
+    // spire starts from the center of the view area.
+    int centerColumn = (viewSlicer.col1 + viewSlicer.col2) / 2;
+    int centerRow = (viewSlicer.row1 + viewSlicer.row2) / 2;
+
+    int step = 1;
+    const int squareSide = 4;
+    for (int loop = 0; loop < maxLoopCount; loop++) {
+        for (int i = 1; i < step * squareSide + 1; i++) {
+            if (memoryLimits <= 0)
+                goto memoryLimitsReached;
+            /*
+            this code means the loop runs like spiral. (i.g. left->down->right->up)
+            when it moves back to original place and then walk 1 tile left and up.
+            the loop keeps on doing this until it reaches max memory to draw tiles.
+            e.g. )
+                         333333
+                         322223
+                         321123
+                         321123
+                         322223
+                         333333
+            */
+            if (i > 0 && i <= step)
+                centerColumn++; // move left.
+            else if (i > step && i <= step * 2)
+                centerRow++; // move down.
+            else if (i > step * 2 && i <= step * 3)
+                centerColumn--; // move right.
+            else if (i > step * 3 && i <= step * 4)
+                centerRow--; // move up.
+            else
+                ERR("ERROR : out of bounds\r\n");
+
+            // skip in view port area.
+            if (static_cast<int>(viewSlicer.col1) < centerColumn
+                && static_cast<int>(viewSlicer.col2) > centerColumn
+                && static_cast<int>(viewSlicer.row1) < centerRow
+                && static_cast<int>(viewSlicer.row2) > centerRow)
+                continue;
+
+            if (static_cast<int>(renderSlicer.col1) <= centerColumn
+                && static_cast<int>(renderSlicer.col2) >= centerColumn
+                && static_cast<int>(renderSlicer.row1) <= centerRow
+                && static_cast<int>(renderSlicer.row2) >= centerRow) {
+
+                if (!ewk_tiled_backing_store_pre_render_tile_add(ewkBackingStore, centerColumn, centerRow, zoom))
+                    continue;
+                DBG("R>[%d %d] ", centerColumn, centerRow);
+                memoryLimits--;
+            }
+        }
+        centerRow--;
+        centerColumn--;
+        step = step + 2;
+    }
+
+memoryLimitsReached:
+    _ewk_tiled_backing_store_item_process_idler_start(priv);
+
+    return true;
 }
 
 Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object* ewkBackingStore, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, float zoom)

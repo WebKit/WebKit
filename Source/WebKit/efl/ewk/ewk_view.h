@@ -135,6 +135,7 @@ struct _Ewk_View_Smart_Class {
     void (*flush)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*pre_render_region)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
     Eina_Bool (*pre_render_relative_radius)(Ewk_View_Smart_Data *sd, unsigned int n, float zoom);
+    Eina_Bool (*pre_render_start)(Ewk_View_Smart_Data *sd);
     void (*pre_render_cancel)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*disable_render)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*enable_render)(Ewk_View_Smart_Data *sd);
@@ -168,7 +169,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 3UL
+#define EWK_VIEW_SMART_CLASS_VERSION 4UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.
@@ -180,7 +181,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializes to zero a whole @a Ewk_View_Smart_Class structure.
@@ -314,6 +315,10 @@ struct _Ewk_View_Smart_Data {
         Eina_Bool position:1;
         Eina_Bool frame_rect:1;
     } changed; /**< Keeps what changed since last smart_calculate. */
+    struct {
+        Evas_Coord x, y;
+        float zoom;
+    } previousView;
 };
 
 /// Defines the modes of view.
@@ -1247,6 +1252,23 @@ EAPI Eina_Bool    ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_
  * @see ewk_view_pre_render_region()
  */
 EAPI Eina_Bool    ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n);
+
+/**
+ * Asks engine to start pre-rendering.
+ *
+ * This is an alternative method to pre-render around the view area.
+ * The first step is to find the center view area where to start pre-rendering.
+ * And then from the center of the view area the backing store append the render request
+ * outward in spiral order. So that the tiles which are close to view area are displayed
+ * sooner than outside.
+ *
+ * @param o view to ask pre-render
+ *
+ * @return @c EINA_TRUE if request was accepted, @c EINA_FALSE
+ *         otherwise (errors, pre-render feature not supported, etc)
+ *
+ */
+EAPI Eina_Bool    ewk_view_pre_render_start(Evas_Object *o);
 
 /**
  * Cancels and clears previous the pre-render requests.

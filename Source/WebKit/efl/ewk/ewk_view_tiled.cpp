@@ -209,6 +209,123 @@ static Eina_Bool _ewk_view_tiled_smart_pre_render_relative_radius(Ewk_View_Smart
                (smartData->backing_store, n, zoom);
 }
 
+static inline int _ewk_view_tiled_rect_collision_check(Eina_Rectangle destination, Eina_Rectangle source)
+{
+    int direction = 0;
+    if (destination.x < source.x)
+        direction = direction | (1 << 0); // 0 bit shift, left
+    if (destination.y < source.y)
+        direction = direction | (1 << 1); // 1 bit shift, top
+    if (destination.x + destination.w > source.x + source.w)
+        direction = direction | (1 << 2); // 2 bit shift, right
+    if (destination.y + destination.h > source.y + source.h)
+        direction = direction | (1 << 3); // 3 bit shift, bottom
+    DBG("check collision %d\r\n", direction);
+    return direction;
+}
+
+static inline void _ewk_view_tiled_rect_collision_resolve(int direction, Eina_Rectangle* destination, Eina_Rectangle source)
+{
+    if (direction & (1 << 0)) // 0 bit shift, left
+        destination->x = source.x;
+    if (direction & (1 << 1)) // 1 bit shift, top
+        destination->y = source.y;
+    if (direction & (1 << 2)) // 2 bit shift, right
+        destination->x = destination->x - ((destination->x + destination->w) - (source.x + source.w));
+    if (direction & (1 << 3)) // 3 bit shift, bottom
+        destination->y = destination->y - ((destination->y + destination->h) - (source.y + source.h));
+}
+
+static Eina_Bool _ewk_view_tiled_smart_pre_render_start(Ewk_View_Smart_Data* smartData)
+{
+    int contentWidth, contentHeight;
+    ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
+
+    int viewX, viewY, viewWidth, viewHeight;
+    ewk_frame_visible_content_geometry_get(smartData->main_frame, false, &viewX, &viewY, &viewWidth, &viewHeight);
+
+    if (viewWidth <= 0 || viewHeight <= 0 || contentWidth <= 0 || contentHeight <= 0)
+        return false;
+
+    if (viewWidth >= contentWidth && viewHeight >= contentHeight)
+        return false;
+
+    int previousViewX, previousViewY;
+    previousViewX = smartData->previousView.x;
+    previousViewY = smartData->previousView.y;
+
+    if (previousViewX < 0 || previousViewX > contentWidth || previousViewY < 0 || previousViewY > contentHeight)
+        previousViewX = previousViewY = 0;
+
+    float currentViewZoom = ewk_view_zoom_get(smartData->self);
+
+    // pre-render works when two conditions are met.
+    // zoom has been changed.
+    // and the view has been moved more than tile size.
+    if (abs(previousViewX - viewX) < DEFAULT_TILE_W
+        && abs(previousViewY - viewY) < DEFAULT_TILE_H
+        && smartData->previousView.zoom == currentViewZoom) {
+        return false;
+    }
+
+    // store previous view position and zoom.
+    smartData->previousView.x = viewX;
+    smartData->previousView.y = viewY;
+    smartData->previousView.zoom = currentViewZoom;
+
+    // cancelling previous pre-rendering list if exists.
+    ewk_view_pre_render_cancel(smartData->self);
+
+    Ewk_Tile_Unused_Cache* tileUnusedCache = ewk_view_tiled_unused_cache_get(smartData->self);
+    int maxMemory = ewk_tile_unused_cache_max_get(tileUnusedCache);
+    if (maxMemory <= viewWidth * viewHeight * EWK_ARGB_BYTES_SIZE)
+        return false;
+
+    Eina_Rectangle viewRect = {viewX, viewY, viewWidth, viewHeight};
+    Eina_Rectangle contentRect = {0, 0, contentWidth, contentHeight};
+
+    // get a base render rect.
+    const int contentMemory = contentWidth * contentHeight * EWK_ARGB_BYTES_SIZE;
+
+    // get render rect's width and height.
+    Eina_Rectangle renderRect;
+    if (maxMemory > contentMemory)
+        renderRect = contentRect;
+    else {
+        // Make a base rectangle as big as possible with using maxMemory.
+        // and then reshape the base rectangle to fit to contents.
+        const int baseSize = static_cast<int>(sqrt(maxMemory / 4.0f));
+        const float widthRate = (viewRect.w + (DEFAULT_TILE_W * 2)) / static_cast<float>(baseSize);
+        const float heightRate = baseSize / static_cast<float>(contentHeight);
+        const float rectRate = std::max(widthRate, heightRate);
+
+        renderRect.w = static_cast<int>(baseSize * rectRate);
+        renderRect.h = static_cast<int>(baseSize / rectRate);
+        renderRect.x = viewRect.x + (viewRect.w / 2) - (renderRect.w / 2);
+        renderRect.y = viewRect.y + (viewRect.h / 2) - (renderRect.h / 2);
+
+        // reposition of renderRect, if the renderRect overlapped the content rect, this code moves the renderRect inside the content rect.
+        int collisionSide = _ewk_view_tiled_rect_collision_check(renderRect, contentRect);
+        if (collisionSide > 0)
+            _ewk_view_tiled_rect_collision_resolve(collisionSide, &renderRect, contentRect);
+
+        // check abnormal render rect
+        if (renderRect.x < 0)
+            renderRect.x = 0;
+        if (renderRect.y < 0)
+            renderRect.y = 0;
+        if (renderRect.w > contentWidth)
+            renderRect.w = contentWidth;
+        if (renderRect.h > contentHeight)
+            renderRect.h = contentHeight;
+    }
+
+    // enqueue tiles into tiled backing store in spiral order.
+    ewk_tiled_backing_store_pre_render_spiral_queue(smartData->backing_store, &viewRect, &renderRect, maxMemory, currentViewZoom);
+
+    return true;
+}
+
 static void _ewk_view_tiled_smart_pre_render_cancel(Ewk_View_Smart_Data* smartData)
 {
     ewk_tiled_backing_store_pre_render_cancel(smartData->backing_store);
@@ -248,6 +365,7 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
     api->flush = _ewk_view_tiled_smart_flush;
     api->pre_render_region = _ewk_view_tiled_smart_pre_render_region;
     api->pre_render_relative_radius = _ewk_view_tiled_smart_pre_render_relative_radius;
+    api->pre_render_start = _ewk_view_tiled_smart_pre_render_start;
     api->pre_render_cancel = _ewk_view_tiled_smart_pre_render_cancel;
     api->disable_render = _ewk_view_tiled_smart_disable_render;
     api->enable_render = _ewk_view_tiled_smart_enable_render;

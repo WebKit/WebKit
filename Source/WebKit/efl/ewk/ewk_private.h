@@ -45,6 +45,7 @@ extern "C" {
 
 // If defined, ewk will do type checking to ensure objects are of correct type
 #define EWK_TYPE_CHECK 1
+#define EWK_ARGB_BYTES_SIZE 4
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #define EWK_JS_OBJECT_MAGIC 0x696969

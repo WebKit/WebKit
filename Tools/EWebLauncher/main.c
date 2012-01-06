@@ -548,6 +548,9 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     } else if (!strcmp(ev->key, "e")) {
         info("Render resumed");
         ewk_view_enable_render(obj);
+    } else if (!strcmp(ev->key, "Insert")) {
+        info("Pre-rendering start");
+        ewk_view_pre_render_start(obj);
     }
 }
 

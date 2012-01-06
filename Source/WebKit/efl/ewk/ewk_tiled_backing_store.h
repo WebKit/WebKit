@@ -112,6 +112,7 @@ void ewk_tiled_backing_store_tile_unused_cache_set(Evas_Object* o, Ewk_Tile_Unus
 
 Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object* o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
 Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object* o, unsigned int n, float zoom);
+Eina_Bool ewk_tiled_backing_store_pre_render_spiral_queue(Evas_Object* o, Eina_Rectangle* view_rect, Eina_Rectangle* render_rect, int max_memory, float zoom);
 void ewk_tiled_backing_store_pre_render_cancel(Evas_Object* o);
 
 Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object* o);

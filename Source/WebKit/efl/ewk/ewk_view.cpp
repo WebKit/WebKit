@@ -1005,6 +1005,12 @@ static Eina_Bool _ewk_view_smart_pre_render_relative_radius(Ewk_View_Smart_Data*
     return false;
 }
 
+static Eina_Bool _ewk_view_smart_pre_render_start(Ewk_View_Smart_Data* smartData)
+{
+    WRN("not supported by engine. smartData=%p", smartData);
+    return false;
+}
+
 static void _ewk_view_smart_pre_render_cancel(Ewk_View_Smart_Data* smartData)
 {
     WRN("not supported by engine. smartData=%p", smartData);
@@ -1137,6 +1143,7 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->flush = _ewk_view_smart_flush;
     api->pre_render_region = _ewk_view_smart_pre_render_region;
     api->pre_render_relative_radius = _ewk_view_smart_pre_render_relative_radius;
+    api->pre_render_start = _ewk_view_smart_pre_render_start;
     api->pre_render_cancel = _ewk_view_smart_pre_render_cancel;
     api->disable_render = _ewk_view_smart_disable_render;
     api->enable_render = _ewk_view_smart_enable_render;
@@ -1832,6 +1839,14 @@ Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object* ewkView, unsigned int
 
     currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
     return smartData->api->pre_render_relative_radius(smartData, number, currentZoom);
+}
+
+Eina_Bool ewk_view_pre_render_start(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_start, false);
+
+    return smartData->api->pre_render_start(smartData);
 }
 
 unsigned int ewk_view_imh_get(const Evas_Object* ewkView)
