@@ -1,3 +1,13 @@
+2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10633760> Update copyright strings
+
+        Reviewed by Mark Rowe.
+
+        * Info.plist:
+        * PluginProcess/Info.plist:
+        * WebProcess/Info.plist:
+
 2012-01-05  Anders Carlsson  <andersca@apple.com>
 
         Crash when trying to invalidate the NPRuntimeObjectMap for a plug-in in a subframe

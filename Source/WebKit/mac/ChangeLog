@@ -1,3 +1,11 @@
+2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10633760> Update copyright strings
+
+        Reviewed by Mark Rowe.
+
+        * Info.plist:
+
 2012-01-05  Pratik Solanki  <psolanki@apple.com>
 
         WebFrameLoaderClient::userAgent does unnecessary NSString/NSURL conversions

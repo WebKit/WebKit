@@ -1,3 +1,11 @@
+2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10633760> Update copyright strings
+
+        Reviewed by Mark Rowe.
+
+        * win/tools/scripts/COPYRIGHT-END-YEAR:
+
 2011-12-06  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: disable on Windows by default
