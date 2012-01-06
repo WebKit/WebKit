@@ -63,7 +63,7 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
     class Document;
-    class Frame;
+    class FrameDestructionObserver;
     class FrameView;
     class HTMLTableCellElement;
     class RegularExpression;
@@ -73,18 +73,6 @@ namespace WebCore {
 #if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };
 #endif
-
-    class FrameDestructionObserver {
-    public:
-        explicit FrameDestructionObserver(Frame*);
-        virtual void frameDestroyed();
-        Frame* frame() const { return m_frame; }
-
-    protected:
-        virtual ~FrameDestructionObserver();
-
-        Frame* m_frame;
-    };
 
     class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
     public:

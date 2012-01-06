@@ -2996,6 +2996,8 @@
             'page/Frame.cpp',
             'page/FrameActionScheduler.cpp',
             'page/FrameActionScheduler.h',
+            'page/FrameDestructionObserver.cpp',
+            'page/FrameDestructionObserver.h',
             'page/FrameTree.cpp',
             'page/FrameView.cpp',
             'page/Geolocation.cpp',

@@ -47,6 +47,7 @@
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
+#include "FrameDestructionObserver.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -233,24 +234,6 @@ Frame::~Frame()
         m_view->hide();
         m_view->clearFrame();
     }
-}
-
-FrameDestructionObserver::FrameDestructionObserver(Frame* frame)
-    : m_frame(frame)
-{
-    if (m_frame)
-        m_frame->addDestructionObserver(this);
-}
-
-FrameDestructionObserver::~FrameDestructionObserver()
-{
-    if (m_frame)
-        m_frame->removeDestructionObserver(this);
-}
-
-void FrameDestructionObserver::frameDestroyed()
-{
-    m_frame = 0;
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)

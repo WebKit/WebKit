@@ -21,6 +21,7 @@
 #define DOMMimeType_h
 
 #include "Frame.h"
+#include "FrameDestructionObserver.h"
 #include "PluginData.h"
 
 #include <wtf/Forward.h>

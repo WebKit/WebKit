@@ -25252,14 +25252,22 @@
 			<File
 				RelativePath="..\page\Frame.h"
 				>
-				<File
-					RelativePath="..\page\FrameActionScheduler.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\page\FrameActionScheduler.h"
-					>
-				</File>
+			</File>
+			<File
+				RelativePath="..\page\FrameActionScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\FrameActionScheduler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\FrameDestructionObserver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\FrameDestructionObserver.h"
+				>
 			</File>
 			<File
 				RelativePath="..\page\FrameTree.cpp"

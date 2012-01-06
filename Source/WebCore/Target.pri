@@ -973,6 +973,7 @@ SOURCES += \
     page/FocusController.cpp \
     page/Frame.cpp \
     page/FrameActionScheduler.cpp \
+    page/FrameDestructionObserver.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \
     page/Geolocation.cpp \

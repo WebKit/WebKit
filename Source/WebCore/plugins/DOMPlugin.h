@@ -20,6 +20,7 @@
 #ifndef DOMPlugin_h
 #define DOMPlugin_h
 
+#include "FrameDestructionObserver.h"
 #include "DOMMimeType.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
