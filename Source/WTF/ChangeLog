@@ -1,3 +1,11 @@
+2012-01-06  Eric Seidel  <eric@webkit.org> and Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Make the new WTF module build on Gtk
+        https://bugs.webkit.org/show_bug.cgi?id=75669
+
+        * GNUmakefile.am: Added.
+        * GNUmakefile.list.am: Added.
+
 2011-11-19  Adam Barth  <abarth@webkit.org>
 
         Integrate Source/WTF with the Chromium build system

@@ -56,6 +56,9 @@ TEST_PROGS :=
 POFILES :=
 MOFILES :=
 dom_binding_idls :=
+wtf_cppflags:=
+wtf_cflags :=
+wtf_sources :=
 javascriptcore_h_api :=
 javascriptcore_cppflags:=
 javascriptcore_cflags :=
@@ -219,6 +222,8 @@ EXTRA_DIST += \
 	$(srcdir)/Source/WebKit/LICENSE
 
 # Include module makefiles
+include Source/WTF/GNUmakefile.am
+
 if USE_JSC
 include Source/JavaScriptCore/GNUmakefile.am
 endif

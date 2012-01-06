@@ -1,0 +1,3 @@
+wtf_sources += \
+	Source/WTF/Stub.cpp \
+	Source/WTF/Stub.h

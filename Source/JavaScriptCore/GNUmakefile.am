@@ -23,10 +23,11 @@ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@
 	$(javascriptcore_sources)
 
 libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
+	-lpthread \
+	libWTF.la \
 	$(UNICODE_LIBS) \
 	$(GLIB_LIBS) \
-	$(WINMM_LIBS) \
-	-lpthread
+	$(WINMM_LIBS)
 
 libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS = \
 	$(global_cxxflags) \
@@ -67,6 +68,9 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/wtf/unicode \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
 	-I$(top_builddir)/DerivedSources/JavaScriptCore
+
+javascriptcore_cppflags += \
+	-I$(srcdir)/Source/WTF
 
 javascriptcore_cflags += \
 	$(global_cflags) \
