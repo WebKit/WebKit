@@ -31,7 +31,6 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "NodeRareData.h"
-#include "TreeScopeAdopter.h"
 
 namespace WebCore {
 
@@ -136,17 +135,6 @@ Element* TreeScope::findAnchor(const String& name)
 bool TreeScope::applyAuthorSheets() const
 {
     return true;
-}
-
-void TreeScope::adoptIfNeeded(Node* node)
-{
-    ASSERT(this);
-    ASSERT(node);
-    ASSERT(!node->isDocumentNode());
-    ASSERT(!node->m_deletionHasBegun);
-    TreeScopeAdopter adopter(node, this);
-    if (adopter.needsScopeChange())
-        adopter.execute();
 }
 
 } // namespace WebCore

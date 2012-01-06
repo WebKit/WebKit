@@ -64,9 +64,6 @@ public:
 
     virtual bool applyAuthorSheets() const;
 
-    // Used by the basic DOM mutation methods (e.g., appendChild()).
-    void adoptIfNeeded(Node*);
-
 protected:
     TreeScope(Document*, ConstructionType = CreateContainer);
     virtual ~TreeScope();
