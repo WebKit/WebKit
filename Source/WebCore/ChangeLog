@@ -1,3 +1,17 @@
+2012-01-05  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75654
+        Text fields should draw using NSTextFieldCell instead of WebKitSystemInterface
+
+        Reviewed by John Sullivan.
+
+        This change should not have any affect on tests or real web sites. It just changed 
+        the implementation under the hood to the more modern NSCell approach.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::textField):
+
 2012-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a compile-time assertion for the size of CSSValue

@@ -713,7 +713,15 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle* style) const
 bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
+    NSTextFieldCell* textField = this->textField();
+
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
+
+    [textField setEnabled:(isEnabled(o) && !isReadOnlyControl(o))];
+    [textField drawWithFrame:NSRect(r) inView:documentViewFor(o)];
+
+    [textField setControlView:nil];
+
     return false;
 }
 
@@ -2082,6 +2090,23 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     }
     
     return m_sliderThumbVertical.get();
+}
+
+NSTextFieldCell* RenderThemeMac::textField() const
+{
+    if (!m_textField) {
+        m_textField.adoptNS([[NSTextFieldCell alloc] initTextCell:@""]);
+        [m_textField.get() setBezeled:YES];
+        [m_textField.get() setEditable:YES];
+        [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
+
+        // Setting a clear background on the cell is necessary for CSS-styled backgrounds
+        // to show through. Ideally, there would be a better way to do this.
+        [m_textField.get() setDrawsBackground:YES];
+        [m_textField.get() setBackgroundColor:[NSColor clearColor]];
+    }
+
+    return m_textField.get();
 }
 
 String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed)
