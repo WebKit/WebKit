@@ -54,13 +54,14 @@ public:
     // resized version if there is one.
     int decodedSize() const;
 
-    // Sets the data complete flag. This is called by the image decoder when
-    // all data is complete, and used by us to know whether we can cache
-    // resized images.
-    void setDataComplete() { m_isDataComplete = true; }
+    // Sets the immutable flag on the bitmap, indicating that the image data
+    // will not be modified any further. This is called by the image decoder
+    // when all data is complete, used by us to know whether we can cache
+    // resized images, and used by Skia for various optimizations.
+    void setDataComplete() { m_image.setImmutable(); }
 
     // Returns true if the entire image has been decoded.
-    bool isDataComplete() const { return m_isDataComplete; }
+    bool isDataComplete() const { return m_image.isImmutable(); }
 
     // Get reference to the internal SkBitmap representing this image.
     const SkBitmap& bitmap() const { return m_image; }
@@ -141,10 +142,6 @@ private:
     // image resizes.
     mutable CachedImageInfo m_cachedImageInfo;
     mutable int m_resizeRequests;
-
-    // Set to true when the data is complete. Before the entire image has
-    // loaded, we do not want to cache a resize.
-    bool m_isDataComplete;
 };
 
 }

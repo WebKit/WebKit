@@ -43,15 +43,13 @@
 namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
-    : m_resizeRequests(0),
-      m_isDataComplete(false)
+    : m_resizeRequests(0)
 {
 }
 
 NativeImageSkia::NativeImageSkia(const SkBitmap& other)
     : m_image(other),
-      m_resizeRequests(0),
-      m_isDataComplete(false)
+      m_resizeRequests(0)
 {
 }
 
@@ -78,7 +76,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
     TRACE_EVENT("NativeImageSkia::resizedBitmap", const_cast<NativeImageSkia*>(this), 0);
 #endif
     if (!hasResizedBitmap(srcSubset, destWidth, destHeight)) {
-        bool shouldCache = m_isDataComplete
+        bool shouldCache = isDataComplete()
             && shouldCacheResampling(srcSubset, destWidth, destHeight, destVisibleSubset);
 
         SkBitmap subset;
@@ -89,6 +87,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
 #endif
             // Just resize the visible subset and return it.
             SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);
+            resizedImage.setImmutable();
             return resizedImage;
         } else {
 #if PLATFORM(CHROMIUM)
@@ -96,6 +95,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
 #endif
             m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
         }
+        m_resizedImage.setImmutable();
     }
 
     SkBitmap visibleBitmap;
@@ -124,7 +124,7 @@ bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
     // the future, were we know how much of the frame has been decoded, so when
     // we incrementally draw more of the image, we only have to resample the
     // parts that are changed.
-    if (!m_isDataComplete)
+    if (!isDataComplete())
         return false;
 
     // If the destination bitmap is small, we'll always allow caching, since

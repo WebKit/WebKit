@@ -1,3 +1,27 @@
+2012-01-05  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] NativeImageSkia should mark SkBitmaps as immutable
+        https://bugs.webkit.org/show_bug.cgi?id=74962
+
+        Removed m_isDataComplete from class NativeImageSkia. Instead, data
+        completeness will be tracked through SkBitmap::setImmutable/
+        isImmutable.  The immutable state signifies that the pixel data
+        will no longer change for the lifetime of the bitmap, which corresponds
+        to the semantic of the old m_isDataComplete member. setImmutable is
+        also called on the cached resized bitmap, since it too is invariant for
+        its life time. Temporary resized bitmaps are also marked as immutable
+        since they technically are.
+
+        Reviewed by Stephen White.
+
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::NativeImageSkia):
+        (WebCore::NativeImageSkia::resizedBitmap):
+        (WebCore::NativeImageSkia::shouldCacheResampling):
+        * platform/graphics/skia/NativeImageSkia.h:
+        (WebCore::NativeImageSkia::setDataComplete):
+        (WebCore::NativeImageSkia::isDataComplete):
+
 2012-01-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104231.
