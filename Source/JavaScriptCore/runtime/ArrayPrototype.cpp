@@ -1170,8 +1170,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
         return JSValue::encode(jsNumber(-1));
 
     unsigned index = length - 1;
-    JSValue fromValue = exec->argument(1);
-    if (!fromValue.isUndefined()) {
+    if (exec->argumentCount() >= 2) {
+        JSValue fromValue = exec->argument(1);
         double fromDouble = fromValue.toInteger(exec);
         if (fromDouble < 0) {
             fromDouble += length;
