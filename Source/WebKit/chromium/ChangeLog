@@ -1,3 +1,13 @@
+2012-01-05  Jochen Eisinger  <jochen@chromium.org>
+
+        Check whether a WebView exists before accessing it in StorageAreaProxy. This is not necessarily the case, e.g. for detached iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=61326
+
+        Reviewed by Adam Barth.
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::canAccessStorage):
+
 2012-01-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Route all animate calls through CCLayerTreeHost in composited mode to simplify rate limiting logic

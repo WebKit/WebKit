@@ -19,7 +19,11 @@
           first_attr = t1.attributes.item(undefined, undefined, undefined, undefined);
           first_attr_value_replaced = first_attr.firstChild.replaceWholeText(undefined, undefined, undefined, undefined);
           first_attr_value_replaced.DOCUMENT_FRAGMENT_NODE = a;
-          first_attr.firstChild.DOCUMENT_FRAGMENT_NODE.localStorage.fuzz3_visited="test";
+          try {
+              first_attr.firstChild.DOCUMENT_FRAGMENT_NODE.localStorage.fuzz3_visited="test";
+          } catch (e) {
+              console.log("Expected exception caught.");
+          }
       }
 
       function runTestOuterText() {

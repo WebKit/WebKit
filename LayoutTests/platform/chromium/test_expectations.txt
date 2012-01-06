@@ -3311,8 +3311,6 @@ BUGWK64003 DEBUG : media/video-delay-load-event.html = PASS TEXT
 
 BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
-BUGWK61326 : fast/storage/storage-detached-iframe.html = CRASH TIMEOUT
-
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 

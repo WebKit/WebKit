@@ -1,3 +1,13 @@
+2012-01-05  Jochen Eisinger  <jochen@chromium.org>
+
+        Disallow access to DOM storage from detached frames.
+        https://bugs.webkit.org/show_bug.cgi?id=61326
+
+        Reviewed by Adam Barth.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::disabledByPrivateBrowsingInFrame):
+
 2012-01-05  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] Convert shaders in TextureMapperGL to use a macro
