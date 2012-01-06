@@ -1,3 +1,13 @@
+2012-01-05  Wei James  <james.wei@intel.com>
+
+        Optimize with memcpy instead of copying frame by frame in Realtimeanalyser::doFFTAnalysis
+        https://bugs.webkit.org/show_bug.cgi?id=74693
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::doFFTAnalysis):
+
 2012-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r104210): Dromaeo DOM test score is lower

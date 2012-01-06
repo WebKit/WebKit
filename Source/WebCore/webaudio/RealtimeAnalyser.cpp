@@ -157,10 +157,13 @@ void RealtimeAnalyser::doFFTAnalysis()
     float* tempP = temporaryBuffer.data();
 
     // Take the previous fftSize values from the input buffer and copy into the temporary buffer.
-    // FIXME : optimize with memcpy().
     unsigned writeIndex = m_writeIndex;
-    for (unsigned i = 0; i < fftSize; ++i)
-        tempP[i] = inputBuffer[(i + writeIndex - fftSize + InputBufferSize) % InputBufferSize];
+    if (writeIndex < fftSize) {
+        memcpy(tempP, inputBuffer + writeIndex - fftSize + InputBufferSize, sizeof(*tempP) * (fftSize - writeIndex));
+        memcpy(tempP + fftSize - writeIndex, inputBuffer, sizeof(*tempP) * writeIndex);
+    } else 
+        memcpy(tempP, inputBuffer + writeIndex - fftSize, sizeof(*tempP) * fftSize);
+
     
     // Window the input samples.
     applyWindow(tempP, fftSize);
