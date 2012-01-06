@@ -42,6 +42,9 @@ struct WebDynamicScrollBarsViewPrivate;
 #endif
 }
 
+// For use by DumpRenderTree only.
++ (void)setCustomScrollerClass:(Class)scrollerClass;
+
 // This was originally added for Safari's benefit, but Safari has not used it for a long time.
 // Perhaps it can be removed.
 - (void)setAllowsHorizontalScrolling:(BOOL)flag;

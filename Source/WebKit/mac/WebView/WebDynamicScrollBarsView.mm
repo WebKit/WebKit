@@ -43,6 +43,11 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
 COMPILE_ASSERT(sizeof(WebDynamicScrollBarsView) == 0x8c, WebDynamicScrollBarsView_is_expected_size);
 #endif
 
+@interface NSScrollView(WebNSScrollViewDetails)
++ (Class)_horizontalScrollerClass;
++ (Class)_verticalScrollerClass;
+@end
+
 struct WebDynamicScrollBarsViewPrivate {
     unsigned inUpdateScrollersLayoutPass;
 
@@ -76,6 +81,29 @@ struct WebDynamicScrollBarsViewPrivate {
 };
 
 @implementation WebDynamicScrollBarsView
+
+static Class customScrollerClass;
+
++ (Class)_horizontalScrollerClass
+{
+    if (Settings::mockScrollbarsEnabled() && customScrollerClass)
+        return customScrollerClass;
+
+    return [super _horizontalScrollerClass];
+}
+
++ (Class)_verticalScrollerClass
+{
+    if (Settings::mockScrollbarsEnabled() && customScrollerClass)
+        return customScrollerClass;
+
+    return [super _horizontalScrollerClass];
+}
+
++ (void)setCustomScrollerClass:(Class)scrollerClass
+{
+    customScrollerClass = scrollerClass;
+}
 
 - (id)initWithFrame:(NSRect)frame
 {

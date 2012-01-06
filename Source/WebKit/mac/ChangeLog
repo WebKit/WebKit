@@ -1,3 +1,24 @@
+2012-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Mitigate scrollbar differences when running pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=67217
+
+        Reviewed by Dan Bernstein.
+        
+        Make it possible to register a custom NSScroller class, which
+        the WebDynamicScrollBarsView will use when mock scrollbars are enabled.
+        
+        Also ensure that the WebPreferences mock scrollbars preference is
+        migrated into Settings.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (+[WebDynamicScrollBarsView _horizontalScrollerClass]):
+        (+[WebDynamicScrollBarsView _verticalScrollerClass]):
+        (+[WebDynamicScrollBarsView setCustomScrollerClass:]):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-01-05  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10633760> Update copyright strings

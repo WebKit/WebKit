@@ -1497,6 +1497,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings->setSuppressIncrementalRendering([preferences suppressIncrementalRendering]);
     settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
+    settings->setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
 
 #if ENABLE(VIDEO_TRACK)
     settings->setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
