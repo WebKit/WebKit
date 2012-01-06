@@ -1,10 +1,11 @@
-// Compare sections of a <canvas> to assert they are identical.
-function compareRows(ctx, y0, y1, width, height) {
+// Compare sections of a <canvas> to assert they are identical, or nearly so.
+function compareRows(ctx, y0, y1, width, height, allowableDifference) {
     var data0 = ctx.getImageData(0, y0, width, height).data;
     var data1 = ctx.getImageData(0, y1, width, height).data;
     for (var i = 0, il = data0.length; i < il; ++i) {
-        if (data0[i] != data1[i]) {
-            testFailed("Pixel at " + i + " should be " + data0[i] + " but was " + data1[i]);
+        if (Math.abs(data0[i] - data1[i]) > allowableDifference) {
+            testFailed("Pixel at " + i + " should be within " + allowableDifference +
+                " of " + data0[i] + " but was " + data1[i]);
             break;
         }
     }
@@ -40,6 +41,7 @@ for (var j = 0; j < 3; ++j) {
     }
 }
 
-// Make sure that all rows are identical.
-compareRows(ctx, 0, 100, 600, 100);
-compareRows(ctx, 0, 200, 600, 100);
+// Make sure that all rows are nearly identical.
+// (Tiny variations are OK.)
+compareRows(ctx, 0, 100, 600, 100, 1);
+compareRows(ctx, 0, 200, 600, 100, 1);
