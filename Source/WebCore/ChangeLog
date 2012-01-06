@@ -1,3 +1,14 @@
+2012-01-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104231.
+        http://trac.webkit.org/changeset/104231
+        https://bugs.webkit.org/show_bug.cgi?id=75668
+
+        Breaks the Qt build (Requested by abarth on #webkit).
+
+        * platform/SchemeRegistry.cpp:
+        * platform/SchemeRegistry.h:
+
 2012-01-05  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75654
