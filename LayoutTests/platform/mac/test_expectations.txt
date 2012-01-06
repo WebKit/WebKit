@@ -25,9 +25,6 @@ BUGWK58192 : fast/canvas/webgl/gl-teximage.html = TEXT PASS
 BUGWK58192 : fast/frames/flattening/iframe-flattening-offscreen.html = TEXT PASS
 BUGWK58192 : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 
-// Need rebaseline
-BUGWK70765 : fast/forms/listbox-clip.html = TEXT
-
 BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
