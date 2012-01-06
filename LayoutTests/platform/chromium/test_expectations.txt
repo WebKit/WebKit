@@ -3022,7 +3022,6 @@ BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 // broke in r84742 - just needs a new baseline?
 BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
 
-BUGCR86337 : fast/files/domurl-script-execution-context-crash.html = PASS CRASH
 BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 
