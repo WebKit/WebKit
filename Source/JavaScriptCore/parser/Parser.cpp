@@ -30,7 +30,6 @@
 #include "Lexer.h"
 #include "NodeInfo.h"
 #include "SourceProvider.h"
-#include "SourceProviderCacheItem.h"
 #include <utility>
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>

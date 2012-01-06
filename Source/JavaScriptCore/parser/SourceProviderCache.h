@@ -26,12 +26,12 @@
 #ifndef SourceProviderCache_h
 #define SourceProviderCache_h
 
+#include "SourceProviderCacheItem.h"
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
-
-class SourceProviderCacheItem;
 
 class SourceProviderCache {
 public:
@@ -44,7 +44,7 @@ public:
     const SourceProviderCacheItem* get(int sourcePosition) const { return m_map.get(sourcePosition); }
 
 private:
-    HashMap<int, SourceProviderCacheItem*> m_map;
+    HashMap<int, OwnPtr<SourceProviderCacheItem> > m_map;
     unsigned m_contentByteSize;
 };
 

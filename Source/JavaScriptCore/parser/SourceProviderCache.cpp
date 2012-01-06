@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SourceProviderCache.h"
 
-#include "SourceProviderCacheItem.h"
-
 namespace JSC {
 
 SourceProviderCache::~SourceProviderCache()
@@ -37,7 +35,6 @@ SourceProviderCache::~SourceProviderCache()
 
 void SourceProviderCache::clear()
 {
-    deleteAllValues(m_map);
     m_map.clear();
     m_contentByteSize = 0;
 }
@@ -49,7 +46,7 @@ unsigned SourceProviderCache::byteSize() const
 
 void SourceProviderCache::add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem> item, unsigned size)
 {
-    m_map.add(sourcePosition, item.leakPtr());
+    m_map.add(sourcePosition, item);
     m_contentByteSize += size;
 }
 
