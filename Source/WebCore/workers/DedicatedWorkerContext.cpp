@@ -41,8 +41,8 @@
 
 namespace WebCore {
 
-DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& userAgent, DedicatedWorkerThread* thread)
-    : WorkerContext(url, userAgent, thread)
+DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& userAgent, DedicatedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+    : WorkerContext(url, userAgent, thread, contentSecurityPolicy, contentSecurityPolicyType)
 {
 }
 

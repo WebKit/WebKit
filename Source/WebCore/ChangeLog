@@ -1,3 +1,52 @@
+2012-01-06  Tom Sepez  <tsepez@chromium.org>
+
+        Pass Content-Security-Policy directives to worker threads.
+        https://bugs.webkit.org/show_bug.cgi?id=73242
+
+        Reviewed by David Levin.
+
+        Tests: http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html
+               http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html
+               http/tests/security/contentSecurityPolicy/worker-connect-src-allowed.html
+               http/tests/security/contentSecurityPolicy/worker-connect-src-blocked.html
+
+        * page/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::policy):
+        (WebCore::ContentSecurityPolicy::headerType):
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::DedicatedWorkerContext):
+        * workers/DedicatedWorkerContext.h:
+        (WebCore::DedicatedWorkerContext::create):
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create):
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerContext):
+        * workers/DedicatedWorkerThread.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::SharedWorkerContext):
+        * workers/SharedWorkerContext.h:
+        (WebCore::SharedWorkerContext::create):
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        (WebCore::SharedWorkerThread::createWorkerContext):
+        * workers/SharedWorkerThread.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::create):
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+
 2012-01-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Crash while collecting svg elements in render flow thread.

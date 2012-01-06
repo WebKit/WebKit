@@ -319,7 +319,10 @@ void SharedWorkerScriptLoader::notifyFinished()
         m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
-        DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
+        DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()),
+                                                                     m_scriptLoader->script(), m_port.release(),
+                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->policy(),
+                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->headerType());
     }
     m_worker->unsetPendingActivity(m_worker.get());
     this->deref(); // This frees this object - must be the last action in this function.
@@ -331,7 +334,7 @@ DefaultSharedWorkerRepository& DefaultSharedWorkerRepository::instance()
     return *instance;
 }
 
-void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port)
+void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel> port, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
     MutexLocker lock(m_lock);
     if (proxy.isClosing())
@@ -339,7 +342,7 @@ void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy,
 
     // Another loader may have already started up a thread for this proxy - if so, just send a connect to the pre-existing thread.
     if (!proxy.thread()) {
-        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy, proxy, DontPauseWorkerContextOnStart);
+        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy, proxy, DontPauseWorkerContextOnStart, contentSecurityPolicy, contentSecurityPolicyType);
         proxy.setThread(thread);
         thread->start();
     }

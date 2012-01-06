@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-PassRefPtr<SharedWorkerThread> SharedWorkerThread::create(const String& name, const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode)
+PassRefPtr<SharedWorkerThread> SharedWorkerThread::create(const String& name, const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    return adoptRef(new SharedWorkerThread(name, scriptURL, userAgent, sourceCode, workerLoaderProxy, workerReportingProxy, startMode));
+    return adoptRef(new SharedWorkerThread(name, scriptURL, userAgent, sourceCode, workerLoaderProxy, workerReportingProxy, startMode, contentSecurityPolicy, contentSecurityPolicyType));
 }
 
-SharedWorkerThread::SharedWorkerThread(const String& name, const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode)
-    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerReportingProxy, startMode)
+SharedWorkerThread::SharedWorkerThread(const String& name, const KURL& url, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+    : WorkerThread(url, userAgent, sourceCode, workerLoaderProxy, workerReportingProxy, startMode, contentSecurityPolicy, contentSecurityPolicyType)
     , m_name(name.isolatedCopy())
 {
 }
@@ -53,9 +53,9 @@ SharedWorkerThread::~SharedWorkerThread()
 {
 }
 
-PassRefPtr<WorkerContext> SharedWorkerThread::createWorkerContext(const KURL& url, const String& userAgent)
+PassRefPtr<WorkerContext> SharedWorkerThread::createWorkerContext(const KURL& url, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    return SharedWorkerContext::create(m_name, url, userAgent, this);
+    return SharedWorkerContext::create(m_name, url, userAgent, this, contentSecurityPolicy, contentSecurityPolicyType);
 }
 
 } // namespace WebCore

@@ -108,7 +108,7 @@ public:
     virtual bool isCleanupTask() const { return true; }
 };
 
-WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
+WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread, const String& policy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
     : m_url(url)
     , m_userAgent(userAgent)
     , m_script(adoptPtr(new WorkerScriptController(this)))
@@ -120,10 +120,8 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
     , m_eventQueue(WorkerEventQueue::create(this))
 {
     setSecurityOrigin(SecurityOrigin::create(url));
-    
-    // FIXME: This should probably adopt the ContentSecurityPolicy of the document
-    // that created this worker or use the header that came with the worker script.
     setContentSecurityPolicy(ContentSecurityPolicy::create(this));
+    contentSecurityPolicy()->didReceiveHeader(policy, contentSecurityPolicyType);
 }
 
 WorkerContext::~WorkerContext()

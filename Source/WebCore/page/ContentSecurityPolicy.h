@@ -52,6 +52,8 @@ public:
     };
 
     void didReceiveHeader(const String&, HeaderType);
+    String policy() { return m_header; }
+    HeaderType headerType() { return m_reportOnly ? ReportOnly : EnforcePolicy; }
 
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;

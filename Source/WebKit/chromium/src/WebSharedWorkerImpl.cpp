@@ -365,7 +365,8 @@ void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString&
 {
     initializeLoader(url);
     WorkerThreadStartMode startMode = m_pauseWorkerContextOnStart ? PauseWorkerContextOnStart : DontPauseWorkerContextOnStart;
-    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, sourceCode, *this, *this, startMode));
+    // FIXME: pass content-security-policy directives into shared worker.
+    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, sourceCode, *this, *this, startMode, "", ContentSecurityPolicy::ReportOnly));
     workerThread()->start();
 }
 

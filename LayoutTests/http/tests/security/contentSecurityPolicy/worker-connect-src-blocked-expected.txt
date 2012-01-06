@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: Refused to load connect from 'http://127.0.0.1:8000/xmlhttprequest/resources/get.txt' because of Content-Security-Policy.
+
+ALERT: xhr blocked
+

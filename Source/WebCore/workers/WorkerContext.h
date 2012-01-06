@@ -29,6 +29,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "ContentSecurityPolicy.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -179,7 +180,7 @@ namespace WebCore {
 #endif
 
     protected:
-        WorkerContext(const KURL&, const String&, WorkerThread*);
+        WorkerContext(const KURL&, const String&, WorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
         void addMessageToWorkerConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);

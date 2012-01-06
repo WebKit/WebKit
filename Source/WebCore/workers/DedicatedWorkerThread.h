@@ -32,6 +32,7 @@
 
 #if ENABLE(WORKERS)
 
+#include "ContentSecurityPolicy.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -40,16 +41,16 @@ namespace WebCore {
 
     class DedicatedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<DedicatedWorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode);
+        static PassRefPtr<DedicatedWorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
         WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
         ~DedicatedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL& url, const String& userAgent);
+        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL&, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
         virtual void runEventLoop();
 
     private:
-        DedicatedWorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode);
+        DedicatedWorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         WorkerObjectProxy& m_workerObjectProxy;
     };

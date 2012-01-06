@@ -172,6 +172,8 @@ WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/shared-worker-simple.h
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS TIMEOUT FAIL
+WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html = TEXT
+WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html = TEXT
 
 // test_shell does not support message ports
 BUGWK74459 SKIP : fast/workers/termination-with-port-messages.html = CRASH
