@@ -178,7 +178,7 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
     if (!axID)
         return 0;
-    
+
     return m_objects.get(axID).get();    
 }
 

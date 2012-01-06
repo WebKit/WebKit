@@ -88,7 +88,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
 
     searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
     searchRange->setEnd(end.deprecatedNode(), end.deprecatedEditingOffset(), ec);
-    
+
     ASSERT(!ec);
     if (ec)
         return VisiblePosition();

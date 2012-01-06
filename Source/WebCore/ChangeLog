@@ -1,3 +1,13 @@
+2012-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch a bunch of files in an attempt to fix Mac release builds.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+
 2012-01-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Enable a compositing trigger for filters
