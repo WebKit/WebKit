@@ -1,3 +1,14 @@
+2012-01-05  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75593
+        Reviewed by Alexey Proskuryakov.
+
+        Null-check 'page' variable before use, to follow the common usage pattern of m_frame->page()
+        throughout the rest of FrameView.cpp.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+
 2012-01-04  Hajime Morrita  <morrita@chromium.org>
 
         [Refactoring] Moving between TreeScopes should be done by its own class.

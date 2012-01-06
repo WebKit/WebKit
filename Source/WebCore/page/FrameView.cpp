@@ -2596,6 +2596,9 @@ void FrameView::setAnimatorsAreActive()
 void FrameView::notifyPageThatContentAreaWillPaint() const
 {
     Page* page = m_frame->page();
+    if (!page)
+        return;
+
     const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
     if (!scrollableAreas)
         return;
