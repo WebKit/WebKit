@@ -1,3 +1,30 @@
+2012-01-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Date parsing is too restrictive.
+        https://bugs.webkit.org/show_bug.cgi?id=75671
+
+        Reviewed by Oliver Hunt.
+
+        ES5 date parsing currently requires all fields to be present, which does not match the spec (ES5.1 15.9.1.15).
+        The spec allow a date to be date only, or date + time.
+
+        The date portion on the should match: (pseudocode!:)
+            [(+|-)YY]YYYY[-MM[-DD]]
+        though we are slightly more liberal (permitted by the spec), allowing:
+            [+|-]Y+[-MM[-DD]]
+        The time portion should match:
+            THH:mm[:ss[.sss]][Z|(+|-)HH:mm]
+        again we're slightly more liberal, allowing:
+            THH:mm[:ss[.s+]][Z|(+|-)HH:mm]
+
+        * wtf/DateMath.cpp:
+        (WTF::parseES5DatePortion):
+            - Month/day fields are optional, default to 01.
+        (WTF::parseES5TimePortion):
+            - Hours/Minutes are requires, seconds/timezone are optional.
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+            - Dates may be date only, or date + time.
+
 2012-01-05  Bruno Dilly  <bdilly@profusion.mobi>
 
         [EFL] Undefined references to ICU_I18N symbols on WTF

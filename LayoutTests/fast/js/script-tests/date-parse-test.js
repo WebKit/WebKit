@@ -68,6 +68,71 @@ testDateParseExact("1995-02-29T00:00:00Z", "NaN");
 testDateParseExact("1995-12-25 01:30:00Z", "NaN");
 testDateParseExact("1995-12-25T01:30:00z", "NaN");
 
+// Date-only dates.
+shouldBe("Number(Date.parse('1970'))", '0');
+shouldBe("Number(Date.parse('1970-01'))", '0');
+shouldBe("Number(Date.parse('1970-01-01'))", '0');
+// Date-time dates
+shouldBe("Number(Date.parse('1970T00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00.000'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00.000'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00.000'))", '0');
+// Date-time dates with UTC timezone
+shouldBe("Number(Date.parse('1970T00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00Z'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00.000Z'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00.000Z'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00.000Z'))", '0');
+// Date-time dates with timezone
+shouldBe("Number(Date.parse('1970T00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00+00:00'))", '0');
+shouldBe("Number(Date.parse('1970T00:00:00.000+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01T00:00:00.000+00:00'))", '0');
+shouldBe("Number(Date.parse('1970-01-01T00:00:00.000+00:00'))", '0');
+
+// Year may not be omitted
+shouldBe("String(Date.parse(''))", '"NaN"');
+shouldBe("String(Date.parse('T00:00:00.000'))", '"NaN"');
+shouldBe("String(Date.parse('T00:00:00.000Z'))", '"NaN"');
+shouldBe("String(Date.parse('Z'))", '"NaN"');
+// Timezone only valid with a time.
+shouldBe("String(Date.parse('1970-01-01Z'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01+00:00'))", '"NaN"');
+// Month/day expected after '-'.
+shouldBe("String(Date.parse('1970-'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-'))", '"NaN"');
+// Hours & minutes expected after 'T'.
+shouldBe("String(Date.parse('1970-01-01T'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T0'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:0'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T0:0'))", '"NaN"');
+// Seconds expected after ':'
+shouldBe("String(Date.parse('1970-01-01T00:00:'))", '"NaN"');
+// Fraction expected after '.'
+shouldBe("String(Date.parse('1970-01-01T00:00:00.'))", '"NaN"');
+// Timezone expected after '+'.
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000-'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00:'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+00:0'))", '"NaN"');
+shouldBe("String(Date.parse('1970-01-01T00:00:00.000+0:0'))", '"NaN"');
 
 // test old implementation fallback
 
@@ -163,3 +228,4 @@ testDateParseExact("4/13/2008 12:00 AM GMT+24", "1208043360000");
 testDateParseExact("4/13/2008 12:00 AM GMT-0024", "1208046240000");
 testDateParseExact("4/13/2008 12:00 AM GMT-123", "1208049780000");
 testDateParseExact("4/13/2008 12:00 AM GMT-1230", "1208089800000");
+
