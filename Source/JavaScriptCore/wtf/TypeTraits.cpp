@@ -152,7 +152,4 @@ COMPILE_ASSERT((IsSameType<int, RemoveExtent<IntArraySized>::Type>::value), WTF_
 COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArray>::Type>::value), WTF_Test_DecayArray_int_array);
 COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArraySized>::Type>::value), WTF_Test_DecayArray_int_sized_array);
 
-COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArray&>::Type>::value), WTF_Test_DecayArray_int_array_reference);
-COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArraySized&>::Type>::value), WTF_Test_DecayArray_int_sized_array_reference);
-
 } // namespace WTF
