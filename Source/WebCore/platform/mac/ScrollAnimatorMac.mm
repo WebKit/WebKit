@@ -690,19 +690,6 @@ void ScrollAnimatorMac::immediateScrollTo(const FloatPoint& newPosition)
     notifyPositionChanged();
 }
 
-void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
-{
-    float newPosX = adjustScrollXPositionIfNecessary(m_currentPosX + delta.width());
-    float newPosY = adjustScrollYPositionIfNecessary(m_currentPosY + delta.height());
-
-    if (newPosX == m_currentPosX && newPosY == m_currentPosY)
-        return;
-
-    m_currentPosX = newPosX;
-    m_currentPosY = newPosY;
-    notifyPositionChanged();
-}
-
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
@@ -1086,6 +1073,19 @@ void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const Flo
     m_scrollableArea->setConstrainsScrollingToContentEdge(false);
     immediateScrollBy(delta);
     m_scrollableArea->setConstrainsScrollingToContentEdge(true);
+}
+
+void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
+{
+    float newPosX = adjustScrollXPositionIfNecessary(m_currentPosX + delta.width());
+    float newPosY = adjustScrollYPositionIfNecessary(m_currentPosY + delta.height());
+
+    if (newPosX == m_currentPosX && newPosY == m_currentPosY)
+        return;
+
+    m_currentPosX = newPosX;
+    m_currentPosY = newPosY;
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorMac::startSnapRubberbandTimer()
