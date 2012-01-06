@@ -1,3 +1,13 @@
+2012-01-04  Jon Lee  <jonlee@apple.com>
+
+        Clicking on the cancel button on readonly and disabled search fields darkens as if the search field was editable
+        https://bugs.webkit.org/show_bug.cgi?id=69886
+        <rdar://problem/10070187>
+
+        Reviewed by Adele Peterson.
+
+        * ManualTests/search-cancel-button.html: Added.
+
 2012-01-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation of app code against QtWebKit master header file

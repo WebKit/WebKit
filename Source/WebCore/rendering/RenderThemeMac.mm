@@ -1511,7 +1511,9 @@ void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
 
 bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* input = o->node()->shadowAncestorNode();
+    Element* input = toElement(o->node()->shadowAncestorNode());
+    ASSERT(input);
+
     if (!input->renderer()->isBox())
         return false;
 
@@ -1520,8 +1522,12 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 
     NSSearchFieldCell* search = this->search();
 
-    updateActiveState([search cancelButtonCell], o);
-    updatePressedState([search cancelButtonCell], o);
+    if (input->isEnabledFormControl() && !input->isReadOnlyFormControl()) {
+        updateActiveState([search cancelButtonCell], o);
+        updatePressedState([search cancelButtonCell], o);
+    }
+    else if ([[search cancelButtonCell] isHighlighted])
+        [[search cancelButtonCell] setHighlighted:NO];
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
