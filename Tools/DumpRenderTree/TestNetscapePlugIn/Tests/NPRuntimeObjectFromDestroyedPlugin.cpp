@@ -38,12 +38,28 @@ private:
     // This is the test object.
     class TestObject : public Object<TestObject> { };
 
-    // This is the scriptable object. It has a single "testObject" property.
+    // This is the scriptable object. It has a single "testObject" property and an "evaluate" function.
     class ScriptableObject : public Object<ScriptableObject> { 
     public:
+        bool hasMethod(NPIdentifier methodName)
+        {
+            return identifierIs(methodName, "evaluate");
+        }
+
+        bool invoke(NPIdentifier methodName, const NPVariant* args, uint32_t argCount, NPVariant* result)
+        {
+            if (!identifierIs(methodName, "evaluate"))
+                return false;
+
+            if (argCount != 1 || !NPVARIANT_IS_STRING(args[0]))
+                return false;
+
+            return pluginTest()->executeScript(&NPVARIANT_TO_STRING(args[0]), result);
+        }
+
         bool hasProperty(NPIdentifier propertyName)
         {
-            return propertyName == pluginTest()->NPN_GetStringIdentifier("testObject");
+            return identifierIs(propertyName, "testObject");
         }
 
         bool getProperty(NPIdentifier propertyName, NPVariant* result)

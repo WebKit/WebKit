@@ -208,13 +208,15 @@ void NPRuntimeObjectMap::invalidate()
     // We shouldn't have any NPJSObjects left now.
     ASSERT(m_npJSObjects.isEmpty());
 
-    HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator end = m_jsNPObjects.end();
-    Vector<Strong<JSNPObject> > objects;
-    for (HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator ptr = m_jsNPObjects.begin(); ptr != end; ++ptr)
-        objects.append(Strong<JSNPObject>(globalObject()->globalData(), ptr->second));
+    Vector<NPObject*> objects;
+
+    for (HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator ptr = m_jsNPObjects.begin(), end = m_jsNPObjects.end(); ptr != end; ++ptr)
+        objects.append(ptr->second->leakNPObject());
+
     m_jsNPObjects.clear();
+
     for (size_t i = 0; i < objects.size(); ++i)
-        objects[i]->invalidate();
+        releaseNPObject(objects[i]);
     
     // Deal with any objects that were scheduled for delayed destruction
     if (m_npObjectsToFinalize.isEmpty())

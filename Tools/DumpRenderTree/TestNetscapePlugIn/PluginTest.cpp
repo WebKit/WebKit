@@ -220,17 +220,22 @@ bool PluginTest::NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSp
 }
 #endif
 
-void PluginTest::executeScript(const char* script)
+bool PluginTest::executeScript(const NPString* script, NPVariant* result)
 {
     NPObject* windowScriptObject;
     browser->getvalue(m_npp, NPNVWindowNPObject, &windowScriptObject);
 
+    return browser->evaluate(m_npp, windowScriptObject, const_cast<NPString*>(script), result);
+}
+
+void PluginTest::executeScript(const char* script)
+{
     NPString npScript;
     npScript.UTF8Characters = script;
     npScript.UTF8Length = strlen(script);
 
     NPVariant browserResult;
-    browser->evaluate(m_npp, windowScriptObject, &npScript, &browserResult);
+    executeScript(&npScript, &browserResult);
     browser->releasevariantvalue(&browserResult);
 }
 

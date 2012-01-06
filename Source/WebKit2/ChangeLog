@@ -1,3 +1,29 @@
+2012-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Crash when trying to invalidate the NPRuntimeObjectMap for a plug-in in a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=75667
+        <rdar://problem/10389454>
+
+        Reviewed by Kevin Decker.
+
+        NPRuntimeObjectMap::invalidate is called whenever a plug-in view is destroyed. If invalidate is called for an object map
+        whose plug-in has a null frame, we'd crash.
+
+        The plug-in will have a null frame if the plug-in view is destroyed because its containing frame has been removed from the document,
+        and if the plug-in view is being destroyed asynchronously due to the plug-in itself calling JavaScript that will remove the frame
+        (see PluginView::unprotectPluginFromDestruction).
+
+        The reason NPRuntimeObjectMap::invalidate will crash when the frame is null is because we were trying to access the frame's global
+        object, causing a null dereference. The reason we were trying to get at the frame's global object was to create a Strong handle to
+        a JSNPObject so we could stick the object in a vector so we could later iterate over the vector elements and call invalidate() on
+        each JSNPObject which will end up releasing the underlying NPObject.
+
+        However, it turns out that we don't need to stick the JSNPObject in a vector; we can just get the underlying NPObject directly and
+        stick that in a vector and then iterate over the NPObjects, releasing them.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::invalidate):
+
 2012-01-05  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r98912-r99538): Crash in WebKit::WebFrameLoaderClient::didDetectXSS

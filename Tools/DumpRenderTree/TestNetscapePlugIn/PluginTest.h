@@ -93,6 +93,7 @@ public:
     bool NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
 #endif
 
+    bool executeScript(const NPString*, NPVariant* result);
     void executeScript(const char*);
     void log(const char* format, ...);
 

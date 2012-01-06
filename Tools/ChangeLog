@@ -1,3 +1,21 @@
+2012-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Crash when trying to invalidate the NPRuntimeObjectMap for a plug-in in a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=75667
+        <rdar://problem/10389454>
+
+        Reviewed by Kevin Decker.
+
+        Add an evaluate method to the plug-in test scriptable object that can be used to evaluate a given JS string.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::executeScript):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp:
+        (NPRuntimeObjectFromDestroyedPlugin::ScriptableObject::hasMethod):
+        (NPRuntimeObjectFromDestroyedPlugin::ScriptableObject::invoke):
+        (NPRuntimeObjectFromDestroyedPlugin::ScriptableObject::hasProperty):
+
 2012-01-05  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up port factory methods
