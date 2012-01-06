@@ -36,9 +36,9 @@
 		5D247B5714689B8600E78B76 = {
 			isa = PBXGroup;
 			children = (
-				5D247B7614689D7600E78B76 /* Source */,
 				5D247B6D14689C4700E78B76 /* Configurations */,
 				5D247B6314689B8600E78B76 /* Products */,
+				5D247B7614689D7600E78B76 /* Source */,
 			);
 			sourceTree = "<group>";
 		};
@@ -78,8 +78,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D247B7A14689D8900E78B76 /* Stub.h in Headers */,
 				5D247EB21468B01500E78B76 /* HeaderDetection.h in Headers */,
+				5D247B7A14689D8900E78B76 /* Stub.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
