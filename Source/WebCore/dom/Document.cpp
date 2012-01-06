@@ -712,7 +712,7 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     ASSERT(!m_docType || !docType);
     m_docType = docType;
     if (m_docType)
-        m_docType->setTreeScopeRecursively(this);
+        this->adoptIfNeeded(m_docType.get());
 }
 
 DOMImplementation* Document::implementation()
@@ -942,7 +942,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             source->parentNode()->removeChild(source.get(), ec);
     }
 
-    source->setTreeScopeRecursively(this);
+    this->adoptIfNeeded(source.get());
 
     return source;
 }

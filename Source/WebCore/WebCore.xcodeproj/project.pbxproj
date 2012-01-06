@@ -3507,6 +3507,8 @@
 		A77979290D6B9E64003851B9 /* JSImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979250D6B9E64003851B9 /* JSImageData.h */; };
 		A77B41A012E675A90054343D /* TextEventInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = A77B419F12E675A90054343D /* TextEventInputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77D0012133B0AEB00D6658C /* TextChecking.h in Headers */ = {isa = PBXBuildFile; fileRef = A77D0011133B0AEB00D6658C /* TextChecking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A77E1FEF14AACB6E005B7CB6 /* TreeScopeAdopter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77E1FED14AACB6E005B7CB6 /* TreeScopeAdopter.cpp */; };
+		A77E1FF014AACB6E005B7CB6 /* TreeScopeAdopter.h in Headers */ = {isa = PBXBuildFile; fileRef = A77E1FEE14AACB6E005B7CB6 /* TreeScopeAdopter.h */; };
 		A781C6A713828B5D0012A62A /* DocumentMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A781C6A613828B5D0012A62A /* DocumentMarker.cpp */; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
 		A78E526F1346BD1700AD9C31 /* MeterShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */; };
@@ -10776,6 +10778,8 @@
 		A77979250D6B9E64003851B9 /* JSImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageData.h; sourceTree = "<group>"; };
 		A77B419F12E675A90054343D /* TextEventInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEventInputType.h; sourceTree = "<group>"; };
 		A77D0011133B0AEB00D6658C /* TextChecking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecking.h; sourceTree = "<group>"; };
+		A77E1FED14AACB6E005B7CB6 /* TreeScopeAdopter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeScopeAdopter.cpp; sourceTree = "<group>"; };
+		A77E1FEE14AACB6E005B7CB6 /* TreeScopeAdopter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeScopeAdopter.h; sourceTree = "<group>"; };
 		A781C6A613828B5D0012A62A /* DocumentMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarker.cpp; sourceTree = "<group>"; };
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
 		A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeterShadowElement.cpp; sourceTree = "<group>"; };
@@ -21444,6 +21448,8 @@
 				37FD4297118368460093C029 /* TreeDepthLimit.h */,
 				14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */,
 				14D64B5B134A5B6B00E58FDA /* TreeScope.h */,
+				A77E1FED14AACB6E005B7CB6 /* TreeScopeAdopter.cpp */,
+				A77E1FEE14AACB6E005B7CB6 /* TreeScopeAdopter.h */,
 				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
 				854FE72F0A2297BE0058D7AD /* TreeWalker.h */,
 				1A750D3C0A90DE35000FF215 /* TreeWalker.idl */,
@@ -24695,6 +24701,7 @@
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
 				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
+				A77E1FF014AACB6E005B7CB6 /* TreeScopeAdopter.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */,
@@ -27626,6 +27633,7 @@
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
 				14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */,
+				A77E1FEF14AACB6E005B7CB6 /* TreeScopeAdopter.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
 				93309E19099E64920056E581 /* TypingCommand.cpp in Sources */,
 				85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */,
