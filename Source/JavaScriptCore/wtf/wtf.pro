@@ -90,7 +90,6 @@ HEADERS += \
     OSAllocator.h \
     OSRandomSource.h \
     OwnArrayPtr.h \
-    OwnFastMallocPtr.h \
     OwnPtr.h \
     OwnPtrCommon.h \
     PackedIntVector.h \

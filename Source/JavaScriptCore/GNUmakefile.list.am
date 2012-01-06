@@ -607,7 +607,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/OSRandomSource.cpp \
 	Source/JavaScriptCore/wtf/OSRandomSource.h \
 	Source/JavaScriptCore/wtf/OwnArrayPtr.h \
-	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	Source/JavaScriptCore/wtf/OwnPtr.h \
 	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/PackedIntVector.h \

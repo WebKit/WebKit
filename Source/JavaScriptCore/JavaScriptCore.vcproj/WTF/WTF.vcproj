@@ -965,10 +965,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\OwnFastMallocPtr.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\OwnPtr.h"
 			>
 		</File>

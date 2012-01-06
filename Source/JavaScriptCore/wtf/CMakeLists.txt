@@ -56,7 +56,6 @@ SET(WTF_HEADERS
     OSAllocator.h
     OSRandomSource.h
     OwnArrayPtr.h
-    OwnFastMallocPtr.h
     OwnPtr.h
     OwnPtrCommon.h
     PageAllocation.h

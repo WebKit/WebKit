@@ -71,7 +71,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Float32Array.h>
 #include <wtf/Int32Array.h>
-#include <wtf/OwnFastMallocPtr.h>
 
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"

@@ -26,7 +26,6 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnFastMallocPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>

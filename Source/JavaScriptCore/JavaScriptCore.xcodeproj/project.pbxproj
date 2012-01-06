@@ -47,7 +47,6 @@
 		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BAC94A01338728400CF135B /* ThreadRestrictionVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BCD83571485845200EA2003 /* TemporaryChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BCD83541485841200EA2003 /* TemporaryChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F16D726142C39C000CF784A /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F16D724142C39A200CF784A /* BitVector.cpp */; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -830,7 +829,6 @@
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadRestrictionVerifier.h; sourceTree = "<group>"; };
 		0BCD83541485841200EA2003 /* TemporaryChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryChange.h; sourceTree = "<group>"; };
-		0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnFastMallocPtr.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
 		0F16D724142C39A200CF784A /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
@@ -1993,7 +1991,6 @@
 				97941A3F130299DB004A3447 /* OSRandomSource.cpp */,
 				97941A40130299DB004A3447 /* OSRandomSource.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
-				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */,
 				0F636D9F142D27D200B2E66A /* PackedIntVector.h */,
@@ -2852,7 +2849,6 @@
 				1400067712A6F7830064D123 /* OSAllocator.h in Headers */,
 				97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */,
 				BC18C4490E16F5CD00B34460 /* OwnArrayPtr.h in Headers */,
-				0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */,
 				BC18C44A0E16F5CD00B34460 /* OwnPtr.h in Headers */,
 				4409D8470FAF80A200523B87 /* OwnPtrCommon.h in Headers */,
 				0F636DA0142D27D700B2E66A /* PackedIntVector.h in Headers */,

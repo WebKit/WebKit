@@ -182,7 +182,6 @@
             'wtf/NullPtr.h',
             'wtf/OSAllocator.h',
             'wtf/OwnArrayPtr.h',
-            'wtf/OwnFastMallocPtr.h',
             'wtf/OwnPtr.h',
             'wtf/OwnPtrCommon.h',
             'wtf/PageAllocation.h',
