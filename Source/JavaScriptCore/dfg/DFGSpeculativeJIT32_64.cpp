@@ -3203,7 +3203,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultGPR = result.gpr();
         
         m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSByteArray::offsetOfStorage()), resultGPR);
-        m_jit.load32(MacroAssembler::Address(baseGPR, ByteArray::offsetOfSize()), resultGPR);
+        m_jit.load32(MacroAssembler::Address(resultGPR, ByteArray::offsetOfSize()), resultGPR);
         
         integerResult(resultGPR, m_compileIndex);
         break;
