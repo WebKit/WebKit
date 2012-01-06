@@ -317,63 +317,78 @@ void TextureMapperGL::initializeShaders()
     "precision mediump float; \n"
 #endif
 
+#define VERTEX_SHADER(src...) OES2_PRECISION_DEFINITIONS#src
+#define FRAGMENT_SHADER(src...) OES2_PRECISION_DEFINITIONS\
+                                OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
+                                #src
+
     const char* fragmentShaderSourceOpacityAndMask =
-            OES2_PRECISION_DEFINITIONS
-            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
-"               uniform sampler2D SourceTexture, MaskTexture;                       \n"
-"               uniform lowp float Opacity;                                         \n"
-"               varying highp vec2 OutTexCoordSource, OutTexCoordMask;              \n"
-"               void main(void)                                                     \n"
-"               {                                                                   \n"
-"                   lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);  \n"
-"                   lowp vec4 maskColor = texture2D(MaskTexture, OutTexCoordMask);  \n"
-"                   lowp float o = Opacity * maskColor.a;                           \n"
-"                   gl_FragColor = vec4(color.rgb * o, color.a * o);                \n"
-"               }                                                                   \n";
+        FRAGMENT_SHADER(
+            uniform sampler2D SourceTexture, MaskTexture;
+            uniform lowp float Opacity;
+            varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+            void main(void)
+            {
+                lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
+                lowp vec4 maskColor = texture2D(MaskTexture, OutTexCoordMask);
+                lowp float fragmentAlpha = Opacity * maskColor.a;
+                gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
+            }
+        );
 
     const char* vertexShaderSourceOpacityAndMask =
-            OES2_PRECISION_DEFINITIONS
-"               uniform mat4 InMatrix, InSourceMatrix, InMaskMatrix;            \n"
-"               attribute vec4 InVertex;                                        \n"
-"               varying highp vec2 OutTexCoordSource, OutTexCoordMask;          \n"
-"               void main(void)                                                 \n"
-"               {                                                               \n"
-"                   OutTexCoordSource = vec2(InSourceMatrix * InVertex);        \n"
-"                   OutTexCoordMask = vec2(InMaskMatrix * InVertex);            \n"
-"                   gl_Position = InMatrix * InVertex;                          \n"
-"               }                                                               \n";
+        VERTEX_SHADER(
+            uniform mat4 InMatrix, InSourceMatrix, InMaskMatrix;
+            attribute vec4 InVertex;
+            varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+            void main(void)
+            {
+                OutTexCoordSource = vec2(InSourceMatrix * InVertex);
+                OutTexCoordMask = vec2(InMaskMatrix * InVertex);
+                gl_Position = InMatrix * InVertex;
+            }
+        );
 
     const char* fragmentShaderSourceSimple =
-            OES2_PRECISION_DEFINITIONS
-            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
-"               uniform sampler2D SourceTexture;                                    \n"
-"               uniform lowp float Opacity;                                         \n"
-"               varying highp vec2 OutTexCoordSource;                               \n"
-"               void main(void)                                                     \n"
-"               {                                                                   \n"
-"                   lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);  \n"
-"                   gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);    \n"
-"               }                                                                   \n";
+        FRAGMENT_SHADER(
+            uniform sampler2D SourceTexture;
+            uniform lowp float Opacity;
+            varying highp vec2 OutTexCoordSource;
+            void main(void)
+            {
+                lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
+                gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
+            }
+        );
 
     const char* vertexShaderSourceSimple =
-            OES2_PRECISION_DEFINITIONS
-"               uniform mat4 InMatrix, InSourceMatrix;                      \n"
-"               attribute vec4 InVertex;                                    \n"
-"               varying highp vec2 OutTexCoordSource;                       \n"
-"               void main(void)                                             \n"
-"               {                                                           \n"
-"                   OutTexCoordSource = vec2(InSourceMatrix * InVertex);    \n"
-"                   gl_Position = InMatrix * InVertex;                      \n"
-"               }                                                           \n";
-
+        VERTEX_SHADER(
+            uniform mat4 InMatrix, InSourceMatrix;
+            attribute vec4 InVertex;
+            varying highp vec2 OutTexCoordSource;
+            void main(void)
+            {
+                OutTexCoordSource = vec2(InSourceMatrix * InVertex);
+                gl_Position = InMatrix * InVertex;
+            }
+        );
     const char* fragmentShaderSourceClip =
-            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
-"               void main(void) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); }                                ";
+        FRAGMENT_SHADER(
+            void main(void)
+            {
+                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            }
+        );
 
     const char* vertexShaderSourceClip =
-"               uniform mat4 InMatrix;                                      \n"
-"               attribute vec4 InVertex;                                    \n"
-"               void main(void) { gl_Position = InMatrix * InVertex; }      ";
+        VERTEX_SHADER(
+            uniform mat4 InMatrix;
+            attribute vec4 InVertex;
+            void main(void)
+            {
+                gl_Position = InMatrix * InVertex;
+            }
+        );
 
 
     TEXMAP_BUILD_SHADER(Simple)
