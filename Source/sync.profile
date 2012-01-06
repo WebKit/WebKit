@@ -15,4 +15,4 @@
 %modulepris = (
     "QtWebKit" => "$basedir/../Tools/qmake/mkspecs/modules/qt_webkit.pri",
 );
-@ignore_for_master_contents = ( "qwebscriptworld.h" );
+@ignore_for_master_contents = ( "qwebscriptworld.h", "testwindow.h", "util.h" );

@@ -1,3 +1,12 @@
+2012-01-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation of app code against QtWebKit master header file
+
+        Unreviewed trivial build fix.
+
+        * Source/sync.profile: Exclude util.h and testwindow.h from the master header
+        file, because it cannot be used outside of the WebKit source tree.
+
 2012-01-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move listing of include paths and libs to pri files in sources
