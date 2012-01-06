@@ -23,10 +23,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-# Features to add:
-#   - Command line option to run a single test.
-#   - Command line option to run all tests in a suite.
-
 use strict;
 use warnings;
 
@@ -62,7 +58,7 @@ my @testsTimedOut;
 
 my $programName = basename($0);
 my $usage = <<EOF;
-Usage: $programName [options]
+Usage: $programName [options] [suite or test prefixes]
   --help                Show this help message
   -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
@@ -87,14 +83,14 @@ buildTestTool() if $build;
 setPathForRunningWebKitApp(\%ENV);
 my @testsToRun = listAllTests();
 
+@testsToRun = grep { my $test = $_; grep { $test =~ m/^\Q$_\E/ } @ARGV; } @testsToRun if @ARGV;
+
 if ($dumpTests) {
     dumpTestsBySuite(@testsToRun);
     exit 0;
 }
 
-if (runTestsBySuite(@testsToRun, $verbose)) {
-    exit 1;
-}
+exit runTestsBySuite(@testsToRun, $verbose);
 
 sub isSupportedPlatform()
 {

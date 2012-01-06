@@ -1,5 +1,28 @@
 2012-01-06  David Kilzer  <ddkilzer@apple.com>
 
+        run-api-tests: specify individual suites and tests on the command-line
+
+        Reviewed by Adam Roben.
+
+        Fixes: <http://webkit.org/b/75065> run-api-tests should be able to run individual suites and tests
+
+        The run-api-tests script will now accept a list of arguments on
+        the command-line that are used as prefix filters.  To run all
+        tests in a suite that starts with "WTF" (WTF and WTF_Vector)
+        use:
+
+            $ run-api-tests WTF
+
+        To run only the tests in the "WTF" suite, not the "WTF_Vector"
+        suite, use:
+
+            $ run-api-tests WTF.
+
+        * Scripts/run-api-tests: Filter tests if any prefix arguments
+        are passed on the command-line.
+
+2012-01-06  David Kilzer  <ddkilzer@apple.com>
+
         run-api-tests: change internal representation of tests to array of "SuiteName.TestName" strings
 
         Reviewed by Adam Roben.
