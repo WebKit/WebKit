@@ -1,3 +1,18 @@
+2012-01-06  Sam Weinig  <sam@webkit.org>
+
+        Add a DecayArray type trait as a first step towards merging OwnPtr and OwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=75737
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/TypeTraits.cpp:
+        * wtf/TypeTraits.h:
+        Added a DecayArray trait, that can convert T[] and T[3] -> T*. DecayArray
+        is composed of some helpers which are also exposed, Conditional<>, which
+        can provide one type or another based on a boolean predicate, IsArray<>
+        which can deduce array types, and RemoveExtent<>, which removes the extent
+        from an array type. 
+
 2012-01-06  Oliver Hunt  <oliver@apple.com>
 
         GetByteArrayLength is incorrect

@@ -139,4 +139,20 @@ COMPILE_ASSERT((!IsSameType<int, RemovePointer<int**>::Type>::value), WTF_Test_R
 COMPILE_ASSERT((IsSameType<int, RemoveReference<int>::Type>::value), WTF_Test_RemoveReference_int);
 COMPILE_ASSERT((IsSameType<int, RemoveReference<int&>::Type>::value), WTF_Test_RemoveReference_int_reference);
 
+
+typedef int IntArray[];
+typedef int IntArraySized[4];
+
+COMPILE_ASSERT((IsArray<IntArray>::value), WTF_Test_IsArray_int_array);
+COMPILE_ASSERT((IsArray<IntArraySized>::value), WTF_Test_IsArray_int_sized_array);
+
+COMPILE_ASSERT((IsSameType<int, RemoveExtent<IntArray>::Type>::value), WTF_Test_RemoveExtent_int_array);
+COMPILE_ASSERT((IsSameType<int, RemoveExtent<IntArraySized>::Type>::value), WTF_Test_RemoveReference_int_sized_array);
+
+COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArray>::Type>::value), WTF_Test_DecayArray_int_array);
+COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArraySized>::Type>::value), WTF_Test_DecayArray_int_sized_array);
+
+COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArray&>::Type>::value), WTF_Test_DecayArray_int_array_reference);
+COMPILE_ASSERT((IsSameType<int*, DecayArray<IntArraySized&>::Type>::value), WTF_Test_DecayArray_int_sized_array_reference);
+
 } // namespace WTF

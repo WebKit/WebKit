@@ -35,9 +35,13 @@ namespace WTF {
 
     // The following are provided in this file:
     //
+    //   Conditional<Predicate, If, Then>::Type
+    //
     //   IsInteger<T>::value
     //   IsPod<T>::value, see the definition for a note about its limitations
     //   IsConvertibleToInteger<T>::value
+    //
+    //   IsArray<T>::value
     //
     //   IsSameType<T, U>::value
     //
@@ -46,8 +50,14 @@ namespace WTF {
     //   RemoveConst<T>::Type
     //   RemoveVolatile<T>::Type
     //   RemoveConstVolatile<T>::Type
+    //   RemoveExtent<T>::Type
+    //
+    //   DecayArray<T>::Type
     //
     //   COMPILE_ASSERT's in TypeTraits.cpp illustrate their usage and what they do.
+
+    template <bool Predicate, class If, class Then> struct Conditional  { typedef If Type; };
+    template <class If, class Then> struct Conditional<false, If, Then> { typedef Then Type; };
 
     template<typename T> struct IsInteger           { static const bool value = false; };
     template<> struct IsInteger<bool>               { static const bool value = true; };
@@ -103,6 +113,20 @@ namespace WTF {
     public:
         static const bool value = IsInteger<T>::value || IsConvertibleToDouble<!IsInteger<T>::value, T>::value;
     };
+
+
+    template <class T> struct IsArray {
+        static const bool value = false;
+    };
+
+    template <class T> struct IsArray<T[]> {
+        static const bool value = true;
+    };
+
+    template <class T, size_t N> struct IsArray<T[N]> {
+        static const bool value = true;
+    };
+
 
     template <typename T, typename U> struct IsSameType {
         static const bool value = false;
@@ -180,6 +204,28 @@ namespace WTF {
 
     template <typename T> struct RemoveReference<T&> {
         typedef T Type;
+    };
+
+    template <typename T> struct RemoveExtent {
+        typedef T Type;
+    };
+
+    template <typename T> struct RemoveExtent<T[]> {
+        typedef T Type;
+    };
+
+    template <typename T, size_t N> struct RemoveExtent<T[N]> {
+        typedef T Type;
+    };
+
+    template <class T> struct DecayArray {
+        typedef typename RemoveReference<T>::Type U;
+    public:
+        typedef typename Conditional<
+            IsArray<U>::value,
+            typename RemoveExtent<U>::Type*,
+            typename RemoveConstVolatile<U>::Type
+        >::Type Type;
     };
 
 #if (defined(__GLIBCXX__) && (__GLIBCXX__ >= 20070724) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
