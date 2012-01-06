@@ -713,6 +713,8 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     m_docType = docType;
     if (m_docType)
         m_docType->setTreeScopeRecursively(this);
+    // Doctype affects the interpretation of the stylesheets.
+    m_styleSelector.clear();
 }
 
 DOMImplementation* Document::implementation()
