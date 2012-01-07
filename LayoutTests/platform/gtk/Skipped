@@ -286,9 +286,6 @@ http/tests/websocket/tests/hybi/send-file-blob-fail.html
 fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
 
-# Request ENABLE(REQUEST_ANIMATION_FRAME) support
-fast/animation
-
 # Requires media engine closed caption support
 media/media-captions.html
 
@@ -951,6 +948,7 @@ canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
 
 # Tests that user modal dialogs fail in the DRT for some reason.
 # https://bugs.webkit.org/show_bug.cgi?id=53600
+fast/animation/request-animation-frame-during-modal.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
