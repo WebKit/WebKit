@@ -169,8 +169,9 @@ public:
 
     PassRefPtr<InspectorObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
-    bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+    bool searchingForNodeInPage() const;
+    void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
     void inspect(Node*);
     void focusNode();
 
@@ -191,7 +192,6 @@ public:
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
-    void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
     bool setHighlightDataFromConfig(InspectorObject* highlightConfig);
     void highlight();
 
