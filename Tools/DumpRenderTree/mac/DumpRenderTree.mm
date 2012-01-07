@@ -68,7 +68,7 @@
 #import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebDeviceOrientationProviderMock.h>
-#import <WebKit/WebDynamicScrollbarsView.h>
+#import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
