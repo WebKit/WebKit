@@ -1,3 +1,14 @@
+2012-01-06  Mark Rowe  <mrowe@apple.com>
+
+        Regenerate a few files with a more appropriate version of bison.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * src/compiler/glslang.l: Tweak the input so that it generates code that compiles without warnings.
+        * src/compiler/glslang_lex.cpp:
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/glslang_tab.h:
+
 2012-01-06  Chris Marrin  <cmarrin@apple.com>
 
         Update ANGLE in WebKit tree
