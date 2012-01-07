@@ -1,5 +1,17 @@
 2011-1-6  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 91145
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix Windows build.
+
+            * WebView.h:
+            (WebView::backingScaleFactor):
+            (WebView::pageScaleFactor):
+
+2011-1-6  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104296
 
     2012-01-06  Jessie Berlin  <jberlin@apple.com>
