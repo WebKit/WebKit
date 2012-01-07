@@ -5455,12 +5455,16 @@ webcore_built_sources += \
 webcore_sources += \
 	Source/ThirdParty/ANGLE/include/GLSLANG/ShaderLang.h \
 	Source/ThirdParty/ANGLE/src/compiler/BaseTypes.h \
+	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.h \
 	Source/ThirdParty/ANGLE/src/compiler/CodeGenGLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/Common.h \
 	Source/ThirdParty/ANGLE/src/compiler/Compiler.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ConstantUnion.h \
 	Source/ThirdParty/ANGLE/src/compiler/debug.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/debug.h \
+	Source/ThirdParty/ANGLE/src/compiler/DetectRecursion.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/DetectRecursion.h \
 	Source/ThirdParty/ANGLE/src/compiler/ExtensionBehavior.h \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.h \
@@ -5502,6 +5506,7 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/cpp.c \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/cpp.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/cppstruct.c \
+	Source/ThirdParty/ANGLE/src/compiler/preprocessor/length_limits.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/memory.c \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/memory.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/parser.h \

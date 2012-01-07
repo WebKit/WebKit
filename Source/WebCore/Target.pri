@@ -3735,9 +3735,11 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
         ANGLE_HEADERS += \
             $$ANGLE_DIR/src/compiler/BaseTypes.h \
+            $$ANGLE_DIR/src/compiler/BuiltInFunctionEmulator.h \
             $$ANGLE_DIR/src/compiler/Common.h \
             $$ANGLE_DIR/src/compiler/ConstantUnion.h \
             $$ANGLE_DIR/src/compiler/debug.h \
+            $$ANGLE_DIR/src/compiler/DetectRecursion.h \
             $$ANGLE_DIR/src/compiler/ExtensionBehavior.h \
             $$ANGLE_DIR/src/compiler/ForLoopUnroll.h \
             $$ANGLE_DIR/src/compiler/glslang.h \
@@ -3755,6 +3757,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
             $$ANGLE_DIR/src/compiler/preprocessor/atom.h \
             $$ANGLE_DIR/src/compiler/preprocessor/compile.h \
             $$ANGLE_DIR/src/compiler/preprocessor/cpp.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/length_limits.h \
             $$ANGLE_DIR/src/compiler/preprocessor/memory.h \
             $$ANGLE_DIR/src/compiler/preprocessor/parser.h \
             $$ANGLE_DIR/src/compiler/preprocessor/preprocess.h \
@@ -3786,9 +3789,11 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         HEADERS += $$ANGLE_HEADERS
 
         ANGLE_SOURCES += \
+            $$ANGLE_DIR/src/compiler/BuiltInFunctionEmulator.cpp \
             $$ANGLE_DIR/src/compiler/CodeGenGLSL.cpp \
             $$ANGLE_DIR/src/compiler/Compiler.cpp \
             $$ANGLE_DIR/src/compiler/debug.cpp \
+            $$ANGLE_DIR/src/compiler/DetectRecursion.cpp \
             $$ANGLE_DIR/src/compiler/ForLoopUnroll.cpp \
             $$ANGLE_DIR/src/compiler/glslang_lex.cpp \
             $$ANGLE_DIR/src/compiler/glslang_tab.cpp \
