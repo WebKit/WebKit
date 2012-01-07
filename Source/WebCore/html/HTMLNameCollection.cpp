@@ -40,6 +40,9 @@ HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, 
 
 Element* HTMLNameCollection::itemAfter(Element* previous) const
 {
+    if (!base())
+        return 0;
+
     ASSERT(previous != base());
 
     Node* current;

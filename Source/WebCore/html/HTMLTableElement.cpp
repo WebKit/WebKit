@@ -56,6 +56,8 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document* docum
 
 HTMLTableElement::~HTMLTableElement()
 {
+    if (m_rowsCollection)
+        m_rowsCollection->detachFromNode();
 }
 
 PassRefPtr<HTMLTableElement> HTMLTableElement::create(Document* document)

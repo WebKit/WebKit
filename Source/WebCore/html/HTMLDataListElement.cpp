@@ -47,7 +47,7 @@ PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName&
     return adoptRef(new HTMLDataListElement(tagName, document));
 }
 
-HTMLCollection* HTMLDataListElement::options()
+PassRefPtr<HTMLCollection> HTMLDataListElement::options()
 {
     return ensureCachedHTMLCollection(DataListOptions);
 }

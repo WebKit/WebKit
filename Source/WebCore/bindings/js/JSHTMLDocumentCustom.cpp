@@ -61,7 +61,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
     JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
-    HTMLCollection* collection = document->documentNamedItems(identifierToAtomicString(propertyName));
+    RefPtr<HTMLCollection> collection = document->documentNamedItems(identifierToAtomicString(propertyName));
 
     unsigned length = collection->length();
     if (!length)
@@ -77,7 +77,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
         return toJS(exec, thisObj->globalObject(), node);
     } 
 
-    return toJS(exec, thisObj->globalObject(), collection);
+    return toJS(exec, thisObj->globalObject(), collection.get());
 }
 
 // Custom attributes
@@ -89,7 +89,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
     if (v)
         return v;
 
-    return toJS(exec, globalObject(), static_cast<HTMLDocument*>(impl())->all());
+    return toJS(exec, globalObject(), static_cast<HTMLDocument*>(impl())->all().get());
 }
 
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)

@@ -82,7 +82,7 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 
 HTMLImageElement* HTMLMapElement::imageElement()
 {
-    HTMLCollection* coll = document()->images();
+    RefPtr<HTMLCollection> coll = document()->images();
     for (Node* curr = coll->firstItem(); curr; curr = coll->nextItem()) {
         if (!curr->hasTagName(imgTag))
             continue;
@@ -126,7 +126,7 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
     HTMLElement::parseMappedAttribute(attribute);
 }
 
-HTMLCollection* HTMLMapElement::areas()
+PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 {
     return ensureCachedHTMLCollection(MapAreas);
 }

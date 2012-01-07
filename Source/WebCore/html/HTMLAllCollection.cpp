@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-PassOwnPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
+PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
 {
-    return adoptPtr(new HTMLAllCollection(document));
+    return adoptRef(new HTMLAllCollection(document));
 }
 
 HTMLAllCollection::HTMLAllCollection(Document* document)
@@ -46,6 +46,9 @@ HTMLAllCollection::~HTMLAllCollection()
 
 Node* HTMLAllCollection::namedItemWithIndex(const AtomicString& name, unsigned index) const
 {
+    if (!base())
+        return 0;
+
     invalidateCacheIfNeeded();
     updateNameCache();
 

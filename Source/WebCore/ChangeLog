@@ -1,3 +1,114 @@
+2012-01-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104373 and r104374.
+        http://trac.webkit.org/changeset/104373
+        http://trac.webkit.org/changeset/104374
+        https://bugs.webkit.org/show_bug.cgi?id=75769
+
+        Too many assertion failures. (Requested by kling on #webkit).
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::JSHTMLDocument::all):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::openSearchDescriptionURL):
+        (WebCore::Document::cachedCollection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::cachedHTMLCollection):
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::properties):
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::create):
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLAllCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::detachFromNode):
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+        (WebCore::HTMLCollection::itemAfter):
+        (WebCore::HTMLCollection::calcLength):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::nextItem):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::tags):
+        * html/HTMLCollection.h:
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLDataListElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLElement.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::create):
+        (WebCore::HTMLFormCollection::calcLength):
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedItem):
+        (WebCore::HTMLFormCollection::namedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormCollection.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLFormElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectedOption):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLMapElement.h:
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        (WebCore::HTMLOptionsCollection::add):
+        (WebCore::HTMLOptionsCollection::remove):
+        (WebCore::HTMLOptionsCollection::selectedIndex):
+        (WebCore::HTMLOptionsCollection::setSelectedIndex):
+        (WebCore::HTMLOptionsCollection::setLength):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::create):
+        (WebCore::HTMLPropertiesCollection::length):
+        (WebCore::HTMLPropertiesCollection::item):
+        (WebCore::HTMLPropertiesCollection::names):
+        * html/HTMLPropertiesCollection.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::~HTMLSelectElement):
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::~HTMLTableElement):
+
 2012-01-06  Andreas Kling  <awesomekling@apple.com>
 
         Unreviewed build fix after r104373.

@@ -92,6 +92,12 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc
     ASSERT(hasTagName(selectTag));
 }
 
+HTMLSelectElement::~HTMLSelectElement()
+{
+    if (m_optionsCollection)
+        m_optionsCollection->detachFromNode();
+}
+
 PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
     ASSERT(tagName.matches(selectTag));
@@ -325,11 +331,11 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderListBox(this);
 }
 
-HTMLOptionsCollection* HTMLSelectElement::options()
+PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 {
     if (!m_optionsCollection)
         m_optionsCollection = HTMLOptionsCollection::create(this);
-    return m_optionsCollection.get();
+    return m_optionsCollection;
 }
 
 void HTMLSelectElement::updateListItemSelectedStates()

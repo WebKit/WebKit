@@ -28,16 +28,18 @@
 
 #include "Event.h"
 #include "HTMLFormControlElementWithState.h"
-#include "HTMLOptionsCollection.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class HTMLOptionElement;
+class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+
+    virtual ~HTMLSelectElement();
 
     int selectedIndex() const;
     void setSelectedIndex(int);
@@ -61,7 +63,7 @@ public:
     String value() const;
     void setValue(const String&);
 
-    HTMLOptionsCollection* options();
+    PassRefPtr<HTMLOptionsCollection> options();
 
     void optionElementChildrenChanged();
 
@@ -173,7 +175,7 @@ private:
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    OwnPtr<HTMLOptionsCollection> m_optionsCollection;
+    RefPtr<HTMLOptionsCollection> m_optionsCollection;
 
     // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, and HTMLHRElement objects.
     mutable Vector<HTMLElement*> m_listItems;

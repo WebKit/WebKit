@@ -512,11 +512,11 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 
     if (doc && doc->isHTMLDocument()) {
         if (static_cast<HTMLDocument*>(doc)->hasNamedItem(propName.impl()) || doc->hasElementWithId(propName.impl())) {
-            HTMLCollection* items = doc->windowNamedItems(propName);
+            RefPtr<HTMLCollection> items = doc->windowNamedItems(propName);
             if (items->length() >= 1) {
                 if (items->length() == 1)
                     return toV8(items->firstItem());
-                return toV8(items);
+                return toV8(items.release());
             }
         }
     }
