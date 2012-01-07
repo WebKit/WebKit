@@ -36,26 +36,24 @@ DynamicSubtreeNodeList::SubtreeCaches::SubtreeCaches()
 {
 }
 
-void DynamicSubtreeNodeList::SubtreeCaches::setLengthCache(Node* node, unsigned length)
+void DynamicSubtreeNodeList::SubtreeCaches::setLengthCache(Document* document, unsigned length)
 {
-    if (m_isItemCacheValid && !domVersionIsConsistent()) {
-        m_cachedItem = node;
+    if (m_isItemCacheValid && !domVersionIsConsistent(document))
         m_isItemCacheValid = false;
-    } else if (!m_isItemCacheValid)
-        m_cachedItem = node; // Used in domVersionIsConsistent.
     m_cachedLength = length;
     m_isLengthCacheValid = true;
-    m_domTreeVersionAtTimeOfCaching = node->document()->domTreeVersion();
+    m_domTreeVersionAtTimeOfCaching = document->domTreeVersion();
 }
 
 void DynamicSubtreeNodeList::SubtreeCaches::setItemCache(Node* item, unsigned offset)
 {
-    if (m_isLengthCacheValid && !domVersionIsConsistent())
+    Document* document = item->document();
+    if (m_isLengthCacheValid && !domVersionIsConsistent(document))
         m_isLengthCacheValid = false;
     m_cachedItem = item;
     m_cachedItemOffset = offset;
     m_isItemCacheValid = true;
-    m_domTreeVersionAtTimeOfCaching = item->document()->domTreeVersion();
+    m_domTreeVersionAtTimeOfCaching = document->domTreeVersion();
 }
 
 void DynamicSubtreeNodeList::SubtreeCaches::reset()
@@ -78,7 +76,8 @@ DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
 
 unsigned DynamicSubtreeNodeList::length() const
 {
-    if (m_caches.isLengthCacheValid())
+    Document* document = node()->document();
+    if (m_caches.isLengthCacheValid(document))
         return m_caches.cachedLength();
 
     unsigned length = 0;
@@ -86,7 +85,7 @@ unsigned DynamicSubtreeNodeList::length() const
     for (Node* n = node()->firstChild(); n; n = n->traverseNextNode(rootNode()))
         length += n->isElementNode() && nodeMatches(static_cast<Element*>(n));
 
-    m_caches.setLengthCache(node(), length);
+    m_caches.setLengthCache(document, length);
 
     return length;
 }
@@ -127,7 +126,7 @@ Node* DynamicSubtreeNodeList::item(unsigned offset) const
 {
     int remainingOffset = offset;
     Node* start = node()->firstChild();
-    if (m_caches.isItemCacheValid()) {
+    if (m_caches.isItemCacheValid(node()->document())) {
         if (offset == m_caches.cachedItemOffset())
             return m_caches.cachedItem();
         if (offset > m_caches.cachedItemOffset() || m_caches.cachedItemOffset() - offset < offset) {

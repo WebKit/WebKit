@@ -86,14 +86,14 @@ private:
     public:
         SubtreeCaches();
 
-        bool isLengthCacheValid() const { return m_isLengthCacheValid && domVersionIsConsistent(); }
-        bool isItemCacheValid() const { return m_isItemCacheValid && domVersionIsConsistent(); }
+        bool isLengthCacheValid(Document* document) const { return m_isLengthCacheValid && domVersionIsConsistent(document); }
+        bool isItemCacheValid(Document* document) const { return m_isItemCacheValid && domVersionIsConsistent(document); }
 
         unsigned cachedLength() const { return m_cachedLength; }
         Node* cachedItem() const { return m_cachedItem; }
         unsigned cachedItemOffset() const { return m_cachedItemOffset; }
 
-        void setLengthCache(Node* nodeForDocumentVersion, unsigned length);
+        void setLengthCache(Document*, unsigned length);
         void setItemCache(Node*, unsigned offset);
         void reset();
 
@@ -104,9 +104,10 @@ private:
         unsigned m_isLengthCacheValid : 1;
         unsigned m_isItemCacheValid : 1;
 
-        bool domVersionIsConsistent() const
+        bool domVersionIsConsistent(Document* document) const
         {
-            return m_cachedItem && m_cachedItem->document()->domTreeVersion() == m_domTreeVersionAtTimeOfCaching;
+            ASSERT(document);
+            return document->domTreeVersion() == m_domTreeVersionAtTimeOfCaching;
         }
         uint64_t m_domTreeVersionAtTimeOfCaching;
     };

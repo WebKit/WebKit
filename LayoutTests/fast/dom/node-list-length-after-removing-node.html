@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<p>This tests accessing an item in node list and then querying the length of the node list after removing the item.
+WebKit should not crash.</p>
+<span></span><span></span>
+<div id="result"></div>
+<script>
+
+var nodeList = document.getElementsByTagName('span');
+document.body.removeChild(nodeList[0]);
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+if (window.GCController)
+   GCController.collect();
+else {
+    for (var i = 0; i < 10000; ++i)
+        new Object;
+}
+
+document.body.offsetLeft;
+
+function runTest() {
+    document.getElementById('result').innerHTML = nodeList.length == 1 ? 'PASS' : 'FAIL';
+}
+
+</script>
+</body>
+</html>
