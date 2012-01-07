@@ -30,6 +30,7 @@
 #import "PrintInfo.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
+#import <PDFKit/PDFKit.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
 
@@ -410,16 +411,30 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     return 0; // Invalid page number.
 }
 
-- (void)_drawPDFDocument:(CGPDFDocumentRef)pdfDocument page:(unsigned)page atPoint:(NSPoint)point
+static Class pdfAnnotationLinkClass()
+{
+    static Class pdfAnnotationLinkClass = NSClassFromString(@"PDFAnnotationLink");
+    return pdfAnnotationLinkClass;
+}
+
+static Class pdfDocumentClass()
+{
+    static Class pdfDocumentClass = NSClassFromString(@"PDFDocument");
+    return pdfDocumentClass;
+}
+
+- (void)_drawPDFDocument:(PDFDocument *)pdfDocument page:(unsigned)page atPoint:(NSPoint)point
 {
     if (!pdfDocument) {
         LOG_ERROR("Couldn't create a PDF document with data passed for preview");
         return;
     }
 
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfDocument, page);
-    if (!pdfPage) {
-        LOG_ERROR("Preview data doesn't have page %d", page);
+    PDFPage *pdfPage;
+    @try {
+        pdfPage = [pdfDocument pageAtIndex:page];
+    } @catch (id exception) {
+        LOG_ERROR("Preview data doesn't have page %d: %@", page, exception);
         return;
     }
 
@@ -429,8 +444,25 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     CGContextSaveGState(context);
     CGContextTranslateCTM(context, point.x, point.y);
     CGContextScaleCTM(context, _totalScaleFactorForPrinting, -_totalScaleFactorForPrinting);
-    CGContextTranslateCTM(context, 0, -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
-    CGContextDrawPDFPage(context, pdfPage);
+    CGContextTranslateCTM(context, 0, -[pdfPage boundsForBox:kPDFDisplayBoxMediaBox].size.height);
+    [pdfPage drawWithBox:kPDFDisplayBoxMediaBox];
+
+    CGAffineTransform transform = CGContextGetCTM(context);
+
+    for (PDFAnnotation *annotation in [pdfPage annotations]) {
+        if (![annotation isKindOfClass:pdfAnnotationLinkClass()])
+            continue;
+
+        PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
+        NSURL *url = [linkAnnotation URL];
+        if (!url)
+            continue;
+
+        CGRect urlRect = NSRectToCGRect([linkAnnotation bounds]);
+        CGRect transformedRect = CGRectApplyAffineTransform(urlRect, transform);
+        CGPDFContextSetURLForRect(context, (CFURLRef)url, transformedRect);
+    }
+
     CGContextRestoreGState(context);
 }
 
@@ -473,11 +505,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         return;
     }
 
-    const Vector<uint8_t>& pdfData = pagePreviewIterator->second;
-    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithData(0, pdfData.data(), pdfData.size(), 0));
-    RetainPtr<CGPDFDocumentRef> pdfDocument(AdoptCF, CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
+    const Vector<uint8_t>& pdfDataBytes = pagePreviewIterator->second;
+    RetainPtr<NSData> pdfData(AdoptNS, [[NSData alloc] initWithBytes:pdfDataBytes.data() length:pdfDataBytes.size()]);
+    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
 
-    [self _drawPDFDocument:pdfDocument.get() page:1 atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
+    [self _drawPDFDocument:pdfDocument.get() page:0 atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
 }
 
 - (void)drawRect:(NSRect)nsRect
@@ -498,11 +530,11 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithData(0, _printedPagesData.data(), _printedPagesData.size(), 0));
-        _printedPagesPDFDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
+        RetainPtr<NSData> pdfData(AdoptNS, [[NSData alloc] initWithBytes:_printedPagesData.data() length:_printedPagesData.size()]);
+        _printedPagesPDFDocument.adoptNS([[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
     }
 
-    unsigned printedPageNumber = [self _pageForRect:nsRect] - [self _firstPrintedPageNumber] + 1;
+    unsigned printedPageNumber = [self _pageForRect:nsRect] - [self _firstPrintedPageNumber];
     [self _drawPDFDocument:_printedPagesPDFDocument.get() page:printedPageNumber atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
 }
 

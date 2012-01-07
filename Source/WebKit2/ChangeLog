@@ -1,3 +1,31 @@
+2012-01-06  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (WebKit2): Save as PDF no longer generates links to URLs
+        <http://webkit.org/b/65076> / <rdar://problem/9606246>
+
+        WebKit2 printing works by having the web process render the page content to a PDF. The PDF
+        data is then shipped to the UI process which will render it in to the printing graphics context.
+        Links were being lost because the API used to do the rendering of the PDF in to the printing
+        graphics context, CGContextDrawPDFPage, did not preserve the links that were present in the
+        PDF content received from the web process.
+
+        To fix this we switch to using PDFKit for drawing the PDF in to the printing graphics context.
+        PDFKit provides the ability for us to iterate over the links in the PDF content ourselves and
+        add links in to the printing graphics context.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/mac/WKPrintingView.h:
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pdfAnnotationLinkClass): Look up the PDFAnnotationLink class from PDFKit as WebKit2 loads PDFKit lazily.
+        (pdfDocumentClass): Ditto.
+        (-[WKPrintingView _drawPDFDocument:page:atPoint:]): Switch to using the PDFKit equivalents of several types.
+        Iterate over the annotations present in the PDFPage, calling CGPDFContextSetURLForRect for each PDFAnnotationLink
+        that we find.
+        (-[WKPrintingView _drawPreview:]): Create an NSData to feed to PDFDocument.
+        (-[WKPrintingView drawRect:]): Ditto.
+        * WebKit2Prefix.h: Add the usual workaround to make Objective-C exceptions compile when C++ exception handling is disabled.
+
 2012-01-06  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Minibrowser leaks memory ~6-7Mb per reload
