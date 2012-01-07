@@ -23,23 +23,26 @@
 #ifndef HTMLCollection_h
 #define HTMLCollection_h
 
+#include "Node.h"
 #include "CollectionType.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Document;
 class Element;
-class Node;
 class NodeList;
 
-class HTMLCollection : public RefCounted<HTMLCollection> {
+class HTMLCollection {
 public:
-    static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
+    static PassOwnPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();
+
+    void ref() { m_base->ref(); }
+    void deref() { m_base->deref(); }
 
     unsigned length() const;
     
@@ -57,8 +60,6 @@ public:
 
     Node* base() const { return m_base; }
     CollectionType type() const { return static_cast<CollectionType>(m_type); }
-
-    void detachFromNode();
 
 protected:
     HTMLCollection(Node* base, CollectionType);

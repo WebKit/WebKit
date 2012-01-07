@@ -43,7 +43,7 @@ class HTMLDataListElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDataListElement> create(const QualifiedName&, Document*);
 
-    PassRefPtr<HTMLCollection> options();
+    HTMLCollection* options();
 
 private:
     HTMLDataListElement(const QualifiedName&, Document*);

@@ -567,14 +567,6 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
-
-    for (unsigned i = 0; i < NumUnnamedDocumentCachedTypes; ++i) {
-        if (m_collections[i])
-            m_collections[i]->detachFromNode();
-    }
-
-    if (m_allCollection)
-        m_allCollection->detachFromNode();
 }
 
 void Document::removedLastRef()
@@ -4176,7 +4168,7 @@ KURL Document::openSearchDescriptionURL()
     if (!head())
         return KURL();
 
-    RefPtr<HTMLCollection> children = head()->children();
+    HTMLCollection* children = head()->children();
     for (Node* child = children->firstItem(); child; child = children->nextItem()) {
         if (!child->hasTagName(linkTag))
             continue;
@@ -4301,81 +4293,81 @@ bool Document::hasSVGRootNode() const
 }
 #endif
 
-const RefPtr<HTMLCollection>& Document::cachedCollection(CollectionType type)
+HTMLCollection* Document::cachedCollection(CollectionType type)
 {
     ASSERT(static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes);
     if (!m_collections[type])
         m_collections[type] = HTMLCollection::create(this, type);
-    return m_collections[type];
+    return m_collections[type].get();
 }
 
-PassRefPtr<HTMLCollection> Document::images()
+HTMLCollection* Document::images()
 {
     return cachedCollection(DocImages);
 }
 
-PassRefPtr<HTMLCollection> Document::applets()
+HTMLCollection* Document::applets()
 {
     return cachedCollection(DocApplets);
 }
 
-PassRefPtr<HTMLCollection> Document::embeds()
+HTMLCollection* Document::embeds()
 {
     return cachedCollection(DocEmbeds);
 }
 
-PassRefPtr<HTMLCollection> Document::plugins()
+HTMLCollection* Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
     return cachedCollection(DocEmbeds);
 }
 
-PassRefPtr<HTMLCollection> Document::objects()
+HTMLCollection* Document::objects()
 {
     return cachedCollection(DocObjects);
 }
 
-PassRefPtr<HTMLCollection> Document::scripts()
+HTMLCollection* Document::scripts()
 {
     return cachedCollection(DocScripts);
 }
 
-PassRefPtr<HTMLCollection> Document::links()
+HTMLCollection* Document::links()
 {
     return cachedCollection(DocLinks);
 }
 
-PassRefPtr<HTMLCollection> Document::forms()
+HTMLCollection* Document::forms()
 {
     return cachedCollection(DocForms);
 }
 
-PassRefPtr<HTMLCollection> Document::anchors()
+HTMLCollection* Document::anchors()
 {
     return cachedCollection(DocAnchors);
 }
 
-PassRefPtr<HTMLAllCollection> Document::all()
+HTMLAllCollection* Document::all()
 {
     if (!m_allCollection)
         m_allCollection = HTMLAllCollection::create(this);
-    return m_allCollection;
+    return m_allCollection.get();
 }
 
-PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
+HTMLCollection* Document::windowNamedItems(const AtomicString& name)
 {
-    RefPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), 0).first->second;
+    OwnPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), nullptr).first->second;
     if (!collection)
         collection = HTMLNameCollection::create(this, WindowNamedItems, name);
-    return collection;
+    return collection.get();
 }
 
-PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
+HTMLCollection* Document::documentNamedItems(const AtomicString& name)
 {
-    RefPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), 0).first->second;
+    OwnPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), nullptr).first->second;
     if (!collection)
         collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
-    return collection;
+    return collection.get();
 }
 
 void Document::finishedParsing()

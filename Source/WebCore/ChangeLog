@@ -1,3 +1,161 @@
+2012-01-06  Andreas Kling  <awesomekling@apple.com>
+
+        Simplify HTMLCollection ownership model.
+        <http://webkit.org/b/75437>
+
+        Reviewed by Sam Weinig.
+
+        Remove HTMLCollection's inheritance from RefCounted and use OwnPtr to store it.
+        Added ref()/deref() methods that forward to the collection's base node, these
+        are only ever used by DOM wrappers.
+
+        This is a behavior change, HTMLCollection wrappers now keep the base node alive.
+
+        Test: fast/dom/htmlcollection-protects-base.html
+
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::ref):
+        (WebCore::HTMLCollection::deref):
+
+            Removed inheritance from RefCounted. Added ref/deref that forward the refs
+            to the collection's base Node.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.cpp:
+
+            Remove HTMLCollection::detachFromNode() and call sites.
+
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+        (WebCore::HTMLCollection::itemAfter):
+        (WebCore::HTMLCollection::calcLength):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::nextItem):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::tags):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::calcLength):
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedItem):
+        (WebCore::HTMLFormCollection::namedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        (WebCore::HTMLOptionsCollection::remove):
+        (WebCore::HTMLOptionsCollection::selectedIndex):
+        (WebCore::HTMLOptionsCollection::setSelectedIndex):
+        (WebCore::HTMLOptionsCollection::setLength):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::length):
+        (WebCore::HTMLPropertiesCollection::item):
+        (WebCore::HTMLPropertiesCollection::names):
+
+            Removed base node null-checks and assertions. Added one assertion to
+            the HTMLCollection constructor (that m_base is non-null.)
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::openSearchDescriptionURL):
+        (WebCore::Document::cachedCollection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::JSHTMLDocument::all):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::properties):
+        * html/HTMLAllCollection.h:
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::create):
+        * html/HTMLCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLDataListElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLElement.h:
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLFormCollection.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::create):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLMapElement.h:
+        * html/HTMLPropertiesCollection.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::insertCell):
+        (WebCore::HTMLTableRowElement::deleteCell):
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::create):
+        (WebCore::HTMLTableRowsCollection::itemAfter):
+        * html/HTMLTableRowsCollection.h:
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::insertRow):
+        (WebCore::HTMLTableSectionElement::deleteRow):
+        (WebCore::HTMLTableSectionElement::rows):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectedOption):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::create):
+
+            Store cached HTMLCollections in OwnPtrs. Methods that used to return
+            PassRefPtr<HTMLCollection> now simply return HTMLCollection*.
+            Updated call sites as appropriate.
+
 2012-01-06  Adam Barth  <abarth@webkit.org>
 
         DOMWindow should be a FrameDestructionObserver

@@ -824,7 +824,7 @@ void HTMLElement::setTabIndex(int value)
     setAttribute(tabindexAttr, String::number(value));
 }
 
-PassRefPtr<HTMLCollection> HTMLElement::children()
+HTMLCollection* HTMLElement::children()
 {
     return ensureCachedHTMLCollection(NodeChildren);
 }

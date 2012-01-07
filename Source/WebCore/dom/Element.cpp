@@ -123,16 +123,6 @@ Element::~Element()
     removeShadowRoot();
     if (m_attributeMap)
         m_attributeMap->detachFromElement();
-
-    if (hasRareData()) {
-        ElementRareData* elementRareData = rareData();
-        if (elementRareData->hasCachedHTMLCollections()) {
-            for (unsigned type = 0; type < NumNodeCollectionTypes; ++type) {
-                if (HTMLCollection* collection = elementRareData->cachedHTMLCollection(static_cast<CollectionType>(FirstNodeCollectionType + type)))
-                    collection->detachFromNode();
-            }
-        }
-    }
 }
 
 inline ElementRareData* Element::rareData() const
