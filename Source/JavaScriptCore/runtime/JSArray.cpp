@@ -755,7 +755,7 @@ JSValue JSArray::pop()
         result = jsUndefined();
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator it = map->find(length);
-            if (it != map->end()) {
+            if (it != map->notFound()) {
                 result = it->second.get();
                 map->remove(it);
                 if (map->isEmpty() && !map->sparseMode()) {
