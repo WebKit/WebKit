@@ -124,7 +124,7 @@ public:
     virtual void updateTile(int tileID, const WebKit::UpdateInfo&);
     virtual void removeTile(int tileID);
 
-    void setLayerTreeTileClient(WebKit::WebLayerTreeTileClient* client) { m_layerTreeTileClient = client; }
+    void setLayerTreeTileClient(WebKit::WebLayerTreeTileClient*);
     WebKit::WebLayerTreeTileClient* layerTreeTileClient() const;
 
     bool isReadyForTileBufferSwap() const;

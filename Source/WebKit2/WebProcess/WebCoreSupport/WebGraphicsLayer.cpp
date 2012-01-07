@@ -401,6 +401,9 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
 
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
+    if (!m_layerTreeTileClient)
+        m_layerTreeTileClient = layerTreeTileClient();
+
     updateContentBuffers();
 
     if (!m_modified)
@@ -431,12 +434,11 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     for (size_t i = 0; i < children().size(); ++i)
         m_layerInfo.children.append(toWebLayerID(children()[i]));
 
-    WebLayerTreeTileClient* tileClient = layerTreeTileClient();
-    ASSERT(tileClient);
+    ASSERT(m_layerTreeTileClient);
     if (m_layerInfo.imageIsUpdated && m_image && !m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = tileClient->adoptImageBackingStore(m_image.get());
+        m_layerInfo.imageBackingStoreID = m_layerTreeTileClient->adoptImageBackingStore(m_image.get());
 
-    tileClient->didSyncCompositingStateForLayer(m_layerInfo);
+    m_layerTreeTileClient->didSyncCompositingStateForLayer(m_layerInfo);
     m_modified = false;
     m_layerInfo.imageIsUpdated = false;
     if (m_hasPendingAnimations)
@@ -611,6 +613,22 @@ void WebGraphicsLayer::recreateBackingStoreIfNeeded()
 
     if (m_image)
         setContentsNeedsDisplay();
+}
+
+void WebGraphicsLayer::setLayerTreeTileClient(WebKit::WebLayerTreeTileClient* client)
+{
+    if (m_layerTreeTileClient == client)
+        return;
+
+    for (size_t i = 0; i < children().size(); ++i) {
+        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
+        layer->setLayerTreeTileClient(client);
+    }
+
+    // Have to force detach from remote layer here if layer tile client changes.
+    if (m_layerTreeTileClient)
+        m_layerTreeTileClient->didDeleteLayer(id());
+    m_layerTreeTileClient = client;
 }
 #endif
 

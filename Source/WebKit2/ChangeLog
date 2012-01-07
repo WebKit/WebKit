@@ -1,3 +1,21 @@
+2012-01-06  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Minibrowser leaks memory ~6-7Mb per reload
+        https://bugs.webkit.org/show_bug.cgi?id=75746
+
+        Reset WebGraphicsLayer::m_layerTreeTileClient of all dependent 
+        layers from ~LayerTreeHostQt(). This replaces r103760 which
+        causes leaks of GraphicsLayerTextureMapper objects on UI side. 
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::setLayerTreeTileClient):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::~LayerTreeHostQt):
+
 2012-01-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Thread verifier assertions when printing

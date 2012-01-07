@@ -52,6 +52,8 @@ PassRefPtr<LayerTreeHostQt> LayerTreeHostQt::create(WebPage* webPage)
 
 LayerTreeHostQt::~LayerTreeHostQt()
 {
+    if (m_rootLayer)
+        toWebGraphicsLayer(m_rootLayer.get())->setLayerTreeTileClient(0);
 }
 
 LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
