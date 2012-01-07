@@ -3879,8 +3879,9 @@ BUGCR109276 LINUX : http/tests/appcache/resource-redirect.html = PASS CRASH
 
 BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 
-BUGWK75696 MAC LINUX DEBUG: svg/text/text-style-recalc-crash.html = PASS TIMEOUT
+BUGWK75696 MAC LINUX DEBUG : svg/text/text-style-recalc-crash.html = PASS TIMEOUT
 
 BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
 
-BUGWK75742 MAC : fast/forms/input-disabled-color.html = IMAGE 
+BUGWK75742 MAC : fast/forms/input-disabled-color.html = IMAGE
+
