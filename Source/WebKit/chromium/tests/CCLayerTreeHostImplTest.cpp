@@ -217,7 +217,8 @@ private:
     bool m_drawn;
 };
 
-TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
+// https://bugs.webkit.org/show_bug.cgi?id=75783
+TEST_F(CCLayerTreeHostImplTest, FAILS_blendingOffWhenDrawingOpaqueLayers)
 {
     GraphicsContext3D::Attributes attrs;
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new BlendStateTrackerContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);

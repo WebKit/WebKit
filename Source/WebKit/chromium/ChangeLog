@@ -1,3 +1,11 @@
+2012-01-07  Dmitry Lomov  <dslomov@google.com>
+
+        Unreviewed: disabled CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers
+        and filed https://bugs.webkit.org/show_bug.cgi?id=75783.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+
 2012-01-06  W. James MacLean  <wjmaclean@chromium.org>
 
         [Chromium] Cull occluded tiles in tiled layers
