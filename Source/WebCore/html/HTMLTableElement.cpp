@@ -54,12 +54,6 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document* docum
     ASSERT(hasTagName(tableTag));
 }
 
-HTMLTableElement::~HTMLTableElement()
-{
-    if (m_rowsCollection)
-        m_rowsCollection->detachFromNode();
-}
-
 PassRefPtr<HTMLTableElement> HTMLTableElement::create(Document* document)
 {
     return adoptRef(new HTMLTableElement(tableTag, document));
@@ -624,14 +618,14 @@ bool HTMLTableElement::isURLAttribute(Attribute *attr) const
     return attr->name() == backgroundAttr || HTMLElement::isURLAttribute(attr);
 }
 
-PassRefPtr<HTMLCollection> HTMLTableElement::rows()
+HTMLCollection* HTMLTableElement::rows()
 {
     if (!m_rowsCollection)
         m_rowsCollection = HTMLTableRowsCollection::create(this);
-    return m_rowsCollection;
+    return m_rowsCollection.get();
 }
 
-PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
+HTMLCollection* HTMLTableElement::tBodies()
 {
     return ensureCachedHTMLCollection(TableTBodies);
 }

@@ -2400,7 +2400,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
 {
     Document* document = m_renderer->document();
-    RefPtr<HTMLCollection> coll = document->links();
+    HTMLCollection* coll = document->links();
     Node* curr = coll->firstItem();
     while (curr) {
         RenderObject* obj = curr->renderer();

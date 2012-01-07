@@ -63,7 +63,7 @@ void HTMLTableSectionElement::additionalAttributeStyleDecls(Vector<CSSMutableSty
 PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionCode& ec)
 {
     RefPtr<HTMLTableRowElement> row;
-    RefPtr<HTMLCollection> children = rows();
+    HTMLCollection* children = rows();
     int numRows = children ? (int)children->length() : 0;
     if (index < -1 || index > numRows)
         ec = INDEX_SIZE_ERR; // per the DOM
@@ -85,7 +85,7 @@ PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionC
 
 void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
 {
-    RefPtr<HTMLCollection> children = rows();
+    HTMLCollection* children = rows();
     int numRows = children ? (int)children->length() : 0;
     if (index == -1)
         index = numRows - 1;
@@ -149,7 +149,7 @@ void HTMLTableSectionElement::setVAlign(const String &value)
     setAttribute(valignAttr, value);
 }
 
-PassRefPtr<HTMLCollection> HTMLTableSectionElement::rows()
+HTMLCollection* HTMLTableSectionElement::rows()
 {
     return ensureCachedHTMLCollection(TSectionRows);
 }

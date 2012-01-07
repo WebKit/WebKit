@@ -49,9 +49,9 @@ static inline bool compareTreeOrder(Node* node1, Node* node2)
     return (node2->compareDocumentPosition(node1) & (Node::DOCUMENT_POSITION_PRECEDING | Node::DOCUMENT_POSITION_DISCONNECTED)) == Node::DOCUMENT_POSITION_PRECEDING;
 }
 
-PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(PassRefPtr<Node> itemNode)
+PassOwnPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(PassRefPtr<Node> itemNode)
 {
-    return adoptRef(new HTMLPropertiesCollection(itemNode));
+    return adoptPtr(new HTMLPropertiesCollection(itemNode));
 }
 
 HTMLPropertiesCollection::HTMLPropertiesCollection(PassRefPtr<Node> itemNode)
@@ -123,9 +123,6 @@ void HTMLPropertiesCollection::findPropetiesOfAnItem(Node* root) const
 
 unsigned HTMLPropertiesCollection::length() const
 {
-    if (!base())
-        return 0;
-
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return 0;
 
@@ -136,9 +133,6 @@ unsigned HTMLPropertiesCollection::length() const
 
 Node* HTMLPropertiesCollection::item(unsigned index) const
 {
-    if (!base())
-        return 0;
-
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return 0;
 
@@ -156,9 +150,6 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
 {
     m_properties.clear();
     m_propertyNames->clear();
-
-    if (!base())
-        return 0;
 
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return m_propertyNames;

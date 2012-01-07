@@ -40,8 +40,6 @@ public:
     static PassRefPtr<HTMLTableElement> create(Document*);
     static PassRefPtr<HTMLTableElement> create(const QualifiedName&, Document*);
 
-    virtual ~HTMLTableElement();
-
     HTMLTableCaptionElement* caption() const;
     void setCaption(PassRefPtr<HTMLTableCaptionElement>, ExceptionCode&);
 
@@ -60,8 +58,8 @@ public:
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    PassRefPtr<HTMLCollection> rows();
-    PassRefPtr<HTMLCollection> tBodies();
+    HTMLCollection* rows();
+    HTMLCollection* tBodies();
 
     String rules() const;
     String summary() const;
@@ -103,7 +101,7 @@ private:
 
     unsigned short m_padding;
     RefPtr<CSSMappedAttributeDeclaration> m_paddingDecl;
-    RefPtr<HTMLTableRowsCollection> m_rowsCollection;
+    OwnPtr<HTMLTableRowsCollection> m_rowsCollection;
 };
 
 } //namespace

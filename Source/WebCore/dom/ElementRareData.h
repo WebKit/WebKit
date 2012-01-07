@@ -43,17 +43,11 @@ public:
     using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
     using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
 
-    typedef FixedArray<RefPtr<HTMLCollection>, NumNodeCollectionTypes> CachedHTMLCollectionArray;
+    typedef FixedArray<OwnPtr<HTMLCollection>, NumNodeCollectionTypes> CachedHTMLCollectionArray;
 
     bool hasCachedHTMLCollections() const
     {
         return m_cachedCollections;
-    }
-
-    HTMLCollection* cachedHTMLCollection(CollectionType type) const
-    {
-        ASSERT(m_cachedCollections);
-        return (*m_cachedCollections)[type - FirstNodeCollectionType].get();
     }
 
     HTMLCollection* ensureCachedHTMLCollection(Element* element, CollectionType type)
@@ -61,7 +55,7 @@ public:
         if (!m_cachedCollections)
             m_cachedCollections = adoptPtr(new CachedHTMLCollectionArray);
 
-        RefPtr<HTMLCollection>& collection = (*m_cachedCollections)[type - FirstNodeCollectionType];
+        OwnPtr<HTMLCollection>& collection = (*m_cachedCollections)[type - FirstNodeCollectionType];
         if (!collection)
             collection = HTMLCollection::create(element, type);
         return collection.get();

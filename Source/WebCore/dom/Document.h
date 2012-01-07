@@ -410,19 +410,19 @@ public:
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
 
-    PassRefPtr<HTMLCollection> images();
-    PassRefPtr<HTMLCollection> embeds();
-    PassRefPtr<HTMLCollection> plugins(); // an alias for embeds() required for the JS DOM bindings.
-    PassRefPtr<HTMLCollection> applets();
-    PassRefPtr<HTMLCollection> links();
-    PassRefPtr<HTMLCollection> forms();
-    PassRefPtr<HTMLCollection> anchors();
-    PassRefPtr<HTMLCollection> objects();
-    PassRefPtr<HTMLCollection> scripts();
-    PassRefPtr<HTMLCollection> windowNamedItems(const AtomicString& name);
-    PassRefPtr<HTMLCollection> documentNamedItems(const AtomicString& name);
+    HTMLCollection* images();
+    HTMLCollection* embeds();
+    HTMLCollection* plugins(); // an alias for embeds() required for the JS DOM bindings.
+    HTMLCollection* applets();
+    HTMLCollection* links();
+    HTMLCollection* forms();
+    HTMLCollection* anchors();
+    HTMLCollection* objects();
+    HTMLCollection* scripts();
+    HTMLCollection* windowNamedItems(const AtomicString& name);
+    HTMLCollection* documentNamedItems(const AtomicString& name);
 
-    PassRefPtr<HTMLAllCollection> all();
+    HTMLAllCollection* all();
 
     // Other methods (not part of DOM)
     bool isHTMLDocument() const { return m_isHTML; }
@@ -1182,7 +1182,7 @@ private:
     PageVisibilityState visibilityState() const;
 #endif
 
-    const RefPtr<HTMLCollection>& cachedCollection(CollectionType);
+    HTMLCollection* cachedCollection(CollectionType);
 
     int m_guardRefCount;
 
@@ -1365,10 +1365,10 @@ private:
     
     CheckedRadioButtons m_checkedRadioButtons;
 
-    RefPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
-    RefPtr<HTMLAllCollection> m_allCollection;
+    OwnPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
+    OwnPtr<HTMLAllCollection> m_allCollection;
 
-    typedef HashMap<AtomicStringImpl*, RefPtr<HTMLNameCollection> > NamedCollectionMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<HTMLNameCollection> > NamedCollectionMap;
     NamedCollectionMap m_documentNamedItemCollections;
     NamedCollectionMap m_windowNamedItemCollections;
 

@@ -41,6 +41,7 @@ HTMLCollection::HTMLCollection(Node* base, CollectionType type)
     , m_type(type)
     , m_base(base)
 {
+    ASSERT(m_base);
     m_cache.clear();
 }
 
@@ -76,24 +77,17 @@ bool HTMLCollection::shouldIncludeChildren(CollectionType type)
     return false;
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
+PassOwnPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(base, type));
+    return adoptPtr(new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()
 {
 }
 
-void HTMLCollection::detachFromNode()
-{
-    m_base = 0;
-}
-
 void HTMLCollection::invalidateCacheIfNeeded() const
 {
-    ASSERT(m_base);
-
     uint64_t docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
     if (m_cache.version == docversion)
@@ -161,8 +155,6 @@ static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
 
 Element* HTMLCollection::itemAfter(Element* previous) const
 {
-    ASSERT(m_base);
-
     Node* current;
     if (!previous)
         current = m_base->firstChild();
@@ -182,8 +174,6 @@ Element* HTMLCollection::itemAfter(Element* previous) const
 
 unsigned HTMLCollection::calcLength() const
 {
-    ASSERT(m_base);
-
     unsigned len = 0;
     for (Element* current = itemAfter(0); current; current = itemAfter(current))
         ++len;
@@ -194,9 +184,6 @@ unsigned HTMLCollection::calcLength() const
 // calculation every time if anything has changed
 unsigned HTMLCollection::length() const
 {
-    if (!m_base)
-        return 0;
-
     invalidateCacheIfNeeded();
     if (!m_cache.hasLength) {
         m_cache.length = calcLength();
@@ -207,9 +194,6 @@ unsigned HTMLCollection::length() const
 
 Node* HTMLCollection::item(unsigned index) const
 {
-    if (!m_base)
-        return 0;
-
      invalidateCacheIfNeeded();
      if (m_cache.current && m_cache.position == index)
          return m_cache.current;
@@ -236,7 +220,6 @@ Node* HTMLCollection::firstItem() const
 
 Node* HTMLCollection::nextItem() const
 {
-     ASSERT(m_base);
      invalidateCacheIfNeeded();
 
      // Look for the 'second' item. The first one is currentItem, already given back.
@@ -276,9 +259,6 @@ bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const A
 
 Node* HTMLCollection::namedItem(const AtomicString& name) const
 {
-    if (!m_base)
-        return 0;
-
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
     // attribute. If a match is not found, the method then searches for an
@@ -306,8 +286,6 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
 void HTMLCollection::updateNameCache() const
 {
-    ASSERT(m_base);
-
     if (m_cache.hasNameCache)
         return;
 
@@ -328,9 +306,6 @@ void HTMLCollection::updateNameCache() const
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const
 {
-    if (!m_base)
-        return false;
-
     if (name.isEmpty())
         return false;
 
@@ -352,9 +327,6 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
 
 void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >& result) const
 {
-    if (!m_base)
-        return;
-
     ASSERT(result.isEmpty());
     if (name.isEmpty())
         return;
@@ -374,9 +346,6 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
-    if (!m_base)
-        return 0;
-
     return m_base->getElementsByTagName(name);
 }
 

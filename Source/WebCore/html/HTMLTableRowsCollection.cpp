@@ -156,14 +156,13 @@ HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement* table)
 {
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement* table)
+PassOwnPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement* table)
 {
-    return adoptRef(new HTMLTableRowsCollection(table));
+    return adoptPtr(new HTMLTableRowsCollection(table));
 }
 
 Element* HTMLTableRowsCollection::itemAfter(Element* previous) const
 {
-    ASSERT(base());
     ASSERT(!previous || previous->hasLocalName(trTag));
     return rowAfter(static_cast<HTMLTableElement*>(base()), static_cast<HTMLTableRowElement*>(previous));
 }

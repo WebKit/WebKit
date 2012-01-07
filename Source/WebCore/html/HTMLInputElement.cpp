@@ -1576,7 +1576,7 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
     HTMLDataListElement* sourceElement = dataList();
     if (!sourceElement)
         return 0;
-    RefPtr<HTMLCollection> options = sourceElement->options();
+    HTMLCollection* options = sourceElement->options();
     if (!options)
         return 0;
     unsigned length = options->length();
