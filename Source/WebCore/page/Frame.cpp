@@ -219,13 +219,6 @@ Frame::~Frame()
 
     disconnectOwnerElement();
 
-    if (m_domWindow)
-        m_domWindow->disconnectFrame();
-
-    HashSet<DOMWindow*>::iterator end = m_liveFormerWindows.end();
-    for (HashSet<DOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)
-        (*it)->disconnectFrame();
-
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->frameDestroyed();
@@ -576,10 +569,8 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
 
 void Frame::clearDOMWindow()
 {
-    if (m_domWindow) {
-        m_liveFormerWindows.add(m_domWindow.get());
+    if (m_domWindow)
         m_domWindow->clear();
-    }
     m_domWindow = 0;
 }
 
@@ -644,10 +635,8 @@ void Frame::clearTimers()
 
 void Frame::setDOMWindow(DOMWindow* domWindow)
 {
-    if (m_domWindow) {
-        m_liveFormerWindows.add(m_domWindow.get());
+    if (m_domWindow)
         m_domWindow->clear();
-    }
     m_domWindow = domWindow;
 }
 
@@ -667,11 +656,6 @@ DOMWindow* Frame::domWindow() const
         m_domWindow = DOMWindow::create(const_cast<Frame*>(this));
 
     return m_domWindow.get();
-}
-
-void Frame::clearFormerDOMWindow(DOMWindow* window)
-{
-    m_liveFormerWindows.remove(window);
 }
 
 void Frame::pageDestroyed()

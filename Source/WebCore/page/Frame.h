@@ -133,7 +133,6 @@ namespace WebCore {
         DOMWindow* domWindow() const;
         DOMWindow* existingDOMWindow() { return m_domWindow.get(); }
         void setDOMWindow(DOMWindow*);
-        void clearFormerDOMWindow(DOMWindow*);
         void clearDOMWindow();
 
         static Frame* frameForWidget(const Widget*);
@@ -212,7 +211,6 @@ namespace WebCore {
         mutable NavigationScheduler m_navigationScheduler;
 
         mutable RefPtr<DOMWindow> m_domWindow;
-        HashSet<DOMWindow*> m_liveFormerWindows;
 
         HTMLFrameOwnerElement* m_ownerElement;
         RefPtr<FrameView> m_view;

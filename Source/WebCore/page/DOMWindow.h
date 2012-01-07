@@ -28,6 +28,7 @@
 #define DOMWindow_h
 
 #include "EventTarget.h"
+#include "FrameDestructionObserver.h"
 #include "KURL.h"
 
 namespace WebCore {
@@ -80,7 +81,7 @@ namespace WebCore {
 
     enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
-    class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
+    class DOMWindow : public RefCounted<DOMWindow>, public EventTarget, public FrameDestructionObserver {
     public:
         static PassRefPtr<DOMWindow> create(Frame* frame) { return adoptRef(new DOMWindow(frame)); }
         virtual ~DOMWindow();
@@ -90,8 +91,7 @@ namespace WebCore {
 
         virtual DOMWindow* toDOMWindow();
 
-        Frame* frame() const { return m_frame; }
-        void disconnectFrame();
+        virtual void frameDestroyed() OVERRIDE;
 
         void clear();
 
@@ -415,7 +415,7 @@ namespace WebCore {
 #endif
 
     private:
-        DOMWindow(Frame*);
+        explicit DOMWindow(Frame*);
 
         // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
         // when its document is no longer the document that is displayed in its
@@ -437,7 +437,6 @@ namespace WebCore {
         KURL m_url;
 
         bool m_shouldPrintWhenFinishedLoading;
-        Frame* m_frame;
         mutable RefPtr<Screen> m_screen;
         mutable RefPtr<DOMSelection> m_selection;
         mutable RefPtr<History> m_history;

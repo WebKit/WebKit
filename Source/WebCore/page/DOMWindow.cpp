@@ -397,16 +397,13 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 }
 
 DOMWindow::DOMWindow(Frame* frame)
-    : m_shouldPrintWhenFinishedLoading(false)
-    , m_frame(frame)
+    : FrameDestructionObserver(frame)
+    , m_shouldPrintWhenFinishedLoading(false)
 {
 }
 
 DOMWindow::~DOMWindow()
 {
-    if (m_frame)
-        m_frame->clearFormerDOMWindow(this);
-
     ASSERT(!m_screen);
     ASSERT(!m_selection);
     ASSERT(!m_history);
@@ -473,9 +470,9 @@ void DOMWindow::setSecurityOrigin(SecurityOrigin* securityOrigin)
     m_securityOrigin = securityOrigin;
 }
 
-void DOMWindow::disconnectFrame()
+void DOMWindow::frameDestroyed()
 {
-    m_frame = 0;
+    FrameDestructionObserver::frameDestroyed();
     clear();
 }
 
