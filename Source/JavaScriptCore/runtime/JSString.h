@@ -59,7 +59,7 @@ namespace JSC {
 
     JSString* jsStringBuilder(JSGlobalData*);
 
-    class JS_EXPORTCLASS JSString : public JSCell {
+    class JSString : public JSCell {
     public:
         friend class JIT;
         friend class JSGlobalData;

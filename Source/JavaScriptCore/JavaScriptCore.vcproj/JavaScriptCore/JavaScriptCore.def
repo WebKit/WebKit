@@ -296,6 +296,7 @@ EXPORTS
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
     ?s_globalObjectMethodTable@JSGlobalObject@JSC@@1UGlobalObjectMethodTable@2@B
     ?s_info@ExecutableBase@JSC@@2UClassInfo@2@B
+    ?s_info@JSString@JSC@@2UClassInfo@2@B
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
@@ -336,6 +337,7 @@ EXPORTS
     ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
     ?tlsKeyCount@WTF@@YAAAJXZ
     ?tlsKeys@WTF@@YAPAKXZ
+    ?toBoolean@JSString@JSC@@QBE_NPAVExecState@2@@Z
     ?toInt32@JSC@@YAHN@Z
     ?toInteger@JSValue@JSC@@QBENPAVExecState@2@@Z
     ?toNumberSlowCase@JSValue@JSC@@ABENPAVExecState@2@@Z
