@@ -762,7 +762,7 @@ void Geolocation::reset() {}
 
 void Geolocation::disconnectFrame() {}
 
-Geolocation::Geolocation(Frame*) {}
+Geolocation::Geolocation(Frame*) : DOMWindowProperty(0) {}
 
 Geolocation::~Geolocation() {}
 
