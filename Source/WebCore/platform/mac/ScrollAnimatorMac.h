@@ -141,7 +141,7 @@ private:
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBand();
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
-    void smoothScrollWithEvent(const PlatformWheelEvent&);
+    bool smoothScrollWithEvent(const PlatformWheelEvent&);
     void beginScrollGesture();
     void endScrollGesture();
 
