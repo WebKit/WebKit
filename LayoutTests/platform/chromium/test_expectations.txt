@@ -1333,7 +1333,7 @@ BUGCR23477 MAC : fast/dynamic/containing-block-change.html = IMAGE
 BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 // Expectation changed at r99653 (IMAGE -> IMAGE+TEXT).
-BUGCR23476 BUGWK70765 MAC : fast/forms/listbox-clip.html = IMAGE+TEXT
+BUGCR23476 BUGWK70765 MAC : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
 // Disagreeing XML parsing error messages
 BUGCR88911 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE+TEXT
@@ -1986,7 +1986,7 @@ BUGUKAI SKIP MAC WIN : fast/text/international/bold-bengali.html = FAIL
 BUGCR42875 SKIP WONTFIX : sputnik = TEXT
 
 // Need rebaseline
-BUGWK70765 WIN : fast/forms/listbox-clip.html = IMAGE+TEXT
+BUGWK70765 WIN : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
 BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
 
@@ -3887,5 +3887,5 @@ BUGWK75742 MAC : fast/forms/input-disabled-color.html = IMAGE
 
 BUGWK75784 : fast/canvas/webgl/invalid-passed-params.html = TEXT
 
-
+BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
