@@ -1435,6 +1435,9 @@ fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.htm
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
 
+# Web Intents is not yet enabled.
+webintents/
+
 # Pointer Lock is not implemented.
 pointer-lock/
 

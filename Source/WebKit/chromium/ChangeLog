@@ -1,3 +1,12 @@
+2012-01-06  Greg Billock  <gbillock@google.com>
+
+        [Web Intents] Flagged-off WebCore implementation of navigator.startActivity
+        https://bugs.webkit.org/show_bug.cgi?id=73051
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2012-01-06  Tom Sepez  <tsepez@chromium.org>
 
         Pass Content-security-policy directive to worker threads.

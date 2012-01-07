@@ -2484,6 +2484,9 @@ css3/flexbox/line-wrapping.html
 # https://bugs.webkit.org/show_bug.cgi?id=72491
 http/tests/misc/onload-remove-iframe-crash-2.html
 
+# Web Intents is not yet enabled.
+webintents/
+
 # Pointer Lock is not implemented.
 pointer-lock/
 

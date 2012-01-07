@@ -159,6 +159,11 @@
           'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
         ],
       }],
+      ['enable_web_intents==1', {
+        'feature_defines': [
+          'ENABLE_WEB_INTENTS=1',
+        ],
+      }],
       ['OS=="mac"', {
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',

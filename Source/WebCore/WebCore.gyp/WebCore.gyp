@@ -51,6 +51,7 @@
       '../',
       '../..',
       '../Modules/gamepad',
+      '../Modules/intents',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',

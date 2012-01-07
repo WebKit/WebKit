@@ -488,6 +488,9 @@ fast/repaint/table-extra-bottom-grow.html
 # DRT doesn't support overridePreference("WebKit*FontMap"...)
 fast/text/international/locale-sensitive-fonts.html
 
+# Web Intents is not yet enabled.
+webintents/
+
 # Pointer Lock is not implemented.
 pointer-lock/
 

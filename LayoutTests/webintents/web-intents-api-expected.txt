@@ -1,0 +1,31 @@
+PASS var intent = new Intent() threw exception TypeError: Not enough arguments.
+PASS new Intent('a') threw exception TypeError: Not enough arguments.
+PASS new Intent('','','') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new Intent('','b','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new Intent('','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new Intent('a','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS intent1.action is "a"
+PASS intent1.type is "b"
+PASS intent1.data is undefined.
+PASS intent1.action is "a"
+PASS intent2.action is "a"
+PASS intent2.type is "b"
+PASS intent2.data is "c"
+PASS intent3.action is "a"
+PASS intent3.type is "b"
+PASS intent3.data.c is "d"
+PASS intent4.action is "a"
+PASS intent4.type is "b"
+PASS intent4.data instanceof Array is true
+PASS intent4.data.length is 2
+PASS intent4.data[0] is "c"
+PASS intent4.data[1] is "d"
+PASS intent5.data is 4
+PASS intent6.data is 4.5
+PASS intent7.data is true
+PASS intent8.data is null
+PASS intent9.data == '[object Object]' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

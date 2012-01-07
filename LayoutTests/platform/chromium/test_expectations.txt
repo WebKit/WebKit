@@ -91,6 +91,10 @@ BUGWK68610 SKIP : fast/dom/MicroData = PASS
 // Unskip after changes on both sides have landed and rolled together.
 BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 
+// Currently Web Intents is disabled. Tests pass with the proper
+// build flag turned on.
+BUGGBILLOCK SKIP : webintents = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
