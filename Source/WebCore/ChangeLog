@@ -1,3 +1,24 @@
+2012-01-06  Tim Horton  <timothy_horton@apple.com>
+
+        [cg] userSpaceOnUse SVG Patterns have the wrong origin
+        https://bugs.webkit.org/show_bug.cgi?id=75741
+        <rdar://problem/9383222>
+
+        Reviewed by Simon Fraser.
+
+        The transformation from pattern space to user space should use the userToBase CTM,
+        not the current CTM.
+
+        Test: svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/cg/TransformationMatrixCG.cpp:
+        (WebCore::AffineTransform::AffineTransform): Add a AffineTransform(CGAffineTransform) constructor
+        * platform/graphics/transforms/AffineTransform.h:
+
 2012-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid falling into tiled layers more often when the device scale factor is > 1

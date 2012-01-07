@@ -527,8 +527,9 @@ void GraphicsContext::clipConvexPolygon(size_t numberOfPoints, const FloatPoint*
 void GraphicsContext::applyStrokePattern()
 {
     CGContextRef cgContext = platformContext();
+    AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.strokePattern->createPlatformPattern(getCTM()));
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.strokePattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
         return;
 
@@ -542,8 +543,9 @@ void GraphicsContext::applyStrokePattern()
 void GraphicsContext::applyFillPattern()
 {
     CGContextRef cgContext = platformContext();
+    AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
 
-    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.fillPattern->createPlatformPattern(getCTM()));
+    RetainPtr<CGPatternRef> platformPattern(AdoptCF, m_state.fillPattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
         return;
 
@@ -1253,8 +1255,7 @@ AffineTransform GraphicsContext::getCTM() const
     if (paintingDisabled())
         return AffineTransform();
 
-    CGAffineTransform t = CGContextGetCTM(platformContext());
-    return AffineTransform(t.a, t.b, t.c, t.d, t.tx, t.ty);
+    return AffineTransform(CGContextGetCTM(platformContext()));
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
