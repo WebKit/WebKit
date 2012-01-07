@@ -1,5 +1,12 @@
 2012-01-06  Andreas Kling  <awesomekling@apple.com>
 
+        Unreviewed build fix after r104373.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::~HTMLTableElement):
+
+2012-01-06  Andreas Kling  <awesomekling@apple.com>
+
         Simplify HTMLCollection ownership model.
         <http://webkit.org/b/75437>
 
