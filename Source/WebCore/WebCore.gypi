@@ -3637,6 +3637,8 @@
             'platform/graphics/chromium/cc/CCPluginLayerImpl.h',
             'platform/graphics/chromium/cc/CCProxy.cpp',
             'platform/graphics/chromium/cc/CCProxy.h',
+            'platform/graphics/chromium/cc/CCQuadCuller.cpp',
+            'platform/graphics/chromium/cc/CCQuadCuller.h',
             'platform/graphics/chromium/cc/CCRenderPass.cpp',
             'platform/graphics/chromium/cc/CCRenderPass.h',
             'platform/graphics/chromium/cc/CCRenderSurface.cpp',

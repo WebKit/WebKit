@@ -28,6 +28,7 @@
 #include "cc/CCRenderPass.h"
 
 #include "cc/CCLayerImpl.h"
+#include "cc/CCQuadCuller.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
 
@@ -61,6 +62,11 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
     OwnPtr<CCSharedQuadState> sharedQuadState = CCSharedQuadState::create(surface->drawTransform(), surface->drawTransform(), surface->contentRect(), surface->clipRect(), surface->drawOpacity(), isOpaque);
     m_quadList.append(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect()));
     m_sharedQuadStateList.append(sharedQuadState.release());
+}
+
+void CCRenderPass::optimizeQuads()
+{
+    CCQuadCuller::cullOccludedQuads(m_quadList);
 }
 
 }

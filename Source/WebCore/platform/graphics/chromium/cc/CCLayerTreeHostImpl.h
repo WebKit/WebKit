@@ -133,7 +133,8 @@ private:
     void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
-    void calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >&);
+    void calculateRenderPasses(CCRenderPassList&);
+    void optimizeRenderPasses(CCRenderPassList&);
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;

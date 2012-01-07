@@ -187,7 +187,7 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
     return surfaceDamageRect;
 }
 
-void CCLayerTreeHostImpl::calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >& passes)
+void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes)
 {
     CCLayerList renderSurfaceLayerList;
     renderSurfaceLayerList.append(rootLayer());
@@ -238,6 +238,12 @@ void CCLayerTreeHostImpl::calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >& p
     }
 }
 
+void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
+{
+    for (unsigned i = 0; i < passes.size(); ++i)
+        passes[i]->optimizeQuads();
+}
+
 void CCLayerTreeHostImpl::drawLayers()
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
@@ -246,8 +252,10 @@ void CCLayerTreeHostImpl::drawLayers()
     if (!rootLayer())
         return;
 
-    Vector<OwnPtr<CCRenderPass> > passes;
+    CCRenderPassList passes;
     calculateRenderPasses(passes);
+
+    optimizeRenderPasses(passes);
 
     m_layerRenderer->beginDrawingFrame();
     for (size_t i = 0; i < passes.size(); ++i)

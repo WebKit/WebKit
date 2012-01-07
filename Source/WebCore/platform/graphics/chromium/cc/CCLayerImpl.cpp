@@ -129,8 +129,8 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 
 void CCLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
-    IntRect layerRect(IntPoint(), bounds());
-    quadList.append(CCCustomLayerDrawQuad::create(sharedQuadState, layerRect, this));
+    IntRect quadRect(IntPoint(), bounds());
+    quadList.append(CCCustomLayerDrawQuad::create(sharedQuadState, quadRect, this));
 }
 
 void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState) const
@@ -176,7 +176,13 @@ const IntRect CCLayerImpl::getDrawRect() const
 
 TransformationMatrix CCLayerImpl::quadTransform() const
 {
-    return drawTransform();
+    TransformationMatrix quadTransformation = drawTransform();
+
+    float offsetX = -0.5 * bounds().width();
+    float offsetY = -0.5 * bounds().height();
+    quadTransformation.translate(offsetX, offsetY);
+
+    return quadTransformation;
 }
 
 void CCLayerImpl::writeIndent(TextStream& ts, int indent)

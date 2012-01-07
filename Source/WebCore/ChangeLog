@@ -1,3 +1,31 @@
+2012-01-06  W. James MacLean  <wjmaclean@chromium.org>
+
+        [Chromium] Cull occluded tiles in tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=70533
+
+        Reviewed by James Robinson.
+
+        Unit test provided, must pass all existing GPU layout tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::appendQuads):
+        (WebCore::CCLayerImpl::quadTransform):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::optimizeRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp: Added.
+        (std::swap):
+        (WebCore::regionContainsRect):
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCQuadCuller.h: Added.
+        (WebCore::CCQuadCuller::CCQuadCuller):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::optimizeQuads):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+
 2012-01-06  Anders Carlsson  <andersca@apple.com>
 
         Move more rubberbanding code into ScrollAnimatorMac::smoothScrollWithEvent

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCRenderPass_h
-#define CCRenderPass_h
+#ifndef CCQuadCuller_h
+#define CCQuadCuller_h
 
-#include "cc/CCDrawQuad.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#include "cc/CCRenderPass.h"
 
 namespace WebCore {
 
-class CCLayerImpl;
-class CCRenderSurface;
-class CCSharedQuadState;
-
-typedef Vector<OwnPtr<CCDrawQuad> > CCQuadList;
-
-class CCRenderPass {
-    WTF_MAKE_NONCOPYABLE(CCRenderPass);
+class CCQuadCuller {
 public:
-    static PassOwnPtr<CCRenderPass> create(CCRenderSurface*);
-
-    void appendQuadsForLayer(CCLayerImpl*);
-    void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
-
-    void optimizeQuads();
-
-    const CCQuadList& quadList() const { return m_quadList; }
-    CCRenderSurface* targetSurface() const { return m_targetSurface; }
-
-    void setSurfaceDamageRect(const FloatRect& surfaceDamageRect) { m_surfaceDamageRect = surfaceDamageRect; }
-    const FloatRect& surfaceDamageRect() const { return m_surfaceDamageRect; }
+    static void cullOccludedQuads(CCQuadList&);
 
 private:
-    explicit CCRenderPass(CCRenderSurface*);
-
-    CCRenderSurface* m_targetSurface;
-    CCQuadList m_quadList;
-    Vector<OwnPtr<CCSharedQuadState> > m_sharedQuadStateList;
-    FloatRect m_surfaceDamageRect;
+    // Make non-instantiable.
+    CCQuadCuller() { }
 };
 
-typedef Vector<OwnPtr<CCRenderPass> > CCRenderPassList;
-
 }
-
-#endif
+#endif // CCQuadCuller_h
