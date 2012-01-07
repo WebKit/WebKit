@@ -2706,10 +2706,6 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
-// Needs rebaseline after BUGWK74123 goes in.
-BUGWK67760 BUGWK75505: media/media-document-audio-repaint.html = IMAGE PASS
-
-
 BUGWK55968 MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
