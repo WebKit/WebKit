@@ -60,7 +60,7 @@ DetectRecursion::DetectRecursion()
 
 DetectRecursion::~DetectRecursion()
 {
-    for (int i = 0; i < functions.size(); ++i)
+    for (size_t i = 0; i < functions.size(); ++i)
         delete functions[i];
 }
 

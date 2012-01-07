@@ -1,3 +1,12 @@
+2012-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Fixed a warning in GTK build of ANGLE
+
+        Unreviewed.
+
+        * src/compiler/DetectRecursion.cpp:
+        (DetectRecursion::~DetectRecursion):
+
 2012-01-06  Mark Rowe  <mrowe@apple.com>
 
         Regenerate a few files with a more appropriate version of bison.
