@@ -22,6 +22,7 @@
 #define DOMPluginArray_h
 
 #include "DOMPlugin.h"
+#include "DOMWindowProperty.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -32,13 +33,10 @@ namespace WebCore {
 class Frame;
 class PluginData;
 
-class DOMPluginArray : public RefCounted<DOMPluginArray> {
+class DOMPluginArray : public RefCounted<DOMPluginArray>, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMPluginArray> create(Frame* frame) { return adoptRef(new DOMPluginArray(frame)); }
     ~DOMPluginArray();
-
-    Frame* frame() { return m_frame; }
-    void disconnectFrame() { m_frame = 0; }
 
     unsigned length() const;
     PassRefPtr<DOMPlugin> item(unsigned index);
@@ -48,10 +46,8 @@ public:
     void refresh(bool reload);
 
 private:
-    DOMPluginArray(Frame*);
+    explicit DOMPluginArray(Frame*);
     PluginData* pluginData() const;
-
-    Frame* m_frame;
 };
 
 } // namespace WebCore

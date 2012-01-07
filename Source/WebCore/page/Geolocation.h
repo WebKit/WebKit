@@ -27,6 +27,7 @@
 #ifndef Geolocation_h
 #define Geolocation_h
 
+#include "DOMWindowProperty.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
@@ -47,25 +48,23 @@ class GeolocationError;
 #endif
 class Page;
 
-class Geolocation : public RefCounted<Geolocation>
+class Geolocation : public RefCounted<Geolocation>, public DOMWindowProperty
 #if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
     , public GeolocationServiceClient
 #endif
 {
 public:
     static PassRefPtr<Geolocation> create(Frame* frame) { return adoptRef(new Geolocation(frame)); }
-
     ~Geolocation();
 
+    virtual void disconnectFrame() OVERRIDE;
     void reset();
-    void disconnectFrame();
-    
+
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
 
     void setIsAllowed(bool);
-    Frame* frame() const { return m_frame; }
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     void positionChanged();
@@ -79,8 +78,8 @@ private:
 
     bool isAllowed() const { return m_allowGeolocation == Yes; }
     bool isDenied() const { return m_allowGeolocation == No; }
-    
-    Geolocation(Frame*);
+
+    explicit Geolocation(Frame*);
 
     Page* page() const;
 
@@ -172,7 +171,6 @@ private:
 
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
-    Frame* m_frame;
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
     OwnPtr<GeolocationService> m_service;
 #endif

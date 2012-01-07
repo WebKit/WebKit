@@ -41,6 +41,7 @@ namespace WebCore {
     class DOMApplicationCache;
     class DOMSelection;
     class DOMURL;
+    class DOMWindowProperty;
     class Database;
     class DatabaseCallback;
     class Document;
@@ -92,6 +93,9 @@ namespace WebCore {
         virtual DOMWindow* toDOMWindow();
 
         virtual void frameDestroyed() OVERRIDE;
+
+        void registerProperty(DOMWindowProperty*);
+        void unregisterProperty(DOMWindowProperty*);
 
         void clear();
 
@@ -437,6 +441,9 @@ namespace WebCore {
         KURL m_url;
 
         bool m_shouldPrintWhenFinishedLoading;
+
+        HashSet<DOMWindowProperty*> m_properties;
+
         mutable RefPtr<Screen> m_screen;
         mutable RefPtr<DOMSelection> m_selection;
         mutable RefPtr<History> m_history;

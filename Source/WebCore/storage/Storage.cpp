@@ -41,7 +41,7 @@ PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storag
 }
 
 Storage::Storage(Frame* frame, PassRefPtr<StorageArea> storageArea)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
     , m_storageArea(storageArea)
 {
     ASSERT(m_frame);

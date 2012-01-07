@@ -29,7 +29,7 @@
 namespace WebCore {
 
 DOMMimeTypeArray::DOMMimeTypeArray(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
 }
 

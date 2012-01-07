@@ -2646,6 +2646,8 @@ webcore_sources += \
 	Source/WebCore/page/DOMTimer.h \
 	Source/WebCore/page/DOMWindow.cpp \
 	Source/WebCore/page/DOMWindow.h \
+	Source/WebCore/page/DOMWindowProperty.cpp \
+	Source/WebCore/page/DOMWindowProperty.h \
 	Source/WebCore/page/DragActions.h \
 	Source/WebCore/page/DragClient.h \
 	Source/WebCore/page/DragController.cpp \

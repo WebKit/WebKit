@@ -30,6 +30,7 @@
 #define Console_h
 
 #include "ConsoleTypes.h"
+#include "DOMWindowProperty.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
@@ -48,13 +49,10 @@ class ScriptCallStack;
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
-class Console : public RefCounted<Console> {
+class Console : public RefCounted<Console>, public DOMWindowProperty {
 public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();
-
-    Frame* frame() const;
-    void disconnectFrame();
 
     void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
     void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack);
@@ -85,19 +83,17 @@ public:
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 
-    MemoryInfo* memory() const;
+    PassRefPtr<MemoryInfo> memory() const;
 
 private:
     inline Page* page() const;
     void addMessage(MessageType, MessageLevel, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, bool acceptNoArguments = false);
 
-    Console(Frame*);
+    explicit Console(Frame*);
 
-    Frame* m_frame;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ProfilesArray m_profiles;
 #endif
-    mutable RefPtr<MemoryInfo> m_memory;
 };
 
 } // namespace WebCore

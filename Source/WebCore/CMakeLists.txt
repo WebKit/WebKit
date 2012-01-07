@@ -989,6 +989,7 @@ SET(WebCore_SOURCES
     page/DOMSelection.cpp
     page/DOMTimer.cpp
     page/DOMWindow.cpp
+    page/DOMWindowProperty.cpp
     page/DragController.cpp
     page/EventHandler.cpp
     page/EventSource.cpp

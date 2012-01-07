@@ -56,24 +56,12 @@
 namespace WebCore {
 
 Console::Console(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
 }
 
 Console::~Console()
 {
-}
-
-Frame* Console::frame() const
-{
-    return m_frame;
-}
-
-void Console::disconnectFrame()
-{
-    if (m_memory)
-        m_memory = 0;
-    m_frame = 0;
 }
 
 static void printSourceURLAndLine(const String& sourceURL, unsigned lineNumber)
@@ -348,10 +336,11 @@ void Console::warn(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallS
     addMessage(LogMessageType, WarningMessageLevel, arguments, callStack);
 }
 
-MemoryInfo* Console::memory() const
+PassRefPtr<MemoryInfo> Console::memory() const
 {
-    m_memory = MemoryInfo::create(m_frame);
-    return m_memory.get();
+    // FIXME: Because we create a new object here each time,
+    // console.memory !== console.memory, which seems wrong.
+    return MemoryInfo::create(m_frame);
 }
 
 static bool printExceptions = false;

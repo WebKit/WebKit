@@ -41,18 +41,8 @@
 namespace WebCore {
 
 History::History(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
-}
-
-Frame* History::frame() const
-{
-    return m_frame;
-}
-
-void History::disconnectFrame()
-{
-    m_frame = 0;
 }
 
 unsigned History::length() const

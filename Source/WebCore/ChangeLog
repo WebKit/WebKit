@@ -1,3 +1,84 @@
+2012-01-07  Adam Barth  <abarth@webkit.org>
+
+        Disconnecting DOMWindow properties is fragile and overly complicated
+        https://bugs.webkit.org/show_bug.cgi?id=75699
+
+        Reviewed by Alexey Proskuryakov.
+
+        Previously, we had to carefully check every object tree hanging off of
+        DOMWindow to make sure that every property correctly disconnected
+        itself and all its subobjects from the Frame when the DOMWindow
+        disconnected from the Frame.
+
+        This patch introduces DOMWindowProperty, which is a base class that
+        handles this work automagically, ensuring that we won't have any
+        dangling Frame pointers and removing a bunch of boilerplate code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::StyleMedia):
+        * css/StyleMedia.h:
+        (WebCore::StyleMedia::create):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache):
+        (WebCore::DOMApplicationCache::disconnectFrame):
+        * loader/appcache/DOMApplicationCache.h:
+        * page/BarInfo.cpp:
+        (WebCore::BarInfo::BarInfo):
+        * page/BarInfo.h:
+        * page/Console.cpp:
+        (WebCore::Console::Console):
+        (WebCore::Console::memory):
+        * page/Console.h:
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::DOMSelection):
+        * page/DOMSelection.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::registerProperty):
+        (WebCore::DOMWindow::unregisterProperty):
+        (WebCore::DOMWindow::clear):
+        * page/DOMWindow.h:
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::disconnectFrame):
+        * page/Geolocation.h:
+        * page/History.cpp:
+        (WebCore::History::History):
+        * page/History.h:
+        * page/Location.cpp:
+        (WebCore::Location::Location):
+        * page/Location.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::Navigator):
+        (WebCore::Navigator::~Navigator):
+        * page/Navigator.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::memory):
+        * page/Performance.h:
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::PerformanceNavigation):
+        * page/PerformanceNavigation.h:
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::PerformanceTiming):
+        * page/PerformanceTiming.h:
+        * page/Screen.cpp:
+        (WebCore::Screen::Screen):
+        * page/Screen.h:
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::DOMMimeTypeArray):
+        * plugins/DOMMimeTypeArray.h:
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::DOMPluginArray):
+        * plugins/DOMPluginArray.h:
+        * storage/Storage.cpp:
+        (WebCore::Storage::Storage):
+        * storage/Storage.h:
+
 2012-01-06  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r83075): Save as PDF does not generate any links for webkit.org and others

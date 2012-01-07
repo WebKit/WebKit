@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_TIMING)
 
+#include "DOMWindowProperty.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -40,12 +41,9 @@ namespace WebCore {
 
 class Frame;
 
-class PerformanceNavigation : public RefCounted<PerformanceNavigation> {
+class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public DOMWindowProperty {
 public:
     static PassRefPtr<PerformanceNavigation> create(Frame* frame) { return adoptRef(new PerformanceNavigation(frame)); }
-
-    Frame* frame() const;
-    void disconnectFrame();
 
     enum PerformanceNavigationType {
         TYPE_NAVIGATE,
@@ -58,9 +56,7 @@ public:
     unsigned short redirectCount() const;
 
 private:
-    PerformanceNavigation(Frame*);
-
-    Frame* m_frame;
+    explicit PerformanceNavigation(Frame*);
 };
 
 }

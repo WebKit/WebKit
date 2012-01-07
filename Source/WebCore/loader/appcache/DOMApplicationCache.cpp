@@ -40,7 +40,7 @@
 namespace WebCore {
 
 DOMApplicationCache::DOMApplicationCache(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
     ApplicationCacheHost* cacheHost = applicationCacheHost();
     if (cacheHost)
@@ -52,7 +52,7 @@ void DOMApplicationCache::disconnectFrame()
     ApplicationCacheHost* cacheHost = applicationCacheHost();
     if (cacheHost)
         cacheHost->setDOMApplicationCache(0);
-    m_frame = 0;
+    DOMWindowProperty::disconnectFrame();
 }
 
 ApplicationCacheHost* DOMApplicationCache::applicationCacheHost() const

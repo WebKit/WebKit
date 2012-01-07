@@ -20,6 +20,7 @@
 #ifndef Navigator_h
 #define Navigator_h
 
+#include "DOMWindowProperty.h"
 #include "NavigatorBase.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -40,14 +41,12 @@ class PluginData;
 
 typedef int ExceptionCode;
 
-class Navigator : public NavigatorBase, public RefCounted<Navigator> {
+class Navigator : public NavigatorBase, public RefCounted<Navigator>, public DOMWindowProperty {
 public:
     static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
     virtual ~Navigator();
 
     void resetGeolocation();
-    void disconnectFrame();
-    Frame* frame() const { return m_frame; }
 
     String appVersion() const;
     String language() const;
@@ -81,8 +80,8 @@ public:
 #endif
 
 private:
-    Navigator(Frame*);
-    Frame* m_frame;
+    explicit Navigator(Frame*);
+
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable RefPtr<Geolocation> m_geolocation;

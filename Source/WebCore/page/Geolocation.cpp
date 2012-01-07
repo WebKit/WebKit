@@ -225,7 +225,7 @@ void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
 }
 
 Geolocation::Geolocation(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
     , m_service(GeolocationService::create(this))
 #endif
@@ -273,7 +273,7 @@ void Geolocation::disconnectFrame()
     reset();
     if (m_frame && m_frame->document())
         m_frame->document()->setUsingGeolocation(false);
-    m_frame = 0;
+    DOMWindowProperty::disconnectFrame();
 }
 
 Geoposition* Geolocation::lastPosition()

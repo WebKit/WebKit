@@ -22,6 +22,7 @@
 #define DOMMimeTypeArray_h
 
 #include "DOMMimeType.h"
+#include "DOMWindowProperty.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -32,13 +33,10 @@ namespace WebCore {
 class Frame;
 class PluginData;
 
-class DOMMimeTypeArray : public RefCounted<DOMMimeTypeArray> {
+class DOMMimeTypeArray : public RefCounted<DOMMimeTypeArray>, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMMimeTypeArray> create(Frame* frame) { return adoptRef(new DOMMimeTypeArray(frame)); }
     ~DOMMimeTypeArray();
-
-    Frame* frame() { return m_frame; }
-    void disconnectFrame() { m_frame = 0; }
 
     unsigned length() const;
     PassRefPtr<DOMMimeType> item(unsigned index);
@@ -46,10 +44,8 @@ public:
     PassRefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
 private:
-    DOMMimeTypeArray(Frame*);
+    explicit DOMMimeTypeArray(Frame*);
     PluginData* getPluginData() const;
-
-    Frame* m_frame;
 };
 
 } // namespace WebCore

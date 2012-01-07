@@ -40,13 +40,8 @@
 namespace WebCore {
 
 Location::Location(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
-}
-
-void Location::disconnectFrame()
-{
-    m_frame = 0;
 }
 
 inline const KURL& Location::url() const

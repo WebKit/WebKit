@@ -29,7 +29,7 @@
 namespace WebCore {
 
 DOMPluginArray::DOMPluginArray(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
 }
 

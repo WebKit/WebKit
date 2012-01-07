@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,28 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleMedia_h
-#define StyleMedia_h
-
-#include "DOMWindowProperty.h"
-#include "PlatformString.h"
-#include <wtf/RefCounted.h>
+#ifndef DOMWindowProperty_h
+#define DOMWindowProperty_h
 
 namespace WebCore {
 
 class Frame;
 
-class StyleMedia : public RefCounted<StyleMedia>, public DOMWindowProperty {
+class DOMWindowProperty {
 public:
-    static PassRefPtr<StyleMedia> create(Frame* frame) { return adoptRef(new StyleMedia(frame));}
+    explicit DOMWindowProperty(Frame*);
+    virtual void disconnectFrame();
 
-    String type() const;
-    bool matchMedium(const String&) const;
+    Frame* frame() const { return m_frame; }
 
-private:
-    explicit StyleMedia(Frame*);
+protected:
+    virtual ~DOMWindowProperty();
+
+    Frame* m_frame;
 };
 
-} // namespace
+}
 
-#endif // StyleMedia_h
+#endif

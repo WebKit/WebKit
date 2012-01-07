@@ -51,18 +51,8 @@ static unsigned long long toIntegerMilliseconds(double seconds)
 }
 
 PerformanceTiming::PerformanceTiming(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
-}
-
-Frame* PerformanceTiming::frame() const
-{
-    return m_frame;
-}
-
-void PerformanceTiming::disconnectFrame()
-{
-    m_frame = 0;
 }
 
 unsigned long long PerformanceTiming::navigationStart() const

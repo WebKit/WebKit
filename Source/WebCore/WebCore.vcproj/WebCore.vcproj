@@ -25186,6 +25186,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DOMWindowProperty.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DOMWindowProperty.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DragActions.h"
 				>
 			</File>

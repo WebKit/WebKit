@@ -40,18 +40,8 @@
 namespace WebCore {
 
 PerformanceNavigation::PerformanceNavigation(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
-}
-
-Frame* PerformanceNavigation::frame() const
-{
-    return m_frame;
-}
-
-void PerformanceNavigation::disconnectFrame()
-{
-    m_frame = 0;
 }
 
 unsigned short PerformanceNavigation::type() const

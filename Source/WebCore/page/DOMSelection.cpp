@@ -54,18 +54,8 @@ static Node* selectionShadowAncestor(Frame* frame)
 }
 
 DOMSelection::DOMSelection(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
-}
-
-Frame* DOMSelection::frame() const
-{
-    return m_frame;
-}
-
-void DOMSelection::disconnectFrame()
-{
-    m_frame = 0;
 }
 
 const VisibleSelection& DOMSelection::visibleSelection() const

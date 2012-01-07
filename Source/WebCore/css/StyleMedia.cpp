@@ -36,7 +36,7 @@
 namespace WebCore {
 
 StyleMedia::StyleMedia(Frame* frame)
-    : m_frame(frame)
+    : DOMWindowProperty(frame)
 {
 }
 
