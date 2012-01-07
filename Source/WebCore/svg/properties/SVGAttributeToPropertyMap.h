@@ -33,6 +33,9 @@ struct SVGPropertyInfo;
 
 class SVGAttributeToPropertyMap {
 public:
+    SVGAttributeToPropertyMap() { }
+    ~SVGAttributeToPropertyMap() { deleteAllValues(m_map); }
+
     bool isEmpty() const { return m_map.isEmpty(); }
 
     void addProperties(SVGAttributeToPropertyMap&);
@@ -49,7 +52,7 @@ private:
     PassRefPtr<SVGAnimatedProperty> animatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, const SVGPropertyInfo*);
 
     typedef Vector<const SVGPropertyInfo*> PropertiesVector;
-    typedef HashMap<QualifiedName, OwnPtr<PropertiesVector> > AttributeToPropertiesMap;
+    typedef HashMap<QualifiedName, PropertiesVector*> AttributeToPropertiesMap;
     AttributeToPropertiesMap m_map;
 };
 
