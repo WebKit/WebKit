@@ -72,7 +72,7 @@ WebDOMTestObj& WebDOMTestObj::operator=(const WebDOMTestObj& copy)
 
 WebCore::TestObj* WebDOMTestObj::impl() const
 {
-    return m_impl ? m_impl->impl.get() : 0;
+    return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
 WebDOMTestObj::~WebDOMTestObj()

@@ -1,5 +1,28 @@
 2012-01-07  Andreas Kling  <awesomekling@apple.com>
 
+        Unreviewed C++ bindings build fix after r104383.
+
+        Use WTF::getPtr() to grab at impl pointer since they could be either RefPtr or raw.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        (WebDOMTestCallback::impl):
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.cpp:
+        (WebDOMTestEventConstructor::impl):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        (WebDOMTestInterface::impl):
+        * bindings/scripts/test/CPP/WebDOMTestMediaQueryListListener.cpp:
+        (WebDOMTestMediaQueryListListener::impl):
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.cpp:
+        (WebDOMTestNamedConstructor::impl):
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::impl):
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        (WebDOMTestSerializedScriptValueInterface::impl):
+
+2012-01-07  Andreas Kling  <awesomekling@apple.com>
+
         Simplify HTMLCollection ownership model.
         <http://webkit.org/b/75437>
 

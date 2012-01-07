@@ -76,7 +76,7 @@ WebDOMTestCallback& WebDOMTestCallback::operator=(const WebDOMTestCallback& copy
 
 WebCore::TestCallback* WebDOMTestCallback::impl() const
 {
-    return m_impl ? m_impl->impl.get() : 0;
+    return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
 WebDOMTestCallback::~WebDOMTestCallback()

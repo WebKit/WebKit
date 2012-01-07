@@ -669,7 +669,7 @@ sub GenerateImplementation
 
         push(@implContent, "$implClassNameWithNamespace* ${className}::impl() const\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return m_impl ? m_impl->impl.get() : 0;\n");
+        push(@implContent, "    return m_impl ? WTF::getPtr(m_impl->impl) : 0;\n");
         push(@implContent, "}\n\n");
 
         # Destructor

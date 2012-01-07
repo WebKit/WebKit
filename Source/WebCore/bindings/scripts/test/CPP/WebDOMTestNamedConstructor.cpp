@@ -62,7 +62,7 @@ WebDOMTestNamedConstructor& WebDOMTestNamedConstructor::operator=(const WebDOMTe
 
 WebCore::TestNamedConstructor* WebDOMTestNamedConstructor::impl() const
 {
-    return m_impl ? m_impl->impl.get() : 0;
+    return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
 WebDOMTestNamedConstructor::~WebDOMTestNamedConstructor()

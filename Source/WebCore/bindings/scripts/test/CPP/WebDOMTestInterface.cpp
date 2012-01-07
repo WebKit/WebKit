@@ -69,7 +69,7 @@ WebDOMTestInterface& WebDOMTestInterface::operator=(const WebDOMTestInterface& c
 
 WebCore::TestInterface* WebDOMTestInterface::impl() const
 {
-    return m_impl ? m_impl->impl.get() : 0;
+    return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
 WebDOMTestInterface::~WebDOMTestInterface()

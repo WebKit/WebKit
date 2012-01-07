@@ -64,7 +64,7 @@ WebDOMTestMediaQueryListListener& WebDOMTestMediaQueryListListener::operator=(co
 
 WebCore::TestMediaQueryListListener* WebDOMTestMediaQueryListListener::impl() const
 {
-    return m_impl ? m_impl->impl.get() : 0;
+    return m_impl ? WTF::getPtr(m_impl->impl) : 0;
 }
 
 WebDOMTestMediaQueryListListener::~WebDOMTestMediaQueryListListener()
