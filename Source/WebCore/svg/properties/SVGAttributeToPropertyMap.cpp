@@ -31,7 +31,7 @@ void SVGAttributeToPropertyMap::addProperties(SVGAttributeToPropertyMap& map)
 {
     AttributeToPropertiesMap::iterator end = map.m_map.end();
     for (AttributeToPropertiesMap::iterator it = map.m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->second;
+        PropertiesVector* vector = it->second.get();
         ASSERT(vector);
 
         PropertiesVector::iterator vectorEnd = vector->end();
@@ -44,13 +44,10 @@ void SVGAttributeToPropertyMap::addProperty(const SVGPropertyInfo* info)
 {
     ASSERT(info);
     ASSERT(info->attributeName != anyQName());
-    if (PropertiesVector* vector = m_map.get(info->attributeName)) {
-        vector->append(info);
-        return;
-    }
-    PropertiesVector* vector = new PropertiesVector;
+    OwnPtr<PropertiesVector>& vector = m_map.add(info->attributeName, nullptr).first->second;
+    if (!vector)
+        vector = adoptPtr(new PropertiesVector);
     vector->append(info);
-    m_map.set(info->attributeName, vector);
 }
 
 void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty> >& properties)
@@ -81,7 +78,7 @@ void SVGAttributeToPropertyMap::synchronizeProperties(SVGElement* contextElement
     ASSERT(contextElement);
     AttributeToPropertiesMap::iterator end = m_map.end();
     for (AttributeToPropertiesMap::iterator it = m_map.begin(); it != end; ++it) {
-        PropertiesVector* vector = it->second;
+        PropertiesVector* vector = it->second.get();
         ASSERT(vector);
 
         PropertiesVector::iterator vectorEnd = vector->end();
