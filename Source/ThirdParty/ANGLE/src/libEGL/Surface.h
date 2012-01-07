@@ -30,7 +30,7 @@ class Config;
 class Surface
 {
   public:
-    Surface(Display *display, const egl::Config *config, HWND window);
+    Surface(Display *display, const egl::Config *config, HWND window, EGLint postSubBufferSupported);
     Surface(Display *display, const egl::Config *config, HANDLE shareHandle, EGLint width, EGLint height, EGLenum textureFormat, EGLenum textureTarget);
 
     ~Surface();
@@ -41,9 +41,12 @@ class Surface
 
     HWND getWindowHandle();
     bool swap();
+    bool postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height);
 
     virtual EGLint getWidth() const;
     virtual EGLint getHeight() const;
+
+    virtual EGLint isPostSubBufferSupported() const;
 
     virtual IDirect3DSurface9 *getRenderTarget();
     virtual IDirect3DSurface9 *getDepthStencil();
@@ -96,6 +99,8 @@ private:
 //  EGLenum vgAlphaFormat;         // Alpha format for OpenVG
 //  EGLenum vgColorSpace;          // Color space for OpenVG
     EGLint mSwapInterval;
+    EGLint mPostSubBufferSupported;
+    
     DWORD mPresentInterval;
     bool mPresentIntervalDirty;
     gl::Texture2D *mTexture;

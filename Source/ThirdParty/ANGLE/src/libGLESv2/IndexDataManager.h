@@ -28,6 +28,7 @@ struct TranslatedIndexData
     UINT startIndex;
 
     IDirect3DIndexBuffer9 *indexBuffer;
+    unsigned int serial;
 };
 
 class IndexBuffer
@@ -42,12 +43,17 @@ class IndexBuffer
     virtual void reserveSpace(UINT requiredSpace, GLenum type) = 0;
 
     IDirect3DIndexBuffer9 *getBuffer() const;
+    unsigned int getSerial() const;
 
   protected:
     IDirect3DDevice9 *const mDevice;
 
     IDirect3DIndexBuffer9 *mIndexBuffer;
     UINT mBufferSize;
+
+    unsigned int mSerial;
+    static unsigned int issueSerial();
+    static unsigned int mCurrentSerial;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(IndexBuffer);
@@ -87,12 +93,28 @@ class StaticIndexBuffer : public IndexBuffer
         intptr_t offset;
         GLsizei count;
 
+        bool operator<(const IndexRange& rhs) const
+        {
+            if (offset != rhs.offset)
+            {
+                return offset < rhs.offset;
+            }
+            if (count != rhs.count)
+            {
+                return count < rhs.count;
+            }
+            return false;
+        }
+    };
+
+    struct IndexResult
+    {
         UINT minIndex;
         UINT maxIndex;
         UINT streamOffset;
     };
 
-    std::vector<IndexRange> mCache;
+    std::map<IndexRange, IndexResult> mCache;
 };
 
 class IndexDataManager

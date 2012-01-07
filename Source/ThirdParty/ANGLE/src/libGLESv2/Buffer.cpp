@@ -74,6 +74,8 @@ void Buffer::bufferSubData(const void *data, GLsizeiptr size, GLintptr offset)
     {
         invalidateStaticData();
     }
+
+    mUnmodifiedDataUse = 0;
 }
 
 StaticVertexBuffer *Buffer::getStaticVertexBuffer()

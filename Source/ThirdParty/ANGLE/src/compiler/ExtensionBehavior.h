@@ -13,7 +13,8 @@ typedef enum {
     EBhRequire,
     EBhEnable,
     EBhWarn,
-    EBhDisable
+    EBhDisable,
+    EBhUndefined,
 } TBehavior;
 
 inline const char* getBehaviorString(TBehavior b)

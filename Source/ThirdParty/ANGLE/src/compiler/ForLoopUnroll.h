@@ -36,6 +36,8 @@ public:
     void Push(TLoopIndexInfo& info);
     void Pop();
 
+    static void MarkForLoopsWithIntegerIndicesForUnrolling(TIntermNode* root);
+
 private:
     int getLoopIncrement(TIntermLoop* node);
 

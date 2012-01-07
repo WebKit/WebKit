@@ -29,8 +29,6 @@ namespace egl
 class Display
 {
   public:
-    Display(HDC deviceContext);
-
     ~Display();
 
     bool initialize();
@@ -39,12 +37,14 @@ class Display
     virtual void startScene();
     virtual void endScene();
 
+    static egl::Display *getDisplay(EGLNativeDisplayType displayId);
+
     bool getConfigs(EGLConfig *configs, const EGLint *attribList, EGLint configSize, EGLint *numConfig);
     bool getConfigAttrib(EGLConfig config, EGLint attribute, EGLint *value);
 
     EGLSurface createWindowSurface(HWND window, EGLConfig config, const EGLint *attribList);
     EGLSurface createOffscreenSurface(EGLConfig config, HANDLE shareHandle, const EGLint *attribList);
-    EGLContext createContext(EGLConfig configHandle, const gl::Context *shareContext);
+    EGLContext createContext(EGLConfig configHandle, const gl::Context *shareContext, bool notifyResets, bool robustAccess);
 
     void destroySurface(egl::Surface *surface);
     void destroyContext(gl::Context *context);
@@ -61,17 +61,24 @@ class Display
     virtual IDirect3DDevice9 *getDevice();
     virtual D3DCAPS9 getDeviceCaps();
     virtual D3DADAPTER_IDENTIFIER9 *getAdapterIdentifier();
-    bool isDeviceLost();
+    virtual bool testDeviceLost();
+    virtual bool testDeviceResettable();
     virtual void getMultiSampleSupport(D3DFORMAT format, bool *multiSampleArray);
-    virtual bool getCompressedTextureSupport();
+    virtual bool getDXT1TextureSupport();
+    virtual bool getDXT3TextureSupport();
+    virtual bool getDXT5TextureSupport();
     virtual bool getEventQuerySupport();
-    virtual bool getFloatTextureSupport(bool *filtering, bool *renderable);
-    virtual bool getHalfFloatTextureSupport(bool *filtering, bool *renderable);
+    virtual bool getFloat32TextureSupport(bool *filtering, bool *renderable);
+    virtual bool getFloat16TextureSupport(bool *filtering, bool *renderable);
     virtual bool getLuminanceTextureSupport();
     virtual bool getLuminanceAlphaTextureSupport();
     virtual bool getVertexTextureSupport() const;
     virtual bool getNonPower2TextureSupport() const;
     virtual D3DPOOL getBufferPool(DWORD usage) const;
+    virtual D3DPOOL getTexturePool(bool renderable) const;
+
+    virtual void notifyDeviceLost();
+    bool isDeviceLost();
 
     bool isD3d9ExDevice() { return mD3d9Ex != NULL; }
     const char *getExtensionString() const;
@@ -79,8 +86,13 @@ class Display
   private:
     DISALLOW_COPY_AND_ASSIGN(Display);
 
+    Display(EGLNativeDisplayType displayId, HDC deviceContext, bool software);
+
     D3DPRESENT_PARAMETERS getDefaultPresentParameters();
 
+    bool restoreLostDevice();
+
+    EGLNativeDisplayType mDisplayId;
     const HDC mDc;
 
     HMODULE mD3d9Module;
@@ -98,6 +110,7 @@ class Display
     bool mSceneStarted;
     EGLint mMaxSwapInterval;
     EGLint mMinSwapInterval;
+    bool mSoftwareDevice;
     
     typedef std::set<Surface*> SurfaceSet;
     SurfaceSet mSurfaceSet;
@@ -106,8 +119,10 @@ class Display
 
     typedef std::set<gl::Context*> ContextSet;
     ContextSet mContextSet;
+    bool mDeviceLost;
 
     bool createDevice();
+    void initializeDevice();
     bool resetDevice();
 
     void initExtensionString();

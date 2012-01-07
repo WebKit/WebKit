@@ -63,7 +63,11 @@ void trace(bool traceFileDebugOnly, const char *format, ...)
 {
     va_list vararg;
     va_start(vararg, format);
+#if defined(ANGLE_DISABLE_PERF)
+    output(traceFileDebugOnly, NULL, format, vararg);
+#else
     output(traceFileDebugOnly, D3DPERF_SetMarker, format, vararg);
+#endif
     va_end(vararg);
 }
 
@@ -79,10 +83,12 @@ bool perfActive()
 
 ScopedPerfEventHelper::ScopedPerfEventHelper(const char* format, ...)
 {
+#if !defined(ANGLE_DISABLE_PERF)
     va_list vararg;
     va_start(vararg, format);
     output(true, reinterpret_cast<PerfOutputFunction>(D3DPERF_BeginEvent), format, vararg);
     va_end(vararg);
+#endif
 }
 
 ScopedPerfEventHelper::~ScopedPerfEventHelper()

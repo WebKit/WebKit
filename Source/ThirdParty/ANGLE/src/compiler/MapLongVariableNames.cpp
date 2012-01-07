@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -10,20 +10,20 @@ namespace {
 
 TString mapLongName(int id, const TString& name, bool isVarying)
 {
-    ASSERT(name.size() > MAX_IDENTIFIER_NAME_SIZE);
+    ASSERT(name.size() > MAX_SHORTENED_IDENTIFIER_SIZE);
     TStringStream stream;
     stream << "webgl_";
     if (isVarying)
         stream << "v";
     stream << id << "_";
-    stream << name.substr(0, MAX_IDENTIFIER_NAME_SIZE - stream.str().size());
+    stream << name.substr(0, MAX_SHORTENED_IDENTIFIER_SIZE - stream.str().size());
     return stream.str();
 }
 
 }  // anonymous namespace
 
 MapLongVariableNames::MapLongVariableNames(
-    TMap<TString, TString>& varyingLongNameMap)
+    std::map<std::string, std::string>& varyingLongNameMap)
     : mVaryingLongNameMap(varyingLongNameMap)
 {
 }
@@ -31,12 +31,13 @@ MapLongVariableNames::MapLongVariableNames(
 void MapLongVariableNames::visitSymbol(TIntermSymbol* symbol)
 {
     ASSERT(symbol != NULL);
-    if (symbol->getSymbol().size() > MAX_IDENTIFIER_NAME_SIZE) {
+    if (symbol->getSymbol().size() > MAX_SHORTENED_IDENTIFIER_SIZE) {
         switch (symbol->getQualifier()) {
           case EvqVaryingIn:
           case EvqVaryingOut:
           case EvqInvariantVaryingIn:
           case EvqInvariantVaryingOut:
+          case EvqUniform:
             symbol->setSymbol(
                 mapVaryingLongName(symbol->getSymbol()));
             break;
@@ -48,30 +49,6 @@ void MapLongVariableNames::visitSymbol(TIntermSymbol* symbol)
     }
 }
 
-void MapLongVariableNames::visitConstantUnion(TIntermConstantUnion*)
-{
-}
-
-bool MapLongVariableNames::visitBinary(Visit, TIntermBinary*)
-{
-    return true;
-}
-
-bool MapLongVariableNames::visitUnary(Visit, TIntermUnary*)
-{
-    return true;
-}
-
-bool MapLongVariableNames::visitSelection(Visit, TIntermSelection*)
-{
-    return true;
-}
-
-bool MapLongVariableNames::visitAggregate(Visit, TIntermAggregate*)
-{
-    return true;
-}
-
 bool MapLongVariableNames::visitLoop(Visit, TIntermLoop* node)
 {
     if (node->getInit())
@@ -79,20 +56,15 @@ bool MapLongVariableNames::visitLoop(Visit, TIntermLoop* node)
     return true;
 }
 
-bool MapLongVariableNames::visitBranch(Visit, TIntermBranch*)
-{
-    return true;
-}
-
 TString MapLongVariableNames::mapVaryingLongName(const TString& name)
 {
-    TMap<TString, TString>::const_iterator it = mVaryingLongNameMap.find(name);
+    std::map<std::string, std::string>::const_iterator it = mVaryingLongNameMap.find(name.c_str());
     if (it != mVaryingLongNameMap.end())
-        return (*it).second;
+        return (*it).second.c_str();
 
     int id = mVaryingLongNameMap.size();
     TString mappedName = mapLongName(id, name, true);
     mVaryingLongNameMap.insert(
-        TMap<TString, TString>::value_type(name, mappedName));
+        std::map<std::string, std::string>::value_type(name.c_str(), mappedName.c_str()));
     return mappedName;
 }

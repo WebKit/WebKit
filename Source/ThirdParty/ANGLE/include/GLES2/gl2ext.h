@@ -1,7 +1,7 @@
 #ifndef __gl2ext_h_
 #define __gl2ext_h_
 
-/* $Revision: 10798 $ on $Date:: 2010-03-19 17:34:30 -0700 #$ */
+/* $Revision: 15049 $ on $Date:: 2011-07-06 17:28:16 -0700 #$ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +55,15 @@ extern "C" {
 /* GL_OES_EGL_image */
 #ifndef GL_OES_EGL_image
 typedef void* GLeglImageOES;
+#endif
+
+/* GL_OES_EGL_image_external */
+#ifndef GL_OES_EGL_image_external
+/* GLeglImageOES defined in GL_OES_EGL_image already. */
+#define GL_TEXTURE_EXTERNAL_OES                                 0x8D65
+#define GL_SAMPLER_EXTERNAL_OES                                 0x8D66
+#define GL_TEXTURE_BINDING_EXTERNAL_OES                         0x8D67
+#define GL_REQUIRED_TEXTURE_IMAGE_UNITS_OES                     0x8D68
 #endif
 
 /* GL_OES_element_index_uint */
@@ -180,6 +189,95 @@ typedef void* GLeglImageOES;
 #endif
 
 /*------------------------------------------------------------------------*
+ * ANGLE extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_ANGLE_framebuffer_blit */
+#ifndef GL_ANGLE_framebuffer_blit
+#define GL_READ_FRAMEBUFFER_ANGLE                               0x8CA8
+#define GL_DRAW_FRAMEBUFFER_ANGLE                               0x8CA9
+#define GL_DRAW_FRAMEBUFFER_BINDING_ANGLE                       0x8CA6
+#define GL_READ_FRAMEBUFFER_BINDING_ANGLE                       0x8CAA
+#endif
+
+/* GL_ANGLE_framebuffer_multisample */
+#ifndef GL_ANGLE_framebuffer_multisample
+#define GL_RENDERBUFFER_SAMPLES_ANGLE                           0x8CAB
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_ANGLE             0x8D56
+#define GL_MAX_SAMPLES_ANGLE                                    0x8D57
+#endif
+
+/* GL_ANGLE_pack_reverse_row_order */
+#ifndef GL_ANGLE_pack_reverse_row_order
+#define GL_PACK_REVERSE_ROW_ORDER_ANGLE                         0x93A4
+#endif
+
+/* GL_ANGLE_texture_compression_dxt3 */
+#ifndef GL_ANGLE_texture_compression_dxt3
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE                      0x83F2
+#endif
+
+/* GL_ANGLE_texture_compression_dxt5 */
+#ifndef GL_ANGLE_texture_compression_dxt5
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE                      0x83F3
+#endif
+
+/* GL_ANGLE_translated_shader_source */
+#ifndef GL_ANGLE_translated_shader_source
+#define GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE                0x93A0
+#endif
+
+/* GL_ANGLE_texture_usage */
+#ifndef GL_ANGLE_texture_usage
+#define GL_TEXTURE_USAGE_ANGLE                                  0x93A2
+#define GL_FRAMEBUFFER_ATTACHMENT_ANGLE                         0x93A3
+#endif
+
+/*------------------------------------------------------------------------*
+ * APPLE extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_APPLE_rgb_422 */
+#ifndef GL_APPLE_rgb_422
+#define GL_RGB_422_APPLE                                        0x8A1F
+#define GL_UNSIGNED_SHORT_8_8_APPLE                             0x85BA
+#define GL_UNSIGNED_SHORT_8_8_REV_APPLE                         0x85BB
+#endif
+
+/* GL_APPLE_framebuffer_multisample */
+#ifndef GL_APPLE_framebuffer_multisample
+#define GL_RENDERBUFFER_SAMPLES_APPLE                           0x8CAB
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE             0x8D56
+#define GL_MAX_SAMPLES_APPLE                                    0x8D57
+#define GL_READ_FRAMEBUFFER_APPLE                               0x8CA8
+#define GL_DRAW_FRAMEBUFFER_APPLE                               0x8CA9
+#define GL_DRAW_FRAMEBUFFER_BINDING_APPLE                       0x8CA6
+#define GL_READ_FRAMEBUFFER_BINDING_APPLE                       0x8CAA
+#endif
+
+/* GL_APPLE_texture_format_BGRA8888 */
+#ifndef GL_APPLE_texture_format_BGRA8888
+#define GL_BGRA_EXT                                             0x80E1
+#endif
+
+/* GL_APPLE_texture_max_level */
+#ifndef GL_APPLE_texture_max_level
+#define GL_TEXTURE_MAX_LEVEL_APPLE                              0x813D
+#endif
+
+/*------------------------------------------------------------------------*
+ * ARM extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_ARM_mali_shader_binary */
+#ifndef GL_ARM_mali_shader_binary
+#define GL_MALI_SHADER_BINARY_ARM                               0x8F60
+#endif
+
+/* GL_ARM_rgba8 */
+/* No new tokens introduced by this extension. */
+
+/*------------------------------------------------------------------------*
  * EXT extension tokens
  *------------------------------------------------------------------------*/
 
@@ -206,6 +304,9 @@ typedef void* GLeglImageOES;
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
 #endif
 
+/* GL_EXT_shader_texture_lod */
+/* No new tokens introduced by this extension. */
+
 /* GL_EXT_texture_filter_anisotropic */
 #ifndef GL_EXT_texture_filter_anisotropic
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
@@ -226,6 +327,58 @@ typedef void* GLeglImageOES;
 #ifndef GL_EXT_texture_compression_dxt1
 #define GL_COMPRESSED_RGB_S3TC_DXT1_EXT                         0x83F0
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT                        0x83F1
+#endif
+
+/* GL_EXT_unpack_subimage */
+#ifndef GL_EXT_unpack_subimage
+#define GL_UNPACK_ROW_LENGTH                                    0x0CF2
+#define GL_UNPACK_SKIP_ROWS                                     0x0CF3
+#define GL_UNPACK_SKIP_PIXELS                                   0x0CF4
+#endif
+
+/* GL_EXT_robustness */
+#ifndef GL_EXT_robustness
+#define GL_GUILTY_CONTEXT_RESET_EXT                             0x8253
+#define GL_INNOCENT_CONTEXT_RESET_EXT                           0x8254
+#define GL_UNKNOWN_CONTEXT_RESET_EXT                            0x8255
+#define GL_CONTEXT_ROBUST_ACCESS_EXT                            0x90F3
+#define GL_RESET_NOTIFICATION_STRATEGY_EXT                      0x8256
+#define GL_LOSE_CONTEXT_ON_RESET_EXT                            0x8252
+#define GL_NO_RESET_NOTIFICATION_EXT                            0x8261
+#endif
+
+/* GL_EXT_texture_storage */
+#ifndef GL_EXT_texture_storage
+#define GL_TEXTURE_IMMUTABLE_FORMAT_EXT                         0x912F
+#define GL_ALPHA8_EXT                                           0x803C
+#define GL_LUMINANCE8_EXT                                       0x8040
+#define GL_LUMINANCE8_ALPHA8_EXT                                0x8045
+/* OES_texture_float dependent internal formats */
+#define GL_RGBA32F_EXT                                          0x8814  /* reuse tokens from ARB_texture_float */
+#define GL_RGB32F_EXT                                           0x8815
+#define GL_ALPHA32F_EXT                                         0x8816
+#define GL_LUMINANCE32F_EXT                                     0x8818
+#define GL_LUMINANCE_ALPHA32F_EXT                               0x8819
+/* OES_texture_half_float dependent internal formats */
+#define GL_RGBA16F_EXT                                          0x881A /* reuse tokens from ARB_texture_float */
+#define GL_RGB16F_EXT                                           0x881B
+#define GL_ALPHA16F_EXT                                         0x881C
+#define GL_LUMINANCE16F_EXT                                     0x881E
+#define GL_LUMINANCE_ALPHA16F_EXT                               0x881F
+/* EXT_texture_type_2_10_10_10_REV dependent internal formats */
+#define GL_RGB10_A2_EXT                                         0x8059  /* reuse tokens from EXT_texture */
+#define GL_RGB10_EXT                                            0x8052
+/* EXT_texture_format_BGRA8888 dependent internal formats */
+#define GL_BGRA8_EXT                                            0x93A1
+#endif
+
+/*------------------------------------------------------------------------*
+ * DMP extension tokens
+ *------------------------------------------------------------------------*/
+
+/* GL_DMP_shader_binary */
+#ifndef GL_DMP_shader_binary
+#define GL_SHADER_BINARY_DMP                                    0x9250
 #endif
 
 /*------------------------------------------------------------------------*
@@ -256,16 +409,17 @@ typedef void* GLeglImageOES;
 #define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
 #endif
 
+/* GL_IMG_multisampled_render_to_texture */
+#ifndef GL_IMG_multisampled_render_to_texture
+#define GL_RENDERBUFFER_SAMPLES_IMG                             0x9133
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG               0x9134
+#define GL_MAX_SAMPLES_IMG                                      0x9135
+#define GL_TEXTURE_SAMPLES_IMG                                  0x9136
+#endif
+
 /*------------------------------------------------------------------------*
  * NV extension tokens
  *------------------------------------------------------------------------*/
-
-/* GL_NV_fence */
-#ifndef GL_NV_fence
-#define GL_ALL_COMPLETED_NV                                     0x84F2
-#define GL_FENCE_STATUS_NV                                      0x84F3
-#define GL_FENCE_CONDITION_NV                                   0x84F4
-#endif
 
 /* GL_NV_coverage_sample */
 #ifndef GL_NV_coverage_sample
@@ -285,9 +439,89 @@ typedef void* GLeglImageOES;
 #define GL_DEPTH_COMPONENT16_NONLINEAR_NV                       0x8E2C
 #endif
 
+/* GL_NV_draw_buffers */
+#ifndef GL_NV_draw_buffers
+#define GL_MAX_DRAW_BUFFERS_NV                                  0x8824
+#define GL_DRAW_BUFFER0_NV                                      0x8825
+#define GL_DRAW_BUFFER1_NV                                      0x8826
+#define GL_DRAW_BUFFER2_NV                                      0x8827
+#define GL_DRAW_BUFFER3_NV                                      0x8828
+#define GL_DRAW_BUFFER4_NV                                      0x8829
+#define GL_DRAW_BUFFER5_NV                                      0x882A
+#define GL_DRAW_BUFFER6_NV                                      0x882B
+#define GL_DRAW_BUFFER7_NV                                      0x882C
+#define GL_DRAW_BUFFER8_NV                                      0x882D
+#define GL_DRAW_BUFFER9_NV                                      0x882E
+#define GL_DRAW_BUFFER10_NV                                     0x882F
+#define GL_DRAW_BUFFER11_NV                                     0x8830
+#define GL_DRAW_BUFFER12_NV                                     0x8831
+#define GL_DRAW_BUFFER13_NV                                     0x8832
+#define GL_DRAW_BUFFER14_NV                                     0x8833
+#define GL_DRAW_BUFFER15_NV                                     0x8834
+#define GL_COLOR_ATTACHMENT0_NV                                 0x8CE0
+#define GL_COLOR_ATTACHMENT1_NV                                 0x8CE1
+#define GL_COLOR_ATTACHMENT2_NV                                 0x8CE2
+#define GL_COLOR_ATTACHMENT3_NV                                 0x8CE3
+#define GL_COLOR_ATTACHMENT4_NV                                 0x8CE4
+#define GL_COLOR_ATTACHMENT5_NV                                 0x8CE5
+#define GL_COLOR_ATTACHMENT6_NV                                 0x8CE6
+#define GL_COLOR_ATTACHMENT7_NV                                 0x8CE7
+#define GL_COLOR_ATTACHMENT8_NV                                 0x8CE8
+#define GL_COLOR_ATTACHMENT9_NV                                 0x8CE9
+#define GL_COLOR_ATTACHMENT10_NV                                0x8CEA
+#define GL_COLOR_ATTACHMENT11_NV                                0x8CEB
+#define GL_COLOR_ATTACHMENT12_NV                                0x8CEC
+#define GL_COLOR_ATTACHMENT13_NV                                0x8CED
+#define GL_COLOR_ATTACHMENT14_NV                                0x8CEE
+#define GL_COLOR_ATTACHMENT15_NV                                0x8CEF
+#endif
+
+/* GL_NV_fbo_color_attachments */
+#ifndef GL_NV_fbo_color_attachments
+#define GL_MAX_COLOR_ATTACHMENTS_NV                             0x8CDF
+/* GL_COLOR_ATTACHMENT{0-15}_NV defined in GL_NV_draw_buffers already. */
+#endif
+
+/* GL_NV_fence */
+#ifndef GL_NV_fence
+#define GL_ALL_COMPLETED_NV                                     0x84F2
+#define GL_FENCE_STATUS_NV                                      0x84F3
+#define GL_FENCE_CONDITION_NV                                   0x84F4
+#endif
+
+/* GL_NV_read_buffer */
+#ifndef GL_NV_read_buffer
+#define GL_READ_BUFFER_NV                                       0x0C02
+#endif
+
+/* GL_NV_read_buffer_front */
+/* No new tokens introduced by this extension. */
+
+/* GL_NV_read_depth */
+/* No new tokens introduced by this extension. */
+
+/* GL_NV_read_depth_stencil */
+/* No new tokens introduced by this extension. */
+
+/* GL_NV_read_stencil */
+/* No new tokens introduced by this extension. */
+
+/* GL_NV_texture_compression_s3tc_update */
+/* No new tokens introduced by this extension. */
+
+/* GL_NV_texture_npot_2D_mipmap */
+/* No new tokens introduced by this extension. */
+
 /*------------------------------------------------------------------------*
  * QCOM extension tokens
  *------------------------------------------------------------------------*/
+
+/* GL_QCOM_alpha_test */
+#ifndef GL_QCOM_alpha_test
+#define GL_ALPHA_TEST_QCOM                                      0x0BC0
+#define GL_ALPHA_TEST_FUNC_QCOM                                 0x0BC1
+#define GL_ALPHA_TEST_REF_QCOM                                  0x0BC2
+#endif
 
 /* GL_QCOM_driver_control */
 /* No new tokens introduced by this extension. */
@@ -357,22 +591,12 @@ typedef void* GLeglImageOES;
 #endif
 
 /*------------------------------------------------------------------------*
- * ANGLE extension tokens
+ * VIV extension tokens
  *------------------------------------------------------------------------*/
 
-/* GL_ANGLE_framebuffer_blit */
-#ifndef GL_ANGLE_framebuffer_blit
-#define GL_READ_FRAMEBUFFER_ANGLE         0x8CA8
-#define GL_DRAW_FRAMEBUFFER_ANGLE         0x8CA9
-#define GL_DRAW_FRAMEBUFFER_BINDING_ANGLE 0x8CA6 // alias GL_FRAMEBUFFER_BINDING
-#define GL_READ_FRAMEBUFFER_BINDING_ANGLE 0x8CAA
-#endif
-
-/* GL_ANGLE_framebuffer_multisample */
-#ifndef GL_ANGLE_framebuffer_multisample
-#define GL_RENDERBUFFER_SAMPLES_ANGLE                   0x8CAB
-#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_ANGLE     0x8D56
-#define GL_MAX_SAMPLES_ANGLE                            0x8D57
+/* GL_VIV_shader_binary */
+#ifndef GL_VIV_shader_binary
+#define GL_SHADER_BINARY_VIV                                    0x8FC4
 #endif
 
 /*------------------------------------------------------------------------*
@@ -417,6 +641,12 @@ GL_APICALL void GL_APIENTRY glEGLImageTargetRenderbufferStorageOES (GLenum targe
 #endif
 typedef void (GL_APIENTRYP PFNGLEGLIMAGETARGETTEXTURE2DOESPROC) (GLenum target, GLeglImageOES image);
 typedef void (GL_APIENTRYP PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC) (GLenum target, GLeglImageOES image);
+#endif
+
+/* GL_OES_EGL_image_external */
+#ifndef GL_OES_EGL_image_external
+#define GL_OES_EGL_image_external 1
+/* glEGLImageTargetTexture2DOES defined in GL_OES_EGL_image already. */
 #endif
 
 /* GL_OES_element_index_uint */
@@ -601,6 +831,101 @@ typedef void (GL_APIENTRYP PFNGLGETPERFMONITORCOUNTERDATAAMDPROC) (GLuint monito
 #endif
 
 /*------------------------------------------------------------------------*
+ * ANGLE extension functions
+ *------------------------------------------------------------------------*/
+
+/* GL_ANGLE_framebuffer_blit */
+#ifndef GL_ANGLE_framebuffer_blit
+#define GL_ANGLE_framebuffer_blit 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glBlitFramebufferANGLE (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+#endif
+typedef void (GL_APIENTRYP PFNGLBLITFRAMEBUFFERANGLEPROC) (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+#endif
+
+/* GL_ANGLE_framebuffer_multisample */
+#ifndef GL_ANGLE_framebuffer_multisample
+#define GL_ANGLE_framebuffer_multisample 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glRenderbufferStorageMultisampleANGLE (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+#endif
+typedef void (GL_APIENTRYP PFNGLRENDERBUFFERSTORAGEMULTISAMPLEANGLEPROC) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+#endif
+
+/* GL_ANGLE_pack_reverse_row_order */
+#ifndef GL_ANGLE_pack_reverse_row_order
+#define GL_ANGLE_pack_reverse_row_order 1
+#endif
+
+/* GL_ANGLE_texture_compression_dxt3 */
+#ifndef GL_ANGLE_texture_compression_dxt3
+#define GL_ANGLE_texture_compression_dxt3 1
+#endif
+
+/* GL_ANGLE_texture_compression_dxt5 */
+#ifndef GL_ANGLE_texture_compression_dxt5
+#define GL_ANGLE_texture_compression_dxt5 1
+#endif
+
+/* GL_ANGLE_translated_shader_source */
+#ifndef GL_ANGLE_translated_shader_source
+#define GL_ANGLE_translated_shader_source 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glGetTranslatedShaderSourceANGLE (GLuint shader, GLsizei bufsize, GLsizei* length, GLchar* source);
+#endif
+typedef void (GL_APIENTRYP PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC) (GLuint shader, GLsizei bufsize, GLsizei* length, GLchar* source);
+#endif
+
+/* GL_ANGLE_texture_usage */
+#ifndef GL_ANGLE_texture_usage
+#define GL_ANGLE_texture_usage 1
+#endif
+
+/*------------------------------------------------------------------------*
+ * APPLE extension functions
+ *------------------------------------------------------------------------*/
+
+/* GL_APPLE_rgb_422 */
+#ifndef GL_APPLE_rgb_422
+#define GL_APPLE_rgb_422 1
+#endif
+
+/* GL_APPLE_framebuffer_multisample */
+#ifndef GL_APPLE_framebuffer_multisample
+#define GL_APPLE_framebuffer_multisample 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glRenderbufferStorageMultisampleAPPLE (GLenum, GLsizei, GLenum, GLsizei, GLsizei);
+GL_APICALL void GL_APIENTRY glResolveMultisampleFramebufferAPPLE (void);
+#endif /* GL_GLEXT_PROTOTYPES */
+typedef void (GL_APIENTRYP PFNGLRENDERBUFFERSTORAGEMULTISAMPLEAPPLEPROC) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+typedef void (GL_APIENTRYP PFNGLRESOLVEMULTISAMPLEFRAMEBUFFERAPPLEPROC) (void);
+#endif
+
+/* GL_APPLE_texture_format_BGRA8888 */
+#ifndef GL_APPLE_texture_format_BGRA8888
+#define GL_APPLE_texture_format_BGRA8888 1
+#endif
+
+/* GL_APPLE_texture_max_level */
+#ifndef GL_APPLE_texture_max_level
+#define GL_APPLE_texture_max_level 1
+#endif
+
+/*------------------------------------------------------------------------*
+ * ARM extension functions
+ *------------------------------------------------------------------------*/
+
+/* GL_ARM_mali_shader_binary */
+#ifndef GL_ARM_mali_shader_binary
+#define GL_ARM_mali_shader_binary 1
+#endif
+
+/* GL_ARM_rgba8 */
+#ifndef GL_ARM_rgba8
+#define GL_ARM_rgba8 1
+#endif
+
+/*------------------------------------------------------------------------*
  * EXT extension functions
  *------------------------------------------------------------------------*/
 
@@ -633,6 +958,11 @@ typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSEXTPROC) (GLenum mode, const GL
 #define GL_EXT_read_format_bgra 1
 #endif
 
+/* GL_EXT_shader_texture_lod */
+#ifndef GL_EXT_shader_texture_lod
+#define GL_EXT_shader_texture_lod 1
+#endif
+
 /* GL_EXT_texture_filter_anisotropic */
 #ifndef GL_EXT_texture_filter_anisotropic
 #define GL_EXT_texture_filter_anisotropic 1
@@ -651,6 +981,44 @@ typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSEXTPROC) (GLenum mode, const GL
 /* GL_EXT_texture_compression_dxt1 */
 #ifndef GL_EXT_texture_compression_dxt1
 #define GL_EXT_texture_compression_dxt1 1
+#endif
+
+/* GL_EXT_unpack_subimage */
+#ifndef GL_EXT_unpack_subimage
+#define GL_EXT_unpack_subimage 1
+#endif
+
+/* GL_EXT_robustness */
+#ifndef GL_EXT_robustness
+#define GL_EXT_robustness 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL GLenum GL_APIENTRY glGetGraphicsResetStatusEXT (void);
+GL_APICALL void   GL_APIENTRY glReadnPixelsEXT (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, GLvoid *data);
+GL_APICALL void   GL_APIENTRY glGetnUniformfvEXT (GLuint program, GLint location, GLsizei bufSize, GLfloat *params);
+GL_APICALL void   GL_APIENTRY glGetnUniformivEXT (GLuint program, GLint location, GLsizei bufSize, GLint *params);
+#endif /* GL_GLEXT_PROTOTYPES */
+typedef GLenum (GL_APIENTRYP PFNGLGETGRAPHICSRESETSTATUSEXTPROC) (void);
+typedef void   (GL_APIENTRYP PFNGLREADNPIXELSEXTPROC) (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, GLvoid *data);
+typedef void   (GL_APIENTRYP PFNGLGETNUNIFORMFVEXTPROC) (GLuint program, GLint location, GLsizei bufSize, GLfloat *params);
+typedef void   (GL_APIENTRYP PFNGLGETNUNIFORMIVEXTPROC) (GLuint program, GLint location, GLsizei bufSize, GLint *params);
+#endif
+
+/* GL_EXT_texture_storage */
+#ifndef GL_EXT_texture_storage
+#define GL_EXT_texture_storage 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY TexStorage2DEXT (GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+#endif /* GL_GLEXT_PROTOTYPES */
+typedef void (GL_APIENTRYP PFNGLTEXSTORAGE2DEXT) (GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+#endif
+
+/*------------------------------------------------------------------------*
+ * DMP extension functions
+ *------------------------------------------------------------------------*/
+
+/* GL_DMP_shader_binary */
+#ifndef GL_DMP_shader_binary
+#define GL_DMP_shader_binary 1
 #endif
 
 /*------------------------------------------------------------------------*
@@ -677,9 +1045,50 @@ typedef void (GL_APIENTRYP PFNGLMULTIDRAWELEMENTSEXTPROC) (GLenum mode, const GL
 #define GL_IMG_texture_compression_pvrtc 1
 #endif
 
+/* GL_IMG_multisampled_render_to_texture */
+#ifndef GL_IMG_multisampled_render_to_texture
+#define GL_IMG_multisampled_render_to_texture 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glRenderbufferStorageMultisampleIMG (GLenum, GLsizei, GLenum, GLsizei, GLsizei);
+GL_APICALL void GL_APIENTRY glFramebufferTexture2DMultisampleIMG (GLenum, GLenum, GLenum, GLuint, GLint, GLsizei);
+#endif
+typedef void (GL_APIENTRYP PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples);
+#endif
+
 /*------------------------------------------------------------------------*
  * NV extension functions
  *------------------------------------------------------------------------*/
+
+/* GL_NV_coverage_sample */
+#ifndef GL_NV_coverage_sample
+#define GL_NV_coverage_sample 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glCoverageMaskNV (GLboolean mask);
+GL_APICALL void GL_APIENTRY glCoverageOperationNV (GLenum operation);
+#endif
+typedef void (GL_APIENTRYP PFNGLCOVERAGEMASKNVPROC) (GLboolean mask);
+typedef void (GL_APIENTRYP PFNGLCOVERAGEOPERATIONNVPROC) (GLenum operation);
+#endif
+
+/* GL_NV_depth_nonlinear */
+#ifndef GL_NV_depth_nonlinear
+#define GL_NV_depth_nonlinear 1
+#endif
+
+/* GL_NV_draw_buffers */
+#ifndef GL_NV_draw_buffers
+#define GL_NV_draw_buffers 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glDrawBuffersNV (GLsizei n, const GLenum *bufs);
+#endif
+typedef void (GL_APIENTRYP PFNGLDRAWBUFFERSNVPROC) (GLsizei n, const GLenum *bufs);
+#endif
+
+/* GL_NV_fbo_color_attachments */
+#ifndef GL_NV_fbo_color_attachments
+#define GL_NV_fbo_color_attachments 1
+#endif
 
 /* GL_NV_fence */
 #ifndef GL_NV_fence
@@ -702,25 +1111,57 @@ typedef void (GL_APIENTRYP PFNGLFINISHFENCENVPROC) (GLuint fence);
 typedef void (GL_APIENTRYP PFNGLSETFENCENVPROC) (GLuint fence, GLenum condition);
 #endif
 
-/* GL_NV_coverage_sample */
-#ifndef GL_NV_coverage_sample
-#define GL_NV_coverage_sample 1
+/* GL_NV_read_buffer */
+#ifndef GL_NV_read_buffer
+#define GL_NV_read_buffer 1
 #ifdef GL_GLEXT_PROTOTYPES
-GL_APICALL void GL_APIENTRY glCoverageMaskNV (GLboolean mask);
-GL_APICALL void GL_APIENTRY glCoverageOperationNV (GLenum operation);
+GL_APICALL void GL_APIENTRY glReadBufferNV (GLenum mode);
 #endif
-typedef void (GL_APIENTRYP PFNGLCOVERAGEMASKNVPROC) (GLboolean mask);
-typedef void (GL_APIENTRYP PFNGLCOVERAGEOPERATIONNVPROC) (GLenum operation);
+typedef void (GL_APIENTRYP PFNGLREADBUFFERNVPROC) (GLenum mode);
 #endif
 
-/* GL_NV_depth_nonlinear */
-#ifndef GL_NV_depth_nonlinear
-#define GL_NV_depth_nonlinear 1
+/* GL_NV_read_buffer_front */
+#ifndef GL_NV_read_buffer_front
+#define GL_NV_read_buffer_front 1
+#endif
+
+/* GL_NV_read_depth */
+#ifndef GL_NV_read_depth
+#define GL_NV_read_depth 1
+#endif
+
+/* GL_NV_read_depth_stencil */
+#ifndef GL_NV_read_depth_stencil
+#define GL_NV_read_depth_stencil 1
+#endif
+
+/* GL_NV_read_stencil */
+#ifndef GL_NV_read_stencil
+#define GL_NV_read_stencil 1
+#endif
+
+/* GL_NV_texture_compression_s3tc_update */
+#ifndef GL_NV_texture_compression_s3tc_update
+#define GL_NV_texture_compression_s3tc_update 1
+#endif
+
+/* GL_NV_texture_npot_2D_mipmap */
+#ifndef GL_NV_texture_npot_2D_mipmap
+#define GL_NV_texture_npot_2D_mipmap 1
 #endif
 
 /*------------------------------------------------------------------------*
  * QCOM extension functions
  *------------------------------------------------------------------------*/
+
+/* GL_QCOM_alpha_test */
+#ifndef GL_QCOM_alpha_test
+#define GL_QCOM_alpha_test 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glAlphaFuncQCOM (GLenum func, GLclampf ref);
+#endif
+typedef void (GL_APIENTRYP PFNGLALPHAFUNCQCOMPROC) (GLenum func, GLclampf ref);
+#endif
 
 /* GL_QCOM_driver_control */
 #ifndef GL_QCOM_driver_control
@@ -797,31 +1238,12 @@ typedef void (GL_APIENTRYP PFNGLENDTILINGQCOMPROC) (GLbitfield preserveMask);
 #endif
 
 /*------------------------------------------------------------------------*
- * ANGLE extension functions
+ * VIV extension tokens
  *------------------------------------------------------------------------*/
 
-/* GL_ANGLE_framebuffer_blit */
-#ifndef GL_ANGLE_framebuffer_blit
-#define GL_ANGLE_framebuffer_blit 1
-#ifdef GL_GLEXT_PROTOTYPES
-GL_APICALL void GL_APIENTRY glBlitFramebufferANGLE (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
-                                                    GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
-                                                    GLbitfield mask, GLenum filter);
-#endif
-typedef void (GL_APIENTRYP PFNGLBLITFRAMEBUFFERANGLEPROC) (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
-                                                           GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
-                                                           GLbitfield mask, GLenum filter);
-#endif
-
-/* GL_ANGLE_framebuffer_multisample */
-#ifndef GL_ANGLE_framebuffer_multisample
-#define GL_ANGLE_framebuffer_multisample 1
-#ifdef GL_GLEXT_PROTOTYPES
-GL_APICALL void GL_APIENTRY glRenderbufferStorageMultisampleANGLE (GLenum target, GLsizei samples, GLenum internalformat, 
-                                                                   GLsizei width, GLsizei height);
-#endif
-typedef void (GL_APIENTRYP PFNGLRENDERBUFFERSTORAGEMULTISAMPLEANGLEPROC) (GLenum target, GLsizei samples, GLenum internalformat,
-                                                                          GLsizei width, GLsizei height);
+/* GL_VIV_shader_binary */
+#ifndef GL_VIV_shader_binary
+#define GL_VIV_shader_binary 1
 #endif
 
 #ifdef __cplusplus

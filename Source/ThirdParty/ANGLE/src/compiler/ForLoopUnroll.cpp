@@ -6,6 +6,39 @@
 
 #include "compiler/ForLoopUnroll.h"
 
+namespace {
+
+class IntegerForLoopUnrollMarker : public TIntermTraverser {
+public:
+
+    virtual bool visitLoop(Visit, TIntermLoop* node)
+    {
+        // This is called after ValidateLimitations pass, so all the ASSERT
+        // should never fail.
+        // See ValidateLimitations::validateForLoopInit().
+        ASSERT(node);
+        ASSERT(node->getType() == ELoopFor);
+        ASSERT(node->getInit());
+        TIntermAggregate* decl = node->getInit()->getAsAggregate();
+        ASSERT(decl && decl->getOp() == EOpDeclaration);
+        TIntermSequence& declSeq = decl->getSequence();
+        ASSERT(declSeq.size() == 1);
+        TIntermBinary* declInit = declSeq[0]->getAsBinaryNode();
+        ASSERT(declInit && declInit->getOp() == EOpInitialize);
+        ASSERT(declInit->getLeft());
+        TIntermSymbol* symbol = declInit->getLeft()->getAsSymbolNode();
+        ASSERT(symbol);
+        TBasicType type = symbol->getBasicType();
+        ASSERT(type == EbtInt || type == EbtFloat);
+        if (type == EbtInt)
+            node->setUnrollFlag(true);
+        return true;
+    }
+
+};
+
+}  // anonymous namepsace
+
 void ForLoopUnroll::FillLoopIndexInfo(TIntermLoop* node, TLoopIndexInfo& info)
 {
     ASSERT(node->getType() == ELoopFor);
@@ -107,6 +140,16 @@ void ForLoopUnroll::Push(TLoopIndexInfo& info)
 void ForLoopUnroll::Pop()
 {
     mLoopIndexStack.pop_back();
+}
+
+// static
+void ForLoopUnroll::MarkForLoopsWithIntegerIndicesForUnrolling(
+    TIntermNode* root)
+{
+    ASSERT(root);
+
+    IntegerForLoopUnrollMarker marker;
+    root->traverse(&marker);
 }
 
 int ForLoopUnroll::getLoopIncrement(TIntermLoop* node)

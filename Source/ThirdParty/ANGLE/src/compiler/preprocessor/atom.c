@@ -335,7 +335,7 @@ static int GrowAtomTable(AtomTable *atable, int size)
             if (newmap)
                 atable->amap = newmap;
             if (newrev)
-                atable->amap = newrev;
+                atable->arev = newrev;
             return -1;
         }
         memset(&newmap[atable->size], 0, (size - atable->size) * sizeof(int));

@@ -196,7 +196,6 @@ bool TParseContext::parseMatrixFields(const TString& compString, int matSize, TM
 //
 void TParseContext::recover()
 {
-    recoveredFromError = true;
 }
 
 //
@@ -449,16 +448,16 @@ bool TParseContext::reservedErrorCheck(int line, const TString& identifier)
 {
     static const char* reservedErrMsg = "reserved built-in name";
     if (!symbolTable.atBuiltInLevel()) {
-        if (identifier.substr(0, 3) == TString("gl_")) {
+        if (identifier.compare(0, 3, "gl_") == 0) {
             error(line, reservedErrMsg, "gl_", "");
             return true;
         }
         if (shaderSpec == SH_WEBGL_SPEC) {
-            if (identifier.substr(0, 6) == TString("webgl_")) {
+            if (identifier.compare(0, 6, "webgl_") == 0) {
                 error(line, reservedErrMsg, "webgl_", "");
                 return true;
             }
-            if (identifier.substr(0, 7) == TString("_webgl_")) {
+            if (identifier.compare(0, 7, "_webgl_") == 0) {
                 error(line, reservedErrMsg, "_webgl_", "");
                 return true;
             }
@@ -554,7 +553,7 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
         return true;
     }
 
-    if (!type->isMatrix()) {
+    if (!type->isMatrix() || !matrixInMatrix) {
         if ((op != EOpConstructStruct && size != 1 && size < type->getObjectSize()) ||
             (op == EOpConstructStruct && size < type->getObjectSize())) {
             error(line, "not enough data provided for construction", "constructor", "");
@@ -930,7 +929,8 @@ bool TParseContext::extensionErrorCheck(int line, const TString& extension)
         error(line, "extension", extension.c_str(), "is not supported");
         return true;
     }
-    if (iter->second == EBhDisable) {
+    // In GLSL ES, an extension's default behavior is "disable".
+    if (iter->second == EBhDisable || iter->second == EBhUndefined) {
         error(line, "extension", extension.c_str(), "is disabled");
         return true;
     }
@@ -941,6 +941,12 @@ bool TParseContext::extensionErrorCheck(int line, const TString& extension)
     }
 
     return false;
+}
+
+bool TParseContext::supportsExtension(const char* extension)
+{
+    TExtensionBehavior::const_iterator iter = extensionBehavior.find(extension);
+    return (iter != extensionBehavior.end());
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -1417,6 +1423,53 @@ TIntermTyped* TParseContext::addConstStruct(TString& identifier, TIntermTyped* n
     }
 
     return typedNode;
+}
+
+bool TParseContext::enterStructDeclaration(int line, const TString& identifier)
+{
+    ++structNestingLevel;
+
+    // Embedded structure definitions are not supported per GLSL ES spec.
+    // They aren't allowed in GLSL either, but we need to detect this here
+    // so we don't rely on the GLSL compiler to catch it.
+    if (structNestingLevel > 1) {
+        error(line, "", "Embedded struct definitions are not allowed", "");
+        return true;
+    }
+
+    return false;
+}
+
+void TParseContext::exitStructDeclaration()
+{
+    --structNestingLevel;
+}
+
+namespace {
+
+const int kWebGLMaxStructNesting = 4;
+
+}  // namespace
+
+bool TParseContext::structNestingErrorCheck(TSourceLoc line, const TType& fieldType)
+{
+    if (shaderSpec != SH_WEBGL_SPEC) {
+        return false;
+    }
+
+    if (fieldType.getBasicType() != EbtStruct) {
+        return false;
+    }
+
+    // We're already inside a structure definition at this point, so add
+    // one to the field's struct nesting.
+    if (1 + fieldType.getDeepestStructNesting() > kWebGLMaxStructNesting) {
+        error(line, "", "", "Reference of struct type %s exceeds maximum struct nesting of %d",
+              fieldType.getTypeName().c_str(), kWebGLMaxStructNesting);
+        return true;
+    }
+
+    return false;
 }
 
 //

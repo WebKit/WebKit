@@ -157,28 +157,50 @@ int Shader::getSourceLength() const
     }
 }
 
-void Shader::getSource(GLsizei bufSize, GLsizei *length, char *source)
+int Shader::getTranslatedSourceLength() const
+{
+    if (!mHlsl)
+    {
+        return 0;
+    }
+    else
+    {
+       return strlen(mHlsl) + 1;
+    }
+}
+
+void Shader::getSourceImpl(char *source, GLsizei bufSize, GLsizei *length, char *buffer)
 {
     int index = 0;
 
-    if (mSource)
+    if (source)
     {
-        while (index < bufSize - 1 && index < (int)strlen(mSource))
+        while (index < bufSize - 1 && index < (int)strlen(source))
         {
-            source[index] = mSource[index];
+            buffer[index] = source[index];
             index++;
         }
     }
 
     if (bufSize)
     {
-        source[index] = '\0';
+        buffer[index] = '\0';
     }
 
     if (length)
     {
         *length = index;
     }
+}
+
+void Shader::getSource(GLsizei bufSize, GLsizei *length, char *buffer)
+{
+    getSourceImpl(mSource, bufSize, length, buffer);
+}
+
+void Shader::getTranslatedSource(GLsizei bufSize, GLsizei *length, char *buffer)
+{
+    getSourceImpl(mHlsl, bufSize, length, buffer);
 }
 
 bool Shader::isCompiled()

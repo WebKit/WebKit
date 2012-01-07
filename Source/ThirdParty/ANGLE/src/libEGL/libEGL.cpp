@@ -99,18 +99,7 @@ EGLDisplay __stdcall eglGetDisplay(EGLNativeDisplayType display_id)
 
     try
     {
-        // FIXME: Return the same EGLDisplay handle when display_id already created a display
-
-        if (display_id == EGL_DEFAULT_DISPLAY)
-        {
-            return new egl::Display((HDC)NULL);
-        }
-        else
-        {
-            // FIXME: Check if display_id is a valid display device context
-
-            return new egl::Display((HDC)display_id);
-        }
+        return egl::Display::getDisplay(display_id);
     }
     catch(std::bad_alloc&)
     {
@@ -499,6 +488,9 @@ EGLBoolean __stdcall eglQuerySurface(EGLDisplay dpy, EGLSurface surface, EGLint 
           case EGL_WIDTH:
             *value = eglSurface->getWidth();
             break;
+          case EGL_POST_SUB_BUFFER_SUPPORTED_NV:
+            *value = eglSurface->isPostSubBufferSupported();
+            break;
           default:
             return error(EGL_BAD_ATTRIBUTE, EGL_FALSE);
         }
@@ -726,7 +718,10 @@ EGLBoolean __stdcall eglBindTexImage(EGLDisplay dpy, EGLSurface surface, EGLint 
             return error(EGL_BAD_MATCH, EGL_FALSE);
         }
 
-        glBindTexImage(eglSurface);
+        if (!glBindTexImage(eglSurface))
+        {
+            return error(EGL_BAD_MATCH, EGL_FALSE);
+        }
 
         return success(EGL_TRUE);
     }
@@ -825,16 +820,34 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
     {
         // Get the requested client version (default is 1) and check it is two.
         EGLint client_version = 1;
+        bool reset_notification = false;
+        bool robust_access = false;
+
         if (attrib_list)
         {
             for (const EGLint* attribute = attrib_list; attribute[0] != EGL_NONE; attribute += 2)
             {
-                if (attribute[0] == EGL_CONTEXT_CLIENT_VERSION)
+                switch (attribute[0])
                 {
+                  case EGL_CONTEXT_CLIENT_VERSION:
                     client_version = attribute[1];
-                }
-                else
-                {
+                    break;
+                  case EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT:
+                    if (attribute[1] == EGL_TRUE)
+                    {
+                        return error(EGL_BAD_CONFIG, EGL_NO_CONTEXT);   // Unimplemented
+                        robust_access = true;
+                    }
+                    else if (attribute[1] != EGL_FALSE)
+                        return error(EGL_BAD_ATTRIBUTE, EGL_NO_CONTEXT);
+                    break;
+                  case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT:
+                    if (attribute[1] == EGL_LOSE_CONTEXT_ON_RESET_EXT)
+                        reset_notification = true;
+                    else if (attribute[1] != EGL_NO_RESET_NOTIFICATION_EXT)
+                        return error(EGL_BAD_ATTRIBUTE, EGL_NO_CONTEXT);
+                    break;
+                  default:
                     return error(EGL_BAD_ATTRIBUTE, EGL_NO_CONTEXT);
                 }
             }
@@ -845,6 +858,11 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
             return error(EGL_BAD_CONFIG, EGL_NO_CONTEXT);
         }
 
+        if (share_context && static_cast<gl::Context*>(share_context)->isResetNotificationEnabled() != reset_notification)
+        {
+            return error(EGL_BAD_MATCH, EGL_NO_CONTEXT);
+        }
+
         egl::Display *display = static_cast<egl::Display*>(dpy);
 
         if (!validateConfig(display, config))
@@ -852,9 +870,12 @@ EGLContext __stdcall eglCreateContext(EGLDisplay dpy, EGLConfig config, EGLConte
             return EGL_NO_CONTEXT;
         }
 
-        EGLContext context = display->createContext(config, static_cast<gl::Context*>(share_context));
+        EGLContext context = display->createContext(config, static_cast<gl::Context*>(share_context), reset_notification, robust_access);
 
-        return success(context);
+        if (context)
+            return success(context);
+        else
+            return error(EGL_CONTEXT_LOST, EGL_NO_CONTEXT);
     }
     catch(std::bad_alloc&)
     {
@@ -906,7 +927,13 @@ EGLBoolean __stdcall eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface 
         gl::Context *context = static_cast<gl::Context*>(ctx);
         IDirect3DDevice9 *device = display->getDevice();
 
-        if (!device || display->isDeviceLost())
+        if (!device || display->testDeviceLost())
+        {
+            display->notifyDeviceLost();
+            return EGL_FALSE;
+        }
+
+        if (display->isDeviceLost())
         {
             return error(EGL_CONTEXT_LOST, EGL_FALSE);
         }
@@ -1088,6 +1115,11 @@ EGLBoolean __stdcall eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
             return EGL_FALSE;
         }
 
+        if (display->isDeviceLost())
+        {
+            return error(EGL_CONTEXT_LOST, EGL_FALSE);
+        }
+
         if (surface == EGL_NO_SURFACE)
         {
             return error(EGL_BAD_SURFACE, EGL_FALSE);
@@ -1120,9 +1152,51 @@ EGLBoolean __stdcall eglCopyBuffers(EGLDisplay dpy, EGLSurface surface, EGLNativ
             return EGL_FALSE;
         }
 
+        if (display->isDeviceLost())
+        {
+            return error(EGL_CONTEXT_LOST, EGL_FALSE);
+        }
+
         UNIMPLEMENTED();   // FIXME
 
         return success(0);
+    }
+    catch(std::bad_alloc&)
+    {
+        return error(EGL_BAD_ALLOC, EGL_FALSE);
+    }
+
+    return EGL_FALSE;
+}
+
+EGLBoolean __stdcall eglPostSubBufferNV(EGLDisplay dpy, EGLSurface surface, EGLint x, EGLint y, EGLint width, EGLint height)
+{
+    EVENT("(EGLDisplay dpy = 0x%0.8p, EGLSurface surface = 0x%0.8p, EGLint x = %d, EGLint y = %d, EGLint width = %d, EGLint height = %d)", dpy, surface, x, y, width, height);
+
+    try
+    {
+        egl::Display *display = static_cast<egl::Display*>(dpy);
+        egl::Surface *eglSurface = static_cast<egl::Surface*>(surface);
+
+        if (!validateSurface(display, eglSurface))
+        {
+            return EGL_FALSE;
+        }
+
+        if (display->isDeviceLost())
+        {
+            return error(EGL_CONTEXT_LOST, EGL_FALSE);
+        }
+
+        if (surface == EGL_NO_SURFACE)
+        {
+            return error(EGL_BAD_SURFACE, EGL_FALSE);
+        }
+
+        if (eglSurface->postSubBuffer(x, y, width, height))
+        {
+            return success(EGL_TRUE);
+        }
     }
     catch(std::bad_alloc&)
     {
@@ -1147,6 +1221,7 @@ __eglMustCastToProperFunctionPointerType __stdcall eglGetProcAddress(const char 
         static const Extension eglExtensions[] =
         {
             {"eglQuerySurfacePointerANGLE", (__eglMustCastToProperFunctionPointerType)eglQuerySurfacePointerANGLE},
+            {"eglPostSubBufferNV", (__eglMustCastToProperFunctionPointerType)eglPostSubBufferNV},
             {"", NULL},
         };
 

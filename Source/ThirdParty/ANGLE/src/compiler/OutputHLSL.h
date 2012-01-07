@@ -31,7 +31,8 @@ class OutputHLSL : public TIntermTraverser
     static TString qualifierString(TQualifier qualifier);
     static TString arrayString(const TType &type);
     static TString initializer(const TType &type);
-    static TString decorate(const TString &string);   // Prepend an underscore to avoid naming clashes
+    static TString decorate(const TString &string);                      // Prepends an underscore to avoid naming clashes
+    static TString decorateUniform(const TString &string, bool array);
 
   protected:
     void header();
@@ -90,9 +91,12 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesPointSize;
     bool mUsesXor;
     bool mUsesMod1;
-    bool mUsesMod2;
-    bool mUsesMod3;
-    bool mUsesMod4;
+    bool mUsesMod2v;
+    bool mUsesMod2f;
+    bool mUsesMod3v;
+    bool mUsesMod3f;
+    bool mUsesMod4v;
+    bool mUsesMod4f;
     bool mUsesFaceforward1;
     bool mUsesFaceforward2;
     bool mUsesFaceforward3;

@@ -45,9 +45,12 @@ OutputHLSL::OutputHLSL(TParseContext &context) : TIntermTraverser(true, true, tr
     mUsesPointSize = false;
     mUsesXor = false;
     mUsesMod1 = false;
-    mUsesMod2 = false;
-    mUsesMod3 = false;
-    mUsesMod4 = false;
+    mUsesMod2v = false;
+    mUsesMod2f = false;
+    mUsesMod3v = false;
+    mUsesMod3f = false;
+    mUsesMod4v = false;
+    mUsesMod4f = false;
     mUsesFaceforward1 = false;
     mUsesFaceforward2 = false;
     mUsesFaceforward3 = false;
@@ -136,7 +139,7 @@ void OutputHLSL::header()
                 {
                     if (mReferencedUniforms.find(name.c_str()) != mReferencedUniforms.end())
                     {
-                        uniforms += "uniform " + typeString(type) + " " + decorate(name) + arrayString(type) + ";\n";
+                        uniforms += "uniform " + typeString(type) + " " + decorateUniform(name, type.isArray()) + arrayString(type) + ";\n";
                     }
                 }
                 else if (qualifier == EvqVaryingIn || qualifier == EvqInvariantVaryingIn)
@@ -185,7 +188,7 @@ void OutputHLSL::header()
 
         if (mUsesFragCoord)
         {
-            out << "uniform float4 dx_Viewport;\n"
+            out << "uniform float4 dx_Coord;\n"
                    "uniform float2 dx_Depth;\n";
         }
 
@@ -300,7 +303,7 @@ void OutputHLSL::header()
                 {
                     if (mReferencedUniforms.find(name.c_str()) != mReferencedUniforms.end())
                     {
-                        uniforms += "uniform " + typeString(type) + " " + decorate(name) + arrayString(type) + ";\n";
+                        uniforms += "uniform " + typeString(type) + " " + decorateUniform(name, type.isArray()) + arrayString(type) + ";\n";
                     }
                 }
                 else if (qualifier == EvqAttribute)
@@ -479,8 +482,17 @@ void OutputHLSL::header()
                "}\n"
                "\n";
     }
-    
-    if (mUsesMod2)
+
+    if (mUsesMod2v)
+    {
+        out << "float2 mod(float2 x, float2 y)\n"
+               "{\n"
+               "    return x - y * floor(x / y);\n"
+               "}\n"
+               "\n";
+    }
+
+    if (mUsesMod2f)
     {
         out << "float2 mod(float2 x, float y)\n"
                "{\n"
@@ -489,7 +501,16 @@ void OutputHLSL::header()
                "\n";
     }
     
-    if (mUsesMod3)
+    if (mUsesMod3v)
+    {
+        out << "float3 mod(float3 x, float3 y)\n"
+               "{\n"
+               "    return x - y * floor(x / y);\n"
+               "}\n"
+               "\n";
+    }
+
+    if (mUsesMod3f)
     {
         out << "float3 mod(float3 x, float y)\n"
                "{\n"
@@ -498,7 +519,16 @@ void OutputHLSL::header()
                "\n";
     }
 
-    if (mUsesMod4)
+    if (mUsesMod4v)
+    {
+        out << "float4 mod(float4 x, float4 y)\n"
+               "{\n"
+               "    return x - y * floor(x / y);\n"
+               "}\n"
+               "\n";
+    }
+
+    if (mUsesMod4f)
     {
         out << "float4 mod(float4 x, float y)\n"
                "{\n"
@@ -729,17 +759,22 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         if (qualifier == EvqUniform)
         {
             mReferencedUniforms.insert(name.c_str());
+            out << decorateUniform(name, node->isArray());
         }
         else if (qualifier == EvqAttribute)
         {
             mReferencedAttributes.insert(name.c_str());
+            out << decorate(name);
         }
         else if (qualifier == EvqVaryingOut || qualifier == EvqInvariantVaryingOut || qualifier == EvqVaryingIn || qualifier == EvqInvariantVaryingIn)
         {
             mReferencedVaryings.insert(name.c_str());
+            out << decorate(name);
         }
-
-        out << decorate(name);
+        else
+        {
+            out << decorate(name);
+        }
     }
 }
 
@@ -1442,12 +1477,17 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
       case EOpVectorNotEqual:   outputTriplet(visit, "(", " != ", ")");                break;
       case EOpMod:
         {
-            switch (node->getSequence()[0]->getAsTyped()->getNominalSize())   // Number of components in the first argument
+            // We need to look at the number of components in both arguments
+            switch (node->getSequence()[0]->getAsTyped()->getNominalSize() * 10
+                     + node->getSequence()[1]->getAsTyped()->getNominalSize())
             {
-              case 1: mUsesMod1 = true; break;
-              case 2: mUsesMod2 = true; break;
-              case 3: mUsesMod3 = true; break;
-              case 4: mUsesMod4 = true; break;
+              case 11: mUsesMod1 = true; break;
+              case 22: mUsesMod2v = true; break;
+              case 21: mUsesMod2f = true; break;
+              case 33: mUsesMod3v = true; break;
+              case 31: mUsesMod3f = true; break;
+              case 44: mUsesMod4v = true; break;
+              case 41: mUsesMod4f = true; break;
               default: UNREACHABLE();
             }
 
@@ -1498,7 +1538,7 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
 
     if (node->usesTernaryOperator())
     {
-        out << "t" << mUnfoldSelect->getTemporaryIndex();
+        out << "s" << mUnfoldSelect->getNextTemporaryIndex();
     }
     else  // if/else statement
     {
@@ -1562,21 +1602,6 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
     }
     else
     {
-        if (node->getInit())
-        {
-            mUnfoldSelect->traverse(node->getInit());
-        }
-        
-        if (node->getCondition())
-        {
-            mUnfoldSelect->traverse(node->getCondition());
-        }
-        
-        if (node->getExpression())
-        {
-            mUnfoldSelect->traverse(node->getExpression());
-        }
-
         out << "for(";
         
         if (node->getInit())
@@ -1610,7 +1635,7 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
     }
 
     outputLineDirective(node->getLine());
-    out << "}\n";
+    out << ";}\n";
 
     if (node->getType() == ELoopDoWhile)
     {
@@ -1844,7 +1869,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
                 }
 
                 outputLineDirective(node->getLine());
-                out << "}\n";
+                out << ";}\n";
 
                 initial += 255 * increment;
                 iterations -= 255;
@@ -2045,14 +2070,7 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
     typedef std::vector<TType> ParameterArray;
     ParameterArray ctorParameters;
 
-    if (parameters)
-    {
-        for (TIntermSequence::const_iterator parameter = parameters->begin(); parameter != parameters->end(); parameter++)
-        {
-            ctorParameters.push_back((*parameter)->getAsTyped()->getType());
-        }
-    }
-    else if (type.getStruct())
+    if (type.getStruct())
     {
         mStructNames.insert(decorate(name));
 
@@ -2079,6 +2097,13 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
         for (unsigned int i = 0; i < fields.size(); i++)
         {
             ctorParameters.push_back(*fields[i].type);
+        }
+    }
+    else if (parameters)
+    {
+        for (TIntermSequence::const_iterator parameter = parameters->begin(); parameter != parameters->end(); parameter++)
+        {
+            ctorParameters.push_back((*parameter)->getAsTyped()->getType());
         }
     }
     else UNREACHABLE();
@@ -2337,13 +2362,21 @@ TString OutputHLSL::structLookup(const TString &typeName)
 
 TString OutputHLSL::decorate(const TString &string)
 {
-    if (string.substr(0, 3) != "gl_" && string.substr(0, 3) != "dx_")
+    if (string.compare(0, 3, "gl_") != 0 && string.compare(0, 3, "dx_") != 0)
     {
         return "_" + string;
     }
-    else
+    
+    return string;
+}
+
+TString OutputHLSL::decorateUniform(const TString &string, bool array)
+{
+    if (array)
     {
-        return string;
+        return "ar_" + string;   // Allows identifying arrays of size 1
     }
+    
+    return decorate(string);
 }
 }

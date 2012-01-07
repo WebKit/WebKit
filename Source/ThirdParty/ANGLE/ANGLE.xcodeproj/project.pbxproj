@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49951C0314B7AAB30060E96E /* length_limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0214B7AAB30060E96E /* length_limits.h */; };
+		49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */; };
+		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
+		49951C0B14B7AAD80060E96E /* DetectRecursion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0714B7AAD80060E96E /* DetectRecursion.cpp */; };
+		49951C0C14B7AAD80060E96E /* DetectRecursion.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0814B7AAD80060E96E /* DetectRecursion.h */; };
 		90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0F912E11DCB002D4255 /* Compiler.cpp */; };
 		90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */; };
 		90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */; };
@@ -63,6 +68,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
+		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
+		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
+		49951C0714B7AAD80060E96E /* DetectRecursion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectRecursion.cpp; sourceTree = "<group>"; };
+		49951C0814B7AAD80060E96E /* DetectRecursion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectRecursion.h; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -372,12 +382,16 @@
 				A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */,
 				FB39D2441200F35A00088E69 /* preprocessor */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
+				49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */,
+				49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */,
 				FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */,
 				FB39D2241200F35A00088E69 /* Common.h */,
 				90D9B0F912E11DCB002D4255 /* Compiler.cpp */,
 				FB39D2251200F35A00088E69 /* ConstantUnion.h */,
 				FB39D2261200F35A00088E69 /* debug.cpp */,
 				FB39D2271200F35A00088E69 /* debug.h */,
+				49951C0714B7AAD80060E96E /* DetectRecursion.cpp */,
+				49951C0814B7AAD80060E96E /* DetectRecursion.h */,
 				90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */,
 				90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */,
 				90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */,
@@ -445,6 +459,7 @@
 				FB39D2481200F35A00088E69 /* cpp.c */,
 				FB39D2491200F35A00088E69 /* cpp.h */,
 				FB39D24A1200F35A00088E69 /* cppstruct.c */,
+				49951C0214B7AAB30060E96E /* length_limits.h */,
 				FB39D24B1200F35A00088E69 /* memory.c */,
 				FB39D24C1200F35A00088E69 /* memory.h */,
 				FB39D24D1200F35A00088E69 /* parser.h */,
@@ -490,6 +505,9 @@
 				A0AABE3513AFE84700F2EBD1 /* OutputGLSLBase.h in Headers */,
 				A0AABE4513AFE94500F2EBD1 /* OutputESSL.h in Headers */,
 				A0AABE4913AFE96100F2EBD1 /* TranslatorESSL.h in Headers */,
+				49951C0314B7AAB30060E96E /* length_limits.h in Headers */,
+				49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */,
+				49951C0C14B7AAD80060E96E /* DetectRecursion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,6 +602,8 @@
 				A0AABE3413AFE84700F2EBD1 /* OutputGLSLBase.cpp in Sources */,
 				A0AABE4413AFE94500F2EBD1 /* OutputESSL.cpp in Sources */,
 				A0AABE4813AFE96100F2EBD1 /* TranslatorESSL.cpp in Sources */,
+				49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */,
+				49951C0B14B7AAD80060E96E /* DetectRecursion.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

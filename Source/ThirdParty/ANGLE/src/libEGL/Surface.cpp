@@ -39,8 +39,8 @@ int getComparableOSVersion()
 }
 }
 
-Surface::Surface(Display *display, const Config *config, HWND window) 
-    : mDisplay(display), mConfig(config), mWindow(window)
+Surface::Surface(Display *display, const Config *config, HWND window, EGLint postSubBufferSupported) 
+    : mDisplay(display), mConfig(config), mWindow(window), mPostSubBufferSupported(postSubBufferSupported)
 {
     mSwapChain = NULL;
     mDepthStencil = NULL;
@@ -61,7 +61,7 @@ Surface::Surface(Display *display, const Config *config, HWND window)
 }
 
 Surface::Surface(Display *display, const Config *config, HANDLE shareHandle, EGLint width, EGLint height, EGLenum textureFormat, EGLenum textureType)
-    : mDisplay(display), mWindow(NULL), mConfig(config), mShareHandle(shareHandle), mWidth(width), mHeight(height)
+    : mDisplay(display), mWindow(NULL), mConfig(config), mShareHandle(shareHandle), mWidth(width), mHeight(height), mPostSubBufferSupported(EGL_FALSE)
 {
     mSwapChain = NULL;
     mDepthStencil = NULL;
@@ -106,7 +106,7 @@ bool Surface::initialize()
 
         result = DwmSetPresentParameters(mWindow, &presentParams);
         if (FAILED(result))
-          ERR("Unable to set present parameters: %081X", result);
+          ERR("Unable to set present parameters: 0x%08X", result);
       }
     }
 
@@ -174,6 +174,13 @@ bool Surface::resetSwapChain(int backbufferWidth, int backbufferHeight)
         return false;
     }
 
+    IDirect3DSurface9* preservedRenderTarget = NULL;
+    if (mPostSubBufferSupported && mRenderTarget)
+    {
+        preservedRenderTarget = mRenderTarget;
+        preservedRenderTarget->AddRef();
+    }
+
     // Evict all non-render target textures to system memory and release all resources
     // before reallocating them to free up as much video memory as possible.
     device->EvictManagedResources();
@@ -191,8 +198,32 @@ bool Surface::resetSwapChain(int backbufferWidth, int backbufferHeight)
     // the current process, disable use of FlipEx.
     DWORD windowPID;
     GetWindowThreadProcessId(mWindow, &windowPID);
-    if(windowPID != GetCurrentProcessId())
-    useFlipEx = false;
+    if (windowPID != GetCurrentProcessId())
+    {
+        useFlipEx = false;
+    }
+
+    // Various hardware does not support D3DSWAPEFFECT_FLIPEX when either the
+    // device format or back buffer format is not 32-bit.
+    HDC deviceContext = GetDC(0);
+    int deviceFormatBits = GetDeviceCaps(deviceContext, BITSPIXEL);
+    ReleaseDC(0, deviceContext);
+    if (mConfig->mBufferSize != 32 || deviceFormatBits != 32)
+    {
+        useFlipEx = false;
+    }
+
+    // D3DSWAPEFFECT_FLIPEX is always VSYNCed
+    if (mSwapInterval == 0)
+    {
+        useFlipEx = false;
+    }
+
+    // D3DSWAPEFFECT_FLIPEX does not preserve the back buffer.
+    if (mPostSubBufferSupported)
+    {
+        useFlipEx = false;
+    }
 
     presentParameters.AutoDepthStencilFormat = mConfig->mDepthStencilFormat;
     // We set BackBufferCount = 1 even when we use D3DSWAPEFFECT_FLIPEX.
@@ -212,7 +243,7 @@ bool Surface::resetSwapChain(int backbufferWidth, int backbufferHeight)
     if(useFlipEx)
       presentParameters.SwapEffect = D3DSWAPEFFECT_FLIPEX;
     else
-      presentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+      presentParameters.SwapEffect = mPostSubBufferSupported ? D3DSWAPEFFECT_COPY : D3DSWAPEFFECT_DISCARD;
     presentParameters.Windowed = TRUE;
     presentParameters.BackBufferWidth = backbufferWidth;
     presentParameters.BackBufferHeight = backbufferHeight;
@@ -232,11 +263,65 @@ bool Surface::resetSwapChain(int backbufferWidth, int backbufferHeight)
 
     if (FAILED(result))
     {
-        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
+        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_INVALIDCALL || result == D3DERR_DEVICELOST);
 
         ERR("Could not create additional swap chains or offscreen surfaces: %08lX", result);
         release();
-        return error(EGL_BAD_ALLOC, false);
+
+        
+        if (preservedRenderTarget)
+        {
+            preservedRenderTarget->Release();
+            preservedRenderTarget = NULL;
+        }
+
+        if(isDeviceLostError(result))
+        {
+            mDisplay->notifyDeviceLost();
+            return false;
+        }
+        else
+        {
+            return error(EGL_BAD_ALLOC, false);
+        }
+    }
+
+    if (mWindow)
+    {
+        mSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &mRenderTarget);
+        if (!preservedRenderTarget)
+        {
+            InvalidateRect(mWindow, NULL, FALSE);
+        }
+    }
+    else
+    {
+        mOffscreenTexture->GetSurfaceLevel(0, &mRenderTarget);
+    }
+
+    if (preservedRenderTarget)
+    {
+        RECT rect =
+        {
+            0, 0,
+            mWidth, mHeight
+        };
+
+        if (rect.right > static_cast<LONG>(presentParameters.BackBufferWidth))
+        {
+            rect.right = presentParameters.BackBufferWidth;
+        }
+
+        if (rect.bottom > static_cast<LONG>(presentParameters.BackBufferHeight))
+        {
+            rect.bottom = presentParameters.BackBufferHeight;
+        }
+
+        mDisplay->endScene();
+        device->StretchRect(preservedRenderTarget, &rect, mRenderTarget, &rect, D3DTEXF_NONE);
+
+        preservedRenderTarget->Release();
+        preservedRenderTarget = NULL;
     }
 
     if (mConfig->mDepthStencilFormat != D3DFMT_UNKNOWN)
@@ -248,18 +333,11 @@ bool Surface::resetSwapChain(int backbufferWidth, int backbufferHeight)
 
     if (FAILED(result))
     {
-        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
+        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_INVALIDCALL);
 
-        ERR("Could not create depthstencil surface for new swap chain: %08lX", result);
+        ERR("Could not create depthstencil surface for new swap chain: 0x%08X", result);
         release();
         return error(EGL_BAD_ALLOC, false);
-    }
-
-    if (mWindow) {
-        mSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &mRenderTarget);
-        InvalidateRect(mWindow, NULL, FALSE);
-    } else {
-        mOffscreenTexture->GetSurfaceLevel(0, &mRenderTarget);
     }
 
     mWidth = presentParameters.BackBufferWidth;
@@ -307,7 +385,7 @@ void Surface::subclassWindow()
     }
 
     SetLastError(0);
-    LONG oldWndProc = SetWindowLong(mWindow, GWL_WNDPROC, reinterpret_cast<LONG>(SurfaceWindowProc));
+    LONG_PTR oldWndProc = SetWindowLongPtr(mWindow, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(SurfaceWindowProc));
     if(oldWndProc == 0 && GetLastError() != ERROR_SUCCESS)
     {
         mWindowSubclassed = false;
@@ -327,7 +405,7 @@ void Surface::unsubclassWindow()
     }
 
     // un-subclass
-    LONG parentWndFunc = reinterpret_cast<LONG>(GetProp(mWindow, kParentWndProc));
+    LONG_PTR parentWndFunc = reinterpret_cast<LONG_PTR>(GetProp(mWindow, kParentWndProc));
 
     // Check the windowproc is still SurfaceWindowProc.
     // If this assert fails, then it is likely the application has subclassed the
@@ -336,8 +414,8 @@ void Surface::unsubclassWindow()
     // EGL context, or to unsubclass before destroying the EGL context.
     if(parentWndFunc)
     {
-        LONG prevWndFunc = SetWindowLong(mWindow, GWL_WNDPROC, parentWndFunc);
-        ASSERT(prevWndFunc == reinterpret_cast<LONG>(SurfaceWindowProc));
+        LONG_PTR prevWndFunc = SetWindowLongPtr(mWindow, GWLP_WNDPROC, parentWndFunc);
+        ASSERT(prevWndFunc == reinterpret_cast<LONG_PTR>(SurfaceWindowProc));
     }
 
     RemoveProp(mWindow, kSurfaceProperty);
@@ -395,6 +473,65 @@ bool Surface::swap()
 
         HRESULT result = mSwapChain->Present(NULL, NULL, NULL, NULL, 0);
 
+        if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY)
+        {
+            return error(EGL_BAD_ALLOC, false);
+        }
+
+        if (isDeviceLostError(result))
+        {
+            mDisplay->notifyDeviceLost();
+            return false;
+        }
+
+        ASSERT(SUCCEEDED(result));
+
+        checkForOutOfDateSwapChain();
+    }
+
+    return true;
+}
+
+bool Surface::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
+{
+    if (x < 0 || y < 0 || width < 0 || height < 0)
+    {
+        return error(EGL_BAD_PARAMETER, false);
+    }
+
+    if (!mPostSubBufferSupported)
+    {
+        // Spec is not clear about how this should be handled.
+        return true;
+    }
+
+    if (mSwapChain)
+    {
+        mDisplay->endScene();
+
+        RECT rect =
+        {
+            x, mHeight - y - height,
+            x + width, mHeight - y
+        };
+
+        if (rect.right > mWidth)
+        {
+            rect.right = mWidth;
+        }
+
+        if (rect.bottom > mHeight)
+        {
+            rect.bottom = mHeight;
+        }
+
+        if (rect.left == rect.right || rect.top == rect.bottom)
+        {
+            return true;
+        }
+
+        HRESULT result = mSwapChain->Present(&rect, &rect, NULL, NULL, 0);
+
         if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_DRIVERINTERNALERROR)
         {
             return error(EGL_BAD_ALLOC, false);
@@ -421,6 +558,11 @@ EGLint Surface::getWidth() const
 EGLint Surface::getHeight() const
 {
     return mHeight;
+}
+
+EGLint Surface::isPostSubBufferSupported() const
+{
+    return mPostSubBufferSupported;
 }
 
 IDirect3DSurface9 *Surface::getRenderTarget()

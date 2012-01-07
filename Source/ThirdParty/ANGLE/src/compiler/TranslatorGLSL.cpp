@@ -31,6 +31,10 @@ void TranslatorGLSL::translate(TIntermNode* root) {
     // Write GLSL version.
     writeVersion(getShaderType(), root, sink);
 
+    // Write emulated built-in functions if needed.
+    getBuiltInFunctionEmulator().OutputEmulatedFunctionDefinition(
+        sink, false);
+
     // Write translated shader.
     TOutputGLSL outputGLSL(sink);
     root->traverse(&outputGLSL);
