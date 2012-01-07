@@ -1,5 +1,25 @@
 2012-01-07  Zan Dobersek  <zandobersek@gmail.com>
 
+        [WK2][GTK] Each test takes roughly half a second to load
+        https://bugs.webkit.org/show_bug.cgi?id=70699
+
+        Reviewed by Martin Robinson.
+
+        Set the XDG_CACHE_HOME environment variable when testing with
+        WebKitTestRunner. This way the testing is started with a non-existing
+        application cache. If the cache exists and is not empty, the emptying
+        and vacuuming that is performed before every test can consume a lot of
+        time.
+
+        This is just a temporary workaround until it becomes possible to set
+        a desired directory to be used as the application cache location through
+        WebKitWebContext.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+
+2012-01-07  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Enable requestAnimationFrame in build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=75773
 
