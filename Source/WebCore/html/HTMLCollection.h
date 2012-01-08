@@ -45,7 +45,7 @@ public:
     void deref() { m_base->deref(); }
 
     unsigned length() const;
-    
+
     virtual Node* item(unsigned index) const;
     virtual Node* nextItem() const;
 

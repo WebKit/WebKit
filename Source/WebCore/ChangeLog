@@ -1,3 +1,9 @@
+2012-01-07  Andreas Kling  <awesomekling@apple.com>
+
+        Attempt to regenerate bindings on the Windows bot.
+
+        * html/HTMLCollection.h:
+
 2012-01-07  Daniel Bates  <dbates@webkit.org>
 
         Memory allocator mismatch; Use operator new[] with OwnArrayPtr instead of fastMalloc()
