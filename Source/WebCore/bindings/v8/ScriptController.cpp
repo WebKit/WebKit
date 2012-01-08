@@ -102,11 +102,6 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
     return !v8::Context::InContext() || V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, true);
 }
 
-bool ScriptController::isSafeScript(Frame* target)
-{
-    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, true);
-}
-
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_sourceURL(0)

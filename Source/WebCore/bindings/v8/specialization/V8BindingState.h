@@ -55,9 +55,6 @@ public:
     Frame* activeFrame();
     Frame* firstFrame();
 
-    // FIXME: This should be shared in BindingSecurity
-    bool allowsAccessFromFrame(Frame*);
-
 private:
     explicit State() {}
     ~State();

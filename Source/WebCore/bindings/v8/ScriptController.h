@@ -147,9 +147,6 @@ public:
     // V8Proxy::retrieveFrameForEnteredContext() for more information.
     static Frame* retrieveFrameForCurrentContext();
 
-    // Check whether it is safe to access a frame in another domain.
-    static bool isSafeScript(Frame*);
-
     // Pass command-line flags to the JS engine.
     static void setFlags(const char* string, int length);
 
