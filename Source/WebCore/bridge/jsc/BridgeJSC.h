@@ -27,8 +27,6 @@
 #ifndef BridgeJSC_h
 #define BridgeJSC_h
 
-#if USE(JSC)
-
 #include "Bridge.h"
 #include <runtime/JSString.h>
 #include <wtf/HashMap.h>
@@ -150,7 +148,5 @@ typedef HashMap<RefPtr<StringImpl>, Field*> FieldMap;
 } // namespace Bindings
 
 } // namespace JSC
-
-#endif // USE(JSC)
 
 #endif

@@ -92,9 +92,7 @@ JavaMethod::~JavaMethod()
 // we get '.' between components from the reflection API.
 static void appendClassName(StringBuilder& builder, const char* className)
 {
-#if USE(JSC)
     ASSERT(JSLock::lockCount() > 0);
-#endif
 
     char* c = fastStrDup(className);
 
@@ -113,9 +111,7 @@ static void appendClassName(StringBuilder& builder, const char* className)
 const char* JavaMethod::signature() const
 {
     if (!m_signature) {
-#if USE(JSC)
         JSLock lock(SilenceAssertionsOnly);
-#endif
 
         StringBuilder signatureBuilder;
         signatureBuilder.append('(');
@@ -126,11 +122,7 @@ const char* JavaMethod::signature() const
                 appendClassName(signatureBuilder, javaClassName.data());
             else {
                 signatureBuilder.append(signatureFromJavaType(type));
-                if (type == JavaTypeObject
-#if USE(V8)
-                    || type == JavaTypeString
-#endif
-                    ) {
+                if (type == JavaTypeObject) {
                     appendClassName(signatureBuilder, javaClassName.data());
                     signatureBuilder.append(';');
                 }
@@ -143,11 +135,7 @@ const char* JavaMethod::signature() const
             appendClassName(signatureBuilder, returnType);
         else {
             signatureBuilder.append(signatureFromJavaType(m_returnType));
-            if (m_returnType == JavaTypeObject
-#if USE(V8)
-                || m_returnType == JavaTypeString
-#endif
-                ) {
+            if (m_returnType == JavaTypeObject) {
                 appendClassName(signatureBuilder, returnType);
                 signatureBuilder.append(';');
             }

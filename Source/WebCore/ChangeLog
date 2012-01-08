@@ -1,3 +1,36 @@
+2012-01-08  Steve Block  <steveblock@google.com>
+
+        Remove V8-specific Java Bridge code
+        https://bugs.webkit.org/show_bug.cgi?id=75801
+
+        Reviewed by Darin Adler.
+
+        Also remove superfluous JSC and V8 guards, as the code is now used only
+        with JSC.
+
+        No new tests, removing dead code only.
+
+        * WebCore.gypi:
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::javaTypeFromClassName):
+        (JSC::Bindings::signatureFromJavaType):
+        (JSC::Bindings::getJNIField):
+        (JSC::Bindings::callJNIMethod):
+        * bridge/jni/JavaType.h:
+        * bridge/jni/jsc/JavaMethodJSC.cpp:
+        (appendClassName):
+        (JavaMethod::signature):
+        * bridge/jni/v8/JNIUtilityPrivate.cpp: Removed.
+        * bridge/jni/v8/JNIUtilityPrivate.h: Removed.
+        * bridge/jni/v8/JavaClassV8.h: Removed.
+        * bridge/jni/v8/JavaFieldV8.h: Removed.
+        * bridge/jni/v8/JavaInstanceV8.h: Removed.
+        * bridge/jni/v8/JavaMethodV8.h: Removed.
+        * bridge/jni/v8/JavaNPObjectV8.cpp: Removed.
+        * bridge/jni/v8/JavaNPObjectV8.h: Removed.
+        * bridge/jni/v8/JavaValueV8.h: Removed.
+        * bridge/jsc/BridgeJSC.h:
+
 2012-01-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104403.

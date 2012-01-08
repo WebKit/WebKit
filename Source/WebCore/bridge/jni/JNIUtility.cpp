@@ -187,10 +187,6 @@ JavaType javaTypeFromClassName(const char* name)
         type = JavaTypeVoid;
     else if ('[' == name[0])
         type = JavaTypeArray;
-#if USE(V8)
-    else if (!strcmp("java.lang.String", name))
-        type = JavaTypeString;
-#endif
     else
         type = JavaTypeObject;
 
@@ -207,9 +203,6 @@ const char* signatureFromJavaType(JavaType type)
         return "[";
 
     case JavaTypeObject:
-#if USE(V8)
-    case JavaTypeString:
-#endif
         return "L";
 
     case JavaTypeBoolean:
@@ -300,9 +293,6 @@ jvalue getJNIField(jobject obj, JavaType type, const char* name, const char* sig
                 switch (type) {
                 case JavaTypeArray:
                 case JavaTypeObject:
-#if USE(V8)
-                case JavaTypeString:
-#endif
                     result.l = env->functions->GetObjectField(env, obj, field);
                     break;
                 case JavaTypeBoolean:
@@ -356,9 +346,6 @@ jvalue callJNIMethod(jobject object, JavaType returnType, const char* name, cons
         callJNIMethodIDA<void>(object, methodId, args);
         break;
     case JavaTypeObject:
-#if USE(V8)
-    case JavaTypeString:
-#endif
         result.l = callJNIMethodIDA<jobject>(object, methodId, args);
         break;
     case JavaTypeBoolean:
