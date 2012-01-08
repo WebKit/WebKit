@@ -883,10 +883,10 @@ END
     }
 
     # Generate security checks if necessary
-    if ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), imp->$attrName()))\n    return v8::Handle<v8::Value>();\n\n");
+    if ($attribute->signature->extendedAttributes->{"allowAccessToNode"}) {
+        push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->$attrName()))\n    return v8::Handle<v8::Value>();\n\n");
     } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), imp->contentDocument()))\n    return v8::Handle<v8::Value>();\n\n");
+        push(@implContentDecls, "    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->contentDocument()))\n    return v8::Handle<v8::Value>();\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
@@ -1434,7 +1434,7 @@ END
     }
     if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
         push(@implContentDecls, <<END);
-    if (!V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), imp->getSVGDocument(ec)))
+    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->getSVGDocument(ec)))
         return v8::Handle<v8::Value>();
 END
     }

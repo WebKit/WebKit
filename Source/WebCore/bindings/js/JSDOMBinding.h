@@ -280,14 +280,15 @@ enum ParameterMissingPolicy {
     // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
     JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned&);
 
-    bool checkNodeSecurity(JSC::ExecState*, Node*);
+    // FIXME: Implement allowAccessToContext(JSC::ExecState*, ScriptExecutionContext*);
+    bool allowAccessToNode(JSC::ExecState*, Node*);
+    bool allowAccessToFrame(JSC::ExecState*, Frame*);
+    bool allowAccessToFrame(JSC::ExecState*, Frame*, String& message);
+    // FIXME: Implement allowAccessToDOMWindow(JSC::ExecState*, DOMWindow*);
 
-    // Helpers for Window, History, and Location classes to implement cross-domain policy.
-    // Besides the cross-domain check, they need non-caching versions of staticFunctionGetter for
-    // because we do not want current property values involved at all.
-    // FIXME: These functions should be named frameAllowsAccessFrom, because the access is *to* the frame.
-    bool allowsAccessFromFrame(JSC::ExecState*, Frame*);
-    bool allowsAccessFromFrame(JSC::ExecState*, Frame*, String& message);
+    // FIXME: Remove these functions in favor of activeContext and
+    // firstContext, which return ScriptExecutionContext*. We prefer to use
+    // ScriptExecutionContext* as the context object in the bindings.
     DOMWindow* activeDOMWindow(JSC::ExecState*);
     DOMWindow* firstDOMWindow(JSC::ExecState*);
 

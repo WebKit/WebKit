@@ -55,7 +55,7 @@ public:
 
     // Check if it is safe to access the given node from the
     // current security context.
-    static bool checkNodeSecurity(State<Binding>*, Node* target);
+    static bool allowAccessToNode(State<Binding>*, Node* target);
 
     static bool allowPopUp(State<Binding>*);
     static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, const String& value);
@@ -101,7 +101,7 @@ bool BindingSecurity<Binding>::canAccessFrame(State<Binding>* state,
 }
 
 template <class Binding>
-bool BindingSecurity<Binding>::checkNodeSecurity(State<Binding>* state, Node* node)
+bool BindingSecurity<Binding>::allowAccessToNode(State<Binding>* state, Node* node)
 {
     if (!node)
         return false;
@@ -131,7 +131,7 @@ bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding
 {
     if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Node* contentDoc = frame->contentDocument();
-        if (contentDoc && !checkNodeSecurity(state, contentDoc))
+        if (contentDoc && !allowAccessToNode(state, contentDoc))
             return false;
     }
     return true;

@@ -522,7 +522,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         if ($interfaceName eq "DOMWindow") {
             push(@implContent, "    if (!thisObject->allowsAccessFrom(exec))\n");
         } else {
-            push(@implContent, "    if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))\n");
+            push(@implContent, "    if (!allowAccessToFrame(exec, thisObject->impl()->frame()))\n");
         }
         push(@implContent, "        return false;\n");
     }
@@ -1752,15 +1752,15 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
                     }
-                } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
+                } elsif ($attribute->signature->extendedAttributes->{"allowAccessToNode"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
-                    push(@implContent, "    return checkNodeSecurity(exec, impl->$implGetterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
+                    push(@implContent, "    return allowAccessToNode(exec, impl->$implGetterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                     $implIncludes{"Document.h"} = 1;
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
-                    push(@implContent, "    return checkNodeSecurity(exec, impl->contentDocument()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
+                    push(@implContent, "    return allowAccessToNode(exec, impl->contentDocument()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName()", "castedThis") . " : jsUndefined();\n");
                 } elsif ($type eq "EventListener") {
                     $implIncludes{"EventListener.h"} = 1;
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
@@ -1928,7 +1928,7 @@ sub GenerateImplementation
                             if ($interfaceName eq "DOMWindow") {
                                 push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                             } else {
-                                push(@implContent, "    if (!allowsAccessFromFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                                push(@implContent, "    if (!allowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
                             }
                             push(@implContent, "        return;\n");
                         }
@@ -2056,7 +2056,7 @@ sub GenerateImplementation
                     if ($interfaceName eq "DOMWindow") {
                         push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
                     } else {
-                        push(@implContent, "    if (!allowsAccessFromFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                        push(@implContent, "    if (!allowAccessToFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
                     }
                     push(@implContent, "        return;\n");
                 }
@@ -2170,7 +2170,7 @@ sub GenerateImplementation
                 }
 
                 if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"} and !$function->isStatic) {
-                    push(@implContent, "    if (!checkNodeSecurity(exec, impl->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                    push(@implContent, "    if (!allowAccessToNode(exec, impl->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                     $implIncludes{"JSDOMBinding.h"} = 1;
                 }
