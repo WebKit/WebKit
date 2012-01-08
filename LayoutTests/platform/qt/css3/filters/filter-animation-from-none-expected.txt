@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: line 123: ReferenceError: Can't find variable: runAnimationTest
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x264
+  RenderBlock {HTML} at (0,0) size 800x264
+    RenderBody {BODY} at (8,8) size 784x248
+      RenderBlock (anonymous) at (0,0) size 784x248
+        RenderText {#text} at (120,106) size 4x17
+          text run at (120,106) width 4: " "
+        RenderText {#text} at (244,106) size 4x17
+          text run at (244,106) width 4: " "
+        RenderText {#text} at (368,106) size 4x17
+          text run at (368,106) width 4: " "
+        RenderText {#text} at (492,106) size 4x17
+          text run at (492,106) width 4: " "
+        RenderText {#text} at (616,106) size 4x17
+          text run at (616,106) width 4: " "
+        RenderText {#text} at (740,106) size 4x17
+          text run at (740,106) width 4: " "
+        RenderText {#text} at (120,230) size 4x17
+          text run at (120,230) width 4: " "
+        RenderText {#text} at (244,230) size 4x17
+          text run at (244,230) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,248) size 784x0
+layer at (18,18) size 100x100
+  RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#0000FF]
+layer at (142,18) size 100x100
+  RenderBlock {DIV} at (134,10) size 100x100 [bgcolor=#0000FF]
+layer at (266,18) size 100x100
+  RenderBlock {DIV} at (258,10) size 100x100 [bgcolor=#0000FF]
+layer at (390,18) size 100x100
+  RenderBlock {DIV} at (382,10) size 100x100 [bgcolor=#0000FF]
+layer at (514,18) size 100x100
+  RenderBlock {DIV} at (506,10) size 100x100 [bgcolor=#0000FF]
+layer at (638,18) size 100x100
+  RenderBlock {DIV} at (630,10) size 100x100 [bgcolor=#0000FF]
+layer at (18,142) size 100x100
+  RenderBlock {DIV} at (10,134) size 100x100 [bgcolor=#0000FF]
+layer at (142,142) size 100x100
+  RenderBlock {DIV} at (134,134) size 100x100 [bgcolor=#0000FF]
+layer at (266,142) size 100x100
+  RenderBlock {DIV} at (258,134) size 100x100 [bgcolor=#0000FF]
