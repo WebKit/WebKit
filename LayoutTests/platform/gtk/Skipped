@@ -373,6 +373,9 @@ fast/mutation
 # supported.
 fast/text/international/locale-sensitive-fonts.html
 
+# Needs layoutTestController.enableAutoResizeMode()
+fast/autoresize
+
 # The GTK+ build bots don't yet have the muscle to run WebGL tests.
 compositing/webgl
 fast/canvas/webgl

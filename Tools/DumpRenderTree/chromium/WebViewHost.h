@@ -154,6 +154,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);
     virtual void didScrollRect(int dx, int dy, const WebKit::WebRect&);
+    virtual void didAutoResize(const WebKit::WebSize& newSize);
     virtual void scheduleComposite();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation();

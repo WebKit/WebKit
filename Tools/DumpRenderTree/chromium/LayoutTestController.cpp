@@ -116,6 +116,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpPermissionClientCallbacks", &LayoutTestController::dumpPermissionClientCallbacks);
     bindMethod("dumpCreateView", &LayoutTestController::dumpCreateView);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
+    bindMethod("enableAutoResizeMode", &LayoutTestController::enableAutoResizeMode);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
@@ -608,6 +609,8 @@ void LayoutTestController::reset()
         m_shell->webView()->setSelectionColors(0xff1e90ff, 0xff000000, 0xffc8c8c8, 0xff323232);
 #endif
         m_shell->webView()->removeAllUserContent();
+        WebKit::WebSize empty;
+        m_shell->webView()->enableAutoResizeMode(false, empty, empty);
     }
     m_dumpAsText = false;
     m_dumpAsAudio = false;
@@ -1096,6 +1099,24 @@ void LayoutTestController::elementDoesAutoCompleteForElementWithId(const CppArgu
     }
     WebString elementId = cppVariantToWebString(arguments[0]);
     result->set(elementDoesAutoCompleteForElementWithId(elementId));
+}
+
+void LayoutTestController::enableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 4) {
+        result->set(false);
+        return;
+    }
+    int minWidth = cppVariantToInt32(arguments[0]);
+    int minHeight = cppVariantToInt32(arguments[1]);
+    WebKit::WebSize minSize(minWidth, minHeight);
+
+    int maxWidth = cppVariantToInt32(arguments[2]);
+    int maxHeight = cppVariantToInt32(arguments[3]);
+    WebKit::WebSize maxSize(maxWidth, maxHeight);
+
+    m_shell->webView()->enableAutoResizeMode(true, minSize, maxSize);
+    result->set(true);
 }
 
 void LayoutTestController::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)

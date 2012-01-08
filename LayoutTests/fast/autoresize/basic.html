@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function shouldBe(a, b)
+{
+  aValue = eval(a);
+  bValue = eval(b);
+  if (aValue == bValue)
+     log('PASS: ' + a + ' equaled ' + b);
+  else
+     log('FAILED: ' + a + '(' + aValue + ') did not equal ' + b + '(' + bValue + ')');
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.enableAutoResizeMode(10, 10, 1000, 1000);
+        layoutTestController.dumpAsText();
+    }
+    shouldBe('document.body.clientWidth', 'window.innerWidth');
+    shouldBe('document.body.clientHeight', 'window.innerHeight');
+    shouldBe('document.body.scrollWidth', 'window.innerWidth');
+    shouldBe('document.body.scrollHeight', 'window.innerHeight');
+    shouldBe('window.innerWidth', 'window.outerWidth');
+    shouldBe('window.innerHeight', 'window.outerHeight');
+    log('DONE');
+}
+</script>
+<body onload="runTest()" style="margin:0; width:900px">
+This test only works in when run in dumprendertree as it relies on having auto-resize enabled its window.
+<br>
+<br>
+When it succeeds, there should be a series of PASS messages followed by a DONE message.
+<br>
+<br>
+<div id='result'>
+</div>
+</body>
+</html>

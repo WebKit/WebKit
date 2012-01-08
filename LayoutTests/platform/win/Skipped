@@ -1074,6 +1074,9 @@ http/tests/misc/prefetch-purpose.html
 # LayoutTestController::pageProperty is not implemented for WIN yet.
 printing/page-rule-selection.html
 
+# Needs layoutTestController.enableAutoResizeMode()
+fast/autoresize
+
 # Hyphenation is not implemented yet.
 fast/text/hyphenate-character.html
 fast/text/hyphens.html

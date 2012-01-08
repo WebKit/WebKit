@@ -132,6 +132,9 @@ fast/media/media-query-list-05.html
 fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
 
+# Needs layoutTestController.enableAutoResizeMode()
+fast/autoresize
+
 # Test is flaky and thus not useful until fixed.
 # https://bugs.webkit.org/show_bug.cgi?id=36642
 fast/replaced/border-radius-clip.html

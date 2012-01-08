@@ -1,3 +1,19 @@
+2012-01-08  David Levin  <levin@chromium.org>
+
+        [chromium] Add layout test support for autosize code in FrameView.
+        https://bugs.webkit.org/show_bug.cgi?id=73631
+
+        Reviewed by Dmitry Titov.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController): Expose the new autoresize method.
+        (LayoutTestController::reset): Set the autoresize mode back to false.
+        (LayoutTestController::enableAutoResizeMode): A way to turn on autoresizing from javascript code in DumpRenderTree.
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didAutoResize): Handle the autoresize callback so that the outer bounds change appropriately.
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2012-01-07  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2][GTK] Each test takes roughly half a second to load

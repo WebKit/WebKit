@@ -709,6 +709,13 @@ void WebViewHost::didScrollRect(int, int, const WebRect& clipRect)
     didInvalidateRect(clipRect);
 }
 
+void WebViewHost::didAutoResize(const WebSize& newSize)
+{
+    // Purposely don't include the virtualWindowBorder in this case so that
+    // window.inner[Width|Height] is the same as window.outer[Width|Height]
+    setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
+}
+
 void WebViewHost::scheduleComposite()
 {
     WebSize widgetSize = webWidget()->size();

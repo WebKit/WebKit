@@ -477,6 +477,9 @@ fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
 fast/media/view-mode-media-feature.html
 
+# EFL's LayoutTestController does not implement enableAutoResizeMode
+fast/autoresize
+
 # EFL's LayoutTestController does not implement setWindowIsKey
 editing/selection/4975120.html
 editing/selection/caret-and-focus-ring.html
