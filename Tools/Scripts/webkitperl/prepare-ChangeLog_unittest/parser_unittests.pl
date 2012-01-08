@@ -35,7 +35,9 @@ use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 my %testFiles = ("perl_unittests.pl" => "perl",
                  "python_unittests.py" => "python",
                  "java_unittests.java" => "java",
-                 "cpp_unittests.cpp" => "cpp");
+                 "cpp_unittests.cpp" => "cpp",
+                 "javascript_unittests.js" => "javascript",
+                );
 
 my $resetResults;
 GetOptions('reset-results' => \$resetResults);

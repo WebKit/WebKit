@@ -1,3 +1,57 @@
+2012-01-08  Kentaro Hara  <haraken@chromium.org>
+
+        Add unittests for the JavaScript parser of prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=75201
+
+        Reviewed by David Kilzer.
+
+        javascript_unittests.js is a unittest for get_function_line_ranges_for_javascript()
+        of prepare-ChangeLog.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_javascript): Before this patch, a string found was just
+        omitted from parsing. Thus,
+
+            str = "foo"
+            function func() {
+            }
+
+        was recognized as equivalent to
+
+            str = function func() {
+            }
+
+        This patch replaces a string with a dummy identifier 'string_appeared_here'
+        to tell the parser that a string appeared there.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests.js: Added.
+        (func1):
+        (func2):
+        (func3):
+        (func4):
+        (func5):
+        (func6):
+        (func7):
+        (func8):
+        (func9):
+        (func10):
+        (func11):
+        (func12):
+        (funcOverloaded):
+        (Func1.prototype.get x1):
+        (Func1.prototype.get x2):
+        (Func1.prototype.set x1):
+        (Func1.prototype.set x3):
+        (Func2.prototype.func13):
+        (Func2.prototype.func14):
+        (Func2.prototype.func15):
+        (func16.func17):
+        (func16.func18):
+        (func16.func19):
+        (func16):
+
 2012-01-08  David Levin  <levin@chromium.org>
 
         [chromium] Add layout test support for autosize code in FrameView.

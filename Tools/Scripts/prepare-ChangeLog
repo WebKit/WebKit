@@ -1150,7 +1150,7 @@ sub get_function_line_ranges_for_javascript($$)
             } elsif ($match eq '//') {
                 s-//.*--;
             } else { # ' or "
-                if (!s-$match([^\\]|\\.)*?$match--) {
+                if (!s-$match([^\\]|\\.)*?$match-string_appeared_here-) {
                     $inQuotedText = $match if /\\$/;
                     warn "mismatched quotes at line $. in $fileName\n" if $inQuotedText eq "";
                     s-$match.*--;
