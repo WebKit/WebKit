@@ -44,3 +44,90 @@ sub func5($$$$)
 sub func6(\@\@\$\$\$\$)
 {
 }
+
+sub func7
+{
+    $str =<< EOF;
+
+EOF
+}
+
+sub func8
+{
+    $str =<< "EOF";
+
+EOF
+}
+
+sub func9
+{
+    $str =<< 'EOF';
+
+EOF
+}
+
+sub func10
+{
+    $str =<< EOF;
+sub funcInHereDocument1
+{
+}
+EOF
+}
+
+sub func11
+{
+    $str =<< EOF;
+sub funcInHereDocument2
+{
+}
+sub funcInHereDocument3
+{
+}
+EOF
+}
+
+sub func12
+{
+    $str =<< EOF;
+{
+{
+{
+}
+}
+}
+EOF
+}
+
+sub func13
+{
+    $str =<< EOF;
+
+$str << DUMMY_EOF
+
+DUMMY_EOF
+
+EOF
+}
+
+sub func14
+{
+    push(@array, << EOF);
+
+EOF
+}
+
+sub func15
+{
+    print << EOF;
+
+EOF
+}
+
+sub func16 {
+}
+
+sub prototypeDeclaration1;
+sub prototypeDeclaration2();
+sub prototypeDeclaration3(\@$$);
+

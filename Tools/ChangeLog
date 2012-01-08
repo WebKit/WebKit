@@ -1,3 +1,33 @@
+2012-01-04  Kentaro Hara  <haraken@chromium.org>
+
+        The Perl parser of prepare-ChangeLog can parse here-documents
+        https://bugs.webkit.org/show_bug.cgi?id=73208
+
+        Reviewed by David Kilzer.
+
+        Currently prepare-ChangeLog cannot recognize here-documents in Perl,
+        which results in wrong subroutine names in ChangeLogs.
+        With this patch, prepare-ChangeLog can judge whether the line of "}"
+        is the end of a subroutine or a line inside a here-document.
+
+        Test: Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests.pl
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_perl):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests.pl:
+        Added test cases for here-documents.
+        (func7):
+        (func8):
+        (func9):
+        (func10):
+        (func11):
+        (func12):
+        (func13):
+        (func14):
+        (func15):
+        (func16):
+
 2012-01-08  Kentaro Hara  <haraken@chromium.org>
 
         Add unittests for the JavaScript parser of prepare-ChangeLog

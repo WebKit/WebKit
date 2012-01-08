@@ -1286,25 +1286,38 @@ sub get_function_line_ranges_for_perl($$)
 
     my $currentFunction = "";
     my $start = 0;
+    my $hereDocumentIdentifier = "";
 
     while (<$fileHandle>) {
-        if (/^sub\s+([^(\s]+)/) {
-            # Skip over forward declarations, which don't contain a brace and end with a semicolon.
-            next if !/{/ && /;$/;
+        chomp;
+        if (!$hereDocumentIdentifier) {
+            if (/^sub\s+([\w_][\w\d_]*)/) {
+                # Skip over forward declarations, which don't contain a brace and end with a semicolon.
+                next if /;\s*$/;
 
-            if ($currentFunction) {
-                warn "nested functions found at top-level at $fileName:$.\n";
-                next;
+                if ($currentFunction) {
+                    warn "nested functions found at top-level at $fileName:$.\n";
+                    next;
+                }
+                $currentFunction = $1;
+                $start = $.;
             }
-            $currentFunction = $1;
-            $start = $.;
-        }
-        if (index($_, "}") == 0) {
-            next unless $start;
-            push(@ranges, [$start, $., $currentFunction]);
-            $currentFunction = "";
-            $start = 0;
-            next;
+            if (/<<\s*[\"\']?([\w_][\w_\d]*)/) {
+                # Enter here-document.
+                $hereDocumentIdentifier = $1;
+            }
+            if (index($_, "}") == 0) {
+                unless ($start) {
+                    warn "nested functions found at top-level at $fileName:$.\n";
+                    next;
+                }
+                push(@ranges, [$start, $., $currentFunction]);
+                $currentFunction = "";
+                $start = 0;
+            }
+        } elsif ($_ eq $hereDocumentIdentifier) {
+            # Escape from here-document.
+            $hereDocumentIdentifier = "";
         }
     }
 
