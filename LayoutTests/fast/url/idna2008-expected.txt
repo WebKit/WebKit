@@ -15,7 +15,7 @@ FAIL canonicalize('http://Ӏ.com/') should be http://�.com/. Was http://xn--d5
 FAIL canonicalize('http://㛼.com/') should be http://�.com/. Was http://xn--j74i.com/.
 FAIL canonicalize('http://Ↄ.com/') should be http://�.com/. Was http://xn--q5g.com/.
 PASS canonicalize('http://look͏out.net/') is 'http://lookout.net/'
-FAIL canonicalize('http://gOoGle.com/') should be http://google.com/. Was http://gOoGle.com/.
+PASS canonicalize('http://gOoGle.com/') is 'http://google.com/'
 FAIL canonicalize('http://ড়.com/') should be http://ড়.com/. Was http://xn--15b8c.com/.
 FAIL canonicalize('http://ẞ.com/') should be http://ss.com/. Was http://xn--kkg.com/.
 FAIL canonicalize('http://ẞ.foo.com/') should be http://ss.foo.com/. Was http://xn--kkg.foo.com/.

@@ -53,10 +53,10 @@ PASS canonicalize(';/../bar') is 'http://host/bar'
 PASS canonicalize('//another') is 'http://another/'
 PASS canonicalize('//another/path?query#ref') is 'http://another/path?query#ref'
 FAIL canonicalize('///another/path') should be http://another/path. Was http:/another/path.
-FAIL canonicalize('//Another\\path') should be http://another/path. Was http://Another/path.
+PASS canonicalize('//Another\\path') is 'http://another/path'
 FAIL canonicalize('//') should be http:. Was http:/.
 PASS canonicalize('\\/another/path') is 'http://another/path'
-FAIL canonicalize('/\\Another\\path') should be http://another/path. Was http://Another/path.
+PASS canonicalize('/\\Another\\path') is 'http://another/path'
 PASS successfullyParsed is true
 
 TEST COMPLETE

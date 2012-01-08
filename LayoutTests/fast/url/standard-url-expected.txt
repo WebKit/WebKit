@@ -8,7 +8,7 @@ FAIL canonicalize('http://www.google.com/foo?bar=baz# »') should be http://www.
 PASS canonicalize('http://[www.google.com]/') is 'http://[www.google.com]/'
 PASS canonicalize('http://www.google.com') is 'http://www.google.com/'
 FAIL canonicalize('http:////////user:@google.com:99?foo') should be http://user@google.com:99/?foo. Was http://////user:@google.com:99?foo.
-FAIL canonicalize('http://192.0x00A80001') should be http://192.168.0.1/. Was http://192.0x00A80001/.
+FAIL canonicalize('http://192.0x00A80001') should be http://192.168.0.1/. Was http://192.0x00a80001/.
 FAIL canonicalize('http://www/foo%2Ehtml') should be http://www/foo.html. Was http://www/foo%2Ehtml.
 PASS canonicalize('http://user:pass@/') is 'http://user:pass@/'
 PASS canonicalize('http://%25DOMAIN:foobar@foodomain.com/') is 'http://%25DOMAIN:foobar@foodomain.com/'

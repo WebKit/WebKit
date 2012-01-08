@@ -1,0 +1,33 @@
+Canonical URL should have a lowercase hostname for server based protocols.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+PASS src is expected
+FAIL src should be ghost://UnicodeF%C3%AAte/. Was ghost://xn--unicodefte-t7a/.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

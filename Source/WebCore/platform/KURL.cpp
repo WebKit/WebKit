@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1050,6 +1050,8 @@ void KURL::parse(const String& string)
     parse(buffer.data(), &string);
 }
 
+// FIXME: (lenA != lenB) is never true in the way this function is used.
+// FIXME: This is only used for short string, we should replace equal() by a recursive template comparing the strings without loop.
 static inline bool equal(const char* a, size_t lenA, const char* b, size_t lenB)
 {
     if (lenA != lenB)
@@ -1096,6 +1098,23 @@ static bool isNonFileHierarchicalScheme(const char* scheme, size_t schemeLength)
         return equal("ftp", 3, scheme, schemeLength) || equal("wss", 3, scheme, schemeLength);
     case 4:
         return equal("http", 4, scheme, schemeLength);
+    case 5:
+        return equal("https", 5, scheme, schemeLength);
+    case 6:
+        return equal("gopher", 6, scheme, schemeLength);
+    }
+    return false;
+}
+
+static bool isCanonicalHostnameLowercaseForScheme(const char* scheme, size_t schemeLength)
+{
+    switch (schemeLength) {
+    case 2:
+        return equal("ws", 2, scheme, schemeLength);
+    case 3:
+        return equal("ftp", 3, scheme, schemeLength) || equal("wss", 3, scheme, schemeLength);
+    case 4:
+        return equal("http", 4, scheme, schemeLength) || equal("file", 4, scheme, schemeLength);
     case 5:
         return equal("https", 5, scheme, schemeLength);
     case 6:
@@ -1344,8 +1363,13 @@ void KURL::parse(const char* url, const String* originalString)
         if (!(isFile && hostIsLocalHost && !haveNonHostAuthorityPart)) {
             strPtr = url + hostStart;
             const char* hostEndPtr = url + hostEnd;
-            while (strPtr < hostEndPtr)
-                *p++ = *strPtr++;
+            if (isCanonicalHostnameLowercaseForScheme(buffer.data(), m_schemeEnd)) {
+                while (strPtr < hostEndPtr)
+                    *p++ = toASCIILower(*strPtr++);
+            } else {
+                while (strPtr < hostEndPtr)
+                    *p++ = *strPtr++;
+            }
         }
         m_hostEnd = p - buffer.data();
 

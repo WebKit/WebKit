@@ -1,3 +1,23 @@
+2012-01-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Valid canonical URLs should have a lowercase hostname
+        https://bugs.webkit.org/show_bug.cgi?id=75771
+
+        Reviewed by Adam Barth.
+
+        According to the RFC 3986 (and other browsers implementation), the hostname
+        of valid canonical URLs should be lowercase.
+
+        This patch lowercase the hostname in KURL::parse() similarily to what we
+        do for the scheme.
+
+        Tests: fast/url/host-lowercase-per-scheme.html
+               fast/url/safari-extension.html
+
+        * platform/KURL.cpp:
+        (WebCore::isCanonicalHostnameLowercaseForScheme):
+        (WebCore::KURL::parse):
+
 2012-01-08  Adam Barth  <abarth@webkit.org>
 
         Rename checkNodeSecurity and allowsAccessFromFrame to have sensible names
