@@ -331,8 +331,6 @@ public:
     
     Element* documentElement() const
     {
-        if (!m_documentElement)
-            cacheDocumentElement();
         return m_documentElement.get();
     }
     
@@ -1155,8 +1153,6 @@ private:
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 
-    void cacheDocumentElement() const;
-
     void buildAccessKeyMap(TreeScope* root);
 
     void createStyleSelector();
@@ -1255,7 +1251,7 @@ private:
     RefPtr<Node> m_focusedNode;
     RefPtr<Node> m_hoverNode;
     RefPtr<Node> m_activeNode;
-    mutable RefPtr<Element> m_documentElement;
+    RefPtr<Element> m_documentElement;
 
     uint64_t m_domTreeVersion;
     static uint64_t s_globalTreeVersion;

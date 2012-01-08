@@ -1,0 +1,19 @@
+<html lang=en>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+#test { background-color: red; }
+@media all and (min-width:0px)
+{
+    #test { background-color: green }
+}
+</style>
+</head>
+<body>
+<div id=test>foo</div>
+<script>
+description("Test for bug 75633");
+shouldBe('window.getComputedStyle(document.getElementById("test")).backgroundColor','"rgb(0, 128, 0)"');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

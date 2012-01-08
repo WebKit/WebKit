@@ -1,3 +1,28 @@
+2012-01-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r104060): Layout Test fast/media/viewport-media-query.html is occasionally failing
+        https://bugs.webkit.org/show_bug.cgi?id=75633
+
+        Reviewed by Andreas Kling.
+        
+        If something triggers CSSStyleSelector construction very early, before documentElement is known,
+        it won't be able to resolve viewport-related media queries. In the included test case
+        the attribute on <html> element triggers the style selector creation. I can't repro
+        the fast/media/viewport-media-query.html failure but I suspect it is the same issue with
+        a different mechanism for early CSSStyleSelector construction.
+        
+        - Reset style selector on documentElement change.
+        - Remove the code for lazy documentElement initialization. It is not an useful optimization,
+          the children of Document rarely change.
+
+        Test: fast/media/viewport-media-query-synchronous.html
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        * dom/Document.h:
+        (WebCore::Document::documentElement):
+
 2012-01-07  Andreas Kling  <awesomekling@apple.com>
 
         Attempt to regenerate bindings on the Windows bot.

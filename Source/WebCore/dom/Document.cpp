@@ -720,14 +720,12 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
 {
     TreeScope::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
-    // Invalidate the document element we have cached in case it was replaced.
-    m_documentElement = 0;
-}
-
-void Document::cacheDocumentElement() const
-{
-    ASSERT(!m_documentElement);
-    m_documentElement = firstElementChild(this);
+    Element* newDocumentElement = firstElementChild(this);
+    if (newDocumentElement == m_documentElement)
+        return;
+    m_documentElement = newDocumentElement;
+    // The root style used for media query matching depends on the document element.
+    m_styleSelector.clear();
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
