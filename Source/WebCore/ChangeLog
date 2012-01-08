@@ -1,3 +1,20 @@
+2012-01-07  Daniel Bates  <dbates@webkit.org>
+
+        Memory allocator mismatch; Use operator new[] with OwnArrayPtr instead of fastMalloc()
+
+        Rubber-stamped by Adam Barth.
+
+        Currently getProgramInfoLog() in GraphicsContext3DOpenGL.cpp assumes that operator new[]
+        and fastMalloc() are equivalent when it adopts a fastMalloc() allocated buffer. Notice,
+        OwnArrayPtr ultimately calls delete[] on destruction. When GLOBAL_FASTMALLOC_NEW is disabled,
+        it isn't true that operator new[], operator delete[] are equivalent to fastMalloc(), fastFree(),
+        respectively. Hence, there may be a mismatch between the allocation and deallocation
+        routines. Therefore, we should allocate the array to be adopted by OwnArrayPtr using
+        operator new[].
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+
 2012-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Fixed ANGLE build for GNU and QT broken in https://trac.webkit.org/changeset/104363

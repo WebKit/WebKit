@@ -1248,7 +1248,7 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
         return String(); 
 
     GLsizei size = 0;
-    OwnArrayPtr<GLchar> info = adoptArrayPtr(static_cast<GLchar*>(fastMalloc(length)));
+    OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
     ::glGetProgramInfoLog(program, length, &size, info.get());
 
     return String(info.get());
