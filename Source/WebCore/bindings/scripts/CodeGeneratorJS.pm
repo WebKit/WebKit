@@ -2572,13 +2572,6 @@ sub GenerateParametersCheck
         $paramIndex++;
     }
 
-    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
-        $functionString .= ", " if $paramIndex;
-        $functionString .= "ScriptController::processingUserGesture()";
-        $paramIndex++;
-        $implIncludes{"ScriptController.h"} = 1;
-    }
-
     return ($functionString, $paramIndex);
 }
 

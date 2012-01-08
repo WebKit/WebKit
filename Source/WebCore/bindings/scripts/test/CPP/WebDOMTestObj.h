@@ -166,8 +166,6 @@ public:
     void withDynamicFrame();
     void withDynamicFrameAndArg(int intArg);
     void withDynamicFrameAndOptionalArg(int intArg, int optionalArg);
-    void withDynamicFrameAndUserGesture(int intArg);
-    void withDynamicFrameAndUserGestureASAD(int intArg, int optionalArg);
     void withScriptStateVoid();
     WebDOMTestObj withScriptStateObj();
     void withScriptStateVoidException();

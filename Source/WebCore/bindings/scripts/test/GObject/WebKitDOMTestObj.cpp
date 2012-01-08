@@ -257,24 +257,6 @@ webkit_dom_test_obj_with_dynamic_frame_and_optional_arg(WebKitDOMTestObj* self, 
 }
 
 void
-webkit_dom_test_obj_with_dynamic_frame_and_user_gesture(WebKitDOMTestObj* self, glong int_arg, gboolean isUserGesture)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    item->withDynamicFrameAndUserGesture(int_arg, false);
-}
-
-void
-webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad(WebKitDOMTestObj* self, glong int_arg, glong optional_arg, gboolean isUserGesture)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    item->withDynamicFrameAndUserGestureASAD(int_arg, optional_arg, false);
-}
-
-void
 webkit_dom_test_obj_with_script_state_void(WebKitDOMTestObj* self)
 {
     g_return_if_fail(self);

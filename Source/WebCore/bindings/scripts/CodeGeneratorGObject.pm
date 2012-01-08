@@ -769,14 +769,6 @@ sub GenerateFunction {
         push(@callImplParams, $paramName);
     }
 
-    # Not quite sure what to do with this yet, but we need to take into
-    # account the difference in parameters between the IDL file and the
-    # actual implementation.
-    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
-        $functionSig .= ", gboolean isUserGesture";
-        push(@callImplParams, "false");
-    }
-
     if ($returnType ne "void" && $returnValueIsGDOMType && $functionSigType ne "DOMObject") {
         if ($functionSigType ne "EventTarget") {
             $implIncludes{"webkit/WebKitDOM${functionSigType}Private.h"} = 1;

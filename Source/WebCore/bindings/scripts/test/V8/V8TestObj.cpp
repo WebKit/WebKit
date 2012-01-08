@@ -30,7 +30,6 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptController.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -941,42 +940,6 @@ static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Ar
     return v8::Handle<v8::Value>();
 }
 
-static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.withDynamicFrameAndUserGesture");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-    imp->withDynamicFrameAndUserGesture(enteredFrame, intArg, ScriptController::processingUserGesture());
-    return v8::Handle<v8::Value>();
-}
-
-static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.withDynamicFrameAndUserGestureASAD");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
-    if (args.Length() <= 1) {
-        Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-        if (!enteredFrame)
-            return v8::Undefined();
-        imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, ScriptController::processingUserGesture());
-        return v8::Handle<v8::Value>();
-    }
-    EXCEPTION_BLOCK(int, optionalArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-    imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, optionalArg, ScriptController::processingUserGesture());
-    return v8::Handle<v8::Value>();
-}
-
 static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withScriptStateVoid");
@@ -1478,8 +1441,6 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"withDynamicFrame", TestObjInternal::withDynamicFrameCallback},
     {"withDynamicFrameAndArg", TestObjInternal::withDynamicFrameAndArgCallback},
     {"withDynamicFrameAndOptionalArg", TestObjInternal::withDynamicFrameAndOptionalArgCallback},
-    {"withDynamicFrameAndUserGesture", TestObjInternal::withDynamicFrameAndUserGestureCallback},
-    {"withDynamicFrameAndUserGestureASAD", TestObjInternal::withDynamicFrameAndUserGestureASADCallback},
     {"withScriptStateVoid", TestObjInternal::withScriptStateVoidCallback},
     {"withScriptStateObj", TestObjInternal::withScriptStateObjCallback},
     {"withScriptStateVoidException", TestObjInternal::withScriptStateVoidExceptionCallback},

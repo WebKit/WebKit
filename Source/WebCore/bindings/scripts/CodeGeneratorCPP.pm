@@ -201,7 +201,6 @@ sub ShouldSkipTypeInImplementation
 
     return 1 if $typeInfo->signature->extendedAttributes->{"CustomArgumentHandling"}
              or $typeInfo->signature->extendedAttributes->{"CustomGetter"}
-             or $typeInfo->signature->extendedAttributes->{"NeedsUserGestureCheck"}
              or $typeInfo->signature->extendedAttributes->{"CPPCustom"};
 
     # FIXME: We don't generate bindings for SVG related interfaces yet

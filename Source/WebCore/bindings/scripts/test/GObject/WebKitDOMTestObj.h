@@ -207,29 +207,6 @@ WEBKIT_API void
 webkit_dom_test_obj_with_dynamic_frame_and_optional_arg(WebKitDOMTestObj* self, glong int_arg, glong optional_arg);
 
 /**
- * webkit_dom_test_obj_with_dynamic_frame_and_user_gesture:
- * @self: A #WebKitDOMTestObj
- * @int_arg: A #glong
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_with_dynamic_frame_and_user_gesture(WebKitDOMTestObj* self, glong int_arg, gboolean isUserGesture);
-
-/**
- * webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad:
- * @self: A #WebKitDOMTestObj
- * @int_arg: A #glong
- * @optional_arg: A #glong
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad(WebKitDOMTestObj* self, glong int_arg, glong optional_arg, gboolean isUserGesture);
-
-/**
  * webkit_dom_test_obj_with_script_state_void:
  * @self: A #WebKitDOMTestObj
  *

@@ -158,8 +158,6 @@ enum {
 - (void)withDynamicFrame;
 - (void)withDynamicFrameAndArg:(int)intArg;
 - (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg;
-- (void)withDynamicFrameAndUserGesture:(int)intArg;
-- (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg;
 - (void)withScriptStateVoid;
 - (DOMTestObj *)withScriptStateObj;
 - (void)withScriptStateVoidException;

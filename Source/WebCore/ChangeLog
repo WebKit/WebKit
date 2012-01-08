@@ -1,5 +1,22 @@
 2012-01-08  Adam Barth  <abarth@webkit.org>
 
+        NeedsUserGestureCheck IDL attribute is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=75794
+
+        Reviewed by Eric Seidel.
+
+        This IDL attribute is no longer used because we use static state to
+        keep track of the user gesture state.  We can delete the code that
+        supports it.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/TestObj.idl:
+
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
         Remove unused security functions from V8 bindings
         https://bugs.webkit.org/show_bug.cgi?id=75797
 

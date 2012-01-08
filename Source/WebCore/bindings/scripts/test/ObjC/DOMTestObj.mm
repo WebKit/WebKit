@@ -661,18 +661,6 @@
     IMPL->withDynamicFrameAndOptionalArg(intArg, optionalArg);
 }
 
-- (void)withDynamicFrameAndUserGesture:(int)intArg
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->withDynamicFrameAndUserGesture(intArg);
-}
-
-- (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->withDynamicFrameAndUserGestureASAD(intArg, optionalArg);
-}
-
 - (void)withScriptStateVoid
 {
     WebCore::JSMainThreadNullState state;

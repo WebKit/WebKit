@@ -3247,13 +3247,6 @@ sub GenerateFunctionCallString()
         $index += 2;
     }
 
-    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
-        $functionString .= ", " if $index;
-        $functionString .= "ScriptController::processingUserGesture()";
-        $index++;
-        AddToImplIncludes("ScriptController.h");
-    }
-
     if (@{$function->raisesExceptions}) {
         $functionString .= ", " if $index;
         $functionString .= "ec";
