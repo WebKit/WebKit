@@ -225,7 +225,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)dealloc
 {
     _data->_page->close();
-    [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
 
     ASSERT(!_data->_inSecureInputState);
 
@@ -1823,11 +1822,19 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
         [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
-        
-        [self _accessibilityRegisterUIProcessTokens];            
+
+        _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
+            [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
+            return flagsChangedEvent;
+        }];
+
+        [self _accessibilityRegisterUIProcessTokens];
     } else {
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
+
+        [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
+        _data->_flagsChangedEventMonitor = nil;
 
 #if ENABLE(GESTURE_EVENTS)
         if (_data->_endGestureMonitor) {
@@ -2703,10 +2710,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 #endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
-    _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
-        [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
-        return flagsChangedEvent;
-    }];
 
     [self _registerDraggedTypes];
 
