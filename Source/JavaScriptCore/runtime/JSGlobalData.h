@@ -251,6 +251,9 @@ namespace JSC {
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
+        CallFrame* callFrameForThrow;
+        void* targetMachinePCForThrow;
+        Instruction* targetInterpreterPCForThrow;
 #if ENABLE(DFG_JIT)
         uint32_t osrExitIndex;
         void* osrExitJumpDestination;

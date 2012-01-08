@@ -1710,6 +1710,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITExceptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITExceptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITStubs.cpp"
 				>
 			</File>

@@ -1,3 +1,23 @@
+2012-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        The JIT's protocol for exception handling should be available to other parts of the system
+        https://bugs.webkit.org/show_bug.cgi?id=75808
+        <rdar://problem/10661025>
+
+        Reviewed by Oliver Hunt.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * jit/JITExceptions.cpp: Added.
+        (JSC::genericThrow):
+        (JSC::jitThrow):
+        * jit/JITExceptions.h: Added.
+        * jit/JITStubs.cpp:
+        * runtime/JSGlobalData.h:
+
 2012-01-06  Hajime Morrita  <morrita@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=75296

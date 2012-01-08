@@ -44,6 +44,7 @@
 #include "Heap.h"
 #include "InlineASM.h"
 #include "JIT.h"
+#include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSByteArray.h"
@@ -1032,26 +1033,6 @@ static NEVER_INLINE void returnToThrowTrampoline(JSGlobalData* globalData, Retur
             return; \
         } \
     } while (0)
-
-struct ExceptionHandler {
-    void* catchRoutine;
-    CallFrame* callFrame;
-};
-
-static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame, JSValue exceptionValue, ReturnAddressPtr faultLocation)
-{
-    ASSERT(exceptionValue);
-
-    unsigned vPCIndex = callFrame->codeBlock()->bytecodeOffset(faultLocation);
-    globalData->exception = JSValue();
-    HandlerInfo* handler = globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex); // This may update callFrame & exceptionValue!
-    globalData->exception = exceptionValue;
-
-    void* catchRoutine = handler ? handler->nativeCode.executableAddress() : FunctionPtr(ctiOpThrowNotCaught).value();
-    ASSERT(catchRoutine);
-    ExceptionHandler exceptionHandler = { catchRoutine, callFrame };
-    return exceptionHandler;
-}
 
 // Helper function for JIT stubs that may throw an exception in the middle of
 // processing a function call. This function rolls back the register file to

@@ -260,6 +260,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITCode.h \
 	Source/JavaScriptCore/jit/JIT.cpp \
 	Source/JavaScriptCore/jit/JIT.h \
+	Source/JavaScriptCore/jit/JITExceptions.cpp \
+	Source/JavaScriptCore/jit/JITExceptions.h \
 	Source/JavaScriptCore/jit/JITInlineMethods.h \
 	Source/JavaScriptCore/jit/JITOpcodes32_64.cpp \
 	Source/JavaScriptCore/jit/JITOpcodes.cpp \
