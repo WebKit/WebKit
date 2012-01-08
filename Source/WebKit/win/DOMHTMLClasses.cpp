@@ -305,7 +305,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::forms(
         return E_FAIL;
 
     HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
-    *collection = DOMHTMLCollection::createInstance(htmlDoc->forms().get());
+    *collection = DOMHTMLCollection::createInstance(htmlDoc->forms());
     return S_OK;
 }
     
@@ -709,7 +709,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLSelectElement::options(
     if (!selectElement->options())
         return E_FAIL;
 
-    *result = DOMHTMLOptionsCollection::createInstance(selectElement->options().get());
+    *result = DOMHTMLOptionsCollection::createInstance(selectElement->options());
     return S_OK;
 }
     
