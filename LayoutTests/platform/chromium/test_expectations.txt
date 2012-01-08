@@ -3889,3 +3889,5 @@ BUGWK75784 : fast/canvas/webgl/invalid-passed-params.html = TEXT
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
+BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
+
