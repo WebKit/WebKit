@@ -698,9 +698,12 @@ void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
 {
     if (needsStyleRecalc())
         return;
-
-    if (document()->attached() && document()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
-        setNeedsStyleRecalc();
+    if (!document()->attached())
+        return;
+    CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
+    if (styleSelector && !styleSelector->hasSelectorForAttribute(attr->name().localName()))
+        return;
+    setNeedsStyleRecalc();
 }
 
 void Element::idAttributeChanged(Attribute* attr)

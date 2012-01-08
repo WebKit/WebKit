@@ -1,3 +1,17 @@
+2012-01-08  Antti Koivisto  <antti@apple.com>
+
+        Don't create style selector in Element::recalcStyleIfNeededAfterAttributeChanged if it doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=75802
+
+        Rubber-stamped by Andreas Kling.
+
+        Element::recalcStyleIfNeededAfterAttributeChanged shouldn't create style selector for attribute 
+        check if it doesn't already exist. We are going to need a full style recalc anyway in that case
+        and the constructed style selector may get throw out again.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyleIfNeededAfterAttributeChanged):
+
 2012-01-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS_FILTERS in Qt build
