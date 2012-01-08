@@ -1,5 +1,50 @@
 2012-01-04  Kentaro Hara  <haraken@chromium.org>
 
+        Rewrite the CSS parser of prepare-ChangeLog with unittests.
+        https://bugs.webkit.org/show_bug.cgi?id=75202
+
+        Reviewed by David Kilzer.
+
+        The current CSS parser can just parse simple CSSes like
+
+            foo bar baz {
+                property1: value;
+                property2: value;
+            }
+
+        , and cannot parse comments nor a CSS in which a selector and {
+        appears in different lines. This patch rewrites the CSS parser
+        (i.e. get_selector_line_ranges_for_css()) so that it can parse more CSSes
+        shown in css_unittests.css.
+
+        Test: Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests.css
+
+        * Scripts/prepare-ChangeLog:
+        (get_selector_line_ranges_for_css):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests.css: Added.
+        (element1):
+        (element2):
+        (element3):
+        (element4.p):
+        (element5.p.q.r.s):
+        (element6#p):
+        (element7 element8):
+        (element9.p element10.q):
+        (element11#p element12#q):
+        (element13, element14):
+        (.p):
+        (#p):
+        (.p element15 #q element16.r element17#s):
+        (element18:target):
+        (element19):
+        (element20):
+        (element21):
+        (element22):
+
+2012-01-04  Kentaro Hara  <haraken@chromium.org>
+
         The Perl parser of prepare-ChangeLog can parse here-documents
         https://bugs.webkit.org/show_bug.cgi?id=73208
 

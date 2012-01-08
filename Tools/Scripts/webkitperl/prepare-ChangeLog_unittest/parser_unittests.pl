@@ -32,11 +32,12 @@ use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
-my %testFiles = ("perl_unittests.pl" => "perl",
-                 "python_unittests.py" => "python",
-                 "java_unittests.java" => "java",
-                 "cpp_unittests.cpp" => "cpp",
-                 "javascript_unittests.js" => "javascript",
+my %testFiles = ("perl_unittests.pl" => "get_function_line_ranges_for_perl",
+                 "python_unittests.py" => "get_function_line_ranges_for_python",
+                 "java_unittests.java" => "get_function_line_ranges_for_java",
+                 "cpp_unittests.cpp" => "get_function_line_ranges_for_cpp",
+                 "javascript_unittests.js" => "get_function_line_ranges_for_javascript",
+                 "css_unittests.css" => "get_selector_line_ranges_for_css",
                 );
 
 my $resetResults;
@@ -46,7 +47,7 @@ my @testSet;
 foreach my $testFile (sort keys %testFiles) {
     my $basename = $testFile;
     $basename = $1 if $basename =~ /^(.*)\.[^\.]*$/;
-    push @testSet, {language => $testFiles{$testFile},
+    push @testSet, {method => $testFiles{$testFile},
                     inputFile => File::Spec->catdir($FindBin::Bin, "resources", $testFile),
                     expectedFile => File::Spec->catdir($FindBin::Bin, "resources", $basename . "-expected.txt")};
 }
@@ -54,7 +55,7 @@ foreach my $testFile (sort keys %testFiles) {
 plan(tests => scalar @testSet);
 foreach my $test (@testSet) {
     open FH, "< $test->{inputFile}" or die "Cannot open $test->{inputFile}: $!";
-    my $parser = eval "\\&PrepareChangeLog::get_function_line_ranges_for_$test->{language}";
+    my $parser = eval "\\&PrepareChangeLog::$test->{method}";
     my @actualOutput = $parser->(\*FH, $test->{inputFile});;
     close FH;
 

@@ -1393,7 +1393,6 @@ sub get_function_line_ranges_for_python($$)
 # Read a file and get all the line ranges of the things that look like CSS selectors.  A selector is
 # anything before an opening brace on a line. A selector starts at the line containing the opening
 # brace and ends at the closing brace.
-# FIXME: Comments are parsed just like uncommented text.
 #
 # Result is a list of triples: [ start_line, end_line, selector ].
 
@@ -1405,21 +1404,36 @@ sub get_selector_line_ranges_for_css($$)
 
     my $currentSelector = "";
     my $start = 0;
+    my $inComment = 0;
+    my $inBrace = 0;
 
     while (<$fileHandle>) {
-        if (/^[ \t]*(.*[^ \t])[ \t]*{/) {
-            $currentSelector = $1;
-            $start = $.;
-        }
-        if (index($_, "}") >= 0) {
-            unless ($start) {
-                warn "mismatched braces in $fileName\n";
-                next;
+        foreach my $token (split m-(\{|\}|/\*|\*/)-, $_) {
+            if ($token eq "{") {
+                if (!$inComment) {
+                    warn "mismatched brace found in $fileName\n" if $inBrace;
+                    $inBrace = 1;
+                }
+            } elsif ($token eq "}") {
+                if (!$inComment) {
+                    warn "mismatched brace found in $fileName\n" if !$inBrace;
+                    $inBrace = 0;
+                    push(@ranges, [$start, $., $currentSelector]);
+                    $currentSelector = "";
+                    $start = 0;
+                }
+            } elsif ($token eq "/*") {
+                $inComment = 1;
+            } elsif ($token eq "*/") {
+                warn "mismatched comment found in $fileName\n" if !$inComment;
+                $inComment = 0;
+            } else {
+                if (!$inComment and !$inBrace and $token !~ /^[\s\t]*$/) {
+                    $token =~ s/^[\s\t]*|[\s\t]*$//g;
+                    $currentSelector = $token;
+                    $start = $.;
+                }
             }
-            push(@ranges, [$start, $., $currentSelector]);
-            $currentSelector = "";
-            $start = 0;
-            next;
         }
     }
 
