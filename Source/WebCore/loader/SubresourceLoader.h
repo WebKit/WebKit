@@ -71,6 +71,7 @@ private:
 #endif
     virtual void releaseResources();
 
+    bool errorLoadingResource();
     void sendDataToResource(const char*, int);
 
     enum SubresourceLoaderState {

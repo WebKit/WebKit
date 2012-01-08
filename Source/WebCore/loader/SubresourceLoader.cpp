@@ -211,15 +211,22 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
     RefPtr<SubresourceLoader> protect(this);
     ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
 
-    if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors()) {
-        m_resource->error(CachedResource::LoadError);
-        m_state = Finishing;
-        cancel();
+    if (errorLoadingResource())
         return;
-    }
 
     if (!m_loadingMultipartContent)
         sendDataToResource(data, length);
+}
+
+bool SubresourceLoader::errorLoadingResource()
+{
+    if (m_resource->response().httpStatusCode() < 400 || m_resource->shouldIgnoreHTTPStatusCodeErrors())
+        return false;
+
+    m_resource->error(CachedResource::LoadError);
+    m_state = Finishing;
+    cancel();
+    return true;
 }
 
 void SubresourceLoader::sendDataToResource(const char* data, int length)

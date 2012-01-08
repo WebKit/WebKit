@@ -36,13 +36,16 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 
     ResourceLoader::didReceiveDataArray(dataArray);
 
+    if (errorLoadingResource())
+        return;
+
     // A subresource loader does not load multipart sections progressively.
     // So don't deliver any data to the loader yet.
     if (!m_loadingMultipartContent) {
         CFIndex arrayCount = CFArrayGetCount(dataArray);
         for (CFIndex i = 0; i < arrayCount; ++i)  {
             CFDataRef data = reinterpret_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-            didReceiveData(reinterpret_cast<const char *>(CFDataGetBytePtr(data)), static_cast<int>(CFDataGetLength(data)), -1, false);
+            sendDataToResource(reinterpret_cast<const char *>(CFDataGetBytePtr(data)), static_cast<int>(CFDataGetLength(data)));
         }
     }
 }
