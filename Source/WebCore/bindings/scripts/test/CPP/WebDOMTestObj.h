@@ -163,9 +163,6 @@ public:
     void customMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void addEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
     void removeEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
-    void withDynamicFrame();
-    void withDynamicFrameAndArg(int intArg);
-    void withDynamicFrameAndOptionalArg(int intArg, int optionalArg);
     void withScriptStateVoid();
     WebDOMTestObj withScriptStateObj();
     void withScriptStateVoidException();

@@ -1,5 +1,32 @@
 2012-01-08  Adam Barth  <abarth@webkit.org>
 
+        Remove deprecated toDynamicFrame and unused [CallWith=DynamicFrame]
+        https://bugs.webkit.org/show_bug.cgi?id=75795
+
+        Reviewed by Eric Seidel.
+
+        We've succeeded in removing all the callers fo this function, including
+        all the uses of CallWith=DynamicFrame in IDL files.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallString):
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
         NeedsUserGestureCheck IDL attribute is no longer used
         https://bugs.webkit.org/show_bug.cgi?id=75794
 

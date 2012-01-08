@@ -2444,12 +2444,7 @@ sub GenerateParametersCheck
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     if ($callWith and !$function->signature->extendedAttributes->{"Constructor"}) {
         my $callWithArg = "COMPILE_ASSERT(false)";
-        if ($callWith eq "DynamicFrame") {
-            push(@$outputArray, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
-            push(@$outputArray, "    if (!dynamicFrame)\n");
-            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-            $callWithArg = "dynamicFrame";
-        } elsif ($callWith eq "ScriptState") {
+        if ($callWith eq "ScriptState") {
             $callWithArg = "exec";
         } elsif ($callWith eq "ScriptExecutionContext") {
             push(@$outputArray, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");

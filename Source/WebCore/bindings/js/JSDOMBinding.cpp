@@ -244,12 +244,6 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
     frame->domWindow()->printErrorMessage(message);
 }
 
-// FIXME: We should remove or at least deprecate this function. Callers can use firstDOMWindow directly.
-Frame* toDynamicFrame(ExecState* exec)
-{
-    return firstDOMWindow(exec)->frame();
-}
-
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
     return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, objectProtoFuncToString);

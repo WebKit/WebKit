@@ -760,30 +760,6 @@ void WebDOMTestObj::removeEventListener(const WebDOMString& type, const WebDOMEv
     impl()->removeEventListener(type, toWebCore(listener), useCapture);
 }
 
-void WebDOMTestObj::withDynamicFrame()
-{
-    if (!impl())
-        return;
-
-    impl()->withDynamicFrame();
-}
-
-void WebDOMTestObj::withDynamicFrameAndArg(int intArg)
-{
-    if (!impl())
-        return;
-
-    impl()->withDynamicFrameAndArg(intArg);
-}
-
-void WebDOMTestObj::withDynamicFrameAndOptionalArg(int intArg, int optionalArg)
-{
-    if (!impl())
-        return;
-
-    impl()->withDynamicFrameAndOptionalArg(intArg, optionalArg);
-}
-
 void WebDOMTestObj::withScriptStateVoid()
 {
     if (!impl())

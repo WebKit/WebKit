@@ -893,53 +893,6 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
     return v8::Undefined();
 }
 
-static v8::Handle<v8::Value> withDynamicFrameCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.withDynamicFrame");
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-    imp->withDynamicFrame(enteredFrame);
-    return v8::Handle<v8::Value>();
-}
-
-static v8::Handle<v8::Value> withDynamicFrameAndArgCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.withDynamicFrameAndArg");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-    imp->withDynamicFrameAndArg(enteredFrame, intArg);
-    return v8::Handle<v8::Value>();
-}
-
-static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.withDynamicFrameAndOptionalArg");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
-    if (args.Length() <= 1) {
-        Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-        if (!enteredFrame)
-            return v8::Undefined();
-        imp->withDynamicFrameAndOptionalArg(enteredFrame, intArg);
-        return v8::Handle<v8::Value>();
-    }
-    EXCEPTION_BLOCK(int, optionalArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
-    imp->withDynamicFrameAndOptionalArg(enteredFrame, intArg, optionalArg);
-    return v8::Handle<v8::Value>();
-}
-
 static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.withScriptStateVoid");
@@ -1438,9 +1391,6 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"customMethodWithArgs", V8TestObj::customMethodWithArgsCallback},
     {"addEventListener", TestObjInternal::addEventListenerCallback},
     {"removeEventListener", TestObjInternal::removeEventListenerCallback},
-    {"withDynamicFrame", TestObjInternal::withDynamicFrameCallback},
-    {"withDynamicFrameAndArg", TestObjInternal::withDynamicFrameAndArgCallback},
-    {"withDynamicFrameAndOptionalArg", TestObjInternal::withDynamicFrameAndOptionalArgCallback},
     {"withScriptStateVoid", TestObjInternal::withScriptStateVoidCallback},
     {"withScriptStateObj", TestObjInternal::withScriptStateObjCallback},
     {"withScriptStateVoidException", TestObjInternal::withScriptStateVoidExceptionCallback},

@@ -101,9 +101,6 @@ module test {
                                  in [Optional] boolean useCapture);
 
         // 'CallWith' extended attribute
-        [CallWith=DynamicFrame] void withDynamicFrame();
-        [CallWith=DynamicFrame] void withDynamicFrameAndArg(in long intArg);
-        [CallWith=DynamicFrame] void withDynamicFrameAndOptionalArg(in long intArg, in [Optional] long optionalArg);
         [CallWith=ScriptState] void withScriptStateVoid();
         [CallWith=ScriptState] TestObj withScriptStateObj();
         [CallWith=ScriptState] void withScriptStateVoidException()

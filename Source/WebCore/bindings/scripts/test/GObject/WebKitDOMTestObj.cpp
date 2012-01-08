@@ -230,33 +230,6 @@ webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError **error
 }
 
 void
-webkit_dom_test_obj_with_dynamic_frame(WebKitDOMTestObj* self)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    item->withDynamicFrame();
-}
-
-void
-webkit_dom_test_obj_with_dynamic_frame_and_arg(WebKitDOMTestObj* self, glong int_arg)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    item->withDynamicFrameAndArg(int_arg);
-}
-
-void
-webkit_dom_test_obj_with_dynamic_frame_and_optional_arg(WebKitDOMTestObj* self, glong int_arg, glong optional_arg)
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    item->withDynamicFrameAndOptionalArg(int_arg, optional_arg);
-}
-
-void
 webkit_dom_test_obj_with_script_state_void(WebKitDOMTestObj* self)
 {
     g_return_if_fail(self);

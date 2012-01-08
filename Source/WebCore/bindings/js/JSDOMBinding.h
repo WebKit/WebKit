@@ -294,8 +294,6 @@ enum ParameterMissingPolicy {
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
 
-    Frame* toDynamicFrame(JSC::ExecState*);
-
     inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
     {
         StringImpl* stringImpl = s.impl();

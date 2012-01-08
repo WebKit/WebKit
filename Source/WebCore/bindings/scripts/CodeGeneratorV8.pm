@@ -3196,12 +3196,7 @@ sub GenerateFunctionCallString()
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     if ($callWith) {
         my $callWithArg = "COMPILE_ASSERT(false)";
-        if ($callWith eq "DynamicFrame") {
-            $result .= $indent . "Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();\n";
-            $result .= $indent . "if (!enteredFrame)\n";
-            $result .= $indent . "    return v8::Undefined();\n";
-            $callWithArg = "enteredFrame";
-        } elsif ($callWith eq "ScriptState") {
+        if ($callWith eq "ScriptState") {
             $result .= $indent . "EmptyScriptState state;\n";
             $callWithArg = "&state";
             $hasScriptState = 1;

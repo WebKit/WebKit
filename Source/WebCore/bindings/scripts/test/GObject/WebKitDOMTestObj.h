@@ -174,39 +174,6 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError **error);
 
 /**
- * webkit_dom_test_obj_with_dynamic_frame:
- * @self: A #WebKitDOMTestObj
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_with_dynamic_frame(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_with_dynamic_frame_and_arg:
- * @self: A #WebKitDOMTestObj
- * @int_arg: A #glong
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_with_dynamic_frame_and_arg(WebKitDOMTestObj* self, glong int_arg);
-
-/**
- * webkit_dom_test_obj_with_dynamic_frame_and_optional_arg:
- * @self: A #WebKitDOMTestObj
- * @int_arg: A #glong
- * @optional_arg: A #glong
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_with_dynamic_frame_and_optional_arg(WebKitDOMTestObj* self, glong int_arg, glong optional_arg);
-
-/**
  * webkit_dom_test_obj_with_script_state_void:
  * @self: A #WebKitDOMTestObj
  *

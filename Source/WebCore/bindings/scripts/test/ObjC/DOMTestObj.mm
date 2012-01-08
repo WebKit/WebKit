@@ -643,24 +643,6 @@
     IMPL->removeEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
 }
 
-- (void)withDynamicFrame
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->withDynamicFrame();
-}
-
-- (void)withDynamicFrameAndArg:(int)intArg
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->withDynamicFrameAndArg(intArg);
-}
-
-- (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->withDynamicFrameAndOptionalArg(intArg, optionalArg);
-}
-
 - (void)withScriptStateVoid
 {
     WebCore::JSMainThreadNullState state;
