@@ -75,7 +75,11 @@ extern "C" {
 
 #if defined(JCS_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
 #define TURBO_JPEG_RGB_SWIZZLE
+#if USE(SKIA) && (!SK_R32_SHIFT && SK_G32_SHIFT == 8 && SK_B32_SHIFT == 16)
+inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_RGBX; }
+#else
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRX; }
+#endif
 inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == rgbOutputColorSpace(); }
 #else
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }

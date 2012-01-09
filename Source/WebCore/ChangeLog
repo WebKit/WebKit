@@ -1,3 +1,16 @@
+2012-01-09  Sami Kyostila  <skyostil@chromium.org>
+
+        [Chromium] JPEG RGB swizzling order should match platform pixel format
+        https://bugs.webkit.org/show_bug.cgi?id=75861
+
+        Choose between JCS_EXT_BGRX and JCS_EXT_RGBX channel swizzling
+        based on the configured Skia 32-bit pixel format.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (rgbOutputColorSpace):
+
 2012-01-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for border-radius is not implemented.
