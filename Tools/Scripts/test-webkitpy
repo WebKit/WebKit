@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -15,7 +15,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,13 +32,9 @@ import logging
 import os
 import sys
 
-# Do not import anything from webkitpy prior to cleaning webkitpy of
-# orphaned *.pyc files.  This ensures that no orphaned *.pyc files are
-# accidentally imported during the course of this script.
-#
-# Also, do not import or execute any Python code incompatible with
-# Python 2.4 until after execution of the init() method below.
-
+# We strictly limit what is imported from webkitpy until we get a chance
+# to delete any stray *.pyc files.
+import webkitpy.common.version_check
 
 _log = logging.getLogger("test-webkitpy")
 
@@ -61,8 +57,6 @@ def configure_logging(is_verbose_logging):
                           logging.DEBUG.  Otherwise, it is set to logging.INFO.
 
     """
-    # Don't use the Python ternary operator here so that this method will
-    # work with Python 2.4.
     if is_verbose_logging:
         logging_level = logging.DEBUG
     else:
@@ -194,10 +188,10 @@ def init(command_args, external_package_paths):
     # after any file moves.  Otherwise, incorrect import statements can
     # be masked.
     #
-    # For example, if webkitpy/python24/versioning.py were moved to a
+    # For example, if webkitpy/common/host.py were moved to a
     # different location without changing any import statements, and if
     # the corresponding .pyc file were left behind without deleting it,
-    # then "import webkitpy.python24.versioning" would continue to succeed
+    # then "import webkitpy.common.host" would continue to succeed
     # even though it would fail for someone checking out a fresh copy
     # of the source tree.  This is because of a Python feature:
     #
@@ -212,19 +206,6 @@ def init(command_args, external_package_paths):
     # cause an ImportError to occur on import as desired.
     _clean_packages_with_test(external_package_paths)
 
-    import webkitpy.python24.versioning as versioning
-
-    versioning.check_version(log=_log)
-
-    (comparison, current_version, expected_version) = \
-        versioning.compare_version()
-
-    if comparison != 0:
-        # Then the current version is not what we expect.
-        message = ("You are testing webkitpy with Python version (%s) "
-                   "instead of version (%s) which we support.  Please verify "
-                   "changes against version (%s)" % (current_version, expected_version, expected_version))
-        _log.warn(message)
 
 def _path_from_webkit_root(*components):
     webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))

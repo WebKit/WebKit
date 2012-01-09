@@ -1,3 +1,39 @@
+2012-01-06  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: revamp version checking
+        https://bugs.webkit.org/show_bug.cgi?id=75765
+
+        Reviewed by Adam Barth.
+
+        The version-checking code in webkitpy/python24/versioning seems really
+        awkward and overdesigned, especially since we don't support python 2.4
+        any more.
+
+        In addition, I am tired of getting warnings about Python 2.6 being "a
+        newer release than what is supported" :).
+
+        I'm taking a page from the depot_tools python code and just creating a
+        new webkitpy.common.version_check module that will print a message on
+        stderr and call sys.exit() if we're running an unsupported version.
+
+        * Scripts/check-webkit-style:
+        * Scripts/new-run-webkit-httpd:
+        * Scripts/new-run-webkit-tests:
+        * Scripts/rebaseline-chromium-webkit-tests:
+        * Scripts/test-webkitpy:
+        (configure_logging):
+        (init):
+        * Scripts/webkit-patch:
+        (main):
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._child_process_encoding):
+        (Executive._should_encode_child_process_arguments):
+        * Scripts/webkitpy/common/version_check.py: Copied from Tools/Scripts/rebaseline-chromium-webkit-tests.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/python24/__init__.py: Removed.
+        * Scripts/webkitpy/python24/versioning.py: Removed.
+        * Scripts/webkitpy/python24/versioning_unittest.py: Removed.
+
 2012-01-09  Adam Barth  <abarth@webkit.org>
 
         Remove Chromium Mac CG from the flakiness dashboard

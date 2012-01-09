@@ -70,7 +70,6 @@ from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port import Port
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
-from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
 
@@ -760,7 +759,7 @@ class MainTest(unittest.TestCase):
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
-MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
+MainTest = skip_if(MainTest, sys.platform == 'cygwin' and sys.version < '2.6', 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
 
 class EndToEndTest(unittest.TestCase):

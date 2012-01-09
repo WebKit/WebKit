@@ -46,7 +46,6 @@ import time
 
 from webkitpy.common.system.deprecated_logging import tee
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.python24 import versioning
 
 
 _log = logging.getLogger(__name__)
@@ -445,7 +444,7 @@ class Executive(object):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform == 'win32' and versioning.compare_version(sys, '3.0')[0] < 0:
+        if sys.platform == 'win32' and sys.version < '3':
             return 'mbcs'
         # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
@@ -462,7 +461,7 @@ class Executive(object):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform == 'win32' and versioning.compare_version(sys, '3.0')[0] < 0:
+        if sys.platform == 'win32' and sys.version < '3':
             return True
 
         return False

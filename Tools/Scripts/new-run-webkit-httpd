@@ -42,6 +42,8 @@ import os
 import sys
 import tempfile
 
+import webkitpy.common.version_check
+
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.servers import http_server
 
