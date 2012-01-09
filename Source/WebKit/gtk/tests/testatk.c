@@ -63,7 +63,7 @@ static const char* linksWithInlineImages = "<html><head><style>a.http:before {co
 
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
 
-static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select></body></html>";
+static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select><input type='text'' name='foo'' value='foo bar baz' /></body></html>";
 
 static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p><ol><li>A list item</li></ol><select></body></html>";
 
@@ -234,7 +234,7 @@ static void runGetTextTests(AtkText* textObject)
     testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_SENTENCE_END,
                         44, " This is the second sentence.", 15, 44);
 
-    /* It's trick to test these properly right now, since our a11y
+    /* It's tricky to test these properly right now, since our a11y
        implementation splits different lines in different a11y items. */
     /* ATK_TEXT_BOUNDARY_LINE_START */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START,
@@ -243,6 +243,15 @@ static void runGetTextTests(AtkText* textObject)
     /* ATK_TEXT_BOUNDARY_LINE_END */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
                         0, "This is a test. This is the second sentence. And this the third.", 0, 64);
+
+    /* For objects implementing AtkEditableText, try to change the
+       exposed text and retrieve it again as a full line.
+       (see https://bugs.webkit.org/show_bug.cgi?id=72830) */
+    if (ATK_IS_EDITABLE_TEXT(textObject)) {
+        atk_editable_text_set_text_contents(ATK_EDITABLE_TEXT(textObject), "foo bar baz");
+        testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 0, "foo bar baz", 0, 11);
+        testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, "foo bar baz", 0, 11);
+    }
 }
 
 static void testWebkitAtkCaretOffsets()
@@ -334,6 +343,18 @@ static void testWebkitAtkCaretOffsets()
     result = atk_text_set_caret_offset(ATK_TEXT(comboBoxOption), 1);
     g_assert_cmpint(result, ==, FALSE);
 
+    AtkObject* textEntry = atk_object_ref_accessible_child(panel, 1);
+    g_assert(ATK_IS_OBJECT(textEntry));
+    g_assert(atk_object_get_role(textEntry) == ATK_ROLE_ENTRY);
+    g_assert(ATK_IS_TEXT(textEntry));
+    text = atk_text_get_text(ATK_TEXT(textEntry), 0, -1);
+    g_assert_cmpstr(text, ==, "foo bar baz");
+
+    result = atk_text_set_caret_offset(ATK_TEXT(textEntry), 5);
+    g_assert_cmpint(result, ==, TRUE);
+    offset = atk_text_get_caret_offset(ATK_TEXT(textEntry));
+    g_assert_cmpint(offset, ==, 5);
+
     g_object_unref(header);
     g_object_unref(paragraph);
     g_object_unref(list);
@@ -342,6 +363,7 @@ static void testWebkitAtkCaretOffsets()
     g_object_unref(comboBox);
     g_object_unref(menuPopup);
     g_object_unref(comboBoxOption);
+    g_object_unref(textEntry);
     g_object_unref(webView);
 }
 

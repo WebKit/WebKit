@@ -1,3 +1,20 @@
+2012-01-09  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Regression: text-inserted events lack text inserted and current line
+        https://bugs.webkit.org/show_bug.cgi?id=72830
+
+        Reviewed by Martin Robinson.
+
+        Updated unit tests to check that both getting the current position
+        for the caret and the exposed text at, before or after a given
+        offset for an accessible object works as expected.
+
+        * tests/testatk.c:
+        (runGetTextTests): For objects implementing AtkEditableText, try
+        to change the exposed text and retrieve it again as a full line.
+        (testWebkitAtkCaretOffsets): For a text control (a text entry),
+        set the caret offset to a value greater than 1 and retrieve it.
+
 2012-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [AC] Introduce AcceleratedCompositingContext to isolate different accelerated compositing implementations

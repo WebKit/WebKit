@@ -80,20 +80,17 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    // Reset lastFocuseNode and return for no valid selections.
+    // Return for no valid selections.
     if (!m_selection.start().isNotNull() || !m_selection.end().isNotNull())
         return;
 
-    RenderObject* focusedNode = m_selection.end().deprecatedNode()->renderer();
-    AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->getOrCreate(focusedNode);
-
-    // Need to check this as getOrCreate could return 0,
+    // Look for the accessibility object for the Frame.
+    AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->rootObjectForFrame(m_frame);
     if (!accessibilityObject)
         return;
 
     int offset;
-    // Always report the events w.r.t. the non-linked unignored parent. (i.e. ignoreLinks == true).
-    RefPtr<AccessibilityObject> object = objectAndOffsetUnignored(accessibilityObject, offset, true);
+    RefPtr<AccessibilityObject> object = objectFocusedAndCaretOffsetUnignored(accessibilityObject, offset);
     if (!object)
         return;
 

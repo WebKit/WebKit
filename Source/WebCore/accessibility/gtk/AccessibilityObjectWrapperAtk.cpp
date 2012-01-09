@@ -76,7 +76,6 @@
 
 using namespace WebCore;
 
-static GQuark gailTextUtilQuark = 0;
 static GQuark hyperlinkObjectQuark = 0;
 
 static AccessibilityObject* fallbackObject()
@@ -846,7 +845,6 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->get_attributes = webkit_accessible_get_attributes;
     klass->ref_relation_set = webkit_accessible_ref_relation_set;
 
-    gailTextUtilQuark = g_quark_from_static_string("webkit-accessible-gail-text-util");
     hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
 }
 
@@ -1293,13 +1291,8 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
 
 static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
-    gpointer data = g_object_get_qdata(G_OBJECT(textObject), gailTextUtilQuark);
-    if (data)
-        return static_cast<GailTextUtil*>(data);
-
     GailTextUtil* gailTextUtil = gail_text_util_new();
     gail_text_util_text_setup(gailTextUtil, webkit_accessible_text_get_text(textObject, 0, -1));
-    g_object_set_qdata_full(G_OBJECT(textObject), gailTextUtilQuark, gailTextUtil, g_object_unref);
     return gailTextUtil;
 }
 
@@ -1352,20 +1345,8 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     if (!coreObject->isAccessibilityRenderObject())
         return 0;
 
-    Document* document = coreObject->document();
-    if (!document)
-        return 0;
-
-    Node* focusedNode = coreObject->selection().end().deprecatedNode();
-    if (!focusedNode)
-        return 0;
-
-    RenderObject* focusedRenderer = focusedNode->renderer();
-    AccessibilityObject* focusedObject = document->axObjectCache()->getOrCreate(focusedRenderer);
-
     int offset;
-    // Don't ignore links if the offset is being requested for a link.
-    if (!objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink()))
+    if (!objectFocusedAndCaretOffsetUnignored(coreObject, offset))
         return 0;
 
     RenderObject* renderer = coreObject->renderer();
@@ -2733,40 +2714,67 @@ AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible)
     return focusedObj->wrapper();
 }
 
-AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, int& offset, bool ignoreLinks)
+AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* referenceObject, int& offset)
 {
     // Indication that something bogus has transpired.
     offset = -1;
 
-    AccessibilityObject* realObject = coreObject;
-    if (realObject->accessibilityIsIgnored())
-        realObject = realObject->parentObjectUnignored();
-    if (!realObject)
+    Document* document = referenceObject->document();
+    if (!document)
         return 0;
 
-    if (ignoreLinks && realObject->isLink())
-        realObject = realObject->parentObjectUnignored();
-    if (!realObject)
+    Node* focusedNode = referenceObject->selection().end().containerNode();
+    if (!focusedNode)
         return 0;
 
-    Node* node = realObject->node();
-    if (node) {
-        VisiblePosition startPosition = VisiblePosition(positionBeforeNode(node), DOWNSTREAM);
-        VisiblePosition endPosition = realObject->selection().visibleEnd();
+    RenderObject* focusedRenderer = focusedNode->renderer();
+    if (!focusedRenderer)
+        return 0;
 
-        if (startPosition == endPosition)
-            offset = 0;
-        else if (!isStartOfLine(endPosition)) {
-            RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
-            offset = TextIterator::rangeLength(range.get(), true) + 1;
-        } else {
-            RefPtr<Range> range = makeRange(startPosition, endPosition);
-            offset = TextIterator::rangeLength(range.get(), true);
-        }
+    AccessibilityObject* focusedObject = document->axObjectCache()->getOrCreate(focusedRenderer);
+    if (!focusedObject)
+        return 0;
 
+    // Look for the actual (not ignoring accessibility) selected object.
+    if (focusedObject->accessibilityIsIgnored())
+        focusedObject = focusedObject->parentObjectUnignored();
+    if (!focusedObject)
+        return 0;
+
+    // Don't ignore links if the offset is being requested for a link.
+    if (!referenceObject->isLink() && focusedObject->isLink())
+        focusedObject = focusedObject->parentObjectUnignored();
+    if (!focusedObject)
+        return 0;
+
+    Node* startNode = 0;
+    if (focusedObject != referenceObject || focusedObject->isTextControl()) {
+        // We need to use the first child's node of the reference
+        // object as the start point to calculate the caret offset
+        // because we want it to be relative to the object of
+        // reference, not just to the focused object (which could have
+        // previous siblings which should be taken into account too).
+        AccessibilityObject* axFirstChild = referenceObject->firstChild();
+        if (axFirstChild)
+            startNode = axFirstChild->node();
+    }
+    if (!startNode)
+        startNode = focusedObject->node();
+
+    VisiblePosition startPosition = VisiblePosition(firstPositionInNode(startNode), DOWNSTREAM);
+    VisiblePosition endPosition = focusedObject->selection().visibleEnd();
+
+    if (startPosition == endPosition)
+        offset = 0;
+    else if (!isStartOfLine(endPosition)) {
+        RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
+        offset = TextIterator::rangeLength(range.get(), true) + 1;
+    } else {
+        RefPtr<Range> range = makeRange(startPosition, endPosition);
+        offset = TextIterator::rangeLength(range.get(), true);
     }
 
-    return realObject;
+    return focusedObject;
 }
 
 #endif // HAVE(ACCESSIBILITY)
