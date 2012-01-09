@@ -236,6 +236,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
     , m_textTracks(0)
+    , m_ignoreTrackDisplayUpdate(0)
 #endif
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)

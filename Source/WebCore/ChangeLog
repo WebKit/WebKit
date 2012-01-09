@@ -1,3 +1,16 @@
+2012-01-09  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r104327?): media/track/track-cues-cuechange.html and track-cues-enter-exit.html 
+        intermittently time out, media/track/track-cues-seeking and  fails
+        https://bugs.webkit.org/show_bug.cgi?id=75817
+
+        Unreviewed, fix a problem introduced in r104327.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_ignoreTrackDisplayUpdate.
+
 2012-01-09  Raymond Toy  <rtoy@google.com>
 
         Add normalize attribute to ConvolverNode to disable normalization.
