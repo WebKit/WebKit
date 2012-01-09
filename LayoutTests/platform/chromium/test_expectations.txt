@@ -536,9 +536,6 @@ WONTFIX : platform/chromium/compositing/rubberbanding = IMAGE
 // it isn't installed on XP by default.
 WONTFIX WIN : css3/font-feature-settings-rendering.html = PASS FAIL
 
-// No webp encoding support on MAC CoreGraphics (CG)
-WONTFIX MAC CPU-CG : fast/canvas/canvas-toDataURL-webp.html = FAIL
-
 // These test the CoreAnimation plugin model which we never intend to support on
 // Windows and Linux.
 WONTFIX SKIP WIN LINUX : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
@@ -548,9 +545,6 @@ WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.ht
 
 // Mac's popup behavior is different.
 WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.html = FAIL
-
-// CG appears to blend borders differently, but this config is going away soon.
-WONTFIX CPU-CG : css2.1/20110323/border-conflict-element-001d.htm = IMAGE
 
 // -----------------------------------------------------------------
 // LIGHTTPD
@@ -2062,19 +2056,6 @@ BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.cap.closed.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.join.parallel.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.path.rect.winding.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
-BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
 BUGCR45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
@@ -2571,13 +2552,6 @@ BUGWK52414 MAC : fast/body-propagation/overflow/005.html = IMAGE
 BUGWK52414 MAC : fast/overflow/006.html = IMAGE
 BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
-// MAC CoreGraphics CG not passing the CSS3 elliptical gradient tests. Skia on the
-// mac passes, refer to https://bugs.webkit.org/show_bug.cgi?id=56736
-BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients.html = IMAGE
-BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients2.html = IMAGE
-BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients3.html = IMAGE
-BUGWK56736 MAC CPU-CG : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
-
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
 BUGWK52082 LEOPARD : fast/text/midword-break-after-breakable-char.html = IMAGE
@@ -2638,8 +2612,6 @@ BUGCR71022 LINUX WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
 BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE IMAGE+TEXT
 
-BUGCR71418 LEOPARD CPU-CG : fast/borders/border-radius-split-inline.html = IMAGE
-
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS CRASH TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
@@ -2669,13 +2641,10 @@ BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = T
 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
-WONTFIX MAC CPU-CG : compositing/color-matching/pdf-image-match.html = IMAGE
 WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
-WONTFIX MAC CPU-CG : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support the CoreAnimation plugin model right now.
 BUGWK47925 SNOWLEOPARD CPU : compositing/plugins/composited-plugin.html = TEXT
-BUGWK47925 SNOWLEOPARD CPU-CG : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK47925 LEOPARD : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
@@ -2708,7 +2677,7 @@ BUGJAMESR : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
+BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK55968 MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
@@ -2985,7 +2954,7 @@ BUGDPRANKE LINUX MAC : transitions/interrupt-zero-duration.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ LEOPARD CPU CPU-CG : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ LEOPARD CPU : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = PASS CRASH
@@ -3015,7 +2984,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK60115 MAC CPU-CG : fast/transforms/shadows.html = PASS IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
@@ -3035,10 +3003,10 @@ BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
 
 // These seem to be minor debug-only differences.
-BUGWK60135 SNOWLEOPARD CPU CPU-CG : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD CPU CPU-CG : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD DEBUG CPU CPU-CG : fast/text/international/thai-line-breaks.html = PASS IMAGE
-BUGWK60135 SNOWLEOPARD DEBUG CPU CPU-CG : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = PASS IMAGE
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = PASS IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
@@ -3410,7 +3378,6 @@ BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TE
 BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
-BUGWK66900 SNOWLEOPARD CPU-CG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
 BUGWK66908 GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
@@ -3468,7 +3435,7 @@ BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
 
-BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU GPU-CG CPU-CG : fast/canvas/set-colors.html = TEXT
+BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU : fast/canvas/set-colors.html = TEXT
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
@@ -3511,7 +3478,7 @@ BUGWK68270 MAC DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT 
 BUGWK68270 MAC DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
 
 // Tests that have become flaky (causing regressions, but only sometimes)
-BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
+BUG_EPOGER SNOWLEOPARD CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
@@ -3541,18 +3508,10 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.h
 // main bots too, although not as flaky for some reason.
 BUGABARTH WIN LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 
-BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
-
-BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
-BUGWK68970 MAC CPU-CG : svg/custom/pattern-in-defs.svg = IMAGE
-
 BUGWK68982 : svg/custom/oversized-pattern-scale.svg = IMAGE PASS
 BUGWK68982 : svg/custom/transformed-pattern-clamp-svg-root.svg = IMAGE PASS
 
 BUGWK69060 WIN LINUX : fast/repaint/selection-clear.html = IMAGE+TEXT
-
-
-BUGWK69070 MAC CPU-CG : svg/filters/animate-fill.svg = IMAGE
 
 BUGABARTH LEOPARD : svg/custom/pattern-excessive-malloc.svg = IMAGE
 
@@ -3642,7 +3601,6 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
-BUGWK71214 LEOPARD CPU-CG : css2.1/20110323/block-non-replaced-width-008.htm = FAIL
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
@@ -3682,7 +3640,6 @@ BUGRICOW : fast/js/regexp-caching.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
 BUGRICOW : http/tests/security/xss-eval.html = TEXT
 
-BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation.html = CRASH
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
@@ -3757,9 +3714,6 @@ BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
-BUGWK72728 LEOPARD CPU-CG : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
-BUGWK72728 LEOPARD CPU-CG : fast/canvas/canvas-alphaImageData-behavior.html = TEXT
-
 BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 
@@ -3771,7 +3725,6 @@ BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
 
 BUGWK73872 WIN : svg/custom/linking-uri-01-b.svg = PASS IMAGE TIMEOUT
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
-BUGWK75136 LEOPARD CPU-CG : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
