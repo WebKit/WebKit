@@ -642,7 +642,7 @@ static Element* contextElementForInsertion(const String& where, Element* element
 {
     if (equalIgnoringCase(where, "beforeBegin") || equalIgnoringCase(where, "afterEnd")) {
         ContainerNode* parent = element->parentNode();
-        if (parent && parent->isDocumentNode()) {
+        if (parent && !parent->isElementNode()) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return 0;
         }

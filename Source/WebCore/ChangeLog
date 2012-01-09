@@ -1,3 +1,17 @@
+2012-01-09  Adam Barth  <abarth@webkit.org>
+
+        insertAdjacentHTML doesn't play nice with DocumentFragment
+        https://bugs.webkit.org/show_bug.cgi?id=75826
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/dom/insertAdjacentHTML-DocumentFragment-crash.html
+
+        Document nodes aren't the only non-Element ContainerNodes.
+
+        * html/HTMLElement.cpp:
+        (WebCore::contextElementForInsertion):
+
 2012-01-09  Andreas Kling  <awesomekling@apple.com>
 
         CSSStyleSelector: Any attribute with a decl() can be assumed to be mapped.
