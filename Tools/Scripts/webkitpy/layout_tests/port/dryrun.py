@@ -33,7 +33,7 @@
 
    This implementation acts as a wrapper around a real port (the real port
    is held as a delegate object). To specify which port, use the port name
-   'dryrun-XXX' (e.g., 'dryrun-chromium-cg-mac-leopard'). If you use just
+   'dryrun-XXX' (e.g., 'dryrun-chromium-mac-leopard'). If you use just
    'dryrun', it uses the default port.
 
    Note that because this is really acting as a wrapper around the underlying

@@ -50,18 +50,14 @@ def _set_gpu_options(port, graphics_type='gpu'):
 
 def _default_tests_paths(port):
     paths = []
-    if (port.name() != 'chromium-gpu-mac-leopard' and
-        port.name() != 'chromium-gpu-cg-mac-leopard'):
+    if port.name() != 'chromium-gpu-mac-leopard':
         # Only run tests requiring accelerated compositing on platforms that
         # support it.
         # FIXME: we should add the above paths here as well but let's test
         # the waters with media first.
         paths += ['media']
 
-    if not port.name().startswith('chromium-gpu-cg-mac'):
-        # Canvas is not yet accelerated on the Mac, so there's no point
-        # in running the tests there.
-        paths += ['fast/canvas', 'canvas/philip']
+    paths += ['fast/canvas', 'canvas/philip']
 
     if not paths:
         # FIXME: This is a hack until we can turn off the webkit_gpu
@@ -87,20 +83,6 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
     def tests(self, paths):
         paths = paths or _default_tests_paths(self)
         return chromium_linux.ChromiumLinuxPort.tests(self, paths)
-
-
-class ChromiumGpuCgMacPort(chromium_mac.ChromiumMacPort):
-    def __init__(self, host, port_name='chromium-gpu-cg-mac', **kwargs):
-        chromium_mac.ChromiumMacPort.__init__(self, host, port_name=port_name, **kwargs)
-        _set_gpu_options(self, graphics_type='gpu-cg')
-
-    def baseline_search_path(self):
-        return (map(self._webkit_baseline_path, ['chromium-gpu-cg-mac', 'chromium-gpu']) +
-                chromium_mac.ChromiumMacPort.baseline_search_path(self))
-
-    def tests(self, paths):
-        paths = paths or _default_tests_paths(self)
-        return chromium_mac.ChromiumMacPort.tests(self, paths)
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):

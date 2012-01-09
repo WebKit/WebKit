@@ -80,7 +80,6 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
     def test_graphics_type(self):
-        self.assertEquals('cpu-cg', self.make_port(port_name='chromium-cg-mac').graphics_type())
         self.assertEquals('cpu', self.make_port(port_name='chromium-mac').graphics_type())
         # Mac defaults to cpu graphics type.
         self.assertEquals('cpu', self.make_port().graphics_type())

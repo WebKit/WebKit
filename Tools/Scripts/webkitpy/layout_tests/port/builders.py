@@ -51,18 +51,11 @@ _exact_matches = {
     "Webkit Mac10.5 (dbg)(2)": {"port_name": "chromium-mac-leopard", "specifiers": set(["leopard", "debug"])},
     "Webkit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
     "Webkit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
-    "Webkit Mac10.5 (CG)": {"port_name": "chromium-cg-mac-leopard", "specifiers": set(["leopard"])},
-    "Webkit Mac10.5 (CG)(dbg)(1)": {"port_name": "chromium-cg-mac-leopard", "specifiers": set(["leopard", "debug"])},
-    "Webkit Mac10.5 (CG)(dbg)(2)": {"port_name": "chromium-cg-mac-leopard", "specifiers": set(["leopard", "debug"])},
-    "Webkit Mac10.6 (CG)": {"port_name": "chromium-cg-mac-snowleopard", "specifiers": set(["snowleopard"])},
-    "Webkit Mac10.6 (CG)(dbg)": {"port_name": "chromium-cg-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
     "Webkit Win - GPU": {"port_name": "chromium-gpu-win-xp", "specifiers": set(["xp", "release", "gpu"])},
     "Webkit Win7 - GPU": {"port_name": "chromium-gpu-win-win7", "specifiers": set(["win7", "vista", "release", "gpu"])},
     # FIXME: For some reason, these port names don't work correctly.
     # "Webkit Linux - GPU": {"port_name": "chromium-gpu-linux-x86_64", "specifiers": set(["linux", "gpu"])},
     # "Webkit Linux 32 - GPU": {"port_name": "chromium-gpu-linux-x86", "specifiers": set(["linux", "x86", "gpu"])},
-    "Webkit Mac10.5 (CG) - GPU": {"port_name": "chromium-gpu-cg-mac-leopard", "specifiers": set(["leopard", "gpu"])},
-    "Webkit Mac10.6 (CG) - GPU": {"port_name": "chromium-gpu-cg-mac-snowleopard", "specifiers": set(["mac", "gpu"])},
     "Webkit Mac10.6 (dbg) - GPU": {"port_name": "chromium-gpu-mac-snowleopard", "specifiers": set(["snowleopard", "gpu", "debug"])},
     "Webkit Mac10.6 - GPU": {"port_name": "chromium-gpu-mac-snowleopard", "specifiers": set(["snowleopard", "gpu"])},
 

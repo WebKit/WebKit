@@ -52,7 +52,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         # FIXME: What is the Tree() abstraction?
 
         host = MockHost()
-        chromium_port = host.port_factory.get("chromium-cg-mac")
+        chromium_port = host.port_factory.get("chromium-mac")
         chromium_base = chromium_port.path_from_chromium_base()
         port = host.port_factory.get(port_name=port_name, options=None)
 

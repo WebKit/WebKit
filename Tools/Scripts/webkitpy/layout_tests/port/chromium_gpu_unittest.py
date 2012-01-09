@@ -42,10 +42,8 @@ class ChromiumGpuTest(unittest.TestCase):
         self.assert_port_works('chromium-gpu-linux', 'chromium-gpu', 'linux3')
 
     def integration_test_chromium_gpu_mac(self):
-        self.assert_port_works('chromium-gpu-cg-mac')
         self.assert_port_works('chromium-gpu-mac')
-        # For now, chromium-gpu on Mac defaults to the chromium-gpu-cg-mac port.
-        self.assert_port_works('chromium-gpu-cg-mac', 'chromium-gpu', 'darwin')
+        self.assert_port_works('chromium-gpu-mac', 'chromium-gpu', 'darwin')
 
     def integration_test_chromium_gpu_win(self):
         self.assert_port_works('chromium-gpu-win')
@@ -91,10 +89,6 @@ class ChromiumGpuTest(unittest.TestCase):
         path = 'fast/html/keygen.html'
         self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
         self.assertFalse(path in files)
-        if port_name.startswith('chromium-gpu-cg-mac'):
-            path = 'fast/canvas/set-colors.html'
-            self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
-            self.assertFalse(path in files)
 
     def _assert_baseline_path(self, port_name, baseline_path):
         host = MockHost()
@@ -106,13 +100,9 @@ class ChromiumGpuTest(unittest.TestCase):
         self._assert_baseline_path('chromium-gpu-win-vista', 'chromium-gpu-win')
         self._assert_baseline_path('chromium-gpu-win-xp', 'chromium-gpu-win')
         self._assert_baseline_path('chromium-gpu-win-win7', 'chromium-gpu-win')
-        self._assert_baseline_path('chromium-gpu-cg-mac-leopard', 'chromium-gpu-cg-mac')
-        self._assert_baseline_path('chromium-gpu-cg-mac-snowleopard', 'chromium-gpu-cg-mac')
 
     def test_graphics_type(self):
         host = MockHost()
-        port = host.port_factory.get('chromium-gpu-cg-mac')
-        self.assertEquals('gpu-cg', port.graphics_type())
         port = host.port_factory.get('chromium-gpu-mac')
         self.assertEquals('gpu', port.graphics_type())
 
@@ -124,7 +114,6 @@ class ChromiumGpuTest(unittest.TestCase):
 
         self.assertEqual(test_paths('chromium-gpu-linux'), ['media', 'fast/canvas', 'canvas/philip'])
         self.assertEqual(test_paths('chromium-gpu-mac-leopard'), ['fast/canvas', 'canvas/philip'])
-        self.assertEqual(test_paths('chromium-gpu-cg-mac-leopard'), ['fast/html'])
 
     def test_test_files(self):
         host = MockHost()
@@ -142,7 +131,6 @@ class ChromiumGpuTest(unittest.TestCase):
 
         self.assertEqual(test_paths('chromium-gpu-linux'), set(['canvas/philip/test.html', 'fast/canvas/test.html', 'media/test.html']))
         self.assertEqual(test_paths('chromium-gpu-mac-leopard'), set(['canvas/philip/test.html', 'fast/canvas/test.html']))
-        self.assertEqual(test_paths('chromium-gpu-cg-mac-leopard'), set(['fast/html/test.html']))
 
 
 if __name__ == '__main__':

@@ -48,7 +48,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
         (["Source/WebCore.exp.in", "Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
-        (["Source/WebCore/mac/foo"], ["chromium-mac", "chromium-cg-mac", "mac-leopard", "mac-lion", "mac-snowleopard"]),
+        (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-lion", "mac-snowleopard"]),
         (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
         (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),

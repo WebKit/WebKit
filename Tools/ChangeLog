@@ -1,3 +1,64 @@
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
+        Remove Chromium Mac CG concept from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=75810
+
+        Reviewed by Ryosuke Niwa.
+
+        This configuration no longer exists.  We can remove all the supporting
+        code from webkitpy.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_move_baselines):
+        (BaselineOptimizerTest.test_chromium_covers_mac_win_linux):
+        (BaselineOptimizerTest.test_chromium_mac_redundant_with_apple_mac):
+        (BaselineOptimizerTest.test_common_directory_includes_root):
+        (BaselineOptimizerTest.test_complex_shadowing):
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build):
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (_default_tests_paths):
+        (ChromiumGpuLinuxPort.tests):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        (ChromiumGpuTest.integration_test_chromium_gpu_mac):
+        (ChromiumGpuTest.assert_port_works):
+        (ChromiumGpuTest.test_baseline_paths):
+        (ChromiumGpuTest.test_graphics_type):
+        (ChromiumGpuTest.test_default_tests_paths):
+        (ChromiumGpuTest.test_test_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        (ChromiumMacPort.__init__):
+        (ChromiumMacPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_graphics_type):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._port_name_from_arguments_and_options):
+        (PortFactory.get):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_chromium_gpu_mac):
+        (FactoryTest.test_chromium_mac):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (GetGoogleChromePortTest._verify_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockChromiumDRTTest.test_chromium_parse_options):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        (test_url_fetcher):
+        (test_zip_factory):
+        (test_archive):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_expectations):
+
 2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Categorize bots by ports instead of core/non-core separation

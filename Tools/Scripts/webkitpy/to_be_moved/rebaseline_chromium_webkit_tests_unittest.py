@@ -85,8 +85,6 @@ def test_url_fetcher(filesystem):
     urls = {
         ARCHIVE_URL + '/Webkit_Mac10_6/': '<a href="4/">',
         ARCHIVE_URL + '/Webkit_Mac10_5/': '<a href="1/"><a href="2/">',
-        ARCHIVE_URL + '/Webkit_Mac10_6__CG_/': '<a href="4/">',
-        ARCHIVE_URL + '/Webkit_Mac10_5__CG_/': '<a href="1/"><a href="2/">',
         ARCHIVE_URL + '/Webkit_Win7/': '<a href="1/">',
         ARCHIVE_URL + '/Webkit_Vista/': '<a href="1/">',
         ARCHIVE_URL + '/Webkit_Win/': '<a href="1/">',
@@ -106,19 +104,6 @@ def test_zip_factory():
             'layout-test-results/failures/expected/image_checksum-actual.png': 'tEXtchecksum\x000123456789',
         },
         ARCHIVE_URL + '/Webkit_Mac10_6/4/layout-test-results.zip': {
-            'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
-            'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
-            'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
-        },
-        ARCHIVE_URL + '/Webkit_Mac10_5__CG_/2/layout-test-results.zip': {
-            'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
-            'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
-            'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
-            'layout-test-results/failures/expected/image_checksum-actual.txt': 'png-comment-txt',
-            'layout-test-results/failures/expected/image_checksum-actual.checksum': '0123456789',
-            'layout-test-results/failures/expected/image_checksum-actual.png': 'tEXtchecksum\x000123456789',
-        },
-        ARCHIVE_URL + '/Webkit_Mac10_6__CG_/4/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
@@ -152,7 +137,6 @@ def test_archive(orig_archive_dict):
     for platform, dirname in orig_archive_dict.iteritems():
         # This is a giant hack. :(
         platform = platform.replace('chromium', 'test')
-        platform = platform.replace('test-cg', 'test')
         new_archive_dict[platform] = dirname
     return new_archive_dict
 

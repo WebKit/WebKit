@@ -126,7 +126,6 @@ class FactoryTest(unittest.TestCase):
         self.assert_port("chromium-gpu-linux", chromium_gpu.ChromiumGpuLinuxPort)
 
     def test_chromium_gpu_mac(self):
-        self.assert_port("chromium-gpu-cg-mac", chromium_gpu.ChromiumGpuCgMacPort)
         self.assert_port("chromium-gpu-mac", chromium_gpu.ChromiumGpuMacPort)
 
     def test_chromium_gpu_win(self):
@@ -134,7 +133,6 @@ class FactoryTest(unittest.TestCase):
 
     def test_chromium_mac(self):
         self.assert_port("chromium-mac", chromium_mac.ChromiumMacPort)
-        self.assert_port("chromium-cg-mac", chromium_mac.ChromiumMacPort)
         self.assert_platform_port("darwin", self.chromium_options,
                                   chromium_mac.ChromiumMacPort)
 

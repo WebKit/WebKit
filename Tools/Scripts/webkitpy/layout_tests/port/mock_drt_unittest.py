@@ -248,7 +248,7 @@ class MockChromiumDRTTest(MockDRTTest):
             {'/tmp/png_result0.png': 'checksum\x8a-pngtEXtchecksum\x00checksum-checksum'})
 
     def test_chromium_parse_options(self):
-        options, args = mock_drt.parse_options(['--platform', 'chromium-cg-mac',
+        options, args = mock_drt.parse_options(['--platform', 'chromium-mac',
             '--pixel-tests=/tmp/png_result0.png'])
         self.assertTrue(options.chromium)
         self.assertTrue(options.pixel_tests)

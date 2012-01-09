@@ -55,12 +55,12 @@ class BaselineOptimizerTest(unittest.TestCase):
     def test_move_baselines(self):
         host = MockHost()
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-win/another/test-expected.txt', 'result A')
-        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-cg-mac/another/test-expected.txt', 'result A')
+        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-mac/another/test-expected.txt', 'result A')
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt', 'result B')
         baseline_optimizer = BaselineOptimizer(host)
         baseline_optimizer._move_baselines('another/test-expected.txt', {
             'LayoutTests/platform/chromium-win': 'aaa',
-            'LayoutTests/platform/chromium-cg-mac': 'aaa',
+            'LayoutTests/platform/chromium-mac': 'aaa',
             'LayoutTests/platform/chromium': 'bbb',
         }, {
             'LayoutTests/platform/chromium': 'aaa',
@@ -77,7 +77,7 @@ class BaselineOptimizerTest(unittest.TestCase):
 
     def test_chromium_covers_mac_win_linux(self):
         self._assertOptimization({
-            'LayoutTests/platform/chromium-cg-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/chromium-linux': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         }, {
@@ -86,7 +86,7 @@ class BaselineOptimizerTest(unittest.TestCase):
 
     def test_chromium_mac_redundant_with_apple_mac(self):
         self._assertOptimization({
-            'LayoutTests/platform/chromium-cg-mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
+            'LayoutTests/platform/chromium-mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         }, {
             'LayoutTests/platform/mac-snowleopard': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
@@ -124,7 +124,7 @@ class BaselineOptimizerTest(unittest.TestCase):
         self._assertOptimization({
             'LayoutTests/platform/chromium-win': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
-            'LayoutTests/platform/chromium-cg-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
+            'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
         }, {
             'LayoutTests/platform/chromium': '23a30302a6910f8a48b1007fa36f3e3158341834',
@@ -140,7 +140,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac': '5daa78e55f05d9f0d1bb1f32b0cd1bc3a01e9364',
             'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/chromium-cg-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
+            'LayoutTests/platform/chromium-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
             'LayoutTests/platform/mac-leopard': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
             'LayoutTests/platform/chromium-win-vista': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
@@ -149,7 +149,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac': '5daa78e55f05d9f0d1bb1f32b0cd1bc3a01e9364',
             'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/chromium-cg-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
+            'LayoutTests/platform/chromium-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
             'LayoutTests/platform/mac-leopard': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
             'LayoutTests/platform/chromium-win-vista': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',

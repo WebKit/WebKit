@@ -65,8 +65,7 @@ class PortFactory(object):
             return 'chromium-linux'
         if platform == 'darwin':
             if options and hasattr(options, 'chromium') and options.chromium:
-                return 'chromium-cg-mac'
-                # FIXME: Add a way to select the chromium-mac port.
+                return 'chromium-mac'
             return 'mac'
 
         raise NotImplementedError('unknown port; platform = "%s"' % platform)
@@ -102,10 +101,6 @@ class PortFactory(object):
             import chromium_gpu
             port_name = port_to_use
             maker = chromium_gpu.ChromiumGpuLinuxPort
-        elif port_to_use.startswith('chromium-gpu-cg-mac'):
-            import chromium_gpu
-            port_name = port_to_use
-            maker = chromium_gpu.ChromiumGpuCgMacPort
         elif port_to_use.startswith('chromium-gpu-mac'):
             import chromium_gpu
             port_name = port_to_use
@@ -114,7 +109,7 @@ class PortFactory(object):
             import chromium_gpu
             port_name = port_to_use
             maker = chromium_gpu.ChromiumGpuWinPort
-        elif port_to_use.startswith('chromium-mac') or port_to_use.startswith('chromium-cg-mac'):
+        elif port_to_use.startswith('chromium-mac'):
             import chromium_mac
             port_name = port_to_use
             maker = chromium_mac.ChromiumMacPort
