@@ -1,3 +1,20 @@
+2012-01-08  ChangSeok Oh  <shivamidow@gmail.com>
+
+        Memory allocation mismatch by using adoptArrayPtr in GraphicsContext3DOpenGL.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=75820
+
+        Reviewed by Darin Adler.
+
+        Dbates submitted a patch to release fastMalloc allocation
+        in GraphicsContext3DOpenGL.cpp properly.
+        See http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=104395
+        But one thing similar to the above still remains mismatched.
+
+        No new tests required.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+
 2012-01-08  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Use the concrete FrameNetworkingContextBlackBerry to access Frame

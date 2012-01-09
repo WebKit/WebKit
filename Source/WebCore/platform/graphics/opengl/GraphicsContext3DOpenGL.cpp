@@ -1315,7 +1315,7 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
         return String(); 
 
     GLsizei size = 0;
-    OwnArrayPtr<GLchar> info = adoptArrayPtr(static_cast<GLchar*>(fastMalloc(length)));
+    OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
     ::glGetShaderInfoLog(shader, length, &size, info.get());
 
     return String(info.get());
