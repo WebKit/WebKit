@@ -58,4 +58,5 @@ stamp-mini-browser-marshal.h: $(MiniBrowser_marshal_list)
 	echo timestamp > $(@F)
 
 EXTRA_DIST += \
-	$(minibrowser_marshal_list)
+	$(srcdir)/Tools/MiniBrowser/gtk/browser-marshal.list
+

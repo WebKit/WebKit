@@ -2958,6 +2958,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GraphicsContext.h \
 	Source/WebCore/platform/graphics/GraphicsLayer.h \
 	Source/WebCore/platform/graphics/GraphicsLayer.cpp \
+	Source/WebCore/platform/graphics/GraphicsLayerClient.h \
 	Source/WebCore/platform/graphics/GraphicsTypes.cpp \
 	Source/WebCore/platform/graphics/GraphicsTypes.h \
 	Source/WebCore/platform/graphics/GraphicsTypes3D.h \

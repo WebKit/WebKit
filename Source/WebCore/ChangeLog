@@ -1,3 +1,9 @@
+2012-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am: Add missing header.
+
 2012-01-09  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Use join(", ", @arguments) to build a method argument string

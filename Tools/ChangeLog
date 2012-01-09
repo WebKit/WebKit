@@ -1,3 +1,9 @@
+2012-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * MiniBrowser/gtk/GNUmakefile.am:
+
 2012-01-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104421.
