@@ -673,7 +673,7 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGWK60109 SLOW WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
-BUGWK75647 : http/tests/inspector/network/download.html = PASS CRASH
+BUGWK75647 : http/tests/inspector/network/download.html = PASS CRASH TIMEOUT
 
 // -----------------------------------------------------------------
 // Editing tests
