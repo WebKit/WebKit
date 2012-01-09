@@ -1,3 +1,17 @@
+2012-01-08  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Fix compilation error about ListHashSetReverseIterator
+        https://bugs.webkit.org/show_bug.cgi?id=75372
+
+        Reviewed by Darin Adler.
+
+        There is a typo in class ListHashSetReverseIterator:
+        typedef ListHashSetConstIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
+        Should be
+        typedef ListHashSetConstReverseIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
+
+        * wtf/ListHashSet.h:
+
 2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         WinCE build fix after r104415.

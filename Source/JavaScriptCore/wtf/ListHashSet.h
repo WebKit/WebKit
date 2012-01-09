@@ -375,7 +375,7 @@ namespace WTF {
     private:
         typedef ListHashSet<ValueArg, inlineCapacity, HashArg> ListHashSetType;
         typedef ListHashSetReverseIterator<ValueArg, inlineCapacity, HashArg> reverse_iterator;
-        typedef ListHashSetConstIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
+        typedef ListHashSetConstReverseIterator<ValueArg, inlineCapacity, HashArg> const_reverse_iterator;
         typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
         typedef ValueArg ValueType;
         typedef ValueType& ReferenceType;
