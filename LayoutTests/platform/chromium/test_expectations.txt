@@ -3844,3 +3844,5 @@ BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
 BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
 
+BUGWK75817 : media/track/track-cues-cuechange.html = PASS TIMEOUT
+BUGWK75817 : media/track/track-cues-enter-exit.html = PASS TIMEOUT
