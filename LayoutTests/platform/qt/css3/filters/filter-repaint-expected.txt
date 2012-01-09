@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 37: ReferenceError: Can't find variable: runRepaintTest
-

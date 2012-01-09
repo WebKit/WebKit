@@ -630,7 +630,7 @@ void ChromeClientQt::scheduleCompositingLayerSync()
 ChromeClient::CompositingTriggerFlags ChromeClientQt::allowedCompositingTriggers() const
 {
     if (platformPageClient() && platformPageClient()->allowsAcceleratedCompositing())
-        return ThreeDTransformTrigger | VideoTrigger | CanvasTrigger | AnimationTrigger;
+        return AllTriggers;
 
     return 0;
 }
