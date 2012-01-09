@@ -3647,9 +3647,9 @@ BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
 
-BUGWK73865 : media/track/tracklist-is-reachable.html = TEXT
-BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT
-BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
+BUGWK73865 : media/track/tracklist-is-reachable.html = TEXT CRASH
+BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT CRASH
+BUGWK73865 : media/track/text-track-is-reachable.html = TEXT CRASH
 
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
