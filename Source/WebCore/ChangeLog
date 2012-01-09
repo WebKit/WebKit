@@ -1,3 +1,24 @@
+2012-01-09  Antti Koivisto  <antti@apple.com>
+
+        possible regression: r104060 maybe causing crashes
+        https://bugs.webkit.org/show_bug.cgi?id=75676
+
+        Reviewed by Andreas Kling.
+
+        Based on the stacks, CSSStyleSelector may be getting deleted from under the
+        CSSStyleSelector::appendAuthorStylesheets call. Protect by temporarily detaching
+        from the document. Also add assertions to catch the case.
+        
+        No test, there is no known repro and the fix is speculative.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setDocType):
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::clearStyleSelector):
+        (WebCore::Document::updateActiveStylesheets):
+        * dom/Document.h:
+
 2012-01-09  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Use Vector<OwnPtr> for m_viewportDependentMediaQueryResults in CSSStyleSelector

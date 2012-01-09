@@ -498,6 +498,10 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     static int docID = 0;
     m_docID = docID++;
+    
+#ifndef NDEBUG
+    m_updatingStyleSelector = false;
+#endif
 }
 
 static void histogramMutationEventUsage(const unsigned short& listenerTypes)
@@ -706,7 +710,7 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     if (m_docType)
         m_docType->setTreeScopeRecursively(this);
     // Doctype affects the interpretation of the stylesheets.
-    m_styleSelector.clear();
+    clearStyleSelector();
 }
 
 DOMImplementation* Document::implementation()
@@ -725,7 +729,7 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
         return;
     m_documentElement = newDocumentElement;
     // The root style used for media query matching depends on the document element.
-    m_styleSelector.clear();
+    clearStyleSelector();
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
@@ -1797,6 +1801,12 @@ void Document::createStyleSelector()
     m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), m_userSheets.get(),
                                                     !inQuirksMode(), matchAuthorAndUserStyles));
     combineCSSFeatureFlags();
+}
+    
+inline void Document::clearStyleSelector()
+{
+    ASSERT(!m_updatingStyleSelector);
+    m_styleSelector.clear();
 }
 
 void Document::attach()
@@ -3227,6 +3237,8 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
 
 bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
 {
+    ASSERT(!m_updatingStyleSelector);
+
     if (m_inStyleRecalc) {
         // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
         // https://bugs.webkit.org/show_bug.cgi?id=54344
@@ -3246,9 +3258,18 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleSelectorReset, requiresFullStyleRecalc);
 
     if (requiresStyleSelectorReset)
-        m_styleSelector.clear();
+        clearStyleSelector();
     else {
-        m_styleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
+#ifndef NDEBUG
+        m_updatingStyleSelector = true;
+#endif
+        // Detach the style selector temporarily so it can't get deleted during appendAuthorStylesheets
+        OwnPtr<CSSStyleSelector> detachedStyleSelector = m_styleSelector.release();
+        detachedStyleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
+        m_styleSelector = detachedStyleSelector.release();
+#ifndef NDEBUG
+        m_updatingStyleSelector = false;
+#endif
         resetCSSFeatureFlags();
     }
     m_styleSheets->swap(newStylesheets);
