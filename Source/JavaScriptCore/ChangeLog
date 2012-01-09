@@ -1,3 +1,13 @@
+2012-01-01  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Clean up some cruft from WTF's CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=75420
+
+        Reviewed by Daniel Bates.
+
+        * wtf/CMakeLists.txt: Remove the unused WTF_PORT_FLAGS variable; add
+        all needed paths to WTF_INCLUDE_DIRECTORIES in a single place.
+
 2012-01-08  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Fix compilation error about ListHashSetReverseIterator
