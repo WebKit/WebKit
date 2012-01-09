@@ -1,3 +1,18 @@
+2012-01-09  Judy Hao  <judy.liqiong-hao@nokia.com>
+
+        [GStreamer] webkitwebsrc: pad template is leaked
+        https://bugs.webkit.org/show_bug.cgi?id=74224
+
+        Reviewed by Philippe Normand.
+
+        Use a GstPadTemplate smart pointer in webkit_web_src_init to
+        avoid a memory leak.
+
+        Fixing memory leaks. So, no new test case is introduced.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+
 2012-01-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Avoid unnecessary TextureManager::reduceMemoryToLimit().

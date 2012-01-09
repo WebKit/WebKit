@@ -212,7 +212,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 
 static void webkit_web_src_init(WebKitWebSrc* src)
 {
-    GstPadTemplate* padTemplate = gst_static_pad_template_get(&srcTemplate);
+    GRefPtr<GstPadTemplate> padTemplate = adoptGRef(gst_static_pad_template_get(&srcTemplate));
     WebKitWebSrcPrivate* priv = WEBKIT_WEB_SRC_GET_PRIVATE(src);
 
     src->priv = priv;
@@ -232,7 +232,7 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 
 
     GRefPtr<GstPad> targetPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT(priv->appsrc), "src"));
-    priv->srcpad = gst_ghost_pad_new_from_template("src", targetPad.get(), padTemplate);
+    priv->srcpad = gst_ghost_pad_new_from_template("src", targetPad.get(), padTemplate.get());
 
     gst_element_add_pad(GST_ELEMENT(src), priv->srcpad);
     gst_pad_set_query_function(priv->srcpad, webKitWebSrcQuery);
