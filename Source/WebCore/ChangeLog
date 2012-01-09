@@ -1,3 +1,22 @@
+2012-01-09  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Use join(", ", @arguments) to build a method argument
+        string in CodeGeneratorV8.pm
+        https://bugs.webkit.org/show_bug.cgi?id=75828
+
+        Reviewed by Darin Adler.
+
+        The code in CodeGeneratorV8.pm to build a method argument string is dirty
+        and error-prone. It is concatenating arguments one by one judging whether
+        ", " is necessary or not. This patch refactors the code so that it pushes
+        all arguments into @arguments and then builds a method string by
+        join(", ", @arguments).
+
+        Test: bindings/scripts/test/*
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallString):
+
 2012-01-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix: ScrollAnimatorMac has missing initializer in systemUptime()
