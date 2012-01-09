@@ -1,0 +1,40 @@
+<style> 
+#control {font-size: 200%;}
+#calc-percent {font-size: -webkit-calc(200%);}
+#calc-percent-pixels {font-size: -webkit-calc(150% + 10px);}
+</style>
+
+<div style="font-size: 20px;">
+<span id="control">The font size of these lines should be identical</span>
+<br/>
+<span id="calc-percent">The font size of these lines should be identical</span>
+<br/>
+<span id="calc-percent-pixels">The font size of these lines should be identical</span>
+<hr/>
+</div>
+<div id="results"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+var controlSize =  getComputedStyle(document.getElementById("control"), null).fontSize
+
+var spans = document.getElementsByTagName("span");
+var sameSize = true;
+for (var i = 0; i < spans.length; ++i) {
+    var current = spans[i];
+    if (sameSize)
+        sameSize = getComputedStyle(current, null).fontSize == controlSize;
+}
+
+var results = document.getElementById("results");
+if (sameSize) {
+    results.style.color = "green";
+    results.innerHTML = "PASS";
+} else {
+    results.style.color = "red";
+    results.innerHTML = "FAIL";    
+    results.innerHTML += "<p>Computed font sizes do not match</p>";
+}
+
+</script>

@@ -1,0 +1,9 @@
+The font size and line height of these lines should be identical
+The font size and line height of these lines should be identical
+The font size and line height of these lines should be identical
+The font size and line height of these lines should be identical
+The font size and line height of these lines should be identical
+FAIL
+Line heights do not match
+
+Line widths do not match

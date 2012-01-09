@@ -1,0 +1,53 @@
+<style> 
+#control             {font: 1.5em/63px sans-serif;}
+#calc-size           {font: -webkit-calc(1.5em)/63px sans-serif}
+#calc-height         {font: 1.5em/-webkit-calc(126px / 2) sans-serif}
+#calc-both           {font: -webkit-calc(1.5em)/-webkit-calc(63px) sans-serif}
+#calc-percent-size   {font: -webkit-calc(100% + 0.5em)/63px sans-serif}
+</style>
+
+<div>
+<span id="control">The font size and line height of these lines should be identical</span>
+<hr/>
+<span id="calc-size">The font size and line height of these lines should be identical</span>
+<hr/>
+<span id="calc-height">The font size and line height of these lines should be identical</span>
+<hr/>
+<span id="calc-both">The font size and line height of these lines should be identical</span>
+<hr/>
+<span id="calc-percent-size">The font size and line height of these lines should be identical</span>
+</div>
+<hr/>
+<div id="results"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+var controlHeight = getComputedStyle(document.getElementById("control"), null).lineHeight;
+var controlSize = getComputedStyle(document.getElementById("control"), null).fontSize;
+
+var spans = document.getElementsByTagName("span");
+var sameHeight = true;
+var sameSize = true;
+for (var i = 0; i < spans.length; ++i) {
+    var current = spans[i];
+    if (sameHeight)
+        sameHeight = getComputedStyle(current, null).lineHeight == controlHeight;
+    if (sameSize)
+        sameSize = getComputedStyle(current, null).fontSize == controlSize;
+}
+
+var results = document.getElementById("results");
+if (sameHeight && sameSize) {
+    results.style.color = "green";
+    results.innerHTML = "PASS";
+} else {
+    results.style.color = "red";
+    results.innerHTML = "FAIL";    
+    if (!sameHeight)
+        results.innerHTML += "<p>Line heights do not match</p>";
+    if (!sameSize)
+        results.innerHTML += "<p>Line widths do not match</p>";
+}
+
+</script>

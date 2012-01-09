@@ -1,0 +1,5 @@
+The font size of these lines should be identical 
+The font size of these lines should be identical 
+The font size of these lines should be identical
+FAIL
+Computed font sizes do not match

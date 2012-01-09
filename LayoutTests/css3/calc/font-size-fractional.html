@@ -1,0 +1,45 @@
+<style> 
+body         {font-size: 12px;}
+#control     {font: normal 400 80%/2.5 sans-serif;}
+#calc-reduce {font: normal 400 -webkit-calc(80%)/2.5 sans-serif;}
+</style>
+
+<div>
+<span id="control">The font size and line height of these lines should be identical</span>
+<hr/>
+<span id="calc-reduce">The font size and line height of these lines should be identical</span>
+</div>
+<hr/>
+<div id="results"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+var controlHeight = getComputedStyle(document.getElementById("control"), null).lineHeight;
+var controlSize = getComputedStyle(document.getElementById("control"), null).fontSize;
+
+var spans = document.getElementsByTagName("span");
+var sameHeight = true;
+var sameSize = true;
+for (var i = 0; i < spans.length; ++i) {
+    var current = spans[i];
+    if (sameHeight)
+        sameHeight = getComputedStyle(current, null).lineHeight == controlHeight;
+    if (sameSize)
+        sameSize = getComputedStyle(current, null).fontSize == controlSize;
+}
+
+var results = document.getElementById("results");
+if (sameHeight && sameSize) {
+    results.style.color = "green";
+    results.innerHTML = "PASS";
+} else {
+    results.style.color = "red";
+    results.innerHTML = "FAIL";    
+    if (!sameHeight)
+        results.innerHTML += "<p>Line heights do not match</p>";
+    if (!sameSize)
+        results.innerHTML += "<p>Font sizes do not match</p>";
+}
+
+</script>
