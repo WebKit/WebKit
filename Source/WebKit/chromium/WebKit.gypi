@@ -59,7 +59,6 @@
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
-            'tests/Canvas2DLayerChromiumTest.cpp',
             'tests/CCDamageTrackerTest.cpp',
             'tests/CCDelayBasedTimeSourceTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',
@@ -73,13 +72,15 @@
             'tests/CCQuadCullerTest.cpp',
             'tests/CCRenderSurfaceTest.cpp',
             'tests/CCSchedulerStateMachineTest.cpp',
-            'tests/CCSchedulerTestCommon.h',
             'tests/CCSchedulerTest.cpp',
-            'tests/CCTiledLayerImplTest.cpp',
+            'tests/CCSchedulerTestCommon.h',
             'tests/CCThreadTaskTest.cpp',
+            'tests/CCTiledLayerImplTest.cpp',
             'tests/CCTimerTest.cpp',
+            'tests/Canvas2DLayerChromiumTest.cpp',
             'tests/CompositorFakeGraphicsContext3D.h',
             'tests/CompositorFakeWebGraphicsContext3D.h',
+            'tests/DragImageTest.cpp',
             'tests/FakeGraphicsContext3DTest.cpp',
             'tests/FakeWebGraphicsContext3D.h',
             'tests/FloatQuadTest.cpp',
@@ -88,9 +89,10 @@
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
+            'tests/ImageLayerChromiumTest.cpp',
             'tests/InnerGestureRecognizerTest.cpp',
-            'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
+            'tests/KeyboardTest.cpp',
             'tests/LayerChromiumTest.cpp',
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
@@ -113,12 +115,6 @@
         ],
 
         'conditions': [
-            ['use_skia == 1', {
-                'webkit_unittest_files': [
-                    'tests/DragImageTest.cpp',
-                    'tests/ImageLayerChromiumTest.cpp',
-                ],
-            }],
             ['OS=="win"', {
                 'webkit_unittest_files': [
                     # FIXME: Port PopupMenuTest to Linux and Mac.

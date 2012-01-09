@@ -1,3 +1,14 @@
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove use_skia option from GYP
+        https://bugs.webkit.org/show_bug.cgi?id=75811
+
+        Reviewed by Ryosuke Niwa.
+
+        The CG configuration of Chromium Mac is no longer supported.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-01-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Valid canonical URLs should have a lowercase hostname

@@ -1,3 +1,15 @@
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove use_skia option from GYP
+        https://bugs.webkit.org/show_bug.cgi?id=75811
+
+        Reviewed by Ryosuke Niwa.
+
+        The CG configuration of Chromium Mac is no longer supported.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+
 2012-01-07  Dmitry Lomov  <dslomov@google.com>
 
         Unreviewed: disabled CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers
