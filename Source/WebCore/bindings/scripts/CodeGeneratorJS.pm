@@ -2181,8 +2181,8 @@ sub GenerateImplementation
                     push(@implContent, GenerateEventListenerCall($className, "remove"));
                 } else {
                     my $numParameters = @{$function->parameters};
-                    my ($functionString, $paramIndex) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
-                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $svgPropertyType, $implClassName);
+                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
+                    GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);
                 }
             }
 
@@ -2419,7 +2419,6 @@ sub GenerateParametersCheck
     my $svgPropertyOrListPropertyType = shift;
     my $svgListPropertyType = shift;
 
-    my $paramIndex = 0;
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
 
@@ -2431,7 +2430,8 @@ sub GenerateParametersCheck
     } else {
         $functionBase = "impl->";
     }
-    my $functionString = "$functionBase$functionImplementationName(";
+    my $functionName = "$functionBase$functionImplementationName";
+    my @arguments;
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"} and !$function->isStatic) {
         push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
@@ -2452,9 +2452,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             $callWithArg = "scriptContext"; 
         }
-        $functionString .= ", " if $paramIndex;
-        $functionString .= $callWithArg;
-        $paramIndex++;
+        push @arguments, $callWithArg;
     }
 
     $implIncludes{"ExceptionCode.h"} = 1;
@@ -2473,7 +2471,16 @@ sub GenerateParametersCheck
                 $hasOptionalArguments = 1;
             }
             push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
-            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $svgPropertyType, $implClassName);
+
+            my @optionalCallbackArguments = @arguments;
+            if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+                push @optionalCallbackArguments, "scriptArguments, callStack";
+            }
+            if (@{$function->raisesExceptions}) {
+                push @optionalCallbackArguments, "ec";
+            }
+            my $functionString = "$functionName(" . join(", ", @optionalCallbackArguments) . ")";
+            GenerateImplementationFunctionCall($function, $functionString, "    " x 2, $svgPropertyType, $implClassName);
             push(@$outputArray, "    }\n\n");
         }
 
@@ -2554,20 +2561,23 @@ sub GenerateParametersCheck
             }
         }
 
-        $functionString .= ", " if $paramIndex;
-
         if ($argType eq "NodeFilter") {
-            $functionString .= "$name.get()";
+            push @arguments, "$name.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
-            $functionString .= "$name->propertyReference()";
+            push @arguments, "$name->propertyReference()";
         } else {
-            $functionString .= $name;
+            push @arguments, $name;
         }
         $argsIndex++;
-        $paramIndex++;
     }
 
-    return ($functionString, $paramIndex);
+    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+        push @arguments, "scriptArguments, callStack";
+    }
+    if (@{$function->raisesExceptions}) {
+        push @arguments, "ec";
+    }
+    return ("$functionName(" . join(", ", @arguments) . ")", scalar @arguments);
 }
 
 sub GenerateCallbackHeader
@@ -2732,22 +2742,9 @@ sub GenerateImplementationFunctionCall()
 {
     my $function = shift;
     my $functionString = shift;
-    my $paramIndex = shift;
     my $indent = shift;
     my $svgPropertyType = shift;
     my $implClassName = shift;
-
-    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-        $functionString .= ", " if $paramIndex;
-        $paramIndex += 2;
-        $functionString .= "scriptArguments, callStack";
-    }
-
-    if (@{$function->raisesExceptions}) {
-        $functionString .= ", " if $paramIndex;
-        $functionString .= "ec";
-    }
-    $functionString .= ")";
 
     if ($function->signature->type eq "void") {
         push(@implContent, $indent . "$functionString;\n");

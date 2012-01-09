@@ -1,3 +1,24 @@
+2012-01-09  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Use join(", ", @arguments) to build a method argument string
+        in CodeGeneratorJS.pm
+        https://bugs.webkit.org/show_bug.cgi?id=75830
+
+        Reviewed by Adam Barth.
+
+        The code in CodeGeneratorJS.pm to build a method argument string is dirty
+        and error-prone. It is concatenating arguments one by one judging whether
+        ", " is necessary or not. This patch refactors the code so that it pushes
+        all arguments into @arguments and then builds a method string by
+        join(", ", @arguments).
+
+        Test: bindings/scripts/test/*
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+
 2012-01-09  Andreas Kling  <awesomekling@apple.com>
 
         CSSMutableStyleDeclaration: Remove propertiesEqual().
