@@ -106,7 +106,6 @@ struct WebPreferences {
     bool compositeToTexture;
     bool forceCompositingMode;
     bool accelerated2dCanvasEnabled;
-    bool legacyAccelerated2dCanvasEnabled;
     bool acceleratedPaintingEnabled;
     bool hixie76WebSocketProtocolEnabled;
     bool perTilePaintingEnabled;

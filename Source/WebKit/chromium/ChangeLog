@@ -1,3 +1,17 @@
+2012-01-09  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] remove all references to the legacy accelerated 2d Canvas
+        implementation
+        https://bugs.webkit.org/show_bug.cgi?id=75108
+
+        Purging an old settings flag that is no longer referenced
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2012-01-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Make WebIDBDatabase::close() idempotent

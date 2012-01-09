@@ -136,7 +136,6 @@ public:
     void setCompositeToTexture(bool enabled) { m_compositeToTexture = enabled; }
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
-    void setLegacyAccelerated2dCanvasEnabled(bool enabled) { m_legacyAccelerated2dCanvasEnabled = enabled; }
     void setAcceleratedPaintingEnabled(bool enabled) { m_acceleratedPaintingEnabled = enabled; }
     void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
 #if defined(OS_WIN)
@@ -226,7 +225,6 @@ private:
     bool m_compositeToTexture;
     bool m_forceCompositingMode;
     bool m_accelerated2dCanvasEnabled;
-    bool m_legacyAccelerated2dCanvasEnabled;
     bool m_acceleratedPaintingEnabled;
     bool m_perTilePaintingEnabled;
     WebPreferences m_prefs;

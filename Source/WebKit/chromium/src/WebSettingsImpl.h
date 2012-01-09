@@ -107,7 +107,6 @@ public:
     virtual void setAcceleratedCompositingForAnimationEnabled(bool);
     virtual void setAccelerated2dCanvasEnabled(bool);
     virtual void setAcceleratedCompositingForFixedPositionEnabled(bool);
-    virtual void setLegacyAccelerated2dCanvasEnabled(bool);
     virtual void setMinimumAccelerated2dCanvasSize(int);
     virtual void setAcceleratedFiltersEnabled(bool);
     virtual void setMemoryInfoEnabled(bool);

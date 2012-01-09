@@ -56,7 +56,6 @@ static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
 static const char optionEnableThreadedCompositing[] = "--enable-threaded-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
-static const char optionEnableLegacyAccelerated2DCanvas[] = "--enable-legacy-accelerated-2d-canvas";
 static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
@@ -144,7 +143,6 @@ int main(int argc, char* argv[])
     bool compositeToTexture = false;
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
-    bool legacyAccelerated2DCanvasEnabled = false;
     bool acceleratedPaintingEnabled = false;
     bool perTilePaintingEnabled = false;
     bool stressOpt = false;
@@ -188,8 +186,6 @@ int main(int argc, char* argv[])
             forceCompositingMode = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
-        else if (argument == optionEnableLegacyAccelerated2DCanvas)
-            legacyAccelerated2DCanvasEnabled = true;
         else if (argument == optionEnableAcceleratedPainting)
             acceleratedPaintingEnabled = true;
         else if (!argument.find(optionUseGraphicsContext3DImplementation)) {
@@ -240,7 +236,6 @@ int main(int argc, char* argv[])
         shell.setCompositeToTexture(compositeToTexture);
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
-        shell.setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2DCanvasEnabled);
         shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
         shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);

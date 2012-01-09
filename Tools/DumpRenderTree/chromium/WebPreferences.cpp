@@ -112,7 +112,6 @@ void WebPreferences::reset()
     acceleratedCompositingEnabled = false;
     compositeToTexture = false;
     accelerated2dCanvasEnabled = false;
-    legacyAccelerated2dCanvasEnabled = false;
     acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
     hixie76WebSocketProtocolEnabled = true;
@@ -218,7 +217,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setCompositeToTextureEnabled(compositeToTexture);
     settings->setForceCompositingMode(forceCompositingMode);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
-    settings->setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2dCanvasEnabled);
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
     settings->setHixie76WebSocketProtocolEnabled(hixie76WebSocketProtocolEnabled);
     settings->setPerTilePaintingEnabled(perTilePaintingEnabled);
