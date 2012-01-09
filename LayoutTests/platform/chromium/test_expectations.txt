@@ -3847,4 +3847,5 @@ BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.
 BUGWK75817 : media/track/track-cues-cuechange.html = PASS TIMEOUT
 BUGWK75817 : media/track/track-cues-enter-exit.html = PASS TIMEOUT
 BUGWK75817 : media/track/track-cues-seeking.html = TEXT
+BUGWK75817 MAC DEBUG : media/track/track-webvtt-tc026-voice.html = PASS CRASH
 
