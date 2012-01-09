@@ -1,3 +1,15 @@
+2012-01-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [AC] Simplify accelerated compositing build options
+        https://bugs.webkit.org/show_bug.cgi?id=75518
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac: Remove the --enable-3d-rendering option. It's enabled by
+        default now when accelerated compositing is enabled.
+        * GNUmakefile.am: Automatically enable 3D rendering when accelerated compositing
+        is turned on.
+
 2012-01-04  Jon Lee  <jonlee@apple.com>
 
         Clicking on the cancel button on readonly and disabled search fields darkens as if the search field was editable

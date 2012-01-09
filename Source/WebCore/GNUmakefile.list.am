@@ -5641,7 +5641,7 @@ webcore_sources += \
 endif  # END ENABLE_REQUEST_ANIMATION_FRAME
 
 # ---
-# Compile with accelerated compositing support
+# Accelerated compositing support
 # ---
 if USE_ACCELERATED_COMPOSITING
 if USE_CLUTTER

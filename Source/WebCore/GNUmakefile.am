@@ -545,16 +545,13 @@ webcore_cppflags += -DENABLE_WEBGL=1
 endif  # END ENABLE_WEBGL
 
 # ---
-# 3D rendering (CSS3 3D transforms) support
+# Accelerated compositing support
 # ---
-if ENABLE_3D_RENDERING
-FEATURE_DEFINES += ENABLE_3D_RENDERING=1
-webcore_cppflags += -DENABLE_3D_RENDERING=1
-endif  # END ENABLE_3D_RENDERING
-
-# ---
-# Compile with accelerated compositing support
-# ---
+if USE_ACCELERATED_COMPOSITING
+FEATURE_DEFINES += \
+	ENABLE_3D_RENDERING=1 \
+	ACCELERATED_COMPOSITING=1
+endif  # END USE_ACCELERATED_COMPOSITING
 
 if USE_TEXTURE_MAPPER_CAIRO
 webcore_cppflags += \
