@@ -1,0 +1,9 @@
+This element should have an overall border of 25 pixels. => FAIL: wrong width, wrong height
+
+This element should have a left border of 25 pixels. => FAIL: wrong width
+
+This element should have a right border of 25 pixels. => FAIL: wrong width
+
+This element should have a top border of 25 pixels. => FAIL: wrong height
+
+This element should have a bottom border of 25 pixels. => FAIL: wrong height
