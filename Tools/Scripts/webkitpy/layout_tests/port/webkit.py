@@ -43,6 +43,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.port import builders, server_process, Port, Driver, DriverOutput
 
 
@@ -525,6 +526,8 @@ class WebKitDriver(Driver):
             command = self.test_to_uri(driver_input.test_name)
         else:
             command = self._port.abspath_for_test(driver_input.test_name)
+            if sys.platform == 'cygwin':
+                command = cygpath(command)
 
         if driver_input.image_hash:
             # FIXME: Why the leading quote?

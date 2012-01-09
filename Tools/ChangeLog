@@ -1,3 +1,19 @@
+2012-01-09  Adam Roben  <aroben@apple.com>
+
+        Convert Cygwin paths to Windows paths before passing them to DRT
+
+        Fixes <http://webkit.org/b/64468> <rdar://problem/10663409> WIN: DumpRenderTree hangs under
+        NRWT
+
+        I couldn't find a way to test this because I couldn't figure out how to override the
+        cygpath function as it is used by WebKitDriver.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._command_from_driver_input): On Cygwin, convert the test's path to a
+        Windows-style path before passing it to DRT.
+
 2012-01-06  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: revamp version checking
