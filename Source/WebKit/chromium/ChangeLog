@@ -1,3 +1,15 @@
+2012-01-09  Chris Rogers  <crogers@google.com>
+
+        Fix potential issue in WebMediaPlayerClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=75899
+
+        Reviewed by Kenneth Russell.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::load):
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::wrap):
+
 2012-01-09  Justin Novosad  <junov@chromium.org>
 
         [Chromium] remove all references to the legacy accelerated 2d Canvas
