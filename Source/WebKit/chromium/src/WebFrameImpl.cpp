@@ -2093,7 +2093,7 @@ void WebFrameImpl::createFrameView()
     WebViewImpl* webView = viewImpl();
     bool isMainFrame = webView->mainFrameImpl()->frame() == m_frame;
     m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
-    if (webView->shouldAutoResize())
+    if (webView->shouldAutoResize() && isMainFrame)
         m_frame->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
 
 #if ENABLE(GESTURE_RECOGNIZER)

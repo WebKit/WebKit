@@ -1,3 +1,16 @@
+2012-01-08  David Levin  <levin@chromium.org>
+
+        [chromium] iframes in an autoresized window get sized incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=75806
+
+        Reviewed by Adam Barth.
+
+        TEST: fast/autoresize/autoresize-with-iframe.html
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView): Only do autoresizing
+        for the main frame not child frames.
+
 2012-01-08  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove use_skia option from GYP
