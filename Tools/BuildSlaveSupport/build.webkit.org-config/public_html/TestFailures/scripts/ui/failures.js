@@ -36,8 +36,6 @@ ui.failures.Builder = base.extends('a', {
         var configuration = config.kBuilders[builderName];
         if (configuration.version)
             this._addSpan('version', configuration.version);
-        if (configuration.isCG)
-            this._addSpan('graphics', 'CG');
         if (configuration.is64bit)
             this._addSpan('architecture', '64-bit');
         this._configuration = configuration;
@@ -53,7 +51,7 @@ ui.failures.Builder = base.extends('a', {
     },
     equals: function(configuration)
     {
-        return this._configuration.is64bit == configuration.is64bit && this._configuration.isCG == configuration.isCG && this._configuration.version == configuration.version; 
+        return this._configuration.is64bit == configuration.is64bit && this._configuration.version == configuration.version; 
     }
 });
 

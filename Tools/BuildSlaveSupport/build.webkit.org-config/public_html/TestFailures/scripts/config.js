@@ -42,11 +42,6 @@ config.kBuilders = {
     'Webkit Mac10.5 (dbg)(2)': {version: 'leopard', debug: true},
     'Webkit Mac10.6': {version: 'snowleopard'},
     'Webkit Mac10.6 (dbg)': {version: 'snowleopard', debug: true},
-    'Webkit Mac10.5 (CG)': {version: 'leopard', isCG: true},
-    'Webkit Mac10.5 (CG)(dbg)(1)': {version: 'leopard', isCG: true, debug: true},
-    'Webkit Mac10.5 (CG)(dbg)(2)': {version: 'leopard', isCG: true, debug: true},
-    'Webkit Mac10.6 (CG)': {version: 'snowleopard', isCG: true},
-    'Webkit Mac10.6 (CG)(dbg)': {version: 'snowleopard', isCG: true, debug: true},
 };
 
 config.kBuildersThatOnlyCompile = [

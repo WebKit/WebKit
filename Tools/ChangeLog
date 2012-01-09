@@ -1,3 +1,19 @@
+2012-01-08  Adam Barth  <abarth@webkit.org>
+
+        Remove support for Chromium Mac CG from garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=75814
+
+        Reviewed by Eric Seidel.
+
+        This configuration no longer exists.  This patch is mostly a matter of
+        updating config.js and removing the examples from the unit tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
 2012-01-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS_FILTERS in Qt build

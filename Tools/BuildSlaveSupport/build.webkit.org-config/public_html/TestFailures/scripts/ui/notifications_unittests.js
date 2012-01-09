@@ -240,7 +240,7 @@ test('FailingTestsSummary', 12, function() {
             '</ul>' +
         '</div>');
 
-    testFailures.updateBuilderResults({'Webkit Mac10.5 (CG)': { actual: 'BUILDING'}});
+    testFailures.updateBuilderResults({'Webkit Mac10.5': { actual: 'BUILDING'}});
     equal(testFailures.innerHTML,
         '<div class="how">' +
             '<time class="relative">10 minutes ago</time>' +
@@ -254,7 +254,7 @@ test('FailingTestsSummary', 12, function() {
                     '</tr>' +
                     '<tr class="BUILDING" style="">' +
                         '<td><span>BUILDING</span></td>' +
-                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span><span class="graphics">CG</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5"><span class="version">leopard</span></a></td>' +
                         '<td></td>' +
                     '</tr>' +
                 '</tbody>' +
