@@ -1,3 +1,33 @@
+2012-01-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Move surface management from TextureMapperNode to TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=75779
+
+        Instead of a TextureMapperSurfaceManager class inside of TextureMapperNode.cpp, we now
+        maintain that surface pool inside of the TextureMapper class. This will later allow us to
+        allocate intermediate surface from within TextureMapperGL, a functionality we need for
+        filters.
+
+        Also, surfaces are not automatically created with the viewport size, but rather with the
+        size passed as a parameter. The surface from the pool is the smallest texture that is
+        larger than the required size, or any texture if such texture is not yet allocated.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tests in LayoutTests/compositing already cover this.
+
+        * GNUmakefile.list.am: Added TextureMapper.cpp to the build.
+        * Target.pri: Added TextureMapper.cpp to the build.
+        * WebCore.gypi: Added TextureMapper.cpp to the build.
+        * platform/graphics/texmap/TextureMapper.cpp: Added.
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::paint):
+        (WebCore::TextureMapperNode::paintReflection):
+        (WebCore::TextureMapperNode::paintRecursive):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperNode::TextureMapperNode):
+
 2012-01-09  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Regression: text-inserted events lack text inserted and current line

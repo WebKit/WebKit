@@ -31,40 +31,6 @@ namespace {
 
 namespace WebCore {
 
-class TextureMapperSurfaceManager {
-public:
-    TextureMapper* textureMapper;
-    Vector<RefPtr<BitmapTexture> > surfaces;
-    IntSize viewportSize;
-
-    PassRefPtr<BitmapTexture> getIntermediateSurface()
-    {
-        IntSize newViewportSize = textureMapper->viewportSize();
-        if (newViewportSize != viewportSize) {
-            viewportSize = newViewportSize;
-            surfaces.clear();
-        }
-        if (surfaces.isEmpty()) {
-            RefPtr<BitmapTexture> newSurface = textureMapper->createTexture();
-            newSurface->reset(viewportSize, false);
-            return newSurface.get();
-        }
-        RefPtr<BitmapTexture> surface = surfaces.last();
-        surface->reset(viewportSize, false);
-        surfaces.removeLast();
-        surface->lock();
-        return surface.get();
-    }
-
-    void releaseIntermediateSurface(BitmapTexture* surface)
-    {
-        if (!surface)
-            return;
-        surfaces.append(surface);
-        surface->unlock();
-    }
-};
-
 TextureMapperNode* toTextureMapperNode(GraphicsLayer* layer)
 {
     return layer ? toGraphicsLayerTextureMapper(layer)->node() : 0;
@@ -346,11 +312,7 @@ void TextureMapperNode::paint()
     if (m_size.isEmpty())
         return;
 
-    if (!m_surfaceManager)
-        m_surfaceManager = new TextureMapperSurfaceManager;
-    m_surfaceManager->textureMapper = m_textureMapper;
     TextureMapperPaintOptions opt;
-    opt.surfaceManager = m_surfaceManager;
     opt.textureMapper = m_textureMapper;
     opt.textureMapper->bindSurface(0);
     paintRecursive(opt);
@@ -496,7 +458,7 @@ bool TextureMapperNode::paintReflection(const TextureMapperPaintOptions& options
 
     // The mask has to be adjusted to target coordinates.
     if (maskTexture) {
-        maskSurface = options.surfaceManager->getIntermediateSurface();
+        maskSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(maskSurface.get());
         options.textureMapper->drawTexture(*maskTexture.get(), entireRect(), m_transforms.target, 1, 0);
         maskTexture = maskSurface;
@@ -504,7 +466,7 @@ bool TextureMapperNode::paintReflection(const TextureMapperPaintOptions& options
 
     // The replica's mask has to be adjusted to target coordinates.
     if (replicaMaskTexture) {
-        replicaMaskSurface = options.surfaceManager->getIntermediateSurface();
+        replicaMaskSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(replicaMaskSurface.get());
         options.textureMapper->drawTexture(*replicaMaskTexture.get(), entireRect(), m_transforms.target, 1, 0);
         replicaMaskTexture = replicaMaskSurface;
@@ -512,21 +474,21 @@ bool TextureMapperNode::paintReflection(const TextureMapperPaintOptions& options
 
     // We might need to apply the mask of the content layer before we draw the reflection, as there might be yet another mask for the reflection itself.
     if (useIntermediateBufferForMask) {
-        RefPtr<BitmapTexture> maskSurface = options.surfaceManager->getIntermediateSurface();
+        RefPtr<BitmapTexture> maskSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(maskSurface.get());
         options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), 1, maskTexture.get());
-        options.surfaceManager->releaseIntermediateSurface(surface.get());
+        options.textureMapper->releaseTextureToPool(surface.get());
         surface = maskSurface;
         maskTexture.clear();
     }
 
     // We blend the layer and its replica in an intermediate buffer before blending into the target surface.
     if (useIntermediateBufferForReplica) {
-        RefPtr<BitmapTexture> replicaSurface = options.surfaceManager->getIntermediateSurface();
+        RefPtr<BitmapTexture> replicaSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(replicaSurface.get());
         options.textureMapper->drawTexture(*surface.get(), viewportRect, m_transforms.replica, m_state.replicaLayer->m_opacity, replicaMaskTexture.get());
         options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), 1, maskTexture.get());
-        options.surfaceManager->releaseIntermediateSurface(surface.get());
+        options.textureMapper->releaseTextureToPool(surface.get());
         surface = replicaSurface;
     }
 
@@ -539,8 +501,8 @@ bool TextureMapperNode::paintReflection(const TextureMapperPaintOptions& options
     // Draw the original.
     options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), options.opacity, maskTexture.get());
 
-    options.surfaceManager->releaseIntermediateSurface(maskSurface.get());
-    options.surfaceManager->releaseIntermediateSurface(replicaMaskSurface.get());
+    options.textureMapper->releaseTextureToPool(maskSurface.get());
+    options.textureMapper->releaseTextureToPool(replicaMaskSurface.get());
 
     return true;
 }
@@ -570,12 +532,12 @@ void TextureMapperNode::paintRecursive(TextureMapperPaintOptions options)
 
     // The mask has to be adjusted to target coordinates.
     if (m_state.maskLayer) {
-        maskSurface = options.surfaceManager->getIntermediateSurface();
+        maskSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(maskSurface.get());
         options.textureMapper->drawTexture(*m_state.maskLayer->texture(), entireRect(), m_transforms.target, 1.0, 0);
     }
 
-    surface = options.surfaceManager->getIntermediateSurface();
+    surface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
     optionsForDescendants.surface = surface.get();
     options.isSurface = true;
     optionsForDescendants.opacity = 1;
@@ -588,8 +550,8 @@ void TextureMapperNode::paintRecursive(TextureMapperPaintOptions options)
         options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), options.opacity, 0);
     }
 
-    options.surfaceManager->releaseIntermediateSurface(surface.get());
-    options.surfaceManager->releaseIntermediateSurface(maskSurface.get());
+    options.textureMapper->releaseTextureToPool(surface.get());
+    options.textureMapper->releaseTextureToPool(maskSurface.get());
 }
 
 TextureMapperNode::~TextureMapperNode()

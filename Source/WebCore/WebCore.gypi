@@ -3922,6 +3922,7 @@
             'platform/graphics/skia/TransformationMatrixSkia.cpp',
             'platform/graphics/texmap/GraphicsLayerTextureMapper.cpp',
             'platform/graphics/texmap/GraphicsLayerTextureMapper.h',
+            'platform/graphics/texmap/TextureMapper.cpp',
             'platform/graphics/texmap/TextureMapper.h',
             'platform/graphics/texmap/TextureMapperNode.cpp',
             'platform/graphics/texmap/TextureMapperNode.h',

@@ -39,17 +39,20 @@ namespace WebCore {
 class TextureMapperPlatformLayer;
 class TextureMapperNode;
 class GraphicsLayerTextureMapper;
-class TextureMapperSurfaceManager;
 
 class TextureMapperPaintOptions {
 public:
     BitmapTexture* surface;
     TextureMapper* textureMapper;
-    TextureMapperSurfaceManager* surfaceManager;
 
     float opacity;
     bool isSurface;
-    TextureMapperPaintOptions() : surface(0), textureMapper(0), opacity(1.0), isSurface(false) { }
+    TextureMapperPaintOptions()
+        : surface(0)
+        , textureMapper(0)
+        , opacity(1)
+        , isSurface(false)
+    { }
 };
 
 class TextureMapperAnimation : public RefCounted<TextureMapperAnimation> {
@@ -135,7 +138,11 @@ public:
     };
 
     TextureMapperNode()
-        : m_parent(0), m_effectTarget(0), m_opacity(1.0), m_surfaceManager(0), m_textureMapper(0) { }
+        : m_parent(0)
+        , m_effectTarget(0)
+        , m_opacity(1)
+        , m_textureMapper(0)
+    { }
 
     virtual ~TextureMapperNode();
 
@@ -317,7 +324,6 @@ private:
     };
 
     State m_state;
-    TextureMapperSurfaceManager* m_surfaceManager;
     TextureMapper* m_textureMapper;
 
     Vector<RefPtr<TextureMapperAnimation> > m_animations;

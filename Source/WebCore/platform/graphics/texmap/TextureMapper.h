@@ -126,6 +126,9 @@ public:
     virtual void beginPainting() { }
     virtual void endPainting() { }
 
+    virtual void releaseTextureToPool(BitmapTexture* surface);
+    virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
+
 
 protected:
     TextureMapper()
@@ -138,6 +141,7 @@ private:
     TextDrawingModeFlags m_textDrawingMode;
     TransformationMatrix m_transform;
     IntSize m_viewportSize;
+    Vector<RefPtr<BitmapTexture> > m_texturePool;
 };
 
 };
