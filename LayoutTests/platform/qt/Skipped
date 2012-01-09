@@ -237,8 +237,29 @@ http/tests/media/media-source/
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
 
-# CSS Filters is disabled
-css3/filters
+# CSS Filters - some tests don't work yet.
+css3/filters/custom-filter-property-computed-style.html
+css3/filters/custom-filter-property-parsing-invalid.html
+css3/filters/custom-filter-property-parsing.html
+css3/filters/filter-animation-from-none.html
+css3/filters/filter-animation.html
+css3/filters/filter-property-computed-style.html
+css3/filters/filter-property-parsing-invalid.html
+css3/filters/filter-property-parsing.html
+css3/filters/filter-property.html
+css3/filters/filter-repaint.html
+css3/filters/crash-hw-sw-switch.html
+css3/filters/effect-blur-hw.html
+css3/filters/effect-combined.html
+css3/filters/effect-combined-hw.html
+css3/filters/effect-custom.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-grayscale-hw.html
+css3/filters/effect-hue-rotate-hw.html
+css3/filters/effect-invert-hw.html
+css3/filters/effect-opacity-hw.html
+css3/filters/effect-saturate-hw.html
+css3/filters/effect-sepia-hw.html
 
 # Support multipart responses is not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=47060

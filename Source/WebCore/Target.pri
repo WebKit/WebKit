@@ -1170,6 +1170,7 @@ SOURCES += \
     rendering/BidiRun.cpp \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
+    rendering/FilterEffectRenderer.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/HitTestingTransformState.cpp \
     rendering/HitTestResult.cpp \
@@ -2284,6 +2285,7 @@ HEADERS += \
     rendering/break_lines.h \
     rendering/CounterNode.h \
     rendering/EllipsisBox.h \
+    rendering/FilterEffectRenderer.h \
     rendering/FixedTableLayout.h \
     rendering/HitTestingTransformState.h \
     rendering/HitTestResult.h \
