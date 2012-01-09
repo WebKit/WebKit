@@ -1,3 +1,16 @@
+2012-01-09  Andreas Kling  <awesomekling@apple.com>
+
+        CSSStyleSelector: Any attribute with a decl() can be assumed to be mapped.
+        <http://webkit.org/b/75832>
+
+        Reviewed by Antti Koivisto.
+
+        Replace isMappedAttribute() check with an assertion. Only a mapped attribute
+        will have an associated style declaration.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+
 2012-01-09  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Use join(", ", @arguments) to build a method argument

@@ -815,7 +815,8 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
             const NamedNodeMap* map = m_styledElement->attributeMap();
             for (unsigned i = 0; i < map->length(); ++i) {
                 Attribute* attr = map->attributeItem(i);
-                if (attr->isMappedAttribute() && attr->decl()) {
+                if (attr->decl()) {
+                    ASSERT(attr->isMappedAttribute());
                     result.lastAuthorRule = m_matchedDecls.size();
                     if (result.firstAuthorRule == -1)
                         result.firstAuthorRule = result.lastAuthorRule;
