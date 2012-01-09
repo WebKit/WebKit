@@ -1,5 +1,19 @@
 2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Categorize bots by ports instead of core/non-core separation
+        https://bugs.webkit.org/show_bug.cgi?id=75766
+
+        Reviewed by Eric Seidel.
+
+        Rename categorizes so as to preserve the original ordering of bots per Eric's suggestion
+        (Chromium still comes before GTK and Qt).
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (loadBuilderConfig):
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
+2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove the concept of core builders from webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=75809
 
