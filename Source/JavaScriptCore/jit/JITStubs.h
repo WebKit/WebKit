@@ -269,6 +269,8 @@ namespace JSC {
     #define JIT_STUB __fastcall
     #elif COMPILER(GCC)
     #define JIT_STUB  __attribute__ ((fastcall))
+    #elif COMPILER(SUNCC)
+    #define JIT_STUB
     #else
     #error "JIT_STUB function calls require fastcall conventions on x86, add appropriate directive/attribute here for your compiler!"
     #endif
