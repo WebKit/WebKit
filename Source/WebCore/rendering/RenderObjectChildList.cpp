@@ -282,7 +282,7 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
     if (!first)
         return 0;
 
-    if (first->style()->styleType() == BEFORE)
+    if (first->isBeforeContent())
         return first;
 
     // Check for a possible generated run-in, using run-in positioning rules.
@@ -294,7 +294,7 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
     // We still need to skip any list markers that could exist before the run-in.
     while (first && first->isListMarker())
         first = first->nextSibling();
-    if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn())
+    if (first && first->isBeforeContent() && first->isRenderInline() && first->isRunIn())
         return first;
     
     return 0;
@@ -306,7 +306,7 @@ RenderObject* RenderObjectChildList::afterPseudoElementRenderer(const RenderObje
     do {
         last = last->lastChild();
     } while (last && last->isAnonymous() && last->style()->styleType() == NOPSEUDO && !last->isListMarker());
-    if (last && last->style()->styleType() != AFTER)
+    if (last && !last->isAfterContent())
         return 0;
     return last;
 }
