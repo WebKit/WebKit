@@ -1,0 +1,24 @@
+<html lang=en>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+#testid { background-color: red; }
+.testclass { background-color: red; }
+</style>
+</head>
+<body>
+<div id=testid>id test</div>
+<style>
+#testid { background-color: green }
+</style>
+<div class=testclass>class test</div>
+<style>
+.testclass { background-color: green; }
+</style>
+<script>
+description("Test that elements before inline stylesheets get their style updated properly");
+shouldBe('window.getComputedStyle(document.getElementById("testid")).backgroundColor','"rgb(0, 128, 0)"');
+shouldBe('window.getComputedStyle(document.getElementsByClassName("testclass")[0]).backgroundColor','"rgb(0, 128, 0)"');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

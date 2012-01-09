@@ -1162,7 +1162,7 @@ private:
     bool updateActiveStylesheets(StyleSelectorUpdateFlag);
     void collectActiveStylesheets(Vector<RefPtr<StyleSheet> >&);
     bool testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet*);
-    void analyzeStylesheetChange(StyleSelectorUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresStyleRecalc);
+    void analyzeStylesheetChange(StyleSelectorUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresFullStyleRecalc);
 
     void deleteCustomFonts();
 

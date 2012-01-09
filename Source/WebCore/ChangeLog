@@ -1,3 +1,25 @@
+2012-01-09  Antti Koivisto  <antti@apple.com>
+
+        Subtree invalidation on stylesheet change
+        https://bugs.webkit.org/show_bug.cgi?id=75834
+
+        Reviewed by Andreas Kling.
+        
+        Currently if we add a stylesheet with scoped selectors and matching scope elements exist,
+        we recalculate the entire document style. It is sufficient to invalidate the subtrees 
+        matching the scope only.
+        
+        This allows us to do less full style recalcs on many popular web sites (nytimes.com for example).
+        Subtree recalcs are typically much cheaper.
+        
+        Test: fast/css/id-or-class-before-stylesheet.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::testAddedStylesheetRequiresStyleRecalc):
+        (WebCore::Document::analyzeStylesheetChange):
+        (WebCore::Document::updateActiveStylesheets):
+        * dom/Document.h:
+
 2012-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

@@ -3161,22 +3161,29 @@ bool Document::testAddedStylesheetRequiresStyleRecalc(CSSStyleSheet* stylesheet)
         return true;
     HashSet<AtomicStringImpl*>::iterator end = idScopes.end();
     for (HashSet<AtomicStringImpl*>::iterator it = idScopes.begin(); it != end; ++it) {
-        if (hasElementWithId(*it))
+        AtomicStringImpl* id = *it;
+        Element* idElement = getElementById(id);
+        if (!idElement)
+            continue;
+        if (containsMultipleElementsWithId(id))
             return true;
+        idElement->setNeedsStyleRecalc();
     }
     end = classScopes.end();
     for (HashSet<AtomicStringImpl*>::iterator it = classScopes.begin(); it != end; ++it) {
         // FIXME: getElementsByClassName is not optimal for this. We should handle all classes in a single pass.
-        if (getElementsByClassName(*it)->length())
-            return true;
+        RefPtr<NodeList> classElements = getElementsByClassName(*it);
+        unsigned elementCount = classElements->length();
+        for (unsigned i = 0; i < elementCount; ++i)
+            classElements->item(i)->setNeedsStyleRecalc();
     }
     return false;
 }
     
-void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresStyleRecalc)
+void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresFullStyleRecalc)
 {
     requiresStyleSelectorReset = true;
-    requiresStyleRecalc = true;
+    requiresFullStyleRecalc = true;
     
     // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
     bool hasActiveLoadingStylesheet = false;
@@ -3215,7 +3222,7 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
         if (testAddedStylesheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(newStylesheets[i].get())))
             return;
     }
-    requiresStyleRecalc = false;
+    requiresFullStyleRecalc = false;
 }
 
 bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
@@ -3235,8 +3242,8 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     collectActiveStylesheets(newStylesheets);
 
     bool requiresStyleSelectorReset;
-    bool requiresStyleRecalc;
-    analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleSelectorReset, requiresStyleRecalc);
+    bool requiresFullStyleRecalc;
+    analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleSelectorReset, requiresFullStyleRecalc);
 
     if (requiresStyleSelectorReset)
         m_styleSelector.clear();
@@ -3249,7 +3256,7 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     m_didCalculateStyleSelector = true;
     m_hasDirtyStyleSelector = false;
     
-    return requiresStyleRecalc;
+    return requiresFullStyleRecalc;
 }
 
 void Document::setHoverNode(PassRefPtr<Node> newHoverNode)
