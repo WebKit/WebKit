@@ -105,7 +105,7 @@ public:
     void setSizeLength(LengthSize l) { m_sizeLength = l; }
     void setSize(FillSize f) { m_sizeType = f.type; m_sizeLength = f.size; }
     
-    void clearImage() { m_imageSet = false; }
+    void clearImage() { m_image.clear(); m_imageSet = false; }
     void clearXPosition() { m_xPosSet = false; }
     void clearYPosition() { m_yPosSet = false; }
     void clearAttachment() { m_attachmentSet = false; }

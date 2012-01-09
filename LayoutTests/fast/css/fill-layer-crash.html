@@ -1,0 +1,25 @@
+<html>
+<head id="head">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<style>
+* {background-image:inherit;}
+</style>
+</head>
+<body>
+ <span></span>
+</body>
+<script>
+document.body.style.background="-webkit-canvas(foo)";
+var head = document.getElementById("head");
+style = document.createElement("style");
+style.type = "text/css";
+var rule = document.createTextNode("* {content:counter(mycount_id)}");
+style.appendChild(rule);
+head.appendChild(style);
+document.body.setAttribute("style","line-height:128mm;");
+</script>
+This test works if it doesn't crash.
+</html>
