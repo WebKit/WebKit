@@ -803,8 +803,16 @@
                     'include_dirs': [
                         'public/mac',
                     ],
-                    'sources/': [
-                        ['exclude', 'CG\\.cpp$'],
+                    'conditions': [
+                        ['use_skia==0', {
+                            'sources/': [
+                                ['exclude', 'Skia\\.cpp$'],
+                            ],
+                        },{ # use_skia
+                            'sources/': [
+                                ['exclude', 'CG\\.cpp$'],
+                            ],
+                        }],
                     ],
                 }, { # else: OS!="mac"
                     'sources/': [
