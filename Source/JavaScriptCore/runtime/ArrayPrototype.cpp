@@ -389,7 +389,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
 
     if (isJSArray(thisValue))
-        return JSValue::encode(asArray(thisValue)->pop());
+        return JSValue::encode(asArray(thisValue)->pop(exec));
 
     JSObject* thisObj = thisValue.toObject(exec);
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);

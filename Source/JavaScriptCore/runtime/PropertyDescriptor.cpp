@@ -201,4 +201,18 @@ unsigned PropertyDescriptor::attributesWithOverride(const PropertyDescriptor& ot
     return newAttributes;
 }
 
+unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescriptor& current) const
+{
+    unsigned overrideMask = 0;
+    if (writablePresent())
+        overrideMask |= ReadOnly;
+    if (enumerablePresent())
+        overrideMask |= DontEnum;
+    if (configurablePresent())
+        overrideMask |= DontDelete;
+    if (isAccessorDescriptor())
+        overrideMask |= (Getter | Setter);
+    return (m_attributes & overrideMask) | (current.m_attributes & ~overrideMask);
+}
+
 }

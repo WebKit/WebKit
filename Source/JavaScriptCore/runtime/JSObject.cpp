@@ -761,7 +761,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
             object->methodTable()->deleteProperty(object, exec, propertyName);
-            putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+            return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
         }
         return true;
     }

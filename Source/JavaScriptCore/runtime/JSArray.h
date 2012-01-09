@@ -30,16 +30,25 @@ namespace JSC {
     class JSArray;
 
     struct SparseArrayEntry : public WriteBarrier<Unknown> {
+        typedef WriteBarrier<Unknown> Base;
+
         SparseArrayEntry() : attributes(0) {}
+
+        JSValue get(ExecState*, JSArray*) const;
+        void get(PropertySlot&) const;
+        void get(PropertyDescriptor&) const;
+        JSValue getNonSparseMode() const;
+
         unsigned attributes;
     };
 
     class SparseArrayValueMap {
-        typedef HashMap<unsigned, SparseArrayEntry> Map;
+        typedef HashMap<uint64_t, SparseArrayEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > Map;
 
         enum Flags {
             Normal = 0,
-            SparseMode = 1
+            SparseMode = 1,
+            LengthIsReadOnly = 2,
         };
 
     public:
@@ -61,12 +70,23 @@ namespace JSC {
 
         void setSparseMode()
         {
-            m_flags = (Flags)(m_flags | SparseMode);
+            m_flags = static_cast<Flags>(m_flags | SparseMode);
+        }
+
+        bool lengthIsReadOnly()
+        {
+            return m_flags & LengthIsReadOnly;
+        }
+
+        void setLengthIsReadOnly()
+        {
+            m_flags = static_cast<Flags>(m_flags | LengthIsReadOnly);
         }
 
         // These methods may mutate the contents of the map
-        void put(JSGlobalData&, JSArray*, unsigned, JSValue);
-        iterator find(unsigned);
+        void put(ExecState*, JSArray*, unsigned, JSValue);
+        std::pair<iterator, bool> add(JSArray*, unsigned);
+        iterator find(unsigned i) { return m_map.find(i); }
         // This should ASSERT the remove is valid (check the result of the find).
         void remove(iterator it) { m_map.remove(it); }
         void remove(unsigned i) { m_map.remove(i); }
@@ -136,7 +156,9 @@ namespace JSC {
             return array->tryFinishCreationUninitialized(globalData, initialLength);
         }
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool throwException);
+
+        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
@@ -144,14 +166,14 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
         
         unsigned length() const { return m_storage->m_length; }
-        void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
+        bool setLength(unsigned, bool throwException = false); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
 
         void sort(ExecState*);
         void sort(ExecState*, JSValue compareFunction, CallType, const CallData&);
         void sortNumeric(ExecState*, JSValue compareFunction, CallType, const CallData&);
 
         void push(ExecState*, JSValue);
-        JSValue pop();
+        JSValue pop(ExecState*);
 
         void shiftCount(ExecState*, unsigned count);
         void unshiftCount(ExecState*, unsigned count);
@@ -245,8 +267,19 @@ namespace JSC {
         void setSubclassData(void*);
 
     private:
+        bool isLengthWritable()
+        {
+            SparseArrayValueMap* map = m_storage->m_sparseValueMap;
+            return !map || !map->lengthIsReadOnly();
+        }
+
+        void setLengthWritable(ExecState*, bool writable);
+        void putDescriptor(ExecState*, SparseArrayEntry*, PropertyDescriptor&, PropertyDescriptor& old);
+        bool defineOwnNumericProperty(ExecState*, unsigned, PropertyDescriptor&, bool throwException);
+        void enterSparseMode(JSGlobalData&);
+
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
-        void putByIndexBeyondVectorLength(JSGlobalData&, unsigned propertyName, JSValue);
+        void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue);
 
         unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(unsigned newLength);

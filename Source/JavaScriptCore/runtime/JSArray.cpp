@@ -27,6 +27,7 @@
 #include "CachedCall.h"
 #include "Error.h"
 #include "Executable.h"
+#include "GetterSetter.h"
 #include "PropertyNameArray.h"
 #include <wtf/AVLTree.h>
 #include <wtf/Assertions.h>
@@ -212,24 +213,94 @@ void JSArray::destroy(JSCell* cell)
     jsCast<JSArray*>(cell)->JSArray::~JSArray();
 }
 
-SparseArrayValueMap::iterator SparseArrayValueMap::find(unsigned i)
+inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(JSArray* array, unsigned i)
 {
-    return m_map.find(i);
-}
-
-inline void SparseArrayValueMap::put(JSGlobalData& globalData, JSArray* array, unsigned i, JSValue value)
-{
-    SparseArrayEntry temp;
-    pair<Map::iterator, bool> result = m_map.add(i, temp);
-    result.first->second.set(globalData, array, value);
-    if (!result.second) // pre-existing entry
-        return;
-
+    SparseArrayEntry entry;
+    std::pair<iterator, bool> result = m_map.add(i, entry);
     size_t capacity = m_map.capacity();
     if (capacity != m_reportedCapacity) {
         Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(WriteBarrier<Unknown>)));
         m_reportedCapacity = capacity;
     }
+    return result;
+}
+
+inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value)
+{
+    SparseArrayEntry& entry = add(array, i).first->second;
+
+    if (!(entry.attributes & (Getter | Setter))) {
+        if (entry.attributes & ReadOnly) {
+            // FIXME: should throw if being called from strict mode.
+            // throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
+        }
+
+        entry.set(exec->globalData(), array, value);
+        return;
+    }
+
+    JSValue accessor = entry.Base::get();
+    ASSERT(accessor.isGetterSetter());
+    JSObject* setter = asGetterSetter(accessor)->setter();
+    
+    if (!setter) {
+        throwTypeError(exec, "setting a property that has only a getter");
+        return;
+    }
+
+    CallData callData;
+    CallType callType = setter->methodTable()->getCallData(setter, callData);
+    MarkedArgumentBuffer args;
+    args.append(value);
+    call(exec, setter, callType, callData, array, args);
+}
+
+inline void SparseArrayEntry::get(PropertySlot& slot) const
+{
+    JSValue value = Base::get();
+    ASSERT(value);
+
+    if (LIKELY(!value.isGetterSetter())) {
+        slot.setValue(value);
+        return;
+    }
+
+    JSObject* getter = asGetterSetter(value)->getter();
+    if (!getter) {
+        slot.setUndefined();
+        return;
+    }
+
+    slot.setGetterSlot(getter);
+}
+
+inline void SparseArrayEntry::get(PropertyDescriptor& descriptor) const
+{
+    descriptor.setDescriptor(Base::get(), attributes);
+}
+
+inline JSValue SparseArrayEntry::get(ExecState* exec, JSArray* array) const
+{
+    JSValue result = Base::get();
+    ASSERT(result);
+
+    if (LIKELY(!result.isGetterSetter()))
+        return result;
+
+    JSObject* getter = asGetterSetter(result)->getter();
+    if (!getter)
+        return jsUndefined();
+
+    CallData callData;
+    CallType callType = getter->methodTable()->getCallData(getter, callData);
+    return call(exec, getter, callType, callData, array, exec->emptyList());
+}
+
+inline JSValue SparseArrayEntry::getNonSparseMode() const
+{
+    ASSERT(!attributes);
+    return Base::get();
 }
 
 inline void SparseArrayValueMap::visitChildren(SlotVisitor& visitor)
@@ -237,6 +308,320 @@ inline void SparseArrayValueMap::visitChildren(SlotVisitor& visitor)
     iterator end = m_map.end();
     for (iterator it = m_map.begin(); it != end; ++it)
         visitor.append(&it->second);
+}
+
+void JSArray::enterSparseMode(JSGlobalData& globalData)
+{
+    ArrayStorage* storage = m_storage;
+    SparseArrayValueMap* map = storage->m_sparseValueMap;
+
+    if (!map)
+        map = storage->m_sparseValueMap = new SparseArrayValueMap;
+
+    if (map->sparseMode())
+        return;
+
+    map->setSparseMode();
+
+    unsigned usedVectorLength = min(storage->m_length, m_vectorLength);
+    for (unsigned i = 0; i < usedVectorLength; ++i) {
+        JSValue value = storage->m_vector[i].get();
+        // This will always be a new entry in the map, so no need to check we can write,
+        // and attributes are default so no need to set them.
+        if (value)
+            map->add(this, i).first->second.set(globalData, this, value);
+    }
+
+    ArrayStorage* newStorage = static_cast<ArrayStorage*>(fastMalloc(storageSize(0)));
+    memcpy(newStorage, m_storage, storageSize(0));
+    newStorage->m_allocBase = newStorage;
+    fastFree(m_storage);
+    m_storage = newStorage;
+    m_indexBias = 0;
+    m_vectorLength = 0;
+}
+
+void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
+{
+    if (descriptor.isDataDescriptor()) {
+        if (descriptor.value())
+            entryInMap->set(exec->globalData(), this, descriptor.value());
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~(Getter | Setter);
+        return;
+    }
+
+    if (descriptor.isAccessorDescriptor()) {
+        JSObject* getter = 0;
+        if (descriptor.getter() && descriptor.getter().isObject())
+            getter = asObject(descriptor.getter());
+        if (!getter && oldDescriptor.isAccessorDescriptor()) {
+            if (oldDescriptor.getter() && oldDescriptor.getter().isObject())
+                getter = asObject(oldDescriptor.getter());
+        }
+        JSObject* setter = 0;
+        if (descriptor.setter() && descriptor.setter().isObject())
+            setter = asObject(descriptor.setter());
+        if (!setter && oldDescriptor.isAccessorDescriptor()) {
+            if (oldDescriptor.setter() && oldDescriptor.setter().isObject())
+                setter = asObject(oldDescriptor.setter());
+        }
+
+        GetterSetter* accessor = GetterSetter::create(exec);
+        if (getter)
+            accessor->setGetter(exec->globalData(), getter);
+        if (setter)
+            accessor->setSetter(exec->globalData(), setter);
+
+        entryInMap->set(exec->globalData(), this, accessor);
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~DontDelete;
+        return;
+    }
+
+    ASSERT(descriptor.isGenericDescriptor());
+    entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor);
+}
+
+static bool sameValue(ExecState* exec, JSValue a, JSValue b)
+{
+    if (a.isNumber())
+        return b.isNumber() && bitwise_cast<uint64_t>(a.asNumber()) == bitwise_cast<uint64_t>(b.asNumber());
+    return JSValue::strictEqual(exec, a, b);
+}
+
+static bool reject(ExecState* exec, bool throwException, const char* message)
+{
+    if (throwException)
+        throwTypeError(exec, message);
+    return false;
+}
+
+// Defined in ES5.1 8.12.9
+bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, PropertyDescriptor& descriptor, bool throwException)
+{
+    ASSERT(index != 0xFFFFFFFF);
+
+    if (!inSparseMode()) {
+        // Fast case: we're putting a regular property to a regular array
+        // FIXME: this will pessimistically assume that if attributes are missing then they'll default to false
+        // – however if the property currently exists missing attributes will override from their current 'true'
+        // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
+        if (!descriptor.attributes()) {
+            ASSERT(!descriptor.isAccessorDescriptor());
+            putByIndex(this, exec, index, descriptor.value());
+            return true;
+        }
+
+        enterSparseMode(exec->globalData());
+    }
+
+    SparseArrayValueMap* map = m_storage->m_sparseValueMap;
+    ASSERT(map);
+
+    // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
+    std::pair<SparseArrayValueMap::iterator, bool> result = map->add(this, index);
+    SparseArrayEntry* entryInMap = &result.first->second;
+
+    // 2. Let extensible be the value of the [[Extensible]] internal property of O.
+    // 3. If current is undefined and extensible is false, then Reject.
+    // 4. If current is undefined and extensible is true, then
+    if (result.second) {
+        if (!isExtensible()) {
+            map->remove(result.first);
+            return reject(exec, throwException, "Attempting to define property on object that is not extensible.");
+        }
+
+        // 4.a. If IsGenericDescriptor(Desc) or IsDataDescriptor(Desc) is true, then create an own data property
+        // named P of object O whose [[Value]], [[Writable]], [[Enumerable]] and [[Configurable]] attribute values
+        // are described by Desc. If the value of an attribute field of Desc is absent, the attribute of the newly
+        // created property is set to its default value.
+        // 4.b. Else, Desc must be an accessor Property Descriptor so, create an own accessor property named P of
+        // object O whose [[Get]], [[Set]], [[Enumerable]] and [[Configurable]] attribute values are described by
+        // Desc. If the value of an attribute field of Desc is absent, the attribute of the newly created property
+        // is set to its default value.
+        // 4.c. Return true.
+
+        PropertyDescriptor defaults;
+        entryInMap->setWithoutWriteBarrier(jsUndefined());
+        entryInMap->attributes = DontDelete | DontEnum | ReadOnly;
+        entryInMap->get(defaults);
+
+        putDescriptor(exec, entryInMap, descriptor, defaults);
+        if (index >= m_storage->m_length)
+            m_storage->m_length = index + 1;
+        return true;
+    }
+
+    // 5. Return true, if every field in Desc is absent.
+    // 6. Return true, if every field in Desc also occurs in current and the value of every field in Desc is the same value as the corresponding field in current when compared using the SameValue algorithm (9.12).
+    PropertyDescriptor current;
+    entryInMap->get(current);
+    if (descriptor.isEmpty() || descriptor.equalTo(exec, current))
+        return true;
+
+    // 7. If the [[Configurable]] field of current is false then
+    if (!current.configurable()) {
+        // 7.a. Reject, if the [[Configurable]] field of Desc is true.
+        if (!descriptor.configurable())
+            return reject(exec, throwException, "Attempting to change configurable attribute of unconfigurable property.");
+        // 7.b. Reject, if the [[Enumerable]] field of Desc is present and the [[Enumerable]] fields of current and Desc are the Boolean negation of each other.
+        if (descriptor.enumerablePresent() && current.enumerable() != descriptor.enumerable())
+            return reject(exec, throwException, "Attempting to change enumerable attribute of unconfigurable property.");
+    }
+
+    // 8. If IsGenericDescriptor(Desc) is true, then no further validation is required.
+    if (!descriptor.isGenericDescriptor()) {
+        // 9. Else, if IsDataDescriptor(current) and IsDataDescriptor(Desc) have different results, then
+        if (current.isDataDescriptor() != descriptor.isDataDescriptor()) {
+            // 9.a. Reject, if the [[Configurable]] field of current is false.
+            if (!current.configurable())
+                return reject(exec, throwException, "Attempting to change access mechanism for an unconfigurable property.");
+            // 9.b. If IsDataDescriptor(current) is true, then convert the property named P of object O from a
+            // data property to an accessor property. Preserve the existing values of the converted property‘s
+            // [[Configurable]] and [[Enumerable]] attributes and set the rest of the property‘s attributes to
+            // their default values.
+            // 9.c. Else, convert the property named P of object O from an accessor property to a data property.
+            // Preserve the existing values of the converted property‘s [[Configurable]] and [[Enumerable]]
+            // attributes and set the rest of the property‘s attributes to their default values.
+        } else if (current.isDataDescriptor() && descriptor.isDataDescriptor()) {
+            // 10. Else, if IsDataDescriptor(current) and IsDataDescriptor(Desc) are both true, then
+            // 10.a. If the [[Configurable]] field of current is false, then
+            if (!current.configurable() && !current.writable()) {
+                // 10.a.i. Reject, if the [[Writable]] field of current is false and the [[Writable]] field of Desc is true.
+                if (descriptor.writable())
+                    return reject(exec, throwException, "Attempting to change writable attribute of unconfigurable property.");
+                // 10.a.ii. If the [[Writable]] field of current is false, then
+                // 10.a.ii.1. Reject, if the [[Value]] field of Desc is present and SameValue(Desc.[[Value]], current.[[Value]]) is false.
+                if (descriptor.value() && !sameValue(exec, descriptor.value(), current.value()))
+                    return reject(exec, throwException, "Attempting to change value of a readonly property.");
+            }
+            // 10.b. else, the [[Configurable]] field of current is true, so any change is acceptable.
+        } else {
+            // 11. Else, IsAccessorDescriptor(current) and IsAccessorDescriptor(Desc) are both true so, if the [[Configurable]] field of current is false, then
+            if (!current.configurable()) {
+                // 11.i. Reject, if the [[Set]] field of Desc is present and SameValue(Desc.[[Set]], current.[[Set]]) is false.
+                if (descriptor.setterPresent() && descriptor.setter() != current.setter())
+                    return reject(exec, throwException, "Attempting to change the setter of an unconfigurable property.");
+                // 11.ii. Reject, if the [[Get]] field of Desc is present and SameValue(Desc.[[Get]], current.[[Get]]) is false.
+                if (descriptor.getterPresent() && descriptor.getter() != current.getter())
+                    return reject(exec, throwException, "Attempting to change the getter of an unconfigurable property.");
+            }
+        }
+    }
+
+    // 12. For each attribute field of Desc that is present, set the correspondingly named attribute of the property named P of object O to the value of the field.
+    putDescriptor(exec, entryInMap, descriptor, current);
+    // 13. Return true.
+    return true;
+}
+
+void JSArray::setLengthWritable(ExecState* exec, bool writable)
+{
+    ASSERT(isLengthWritable() || !writable);
+    if (!isLengthWritable() || writable)
+        return;
+
+    enterSparseMode(exec->globalData());
+
+    SparseArrayValueMap* map = m_storage->m_sparseValueMap;
+    ASSERT(map);
+    map->setLengthIsReadOnly();
+}
+
+// Defined in ES5.1 15.4.5.1
+bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+{
+    JSArray* array = static_cast<JSArray*>(object);
+
+    // 3. If P is "length", then
+    if (propertyName == exec->propertyNames().length) {
+        // All paths through length definition call the default [[DefineOwnProperty]], hence:
+        // from ES5.1 8.12.9 7.a.
+        if (descriptor.configurable())
+            return reject(exec, throwException, "Attempting to change configurable attribute of unconfigurable property.");
+        // from ES5.1 8.12.9 7.b.
+        if (descriptor.enumerable())
+            return reject(exec, throwException, "Attempting to change enumerable attribute of unconfigurable property.");
+
+        // a. If the [[Value]] field of Desc is absent, then
+        // a.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Desc, and Throw as arguments.
+        if (descriptor.isAccessorDescriptor())
+            return reject(exec, throwException, "Attempting to change access mechanism for an unconfigurable property.");
+        // from ES5.1 8.12.9 10.a.
+        if (!array->isLengthWritable() && descriptor.writable())
+            return reject(exec, throwException, "Attempting to change writable attribute of unconfigurable property.");
+        // This descriptor is either just making length read-only, or changing nothing!
+        if (!descriptor.value()) {
+            array->setLengthWritable(exec, descriptor.writable());
+            return true;
+        }
+        
+        // b. Let newLenDesc be a copy of Desc.
+        // c. Let newLen be ToUint32(Desc.[[Value]]).
+        unsigned newLen = descriptor.value().toUInt32(exec);
+        // d. If newLen is not equal to ToNumber( Desc.[[Value]]), throw a RangeError exception.
+        if (newLen != descriptor.value().toNumber(exec)) {
+            throwError(exec, createRangeError(exec, "Invalid array length"));
+            return false;
+        }
+
+        // Based on SameValue check in 8.12.9, this is always okay.
+        if (newLen == array->length()) {
+            array->setLengthWritable(exec, descriptor.writable());
+            return true;
+        }
+
+        // e. Set newLenDesc.[[Value] to newLen.
+        // f. If newLen >= oldLen, then
+        // f.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
+        // g. Reject if oldLenDesc.[[Writable]] is false.
+        if (!array->isLengthWritable())
+            return reject(exec, throwException, "Attempting to change value of a readonly property.");
+        
+        // h. If newLenDesc.[[Writable]] is absent or has the value true, let newWritable be true.
+        // i. Else,
+        // i.i. Need to defer setting the [[Writable]] attribute to false in case any elements cannot be deleted.
+        // i.ii. Let newWritable be false.
+        // i.iii. Set newLenDesc.[[Writable] to true.
+        // j. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
+        // k. If succeeded is false, return false.
+        // l. While newLen < oldLen repeat,
+        // l.i. Set oldLen to oldLen – 1.
+        // l.ii. Let deleteSucceeded be the result of calling the [[Delete]] internal method of A passing ToString(oldLen) and false as arguments.
+        // l.iii. If deleteSucceeded is false, then
+        if (!array->setLength(newLen, throwException)) {
+            // 1. Set newLenDesc.[[Value] to oldLen+1.
+            // 2. If newWritable is false, set newLenDesc.[[Writable] to false.
+            // 3. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and false as arguments.
+            // 4. Reject.
+            array->setLengthWritable(exec, descriptor.writable());
+            return false;
+        }
+
+        // m. If newWritable is false, then
+        // i. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Property Descriptor{[[Writable]]: false}, and false as arguments. This call will always return true.
+        array->setLengthWritable(exec, descriptor.writable());
+        // n. Return true.
+        return true;
+    }
+
+    // 4. Else if P is an array index (15.4), then
+    bool isArrayIndex;
+    // a. Let index be ToUint32(P).
+    unsigned index = propertyName.toArrayIndex(isArrayIndex);
+    if (isArrayIndex) {
+        // b. Reject if index >= oldLen and oldLenDesc.[[Writable]] is false.
+        if (index >= array->length() && !array->isLengthWritable())
+            return reject(exec, throwException, "Attempting to define numeric property on array with non-writable length property.");
+        // c. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing P, Desc, and false as arguments.
+        // d. Reject if succeeded is false.
+        // e. If index >= oldLen
+        // e.i. Set oldLenDesc.[[Value]] to index + 1.
+        // e.ii. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", oldLenDesc, and false as arguments. This call will always return true.
+        // f. Return true.
+        return array->defineOwnNumericProperty(exec, index, descriptor, throwException);
+    }
+
+    return JSObject::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
@@ -259,7 +644,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
     } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator it = map->find(i);
         if (it != map->notFound()) {
-            slot.setValue(it->second.get());
+            it->second.get(slot);
             return true;
         }
     }
@@ -307,7 +692,7 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
         } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                descriptor.setDescriptor(it->second.get(), 0);
+                it->second.get(descriptor);
                 return true;
             }
         }
@@ -332,7 +717,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
             throwError(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
-        thisObject->setLength(newLength);
+        thisObject->setLength(newLength, slot.isStrictMode());
         return;
     }
 
@@ -372,12 +757,14 @@ void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue valu
     }
 
     // For all other cases, call putByIndexBeyondVectorLength.
-    thisObject->putByIndexBeyondVectorLength(exec->globalData(), i, value);
+    thisObject->putByIndexBeyondVectorLength(exec, i, value);
     thisObject->checkConsistency();
 }
 
-NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(JSGlobalData& globalData, unsigned i, JSValue value)
+NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value)
 {
+    JSGlobalData& globalData = exec->globalData();
+
     // i should be a valid array index that is outside of the current vector.
     ASSERT(i >= m_vectorLength);
     ASSERT(i <= MAX_ARRAY_INDEX);
@@ -385,15 +772,12 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(JSGlobalData& globalData
     ArrayStorage* storage = m_storage;
     SparseArrayValueMap* map = storage->m_sparseValueMap;
 
-    // Update m_length if necessary.
-    unsigned length = storage->m_length;
-    if (i >= length) {
-        length = i + 1;
-        storage->m_length = length;
-    }
-
     // First, handle cases where we don't currently have a sparse map.
     if (LIKELY(!map)) {
+        // Update m_length if necessary.
+        if (i >= storage->m_length)
+            storage->m_length = i + 1;
+
         // Check that it is sensible to still be using a vector, and then try to grow the vector.
         if (LIKELY((isDenseEnoughForVector(i, storage->m_numValuesInVector)) && increaseVectorLength(i + 1))) {
             // success! - reread m_storage since it has likely been reallocated, and store to the vector.
@@ -405,15 +789,27 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(JSGlobalData& globalData
         // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
         map = new SparseArrayValueMap;
         storage->m_sparseValueMap = map;
-        map->put(globalData, this, i, value);
+        map->put(exec, this, i, value);
         return;
+    }
+
+    // Update m_length if necessary.
+    unsigned length = storage->m_length;
+    if (i >= length) {
+        // Prohibit growing the array if length is not writable.
+        if (map->lengthIsReadOnly()) {
+            // FIXME: should throw in strict mode.
+            return;
+        }
+        length = i + 1;
+        storage->m_length = length;
     }
 
     // We are currently using a map - check whether we still want to be doing so.
     // We will continue  to use a sparse map if SparseMode is set, a vector would be too sparse, or if allocation fails.
     unsigned numValuesInArray = storage->m_numValuesInVector + map->size();
     if (map->sparseMode() || !isDenseEnoughForVector(length, numValuesInArray) || !increaseVectorLength(length)) {
-        map->put(globalData, this, i, value);
+        map->put(exec, this, i, value);
         return;
     }
 
@@ -425,7 +821,7 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(JSGlobalData& globalData
     WriteBarrier<Unknown>* vector = storage->m_vector;
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-        vector[it->first].set(globalData, this, it->second.get());
+        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
     delete map;
     storage->m_sparseValueMap = 0;
 
@@ -455,35 +851,35 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
 
+    if (i > MAX_ARRAY_INDEX)
+        return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, i));
+
     ArrayStorage* storage = thisObject->m_storage;
     
     if (i < thisObject->m_vectorLength) {
         WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
-        if (!valueSlot) {
-            thisObject->checkConsistency();
-            return false;
+        if (valueSlot) {
+            valueSlot.clear();
+            --storage->m_numValuesInVector;
         }
-        valueSlot.clear();
-        --storage->m_numValuesInVector;
-        thisObject->checkConsistency();
-        return true;
-    }
-
-    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
+    } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator it = map->find(i);
         if (it != map->notFound()) {
+            if (it->second.attributes & DontDelete)
+                return false;
             map->remove(it);
-            thisObject->checkConsistency();
-            return true;
         }
     }
 
     thisObject->checkConsistency();
+    return true;
+}
 
-    if (i > MAX_ARRAY_INDEX)
-        return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, i));
-
-    return false;
+static int compareKeysForQSort(const void* a, const void* b)
+{
+    uint64_t da = *static_cast<const uint64_t*>(a);
+    uint64_t db = *static_cast<const uint64_t*>(b);
+    return (da > db) - (da < db);
 }
 
 void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -502,9 +898,18 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
+        Vector<uint64_t> keys;
+        keys.reserveCapacity(map->size());
+        
         SparseArrayValueMap::const_iterator end = map->end();
-        for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-            propertyNames.add(Identifier::from(exec, it->first));
+        for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
+            if (mode == IncludeDontEnumProperties || !(it->second.attributes & DontEnum))
+                keys.append(it->first);
+        }
+
+        qsort(keys.begin(), keys.size(), sizeof(uint64_t), compareKeysForQSort);
+        for (unsigned i = 0; i < keys.size(); ++i)
+            propertyNames.add(Identifier::from(exec, static_cast<unsigned>(keys[i])));
     }
 
     if (mode == IncludeDontEnumProperties)
@@ -693,8 +1098,9 @@ bool JSArray::unshiftCountSlowCase(unsigned count)
     return true;
 }
 
-void JSArray::setLength(unsigned newLength)
+bool JSArray::setLength(unsigned newLength, bool throwException)
 {
+    UNUSED_PARAM(throwException);
     checkConsistency();
 
     ArrayStorage* storage = m_storage;
@@ -710,6 +1116,9 @@ void JSArray::setLength(unsigned newLength)
             storage->m_numValuesInVector -= hadValue;
         }
 
+        // FIXME: properties should be removed in reverse numeric order, if any cannot be
+        // removed this method should reject (possibly throw / return false), and length
+        // should be set the after the last property that could not be removed.
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap copy = *map;
             SparseArrayValueMap::const_iterator end = copy.end();
@@ -727,17 +1136,21 @@ void JSArray::setLength(unsigned newLength)
     storage->m_length = newLength;
 
     checkConsistency();
+    return true;
 }
 
-JSValue JSArray::pop()
+JSValue JSArray::pop(ExecState* exec)
 {
     checkConsistency();
 
     ArrayStorage* storage = m_storage;
     
     unsigned length = storage->m_length;
-    if (!length)
+    if (!length) {
+        if (!isLengthWritable())
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return jsUndefined();
+    }
 
     --length;
 
@@ -756,7 +1169,18 @@ JSValue JSArray::pop()
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator it = map->find(length);
             if (it != map->notFound()) {
-                result = it->second.get();
+                unsigned attributes = it->second.attributes;
+
+                result = it->second.get(exec, this);
+                if (exec->hadException())
+                    return jsUndefined();
+                
+                if (attributes & DontDelete) {
+                    throwError(exec, createTypeError(exec, "Unable to delete property."));
+                    checkConsistency();
+                    return result;
+                }
+                
                 map->remove(it);
                 if (map->isEmpty() && !map->sparseMode()) {
                     delete map;
@@ -800,7 +1224,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     }
 
     // Handled the same as putIndex.
-    putByIndexBeyondVectorLength(exec->globalData(), storage->m_length, value);
+    putByIndexBeyondVectorLength(exec, storage->m_length, value);
     checkConsistency();
 }
 
@@ -1189,7 +1613,7 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
 
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-            tree.abstractor().m_nodes[numDefined].value = it->second.get();
+            tree.abstractor().m_nodes[numDefined].value = it->second.getNonSparseMode();
             tree.insert(numDefined);
             ++numDefined;
         }
@@ -1305,7 +1729,7 @@ unsigned JSArray::compactForSorting()
 
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-            storage->m_vector[numDefined++].setWithoutWriteBarrier(it->second.get());
+            storage->m_vector[numDefined++].setWithoutWriteBarrier(it->second.getNonSparseMode());
 
         delete map;
         storage->m_sparseValueMap = 0;

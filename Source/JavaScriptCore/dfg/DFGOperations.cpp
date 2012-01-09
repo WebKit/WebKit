@@ -411,9 +411,9 @@ EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue 
     return JSValue::encode(jsNumber(array->length()));
 }
         
-EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray* array)
+EncodedJSValue DFG_OPERATION operationArrayPop(ExecState* exec, JSArray* array)
 {
-    return JSValue::encode(array->pop());
+    return JSValue::encode(array->pop(exec));
 }
         
 void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)

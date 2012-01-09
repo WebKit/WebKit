@@ -26,13 +26,13 @@ PASS 'use strict'; var a = arr(); a[0] = 2; a[0] is 2
 PASS var a = arr(); a[0] = 2; a[0] is 2
 PASS true === true
 FAIL 'use strict'; var a = arr(); a[1] = 2; a[1] should throw an instance of TypeError
-FAIL var a = arr(); a[1] = 2; a[1] should be 1. Was 2.
+PASS var a = arr(); a[1] = 2; a[1] is 1
 PASS true === true
 PASS 'use strict'; var a = arr(); a[2] = 2; a[2] is 2
 PASS var a = arr(); a[2] = 2; a[2] is 2
 PASS true === true
 FAIL 'use strict'; var a = arr(); a[3] = 2; a[3] should throw an instance of TypeError
-FAIL var a = arr(); a[3] = 2; a[3] should be 1. Was 2.
+PASS var a = arr(); a[3] = 2; a[3] is 1
 PASS true === true
 FAIL 'use strict'; arr()[1]++ should throw an instance of TypeError
 PASS arr()[1]++ is 1

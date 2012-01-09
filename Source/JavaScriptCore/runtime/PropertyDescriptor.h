@@ -66,6 +66,8 @@ namespace JSC {
         bool equalTo(ExecState* exec, const PropertyDescriptor& other) const;
         bool attributesEqual(const PropertyDescriptor& other) const;
         unsigned attributesWithOverride(const PropertyDescriptor& other) const;
+        unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;
+
     private:
         static unsigned defaultAttributes;
         bool operator==(const PropertyDescriptor&){ return false; }

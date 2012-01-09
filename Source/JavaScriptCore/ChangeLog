@@ -1,3 +1,88 @@
+2012-01-09  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75789
+        defineOwnProperty not implemented for Array objects
+
+        Reviewed by Sam Weinig.
+
+        Implements support for getter/setter & non-default attribute properties on arrays,
+        by forcing them into a dictionary-like 'SparseMode'. This fixes ~300 test-262
+        test failures.
+
+        * JavaScriptCore.exp:
+            - Updated exports.
+        * dfg/DFGOperations.cpp:
+            - JSArray::pop now requires an exec state.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPop):
+            - JSArray::pop now requires an exec state.
+        * runtime/JSArray.cpp:
+        (JSC::SparseArrayValueMap::add):
+            - Add a potentially empty entry into the map.
+        (JSC::SparseArrayValueMap::put):
+            - Changed to call setter.
+        (JSC::SparseArrayEntry::get):
+            - calls getters.
+        (JSC::SparseArrayEntry::getNonSparseMode):
+            - does not call getters.
+        (JSC::JSArray::enterSparseMode):
+            - Convert into 'SparseMode' - removes the vectors, don't allow it to be recreated.
+        (JSC::JSArray::putDescriptor):
+            - Create a numeric property based on a descriptor.
+        (JSC::sameValue):
+            - See ES5.1 9.12.
+        (JSC::reject):
+            - Helper for the [[DefineOwnProperty]] algorithm.
+        (JSC::JSArray::defineOwnNumericProperty):
+            - Define an indexed property on an array object.
+        (JSC::JSArray::setLengthWritable):
+            - Marks the length read-only, enters SparseMode as necessary.
+        (JSC::JSArray::defineOwnProperty):
+            - Defines either an indexed property or 'length' on an array object.
+        (JSC::JSArray::getOwnPropertySlotByIndex):
+            - Updated to correctly handle accessor descriptors & attributes.
+        (JSC::JSArray::getOwnPropertyDescriptor):
+            - Updated to correctly handle accessor descriptors & attributes.
+        (JSC::JSArray::put):
+            - Pass strict mode flag to setLength.
+        (JSC::JSArray::putByIndex):
+            - putByIndexBeyondVectorLength requires an ExecState* rather than a JSGloablData&.
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+            - Pass exec to SparseArrayValueMap::put.
+        (JSC::JSArray::deletePropertyByIndex):
+            - Do not allow deletion of non-configurable properties.
+        (JSC::compareKeysForQSort):
+            - used in implementation of getOwnPropertyNames.
+        (JSC::JSArray::getOwnPropertyNames):
+            - Properties in the sparse map should be iterated in order.
+        (JSC::JSArray::setLength):
+            - Updated to take a 'shouldThrow' flag, return a result indicating error.
+        (JSC::JSArray::pop):
+            - pop should throw an error if length is not writable, even if the array is empty.
+        (JSC::JSArray::push):
+            - putByIndexBeyondVectorLength requires an ExecState* rather than a JSGloablData&.
+        (JSC::JSArray::sort):
+            - Changed 'get' to 'getNonSparseMode' (can't be getters to call).
+        (JSC::JSArray::compactForSorting):
+            - Changed 'get' to 'getNonSparseMode' (can't be getters to call).
+        * runtime/JSArray.h:
+        (JSC::SparseArrayValueMap::lengthIsReadOnly):
+            - Check if the length is read only.
+        (JSC::SparseArrayValueMap::setLengthIsReadOnly):
+            - Mark the length as read only.
+        (JSC::SparseArrayValueMap::find):
+            - Moved into header.
+        (JSC::JSArray::isLengthWritable):
+            - Wraps SparseArrayValueMap::lengthIsReadOnly.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnProperty):
+            - Should be returning the result of putDescriptor.
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::attributesOverridingCurrent):
+            - Added attributesOverridingCurrent - this should probably be merged with attributesWithOverride.
+        * runtime/PropertyDescriptor.h:
+            - Added attributesOverridingCurrent.
+
 2012-01-09  Pavel Heimlich  <tropikhajma@gmail.com>
 
         There is no support for fastcall in Solaris Studio.
