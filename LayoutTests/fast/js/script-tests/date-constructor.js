@@ -42,7 +42,6 @@ shouldBe("Number(new Date(new Date(1, 1, 1, Infinity, 1, 1, 1, 1, 1)))", 'Number
 shouldBe("Number(new Date(new Date(1, 1, 1, 1, Infinity, 1, 1, 1, 1)))", 'Number.NaN');
 shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1)))", 'Number.NaN');
 shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1)))", 'Number.NaN');
-shouldBe("Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)))", '-2174741938999');
 
 // In Firefox, the results of the following tests are timezone-dependent, which likely implies that the implementation is not quite correct.
 // Our results are even worse, though, as the dates are clipped: (new Date(1111, 1201).getTime()) == (new Date(1111, 601).getTime())

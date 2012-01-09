@@ -31,7 +31,6 @@ PASS Number(new Date(new Date(1, 1, 1, Infinity, 1, 1, 1, 1, 1))) is Number.NaN
 PASS Number(new Date(new Date(1, 1, 1, 1, Infinity, 1, 1, 1, 1))) is Number.NaN
 PASS Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1))) is Number.NaN
 PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1))) is Number.NaN
-PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity))) is -2174741938999
 PASS testStr is "1234567"
 PASS testStr is "1234567"
 PASS successfullyParsed is true
