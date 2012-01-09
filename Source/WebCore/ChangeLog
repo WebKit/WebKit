@@ -1,3 +1,21 @@
+2012-01-09  Andreas Kling  <awesomekling@apple.com>
+
+        CSSMutableStyleDeclaration: Remove propertiesEqual().
+        <http://webkit.org/b/75829>
+
+        Reviewed by Antti Koivisto.
+
+        Remove propertiesEqual() since it was wrong (it only compared CSSValue pointers,
+        not the actual values.)
+
+        Skip comparing the style declarations in NamedNodeMap::mappedMapsEquivalent()
+        and just compare pointers instead. This is possible because the declarations
+        all come from the mapped attribute/declaration table.
+
+        * css/CSSMutableStyleDeclaration.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::mappedMapsEquivalent):
+
 2012-01-09  Adam Barth  <abarth@webkit.org>
 
         insertAdjacentHTML doesn't play nice with DocumentFragment

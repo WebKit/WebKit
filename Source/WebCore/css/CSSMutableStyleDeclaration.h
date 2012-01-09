@@ -127,8 +127,6 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
-    bool propertiesEqual(const CSSMutableStyleDeclaration* o) const { return m_properties == o->m_properties; }
-
 protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration();
