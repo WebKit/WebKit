@@ -1,3 +1,29 @@
+2012-01-09  Adam Treat  <atreat@rim.com>
+
+        Log is a little to verbose for blackberry port
+        https://bugs.webkit.org/show_bug.cgi?id=75728
+
+        The BlackBerry::Platform::Log* functions take care of the call to vfprintf
+        which is resulting in unintentional noise in our logs.  Add a conditional
+        directive to fix.
+
+        Change to using BlackBerry::Platform::logStreamV which does not insert
+        threading info and newlines unlike BlackBerry::Platform::log.
+
+        Finally, add log locking and unlocking which the BlackBerry platform
+        uses to ensure that N threads do not trample on each other's logs.
+
+        Reviewed by Rob Buis.
+
+        * wtf/Assertions.cpp:
+        (WTFLogLocker::WTFReportAssertionFailure):
+        (WTFLogLocker::WTFReportAssertionFailureWithMessage):
+        (WTFLogLocker::WTFReportArgumentAssertionFailure):
+        (WTFLogLocker::WTFReportFatalError):
+        (WTFLogLocker::WTFReportError):
+        (WTFLogLocker::WTFLog):
+        (WTFLogLocker::WTFLogVerbose):
+
 2012-01-09  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75789
