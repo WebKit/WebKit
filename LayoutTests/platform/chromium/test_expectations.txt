@@ -3614,8 +3614,6 @@ BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
-BUGWK71653 : platform/chromium-cg-mac/editing/input/ime-candidate-window-position.html = PASS TIMEOUT
-
 // Intermittent assertion failures on snowleopard bots.
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/Element/id-in-frame.html = PASS CRASH
 BUGWK59552 SNOWLEOPARD DEBUG : fast/dom/image-object.html = PASS CRASH
