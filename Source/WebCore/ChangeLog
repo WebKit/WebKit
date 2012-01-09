@@ -1,3 +1,15 @@
+2012-01-09  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Use Vector<OwnPtr> for m_viewportDependentMediaQueryResults in CSSStyleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=75723
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addViewportDependentMediaQueryResult):
+        * css/CSSStyleSelector.h:
+
 2012-01-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         Extend CSSValueList to allow slash separated lists.

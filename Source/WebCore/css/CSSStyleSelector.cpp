@@ -479,7 +479,6 @@ void CSSStyleSelector::addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule)
 CSSStyleSelector::~CSSStyleSelector()
 {
     m_fontSelector->clearDocument();
-    deleteAllValues(m_viewportDependentMediaQueryResults);
 }
 
 CSSStyleSelector::Features::Features()
@@ -4704,7 +4703,7 @@ bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname) con
 
 void CSSStyleSelector::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)
 {
-    m_viewportDependentMediaQueryResults.append(new MediaQueryResult(*expr, result));
+    m_viewportDependentMediaQueryResults.append(adoptPtr(new MediaQueryResult(*expr, result)));
 }
 
 bool CSSStyleSelector::affectedByViewportChange() const
