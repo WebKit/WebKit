@@ -87,16 +87,23 @@ static double calculateNormalizationScale(AudioBus* response)
     return scale;
 }
 
-Reverb::Reverb(AudioBus* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads)
+Reverb::Reverb(AudioBus* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads, bool normalize)
 {
-    double scale = calculateNormalizationScale(impulseResponse);
-    if (scale)
-        impulseResponse->scale(scale);
+    double scale = 1;
+
+    if (normalize) {
+        scale = calculateNormalizationScale(impulseResponse);
+
+        if (scale)
+            impulseResponse->scale(scale);
+    }
 
     initialize(impulseResponse, renderSliceSize, maxFFTSize, numberOfChannels, useBackgroundThreads);
 
-    // Undo scaling since this shouldn't be a destructive operation on impulseResponse
-    if (scale)
+    // Undo scaling since this shouldn't be a destructive operation on impulseResponse.
+    // FIXME: What about roundoff? Perhaps consider making a temporary scaled copy
+    // instead of scaling and unscaling in place.
+    if (normalize && scale)
         impulseResponse->scale(1.0 / scale);
 }
 

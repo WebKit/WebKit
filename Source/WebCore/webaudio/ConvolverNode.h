@@ -54,6 +54,8 @@ public:
     void setBuffer(AudioBuffer*);
     AudioBuffer* buffer();
 
+    bool normalize() const { return m_normalize; }
+    void setNormalize(bool normalize) { m_normalize = normalize; }
 private:
     ConvolverNode(AudioContext*, float sampleRate);
 
@@ -62,6 +64,9 @@ private:
 
     // This synchronizes dynamic changes to the convolution impulse response with process().
     mutable Mutex m_processLock;
+
+    // Normalize the impulse response or not. Must default to true.
+    bool m_normalize;
 };
 
 } // namespace WebCore

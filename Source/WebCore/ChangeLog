@@ -1,3 +1,33 @@
+2012-01-09  Raymond Toy  <rtoy@google.com>
+
+        Add normalize attribute to ConvolverNode to disable normalization.
+        https://bugs.webkit.org/show_bug.cgi?id=75126
+
+        Reviewed by Kenneth Russell.
+
+        Tests added in convolution-mono-mono.html.
+
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::Reverb): Add extra arg to indicate whether
+        normalization is enabled or not, and do it.
+        * platform/audio/Reverb.h: Update declaration.
+        * webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode): Initialize attribute (to
+        true).
+        (WebCore::ConvolverNode::setBuffer): Call Reverb with
+        normalization argument.
+        * webaudio/ConvolverNode.h:
+        (WebCore::ConvolverNode::normalize): New method to return
+        normalization. 
+        (WebCore::ConvolverNode::setNormalize):  New method to set
+        normalization. 
+        * webaudio/ConvolverNode.idl: Add normalize attribute.
+        * LayoutTests/webaudio/convolution-mono-mono.html:
+        * LayoutTests/webaudio/convolution-mono-mono-expected.txt:
+        * LayoutTests/webaudio/resources/convolution-testing.js:
+        Test for convolution.  Tests only work when normalization is
+        disabled.
+
 2012-01-09  Judy Hao  <judy.liqiong-hao@nokia.com>
 
         [GStreamer] webkitwebsrc: pad template is leaked

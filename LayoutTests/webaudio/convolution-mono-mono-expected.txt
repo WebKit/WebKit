@@ -1,0 +1,13 @@
+Tests ConvolverNode processing a mono channel with mono impulse response.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Initial latency of convolver is silent.
+PASS Triangular portion of convolution is correct.
+PASS First part of tail of convolution is sufficiently small.
+PASS Rendered signal after tail of convolution is silent.
+PASS Test signal was correctly convolved.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

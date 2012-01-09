@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/convolution-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests ConvolverNode processing a mono channel with mono impulse response.");
+
+// To test the convolver, we convolve two square pulses together to
+// produce a triangular pulse.  To verify the result is correct we
+// check several parts of the result.  First, we make sure the initial
+// part of the result is zero (due to the latency in the convolver).
+// Next, the triangular pulse should match the theoretical result to
+// within some roundoff.  After the triangular pulse, the result
+// should be exactly zero, but round-off prevents that.  We make sure
+// the part after the pulse is sufficiently close to zero.  Finally,
+// the result should be exactly zero because the inputs are exactly
+// zero.
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create offline audio context.
+    var context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+
+    var squarePulse = createSquarePulseBuffer(context, pulseLengthFrames);
+    var trianglePulse = createTrianglePulseBuffer(context, 2 * pulseLengthFrames);
+    
+    var bufferSource = context.createBufferSource();
+    bufferSource.buffer = squarePulse;
+    
+    var convolver = context.createConvolver();
+    convolver.normalize = false;
+    convolver.buffer = squarePulse;
+
+    bufferSource.connect(convolver);
+    convolver.connect(context.destination);
+
+    bufferSource.noteOn(0);
+    
+    context.oncomplete = checkConvolvedResult(trianglePulse);
+    context.startRendering();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
