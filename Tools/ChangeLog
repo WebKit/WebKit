@@ -1,3 +1,18 @@
+2012-01-09  Adam Barth  <abarth@webkit.org>
+
+        Remove Chromium Mac CG from the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=75873
+
+        Reviewed by Ojan Vafai.
+
+        This configuration no longer exists.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testOverrideJustBuildType):
+        (testPlatformAndBuildType):
+
 2012-01-06  Adam Roben  <aroben@apple.com>
 
         Print an error message when NRWT can't run Apache
