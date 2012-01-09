@@ -219,113 +219,6 @@ class BuildBotTest(unittest.TestCase):
             for key, expected_value in expected_parsing.items():
                 self.assertEquals(builder[key], expected_value, ("Builder %d parse failure for key: %s: Actual='%s' Expected='%s'" % (x, key, builder[key], expected_value)))
 
-    def test_core_builder_methods(self):
-        buildbot = BuildBot()
-
-        # Override builder_statuses function to not touch the network.
-        def example_builder_statuses(): # We could use instancemethod() to bind 'self' but we don't need to.
-            return BuildBotTest._expected_example_one_box_parsings
-        buildbot.builder_statuses = example_builder_statuses
-
-        buildbot.core_builder_names_regexps = [ 'Leopard', "Windows.*Build" ]
-        self.assertEquals(buildbot.red_core_builders_names(), [])
-        self.assertTrue(buildbot.core_builders_are_green())
-
-        buildbot.core_builder_names_regexps = [ 'SnowLeopard', 'Qt' ]
-        self.assertEquals(buildbot.red_core_builders_names(), [ u'SnowLeopard Intel Release', u'Qt Linux Release' ])
-        self.assertFalse(buildbot.core_builders_are_green())
-
-    def test_builder_name_regexps(self):
-        buildbot = BuildBot()
-
-        # For complete testing, this list should match the list of builders at build.webkit.org:
-        example_builders = [
-            {'name': u'Leopard Intel Release (Build)', },
-            {'name': u'Leopard Intel Release (Tests)', },
-            {'name': u'Leopard Intel Debug (Build)', },
-            {'name': u'Leopard Intel Debug (Tests)', },
-            {'name': u'SnowLeopard Intel Release (Build)', },
-            {'name': u'SnowLeopard Intel Release (Tests)', },
-            {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },
-            {'name': u'SnowLeopard Intel Leaks', },
-            {'name': u'Windows Release (Build)', },
-            {'name': u'Windows 7 Release (Tests)', },
-            {'name': u'Windows Debug (Build)', },
-            {'name': u'Windows XP Debug (Tests)', },
-            {'name': u'Windows 7 Release (WebKit2 Tests)', },
-            {'name': u'GTK Linux 32-bit Release', },
-            {'name': u'GTK Linux 64-bit Release', },
-            {'name': u'GTK Linux 64-bit Debug', },
-            {'name': u'Qt Linux Release', },
-            {'name': u'Qt Linux Release minimal', },
-            {'name': u'Qt Linux ARMv7 Release', },
-            {'name': u'Qt Windows 32-bit Release', },
-            {'name': u'Qt Windows 32-bit Debug', },
-            {'name': u'Chromium Android Release', },
-            {'name': u'Chromium Win Release', },
-            {'name': u'Chromium Win Release (Tests)', },
-            {'name': u'Chromium Mac Release', },
-            {'name': u'Chromium Mac Release (Tests)', },
-            {'name': u'Chromium Linux Release', },
-            {'name': u'Chromium Linux Release (Tests)', },
-            {'name': u'Leopard Intel Release (NRWT)', },
-            {'name': u'SnowLeopard Intel Release (NRWT)', },
-            {'name': u'New run-webkit-tests', },
-            {'name': u'WinCairo Debug (Build)', },
-            {'name': u'WinCE Release (Build)', },
-            {'name': u'EFL Linux Release (Build)', },
-        ]
-        name_regexps = [
-            "SnowLeopard.*Build",
-            "SnowLeopard.*\(Test",
-            "SnowLeopard.*\(WebKit2 Test",
-            "Leopard.*\((?:Build|Test)",
-            "Windows.*Build",
-            "Windows.*\(Test",
-            "WinCE",
-            "EFL",
-            "GTK.*32",
-            "GTK.*64",
-            "Qt",
-            "Chromium.*(Mac|Linux|Win).*Release$",
-            "Chromium.*(Mac|Linux|Win).*Release.*\(Tests",
-        ]
-        expected_builders = [
-            {'name': u'Leopard Intel Release (Build)', },
-            {'name': u'Leopard Intel Release (Tests)', },
-            {'name': u'Leopard Intel Debug (Build)', },
-            {'name': u'Leopard Intel Debug (Tests)', },
-            {'name': u'SnowLeopard Intel Release (Build)', },
-            {'name': u'SnowLeopard Intel Release (Tests)', },
-            {'name': u'SnowLeopard Intel Release (WebKit2 Tests)', },
-            {'name': u'Windows Release (Build)', },
-            {'name': u'Windows 7 Release (Tests)', },
-            {'name': u'Windows Debug (Build)', },
-            {'name': u'Windows XP Debug (Tests)', },
-            {'name': u'GTK Linux 32-bit Release', },
-            {'name': u'GTK Linux 64-bit Release', },
-            {'name': u'GTK Linux 64-bit Debug', },
-            {'name': u'Qt Linux Release', },
-            {'name': u'Qt Linux Release minimal', },
-            {'name': u'Qt Linux ARMv7 Release', },
-            {'name': u'Qt Windows 32-bit Release', },
-            {'name': u'Qt Windows 32-bit Debug', },
-            {'name': u'Chromium Win Release', },
-            {'name': u'Chromium Win Release (Tests)', },
-            {'name': u'Chromium Mac Release', },
-            {'name': u'Chromium Mac Release (Tests)', },
-            {'name': u'Chromium Linux Release', },
-            {'name': u'Chromium Linux Release (Tests)', },
-            {'name': u'WinCE Release (Build)', },
-            {'name': u'EFL Linux Release (Build)', },
-        ]
-
-        # This test should probably be updated if the default regexp list changes
-        self.assertEquals(buildbot.core_builder_names_regexps, name_regexps)
-
-        builders = buildbot._builder_statuses_with_names_matching_regexps(example_builders, name_regexps)
-        self.assertEquals(builders, expected_builders)
-
     def test_builder_with_name(self):
         buildbot = BuildBot()
 
@@ -440,8 +333,10 @@ class BuildBotTest(unittest.TestCase):
 
     def test_last_green_revision(self):
         buildbot = BuildBot()
-        def mock_builds_from_builders(only_core_builders):
+
+        def mock_builds_from_builders():
             return self._fake_builds_at_index(0)
+
         buildbot._latest_builds_from_builders = mock_builds_from_builders
         self.assertEqual(buildbot.last_green_revision(), 1)
 

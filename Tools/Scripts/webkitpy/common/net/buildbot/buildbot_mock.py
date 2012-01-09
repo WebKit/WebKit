@@ -90,21 +90,6 @@ class MockBuildBot(object):
             self._mock_builder2_status,
         ]
 
-    def red_core_builders_names(self):
-        if not self._mock_builder2_status["is_green"]:
-            return [self._mock_builder2_status["name"]]
-        return []
-
-    def red_core_builders(self):
-        if not self._mock_builder2_status["is_green"]:
-            return [self._mock_builder2_status]
-        return []
-
-    def idle_red_core_builders(self):
-        if not self._mock_builder2_status["is_green"]:
-            return [self._mock_builder2_status]
-        return []
-
     def last_green_revision(self):
         return 9479
 

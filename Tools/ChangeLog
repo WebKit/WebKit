@@ -1,3 +1,28 @@
+2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the concept of core builders from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=75809
+
+        Reviewed by Ryosuke Niwa.
+
+        Treat all bots equally since core/non-core sepration has been removed from build.webkit.org,
+        and remove the relevant code.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot.__init__):
+        (BuildBot._matches_regexps):
+        (BuildBot._builder_statuses_with_names_matching_regexps):
+        (BuildBot.builder_statuses):
+        (BuildBot.failure_map):
+        (BuildBot._latest_builds_from_builders):
+        (BuildBot.last_green_revision):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        (MockBuildBot.builder_statuses):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_status_parsing):
+        (test_last_green_revision):
+        (test_last_green_revision.mock_builds_from_builders):
+
 2012-01-08  Adam Barth  <abarth@webkit.org>
 
         Remove Chromium Mac CG concept from webkitpy
