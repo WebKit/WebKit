@@ -82,7 +82,7 @@ static NSTimeInterval systemUptime()
         return [[NSProcessInfo processInfo] systemUptime];
 
     // Get how long system has been up. Found by looking getting "boottime" from the kernel.
-    static struct timeval boottime = {};
+    static struct timeval boottime = {0, 0};
     if (!boottime.tv_sec) {
         int mib[2] = {CTL_KERN, KERN_BOOTTIME};
         size_t size = sizeof(boottime);

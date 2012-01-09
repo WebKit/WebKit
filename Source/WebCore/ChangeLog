@@ -1,3 +1,15 @@
+2012-01-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Build fix: ScrollAnimatorMac has missing initializer in systemUptime()
+        https://bugs.webkit.org/show_bug.cgi?id=75827
+
+        Reviewed by Darin Adler.
+
+        Explicitly initialize the struct timeval to avoid compiler warnings.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (systemUptime):
+
 2012-01-08  ChangSeok Oh  <shivamidow@gmail.com>
 
         Memory allocation mismatch by using adoptArrayPtr in GraphicsContext3DOpenGL.cpp
