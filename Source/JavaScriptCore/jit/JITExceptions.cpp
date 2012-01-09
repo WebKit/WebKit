@@ -32,6 +32,8 @@
 #include "JSGlobalData.h"
 #include "JSValue.h"
 
+#if ENABLE(ASSEMBLER)
+
 namespace JSC {
 
 ExceptionHandler genericThrow(JSGlobalData* globalData, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
@@ -67,3 +69,4 @@ ExceptionHandler jitThrow(JSGlobalData* globalData, ExecState* callFrame, JSValu
 
 }
 
+#endif

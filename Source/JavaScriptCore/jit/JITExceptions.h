@@ -29,6 +29,8 @@
 #include "JSValue.h"
 #include "MacroAssemblerCodeRef.h"
 
+#if ENABLE(ASSEMBLER)
+
 namespace JSC {
 
 class ExecState;
@@ -47,6 +49,8 @@ ExceptionHandler genericThrow(JSGlobalData*, ExecState*, JSValue exceptionValue,
 ExceptionHandler jitThrow(JSGlobalData*, ExecState*, JSValue exceptionValue, ReturnAddressPtr faultLocation);
 
 } // namespace JSC
+
+#endif
 
 #endif // JITExceptions_h
 

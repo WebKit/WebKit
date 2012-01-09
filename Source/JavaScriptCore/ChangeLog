@@ -1,3 +1,10 @@
+2012-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r104415.
+
+        * jit/JITExceptions.cpp:
+        * jit/JITExceptions.h:
+
 2012-01-08  Filip Pizlo  <fpizlo@apple.com>
 
         The JIT's protocol for exception handling should be available to other parts of the system
