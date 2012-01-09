@@ -1,0 +1,5 @@
+These two sentences should be the same color (simple)
+These two sentences should be the same color (simple)
+These two sentences should be the same color (alpha)
+These two sentences should be the same color (alpha)
+FAIL

@@ -1,0 +1,9 @@
+These two sentences should be the same color (simple)
+These two sentences should be the same color (simple)
+B. These two sentences should be the same color (simple percent)
+B. These two sentences should be the same color (simple percent)
+C. These two sentences should be the same color (alpha)
+C. These two sentences should be the same color (alpha)
+These two sentences should be the same color (percent alpha)
+These two sentences should be the same color (percent alpha)
+FAIL

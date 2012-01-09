@@ -1,0 +1,41 @@
+<style>
+div {color: red;}
+#controlsimple {color: hsl(120,75%,50%);}
+#simple        {color: hsl(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%));}
+
+#controlalpha {color: hsla(120,75%,50%,0.7);}
+#alpha        {color: hsla(-webkit-calc(120),-webkit-calc(75%),-webkit-calc(50%), -webkit-calc(0.7));}
+</style>
+
+<div id="controlsimple">These two sentences should be the same color (simple)</div>
+<div id="simple">These two sentences should be the same color (simple)</div>
+<hr/>
+<div id="controlalpha">These two sentences should be the same color (alpha)</div>
+<div id="alpha">These two sentences should be the same color (alpha)</div>
+<hr/>
+<div id="results"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+tests = ["simple", "alpha"];
+
+var success = true;
+
+for (i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var expected = getComputedStyle(document.getElementById("control" + test), null).color;
+    var actual = getComputedStyle(document.getElementById(test), null).color;
+    success = success && (actual == expected);
+}
+
+var results = document.getElementById("results");
+if (success) {
+    results.style.color = "green";
+    results.innerHTML = "PASS";
+} else {
+    results.style.color = "red";
+    results.innerHTML = "FAIL";
+}
+</script>

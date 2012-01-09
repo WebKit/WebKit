@@ -1,0 +1,53 @@
+<style>
+div {color: red;}
+#controlsimple {color: rgb(10,180,30);}
+#simple        {color: rgb(-webkit-calc(10),-webkit-calc(18 * 10),-webkit-calc(30));}
+#controlpercentsimple {color: rgb(10%,95%,30%);}
+#percentsimple        {color: rgb(-webkit-calc(2% + 8%),-webkit-calc(95%),-webkit-calc(3% * 10));}
+
+#controlalpha {color: rgba(10,180,30,0.7);}
+#alpha        {color: rgba(-webkit-calc(10),-webkit-calc(180),-webkit-calc(30), -webkit-calc(0.35 * 2));}
+#controlpercentalpha {color: rgba(10%,95%,30%,0.7);}
+#percentalpha        {color: rgba(-webkit-calc(2 * 5%),-webkit-calc(100% - 5%),-webkit-calc(30%),-webkit-calc(0.2 * 3 + 0.1));}
+</style>
+
+<div id="controlsimple">These two sentences should be the same color (simple)</div>
+<div id="simple">These two sentences should be the same color (simple)</div>
+<hr/>
+<div id="controlpercentsimple">B. These two sentences should be the same color (simple percent)</div>
+<div id="percentsimple">B. These two sentences should  be the same color (simple percent)</div>
+<hr/>
+<div id="controlalpha">C. These two sentences should be the same color (alpha)</div>
+<div id="alpha">C. These two sentences should be the same color (alpha)</div>
+<hr/>
+<div id="controlpercentalpha">These two sentences should  be the same color (percent alpha)</div>
+<div id="percentalpha">These two sentences should  be the same color (percent alpha)</div>
+<hr/>
+<div id="results"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+tests = ["simple", "alpha"];
+
+var success = true;
+
+for (i = 0; i < tests.length; i++) {
+    var test = tests[i];
+    var expectedsimple = getComputedStyle(document.getElementById("control" + test), null).color;
+    var actualsimple = getComputedStyle(document.getElementById(test), null).color;
+    var expectedpercent = getComputedStyle(document.getElementById("controlpercent" + test), null).color;
+    var actualpercent = getComputedStyle(document.getElementById("percent" + test), null).color;    
+    success = success && (actualsimple == expectedsimple) && (actualpercent == expectedpercent);
+}
+
+var results = document.getElementById("results");
+if (success) {
+    results.style.color = "green";
+    results.innerHTML = "PASS";
+} else {
+    results.style.color = "red";
+    results.innerHTML = "FAIL";
+}
+</script>
