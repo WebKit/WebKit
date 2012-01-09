@@ -1,3 +1,17 @@
+2012-01-09  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Set color_set function to the clipped smart class.
+        https://bugs.webkit.org/show_bug.cgi?id=75286
+
+        Reviewed by Andreas Kling.
+
+        Set _ewk_view_smart_color_set() function to the clipped smart class's color_set,
+        so application can set webpage's background color using evas_object_color_set() API.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_color_set):
+        (ewk_view_smart_class_init):
+
 2012-01-08  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r103859): WKViews leak

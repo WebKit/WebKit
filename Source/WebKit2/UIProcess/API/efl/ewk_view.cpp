@@ -385,6 +385,33 @@ static void _ewk_view_smart_hide(Evas_Object* ewkView)
     evas_object_hide(smartData->image);
 }
 
+static void _ewk_view_smart_color_set(Evas_Object* ewkView, int red, int green, int blue, int alpha)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (alpha < 0)
+        alpha = 0;
+    else if (alpha > 255)
+        alpha = 255;
+
+#define CHECK_COLOR(color, alpha) \
+    if (color < 0)                \
+        color = 0;                \
+    else if (color > alpha)       \
+        color = alpha;
+    CHECK_COLOR(red, alpha);
+    CHECK_COLOR(green, alpha);
+    CHECK_COLOR(blue, alpha);
+#undef CHECK_COLOR
+
+    evas_object_image_alpha_set(smartData->image, alpha < 255);
+    priv->pageClient->page()->setDrawsBackground(red || green || blue);
+    priv->pageClient->page()->setDrawsTransparentBackground(alpha < 255);
+
+    g_parentSmartClass.color_set(ewkView, red, green, blue, alpha);
+}
+
 Eina_Bool ewk_view_smart_class_init(Ewk_View_Smart_Class* api)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(api, false);
@@ -407,6 +434,7 @@ Eina_Bool ewk_view_smart_class_init(Ewk_View_Smart_Class* api)
     api->sc.resize = _ewk_view_smart_resize;
     api->sc.show = _ewk_view_smart_show;
     api->sc.hide = _ewk_view_smart_hide;
+    api->sc.color_set = _ewk_view_smart_color_set;
     api->sc.calculate = _ewk_view_smart_calculate;
     api->sc.data = EWK_VIEW_TYPE_STR; // It is used by type checking.
 
