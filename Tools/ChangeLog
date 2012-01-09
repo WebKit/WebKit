@@ -1,3 +1,13 @@
+2012-01-09  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Gtk][ARM] Cross compiler buildbot is failing after r103040
+        https://bugs.webkit.org/show_bug.cgi?id=75846
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+
 2012-01-09  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] Add support for dynamically enabling and disabling touch mocking in the Qt MiniBrowser
