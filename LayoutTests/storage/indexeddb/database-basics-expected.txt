@@ -3,7 +3,11 @@ Test the basics of IndexedDB's IDBDatabase.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('database-basics')
+indexedDB = window.indexedDB || window.webkitIndexedDB
+PASS indexedDB != null is true
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException
+PASS IDBDatabaseException != null is true
+indexedDB.open('database-basics')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -43,6 +47,13 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
+db.close()
+Now that the connection is closed, transaction creation should fail
+Expecting exception from db.transaction('test123')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+Call twice, make sure it's harmless
+db.close()
 PASS successfullyParsed is true
 
 TEST COMPLETE

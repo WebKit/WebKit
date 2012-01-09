@@ -101,8 +101,10 @@ void WebIDBDatabaseImpl::close()
 {
     // Use the callbacks that ::open gave us so that the backend in
     // multi-process chromium knows which database connection is closing.
-    ASSERT(m_databaseCallbacks);
+    if (!m_databaseCallbacks)
+        return;
     m_databaseBackend->close(m_databaseCallbacks);
+    m_databaseCallbacks = 0;
 }
 
 void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)

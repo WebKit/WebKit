@@ -1,3 +1,17 @@
+2012-01-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Make WebIDBDatabase::close() idempotent
+        https://bugs.webkit.org/show_bug.cgi?id=75751
+
+        Allow Chromium's back-end to safely trigger the cleanup that occurs
+        when a database connection is closed, without tracking whether or not
+        the connection was previous closed by script.
+
+        Reviewed by Tony Chang.
+
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::close):
+
 2012-01-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Avoid unnecessary TextureManager::reduceMemoryToLimit().

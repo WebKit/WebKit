@@ -14,7 +14,12 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('database-basics')");
+    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
+    shouldBeTrue("indexedDB != null");
+    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
+    shouldBeTrue("IDBDatabaseException != null");
+
+    request = evalAndLog("indexedDB.open('database-basics')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -104,6 +109,16 @@ function checkMetadata()
 {
     shouldBeEqualToString("db.version", "version b");
     checkObjectStore();
+    testClose();
+}
+
+function testClose()
+{
+    evalAndLog("db.close()");
+    debug("Now that the connection is closed, transaction creation should fail");
+    evalAndExpectException("db.transaction('test123')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    debug("Call twice, make sure it's harmless");
+    evalAndLog("db.close()");
     done();
 }
 
