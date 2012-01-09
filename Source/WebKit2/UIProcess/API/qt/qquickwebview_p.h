@@ -100,6 +100,11 @@ public:
 
     virtual QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
 
+    QPointF mapToWebContent(const QPointF&) const;
+    QRectF mapRectToWebContent(const QRectF&) const;
+    QPointF mapFromWebContent(const QPointF&) const;
+    QRectF mapRectFromWebContent(const QRectF&) const;
+
     QQuickWebPage* page();
 
     QQuickWebViewExperimental* experimental() const;
@@ -130,8 +135,26 @@ Q_SIGNALS:
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
+
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void keyReleaseEvent(QKeyEvent*);
+    virtual void inputMethodEvent(QInputMethodEvent*);
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
+    virtual void touchEvent(QTouchEvent*);
+    virtual void mousePressEvent(QMouseEvent*);
+    virtual void mouseMoveEvent(QMouseEvent*);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent*);
+    virtual void wheelEvent(QWheelEvent*);
+    virtual void hoverEnterEvent(QHoverEvent*);
+    virtual void hoverMoveEvent(QHoverEvent*);
+    virtual void hoverLeaveEvent(QHoverEvent*);
+    virtual void dragMoveEvent(QDragMoveEvent*);
+    virtual void dragEnterEvent(QDragEnterEvent*);
+    virtual void dragLeaveEvent(QDragLeaveEvent*);
+    virtual void dropEvent(QDropEvent*);
+    virtual bool event(QEvent*);
 
 private:
     Q_DECLARE_PRIVATE(QQuickWebView)

@@ -1,3 +1,132 @@
+2012-01-09  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Pinch zoom should affect the page size
+        https://bugs.webkit.org/show_bug.cgi?id=74601
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The current implementation uses the scale property of the QQuickWebPage
+        to scale the page in response to pinch gestures.
+        However for layout and anchoring to work correctly in QML, pinching needs
+        to change the page size.
+        This patch applies the pinch scale to the page size and to the transformation
+        matrix of the drawing area.
+        Thus the page item's coordinate system is no longer a direct representation
+        of the WebCore::Page coordinate system and it is no longer suitable as
+        an inertial frame of reference for input events. The event propagation had
+        to be moved to the QQuickWebView and the positions translated to content
+        coordinates when NativeWebEvents are created.
+        Re-landing with fixed event delivery for the test infrastructure.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/qt/NativeWebMouseEventQt.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/qt/NativeWebTouchEventQt.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/qt/NativeWebWheelEventQt.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::geometryChanged):
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (QQuickWebPage::usesTraditionalDesktopBehaviour):
+        (QQuickWebPage::setUsesTraditionalDesktopBehaviour):
+        (QQuickWebPage::eventHandler):
+        (QQuickWebPage::setContentSize):
+        (QQuickWebPage::contentSize):
+        (QQuickWebPage::setContentScale):
+        (QQuickWebPage::contentScale):
+        (QQuickWebPage::transformFromItem):
+        (QQuickWebPage::transformToItem):
+        (QQuickWebPagePrivate::updateSize):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::enableMouseEvents):
+        (QQuickWebViewPrivate::disableMouseEvents):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::pageDidRequestScroll):
+        (QQuickWebViewPrivate::updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::PostTransitionState::apply):
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewExperimental::useTraditionalDesktopBehaviour):
+        (QQuickWebView::mapToWebContent):
+        (QQuickWebView::mapRectToWebContent):
+        (QQuickWebView::mapFromWebContent):
+        (QQuickWebView::mapRectFromWebContent):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::keyPressEvent):
+        (QQuickWebView::keyReleaseEvent):
+        (QQuickWebView::inputMethodEvent):
+        (QQuickWebView::focusInEvent):
+        (QQuickWebView::focusOutEvent):
+        (QQuickWebView::touchEvent):
+        (QQuickWebView::mousePressEvent):
+        (QQuickWebView::mouseMoveEvent):
+        (QQuickWebView::mouseReleaseEvent):
+        (QQuickWebView::mouseDoubleClickEvent):
+        (QQuickWebView::wheelEvent):
+        (QQuickWebView::hoverEnterEvent):
+        (QQuickWebView::hoverMoveEvent):
+        (QQuickWebView::hoverLeaveEvent):
+        (QQuickWebView::dragMoveEvent):
+        (QQuickWebView::dragEnterEvent):
+        (QQuickWebView::dragLeaveEvent):
+        (QQuickWebView::dropEvent):
+        (QQuickWebView::event):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::contentsSize):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::event):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::pagePositionRequest):
+        (WebKit::QtViewportInteractionEngine::computePosRangeForItemAtScale):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        (WebKit::QtViewportInteractionEngine::currentCSSScale):
+        (WebKit::QtViewportInteractionEngine::panGestureStarted):
+        (WebKit::QtViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::panGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::QtViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::QtViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleEvent):
+        (QtWebPageEventHandler::handleMouseMoveEvent):
+        (QtWebPageEventHandler::handleMousePressEvent):
+        (QtWebPageEventHandler::handleMouseReleaseEvent):
+        (QtWebPageEventHandler::handleWheelEvent):
+        (QtWebPageEventHandler::handleHoverLeaveEvent):
+        (QtWebPageEventHandler::handleHoverMoveEvent):
+        (QtWebPageEventHandler::handleDragEnterEvent):
+        (QtWebPageEventHandler::handleDragMoveEvent):
+        (QtWebPageEventHandler::handleDropEvent):
+        (QtWebPageEventHandler::handleSingleTapEvent):
+        (QtWebPageEventHandler::handleDoubleTapEvent):
+        (QtWebPageEventHandler::touchEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+
 2012-01-09  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Set color_set function to the clipped smart class.

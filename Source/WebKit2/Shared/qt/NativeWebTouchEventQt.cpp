@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(const QTouchEvent* event)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event))
+NativeWebTouchEvent::NativeWebTouchEvent(const QTouchEvent* event, const QTransform& fromItemTransform)
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, fromItemTransform))
     , m_nativeEvent(*event)
 {
 }

@@ -41,11 +41,11 @@ namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(QMouseEvent*, int eventClickCount);
-    static WebWheelEvent createWebWheelEvent(QWheelEvent*);
+    static WebMouseEvent createWebMouseEvent(QMouseEvent*, const QTransform& fromItemTransform, int eventClickCount);
+    static WebWheelEvent createWebWheelEvent(QWheelEvent*, const QTransform& fromItemTransform);
     static WebKeyboardEvent createWebKeyboardEvent(QKeyEvent*);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(const QTouchEvent*);
+    static WebTouchEvent createWebTouchEvent(const QTouchEvent*, const QTransform& fromItemTransform);
 #endif
 };
 

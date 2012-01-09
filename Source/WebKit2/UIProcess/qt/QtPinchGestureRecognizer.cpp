@@ -112,8 +112,8 @@ bool QtPinchGestureRecognizer::recognize(const QTouchEvent* event)
             const qreal currentSpanDistance = QLineF(point1.screenPos(), point2.screenPos()).length();
             const qreal initialSpanDistance = QLineF(m_point1.initialScreenPosition, m_point2.initialScreenPosition).length();
             const qreal totalScaleFactor = currentSpanDistance / initialSpanDistance;
-            const QPointF touchCenterInPageViewCoordinates = computePinchCenter(point1, point2);
-            interactionEngine()->pinchGestureRequestUpdate(touchCenterInPageViewCoordinates, totalScaleFactor);
+            const QPointF touchCenterInViewCoordinates = computePinchCenter(point1, point2);
+            interactionEngine()->pinchGestureRequestUpdate(touchCenterInViewCoordinates, totalScaleFactor);
             return true;
             break;
         }

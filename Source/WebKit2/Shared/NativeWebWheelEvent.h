@@ -49,7 +49,7 @@ public:
 #elif PLATFORM(WIN)
     NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
 #elif PLATFORM(QT)
-    explicit NativeWebWheelEvent(QWheelEvent*);
+    explicit NativeWebWheelEvent(QWheelEvent*, const QTransform& fromItemTransform);
 #elif PLATFORM(GTK)
     NativeWebWheelEvent(const NativeWebWheelEvent&);
     NativeWebWheelEvent(GdkEvent*);
