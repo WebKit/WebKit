@@ -1,3 +1,23 @@
+2012-01-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix regression in test-webkitpy introduced by removing the webkitpy/python24 directory.
+
+        Unreviewed, build fix.
+
+        test-webkitpy had a built-in self-test routine to verify that
+        deleting the .pyc files worked correctly. When I removed the
+        python24 directory in r104482, I broke the self-test.
+
+        I have deleted the self-test for now. Since I am reworking
+        test-webkitpy I will make sure the new version is adequately
+        tested.
+
+        * Scripts/test-webkitpy:
+        (configure_logging):
+        (_clean_pyc_files):
+        (_clean_packages):
+        (init):
+
 2012-01-09  Justin Novosad  <junov@chromium.org>
 
         [Chromium] remove all references to the legacy accelerated 2d Canvas
