@@ -236,7 +236,10 @@ class Port(object):
         try:
             server_name = self._filesystem.basename(httpd_path)
             env = self.setup_environ_for_server(server_name)
-            return self._executive.run_command([httpd_path, "-v"], env=env, return_exit_code=True) == 0
+            if self._executive.run_command([httpd_path, "-v"], env=env, return_exit_code=True) != 0:
+                _log.error("httpd seems broken. Cannot run http tests.")
+                return False
+            return True
         except OSError:
             _log.error("No httpd found. Cannot run http tests.")
             return False

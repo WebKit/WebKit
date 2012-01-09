@@ -1,3 +1,21 @@
+2012-01-06  Adam Roben  <aroben@apple.com>
+
+        Print an error message when NRWT can't run Apache
+
+        Fixes <http://webkit.org/b/75712> NRWT mysteriously exits when Apache returns an error code
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.check_httpd): Print an error message when Apache returns an error code instead of
+        failing silently.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_check_httpd_success): Test that we don't print anything when we successfully
+        run Apache.
+        (PortTest.test_httpd_returns_error_code): Test that we print an error message when Apache
+        fails.
+
 2012-01-09  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Gtk][ARM] Cross compiler buildbot is failing after r103040

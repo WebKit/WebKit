@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import optparse
 import sys
 import tempfile
@@ -38,7 +39,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
@@ -340,6 +341,24 @@ class PortTest(unittest.TestCase):
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
+
+    def test_check_httpd_success(self):
+        port = self.make_port(executive=MockExecutive2())
+        port._path_to_apache = lambda: '/usr/sbin/httpd'
+        capture = OutputCapture()
+        capture.capture_output()
+        self.assertTrue(port.check_httpd())
+        _, _, logs = capture.restore_output()
+        self.assertEqual('', logs)
+
+    def test_httpd_returns_error_code(self):
+        port = self.make_port(executive=MockExecutive2(exit_code=1))
+        port._path_to_apache = lambda: '/usr/sbin/httpd'
+        capture = OutputCapture()
+        capture.capture_output()
+        self.assertFalse(port.check_httpd())
+        _, _, logs = capture.restore_output()
+        self.assertEqual('httpd seems broken. Cannot run http tests.\n', logs)
 
 
 class VirtualTest(unittest.TestCase):
