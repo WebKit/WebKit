@@ -361,7 +361,7 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     return m_layerRenderer;
 }
 
-void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
+void CCLayerTreeHostImpl::setViewportSize(const IntSize& viewportSize)
 {
     if (viewportSize == m_viewportSize)
         return;

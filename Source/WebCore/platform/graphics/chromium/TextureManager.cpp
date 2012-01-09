@@ -112,7 +112,6 @@ void TextureManager::setMaxMemoryLimitBytes(size_t memoryLimitBytes)
 
 void TextureManager::setPreferredMemoryLimitBytes(size_t memoryLimitBytes)
 {
-    reduceMemoryToLimit(memoryLimitBytes);
     m_preferredMemoryLimitBytes = memoryLimitBytes;
 }
 

@@ -169,7 +169,7 @@ public:
 
     const CCSettings& settings() const { return m_settings; }
 
-    void setViewport(const IntSize& viewportSize);
+    void setViewportSize(const IntSize&);
 
     const IntSize& viewportSize() const { return m_viewportSize; }
 

@@ -81,7 +81,7 @@ void WebLayerTreeView::composite()
 
 void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)
 {
-    m_private->setViewport(viewportSize);
+    m_private->setViewportSize(viewportSize);
 }
 
 WebSize WebLayerTreeView::viewportSize() const

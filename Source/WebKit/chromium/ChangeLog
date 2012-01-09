@@ -1,3 +1,36 @@
+2012-01-09  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Avoid unnecessary TextureManager::reduceMemoryToLimit().
+        https://bugs.webkit.org/show_bug.cgi?id=75632
+
+        Main part of the change is in Source/WebCore.
+
+        Reviewed by James Robinson.
+
+        Tests: webkit_unit_tests --gtest_filter=TextureManagerTest.*:CCLayerTreeHostTestSetViewportSize.*
+
+        * WebKit.gypi:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setViewportSize):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        (WTF::CCLayerTreeHostTestOpacityChange::beginTest):
+        (WTF::CCLayerTreeHostTestSetViewportSize::CCLayerTreeHostTestSetViewportSize):
+        (WTF::CCLayerTreeHostTestSetViewportSize::beginTest):
+        (WTF::CCLayerTreeHostTestSetViewportSize::afterTest):
+        (WTF::TEST_F):
+        * tests/TextureManagerTest.cpp: Added.
+        (WTF::FakeTextureAllocator::createTexture):
+        (WTF::FakeTextureAllocator::deleteTexture):
+        (WTF::texturesMemorySize):
+        (WTF::createTextureManager):
+        (WTF::requestTexture):
+        (WTF::TEST):
+
 2012-01-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104418.

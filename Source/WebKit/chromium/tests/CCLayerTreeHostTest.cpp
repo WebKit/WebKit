@@ -110,7 +110,7 @@ public:
         layerTreeHost->setRootLayer(rootLayer);
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
-        layerTreeHost->setViewport(IntSize(1, 1));
+        layerTreeHost->setViewportSize(IntSize(1, 1));
 
         return layerTreeHost.release();
     }
@@ -988,7 +988,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->setRootLayer(m_updateCheckLayer);
-        m_layerTreeHost->setViewport(IntSize(10, 10));
+        m_layerTreeHost->setViewportSize(IntSize(10, 10));
 
         postSetNeedsCommitToMainThread();
     }
@@ -1023,6 +1023,49 @@ private:
 TEST_F(CCLayerTreeHostTestOpacityChange, runMultiThread)
 {
     runTest(true);
+}
+
+class CCLayerTreeHostTestSetViewportSize : public CCLayerTreeHostTest {
+public:
+
+    CCLayerTreeHostTestSetViewportSize()
+        : m_numCommits(0)
+        , m_numDraws(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        IntSize viewportSize(10, 10);
+        layerTreeHost()->setViewportSize(viewportSize);
+        EXPECT_EQ(viewportSize, layerTreeHost()->viewportSize());
+        EXPECT_EQ(TextureManager::highLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
+        EXPECT_EQ(TextureManager::reclaimLimitBytes(viewportSize), layerTreeHost()->contentsTextureManager()->preferredMemoryLimitBytes());
+
+        // setViewportSize() should not call TextureManager::setMaxMemoryLimitBytes() or TextureManager::setPreferredMemoryLimitBytes()
+        // if the viewport size is not changed.
+        IntSize fakeSize(5, 5);
+        layerTreeHost()->contentsTextureManager()->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(fakeSize));
+        layerTreeHost()->contentsTextureManager()->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(fakeSize));
+        layerTreeHost()->setViewportSize(viewportSize);
+        EXPECT_EQ(TextureManager::highLimitBytes(fakeSize), layerTreeHost()->contentsTextureManager()->maxMemoryLimitBytes());
+        EXPECT_EQ(TextureManager::reclaimLimitBytes(fakeSize), layerTreeHost()->contentsTextureManager()->preferredMemoryLimitBytes());
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numCommits;
+    int m_numDraws;
+};
+
+TEST_F(CCLayerTreeHostTestSetViewportSize, runSingleThread)
+{
+    runTest(false);
 }
 
 } // namespace

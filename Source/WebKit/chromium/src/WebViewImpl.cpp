@@ -3089,7 +3089,7 @@ void WebViewImpl::updateLayerTreeViewport()
         layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
     }
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
-    m_layerTreeHost->setViewport(visibleRect.size());
+    m_layerTreeHost->setViewportSize(visibleRect.size());
     m_layerTreeHost->setPageScale(pageScaleFactor());
 }
 

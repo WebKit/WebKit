@@ -1,3 +1,38 @@
+2012-01-09  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Avoid unnecessary TextureManager::reduceMemoryToLimit().
+        https://bugs.webkit.org/show_bug.cgi?id=75632
+
+        Unnecessary TextureManager::reduceMemoryToLimit() will cause some tile
+        textures that are required soon to be unnecessarily removed/replaced,
+        and degrade performance, sometimes significantly.
+
+        For example, CCLayerTreeHost::setViewport will be called during
+        scrolling. The original code would call TextureManager::reduceMemoryToLimit(),
+        causing some textures unnecessarily discarded and then recreated
+        repeatedly during scrolling.
+
+        It's also unnecessary to call TextureManager::reduceMemoryToLimit()
+        from TextureManager::setPreferredMemoryLimitBytes() because the limit
+        is not a hard limit. The callers should call reduceMemoryToLimit()
+        explicitly if it wants it when setting the preferred memory limit.
+
+        Reviewed by James Robinson.
+
+        Tests: webkit_unit_tests --gtest_filter=TextureManagerTest.*:CCLayerTreeHostTestSetViewportSize.*
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::finishDrawingFrame): Call reduceMemoryToLimit() explicitly
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::setPreferredMemoryLimitBytes): Removed call to reduceMemoryToLimit().
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setViewportSize): Changed name from setViewport(). Check change of viewportSize.
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setViewportSize): Changed name from setViewport()
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2012-01-09  Sami Kyostila  <skyostil@chromium.org>
 
         [Chromium] JPEG RGB swizzling order should match platform pixel format

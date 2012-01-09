@@ -679,11 +679,9 @@ void LayerRendererChromium::finishDrawingFrame()
 
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
     size_t reclaimLimit = TextureManager::reclaimLimitBytes(viewportSize());
-    if (reclaimLimit > contentsMemoryUseBytes)
-        m_renderSurfaceTextureManager->setPreferredMemoryLimitBytes(reclaimLimit - contentsMemoryUseBytes);
-    else
-        m_renderSurfaceTextureManager->setPreferredMemoryLimitBytes(0);
-
+    size_t preferredLimit = reclaimLimit > contentsMemoryUseBytes ? reclaimLimit - contentsMemoryUseBytes : 0;
+    m_renderSurfaceTextureManager->setPreferredMemoryLimitBytes(preferredLimit);
+    m_renderSurfaceTextureManager->reduceMemoryToLimit(preferredLimit);
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_renderSurfaceTextureAllocator.get());
 
     if (settings().compositeOffscreen)

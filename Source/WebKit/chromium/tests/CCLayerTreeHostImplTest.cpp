@@ -223,7 +223,7 @@ TEST_F(CCLayerTreeHostImplTest, FAILS_blendingOffWhenDrawingOpaqueLayers)
     GraphicsContext3D::Attributes attrs;
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new BlendStateTrackerContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
     m_hostImpl->initializeLayerRenderer(context);
-    m_hostImpl->setViewport(IntSize(10, 10));
+    m_hostImpl->setViewportSize(IntSize(10, 10));
 
     RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
     root->setAnchorPoint(FloatPoint(0, 0));
@@ -322,7 +322,7 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
     ReshapeTrackerContext* reshapeTracker = new ReshapeTrackerContext();
     RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(reshapeTracker), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
     m_hostImpl->initializeLayerRenderer(context);
-    m_hostImpl->setViewport(IntSize(10, 10));
+    m_hostImpl->setViewportSize(IntSize(10, 10));
 
     RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
     root->setAnchorPoint(FloatPoint(0, 0));
@@ -372,7 +372,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     settings.partialSwapEnabled = true;
     OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
     layerTreeHostImpl->initializeLayerRenderer(context);
-    layerTreeHostImpl->setViewport(IntSize(500, 500));
+    layerTreeHostImpl->setViewportSize(IntSize(500, 500));
 
     RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
     RefPtr<CCLayerImpl> child = adoptRef(new FakeDrawableCCLayerImpl(2));
@@ -413,7 +413,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     // Make sure that partial swap is constrained to the viewport dimensions
     // expected damage rect: IntRect(IntPoint::zero(), IntSize(500, 500));
     // expected swap rect: flipped damage rect, but also clamped to viewport
-    layerTreeHostImpl->setViewport(IntSize(10, 10));
+    layerTreeHostImpl->setViewportSize(IntSize(10, 10));
     root->setOpacity(0.7); // this will damage everything
     layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();

@@ -156,7 +156,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
-    hostImpl->setViewport(viewportSize());
+    hostImpl->setViewportSize(viewportSize());
     hostImpl->setPageScaleFactorAndLimits(pageScale(), m_minPageScale, m_maxPageScale);
 
     m_frameNumber++;
@@ -247,8 +247,11 @@ void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
     setNeedsCommit();
 }
 
-void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
+void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
 {
+    if (viewportSize == m_viewportSize)
+        return;
+
     contentsTextureManager()->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(viewportSize));
     contentsTextureManager()->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(viewportSize));
     m_viewportSize = viewportSize;
