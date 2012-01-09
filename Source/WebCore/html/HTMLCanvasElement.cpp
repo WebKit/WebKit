@@ -465,7 +465,12 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!bufferSize.width() || !bufferSize.height())
         return;
 
-    RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : Unaccelerated;
+    RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : 
+#if USE(SKIA)
+        UnacceleratedNonPlatformBuffer;
+#else
+        Unaccelerated;
+#endif
     m_imageBuffer = ImageBuffer::create(bufferSize, ColorSpaceDeviceRGB, renderingMode);
     if (!m_imageBuffer)
         return;

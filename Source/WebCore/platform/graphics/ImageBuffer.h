@@ -59,6 +59,7 @@ namespace WebCore {
 
     enum RenderingMode {
         Unaccelerated,
+        UnacceleratedNonPlatformBuffer, // Use plain memory allocation rather than platform API to allocate backing store.
         Accelerated
     };
     

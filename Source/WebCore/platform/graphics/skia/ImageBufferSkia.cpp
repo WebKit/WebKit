@@ -93,6 +93,13 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     return canvas;
 }
 
+static SkCanvas* createNonPlatformCanvas(const IntSize& size)
+{
+    SkCanvas* canvas = new SkCanvas();
+    canvas->setDevice(new SkDevice(SkBitmap::kARGB_8888_Config, size.width(), size.height()))->unref();
+    return canvas;
+}
+
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
@@ -101,6 +108,8 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
 
     if (renderingMode == Accelerated)
         canvas = adoptPtr(createAcceleratedCanvas(size, &m_data));
+    else if (renderingMode == UnacceleratedNonPlatformBuffer)
+        canvas = adoptPtr(createNonPlatformCanvas(size));
 
     if (!canvas)
         canvas = adoptPtr(skia::TryCreateBitmapCanvas(size.width(), size.height(), false));
