@@ -1,8 +1,0 @@
-This test ensures that the IME candidate window appears at the appropriate position. Enter some text with IME in the following gray box and convert them. Then check whether the candidate window appears the below of the composition text. In DRT, this test checks it by calling textInputController.firstRectForCharacterRange().
-rect[0] denotes x coodinate and rect[1] denotes y coodinate
-PASS rect[0] is frame.offsetLeft + input.offsetLeft + 1
-PASS rect[1] is frame.offsetTop + input.offsetTop
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

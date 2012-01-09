@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 10: Uncaught Error: NOT_FOUND_ERR: DOM Exception 8
-

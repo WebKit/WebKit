@@ -1,7 +1,0 @@
-ALERT: hello
-CONSOLE MESSAGE: line 1: Uncaught ReferenceError: sayHello is not defined
-This test copies the content of an iframe and pastes it in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
-
-HelloCNNHello
-This is a form
-<button xmlns="http://www.w3.org/1999/xhtml" id="button1" style="width: 100px; ">Hello</button><a xmlns="http://www.w3.org/1999/xhtml" id="anchor1" href="http://www.bing.com/search?q=cnn">CNN</a><a xmlns="http://www.w3.org/1999/xhtml" id="anchor2">Hello</a><iframe xmlns="http://www.w3.org/1999/xhtml" id="iframe1" style="width: 200px; height: 100px; background-color: rgb(204, 238, 238); "></iframe><form xmlns="http://www.w3.org/1999/xhtml" id="form1" style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); ">This is a form</form>
