@@ -1,3 +1,42 @@
+2012-01-09  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Extend CSSValueList to allow slash separated lists.
+        https://bugs.webkit.org/show_bug.cgi?id=75841
+
+        Reviewed by Andreas Kling.
+
+        Multiple CSS properties are using slash to separate
+        various parts (e.g. border-radius) so having this
+        feature available in CSSValueList will make it easier
+        in the future to support these properties.
+
+        No new tests : existing ones should cover the refactor.
+
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::isImplicit):
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::isImplicitInitialValue):
+        * css/CSSValue.h:
+        In order for CSSValue to not grow I moved m_isImplicitInitialValue
+        back to CSSInitialValue as this object is used only in CSSValuePool
+        and is allocated only twice.
+        (WebCore::CSSValue::CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        (WebCore::CSSValueList::copy):
+        Fix also usage of PassRefPtr.
+        (WebCore::CSSValueList::customCssText):
+        Refactor to use StringBuilder.
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::createCommaSeparated):
+        (WebCore::CSSValueList::createSpaceSeparated):
+        (WebCore::CSSValueList::createSlashSeparated):
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::WebKitCSSFilterValue):
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::WebKitCSSTransformValue):
+
 2012-01-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Move surface management from TextureMapperNode to TextureMapper

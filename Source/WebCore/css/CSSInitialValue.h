@@ -39,12 +39,16 @@ public:
 
     String customCssText() const;
 
+    bool isImplicit() const { return m_isImplicit; }
+
 private:
     CSSInitialValue(bool implicit)
         : CSSValue(InitialClass)
+        , m_isImplicit(implicit)
     {
-        m_isImplicitInitialValue = implicit;
     }
+
+    bool m_isImplicit;
 };
 
 } // namespace WebCore

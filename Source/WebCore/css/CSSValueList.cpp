@@ -24,25 +24,26 @@
 #include "CSSParserValues.h"
 #include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSValueList::CSSValueList(ClassType classType, bool isSpaceSeparated)
+CSSValueList::CSSValueList(ClassType classType, ValueListSeparator listSeparator)
     : CSSValue(classType)
 {
-    m_isSpaceSeparatedValueList = isSpaceSeparated;
+    m_valueListSeparator = listSeparator;
 }
 
-CSSValueList::CSSValueList(bool isSpaceSeparated)
+CSSValueList::CSSValueList(ValueListSeparator listSeparator)
     : CSSValue(ValueListClass)
 {
-    m_isSpaceSeparatedValueList = isSpaceSeparated;
+    m_valueListSeparator = listSeparator;
 }
 
 CSSValueList::CSSValueList(CSSParserValueList* list)
     : CSSValue(ValueListClass)
 {
-    m_isSpaceSeparatedValueList = true;
+    m_valueListSeparator = SpaceSeparator;
     if (list) {
         size_t size = list->size();
         for (unsigned i = 0; i < size; ++i)
@@ -88,28 +89,51 @@ bool CSSValueList::hasValue(CSSValue* val) const
 
 PassRefPtr<CSSValueList> CSSValueList::copy()
 {
-    PassRefPtr<CSSValueList> newList = isSpaceSeparated() ? createSpaceSeparated() : createCommaSeparated();
+    RefPtr<CSSValueList> newList;
+    switch (m_valueListSeparator) {
+    case SpaceSeparator:
+        newList = createSpaceSeparated();
+        break;
+    case CommaSeparator:
+        newList = createCommaSeparated();
+        break;
+    case SlashSeparator:
+        newList = createSlashSeparated();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
     for (size_t index = 0; index < m_values.size(); index++)
         newList->append(m_values[index]);
-    return newList;
+    return newList.release();
 }
 
 String CSSValueList::customCssText() const
 {
-    String result = "";
+    StringBuilder result;
+    String separator;
+    switch (m_valueListSeparator) {
+    case SpaceSeparator:
+        separator = " ";
+        break;
+    case CommaSeparator:
+        separator = ", ";
+        break;
+    case SlashSeparator:
+        separator = " / ";
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
     unsigned size = m_values.size();
     for (unsigned i = 0; i < size; i++) {
-        if (!result.isEmpty()) {
-            if (isSpaceSeparated())
-                result += " ";
-            else
-                result += ", ";
-        }
-        result += m_values[i]->cssText();
+        if (!result.isEmpty())
+            result.append(separator);
+        result.append(m_values[i]->cssText());
     }
 
-    return result;
+    return result.toString();
 }
 
 void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSheet* styleSheet)

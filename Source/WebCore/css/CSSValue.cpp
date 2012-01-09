@@ -65,6 +65,11 @@ class SameSizeAsCSSValue : public RefCounted<SameSizeAsCSSValue> {
 
 COMPILE_ASSERT(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), CSS_value_should_stay_small);
 
+bool CSSValue::isImplicitInitialValue() const
+{
+    return m_classType == InitialClass && static_cast<const CSSInitialValue*>(this)->isImplicit();
+}
+
 CSSValue::Type CSSValue::cssValueType() const
 {
     if (isInheritedValue())

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WebKitCSSTransformValue::WebKitCSSTransformValue(TransformOperationType op)
-    : CSSValueList(WebKitCSSTransformClass, false)
+    : CSSValueList(WebKitCSSTransformClass, CommaSeparator)
     , m_type(op)
 {
 }

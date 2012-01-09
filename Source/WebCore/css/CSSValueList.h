@@ -33,11 +33,15 @@ class CSSValueList : public CSSValue {
 public:
     static PassRefPtr<CSSValueList> createCommaSeparated()
     {
-        return adoptRef(new CSSValueList(false));
+        return adoptRef(new CSSValueList(CommaSeparator));
     }
     static PassRefPtr<CSSValueList> createSpaceSeparated()
     {
-        return adoptRef(new CSSValueList(true));
+        return adoptRef(new CSSValueList(SpaceSeparator));
+    }
+    static PassRefPtr<CSSValueList> createSlashSeparated()
+    {
+        return adoptRef(new CSSValueList(SlashSeparator));
     }
     static PassRefPtr<CSSValueList> createFromParserValueList(CSSParserValueList* list)
     {
@@ -59,13 +63,11 @@ public:
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
 protected:
-    CSSValueList(ClassType, bool isSpaceSeparated);
+    CSSValueList(ClassType, ValueListSeparator);
 
 private:
-    explicit CSSValueList(bool isSpaceSeparated);
+    explicit CSSValueList(ValueListSeparator);
     explicit CSSValueList(CSSParserValueList*);
-
-    bool isSpaceSeparated() const { return m_isSpaceSeparatedValueList; }
 
     Vector<RefPtr<CSSValue> > m_values;
 };
