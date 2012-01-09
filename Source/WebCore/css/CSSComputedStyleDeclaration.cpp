@@ -576,14 +576,9 @@ PassRefPtr<CSSPrimitiveValue> CSSComputedStyleDeclaration::currentColorOrValidCo
     return cssValuePool->createColorValue(color.rgb());
 }
 
-static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const RenderStyle* style, CSSValuePool* cssValuePool)
+static PassRefPtr<CSSValueList> getBorderRadiusCornerValues(LengthSize radius, const RenderStyle* style, CSSValuePool* cssValuePool)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    if (radius.width() == radius.height()) {
-        if (radius.width().type() == Percent)
-            return cssValuePool->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
-        return zoomAdjustedPixelValue(radius.width().value(), style, cssValuePool);
-    }
     if (radius.width().type() == Percent)
         list->append(cssValuePool->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
@@ -592,6 +587,58 @@ static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const 
         list->append(cssValuePool->createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
         list->append(zoomAdjustedPixelValue(radius.height().value(), style, cssValuePool));
+    return list.release();
+}
+
+static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const RenderStyle* style, CSSValuePool* cssValuePool)
+{
+    if (radius.width() == radius.height()) {
+        if (radius.width().type() == Percent)
+            return cssValuePool->createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        return zoomAdjustedPixelValue(radius.width().value(), style, cssValuePool);
+    }
+    return getBorderRadiusCornerValues(radius, style, cssValuePool);
+}
+
+static PassRefPtr<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle* style, CSSValuePool* cssValuePool)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSlashSeparated();
+    bool showHorizontalBottomLeft = style->borderTopRightRadius().width() != style->borderBottomLeftRadius().width();
+    bool showHorizontalBottomRight = style->borderBottomRightRadius().width() != style->borderTopLeftRadius().width();
+    bool showHorizontalTopRight = style->borderTopRightRadius().width() != style->borderTopLeftRadius().width();
+
+    bool showVerticalBottomLeft = style->borderTopRightRadius().height() != style->borderBottomLeftRadius().height();
+    bool showVerticalBottomRight = (style->borderBottomRightRadius().height() != style->borderTopLeftRadius().height()) || showVerticalBottomLeft;
+    bool showVerticalTopRight = (style->borderTopRightRadius().height() != style->borderTopLeftRadius().height()) || showVerticalBottomRight;
+    bool showVerticalTopLeft = (style->borderTopLeftRadius().width() != style->borderTopLeftRadius().height());
+
+    RefPtr<CSSValueList> topLeftRadius = getBorderRadiusCornerValues(style->borderTopLeftRadius(), style, cssValuePool);
+    RefPtr<CSSValueList> topRightRadius = getBorderRadiusCornerValues(style->borderTopRightRadius(), style, cssValuePool);
+    RefPtr<CSSValueList> bottomRightRadius = getBorderRadiusCornerValues(style->borderBottomRightRadius(), style, cssValuePool);
+    RefPtr<CSSValueList> bottomLeftRadius = getBorderRadiusCornerValues(style->borderBottomLeftRadius(), style, cssValuePool);
+
+    RefPtr<CSSValueList> horizontalRadii = CSSValueList::createSpaceSeparated();
+    horizontalRadii->append(topLeftRadius->item(0));
+    if (showHorizontalTopRight)
+        horizontalRadii->append(topRightRadius->item(0));
+    if (showHorizontalBottomRight)
+        horizontalRadii->append(bottomRightRadius->item(0));
+    if (showHorizontalBottomLeft)
+        horizontalRadii->append(bottomLeftRadius->item(0));
+
+    list->append(horizontalRadii);
+
+    if (showVerticalTopLeft) {
+        RefPtr<CSSValueList> verticalRadii = CSSValueList::createSpaceSeparated();
+        verticalRadii->append(topLeftRadius->item(1));
+        if (showVerticalTopRight)
+            verticalRadii->append(topRightRadius->item(1));
+        if (showVerticalBottomRight)
+            verticalRadii->append(bottomRightRadius->item(1));
+        if (showVerticalBottomLeft)
+            verticalRadii->append(bottomLeftRadius->item(1));
+        list->append(verticalRadii);
+    }
     return list.release();
 }
 
@@ -2135,7 +2182,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get());
 #endif
-        /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground: {
             const int properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
                                         CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,
@@ -2170,7 +2216,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderImage:
             return valueForNinePieceImage(style->borderImage(), cssValuePool);
         case CSSPropertyBorderRadius:
-            break;
+            return getBorderRadiusShorthandValue(style.get(), cssValuePool);
         case CSSPropertyBorderRight: {
             const int properties[3] = { CSSPropertyBorderRightWidth, CSSPropertyBorderRightStyle,
                                         CSSPropertyBorderRightColor };
