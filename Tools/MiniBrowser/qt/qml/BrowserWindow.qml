@@ -180,6 +180,33 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle {
+                id: touchEventsButton
+                height: parent.height
+                width: height
+                color: "#efefef"
+                radius: 6
+
+                Image {
+                    anchors.centerIn: parent
+                    opacity: options.touchMockingEnabled ? 0.6 : 0.1
+                    source: "../icons/touch.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (options.touchMockingEnabled) {
+                            console.log("Touch Mocking Disabled")
+                        } else {
+                            console.log("Touch Mocking Enabled")
+                        }
+
+                        options.touchMockingEnabled = !options.touchMockingEnabled
+                    }
+                }
+            }
         }
         Rectangle {
             color: "white"

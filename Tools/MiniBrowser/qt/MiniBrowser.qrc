@@ -5,6 +5,7 @@
         <file>icons/previous.png</file>
         <file>icons/refresh.png</file>
         <file>icons/stop.png</file>
+        <file>icons/touch.png</file>
         <file>icons/touchpoint.png</file>
         <file>qml/AlertDialog.qml</file>
         <file>qml/BrowserWindow.qml</file>

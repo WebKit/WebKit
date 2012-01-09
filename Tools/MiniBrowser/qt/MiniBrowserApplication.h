@@ -45,6 +45,7 @@ class WindowOptions : public QObject {
     Q_PROPERTY(bool printLoadedUrls READ printLoadedUrls)
     Q_PROPERTY(bool useTraditionalDesktopBehavior READ useTraditionalDesktopBehavior)
     Q_PROPERTY(bool startMaximized READ startMaximized)
+    Q_PROPERTY(bool touchMockingEnabled READ touchMockingEnabled WRITE setTouchMockingEnabled NOTIFY touchMockingEnabledChanged)
 
 public:
     WindowOptions(QObject* parent = 0)
@@ -52,6 +53,7 @@ public:
         , m_printLoadedUrls(false)
         , m_useTraditionalDesktopBehavior(false)
         , m_startMaximized(false)
+        , m_touchMockingEnabled(true)
         , m_windowSize(QSize(980, 735))
     {
     }
@@ -66,12 +68,24 @@ public:
     bool startFullScreen() const { return m_startFullScreen; }
     void setRequestedWindowSize(const QSize& size) { m_windowSize = size; }
     QSize requestedWindowSize() const { return m_windowSize; }
+    bool touchMockingEnabled() const { return m_touchMockingEnabled; }
+    void setTouchMockingEnabled(bool enabled)
+    {
+        if (enabled != m_touchMockingEnabled) {
+            m_touchMockingEnabled = enabled;
+            emit touchMockingEnabledChanged();
+        }
+    }
+
+signals:
+    void touchMockingEnabledChanged();
 
 private:
     bool m_printLoadedUrls;
     bool m_useTraditionalDesktopBehavior;
     bool m_startMaximized;
     bool m_startFullScreen;
+    bool m_touchMockingEnabled;
     QSize m_windowSize;
 };
 
