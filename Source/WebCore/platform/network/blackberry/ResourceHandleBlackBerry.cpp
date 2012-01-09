@@ -22,6 +22,7 @@
 #include "EventLoop.h"
 #include "Frame.h"
 #include "FrameLoaderClientBlackBerry.h"
+#include "FrameNetworkingContextBlackBerry.h"
 #include "NetworkManager.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -112,7 +113,7 @@ bool ResourceHandle::start(NetworkingContext* context)
         return false;
 
     // FIXME: clean up use of Frame now that we have NetworkingContext (see RIM Bug #1515)
-    Frame* frame = context->wrappedFrame();
+    Frame* frame = static_cast<FrameNetworkingContextBlackBerry*>(context)->frame();
     if (!frame || !frame->loader() || !frame->loader()->client() || !client())
         return false;
     int playerId = static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->playerId();
@@ -144,7 +145,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     }
 
     // FIXME: clean up use of Frame now that we have NetworkingContext (see RIM Bug #1515)
-    Frame* frame = context->wrappedFrame();
+    Frame* frame = static_cast<FrameNetworkingContextBlackBerry*>(context)->frame();
     if (!frame || !frame->loader() || !frame->loader()->client() || !frame->page()) {
         ASSERT(false && "loadResourceSynchronously called without a frame or frame client");
         return;

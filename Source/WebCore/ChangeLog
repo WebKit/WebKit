@@ -1,3 +1,27 @@
+2012-01-08  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Use the concrete FrameNetworkingContextBlackBerry to access Frame
+        https://bugs.webkit.org/show_bug.cgi?id=75611
+
+        Reviewed by Antonio Gomes.
+
+        In platform/network/blackberry/ResourceHandleBlackBerry.cpp, we were using
+        NetworkingContext::wrappedFrame() to access the frame associated with the
+        networking context. NetworkingContext::wrappedFrame() was added as a virtual
+        function by the BlackBerry porting internally. It's unnecessary because
+        FrameNetworkingContextBlackBerry inherits from FrameNetworkingContext which
+        has a protected frame() member which is exported as public in
+        FrameNetworkingContextBlackBerry. We don't want to upstream wrappedFrame()
+        as a specific change of the BlackBerry porting in
+        platform/network/NetworkingContext.h, so use the concrete networking context
+        FrameNetworkingContextBlackBerry to access the associated frame.
+
+        No functionalities changed, no new tests.
+
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2012-01-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104421.
