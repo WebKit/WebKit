@@ -1626,3 +1626,7 @@ fast/dom/htmlcollection-zombies.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=75785
 accessibility/textbox-role-reports-line-number.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=75833
+fast/text/international/spaces-combined-in-vertical-text.html
+
