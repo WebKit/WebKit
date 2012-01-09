@@ -19,10 +19,12 @@
  */
 
 #import "config.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "RenderThemeChromiumMac.h"
 #import "PaintInfo.h"
 #import "PlatformSupport.h"
 #import "RenderMediaControlsChromium.h"
+#import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
@@ -123,6 +125,23 @@ void RenderThemeChromiumMac::updateActiveState(NSCell* cell, const RenderObject*
 bool RenderThemeChromiumMac::shouldShowPlaceholderWhenFocused() const
 {
     return true;
+}
+
+bool RenderThemeChromiumMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    // Using the Cocoa code to paint the text field as RenderThemeMac does runs
+    // into a bug when building against the 10.5 SDK, so we are forced here to
+    // use the SPI. This override of paintTextField should be able to be removed
+    // when 10.6 is the minimum required system and Chromium is built against
+    // the 10.6 SDK.
+    //
+    // https://bugs.webkit.org/show_bug.cgi?id=75860
+    // http://code.google.com/p/chromium/issues/detail?id=109567
+
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
+
+    return false;
 }
 
 #if ENABLE(VIDEO)

@@ -1,3 +1,17 @@
+2012-01-09  Avi Drissman  <avi@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75860
+        [Chromium Mac] no background is drawn for input elements
+
+        Reviewed by Dimitri Glazkov.
+
+        Reverts r104240 for Chromium. Unfortunately the code that uses Cocoa
+        API misbehaves when built with the 10.5 SDK, so we use SPI. For now.
+
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintTextField):
+
 2012-01-09  Pablo Flouret  <pablof@motorola.com>
 
         Compilation error on build-webkit --debug --no-3d-canvas on mac.
