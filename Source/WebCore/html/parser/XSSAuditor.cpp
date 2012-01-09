@@ -411,6 +411,7 @@ bool XSSAuditor::filterEmbedToken(HTMLToken& token)
 
     bool didBlockScript = false;
 
+    didBlockScript |= eraseAttributeIfInjected(token, codeAttr, String(), SrcLikeAttribute);
     didBlockScript |= eraseAttributeIfInjected(token, srcAttr, blankURL().string(), SrcLikeAttribute);
     didBlockScript |= eraseAttributeIfInjected(token, typeAttr);
 

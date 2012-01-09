@@ -1,3 +1,16 @@
+2012-01-09  Tom Sepez  <tsepez@chromium.org>
+
+        Treat code="" attribute in embed tags similarly to applet tags.
+        https://bugs.webkit.org/show_bug.cgi?id=75871
+
+        Reviewed by Daniel Bates.
+
+        Tests: http/tests/security/xssAuditor/embed-tag-code-attribute-2.html
+               http/tests/security/xssAuditor/embed-tag-code-attribute.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterEmbedToken):
+
 2012-01-09  Justin Novosad  <junov@chromium.org>
 
         [Chromium] remove all references to the legacy accelerated 2d Canvas
