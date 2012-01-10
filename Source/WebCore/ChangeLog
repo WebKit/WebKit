@@ -1,3 +1,16 @@
+2012-01-10  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Shift PathSkia to use Skia's new RawIter
+        https://bugs.webkit.org/show_bug.cgi?id=75703
+
+        Reviewed by Nikolas Zimmermann.
+
+        No new tests required - covered by existing tests.
+
+        * platform/graphics/Path.h: Added comments ont he return values from iteration.
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::apply): Switched to SkPath::RawIter
+
 2012-01-10  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Use SkFontHost::GetUnitsPerEm instead of advanced type

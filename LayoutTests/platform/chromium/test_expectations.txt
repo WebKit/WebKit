@@ -879,6 +879,11 @@ BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMA
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 
+// Needs rebaselining after BUGWK75703. Old results are, in fact, incorrect.
+BUGWK75703 : svg/custom/shapes-supporting-markers.svg = PASS IMAGE+TEXT TEXT IMAGE
+BUGWK75703 : svg/W3C-SVG-1.1/painting-marker-02-f.svg = PASS IMAGE 
+BUGWK75703 : svg/W3C-SVG-1.1/painting-marker-03-f.svg = PASS IMAGE 
+
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
