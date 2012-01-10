@@ -3649,6 +3649,8 @@ BUGWK73865 : media/track/tracklist-is-reachable.html = TEXT CRASH
 BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT CRASH
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT CRASH
 
+BUGWK75186 SKIP LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TEXT TIMEOUT
+
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
