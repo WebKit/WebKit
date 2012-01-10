@@ -302,7 +302,6 @@ EXPORTS
     ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
-    ?setLength@JSArray@JSC@@QAEXI@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z

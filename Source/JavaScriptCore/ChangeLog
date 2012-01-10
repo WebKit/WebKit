@@ -1,5 +1,11 @@
 2012-01-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-01-10  Gavin Barraclough  <barraclough@apple.com>
+
         Do not allow Array length to be set if it is non-configurable
         https://bugs.webkit.org/show_bug.cgi?id=75935
 
