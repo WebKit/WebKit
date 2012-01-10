@@ -1,3 +1,13 @@
+2012-01-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create iterators for the RenderSurface-Layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=74203
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerIteratorTest.cpp: Added.
+
 2012-01-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove old WebMimeRegistry.h forwarding header

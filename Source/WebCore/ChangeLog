@@ -1,3 +1,51 @@
+2012-01-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create iterators for the RenderSurface-Layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=74203
+
+        Reviewed by James Robinson.
+
+        New unit tests: CCLayerIteratorTest.cpp
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/cc/CCLayerIterator.cpp: Added.
+        (WebCore::CCLayerIteratorActions::BackToFront::begin):
+        (WebCore::CCLayerIteratorActions::BackToFront::end):
+        (WebCore::CCLayerIteratorActions::BackToFront::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::begin):
+        (WebCore::CCLayerIteratorActions::FrontToBack::end):
+        (WebCore::CCLayerIteratorActions::FrontToBack::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::goToHighestInSubtree):
+        * platform/graphics/chromium/cc/CCLayerIterator.h: Added.
+        (WebCore::CCLayerIterator::CCLayerIterator):
+        (WebCore::CCLayerIterator::begin):
+        (WebCore::CCLayerIterator::end):
+        (WebCore::CCLayerIterator::operator++):
+        (WebCore::CCLayerIterator::operator==):
+        (WebCore::CCLayerIterator::operator!=):
+        (WebCore::CCLayerIterator::operator->):
+        (WebCore::CCLayerIterator::operator*):
+        (WebCore::CCLayerIterator::representsTargetRenderSurface):
+        (WebCore::CCLayerIterator::representsContributingRenderSurface):
+        (WebCore::CCLayerIterator::representsItself):
+        (WebCore::CCLayerIterator::targetRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCLayerIteratorPosition.h: Added.
+        (WebCore::CCLayerIteratorPosition::CCLayerIteratorPosition):
+        (WebCore::CCLayerIteratorPosition::currentLayer):
+        (WebCore::CCLayerIteratorPosition::currentLayerRepresentsContributingRenderSurface):
+        (WebCore::CCLayerIteratorPosition::currentLayerRepresentsTargetRenderSurface):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurfaceLayer):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurface):
+        (WebCore::CCLayerIteratorPosition::targetRenderSurfaceChildren):
+        (WebCore::CCLayerIteratorPosition::operator==):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::walkLayersAndCalculateVisibleLayerRects):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+
 2012-01-10  Ojan Vafai  <ojan@chromium.org>
 
         Rename flex-align to flex-item-align.
