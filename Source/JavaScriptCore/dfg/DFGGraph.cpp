@@ -344,8 +344,8 @@ void Graph::predictArgumentTypes(CodeBlock* codeBlock)
     ASSERT(codeBlock->alternative());
 
     CodeBlock* profiledCodeBlock = codeBlock->alternative();
-    ASSERT(codeBlock->m_numParameters >= 1);
-    for (size_t arg = 0; arg < static_cast<size_t>(codeBlock->m_numParameters); ++arg) {
+    ASSERT(codeBlock->numParameters() >= 1);
+    for (size_t arg = 0; arg < static_cast<size_t>(codeBlock->numParameters()); ++arg) {
         ValueProfile* profile = profiledCodeBlock->valueProfileForArgument(arg);
         if (!profile)
             continue;

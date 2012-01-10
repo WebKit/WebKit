@@ -51,7 +51,7 @@ namespace JSC { namespace DFG {
 AbstractState::AbstractState(CodeBlock* codeBlock, Graph& graph)
     : m_codeBlock(codeBlock)
     , m_graph(graph)
-    , m_variables(codeBlock->m_numParameters, graph.m_localVars)
+    , m_variables(codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
 {
     size_t maxBlockSize = 0;

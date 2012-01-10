@@ -2172,13 +2172,13 @@ inline CallFrame* arityCheckFor(CallFrame* callFrame, RegisterFile* registerFile
     int argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
 
     // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!registerFile->grow(callFrame->registers() + newCodeBlock->m_numParameters + newCodeBlock->m_numCalleeRegisters))
+    if (!registerFile->grow(callFrame->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
         return 0;
 
-    ASSERT(argumentCountIncludingThis < newCodeBlock->m_numParameters);
+    ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
 
     // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
-    size_t delta = newCodeBlock->m_numParameters - argumentCountIncludingThis;
+    size_t delta = newCodeBlock->numParameters() - argumentCountIncludingThis;
     Register* src = callFrame->registers();
     Register* dst = callFrame->registers() + delta;
 
@@ -2239,7 +2239,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
         if (error)
             return 0;
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
-        if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->m_numParameters)
+        if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters())
             || callLinkInfo->callType == CallLinkInfo::CallVarargs)
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
         else

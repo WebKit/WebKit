@@ -1070,7 +1070,7 @@ void SpeculativeJIT::checkArgumentTypes()
     for (size_t i = 0; i < m_variables.size(); ++i)
         m_variables[i] = ValueSource(ValueInRegisterFile);
     
-    for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
+    for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         VariableAccessData* variableAccessData = at(m_jit.graph().m_arguments[i]).variableAccessData();
         VirtualRegister virtualRegister = variableAccessData->local();
         PredictedType predictedType = variableAccessData->prediction();

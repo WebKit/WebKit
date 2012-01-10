@@ -1,3 +1,55 @@
+2012-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock::m_numParameters should be encapsulated
+        https://bugs.webkit.org/show_bug.cgi?id=75985
+        <rdar://problem/10671020>
+
+        Reviewed by Oliver Hunt.
+        
+        Encapsulated CodeBlock::m_numParameters and hooked argument profile creation
+        into it.  This appears to be performance neutral.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::addParameter):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numParameters):
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::offsetOfNumParameters):
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addParameter):
+        (JSC::BytecodeGenerator::emitReturn):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::slideRegisterWindowForCall):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::arityCheckFor):
+        (JSC::lazyLinkFor):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
 2012-01-10  Gavin Barraclough  <barraclough@apple.com>
 
         Build fix following https://bugs.webkit.org/show_bug.cgi?id=75935

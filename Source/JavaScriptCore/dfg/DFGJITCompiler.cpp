@@ -260,7 +260,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     compileEntry();
 
     load32(AssemblyHelpers::payloadFor((VirtualRegister)RegisterFile::ArgumentCount), GPRInfo::regT1);
-    branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
+    branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callArityCheck = call();

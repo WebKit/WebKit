@@ -534,7 +534,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForCall.release()));
     m_codeBlockForCall = newCodeBlock.release();
     
-    m_numParametersForCall = m_codeBlockForCall->m_numParameters;
+    m_numParametersForCall = m_codeBlockForCall->numParameters();
     ASSERT(m_numParametersForCall);
     m_numCapturedVariables = m_codeBlockForCall->m_numCapturedVars;
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
@@ -597,7 +597,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForConstruct.release()));
     m_codeBlockForConstruct = newCodeBlock.release();
     
-    m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
+    m_numParametersForConstruct = m_codeBlockForConstruct->numParameters();
     ASSERT(m_numParametersForConstruct);
     m_numCapturedVariables = m_codeBlockForConstruct->m_numCapturedVars;
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();

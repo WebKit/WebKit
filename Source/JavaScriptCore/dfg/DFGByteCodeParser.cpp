@@ -53,7 +53,7 @@ public:
         , m_constantNaN(UINT_MAX)
         , m_constant1(UINT_MAX)
         , m_constants(codeBlock->numberOfConstantRegisters())
-        , m_numArguments(codeBlock->m_numParameters)
+        , m_numArguments(codeBlock->numParameters())
         , m_numLocals(codeBlock->m_numCalleeRegisters)
         , m_preservedVars(codeBlock->m_numVars)
         , m_parameterSlots(0)
@@ -2478,7 +2478,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
         inlineCallFrame.stackOffset = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize;
         inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
-        inlineCallFrame.arguments.resize(codeBlock->m_numParameters); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        inlineCallFrame.arguments.resize(codeBlock->numParameters()); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
         byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
         m_inlineCallFrame = &byteCodeParser->m_codeBlock->inlineCallFrames().last();

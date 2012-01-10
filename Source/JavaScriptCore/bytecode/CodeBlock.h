@@ -268,6 +268,13 @@ namespace JSC {
 
     public:
         virtual ~CodeBlock();
+        
+        int numParameters() const { return m_numParameters; }
+        void setNumParameters(int newValue);
+        void addParameter();
+        
+        int* addressOfNumParameters() { return &m_numParameters; }
+        static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
 
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
@@ -657,12 +664,10 @@ namespace JSC {
 #endif
         
 #if ENABLE(VALUE_PROFILER)
-        void setArgumentValueProfileSize(unsigned size)
-        {
-            m_argumentValueProfiles.resize(size);
-        }
         unsigned numberOfArgumentValueProfiles()
         {
+            ASSERT(m_numParameters >= 0);
+            ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters));
             return m_argumentValueProfiles.size();
         }
         ValueProfile* valueProfileForArgument(unsigned argumentIndex)
@@ -1131,7 +1136,6 @@ namespace JSC {
         int m_numCalleeRegisters;
         int m_numVars;
         int m_numCapturedVars;
-        int m_numParameters;
         bool m_isConstructor;
 
         // This is public because otherwise we would have many friends.
@@ -1195,6 +1199,8 @@ namespace JSC {
                 m_rareData = adoptPtr(new RareData);
         }
         
+        int m_numParameters;
+
         WriteBarrier<ScriptExecutable> m_ownerExecutable;
         JSGlobalData* m_globalData;
 

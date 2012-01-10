@@ -1413,7 +1413,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
     , m_numVars(other.m_numVars)
     , m_numCapturedVars(other.m_numCapturedVars)
-    , m_numParameters(other.m_numParameters)
     , m_isConstructor(other.m_isConstructor)
     , m_shouldDiscardBytecode(false)
     , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
@@ -1448,6 +1447,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
 {
+    setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
     
     if (other.m_rareData) {
@@ -1469,9 +1469,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_heap(&m_globalObject->globalData().heap)
     , m_numCalleeRegisters(0)
     , m_numVars(0)
-    , m_numParameters(0)
     , m_isConstructor(isConstructor)
     , m_shouldDiscardBytecode(false)
+    , m_numParameters(0)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
     , m_globalData(0)
     , m_instructions(adoptRef(new Instructions))
@@ -1535,6 +1535,24 @@ CodeBlock::~CodeBlock()
 
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.remove(this);
+#endif
+}
+
+void CodeBlock::setNumParameters(int newValue)
+{
+    m_numParameters = newValue;
+
+#if ENABLE(VALUE_PROFILER)
+    m_argumentValueProfiles.resize(newValue);
+#endif
+}
+
+void CodeBlock::addParameter()
+{
+    m_numParameters++;
+
+#if ENABLE(VALUE_PROFILER)
+    m_argumentValueProfiles.append(ValueProfile());
 #endif
 }
 

@@ -370,16 +370,16 @@ NEVER_INLINE bool Interpreter::resolveThisAndProperty(CallFrame* callFrame, Inst
 ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, CallFrame* callFrame, size_t registerOffset, int argumentCountIncludingThis)
 {
     // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!registerFile->grow(callFrame->registers() + registerOffset + newCodeBlock->m_numParameters + newCodeBlock->m_numCalleeRegisters))
+    if (!registerFile->grow(callFrame->registers() + registerOffset + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
         return 0;
 
-    if (argumentCountIncludingThis >= newCodeBlock->m_numParameters) {
+    if (argumentCountIncludingThis >= newCodeBlock->numParameters()) {
         Register* newCallFrame = callFrame->registers() + registerOffset;
         return CallFrame::create(newCallFrame);
     }
 
     // Too few arguments -- copy arguments, then fill in missing arguments with undefined.
-    size_t delta = newCodeBlock->m_numParameters - argumentCountIncludingThis;
+    size_t delta = newCodeBlock->numParameters() - argumentCountIncludingThis;
     CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + registerOffset + delta);
 
     Register* dst = &newCallFrame->uncheckedR(CallFrame::thisArgumentOffset());
@@ -602,14 +602,14 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     const Register* end;
     JSValue v;
 
-    it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - codeBlock->m_numParameters;
+    it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - codeBlock->numParameters();
     v = (*it).jsValue();
 #if USE(JSVALUE32_64)
     printf("[this]                     | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v)); ++it;
 #else
     printf("[this]                     | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v)); ++it;
 #endif
-    end = it + max(codeBlock->m_numParameters - 1, 0); // - 1 to skip "this"
+    end = it + max(codeBlock->numParameters() - 1, 0); // - 1 to skip "this"
     if (it != end) {
         do {
             v = (*it).jsValue();
@@ -985,13 +985,13 @@ failedJSONP:
     CodeBlock* codeBlock = &program->generatedBytecode();
 
     Register* oldEnd = m_registerFile.end();
-    Register* newEnd = oldEnd + codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
+    Register* newEnd = oldEnd + codeBlock->numParameters() + RegisterFile::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
     if (!m_registerFile.grow(newEnd))
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    CallFrame* newCallFrame = CallFrame::create(oldEnd + codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize);
-    ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
-    newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->m_numParameters, 0);
+    CallFrame* newCallFrame = CallFrame::create(oldEnd + codeBlock->numParameters() + RegisterFile::CallFrameHeaderSize);
+    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->numParameters(), 0);
     newCallFrame->setThisValue(thisObj);
     TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
 
@@ -1256,7 +1256,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     }
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argumentCountIncludingThis, function);  
     scopeChain->globalData->topCallFrame = newCallFrame;
-    CallFrameClosure result = { callFrame, newCallFrame, function, functionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argumentCountIncludingThis };
+    CallFrameClosure result = { callFrame, newCallFrame, function, functionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->numParameters(), argumentCountIncludingThis };
     return result;
 }
 
@@ -1367,8 +1367,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     CallFrame* newCallFrame = CallFrame::create(m_registerFile.begin() + globalRegisterOffset);
 
-    ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
-    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
+    ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
+    newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->numParameters(), 0);
     newCallFrame->setThisValue(thisValue);
 
     TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);

@@ -557,8 +557,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if ENABLE(VALUE_PROFILER)
         ASSERT(m_bytecodeOffset == (unsigned)-1);
         if (shouldEmitProfiling()) {
-            m_codeBlock->setArgumentValueProfileSize(m_codeBlock->m_numParameters);
-            for (int argument = 0; argument < m_codeBlock->m_numParameters; ++argument) {
+            for (int argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
                 // keep things consistent) but we don't actually want to record the dummy value.
                 if (m_codeBlock->m_isConstructor && !argument)
