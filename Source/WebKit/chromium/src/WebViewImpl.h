@@ -186,6 +186,9 @@ public:
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
         const WebPoint& location);
+    virtual void performPluginAction(
+        const WebPluginAction&,
+        const WebPoint&);
     virtual void copyImageAt(const WebPoint& point);
     virtual void dragSourceEndedAt(
         const WebPoint& clientPoint,

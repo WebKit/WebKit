@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -95,6 +95,7 @@
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "ResourceHandle.h"
 #include "SchemeRegistry.h"
 #include "ScrollAnimator.h"
@@ -125,6 +126,7 @@
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPlugin.h"
+#include "WebPluginAction.h"
 #include "WebPluginContainerImpl.h"
 #include "platform/WebPoint.h"
 #include "WebPopupMenuImpl.h"
@@ -2183,7 +2185,7 @@ void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
     HitTestResult result = hitTestResultForWindowPos(location);
     RefPtr<Node> node = result.innerNonSharedNode();
     if (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag))
-      return;
+        return;
 
     RefPtr<HTMLMediaElement> mediaElement =
         static_pointer_cast<HTMLMediaElement>(node);
@@ -2205,6 +2207,33 @@ void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
         break;
     default:
         ASSERT_NOT_REACHED();
+    }
+}
+
+void WebViewImpl::performPluginAction(const WebPluginAction& action,
+                                      const WebPoint& location)
+{
+    HitTestResult result = hitTestResultForWindowPos(location);
+    RefPtr<Node> node = result.innerNonSharedNode();
+    if (!node->hasTagName(HTMLNames::objectTag) && !node->hasTagName(HTMLNames::embedTag))
+        return;
+
+    RenderObject* object = node->renderer();
+    if (object && object->isWidget()) {
+        Widget* widget = toRenderWidget(object)->widget();
+        if (widget && widget->isPluginContainer()) {
+            WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(widget);
+            switch (action.type) {
+            case WebPluginAction::Rotate90Clockwise:
+                plugin->plugin()->rotateView(WebPlugin::RotationType90Clockwise);
+                break;
+            case WebPluginAction::Rotate90Counterclockwise:
+                plugin->plugin()->rotateView(WebPlugin::RotationType90Counterclockwise);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+        }
     }
 }
 

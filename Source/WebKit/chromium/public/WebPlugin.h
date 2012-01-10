@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -124,6 +124,16 @@ public:
     virtual void selectFindResult(bool forward) { }
     // Tells the plugin that the user has stopped the find operation.
     virtual void stopFind() { }
+
+    // View rotation types.
+    enum RotationType {
+        RotationType90Clockwise,
+        RotationType90Counterclockwise
+    };
+    // Whether the plugin can rotate the view of its content.
+    virtual bool canRotateView() { return false; }
+    // Rotates the plugin's view of its content.
+    virtual void rotateView(RotationType type) { }
 
 protected:
     ~WebPlugin() { }

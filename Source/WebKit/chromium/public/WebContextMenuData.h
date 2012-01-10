@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -102,6 +102,7 @@ struct WebContextMenuData {
         MediaHasVideo = 0x40,
         MediaControlRootElement = 0x80,
         MediaCanPrint = 0x100,
+        MediaCanRotate = 0x200,
     };
 
     // Extra attributes describing media elements.

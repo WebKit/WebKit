@@ -1,3 +1,26 @@
+2012-01-10  Bill Budge  <bbudge@chromium.org>
+
+        Allow plugins to add rotate items to browser's context menu. Adds a new
+        WebPluginAction struct, with rotate types.
+        https://bugs.webkit.org/show_bug.cgi?id=75645
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebContextMenuData.h:
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::canRotateView):
+        (WebKit::WebPlugin::rotateView):
+        * public/WebPluginAction.h: Added.
+        (WebKit::WebPluginAction::WebPluginAction):
+        * public/WebView.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::performMediaPlayerAction):
+        (WebKit::WebViewImpl::performPluginAction):
+        * src/WebViewImpl.h:
+
 2012-01-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create iterators for the RenderSurface-Layer tree

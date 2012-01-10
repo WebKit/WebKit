@@ -216,6 +216,7 @@
                 'public/WebPerformance.h',
                 'public/WebPermissionClient.h',
                 'public/WebPlugin.h',
+                'public/WebPluginAction.h',
                 'public/WebPluginContainer.h',
                 'public/WebPluginDocument.h',
                 'public/WebPluginListBuilder.h',

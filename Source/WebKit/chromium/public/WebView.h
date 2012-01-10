@@ -55,6 +55,7 @@ class WebSpellCheckClient;
 class WebString;
 class WebViewClient;
 struct WebMediaPlayerAction;
+struct WebPluginAction;
 struct WebPoint;
 
 class WebView : public WebWidget {
@@ -273,9 +274,13 @@ public:
 
     // Media ---------------------------------------------------------------
 
-    // Performs the specified action on the node at the given location.
+    // Performs the specified media player action on the node at the given location.
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction&, const WebPoint& location) = 0;
+
+    // Performs the specified plugin action on the node at the given location.
+    virtual void performPluginAction(
+        const WebPluginAction&, const WebPoint& location) = 0;
 
 
     // Data exchange -------------------------------------------------------
