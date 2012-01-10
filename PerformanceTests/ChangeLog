@@ -1,3 +1,10 @@
+2012-01-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed test fix after r103683.
+
+        * inspector/first-open-scripts.html:
+        * inspector/show-panel.html:
+
 2012-01-03  Adam Barth  <abarth@webkit.org>
 
         html-parser.html takes too long to run

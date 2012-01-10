@@ -16,11 +16,11 @@ function makeXHRRequests(count)
 function test()
 {
     WebInspector.showPanel("scripts");
-    var files = WebInspector.panels.scripts._filesSelectElement;
+    var files = WebInspector.panels.scripts._fileSelector._filesSelectElement;
     for (var i = 0; i < files.options.length; ++i) {
          if (files.options[i].value.indexOf("inspector-test.js") !== -1) {
              files.selectedIndex = i;
-             WebInspector.panels.scripts._filesSelectChanged();
+             WebInspector.panels.scripts._fileSelector._filesSelectChanged();
              break;
          }
     }
