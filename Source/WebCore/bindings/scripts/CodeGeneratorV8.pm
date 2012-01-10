@@ -291,8 +291,6 @@ sub GenerateHeader
         }
     }
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-
     # - Add default header template
     push(@headerContent, GenerateHeaderContentHeader($dataNode));
 
@@ -2211,7 +2209,6 @@ sub GenerateImplementation
     my $visibleInterfaceName = GetVisibleInterfaceName($interfaceName);
     my $className = "V8$interfaceName";
     my $implClassName = $interfaceName;
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
 
     # - Add default header template
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
