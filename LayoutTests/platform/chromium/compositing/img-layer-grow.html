@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../compositing/resources/mock_scrollbars.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+  if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText(true); // This is only useful as a pixel test.
+  }
+
+  function doTest()
+  {
+    div = document.getElementById("div");
+    if (window.layoutTestController)
+      layoutTestController.display();
+    window.setTimeout(function() {
+      div.style.height = "1600px";
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }, 0);
+  }
+
+  window.addEventListener('load', doTest, false);
+</script>
+
+</head>
+<body>
+  <div id="div">
+    <img id="image" src="../../../compositing/resources/apple.jpg" style="-webkit-transform: translateZ(0);">
+  </div>
+</body>
+</html>

@@ -189,7 +189,9 @@ bool ImageLayerChromium::drawsContent() const
 
 void ImageLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
-    m_textureUpdater = ImageLayerTextureUpdater::create(host->layerRendererCapabilities().usingMapSub);
+    // Avoid creating a new texture updater which would not have a valid copy of the current image.
+    if (!m_textureUpdater)
+        m_textureUpdater = ImageLayerTextureUpdater::create(host->layerRendererCapabilities().usingMapSub);
 }
 
 bool ImageLayerChromium::needsContentsScale() const
