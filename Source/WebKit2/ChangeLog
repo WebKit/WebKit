@@ -1,5 +1,11 @@
 2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        Unreviewed buildfix.
+
+        * UIProcess/WebPageProxy.h:
+
+2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         Implement the input panel request/close handling
 
         Reviewed by Simon Hausmann.
