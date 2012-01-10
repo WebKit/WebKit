@@ -36,6 +36,7 @@ WebInspector.DebuggerPresentationModel = function()
 {
     // FIXME: apply formatter from outside as a generic mapping.
     this._formatter = new WebInspector.ScriptFormatter();
+    this._rawSourceCodes = [];
     this._rawSourceCodeForScriptId = {};
     this._rawSourceCodeForURL = {};
     this._rawSourceCodeForDocumentURL = {};
@@ -143,7 +144,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL)
             compilerSourceMapping = new WebInspector.ClosureCompilerSourceMapping(script.sourceMapURL, script.sourceURL);
 
-        rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource, compilerSourceMapping);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource, compilerSourceMapping);
+        this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
 
         if (isInlineScript)
@@ -180,10 +182,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
     uiSourceCodes: function()
     {
         var result = [];
-        for (var id in this._rawSourceCodeForScriptId) {
-            var uiSourceCodeList = this._rawSourceCodeForScriptId[id].sourceMapping.uiSourceCodeList();
-            for (var i = 0; i < uiSourceCodeList.length; ++i)
-                result.push(uiSourceCodeList[i]);
+        for (var i = 0; i < this._rawSourceCodes.length; ++i) {
+            var uiSourceCodeList = this._rawSourceCodes[i].sourceMapping.uiSourceCodeList();
+            for (var j = 0; j < uiSourceCodeList.length; ++j)
+                result.push(uiSourceCodeList[j]);
         }
         return result;
     },
@@ -335,8 +337,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         this._formatSource = formatSource;
         this._breakpointManager.reset();
-        for (var id in this._rawSourceCodeForScriptId)
-            this._rawSourceCodeForScriptId[id].setFormatted(this._formatSource);
+        for (var i = 0; i < this._rawSourceCodes.length; ++i)
+            this._rawSourceCodes[i].setFormatted(this._formatSource);
     },
 
     /**
@@ -376,8 +378,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _consoleCleared: function()
     {
-        for (var id in this._rawSourceCodeForScriptId)
-            this._rawSourceCodeForScriptId[id].messages = [];
+        for (var i = 0; i < this._rawSourceCodes.length; ++i)
+            this._rawSourceCodes[i].messages = [];
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared);
     },
 
@@ -655,15 +657,16 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _debuggerReset: function()
     {
-        for (var id in this._rawSourceCodeForScriptId) {
-            var rawSourceCode = this._rawSourceCodeForScriptId[id];
+        for (var i = 0; i < this._rawSourceCodes.length; ++i) {
+            var rawSourceCode = this._rawSourceCodes[i];
             if (rawSourceCode.sourceMapping) {
                 var uiSourceCodeList = rawSourceCode.sourceMapping.uiSourceCodeList();
-                for (var i = 0; i < uiSourceCodeList.length; ++i)
-                    this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, uiSourceCodeList[i]);
+                for (var j = 0; j < uiSourceCodeList.length; ++j)
+                    this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, uiSourceCodeList[j]);
             }
             rawSourceCode.removeAllListeners();
         }
+        this._rawSourceCodes = [];
         this._rawSourceCodeForScriptId = {};
         this._rawSourceCodeForURL = {};
         this._rawSourceCodeForDocumentURL = {};

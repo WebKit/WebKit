@@ -1,3 +1,19 @@
+2012-01-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: fix DebuggerPresentationModel::uiSourceCodes - do not iterate
+        over same raw source code multiple times.
+        https://bugs.webkit.org/show_bug.cgi?id=75953
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._bindScriptToRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCodes):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSource):
+        (WebInspector.DebuggerPresentationModel.prototype._consoleCleared):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+
 2012-01-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS_FILTERS in Qt build
