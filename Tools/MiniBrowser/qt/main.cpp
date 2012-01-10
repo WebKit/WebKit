@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     MiniBrowserApplication app(argc, argv);
 
     if (app.isRobotized()) {
-        BrowserWindow* window = new BrowserWindow(&app.m_windowOptions);
+        BrowserWindow* window = new BrowserWindow(app.windowOptions());
         UrlLoader loader(window, app.urls().at(0), app.robotTimeout(), app.robotExtraTime());
         loader.loadNext();
         window->show();
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
             urls.append("http://www.google.com");
     }
 
-    BrowserWindow* window = new BrowserWindow(&app.m_windowOptions);
+    BrowserWindow* window = new BrowserWindow(app.windowOptions());
     window->load(urls.at(0));
 
     for (int i = 1; i < urls.size(); ++i)

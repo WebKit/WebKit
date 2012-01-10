@@ -98,8 +98,7 @@ public:
     bool isRobotized() const { return m_isRobotized; }
     int robotTimeout() const { return m_robotTimeoutSeconds; }
     int robotExtraTime() const { return m_robotExtraTimeSeconds; }
-
-    WindowOptions m_windowOptions;
+    WindowOptions* windowOptions() { return &m_windowOptions; }
 
     virtual bool notify(QObject*, QEvent*);
 
@@ -117,6 +116,8 @@ private:
 
     QHash<int, QWindowSystemInterface::TouchPoint> m_touchPoints;
     QSet<int> m_heldTouchPoints;
+
+    WindowOptions m_windowOptions;
 };
 
 QML_DECLARE_TYPE(WindowOptions);
