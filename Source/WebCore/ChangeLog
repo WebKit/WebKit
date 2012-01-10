@@ -1,3 +1,21 @@
+2012-01-10  Tony Chang  <tony@chromium.org>
+
+        Need to handle absolutely positioned elements inside flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=70793
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/insert-text-crash.html
+               css3/flexbox/position-absolute-child.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredMainAxisExtent): Skip the size of positioned elements.
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithm): Add placeholders for positioned elements.
+        (WebCore::RenderFlexibleBox::prepareChildForPositionedLayout): Positions the layer for the positioned child.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Handle positioned elements.
+        (WebCore::RenderFlexibleBox::layoutColumnReverse): Adjust the main axis offset of the layer for positioned elements.
+        * rendering/RenderFlexibleBox.h:
+
 2012-01-10  Nat Duca  <nduca@chromium.org>
 
         [chromium] Reuse old timebase when activating CCDelayBasedTimeSource

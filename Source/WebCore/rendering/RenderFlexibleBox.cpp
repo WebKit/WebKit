@@ -32,6 +32,7 @@
 #include "RenderFlexibleBox.h"
 
 #include "LayoutRepainter.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -488,6 +489,9 @@ void RenderFlexibleBox::computePreferredMainAxisExtent(bool relayoutChildren, Tr
 
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        if (child->isPositioned())
+            continue;
+
         child->clearOverrideSize();
         if (mainAxisLengthForChild(child).isAuto()) {
             if (!relayoutChildren)
@@ -523,6 +527,11 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(FlexOrderIterator& itera
 
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        if (child->isPositioned()) {
+            childSizes.append(0);
+            continue;
+        }
+
         LayoutUnit childPreferredSize;
         if (inflexibleItems.contains(child))
             childPreferredSize = inflexibleItems.get(child);
@@ -591,6 +600,24 @@ void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit chil
         child->setOverrideWidth(childPreferredSize);
 }
 
+void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset)
+{
+    ASSERT(child->isPositioned());
+    child->containingBlock()->insertPositionedObject(child);
+    RenderLayer* childLayer = child->layer();
+    LayoutUnit inlinePosition = isColumnFlow() ? crossAxisOffset : mainAxisOffset;
+    if (style()->flexDirection() == FlowRowReverse)
+        inlinePosition = mainAxisExtent() - mainAxisOffset;
+    childLayer->setStaticInlinePosition(inlinePosition); // FIXME: Not right for regions.
+
+    LayoutUnit staticBlockPosition = isColumnFlow() ? mainAxisOffset : crossAxisOffset;
+    if (childLayer->staticBlockPosition() != staticBlockPosition) {
+        childLayer->setStaticBlockPosition(staticBlockPosition);
+        if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()))
+            child->setChildNeedsLayout(true, false);
+    }
+}
+
 void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
@@ -602,6 +629,11 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
+        if (child->isPositioned()) {
+            prepareChildForPositionedLayout(child, mainAxisOffset, crossAxisOffset);
+            mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
+            continue;
+        }
         LayoutUnit childPreferredSize = childSizes[i] + mainAxisBorderAndPaddingExtentForChild(child);
         setLogicalOverrideSize(child, childPreferredSize);
         child->setChildNeedsLayout(true);
@@ -657,6 +689,11 @@ void RenderFlexibleBox::layoutColumnReverse(FlexOrderIterator& iterator, const W
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
+        if (child->isPositioned()) {
+            child->layer()->setStaticBlockPosition(mainAxisOffset);
+            mainAxisOffset -= packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
+            continue;
+        }
         mainAxisOffset -= mainAxisExtentForChild(child) + flowAwareMarginEndForChild(child);
 
         LayoutRect oldRect = child->frameRect();

@@ -1,0 +1,224 @@
+horizontal-tb ltr row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb rtl row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb ltr column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb rtl column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb ltr row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb rtl row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb ltr column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-tb rtl column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt ltr row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt rtl row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt ltr column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt rtl column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt ltr row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt rtl row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt ltr column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+horizontal-bt rtl column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl ltr row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl rtl row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl ltr column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl rtl column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl ltr row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl rtl row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl ltr column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-rl rtl column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr ltr row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr rtl row
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr ltr column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr rtl column
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr ltr row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr rtl row-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr ltr column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+vertical-lr rtl column-reverse
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

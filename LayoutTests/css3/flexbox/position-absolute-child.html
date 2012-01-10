@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+
+.title {
+    margin-top: 1em;
+}
+
+.flexbox {
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+}
+.flexbox div {
+    border: 0;
+}
+
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+
+.row {
+    -webkit-flex-flow: row;
+}
+.row-reverse {
+    -webkit-flex-flow: row-reverse;
+}
+.column {
+    -webkit-flex-flow: column;
+}
+.column-reverse {
+    -webkit-flex-flow: column-reverse;
+}
+
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+.flexbox :nth-child(3) {
+    background-color: red;
+}
+
+.rtl {
+    direction: rtl;
+}
+.ltr {
+    direction: ltr;
+}
+
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkFlexBoxen()">
+
+<script>
+function getFlexDirection(flexFlow, writingMode)
+{
+    if (writingMode.indexOf('horizontal') != -1)
+        return (flexFlow.indexOf('row') != -1) ? 'width' : 'height';
+    return (flexFlow.indexOf('row') != -1) ? 'height' : 'width';
+}
+
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-lr'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
+var directions = ['ltr', 'rtl'];
+
+var expectations = {
+    'horizontal-tb': {
+        row: {
+            ltr: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 260, 560] },
+                { offsets: [0, 300, 560] },
+                { offsets: [0, 300, 600] },
+            ],
+            rtl: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [580, 300, 0] },
+                { offsets: [560, 280, 0] },
+                { offsets: [560, 260, -20] },
+            ],
+        },
+        column: {
+            ltr: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 20, 80] },
+                { offsets: [0, 60, 80] },
+                { offsets: [0, 60, 120] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 20, 80] },
+                { offsets: [0, 60, 80] },
+                { offsets: [0, 60, 120] },
+            ],
+        },
+        'row-reverse': {
+            ltr: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [600, 300, 0] },
+                { offsets: [560, 300, 0] },
+                { offsets: [560, 260, 0] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [-20, 260, 560] },
+                { offsets: [0, 280, 560] },
+                { offsets: [0, 300, 580] },
+            ],
+        },
+        'column-reverse': {
+            ltr: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [120, 60, 0] },
+                { offsets: [80, 60, 0] },
+                { offsets: [80, 20, 0] },
+            ],
+            rtl: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [120, 60, 0] },
+                { offsets: [80, 60, 0] },
+                { offsets: [80, 20, 0] },
+            ],
+        },
+    },
+    'horizontal-bt': {
+        // This matches the horizontal-tb values above.
+        row: {
+            ltr: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 260, 560] },
+                { offsets: [0, 300, 560] },
+                { offsets: [0, 300, 600] },
+            ],
+            rtl: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [580, 300, 0] },
+                { offsets: [560, 280, 0] },
+                { offsets: [560, 260, -20] },
+            ],
+        },
+        // horizontal-bt flips the main axis direction so the offsets are different from horizontal-tb.
+        column: {
+            ltr: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [100, 60, 0] },
+                { offsets: [80, 40, 0] },
+                { offsets: [80, 20, -20] },
+            ],
+            rtl: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [100, 60, 0] },
+                { offsets: [80, 40, 0] },
+                { offsets: [80, 20, -20] },
+            ],
+        },
+        'row-reverse': {
+            ltr: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [600, 300, 0] },
+                { offsets: [560, 300, 0] },
+                { offsets: [560, 260, 0] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [-20, 260, 560] },
+                { offsets: [0, 280, 560] },
+                { offsets: [0, 300, 580] },
+            ],
+        },
+        'column-reverse': {
+            ltr: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [-20, 20, 80] },
+                { offsets: [0, 40, 80] },
+                { offsets: [0, 60, 100] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [-20, 20, 80] },
+                { offsets: [0, 40, 80] },
+                { offsets: [0, 60, 100] },
+            ],
+        },
+    },
+    'vertical-rl': {
+        row: {
+            // The same as horizontal-tb + column.
+            ltr: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 20, 80] },
+                { offsets: [0, 60, 80] },
+                { offsets: [0, 60, 120] },
+            ],
+            rtl: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [100, 60, 0] },
+                { offsets: [80, 40, 0] },
+                { offsets: [80, 20, -20] },
+            ],
+        },
+        column: {
+            // The same as horizontal-tb + row.
+            ltr: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [580, 300, 0] },
+                { offsets: [560, 280, 0] },
+                { offsets: [560, 260, -20] },
+            ],
+            rtl: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [580, 300, 0] },
+                { offsets: [560, 280, 0] },
+                { offsets: [560, 260, -20] },
+            ],
+        },
+        'row-reverse': {
+            ltr: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [120, 60, 0] },
+                { offsets: [80, 60, 0] },
+                { offsets: [80, 20, 0] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [-20, 20, 80] },
+                { offsets: [0, 40, 80] },
+                { offsets: [0, 60, 100] },
+            ],
+        },
+        'column-reverse': {
+            ltr: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [-20, 260, 560] },
+                { offsets: [0, 280, 560] },
+                { offsets: [0, 300, 580] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [-20, 260, 560] },
+                { offsets: [0, 280, 560] },
+                { offsets: [0, 300, 580] },
+            ],
+        }
+    },
+    'vertical-lr': {
+        row: {
+            // The same as horizontal-tb + column.
+            ltr: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [0, 20, 80] },
+                { offsets: [0, 60, 80] },
+                { offsets: [0, 60, 120] },
+            ],
+            rtl: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [100, 60, 0] },
+                { offsets: [80, 40, 0] },
+                { offsets: [80, 20, -20] },
+            ],
+        },
+        column: {
+            // The same as horizontal-bt + row.
+            ltr: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 260, 560] },
+                { offsets: [0, 300, 560] },
+                { offsets: [0, 300, 600] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 240], sizes: [0, 240, 360] },
+                { offsets: [0, 150, 150], sizes: [150, 0, 450] },
+                { offsets: [0, 200, 600], sizes: [200, 400, 0] },
+                { offsets: [0, 260, 560] },
+                { offsets: [0, 300, 560] },
+                { offsets: [0, 300, 600] },
+            ],
+        },
+        'row-reverse': {
+            ltr: [
+                { offsets: [120, 72, 0], sizes: [0, 48, 72] },
+                { offsets: [90, 90, 0], sizes: [30, 0, 90] },
+                { offsets: [80, 0, 0], sizes: [40, 80, 0] },
+                { offsets: [120, 60, 0] },
+                { offsets: [80, 60, 0] },
+                { offsets: [80, 20, 0] },
+            ],
+            rtl: [
+                { offsets: [0, 0, 48], sizes: [0, 48, 72] },
+                { offsets: [0, 30, 30], sizes: [30, 0, 90] },
+                { offsets: [0, 40, 120], sizes: [40, 80, 0] },
+                { offsets: [-20, 20, 80] },
+                { offsets: [0, 40, 80] },
+                { offsets: [0, 60, 100] },
+            ],
+        },
+        'column-reverse': {
+            ltr: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [600, 300, 0] },
+                { offsets: [560, 300, 0] },
+                { offsets: [560, 260, 0] },
+            ],
+            rtl: [
+                { offsets: [600, 360, 0], sizes: [0, 240, 360] },
+                { offsets: [450, 450, 0], sizes: [150, 0, 450] },
+                { offsets: [400, 0, 0], sizes: [200, 400, 0] },
+                { offsets: [600, 300, 0] },
+                { offsets: [560, 300, 0] },
+                { offsets: [560, 260, 0] },
+            ],
+        },
+    }
+};
+
+function setFlexboxSize(flexbox, flexDirection)
+{
+    if ('width' == flexDirection) {
+        flexbox.style.width = '600px';
+    } else {
+        flexbox.style.width = '100px';
+        flexbox.style.height = '120px';
+    }
+}
+
+function addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection)
+{
+    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
+
+
+    for (var absoluteIndex = 1; absoluteIndex <= 3; ++absoluteIndex) {
+        var expected = expectations[writingMode][flexFlow][direction][2 + absoluteIndex];
+
+        // Absolute div is 20px, other divs should be 40px.
+        expected.sizes = [40, 40, 40];
+        expected.sizes[absoluteIndex - 1] = 20;
+
+        var flexbox = document.createElement('div');
+        flexbox.className = 'flexbox ' + flexboxClassName;
+        setFlexboxSize(flexbox, flexDirection);
+        flexbox.style.webkitFlexPack = 'justify';
+        for (var childIndex = 1; childIndex <= 3; ++childIndex) {
+            var child = document.createElement('div');
+            child.style[flexDirection] = '40px';
+            if (absoluteIndex == childIndex) {
+                child.style.position = 'absolute';
+                child.style[flexDirection] = '20px';
+                if ('height' == flexDirection)
+                    child.style.width = '100px';
+            }
+
+            if ('width' == flexDirection)
+                child.style.height = '20px';
+
+            child.setAttribute('data-offset-' + (flexDirection == 'width' ? 'x' : 'y'), expected.offsets[childIndex - 1]);
+            child.setAttribute('data-expected-' + flexDirection, expected.sizes[childIndex - 1]);
+            flexbox.appendChild(child);
+        }
+
+        document.body.appendChild(flexbox);
+    }
+}
+
+writingModes.forEach(function(writingMode) {
+    flexFlows.forEach(function(flexFlow) {
+        directions.forEach(function(direction) {
+            var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
+            var title = document.createElement('div');
+            title.className = 'title';
+            title.innerHTML = flexboxClassName;
+            document.body.appendChild(title);
+
+            var flexDirection = getFlexDirection(flexFlow, writingMode);
+
+            for (var absoluteIndex = 1; absoluteIndex <= 3; ++absoluteIndex) {
+                var expected = expectations[writingMode][flexFlow][direction][absoluteIndex - 1];
+
+                var flexbox = document.createElement('div');
+                flexbox.className = 'flexbox ' + flexboxClassName;
+                setFlexboxSize(flexbox, flexDirection);
+                for (var childIndex = 1; childIndex <= 3; ++childIndex) {
+                    var child = document.createElement('div');
+                    child.style[flexDirection] = '-webkit-flex(' + childIndex + ')';
+                    if (childIndex == absoluteIndex)
+                        child.style.position = 'absolute';
+
+                    if ('width' == flexDirection)
+                        child.style.height = '20px';
+
+                    child.setAttribute('data-offset-' + (flexDirection == 'width' ? 'x' : 'y'), expected.offsets[childIndex - 1]);
+                    child.setAttribute('data-expected-' + flexDirection, expected.sizes[childIndex - 1]);
+                    flexbox.appendChild(child);
+                }
+
+                document.body.appendChild(flexbox);
+            }
+            addFlexPackJustifyTests(writingMode, flexFlow, direction, flexDirection);
+        })
+    })
+})
+
+</script>
+
+</body>
+</html>
