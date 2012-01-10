@@ -1,3 +1,22 @@
+2012-01-10  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt] fast/events/dont-loose-last-event test fails on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=73894
+
+        Reviewed by Simon Hausmann.
+
+        Empty the entire event queue when requested besides using
+        sendEvent instead of postEvent to make sure all events were
+        delivered.
+        This commit also removes not working DRT code to handle drag and drop,
+        for more refs see: https://bugs.webkit.org/show_bug.cgi?id=31332
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::EventSender):
+        (EventSender::sendOrQueueEvent):
+        (EventSender::replaySavedEvents):
+        * DumpRenderTree/qt/EventSenderQt.h:
+
 2012-01-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS_FILTERS in Qt build

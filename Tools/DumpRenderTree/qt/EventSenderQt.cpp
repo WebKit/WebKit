@@ -45,8 +45,6 @@
 // Hence Qt DRT adopts a fixed zoom-factor (1.2) for compatibility.
 #define ZOOM_STEP           1.2
 
-#define DRT_MESSAGE_DONE (QEvent::User + 1)
-
 struct DRTEventQueue {
     QEvent* m_event;
     int m_delay;
@@ -54,21 +52,18 @@ struct DRTEventQueue {
 
 static DRTEventQueue eventQueue[1024];
 static unsigned endOfQueue;
-static unsigned startOfQueue;
+static bool isReplayingEvents;
 
 EventSender::EventSender(QWebPage* parent)
     : QObject(parent)
 {
     m_page = parent;
-    m_mouseButtonPressed = false;
-    m_drag = false;
     memset(eventQueue, 0, sizeof(eventQueue));
     endOfQueue = 0;
-    startOfQueue = 0;
+    isReplayingEvents = false;
     m_eventLoop = 0;
     m_currentButton = 0;
     resetClickCount();
-    m_page->view()->installEventFilter(this);
     // So that we can match Scrollbar::pixelsPerLineStep() in WheelEventQt.cpp and
     // pass fast/events/platform-wheelevent-in-scrolling-div.html
     QApplication::setWheelScrollLines(2);
@@ -559,73 +554,34 @@ void EventSender::sendOrQueueEvent(QEvent* event)
     // 2. A delay was set-up by leapForward().
     // 3. A call to mouseMoveTo while the mouse button is pressed could initiate a drag operation, and that does not return until mouseUp is processed.
     // To be safe and avoid a deadlock, this event is queued.
-    if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay && (!(m_mouseButtonPressed && (m_eventLoop && event->type() == QEvent::MouseButtonRelease)))) {
+    if (!endOfQueue && !eventQueue[endOfQueue].m_delay) {
         sendEvent(m_page->view(), event);
         delete event;
         return;
     }
     eventQueue[endOfQueue++].m_event = event;
     eventQueue[endOfQueue].m_delay = 0;
-    replaySavedEvents(event->type() != QEvent::MouseMove);
+    replaySavedEvents();
 }
 
-void EventSender::replaySavedEvents(bool flush)
+void EventSender::replaySavedEvents()
 {
-    if (startOfQueue < endOfQueue) {
-        // First send all the events that are ready to be sent
-        while (!eventQueue[startOfQueue].m_delay && startOfQueue < endOfQueue) {
-            QEvent* ev = eventQueue[startOfQueue++].m_event;
-            postEvent(m_page->view(), ev);
-        }
-        if (startOfQueue == endOfQueue) {
-            // Reset the queue
-            startOfQueue = 0;
-            endOfQueue = 0;
-        } else {
-            QTest::qWait(eventQueue[startOfQueue].m_delay);
-            eventQueue[startOfQueue].m_delay = 0;
-        }
-    }
-    if (!flush)
+    if (isReplayingEvents)
         return;
 
-    // Send a marker event, it will tell us when it is safe to exit the new event loop
-    QEvent* drtEvent = new QEvent((QEvent::Type)DRT_MESSAGE_DONE);
-    QApplication::postEvent(m_page->view(), drtEvent);
+    isReplayingEvents = true;
+    int i = 0;
 
-    // Start an event loop for async handling of Drag & Drop
-    m_eventLoop = new QEventLoop;
-    m_eventLoop->exec();
-    delete m_eventLoop;
-    m_eventLoop = 0;
-}
+    while (i < endOfQueue) {
+        DRTEventQueue& ev = eventQueue[i];
 
-bool EventSender::eventFilter(QObject* watched, QEvent* event)
-{
-    if (watched != m_page->view())
-        return false;
-    switch (event->type()) {
-    case QEvent::Leave:
-        return true;
-    case QEvent::MouseButtonPress:
-    case QEvent::GraphicsSceneMousePress:
-        m_mouseButtonPressed = true;
-        break;
-    case QEvent::MouseMove:
-    case QEvent::GraphicsSceneMouseMove:
-        if (m_mouseButtonPressed)
-            m_drag = true;
-        break;
-    case QEvent::MouseButtonRelease:
-    case QEvent::GraphicsSceneMouseRelease:
-        m_mouseButtonPressed = false;
-        m_drag = false;
-        break;
-    case DRT_MESSAGE_DONE:
-        m_eventLoop->exit();
-        return true;
+        if (ev.m_delay)
+            QTest::qWait(ev.m_delay);
+        i++;
+        sendEvent(m_page->view(), ev.m_event);
+        delete ev.m_event;
+        ev.m_delay = 0;
     }
-    return false;
 }
 
 void EventSender::timerEvent(QTimerEvent* ev)
