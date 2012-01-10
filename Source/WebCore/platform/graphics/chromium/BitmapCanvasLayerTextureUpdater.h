@@ -37,7 +37,9 @@ namespace WebCore {
 
 class LayerPainterChromium;
 
-// A CanvasLayerTextureUpdater with an internal bitmap.
+// This class rasterizes the contentRect into a PlatformCanvas. It then updates
+// textures by copying from the canvas into the texture, using MapSubImage if
+// possible.
 class BitmapCanvasLayerTextureUpdater : public CanvasLayerTextureUpdater {
 public:
     class Texture : public LayerTextureUpdater::Texture {

@@ -39,6 +39,11 @@ namespace WebCore {
 
 class LayerPainterChromium;
 
+// This class records the contentRect into an SkPicture. Subclasses, provide
+// different implementations of tile updating based on this recorded picture.
+// The BitmapSkPictureCanvasLayerTextureUpdater and
+// FrameBufferSkPictureCanvasLayerTextureUpdater are two examples of such
+// implementations.
 class SkPictureCanvasLayerTextureUpdater : public CanvasLayerTextureUpdater {
 public:
     virtual ~SkPictureCanvasLayerTextureUpdater();

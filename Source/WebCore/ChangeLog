@@ -1,3 +1,16 @@
+2012-01-09  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add documentation to updater classes
+        https://bugs.webkit.org/show_bug.cgi?id=75866
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h:
+
 2012-01-09  Adam Barth  <abarth@webkit.org>
 
         Remove unused variable from CodeGeneratorV8
