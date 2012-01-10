@@ -5470,6 +5470,8 @@
             'dom/TreeDepthLimit.h',
             'dom/TreeScope.cpp',
             'dom/TreeScope.h',
+            'dom/TreeScopeAdopter.cpp',
+            'dom/TreeScopeAdopter.h',
             'dom/TreeWalker.cpp',
             'dom/TreeWalker.h',
             'dom/UIEvent.cpp',

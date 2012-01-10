@@ -1,3 +1,60 @@
+2012-01-06  Hajime Morrita  <morrita@chromium.org>
+
+        [Refactoring] Moving between TreeScopes should be done by its own class.
+        https://bugs.webkit.org/show_bug.cgi?id=75290
+
+        Reviewed by Ryosuke Niwa.
+
+        This change extracted Node::setTreeScopeRecursively(),
+        setDocumentRecursively() and a part of setDocument() into a new
+        class called TreeScopeAdopter. By doing this, the idea of
+        moving a node from scope to scope, that was originally hidden
+        behind the forest of Node APIs, has become clearer.
+
+        Note that this change is a preparation for Bug 59816.
+
+        No new tests. No behavioral change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp: Followed the renaming.
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAddChild):
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp: Followed te renaming.
+        (WebCore::Document::setDocType):
+        (WebCore::Document::adoptNode):
+        * dom/Element.cpp: Followed te renaming.
+        (WebCore::Element::removeShadowRoot):
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument):
+        (WebCore::Node::setTreeScope):
+        (WebCore::Node::didMoveToNewDocument):
+        * dom/Node.h:
+        * dom/TreeScope.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::adoptIfNeeded): moved from setTreeScopeRecursively()
+        * dom/TreeScopeAdopter.cpp: Added.
+        (WebCore::TreeScopeAdopter::TreeScopeAdopter):
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
+        (WebCore::TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+        * dom/TreeScopeAdopter.h: Added.
+        (WebCore::TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled):
+        (WebCore::TreeScopeAdopter::execute):
+        (WebCore::TreeScopeAdopter::needsScopeChange()):
+        (WebCore::TreeScopeAdopter::shadowRootFor):
+
 2012-01-09  Adam Barth  <abarth@webkit.org>
 
         run-bindings-tests should exercise all the IDL attributes we use

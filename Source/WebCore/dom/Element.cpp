@@ -1214,7 +1214,7 @@ void Element::removeShadowRoot()
             oldRoot->detach();
 
         oldRoot->setShadowHost(0);
-        oldRoot->setTreeScopeRecursively(document());
+        document()->adoptIfNeeded(oldRoot.get());
         if (oldRoot->inDocument())
             oldRoot->removedFromDocument();
         else

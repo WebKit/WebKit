@@ -99,7 +99,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
-        child->setTreeScopeRecursively(treeScope());
+        treeScope()->adoptIfNeeded(child.get());
         if (attached() && !child->attached())
             child->attach();
     }
@@ -175,7 +175,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
-        child->setTreeScopeRecursively(treeScope());
+        treeScope()->adoptIfNeeded(child);
 
         insertBeforeCommon(next.get(), child);
 
@@ -329,7 +329,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         InspectorInstrumentation::willInsertDOMNode(document(), child.get(), this);
 #endif
 
-        child->setTreeScopeRecursively(treeScope());
+        treeScope()->adoptIfNeeded(child.get());
 
         // Add child after "prev".
         forbidEventDispatch();
@@ -509,7 +509,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    oldChild->setTreeScopeRecursively(document());
+    document()->adoptIfNeeded(oldChild);
 
     allowEventDispatch();
 }
@@ -564,7 +564,7 @@ void ContainerNode::removeChildren()
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-        n->setTreeScopeRecursively(document());
+        document()->adoptIfNeeded(n.get());
 
         m_firstChild = next;
         if (n == m_lastChild)
@@ -649,7 +649,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
-        child->setTreeScopeRecursively(treeScope());
+        treeScope()->adoptIfNeeded(child);
 
         // Append child to the end of the list
         forbidEventDispatch();
@@ -697,7 +697,7 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     Node* last = m_lastChild;
     // FIXME: This method should take a PassRefPtr.
     appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
-    newChild->setTreeScopeRecursively(treeScope());
+    treeScope()->adoptIfNeeded(newChild.get());
     
     allowEventDispatch();
 

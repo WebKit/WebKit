@@ -105,6 +105,7 @@ enum StyleChangeType {
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<ContainerNode> {
     friend class Document;
     friend class TreeScope;
+    friend class TreeScopeAdopter;
 
 public:
     enum NodeType {
@@ -406,9 +407,6 @@ public:
     }
 
     TreeScope* treeScope() const;
-
-    // Used by the basic DOM methods (e.g., appendChild()).
-    void setTreeScopeRecursively(TreeScope*);
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
@@ -719,9 +717,9 @@ protected:
     void clearHasCustomStyleForRenderer() { clearFlag(HasCustomStyleForRendererFlag); }
 
 private:
-    // Do not use this method to change the document of a node until after the node has been
-    // removed from its previous document.
-    void setDocumentRecursively(Document*);
+    // These API should be only used for a tree scope migration.
+    // setTreeScope() returns NodeRareData to save extra nodeRareData() invocations on the caller site.
+    NodeRareData* setTreeScope(TreeScope*);
     void setDocument(Document*);
 
     enum EditableLevel { Editable, RichlyEditable };
