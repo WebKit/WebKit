@@ -953,11 +953,6 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
     }
 }
 
-bool InspectorDOMAgent::searchingForNodeInPage() const
-{
-    return m_searchingForNode;
-}
-
 void InspectorDOMAgent::setSearchingForNode(bool enabled, InspectorObject* highlightConfig)
 {
     if (m_searchingForNode == enabled)
