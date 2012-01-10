@@ -1,5 +1,34 @@
 2012-01-10  Kenichi Ishibashi  <bashi@chromium.org>
 
+        Complex path should be used when UVS exists in text run
+        https://bugs.webkit.org/show_bug.cgi?id=75289
+
+        Uses complex path when a text run contains UVS. The range from U+180B to U+180D already uses complex path.
+        Removes unnecessary functions that were added by r102915.
+
+        Reviewed by Dan Bernstein.
+
+        No new tests. fast/text/unicode-variation-selector.html should take care of this change.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::codePath): Use Complex path when the text run contains UVS.
+        * platform/graphics/SimpleFontData.h: Removed updateGlyphWithVariationSelector().
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Removed unnecessary static functions.
+        * platform/graphics/SurrogatePairAwareTextIterator.h: Removed hasTrailingVariationSelector().
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance): Removed UVS detection code.
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp: Removed updateGlyphWithVariationSelector().
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp: Ditto.
+        * platform/graphics/harfbuzz/SimpleFontDataSkia.cpp: Ditto.
+        * platform/graphics/mac/SimpleFontDataMac.mm: Ditto.
+        * platform/graphics/pango/SimpleFontDataPango.cpp: Ditto.
+        * platform/graphics/qt/SimpleFontDataQt.cpp: Ditto.
+        * platform/graphics/win/SimpleFontDataWin.cpp: Ditto.
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp: Ditto.
+        * platform/graphics/wx/SimpleFontDataWx.cpp: Ditto.
+
+2012-01-10  Kenichi Ishibashi  <bashi@chromium.org>
+
         WebFonts are re-fetched from the server upon Document::styleSelectorChanged call.
         https://bugs.webkit.org/show_bug.cgi?id=73419
 

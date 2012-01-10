@@ -282,9 +282,4 @@ SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const
     return m_scriptFontProperties;
 }
 
-void SimpleFontData::updateGlyphWithVariationSelector(UChar32 character, UChar32 selector, Glyph& glyph) const
-{
-    // FIXME: Implement.
-}
-
 }

@@ -115,13 +115,6 @@ unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         ASSERT(fontData);
 
-        // If a variation selector follows, update glyph with the selector if possible.
-        UChar32 selector = 0;
-        if (textIterator.hasTrailingVariationSelector(selector, clusterLength)) {
-            fontData->updateGlyphWithVariationSelector(character, selector, glyph);
-            advanceLength = clusterLength;
-        }
-
         // Now that we have a glyph and font data, get its width.
         float width;
         if (character == '\t' && m_run.allowTabs()) {

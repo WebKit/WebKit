@@ -236,9 +236,4 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     return round(SkScalarToFloat(width));
 }
 
-void SimpleFontData::updateGlyphWithVariationSelector(UChar32 character, UChar32 selector, Glyph& glyph) const
-{
-    // FIXME: Implement.
-}
-
 } // namespace WebCore

@@ -404,11 +404,21 @@ Font::CodePath Font::codePath(const TextRun& run) const
             if (supplementaryCharacter <= 0x1F1FF)
                 return Complex;
 
+            if (supplementaryCharacter < 0xE0100) // U+E0100 through U+E01EF Unicode variation selectors.
+                continue;
+            if (supplementaryCharacter <= 0xE01EF)
+                return Complex;
+
             // FIXME: Check for Brahmi (U+11000 block), Kaithi (U+11080 block) and other complex scripts
             // in plane 1 or higher.
 
             continue;
         }
+
+        if (c < 0xFE00) // U+FE00 through U+FE0F Unicode variation selectors
+            continue;
+        if (c <= 0xFE0F)
+            return Complex;
 
         if (c < 0xFE20) // U+FE20 through U+FE2F Combining half marks
             continue;

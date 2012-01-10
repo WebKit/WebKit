@@ -3774,7 +3774,7 @@ BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMA
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
-BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
+BUGWK74662 : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
