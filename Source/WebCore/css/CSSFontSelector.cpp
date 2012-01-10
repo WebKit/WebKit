@@ -243,8 +243,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             Settings* settings = m_document ? m_document->frame() ? m_document->frame()->settings() : 0 : 0;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item->isSupportedFormat() && m_document) {
-                ResourceRequest request(m_document->completeURL(item->resource()));
-                CachedFont* cachedFont = m_document->cachedResourceLoader()->requestFont(request);
+                CachedFont* cachedFont = item->cachedFont(m_document);
                 if (cachedFont) {
                     source = adoptPtr(new CSSFontFaceSource(item->resource(), cachedFont));
 #if ENABLE(SVG_FONTS)

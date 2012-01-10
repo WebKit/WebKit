@@ -1,3 +1,20 @@
+2012-01-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        WebFonts are re-fetched from the server upon Document::styleSelectorChanged call.
+        https://bugs.webkit.org/show_bug.cgi?id=73419
+
+        Holds the CachedFont handle in CSSFontFaceSrcValue so that avoiding re-validation during style recalculation.
+
+        Reviewed by Dan Bernstein.
+
+        Test: http/tests/css/font-face-src-loading.html
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont): Added.
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Gets the CachedFont from CSSFontFaceSrcValue object. The object will request the resource if it doesn't exist.
+
 2012-01-10  pfeldman@chomium.org  <pavel.feldman@gmail.com>
 
         Web Inspector: introduce experimental setting that makes source files always editable

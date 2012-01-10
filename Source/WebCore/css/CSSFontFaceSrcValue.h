@@ -27,11 +27,14 @@
 #define CSSFontFaceSrcValue_h
 
 #include "CSSValue.h"
+#include "CachedResourceHandle.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+class CachedFont;
+class Document;
 class SVGFontFaceElement;
 
 class CSSFontFaceSrcValue : public CSSValue {
@@ -64,6 +67,8 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
+    CachedFont* cachedFont(Document*);
+
 private:
     CSSFontFaceSrcValue(const String& resource, bool local)
         : CSSValue(FontFaceSrcClass)
@@ -78,6 +83,8 @@ private:
     String m_resource;
     String m_format;
     bool m_isLocal;
+
+    CachedResourceHandle<CachedFont> m_cachedFont;
 
 #if ENABLE(SVG_FONTS)
     SVGFontFaceElement* m_svgFontFaceElement;
