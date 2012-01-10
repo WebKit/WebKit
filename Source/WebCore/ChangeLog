@@ -1,3 +1,40 @@
+2012-01-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add "free flow DOM editing" experiment.
+        https://bugs.webkit.org/show_bug.cgi?id=75955
+
+        This change enables HTML editing from Resources panel experiment.
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * English.lproj/localizedStrings.js:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/DOMEditor.cpp: Added.
+        (WebCore::DOMEditor::DOMEditor):
+        (WebCore::DOMEditor::~DOMEditor):
+        (WebCore::DOMEditor::patch):
+        (WebCore::DOMEditor::NodeDigest::NodeDigest):
+        (WebCore::DOMEditor::patchElement):
+        (WebCore::DOMEditor::patchNode):
+        (WebCore::DOMEditor::patchChildren):
+        (WebCore::addStringToSHA1):
+        (WebCore::DOMEditor::createNodeDigest):
+        * inspector/DOMEditor.h: Added.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMModelResourceBinding):
+        (WebInspector.DOMModelResourceBinding.prototype.setContent):
+        (WebInspector.DOMModelResourceBinding.prototype.canSetContent):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+
 2012-01-10  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Shift PathSkia to use Skia's new RawIter

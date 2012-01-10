@@ -169,6 +169,7 @@ WebInspector.ExperimentsSettings = function()
     // FIXME: Move out from experiments once navigator is production-ready.
     this.useScriptsNavigator = this._createExperiment("useScriptsNavigator", "Use file navigator and tabbed editor container in scripts panel");
     this.sourceFrameAlwaysEditable = this._createExperiment("sourceFrameAlwaysEditable", "Make resources always editable");
+    this.freeFlowDOMEditing = this._createExperiment("freeFlowDOMEditing", "Enable free flow DOM editing");
 
     this._cleanUpSetting();
 }

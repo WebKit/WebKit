@@ -71130,6 +71130,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\DOMEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\DOMEditor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\DOMNodeHighlighter.cpp"
 				>
 			</File>

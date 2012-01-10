@@ -529,6 +529,8 @@ WebInspector.DOMAgent = function() {
     this._document = null;
     this._attributeLoadNodeIds = {};
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
+    if (WebInspector.experimentsSettings.freeFlowDOMEditing.isEnabled())
+        new WebInspector.DOMModelResourceBinding(this);
 }
 
 WebInspector.DOMAgent.Events = {
@@ -1074,3 +1076,27 @@ WebInspector.DOMDispatcher.prototype = {
  * @type {?WebInspector.DOMAgent}
  */
 WebInspector.domAgent = null;
+
+/**
+ * @constructor
+ * @implements {WebInspector.ResourceDomainModelBinding}
+ */
+WebInspector.DOMModelResourceBinding = function(domAgent)
+{
+    this._domAgent = domAgent;
+    WebInspector.Resource.registerDomainModelBinding(WebInspector.Resource.Type.Document, this);
+}
+
+WebInspector.DOMModelResourceBinding.prototype = {
+    setContent: function(resource, content, majorChange, userCallback)
+    {
+        DOMAgent.setOuterHTML(0, content, userCallback);
+    },
+
+    canSetContent: function()
+    {
+        return true;
+    }
+}
+
+WebInspector.DOMModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;

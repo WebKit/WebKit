@@ -47,6 +47,7 @@
 #include "ContainerNode.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "DOMEditor.h"
 #include "DOMNodeHighlighter.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -632,13 +633,22 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
 
 void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML, int* newId)
 {
+    if (!nodeId) {
+        DOMEditor domEditor(m_document.get());
+        domEditor.patch(outerHTML);
+        *newId = 0;
+        return;
+    }
+
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
 
-    Element* parentElement = node->parentElement();
-    if (!parentElement)
+    Node* parentNode = node->parentNode();
+    if (!parentNode) {
+        *errorString = "Editing of the detached nodes is not supported";
         return;
+    }
 
     Document* document = node->ownerDocument();
     if (!document->isHTMLDocument()) {
@@ -649,10 +659,10 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     Node* previousSibling = node->previousSibling(); // Remember previous sibling before replacing node.
 
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
-    fragment->parseHTML(outerHTML, parentElement);
+    fragment->parseHTML(outerHTML, parentNode->nodeType() == Node::ELEMENT_NODE ? static_cast<Element*>(parentNode) : document->documentElement());
 
     ExceptionCode ec = 0;
-    parentElement->replaceChild(fragment.release(), node, ec);
+    parentNode->replaceChild(fragment.release(), node, ec);
     if (ec) {
         *errorString = "Failed to replace Node with new contents";
         return;
@@ -670,7 +680,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentElement->firstChild();
+    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
     if (!newNode) {
         // The only child node has been deleted.
         *newId = 0;

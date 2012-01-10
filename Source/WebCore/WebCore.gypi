@@ -2730,6 +2730,8 @@
             'inspector/ConsoleMessage.h',
             'inspector/ContentSearchUtils.cpp',
             'inspector/ContentSearchUtils.h',
+            'inspector/DOMEditor.cpp',
+            'inspector/DOMEditor.h',
             'inspector/DOMNodeHighlighter.cpp',
             'inspector/DOMNodeHighlighter.h',
             'inspector/DOMWrapperVisitor.h',

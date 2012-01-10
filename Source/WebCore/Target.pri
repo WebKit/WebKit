@@ -849,6 +849,7 @@ SOURCES += \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/ContentSearchUtils.cpp \
+    inspector/DOMEditor.cpp \
     inspector/DOMNodeHighlighter.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
@@ -1907,6 +1908,7 @@ HEADERS += \
     html/track/WebVTTTokenizer.h \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
+    inspector/DOMEditor.h \
     inspector/DOMNodeHighlighter.h \
     inspector/DOMWrapperVisitor.h \
     inspector/IdentifiersFactory.h \

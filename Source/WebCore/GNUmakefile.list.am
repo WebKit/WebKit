@@ -2327,6 +2327,8 @@ webcore_sources += \
 	Source/WebCore/inspector/ConsoleMessage.h \
 	Source/WebCore/inspector/ContentSearchUtils.cpp \
 	Source/WebCore/inspector/ContentSearchUtils.h \
+	Source/WebCore/inspector/DOMEditor.cpp \
+	Source/WebCore/inspector/DOMEditor.h \
 	Source/WebCore/inspector/DOMNodeHighlighter.cpp \
 	Source/WebCore/inspector/DOMNodeHighlighter.h \
 	Source/WebCore/inspector/DOMWrapperVisitor.h \
