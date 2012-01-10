@@ -37,17 +37,29 @@ namespace WebKit {
     
 class SecItemRequestData {
 public:
+    enum Type {
+        Invalid,
+        CopyMatching,
+        Add,
+        Update,
+        Delete,
+        CopyContent,
+    };
+
     SecItemRequestData();
-    SecItemRequestData(CFDictionaryRef query);
-    SecItemRequestData(CFDictionaryRef query, CFDictionaryRef attributesToMatch);
+    SecItemRequestData(Type, CFDictionaryRef query);
+    SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SecItemRequestData&);
+
+    Type type() const { return m_type; }
 
     CFDictionaryRef query() const { return m_queryDictionary.get(); }
     CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
 
 private:
+    Type m_type;
     RetainPtr<CFDictionaryRef> m_queryDictionary;
     RetainPtr<CFDictionaryRef> m_attributesToMatch;
 };

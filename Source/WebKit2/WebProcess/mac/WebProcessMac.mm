@@ -272,4 +272,18 @@ void WebProcess::platformTerminate()
 {
 }
 
+void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    didReceiveSecItemResponse(requestID, response);
+#endif
+}
+
+void WebProcess::secKeychainItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemResponseData& response)
+{
+#if defined(BUILDING_ON_SNOW_LEOPARD)
+    didReceiveSecKeychainItemResponse(requestID, response);
+#endif
+}
+
 } // namespace WebKit

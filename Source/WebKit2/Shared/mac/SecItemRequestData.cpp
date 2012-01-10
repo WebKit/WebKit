@@ -32,22 +32,27 @@
 namespace WebKit {
 
 SecItemRequestData::SecItemRequestData()
+    : m_type(Invalid)
 {
 }
 
-SecItemRequestData::SecItemRequestData(CFDictionaryRef query)
-    : m_queryDictionary(query)
+SecItemRequestData::SecItemRequestData(Type type, CFDictionaryRef query)
+    : m_type(type)
+    , m_queryDictionary(query)
 {
 }
 
-SecItemRequestData::SecItemRequestData(CFDictionaryRef query, CFDictionaryRef attributesToMatch)
-    : m_queryDictionary(query)
+SecItemRequestData::SecItemRequestData(Type type, CFDictionaryRef query, CFDictionaryRef attributesToMatch)
+    : m_type(type)
+    , m_queryDictionary(query)
     , m_attributesToMatch(attributesToMatch)
 {
 }
 
 void SecItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
+    encoder->encodeEnum(m_type);
+
     CoreIPC::encode(encoder, m_queryDictionary.get());
 
     encoder->encodeBool(m_attributesToMatch.get());
@@ -57,6 +62,9 @@ void SecItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 
 bool SecItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemRequestData& secItemRequestData)
 {    
+    if (!decoder->decodeEnum(secItemRequestData.m_type))
+        return false;
+
     if (!CoreIPC::decode(decoder, secItemRequestData.m_queryDictionary))
         return false;
     

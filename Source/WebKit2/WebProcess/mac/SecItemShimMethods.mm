@@ -28,7 +28,7 @@
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
 
-#import "CoreIPCClientRunLoop.h"
+#import "KeychainShimResponseMap.h"
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
 #import "WebProcess.h"
@@ -39,122 +39,68 @@
 
 namespace WebKit {
 
-// FIXME (https://bugs.webkit.org/show_bug.cgi?id=60975) - Once CoreIPC supports sync messaging from a secondary thread,
-// we can remove SecItemAPIContext and these 4 main-thread methods, and we can have the shim methods call out directly 
-// from whatever thread they're on.
-
-struct SecItemAPIContext {
-    CFDictionaryRef query;
-    CFDictionaryRef attributesToUpdate;
-    CFTypeRef resultObject;
-    OSStatus resultCode;
-};
-
-static void webSecItemCopyMatchingMainThread(void* voidContext)
+static KeychainShimResponseMap<SecItemResponseData>& responseMap()
 {
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemCopyMatching(requestData), Messages::WebProcessProxy::SecItemCopyMatching::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultObject = response.resultObject().leakRef();
-    context->resultCode = response.resultCode();
+    AtomicallyInitializedStatic(KeychainShimResponseMap<SecItemResponseData>&, responseMap = *new KeychainShimResponseMap<SecItemResponseData>);
+    return responseMap;
+}
+
+static uint64_t generateSecItemRequestID()
+{
+    static int64_t uniqueSecItemRequestID;
+    return OSAtomicIncrement64Barrier(&uniqueSecItemRequestID);
+}
+
+void didReceiveSecItemResponse(uint64_t requestID, const SecItemResponseData& response)
+{
+    responseMap().didReceiveResponse(requestID, adoptPtr(new SecItemResponseData(response)));
+}
+
+static PassOwnPtr<SecItemResponseData> sendSeqItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
+{
+    uint64_t requestID = generateSecItemRequestID();
+    if (!WebProcess::shared().connection()->send(Messages::WebProcessProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
+        return nullptr;
+
+    return responseMap().waitForResponse(requestID);
 }
 
 static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    SecItemAPIContext context;
-    context.query = query;
-    
-    callOnCoreIPCClientRunLoopAndWait(webSecItemCopyMatchingMainThread, &context);
-    
-    if (result)
-        *result = context.resultObject;
-    return context.resultCode;
-}
+    OwnPtr<SecItemResponseData> response = sendSeqItemRequest(SecItemRequestData::CopyMatching, query);
+    if (!response)
+        return errSecInteractionNotAllowed;
 
-static void webSecItemAddOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemAdd(requestData), Messages::WebProcessProxy::SecItemAdd::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultObject = response.resultObject().leakRef();
-    context->resultCode = response.resultCode();
+    *result = response->resultObject().leakRef();
+    return response->resultCode();
 }
 
 static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 {
-    SecItemAPIContext context;
-    context.query = query;
+    OwnPtr<SecItemResponseData> response = sendSeqItemRequest(SecItemRequestData::Add, query);
+    if (!response)
+        return errSecInteractionNotAllowed;
     
-    callOnCoreIPCClientRunLoopAndWait(webSecItemAddOnMainThread, &context);
-    
-    if (result)
-        *result = context.resultObject;
-    return context.resultCode;
-}
-
-static void webSecItemUpdateOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query, context->attributesToUpdate);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemUpdate(requestData), Messages::WebProcessProxy::SecItemUpdate::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultCode = response.resultCode();
+    *result = response->resultObject().leakRef();
+    return response->resultCode();
 }
 
 static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    SecItemAPIContext context;
-    context.query = query;
-    context.attributesToUpdate = attributesToUpdate;
+    OwnPtr<SecItemResponseData> response = sendSeqItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
+    if (!response)
+        return errSecInteractionNotAllowed;
     
-    callOnCoreIPCClientRunLoopAndWait(webSecItemUpdateOnMainThread, &context);
-    
-    return context.resultCode;
-}
-
-static void webSecItemDeleteOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemDelete(requestData), Messages::WebProcessProxy::SecItemDelete::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultCode = response.resultCode();
+    return response->resultCode();
 }
 
 static OSStatus webSecItemDelete(CFDictionaryRef query)
 {
-    SecItemAPIContext context;
-    context.query = query;
+    OwnPtr<SecItemResponseData> response = sendSeqItemRequest(SecItemRequestData::Delete, query);
+    if (!response)
+        return errSecInteractionNotAllowed;
     
-    callOnCoreIPCClientRunLoopAndWait(webSecItemDeleteOnMainThread, &context);
-
-    return context.resultCode;
+    return response->resultCode();
 }
 
 void initializeSecItemShim()

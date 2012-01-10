@@ -31,6 +31,7 @@
 #include <Security/Security.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -42,14 +43,23 @@ namespace WebKit {
     
 class SecKeychainItemRequestData {
 public:
+    enum Type {
+        Invalid,
+        CopyContent,
+        CreateFromContent,
+        ModifyContent,
+    };
+
     SecKeychainItemRequestData();
-    SecKeychainItemRequestData(SecKeychainItemRef, SecKeychainAttributeList*);
-    SecKeychainItemRequestData(SecKeychainItemRef, SecKeychainAttributeList*, UInt32 length, const void* data);
-    SecKeychainItemRequestData(SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data);
+    SecKeychainItemRequestData(Type, SecKeychainItemRef, SecKeychainAttributeList*);
+    SecKeychainItemRequestData(Type, SecKeychainItemRef, SecKeychainAttributeList*, UInt32 length, const void* data);
+    SecKeychainItemRequestData(Type, SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data);
     ~SecKeychainItemRequestData();
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SecKeychainItemRequestData&);
+
+    Type type() const { return m_type; }
 
     SecKeychainItemRef keychainItem() const { return m_keychainItem.get(); }
     SecItemClass itemClass() const { return m_itemClass; }
@@ -60,14 +70,19 @@ public:
 
 private:
     void initializeWithAttributeList(SecKeychainAttributeList*);
-    
+
+    Type m_type;
     RetainPtr<SecKeychainItemRef> m_keychainItem;
     SecItemClass m_itemClass;
     CoreIPC::DataReference m_dataReference;
     
     Vector<KeychainAttribute> m_keychainAttributes;
-    mutable OwnPtr<SecKeychainAttributeList> m_attributeList;
-    mutable OwnArrayPtr<SecKeychainAttribute> m_attributes;
+
+    struct Attributes : public ThreadSafeRefCounted<Attributes> {
+        mutable OwnPtr<SecKeychainAttributeList> m_attributeList;
+        mutable OwnArrayPtr<SecKeychainAttribute> m_attributes;
+    };
+    RefPtr<Attributes> m_attrs;
 };
     
 } // namespace WebKit

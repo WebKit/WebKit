@@ -117,6 +117,7 @@ void WebProcessProxy::connect()
 void WebProcessProxy::disconnect()
 {
     if (m_connection) {
+        m_connection->connection()->removeQueueClient(this);
         m_connection->invalidate();
         m_connection = nullptr;
     }
@@ -349,6 +350,12 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     pageProxy->didReceiveSyncMessage(connection, messageID, arguments, reply);
 }
 
+void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+{
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
+        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
+}
+
 void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
     // Protect ourselves, as the call to disconnect() below may otherwise cause us
@@ -409,7 +416,9 @@ void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connect
     ASSERT(!m_connection);
     
     m_connection = WebConnectionToWebProcess::create(this, connectionIdentifier, RunLoop::main());
-    
+    m_connection->connection()->addQueueClient(this);
+    m_connection->connection()->open();
+
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
         CoreIPC::Connection::OutgoingMessage& outgoingMessage = m_pendingMessages[i].first;
         unsigned messageSendFlags = m_pendingMessages[i].second;

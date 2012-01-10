@@ -1,5 +1,187 @@
 2012-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Hang opening movie that requires authentication
+        https://bugs.webkit.org/show_bug.cgi?id=75989
+
+        Reviewed by Sam Weinig.
+
+        Change the way the keychain calls are processed to avoid deadlocks:
+
+        1. When a keychain call is made, the web process sends an asynchronous request message to the UI process,
+           avoiding the need to bounce calls to the main thread (since CoreIPC only allows sending
+           synchronous messages from the main thread). Incidentally, this fixes <rdar://problem/9428041>.
+        2. The Web Process now waits on the calling thread, (for a condition variable to be signalled) for a reply message.
+        3. The UI process handles the incoming message request message on the connection work queue and uses
+           dispatch_async to a global dispatch queue where the keychain call is made.
+           We use a global queue to prevent the connection work queue from blocking on the call.
+        4. The UI process then sends an asynchronous reply message back to the web process. This message is sent from
+           the global dispatch queue.
+        5. The Web Process handles the reply message on the connection queue, adds the reply to a map and signals
+           the condition variable that the web process is waiting on and the thread that made the keychain call
+           can resume execution.
+
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::SecItemRequestData):
+        (WebKit::SecItemRequestData::encode):
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemRequestData.h:
+        (WebKit::SecItemRequestData::type):
+        Add a type to SecItemRequestData and encode/decode it.
+
+        * Shared/mac/SecItemResponseData.h:
+        (WebKit::SecItemResponseData::resultObject):
+        Make this return a reference so we can call leakRef() on it.
+
+        * Shared/mac/SecKeychainItemRequestData.cpp:
+        (WebKit::SecKeychainItemRequestData::SecKeychainItemRequestData):
+        (WebKit::SecKeychainItemRequestData::~SecKeychainItemRequestData):
+        (WebKit::SecKeychainItemRequestData::attributeList):
+        (WebKit::SecKeychainItemRequestData::encode):
+        (WebKit::SecKeychainItemRequestData::decode):
+        * Shared/mac/SecKeychainItemRequestData.h:
+        (WebKit::SecKeychainItemRequestData::type):
+        Add a type, and put the OwnPtr and OwnArrayPtr in a RefCounted struct so we can
+        correctly copy this object.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::WebConnectionToWebProcess):
+        Don't open the connection here, the WebProcessProxy object needs to add itself as a queue client before opening.
+    
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        Remove the WebProcessProxy object from the list of connection queue clients.
+
+        (WebKit::WebProcessProxy::didReceiveMessageOnConnectionWorkQueue):
+        Call didReceiveWebProcessProxyMessageOnConnectionWorkQueue.
+
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Add the WebProcessProxy as a queue client and open the connection.
+
+        * UIProcess/WebProcessProxy.h:
+        WebProcessProxy should inherit from CoreIPC::Connection::QueueClient. Replace all individual keychain
+        handler functions with two generic functions, secItemRequest and secKeychainItemRequest.
+    
+        * UIProcess/WebProcessProxy.messages.in:
+        Replace individual keychain messages with SecItemRequest and SecKeychainItemRequest messages.
+
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::handleSecItemRequest):
+        Call the right SecItem function depending on the request type and send back the result.
+
+        (WebKit::WebProcessProxy::secItemRequest):
+        Dispatch handleSecItemRequest on a global dispatch queue.
+
+        (WebKit::handleSecKeychainItemRequest):
+        Call the right SecKeychainItem function depending on the request type and send back the result.
+        
+        (WebKit::WebProcessProxy::secKeychainItemRequest):
+        Dispatch handleSecKeychainItemRequest on a global dispatch queue.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update for added/removed files.
+
+        * WebProcess/WebProcess.h:
+        Add secItemResponse and secKeychainItemResponse message handlers.
+
+        * WebProcess/WebProcess.messages.in:
+        Add SecItemResponse and SecKeychainItemResponse messages.
+
+        * WebProcess/mac/CoreIPCClientRunLoop.h:
+        * WebProcess/mac/CoreIPCClientRunLoop.mm:
+        This is no longer needed.
+
+        * WebProcess/mac/KeychainItemShimMethods.h:
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::managedAttributeLists):
+        Make this an atomically initialized static.
+
+        (WebKit::managedAttributeListsMutex):
+        Add an atomically initialized mutex.
+
+        (WebKit::allocateAttributeListContents):
+        Use the managedAttributeListsMutex to make this function callable from any thread.
+
+        (WebKit::managedKeychainItemContents):
+        Make this an atomically initialized static.
+        
+        (WebKit::managedKeychainItemContentsMutex):
+        Add an atomically initialized mutex.
+
+        (WebKit::allocateKeychainItemContentData):
+        Use the managedAttributeListsMutex to make this function callable from any thread.
+
+        (WebKit::webFreeAttributeListContent):
+        Use locking so this can be called from any thread.
+
+        (WebKit::webFreeKeychainItemContent):
+        Ditto.
+
+        (WebKit::responseMap):
+        Add responseMap thread-safe singleton for holding incoming responses.
+
+        (WebKit::generateSecKeychainItemRequestID):
+        Return a unique item request id, using OSAtomicIncrement64Barrier for atomicity.
+
+        (WebKit::didReceiveSecKeychainItemResponse):
+        Pass the response over the response map.
+
+        (WebKit::sendSeqKeychainItemRequest):
+        Send a request message and wait for a response using ResponseMap::waitForResponse.
+
+        (WebKit::webSecKeychainItemCopyContent):
+        Send a request using sendSeqKeychainItemRequest.
+
+        (WebKit::webSecKeychainItemCreateFromContent):
+        Ditto.
+
+        (WebKit::webSecKeychainItemModifyContent):
+        Ditto.
+
+        * WebProcess/mac/KeychainShimResponseMap.h:
+        New thread-safe helper class that stores a map of responses and lets client wait for a response
+        with a given ID.
+
+        (KeychainShimResponseMap::waitForResponse):
+        Wait until the response is available in the hash map, then return it.
+
+        (KeychainShimResponseMap::didReceiveResponse):
+        Add the response to the hash map and signal the condition variable.
+
+        * WebProcess/mac/SecItemShimMethods.h:
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::responseMap):
+        Add responseMap thread-safe singleton for holding incoming responses.
+
+        (WebKit::generateSecItemRequestID):
+        Return a unique item request id, using OSAtomicIncrement64Barrier for atomicity.
+
+        (WebKit::didReceiveSecItemResponse):
+        Pass the response over the response map.
+
+        (WebKit::sendSeqItemRequest):
+        Send a request message and wait for a response using ResponseMap::waitForResponse.
+
+        (WebKit::webSecItemCopyMatching):
+        Send a request using sendSeqItemRequest.
+
+        (WebKit::webSecItemAdd):
+        Ditto.
+
+        (WebKit::webSecItemUpdate):
+        Ditto.
+
+        (WebKit::webSecItemDelete):
+        Ditto.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::secItemResponse):
+        Call didReceiveSecItemResponse.
+
+        (WebKit::WebProcess::secKeychainItemResponse):
+        Call didReceiveSecKeychainItemResponse.
+
+2012-01-10  Anders Carlsson  <andersca@apple.com>
+
         DispatchOnConnectionQueue messages should have a Connection parameter
         https://bugs.webkit.org/show_bug.cgi?id=75986
 

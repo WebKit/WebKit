@@ -75,4 +75,9 @@ messages -> WebProcess {
 
     GetWebCoreStatistics(uint64_t callbackID)
     GarbageCollectJavaScriptObjects()
+
+#if PLATFORM(MAC)
+    SecItemResponse(uint64_t requestID, WebKit::SecItemResponseData response) DispatchOnConnectionQueue
+    SecKeychainItemResponse(uint64_t requestID, WebKit::SecKeychainItemResponseData response) DispatchOnConnectionQueue
+#endif
 }

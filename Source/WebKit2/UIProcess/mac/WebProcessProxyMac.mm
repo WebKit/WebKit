@@ -30,82 +30,105 @@
 #import "SecItemResponseData.h"
 #import "SecKeychainItemRequestData.h"
 #import "SecKeychainItemResponseData.h"
+#import "WebProcessMessages.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import <Security/SecItem.h>
 
 namespace WebKit {
 
-void WebProcessProxy::secItemCopyMatching(const SecItemRequestData& queryData, SecItemResponseData& result)
+static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
-    CFDictionaryRef query = queryData.query();
-    CFTypeRef resultObjectRef;
-    OSStatus resultCode = SecItemCopyMatching(query, &resultObjectRef);
+    SecItemResponseData response;
 
-    RetainPtr<CFTypeRef> resultObject(AdoptCF, resultObjectRef);
-    result = SecItemResponseData(resultCode, resultObject.get());
+    switch (request.type()) {
+        case SecItemRequestData::CopyMatching: {
+            CFTypeRef resultObject = 0;
+            OSStatus resultCode = SecItemCopyMatching(request.query(), &resultObject);
+            response = SecItemResponseData(resultCode, adoptCF(resultObject).get());
+            break;
+        }
+
+        case SecItemRequestData::Add: {
+            CFTypeRef resultObject = 0;
+            OSStatus resultCode = SecItemAdd(request.query(), &resultObject);
+            response = SecItemResponseData(resultCode, adoptCF(resultObject).get());
+            break;
+        }
+
+        case SecItemRequestData::Update: {
+            OSStatus resultCode = SecItemUpdate(request.query(), request.attributesToMatch());
+            response = SecItemResponseData(resultCode, 0);
+            break;
+        }
+
+        case SecItemRequestData::Delete: {
+            OSStatus resultCode = SecItemDelete(request.query());
+            response = SecItemResponseData(resultCode, 0);
+            break;
+        }
+
+        default:
+            return;
+    }
+
+    connection->send(Messages::WebProcess::SecItemResponse(requestID, response), 0);
 }
 
-void WebProcessProxy::secItemAdd(const SecItemRequestData& queryData, SecItemResponseData& result)
+void WebProcessProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
-    CFDictionaryRef query = queryData.query();
-    CFTypeRef resultObjectRef;
-    OSStatus resultCode = SecItemAdd(query, &resultObjectRef);
-
-    RetainPtr<CFTypeRef> resultObject(AdoptCF, resultObjectRef);
-    result = SecItemResponseData(resultCode, resultObject.get());
+    // Since we don't want the connection work queue to be held up, we do all
+    // keychain interaction work on a global dispatch queue.
+    dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(keychainWorkQueue, bind(handleSecItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
 }
 
-void WebProcessProxy::secItemUpdate(const SecItemRequestData& queryData, SecItemResponseData& result)
+static void handleSecKeychainItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecKeychainItemRequestData& request)
 {
-    CFDictionaryRef query = queryData.query();
-    CFDictionaryRef attributesToMatch = queryData.attributesToMatch();
-    OSStatus resultCode;
+    SecKeychainItemResponseData response;
 
-    resultCode = SecItemUpdate(query, attributesToMatch);
+    switch (request.type()) {
+        case SecKeychainItemRequestData::CopyContent: {
+            SecKeychainItemRef item = request.keychainItem();
+            SecItemClass itemClass;
+            SecKeychainAttributeList* attrList = request.attributeList();    
+            UInt32 length = 0;
+            void* outData = 0;
 
-    result = SecItemResponseData(resultCode, 0);
+            OSStatus resultCode = SecKeychainItemCopyContent(item, &itemClass, attrList, &length, &outData);
+            RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, static_cast<const UInt8*>(outData), length));
+            response = SecKeychainItemResponseData(resultCode, itemClass, attrList, data.get());
+
+            SecKeychainItemFreeContent(attrList, outData);
+            break;
+        }
+
+        case SecKeychainItemRequestData::CreateFromContent: {
+            SecKeychainItemRef keychainItem;
+
+            OSStatus resultCode = SecKeychainItemCreateFromContent(request.itemClass(), request.attributeList(), request.length(), request.data(), 0, 0, &keychainItem);
+            response = SecKeychainItemResponseData(resultCode,  adoptCF(keychainItem));
+            break;
+        }
+
+        case SecKeychainItemRequestData::ModifyContent: {
+            OSStatus resultCode = SecKeychainItemModifyContent(request.keychainItem(), request.attributeList(), request.length(), request.data());
+            response = resultCode;
+            break;
+        }
+
+        default:
+            return;
+    }
+
+    connection->send(Messages::WebProcess::SecKeychainItemResponse(requestID, response), 0);
 }
 
-void WebProcessProxy::secItemDelete(const SecItemRequestData& queryData, SecItemResponseData& result)
+void WebProcessProxy::secKeychainItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecKeychainItemRequestData& request)
 {
-    CFDictionaryRef query = queryData.query();
-    OSStatus resultCode;
-
-    resultCode = SecItemDelete(query);
-
-    result = SecItemResponseData(resultCode, 0);
-}
-
-void WebProcessProxy::secKeychainItemCopyContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
-{
-    SecKeychainItemRef item = request.keychainItem();
-    SecItemClass itemClass;
-    SecKeychainAttributeList* attrList = request.attributeList();    
-    UInt32 length = 0;
-    void* outData = 0;
-
-    OSStatus resultCode = SecKeychainItemCopyContent(item, &itemClass, attrList, &length, &outData);
-    
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, static_cast<const UInt8*>(outData), length));
-    response = SecKeychainItemResponseData(resultCode, itemClass, attrList, data.get());
-    
-    SecKeychainItemFreeContent(attrList, outData);
-}
-
-void WebProcessProxy::secKeychainItemCreateFromContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
-{
-    SecKeychainItemRef keychainItem;
-    
-    OSStatus resultCode = SecKeychainItemCreateFromContent(request.itemClass(), request.attributeList(), request.length(), request.data(), 0, 0, &keychainItem);
-
-    response = SecKeychainItemResponseData(resultCode, RetainPtr<SecKeychainItemRef>(AdoptCF, keychainItem));
-}
-
-void WebProcessProxy::secKeychainItemModifyContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
-{
-    OSStatus resultCode = SecKeychainItemModifyContent(request.keychainItem(), request.attributeList(), request.length(), request.data());
-    
-    response = resultCode;
+    // Since we don't want the connection work queue to be held up, we do all
+    // keychain interaction work on a global dispatch queue.
+    dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(keychainWorkQueue, bind(handleSecKeychainItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
 }
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()

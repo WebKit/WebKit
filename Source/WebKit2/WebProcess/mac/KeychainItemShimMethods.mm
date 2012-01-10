@@ -28,7 +28,7 @@
 
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 
-#import "CoreIPCClientRunLoop.h"
+#import "KeychainShimResponseMap.h"
 #import "SecKeychainItemRequestData.h"
 #import "SecKeychainItemResponseData.h"
 #import "WebProcess.h"
@@ -40,34 +40,30 @@
 namespace WebKit {
 
 // Methods to allow the shim to manage memory for its own AttributeList contents.
-static HashSet<SecKeychainAttributeList*>& shimManagedAttributeLists()
+static HashSet<SecKeychainAttributeList*>& managedAttributeLists()
 {
-    DEFINE_STATIC_LOCAL(HashSet<SecKeychainAttributeList*>, set, ());
-    return set;
+    AtomicallyInitializedStatic(HashSet<SecKeychainAttributeList*>&, managedAttributeLists = *new HashSet<SecKeychainAttributeList*>);
+
+    return managedAttributeLists;
 }
 
-static void freeAttributeListContents(SecKeychainAttributeList* attrList)
+static Mutex& managedAttributeListsMutex()
 {
-    ASSERT(shimManagedAttributeLists().contains(attrList));
-    ASSERT(attrList);
-    
-    for (size_t i = 0; i < attrList->count; ++i)
-        free(attrList->attr[i].data);
-
-    shimManagedAttributeLists().remove(attrList);
+    AtomicallyInitializedStatic(Mutex&, managedAttributeListsMutex = *new Mutex);
+    return managedAttributeListsMutex;
 }
 
 static void allocateAttributeListContents(const Vector<KeychainAttribute>& attributes, SecKeychainAttributeList* attrList)
 {
-    ASSERT(isMainThread());
-    
     if (!attrList)
         return;
-    
-    ASSERT(!shimManagedAttributeLists().contains(attrList));
+
+    MutexLocker locker(managedAttributeListsMutex());
+
+    ASSERT(!managedAttributeLists().contains(attrList));
     ASSERT(attributes.size() == attrList->count);
     
-    shimManagedAttributeLists().add(attrList);
+    managedAttributeLists().add(attrList);
     
     for (size_t i = 0; i < attrList->count; ++i) {
         ASSERT(attributes[i].tag == attrList->attr[i].tag);
@@ -87,15 +83,20 @@ static void allocateAttributeListContents(const Vector<KeychainAttribute>& attri
 }
 
 // Methods to allow the shim to manage memory for its own KeychainItem content data.
-static HashSet<void*>& shimManagedKeychainItemContents()
+static HashSet<void*>& managedKeychainItemContents()
 {
-    DEFINE_STATIC_LOCAL(HashSet<void*>, set, ());
-    return set;
+    AtomicallyInitializedStatic(HashSet<void*>&, managedKeychainItemContents = *new HashSet<void*>);
+    return managedKeychainItemContents;
+}
+
+static Mutex& managedKeychainItemContentsMutex()
+{
+    AtomicallyInitializedStatic(Mutex&, managedKeychainItemContentsMutex = *new Mutex);
+    return managedKeychainItemContentsMutex;
 }
 
 static void allocateKeychainItemContentData(CFDataRef cfData, UInt32* length, void** data)
 {
-    ASSERT(isMainThread());
     ASSERT((length && data) || (!length && !data));
     if (!data)
         return;
@@ -109,184 +110,107 @@ static void allocateKeychainItemContentData(CFDataRef cfData, UInt32* length, vo
     *length = CFDataGetLength(cfData);
     *data = malloc(*length);
     CFDataGetBytes(cfData, CFRangeMake(0, *length), (UInt8*)*data);
-    shimManagedKeychainItemContents().add(*data);
-}
 
-// FIXME (https://bugs.webkit.org/show_bug.cgi?id=60975) - Once CoreIPC supports sync messaging from a secondary thread,
-// we can remove FreeAttributeListContext, FreeKeychainItemDataContext, KeychainItemAPIContext, and these 5 main-thread methods, 
-// and we can have the shim methods call out directly from whatever thread they're called on.
-
-struct FreeAttributeListContext {
-    SecKeychainAttributeList* attrList;
-    bool freed;
-};
-
-static void webFreeAttributeListContentOnMainThread(void* voidContext)
-{
-    FreeAttributeListContext* context = (FreeAttributeListContext*)voidContext;
-    
-    if (!shimManagedAttributeLists().contains(context->attrList)) {
-        context->freed = false;
-        return;
-    }
-    
-    freeAttributeListContents(context->attrList);
-    context->freed = true;
+    MutexLocker locker(managedKeychainItemContentsMutex());
+    managedKeychainItemContents().add(*data);
 }
 
 static bool webFreeAttributeListContent(SecKeychainAttributeList* attrList)
 {
-    FreeAttributeListContext context;
-    context.attrList = attrList;
+    MutexLocker locker(managedAttributeListsMutex());
+
+    if (!managedAttributeLists().contains(attrList))
+        return false;
+
+    for (size_t i = 0; i < attrList->count; ++i)
+        free(attrList->attr[i].data);
     
-    callOnCoreIPCClientRunLoopAndWait(webFreeAttributeListContentOnMainThread, &context);
-
-    return context.freed;
-}
-
-struct FreeKeychainItemDataContext {
-    void* data;
-    bool freed;
-};
-
-static void webFreeKeychainItemContentOnMainThread(void* voidContext)
-{
-    FreeKeychainItemDataContext* context = (FreeKeychainItemDataContext*)voidContext;
-    
-    if (!shimManagedKeychainItemContents().contains(context->data)) {
-        context->freed = false;
-        return;
-    }
-        
-    shimManagedKeychainItemContents().remove(context->data);
-    free(context->data);
-    context->freed = true;
+    managedAttributeLists().remove(attrList);
+    return true;
 }
 
 static bool webFreeKeychainItemContent(void* data)
 {
-    FreeKeychainItemDataContext context;
-    context.data = data;
-    
-    callOnCoreIPCClientRunLoopAndWait(webFreeKeychainItemContentOnMainThread, &context);
+    MutexLocker locker(managedKeychainItemContentsMutex());
 
-    return context.freed;
+    HashSet<void*>::iterator it = managedKeychainItemContents().find(data);
+    if (it == managedKeychainItemContents().end())
+        return false;
+
+    managedKeychainItemContents().remove(it);
+    return true;
 }
 
-struct SecKeychainItemContext {
-    SecKeychainItemRef item;
-    
-    SecKeychainAttributeList* attributeList;
-    SecItemClass initialItemClass;
-    UInt32 length;
-    const void* data;
-    
-    SecItemClass* resultItemClass;
-    UInt32* resultLength;
-    void** resultData;
-
-    OSStatus resultCode;
-};
-
-static void webSecKeychainItemCopyContentOnMainThread(void* voidContext)
+static KeychainShimResponseMap<SecKeychainItemResponseData>& responseMap()
 {
-    SecKeychainItemContext* context = (SecKeychainItemContext*)voidContext;
+    AtomicallyInitializedStatic(KeychainShimResponseMap<SecKeychainItemResponseData>&, responseMap = *new KeychainShimResponseMap<SecKeychainItemResponseData>);
+    return responseMap;
+}
 
-    SecKeychainItemRequestData requestData(context->item, context->attributeList);
-    SecKeychainItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecKeychainItemCopyContent(requestData), Messages::WebProcessProxy::SecKeychainItemCopyContent::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-        
-    allocateAttributeListContents(response.attributes(), context->attributeList);
-    allocateKeychainItemContentData(response.data(), context->resultLength, context->resultData);
-    if (context->resultItemClass)
-        *context->resultItemClass = response.itemClass();
-    context->resultCode = response.resultCode();
+static uint64_t generateSecKeychainItemRequestID()
+{
+    static int64_t uniqueSecKeychainItemRequestID;
+    return OSAtomicIncrement64Barrier(&uniqueSecKeychainItemRequestID);
+}
+
+void didReceiveSecKeychainItemResponse(uint64_t requestID, const SecKeychainItemResponseData& response)
+{
+    responseMap().didReceiveResponse(requestID, adoptPtr(new SecKeychainItemResponseData(response)));
+}
+
+static PassOwnPtr<SecKeychainItemResponseData> sendSeqKeychainItemRequest(const SecKeychainItemRequestData& request)
+{
+    uint64_t requestID = generateSecKeychainItemRequestID();
+    if (!WebProcess::shared().connection()->send(Messages::WebProcessProxy::SecKeychainItemRequest(requestID, request), 0))
+        return nullptr;
+
+    return responseMap().waitForResponse(requestID);
 }
 
 static OSStatus webSecKeychainItemCopyContent(SecKeychainItemRef item, SecItemClass* itemClass, SecKeychainAttributeList* attrList, UInt32* length, void** outData)
 {
-    SecKeychainItemContext context;
-    memset(&context, 0, sizeof(SecKeychainItemContext));
-    context.item = item;
-    context.resultItemClass = itemClass;
-    context.attributeList = attrList;
-    context.resultLength = length;
-    context.resultData = outData;
+    SecKeychainItemRequestData request(SecKeychainItemRequestData::CopyContent, item, attrList);
+    OwnPtr<SecKeychainItemResponseData> response = sendSeqKeychainItemRequest(request);
+    if (!response) {
+        ASSERT_NOT_REACHED();
+        return errSecInteractionNotAllowed;
+    }
 
-    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemCopyContentOnMainThread, &context);
+    if (itemClass)
+        *itemClass = response->itemClass();
+    allocateAttributeListContents(response->attributes(), attrList);
+    allocateKeychainItemContentData(response->data(), length, outData);
 
-    // FIXME: should return context.resultCode. Returning noErr is a workaround for <rdar://problem/9520886>;
+    // FIXME: should return response->resultCode(). Returning noErr is a workaround for <rdar://problem/9520886>;
     // the authentication should fail anyway, since on error no data will be returned.
     return noErr;
 }
 
-static void webSecKeychainItemCreateFromContentOnMainThread(void* voidContext)
-{
-    SecKeychainItemContext* context = (SecKeychainItemContext*)voidContext;
-
-    SecKeychainItemRequestData requestData(context->initialItemClass, context->attributeList, context->length, context->data);
-    SecKeychainItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecKeychainItemCreateFromContent(requestData), Messages::WebProcessProxy::SecKeychainItemCreateFromContent::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (response.keychainItem())
-        CFRetain(response.keychainItem());
-    context->item = response.keychainItem();
-    context->resultCode = response.resultCode();
-}
-
 static OSStatus webSecKeychainItemCreateFromContent(SecItemClass itemClass, SecKeychainAttributeList* attrList, UInt32 length, const void* data, SecKeychainItemRef *item)
 {
-    SecKeychainItemContext context;
-    memset(&context, 0, sizeof(SecKeychainItemContext));
-    context.initialItemClass = itemClass;
-    context.attributeList = attrList;
-    context.length = length;
-    context.data = data;
-    
-    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemCreateFromContentOnMainThread, &context);
-    
-    if (item)
-        *item = context.item;
-    else
-        CFRelease(context.item);
-
-    return context.resultCode;
-}
-
-static void webSecKeychainItemModifyContentOnMainThread(void* voidContext)
-{
-    SecKeychainItemContext* context = (SecKeychainItemContext*)voidContext;
-
-    SecKeychainItemRequestData requestData(context->item, context->attributeList, context->length, context->data);
-    SecKeychainItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecKeychainItemModifyContent(requestData), Messages::WebProcessProxy::SecKeychainItemModifyContent::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
+    SecKeychainItemRequestData request(SecKeychainItemRequestData::CreateFromContent, itemClass, attrList, length, data);
+    OwnPtr<SecKeychainItemResponseData> response = sendSeqKeychainItemRequest(request);
+    if (!response) {
         ASSERT_NOT_REACHED();
-        return;
+        return errSecInteractionNotAllowed;
     }
-        
-    context->resultCode = response.resultCode();
+
+    if (item)
+        *item = RetainPtr<SecKeychainItemRef>(response->keychainItem()).leakRef();
+
+    return response->resultCode();
 }
 
 static OSStatus webSecKeychainItemModifyContent(SecKeychainItemRef itemRef, const SecKeychainAttributeList* attrList, UInt32 length, const void* data)
 {
-    SecKeychainItemContext context;
-    context.item = itemRef;
-    context.attributeList = (SecKeychainAttributeList*)attrList;
-    context.length = length;
-    context.data = data;
-    
-    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemModifyContentOnMainThread, &context);
-    
-    return context.resultCode;
+    SecKeychainItemRequestData request(SecKeychainItemRequestData::ModifyContent, itemRef, (SecKeychainAttributeList*)attrList, length, data);
+    OwnPtr<SecKeychainItemResponseData> response = sendSeqKeychainItemRequest(request);
+    if (!response) {
+        ASSERT_NOT_REACHED();
+        return errSecInteractionNotAllowed;
+    }
+
+    return response->resultCode();
 }
 
 void initializeKeychainItemShim()

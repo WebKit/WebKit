@@ -30,6 +30,9 @@ namespace WebKit {
 
 void initializeSecItemShim();
 
+class SecItemResponseData;
+void didReceiveSecItemResponse(uint64_t requestID, const SecItemResponseData&);
+
 }
 
 #endif // SecItemShimMethods_h

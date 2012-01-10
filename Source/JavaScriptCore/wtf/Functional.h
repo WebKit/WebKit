@@ -136,6 +136,26 @@ private:
     R (*m_function)(P1, P2);
 };
 
+template<typename R, typename P1, typename P2, typename P3>
+class FunctionWrapper<R (*)(P1, P2, P3)> {
+public:
+    typedef R ResultType;
+    static const bool shouldRefFirstParameter = false;
+
+    explicit FunctionWrapper(R (*function)(P1, P2, P3))
+        : m_function(function)
+    {
+    }
+
+    R operator()(P1 p1, P2 p2, P3 p3)
+    {
+        return m_function(p1, p2, p3);
+    }
+
+private:
+    R (*m_function)(P1, P2, P3);
+};
+
 template<typename R, typename C>
 class FunctionWrapper<R (C::*)()> {
 public:

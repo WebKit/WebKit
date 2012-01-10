@@ -30,6 +30,9 @@ namespace WebKit {
 
 void initializeKeychainItemShim();
 
+class SecKeychainItemResponseData;
+void didReceiveSecKeychainItemResponse(uint64_t requestID, const SecKeychainItemResponseData&);
+
 }
 
 #endif // KeychainItemShimMethods_h

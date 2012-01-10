@@ -1,3 +1,14 @@
+2012-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Hang opening movie that requires authentication
+        https://bugs.webkit.org/show_bug.cgi?id=75989
+        <rdar://problem/9601915>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Functional.h:
+        Add function wrapper for a function that takes three parameters.
+
 2012-01-10  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlock::m_numParameters should be encapsulated

@@ -32,29 +32,36 @@
 namespace WebKit {
 
 SecKeychainItemRequestData::SecKeychainItemRequestData()
-    : m_itemClass(0)
+    : m_type(Invalid)
+    , m_itemClass(0)
+    , m_attrs(adoptRef(new Attributes))
 {
 }
 
-SecKeychainItemRequestData::SecKeychainItemRequestData(SecKeychainItemRef item, SecKeychainAttributeList* attrList)
-    : m_keychainItem(item)
+SecKeychainItemRequestData::SecKeychainItemRequestData(Type type, SecKeychainItemRef item, SecKeychainAttributeList* attrList)
+    : m_type(type)
+    , m_keychainItem(item)
     , m_itemClass(0)
+    , m_attrs(adoptRef(new Attributes))
 {
     initializeWithAttributeList(attrList);
 }
 
-SecKeychainItemRequestData::SecKeychainItemRequestData(SecKeychainItemRef item, SecKeychainAttributeList* attrList, UInt32 length, const void* data)
-    : m_keychainItem(item)
+SecKeychainItemRequestData::SecKeychainItemRequestData(Type type, SecKeychainItemRef item, SecKeychainAttributeList* attrList, UInt32 length, const void* data)
+    : m_type(type)
+    , m_keychainItem(item)
     , m_itemClass(0)
     , m_dataReference(static_cast<const uint8_t*>(data), length)
+    , m_attrs(adoptRef(new Attributes))
 {
     initializeWithAttributeList(attrList);
 }
 
-
-SecKeychainItemRequestData::SecKeychainItemRequestData(SecItemClass itemClass, SecKeychainAttributeList* attrList, UInt32 length, const void* data)
-    : m_itemClass(itemClass)
+SecKeychainItemRequestData::SecKeychainItemRequestData(Type type, SecItemClass itemClass, SecKeychainAttributeList* attrList, UInt32 length, const void* data)
+    : m_type(type)
+    , m_itemClass(itemClass)
     , m_dataReference(static_cast<const uint8_t*>(data), length)
+    , m_attrs(adoptRef(new Attributes))
 {
     initializeWithAttributeList(attrList);
 }
@@ -71,7 +78,7 @@ void SecKeychainItemRequestData::initializeWithAttributeList(SecKeychainAttribut
 SecKeychainItemRequestData::~SecKeychainItemRequestData()
 {
 #ifndef NDEBUG
-    if (!m_attributeList)
+    if (!m_attrs->m_attributeList)
         return;
 
     // If this request was for SecKeychainItemModifyContent:
@@ -80,42 +87,44 @@ SecKeychainItemRequestData::~SecKeychainItemRequestData()
     // If this request was for SecKeychainItemCopyContent:
     //   - Security APIs should've filled in the data in the AttributeList and that data 
     //     should've been freed by SecKeychainItemFreeContent.
-    for (size_t i = 0; i < m_attributeList->count; ++i) {
+    for (size_t i = 0; i < m_attrs->m_attributeList->count; ++i) {
         if (m_keychainAttributes[i].data)
-            ASSERT(m_attributeList->attr[i].data == CFDataGetBytePtr(m_keychainAttributes[i].data.get()));
+            ASSERT(m_attrs->m_attributeList->attr[i].data == CFDataGetBytePtr(m_keychainAttributes[i].data.get()));
         else
-            ASSERT(!m_attributeList->attr[i].data);
+            ASSERT(!m_attrs->m_attributeList->attr[i].data);
     }
 #endif
 }
 
 SecKeychainAttributeList* SecKeychainItemRequestData::attributeList() const
 {
-    if (m_attributeList || m_keychainAttributes.isEmpty())
-        return m_attributeList.get();
+    if (m_attrs->m_attributeList || m_keychainAttributes.isEmpty())
+        return m_attrs->m_attributeList.get();
     
-    m_attributeList = adoptPtr(new SecKeychainAttributeList);
-    m_attributeList->count = m_keychainAttributes.size();
-    m_attributes = adoptArrayPtr(new SecKeychainAttribute[m_attributeList->count]);
-    m_attributeList->attr = m_attributes.get();
+    m_attrs->m_attributeList = adoptPtr(new SecKeychainAttributeList);
+    m_attrs->m_attributeList->count = m_keychainAttributes.size();
+    m_attrs->m_attributes = adoptArrayPtr(new SecKeychainAttribute[m_attrs->m_attributeList->count]);
+    m_attrs->m_attributeList->attr = m_attrs->m_attributes.get();
 
-    for (size_t i = 0; i < m_attributeList->count; ++i) {
-        m_attributeList->attr[i].tag = m_keychainAttributes[i].tag;
+    for (size_t i = 0; i < m_attrs->m_attributeList->count; ++i) {
+        m_attrs->m_attributeList->attr[i].tag = m_keychainAttributes[i].tag;
         if (!m_keychainAttributes[i].data) {
-            m_attributeList->attr[i].length = 0;
-            m_attributeList->attr[i].data = 0;
+            m_attrs->m_attributeList->attr[i].length = 0;
+            m_attrs->m_attributeList->attr[i].data = 0;
             continue;
         }
         
-        m_attributeList->attr[i].length = CFDataGetLength(m_keychainAttributes[i].data.get());
-        m_attributeList->attr[i].data = const_cast<void*>(static_cast<const void*>(CFDataGetBytePtr(m_keychainAttributes[i].data.get())));
+        m_attrs->m_attributeList->attr[i].length = CFDataGetLength(m_keychainAttributes[i].data.get());
+        m_attrs->m_attributeList->attr[i].data = const_cast<void*>(static_cast<const void*>(CFDataGetBytePtr(m_keychainAttributes[i].data.get())));
     }
     
-    return m_attributeList.get();
+    return m_attrs->m_attributeList.get();
 }
 
 void SecKeychainItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
+    encoder->encodeEnum(m_type);
+
     encoder->encodeBool(m_keychainItem);
     if (m_keychainItem)
         CoreIPC::encode(encoder, m_keychainItem.get());
@@ -130,6 +139,9 @@ void SecKeychainItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 
 bool SecKeychainItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecKeychainItemRequestData& secKeychainItemRequestData)
 {
+    if (!decoder->decodeEnum(secKeychainItemRequestData.m_type))
+        return false;
+
     bool hasKeychainItem;
     if (!decoder->decodeBool(hasKeychainItem))
         return false;

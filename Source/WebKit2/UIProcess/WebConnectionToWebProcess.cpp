@@ -46,8 +46,6 @@ WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process, C
 #elif PLATFORM(QT)
     m_connection->setShouldCloseConnectionOnProcessTermination(process->processIdentifier());
 #endif
-
-    m_connection->open();
 }
 
 void WebConnectionToWebProcess::invalidate()

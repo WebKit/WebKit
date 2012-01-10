@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace WebKit {
+#ifndef KeychainShimResponseMap_h
+#define KeychainShimResponseMap_h
 
-typedef void (*FunctionWithContext)(void* context);
+#include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/ThreadingPrimitives.h>
 
-// Call the function on a thread where it's safe to send a synchronous CoreIPC message.
-// We can't use WTF's callOnMainThreadAndWait because it doesn't support enough run loop modes.
-void callOnCoreIPCClientRunLoopAndWait(FunctionWithContext, void* context);
+template<typename T>
+class KeychainShimResponseMap {
+public:
+    PassOwnPtr<T> waitForResponse(uint64_t requestID)
+    {
+        while (true) {
+            MutexLocker locker(m_mutex);
 
-}
+            if (OwnPtr<T> response = m_responses.take(requestID))
+                return response.release();
+
+            m_condition.wait(m_mutex);
+        }
+
+        return nullptr;
+    }
+
+    void didReceiveResponse(uint64_t requestID, PassOwnPtr<T> response)
+    {
+        MutexLocker locker(m_mutex);
+        ASSERT(!m_responses.contains(requestID));
+
+        m_responses.set(requestID, response);
+        m_condition.signal();
+    }
+
+private:
+    Mutex m_mutex;
+    ThreadCondition m_condition;
+
+    HashMap<uint64_t, OwnPtr<T> > m_responses;
+};
+
+
+
+#endif // KeychainShimResponseMap_h
