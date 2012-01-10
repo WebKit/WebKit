@@ -259,7 +259,14 @@ JSStringRef AccessibilityUIElement::language()
 
 JSStringRef AccessibilityUIElement::helpText() const
 {
-    return 0;
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
+    ASSERT(ATK_IS_OBJECT(m_element));
+
+    CString helpText = DumpRenderTreeSupportGtk::accessibilityHelpText(ATK_OBJECT(m_element));
+    GOwnPtr<gchar> axHelpText(g_strdup_printf("AXHelp: %s", helpText.data()));
+    return JSStringCreateWithUTF8CString(axHelpText.get());
 }
 
 double AccessibilityUIElement::x()

@@ -24,6 +24,7 @@
 
 #include "APICast.h"
 #include "AXObjectCache.h"
+#include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
 #include "DOMWrapperWorld.h"
@@ -778,6 +779,18 @@ void DumpRenderTreeSupportGtk::incrementAccessibilityValue(AtkObject* axObject)
 void DumpRenderTreeSupportGtk::decrementAccessibilityValue(AtkObject* axObject)
 {
     modifyAccessibilityValue(axObject, false);
+}
+
+CString DumpRenderTreeSupportGtk::accessibilityHelpText(AtkObject* axObject)
+{
+    if (!axObject || !WEBKIT_IS_ACCESSIBLE(axObject))
+        return CString();
+
+    AccessibilityObject* coreObject = webkit_accessible_get_accessibility_object(WEBKIT_ACCESSIBLE(axObject));
+    if (!coreObject)
+        return CString();
+
+    return coreObject->helpText().utf8();
 }
 
 void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)

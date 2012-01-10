@@ -388,7 +388,6 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 # TESTS FAILING
 ###############################################################################
 accessibility/aria-checkbox-sends-notification.html
-accessibility/aria-help.html
 accessibility/aria-hidden.html
 accessibility/aria-hidden-with-elements.html
 accessibility/aria-labelledby-on-input.html
@@ -1123,9 +1122,6 @@ http/tests/inspector/compiler-source-mapping-debug.html
 # https://bugs.webkit.org/show_bug.cgi?id=44316
 platform/gtk/accessibility/object-attributes.html
 platform/gtk/accessibility/title-and-alt.html
-
-# [GTK] https://bugs.webkit.org/show_bug.cgi?id=40193
-accessibility/aria-describedby-on-input.html
 
 # fails on 32-bits debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=50389

@@ -1,3 +1,18 @@
+2012-01-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        AX: support helpText() in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=40193
+
+        Reviewed by Chris Fleizach.
+
+        Add support for retrieving WebCore's AccessibilityObject's
+        helpText from the GTK DumpRenderTree.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::accessibilityHelpText): Returns result
+        of calling to helpText() over the core accessibility object's.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2012-01-09  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Regression: text-inserted events lack text inserted and current line

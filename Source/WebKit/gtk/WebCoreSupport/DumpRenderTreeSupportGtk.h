@@ -101,6 +101,7 @@ public:
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);
     static void decrementAccessibilityValue(AtkObject*);
+    static WTF::CString accessibilityHelpText(AtkObject*);
 
     // TextInputController
     static void setComposition(WebKitWebView*, const char*, int start, int length);
