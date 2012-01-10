@@ -30,6 +30,7 @@
 #include "cc/CCTiledLayerImpl.h"
 
 #include "LayerRendererChromium.h"
+#include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include <wtf/text/WTFString.h>
@@ -37,6 +38,9 @@
 using namespace std;
 
 namespace WebCore {
+
+static const int debugTileBorderWidth = 1;
+static const int debugTileBorderAlpha = 100;
 
 class ManagedTexture;
 
@@ -156,6 +160,11 @@ void CCTiledLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState
 
             const GC3Dint textureFilter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             quadList.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tile->textureId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
+
+            if (hasDebugBorders()) {
+                Color color(debugBorderColor().red(), debugBorderColor().green(), debugBorderColor().blue(), debugTileBorderAlpha);
+                quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, tileRect, color, debugTileBorderWidth));
+            }
         }
     }
 }

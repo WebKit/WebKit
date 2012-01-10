@@ -37,6 +37,7 @@ namespace WebKit {
 
 NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint)
     : m_contentPaint(contentPaint)
+    , m_showDebugBorders(false)
 {
     m_graphicsLayer = WebCore::GraphicsLayer::create(this);
 #ifndef NDEBUG
@@ -143,9 +144,15 @@ void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebC
     m_contentPaint->paint(context, adjustedClipRect);
 }
 
+void NonCompositedContentHost::setShowDebugBorders(bool showDebugBorders)
+{
+    m_showDebugBorders = showDebugBorders;
+    m_graphicsLayer->updateDebugIndicators();
+}
+
 bool NonCompositedContentHost::showDebugBorders() const
 {
-    return false;
+    return m_showDebugBorders;
 }
 
 bool NonCompositedContentHost::showRepaintCounter() const

@@ -2977,6 +2977,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         ccSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
+        m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
             m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);

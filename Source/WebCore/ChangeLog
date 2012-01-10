@@ -1,3 +1,31 @@
+2012-01-10  Adrienne Walker  <enne@google.com>
+
+        [chromium] Draw debug tile borders on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=75680
+
+        Reviewed by James Robinson.
+
+        On tiled layers, draw debug borders on the tiles themselves. By
+        default, these are one pixel wide and transparent, so should be
+        unobtrusive but informative. They are triggered when the layer itself
+        would have a debug border via the existing flags.
+
+        Also, fix the drawDebugBorderQuad function to handle arbitrarily
+        positioned quads, not just full layer quads. Also, fix alpha issue
+        with debug borders.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.cpp:
+        (WebCore::CCDebugBorderDrawQuad::CCDebugBorderDrawQuad):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::appendDebugBorderQuad):
+        (WebCore::CCLayerImpl::quadTransform):
+        (WebCore::CCLayerImpl::hasDebugBorders):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2012-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Missing Implementation of Public InspectorDOMAgent Function

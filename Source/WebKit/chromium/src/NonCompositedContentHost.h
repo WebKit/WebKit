@@ -61,6 +61,8 @@ public:
     void protectVisibleTileTextures();
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
+    void setShowDebugBorders(bool);
+
 protected:
     explicit NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint);
 
@@ -78,6 +80,7 @@ private:
     OwnPtr<WebCore::LayerPainterChromium> m_contentPaint;
     WebCore::IntSize m_viewportSize;
     int m_layerAdjustX;
+    bool m_showDebugBorders;
 };
 
 } // namespace WebKit

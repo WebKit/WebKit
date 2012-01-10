@@ -1,3 +1,23 @@
+2012-01-10  Adrienne Walker  <enne@google.com>
+
+        [chromium] Draw debug tile borders on composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=75680
+
+        Reviewed by James Robinson.
+
+        As debug borders are not a CCSetting and are instead grabbed directly
+        from each graphics layer, modify the NonCompositedContentHost to say
+        that its graphics layer has debug borders if the page settings demand
+        it.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setShowDebugBorders):
+        (WebKit::NonCompositedContentHost::showDebugBorders):
+        * src/NonCompositedContentHost.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-01-10  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix compilation with ENABLE_WEB_AUDIO=0

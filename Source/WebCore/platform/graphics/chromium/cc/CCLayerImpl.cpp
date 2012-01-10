@@ -135,9 +135,7 @@ void CCLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sha
 
 void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState) const
 {
-    if (!debugBorderColor().alpha())
-        return;
-    if (debugBorderWidth() <= 0)
+    if (!hasDebugBorders())
         return;
 
     IntRect layerRect(IntPoint(), bounds());
@@ -424,6 +422,11 @@ void CCLayerImpl::setDebugBorderWidth(float debugBorderWidth)
 
     m_debugBorderWidth = debugBorderWidth;
     m_layerPropertyChanged = true;
+}
+
+bool CCLayerImpl::hasDebugBorders() const
+{
+    return debugBorderColor().alpha() && debugBorderWidth() > 0;
 }
 
 void CCLayerImpl::setContentBounds(const IntSize& contentBounds)

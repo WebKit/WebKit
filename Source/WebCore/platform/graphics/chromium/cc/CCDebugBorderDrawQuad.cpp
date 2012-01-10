@@ -40,7 +40,7 @@ CCDebugBorderDrawQuad::CCDebugBorderDrawQuad(const CCSharedQuadState* sharedQuad
     , m_width(width)
 {
     m_quadOpaque = false;
-    if (m_color.alpha() != 1)
+    if (m_color.hasAlpha())
         m_needsBlending = true;
 }
 
