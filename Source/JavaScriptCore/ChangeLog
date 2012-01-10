@@ -1,3 +1,9 @@
+2012-01-09  Lucas Forschler  <lforschler@apple.com>
+
+        Windows Build fix.
+        
+        * API/JSRetainPtr.h:
+
 2011-1-6  Lucas Forschler  <lforschler@apple.com>
 
     Merge 104330

@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WARN_UNUSED_RETURN
+#define WARN_UNUSED_RETURN
+#endif
+
 #ifndef JSRetainPtr_h
 #define JSRetainPtr_h
 
