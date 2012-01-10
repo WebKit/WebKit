@@ -653,10 +653,11 @@ BUGCR89357 SKIP MAC : http/tests/inspector-enabled = PASS
 
 BUGCR67662 LINUX WIN : http/tests/inspector/console-websocket-error.html = TIMEOUT TEXT
 
-BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
-BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
-BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
-BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
+// Transferred time/size are not supported in DRT.
+WONTFIX SKIP : http/tests/inspector/network/network-timing.html = FAIL
+WONTFIX SKIP : http/tests/inspector/network/network-size.html = FAIL
+WONTFIX SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
+WONTFIX SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
 // PageAgent can not getCookies from DumpRenderTree.
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
