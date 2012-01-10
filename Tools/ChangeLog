@@ -1,3 +1,13 @@
+2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] DRT crashes with Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=75951
+
+        Reviewed by Ossy.
+
+        * DumpRenderTree/qt/fonts.conf: Add missing last-resort font fallback for Qt 5 where
+        Qt relies on font-config to define the default font family.
+
 2012-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r100130): Clean build feature is broken.
