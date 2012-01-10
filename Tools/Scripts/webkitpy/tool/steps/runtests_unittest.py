@@ -39,6 +39,7 @@ class RunTestsTest(unittest.TestCase):
         tool._deprecated_port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
         expected_stderr = """Running JavaScriptCore tests
+Running WebKit unit tests
 Running run-webkit-tests
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)

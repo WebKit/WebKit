@@ -105,6 +105,10 @@ class WebKitPort(object):
         return cls.script_shell_command("run-javascriptcore-tests")
 
     @classmethod
+    def run_webkit_unit_tests_command(cls):
+        return None
+
+    @classmethod
     def run_webkit_tests_command(cls):
         return cls.script_shell_command("run-webkit-tests")
 
@@ -238,6 +242,10 @@ class ChromiumPort(WebKitPort):
         command.append("--chromium")
         command.append("--update-chromium")
         return command
+
+    @classmethod
+    def run_webkit_unit_tests_command(cls):
+        return cls.script_shell_command("run-chromium-webkit-unit-tests")
 
     @classmethod
     def run_webkit_tests_command(cls):

@@ -61,6 +61,11 @@ class RunTests(AbstractStep):
             log("Running JavaScriptCore tests")
             self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
+        webkit_unit_tests_command = self._tool.port().run_webkit_unit_tests_command()
+        if webkit_unit_tests_command:
+            log("Running WebKit unit tests")
+            self._tool.executive.run_and_throw_if_fail(webkit_unit_tests_command, cwd=self._tool.scm().checkout_root)
+
         log("Running run-webkit-tests")
         args = self._tool.port().run_webkit_tests_command()
         if self._options.non_interactive:

@@ -1,3 +1,25 @@
+2012-01-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Run webkit_unit_tests as part of webkit-patch build-and-test
+        https://bugs.webkit.org/show_bug.cgi?id=75988
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (WebKitPort.run_webkit_unit_tests_command):
+        (WebKitPort):
+        (ChromiumPort.run_webkit_unit_tests_command):
+        (ChromiumPort):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_webkit_unit_tests_command):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.test_build_and_test):
+        (test_land):
+        (test_land_red_builders):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2012-01-09  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: add os_name, os_version to platforminfo
