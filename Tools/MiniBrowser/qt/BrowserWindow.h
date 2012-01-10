@@ -42,6 +42,8 @@ public:
     BrowserWindow(WindowOptions* = 0);
     ~BrowserWindow();
     void load(const QString& url);
+    void reload();
+    void focusAddressBar();
     QQuickWebView* webView() const;
 
     void updateVisualMockTouchPoints(const QList<QWindowSystemInterface::TouchPoint>& touchPoints);

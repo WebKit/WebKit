@@ -97,6 +97,21 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     if (!browserWindow)
         return QApplication::notify(target, event);
 
+    // In QML events are propagated through parents. But since the WebView
+    // may consume key events, a shortcut might never reach the top QQuickItem.
+    // Therefore we are checking here for shortcuts.
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        if ((keyEvent->key() == Qt::Key_R && keyEvent->modifiers() == Qt::ControlModifier) || keyEvent->key() == Qt::Key_F5) {
+            browserWindow->reload();
+            return true;
+        }
+        if ((keyEvent->key() == Qt::Key_L && keyEvent->modifiers() == Qt::ControlModifier) || keyEvent->key() == Qt::Key_F6) {
+            browserWindow->focusAddressBar();
+            return true;
+        }
+    }
+
     if (event->type() == QEvent::KeyRelease && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Control) {
         foreach (int id, m_heldTouchPoints)
             if (m_touchPoints.contains(id))

@@ -41,6 +41,10 @@ Rectangle {
         webView.load(address)
     }
 
+    function reload() {
+        webView.reload()
+    }
+
     function focusAddressBar() {
         addressLine.forceActiveFocus()
         addressLine.selectAll()
@@ -151,11 +155,9 @@ Rectangle {
                     onReleased: { parent.color = "#efefef" }
                     onClicked: {
                         if (webView.loading) {
-                            console.log("stop loading")
                             webView.stop()
                         } else {
-                            console.log("reloading")
-                            webView.reload()
+                            reload()
                         }
                     }
                 }
@@ -261,13 +263,6 @@ Rectangle {
                     console.log("going to: ", addressLine.text)
                     webView.load(utils.urlFromUserInput(addressLine.text))
                 }
-
-                Keys.onPressed: {
-                    if (((event.modifiers & Qt.ControlModifier) && event.key == Qt.Key_L) || event.key == Qt.key_F6) {
-                        focusAddressBar()
-                        event.accepted = true
-                    }
-                }
             }
         }
     }
@@ -305,12 +300,5 @@ Rectangle {
         }
         visible: false
         viewportInfo : webView.experimental.viewportInfo
-    }
-
-    Keys.onPressed: {
-        if (((event.modifiers & Qt.ControlModifier) && event.key == Qt.Key_L) || event.key == Qt.key_F6) {
-            focusAddressBar()
-            event.accepted = true
-        }
     }
 }

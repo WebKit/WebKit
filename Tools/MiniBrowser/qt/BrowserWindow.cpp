@@ -76,6 +76,16 @@ void BrowserWindow::load(const QString& url)
     QMetaObject::invokeMethod(rootObject(), "load", Qt::DirectConnection, Q_ARG(QVariant, completedUrl));
 }
 
+void BrowserWindow::reload()
+{
+    QMetaObject::invokeMethod(rootObject(), "reload", Qt::DirectConnection);
+}
+
+void BrowserWindow::focusAddressBar()
+{
+    QMetaObject::invokeMethod(rootObject(), "focusAddressBar", Qt::DirectConnection);
+}
+
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
     BrowserWindow* window = new BrowserWindow();
