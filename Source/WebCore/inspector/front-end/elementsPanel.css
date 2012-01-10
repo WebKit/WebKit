@@ -31,6 +31,10 @@
     white-space: nowrap;
 }
 
+#elements-content {
+    padding-left: 0;
+}
+
 #elements-content > ol {
     display: inline-block;
 }

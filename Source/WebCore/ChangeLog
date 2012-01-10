@@ -1,3 +1,13 @@
+2012-01-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, inspector style fix.
+
+        Web Inspector: elements tree is shifted 12px to the right.
+        https://bugs.webkit.org/show_bug.cgi?id=75609
+
+        * inspector/front-end/elementsPanel.css:
+        (#elements-content):
+
 2012-01-10  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Fix style errors in CSSParser.cpp
