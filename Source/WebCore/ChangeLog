@@ -1,3 +1,24 @@
+2012-01-10  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r102024): Having the Bing homepage open prevents idle sleep
+        https://bugs.webkit.org/show_bug.cgi?id=75972
+
+        Reviewed by Oliver Hunt.
+
+        No new tests; no testing infrastructure exists to test display sleep assertions.
+
+        Only disable idle and display sleep when a video element is not paused, not looping, and
+        has both a video and audio track.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged): Factor into updateDisableSleep() and
+            shouldDisplaySleep().
+        (WebCore::HTMLMediaElement::setLoop): Ditto.
+        (WebCore::HTMLMediaElement::attributeChanged): Ditto.
+        (WebCore::HTMLMediaElement::updateDisableSleep):
+        (WebCore::HTMLMediaElement::shouldDisableSleep):
+        * html/HTMLMediaElement.h:
+
 2012-01-09  Matthew Delaney  <mdelaney@apple.com>
 
         [Mac] Accelerate canvas layers with the same logic as accelerating the canvas itself

@@ -461,6 +461,11 @@ private:
     bool isLiveStream() const { return movieLoadType() == MediaPlayer::LiveStream; }
     bool isAutoplaying() const { return m_autoplaying; }
 
+#if PLATFORM(MAC)
+    void updateDisableSleep();
+    bool shouldDisableSleep() const;
+#endif
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
