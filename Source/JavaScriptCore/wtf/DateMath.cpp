@@ -961,6 +961,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveT
                 else
                     offset = o * 60 * sgn;
             } else { // GMT+05:00
+                ++dateString; // skip the ':'
                 long o2;
                 if (!parseLong(dateString, &newPosStr, 10, &o2))
                     return std::numeric_limits<double>::quiet_NaN();

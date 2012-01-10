@@ -208,6 +208,42 @@ PASS Date.parse("dec 25 1995 13:30 am gmt") is NaN
 PASS Date.parse("Dec 25 1995 13:30 PM GMT") is NaN
 PASS Date.parse("DEC 25 1995 13:30 PM GMT") is NaN
 PASS Date.parse("dec 25 1995 13:30 pm gmt") is NaN
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+00") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+00") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+00") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+0000") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+0000") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+0000") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+00:00") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+00:00") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+00:00") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+00") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+00") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+00") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+0000") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+0000") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+0000") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+00:00") == 819894600000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+00:00") == 819894600000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+00:00") == 819894600000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+01") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+01") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+01") == 819891000000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+0100") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+0100") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+0100") == 819891000000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM GMT+01:00") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM GMT+01:00") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm gmt+01:00") == 819891000000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+01") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+01") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+01") == 819891000000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+0100") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+0100") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+0100") == 819891000000 is true
+PASS Date.parse("Dec 25 1995 12:30 PM+01:00") == 819891000000 is true
+PASS Date.parse("DEC 25 1995 12:30 PM+01:00") == 819891000000 is true
+PASS Date.parse("dec 25 1995 12:30 pm+01:00") == 819891000000 is true
 PASS Date.parse("Anf 25 1995 GMT") is NaN
 PASS Date.parse("ANF 25 1995 GMT") is NaN
 PASS Date.parse("anf 25 1995 gmt") is NaN

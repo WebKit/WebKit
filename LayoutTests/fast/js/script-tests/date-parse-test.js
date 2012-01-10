@@ -189,6 +189,20 @@ testDateParse("Dec 25 1995 12:30 PM GMT", "819894600000");
 testDateParse("Dec 25 1995 13:30 AM GMT", "NaN");
 testDateParse("Dec 25 1995 13:30 PM GMT", "NaN");
 
+// Test some ISO 8601 timezones.
+testDateParse("Dec 25 1995 12:30 PM GMT+00", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM GMT+0000", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM GMT+00:00", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM+00", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM+0000", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM+00:00", "819894600000");
+testDateParse("Dec 25 1995 12:30 PM GMT+01", "819891000000");
+testDateParse("Dec 25 1995 12:30 PM GMT+0100", "819891000000");
+testDateParse("Dec 25 1995 12:30 PM GMT+01:00", "819891000000");
+testDateParse("Dec 25 1995 12:30 PM+01", "819891000000");
+testDateParse("Dec 25 1995 12:30 PM+0100", "819891000000");
+testDateParse("Dec 25 1995 12:30 PM+01:00", "819891000000");
+
 testDateParse("Anf 25 1995 GMT", "NaN");
 
 testDateParse("Wed Dec 25 1995 1:30 GMT", "819855000000");
