@@ -1,3 +1,53 @@
+2012-01-09  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: add os_name, os_version to platforminfo
+        https://bugs.webkit.org/show_bug.cgi?id=75931
+
+        Reviewed by Eric Siedel.
+
+        As a first step in cleaning up the version parsing logic in
+        webkitpy.layout_tests.port, this adds common routines for
+        getting the os_name and os_version fields to the PlatformInfo
+        class. Nothing uses them yet but I've added FIXME's to some of
+        the code that needs to be deleted in the port files.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__):
+        (PlatformInfo):
+        (PlatformInfo._determine_os_name):
+        (PlatformInfo._determine_mac_version):
+        (PlatformInfo._determine_linux_version):
+        (PlatformInfo._determine_win_version):
+        (PlatformInfo.display_name):
+        (PlatformInfo.total_bytes_memory):
+        (PlatformInfo._compute_bytes_from_vm_stat_output):
+        (PlatformInfo.free_bytes_memory):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py: Added.
+        (TestPlatformInfo):
+        (TestPlatformInfo.make_info):
+        (TestPlatformInfo.make_info.mock_run_command):
+        (TestPlatformInfo.setUp):
+        (TestPlatformInfo.tearDown):
+        (TestPlatformInfo.test_basic):
+        (TestPlatformInfo.integration_test_basic):
+        (TestPlatformInfo.test_display_name_mac):
+        (TestPlatformInfo.test_display_name_win32):
+        (TestPlatformInfo.test_memory_mac):
+        (TestPlatformInfo.test_memory_win32):
+        (TestPlatformInfo.test_determine_os_name):
+        (TestPlatformInfo.test_determine_mac_version):
+        (TestPlatformInfo.test_determine_linux_version):
+        (TestPlatformInfo.test_determine_win_version_from_tuple):
+        (TestPlatformInfo.test_determine_win_version_from_cmd):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+
 2012-01-10  Adam Roben  <aroben@apple.com>
 
         Make it possible to type data: URLs into MiniBrowser on Windows

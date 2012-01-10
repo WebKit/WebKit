@@ -83,6 +83,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         port_name = port_name or 'chromium-mac'
         chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
         if port_name.endswith('-mac'):
+            # FIXME: Use host.platforminfo.os_version instead.
             self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
             self._name = port_name + '-' + self._version
         else:

@@ -45,6 +45,7 @@ class WinPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
+    # FIXME: Use host.platforminfo.os_version instead.
     def _version_string_from_windows_version_tuple(self, windows_version_tuple):
         if windows_version_tuple[:3] == (6, 1, 7600):
             return '7sp0'

@@ -36,7 +36,7 @@ from webkitpy.layout_tests.port.leakdetector import LeakDetector
 
 _log = logging.getLogger(__name__)
 
-
+# FIXME: Delete this when we switch to using host.platforminfo.os_version instead.
 def os_version(os_version_string=None, supported_versions=None):
     if not os_version_string:
         if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
@@ -64,6 +64,7 @@ class MacPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
 
+    # FIXME: Delete this when we switch to using host.platforminfo.os_version instead.
     def _detect_version(self, os_version_string):
         # FIXME: MacPort and WinPort implement _detect_version differently.
         # WinPort uses os_version_string as a replacement for self.version.

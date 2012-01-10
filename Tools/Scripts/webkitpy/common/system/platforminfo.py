@@ -1,4 +1,4 @@
-# Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,46 +26,118 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import platform
 import re
 
 
-# We use this instead of calls to platform directly to allow mocking.
 class PlatformInfo(object):
-    def __init__(self, executive):
+    """This class provides a consistent (and mockable) interpretation of
+    system-specific values (like sys.platform and platform.mac_ver())
+    to be used by the rest of the webkitpy code base.
+
+    Public (static) properties:
+    -- os_name
+    -- os_version
+
+    Note that 'future' is returned for os_version if the operating system is
+    newer than one known to the code.
+    """
+
+    def __init__(self, sys_module, platform_module, executive):
         self._executive = executive
+        self._platform_module = platform_module
+        self.os_name = self._determine_os_name(sys_module.platform)
+        if self.os_name == 'linux':
+            self.os_version = self._determine_linux_version()
+        if self.os_name.startswith('mac'):
+            self.os_version = self._determine_mac_version(platform_module.mac_ver()[0])
+        if self.os_name.startswith('win'):
+            self.os_version = self._determine_win_version(self._win_version_tuple(sys_module))
+
+    def is_mac(self):
+        return self.os_name == 'mac'
+
+    def is_win(self):
+        return self.os_name == 'win'
+
+    def is_linux(self):
+        return self.os_name == 'linux'
 
     def display_name(self):
         # platform.platform() returns Darwin information for Mac, which is just confusing.
-        if platform.system() == "Darwin":
-            return "Mac OS X %s" % platform.mac_ver()[0]
+        if self.is_mac():
+            return "Mac OS X %s" % self._platform_module.mac_ver()[0]
 
         # Returns strings like:
         # Linux-2.6.18-194.3.1.el5-i686-with-redhat-5.5-Final
         # Windows-2008ServerR2-6.1.7600
-        return platform.platform()
-
-    def total_bytes_memory(self):
-        system_name = platform.system()
-        if system_name == "Darwin":
-            return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
-        return None
-
-    def _compute_bytes_from_vm_stat_output(self, label_text, vm_stat_output):
-        page_size_match = re.search(r"page size of (\d+) bytes", vm_stat_output)
-        free_pages_match = re.search(r"%s:\s+(\d+)." % label_text, vm_stat_output)
-        if not page_size_match or not free_pages_match:
-            return None
-        free_page_count = int(free_pages_match.group(1))
-        page_size = int(page_size_match.group(1))
-        return free_page_count * page_size
+        return self._platform_module.platform()
 
     def free_bytes_memory(self):
-        system_name = platform.system()
-        if system_name == "Darwin":
+        if self.is_mac():
             vm_stat_output = self._executive.run_command(["vm_stat"])
             free_bytes = self._compute_bytes_from_vm_stat_output("Pages free", vm_stat_output)
             # Per https://bugs.webkit.org/show_bug.cgi?id=74650 include inactive memory since the OS is lazy about freeing memory.
             free_bytes += self._compute_bytes_from_vm_stat_output("Pages inactive", vm_stat_output)
             return free_bytes
         return None
+
+    def total_bytes_memory(self):
+        if self.is_mac():
+            return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
+        return None
+
+    def _determine_os_name(self, sys_platform):
+        if sys_platform == 'darwin':
+            return 'mac'
+        if sys_platform.startswith('linux'):
+            return 'linux'
+        if sys_platform in ('win32', 'cygwin'):
+            return 'win'
+        raise AssertionError('unrecognized platform string "%s"' % sys_platform)
+
+    def _determine_mac_version(self, mac_version_string):
+        release_version = mac_version_string.split('.')[1]
+        version_strings = {
+            '5': 'leopard',
+            '6': 'snowleopard',
+            '7': 'lion',
+        }
+        assert release_version >= min(version_strings.keys())
+        return version_strings.get(release_version, 'future')
+
+    def _determine_linux_version(self):
+        # FIXME: we ignore whatever the real version is and pretend it's lucid for now.
+        return 'lucid'
+
+    def _determine_win_version(self, win_version_tuple):
+        if win_version_tuple[:3] == (6, 1, 7600):
+            return '7sp0'
+        if win_version_tuple[:2] == (6, 0):
+            return 'vista'
+        if win_version_tuple[:2] == (5, 1):
+            return 'xp'
+        assert win_version_tuple[0] > 6 or win_version_tuple[1] >= 1, 'Unrecognized Windows version tuple: "%s"' % (win_version_tuple,)
+        return 'future'
+
+    def _win_version_tuple(self, sys_module):
+        if hasattr(sys_module, 'getwindowsversion'):
+            return sys_module.getwindowsversion()
+        return self._win_version_tuple_from_cmd()
+
+    def _win_version_tuple_from_cmd(self):
+        # Note that this should only ever be called on windows, so this should always work.
+        ver_output = self._executive.run_command(['cmd', '/c', 'ver'])
+        match_object = re.search(r'(?P<major>\d)\.(?P<minor>\d)\.(?P<build>\d+)', ver_output)
+        assert match_object, 'cmd returned an unexpected version string: ' + ver_output
+        return tuple(map(int, match_object.groups()))
+
+    def _compute_bytes_from_vm_stat_output(self, label_text, vm_stat_output):
+        page_size_match = re.search(r"page size of (\d+) bytes", vm_stat_output)
+        free_pages_match = re.search(r"%s:\s+(\d+)." % label_text, vm_stat_output)
+
+        # Fail hard if vmstat's output isn't what we expect.
+        assert(page_size_match and free_pages_match)
+
+        free_page_count = int(free_pages_match.group(1))
+        page_size = int(page_size_match.group(1))
+        return free_page_count * page_size

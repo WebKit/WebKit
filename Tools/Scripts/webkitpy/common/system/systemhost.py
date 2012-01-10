@@ -27,6 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import platform
+import sys
 
 from webkitpy.common.system import environment, executive, filesystem, platforminfo, user, workspace
 
@@ -36,7 +38,7 @@ class SystemHost(object):
         self.executive = executive.Executive()
         self.filesystem = filesystem.FileSystem()
         self.user = user.User()
-        self.platform = platforminfo.PlatformInfo(self.executive)
+        self.platform = platforminfo.PlatformInfo(sys, platform, self.executive)
         self.workspace = workspace.Workspace(self.filesystem, self.executive)
 
     def copy_current_environment(self):

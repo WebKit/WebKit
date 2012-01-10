@@ -67,6 +67,7 @@ class ApplePort(WebKitPort):
             self.set_option_default('webkit_test_runner', True)
 
         if port_name == self.port_name:
+            # FIXME: Use host.platforminfo.os_version instead.
             self._version = self._detect_version(os_version_string) or self.FUTURE_VERSION
             self._name = self.port_name + '-' + self._version
         else:
