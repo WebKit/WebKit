@@ -172,6 +172,7 @@ def parse_args(args=None):
         optparse.make_option("--platform", help="Override port/platform being tested (i.e. chromium-mac)"),
         optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
         optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
+        optparse.make_option('--efl', action='store_const', const='efl', dest="platform", help='Alias for --platform=efl'),
     ]
 
     print_options = printing.print_options()

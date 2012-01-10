@@ -1,3 +1,14 @@
+2012-01-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add --efl alias for --platform=efl to run-webkit-test
+        https://bugs.webkit.org/show_bug.cgi?id=75937
+
+        Reviewed by Andreas Kling.
+        
+        * Scripts/run-webkit-tests: Add --efl alias.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Add --efl alias.
+        (parse_args):
+
 2012-01-09  Dan Bernstein  <mitz@apple.com>
 
         -[DOMRange renderedImageForcingBlackText:] fails with non-user-selectable text
