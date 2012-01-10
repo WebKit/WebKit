@@ -36,6 +36,7 @@
 #include "PlatformSupport.h"
 
 #include "SkAdvancedTypefaceMetrics.h"
+#include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTypeface.h"
 
@@ -116,9 +117,17 @@ int FontPlatformData::emSizeInFontUnits() const
     if (m_emSizeInFontUnits)
         return m_emSizeInFontUnits;
 
+    // FIXME: Switch to the SkTypeface::GetUnitsPerEm API once this becomes available.
+    // https://bugs.webkit.org/show_bug.cgi?id=75961
+#if OS(ANDROID)
+    // Android doesn't currently support Skia's getAdvancedTypefaceMetrics(),
+    // but it has access to another method to replace this functionality.
+    m_emSizeInFontUnits = SkFontHost::GetUnitsPerEm(m_typeface->uniqueID());
+#else
     SkAdvancedTypefaceMetrics* metrics = m_typeface->getAdvancedTypefaceMetrics(SkAdvancedTypefaceMetrics::kNo_PerGlyphInfo);
     m_emSizeInFontUnits = metrics->fEmSize;
     metrics->unref();
+#endif
     return m_emSizeInFontUnits;
 }
 

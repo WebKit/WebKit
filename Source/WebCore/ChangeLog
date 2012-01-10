@@ -1,3 +1,19 @@
+2012-01-10  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Use SkFontHost::GetUnitsPerEm instead of advanced type
+        metrics for Android in FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=75702
+
+        Reviewed by Stephen White.
+
+        Since Skia for Android doesn't implement advanced type metric routines,
+        use an alternative method to calculate the number of font units for an
+        em size. This will be exercized by existing layout tests, as it's being
+        used by the ComplexTextController.
+
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::emSizeInFontUnits):
+
 2012-01-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, inspector style fix.
