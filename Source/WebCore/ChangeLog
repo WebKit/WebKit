@@ -1,3 +1,16 @@
+2012-01-10  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Partial revert of r104566, since it breaks the shared
+        library build on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=75994
+
+        Reviewed by Dmitry Titov.
+
+        Covered by SVG feColorMatrix tests (see LayoutTests/ChangeLog).
+
+        * WebCore.gypi:
+        * platform/graphics/filters/FEColorMatrix.h:
+
 2012-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up RenderLayerBacking code that looks for the body
