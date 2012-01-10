@@ -1,3 +1,13 @@
+2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix failing WK2 layout tests after r104557
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Add missing break to not
+        handle mouseDown as gesture event.
+
 2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed buildfix.
