@@ -1,3 +1,11 @@
+2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed potential Mac WK2 build fix.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::doneWithGestureEvent):
+
 2012-01-10  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Add font-related API tests for QWebPreferences
