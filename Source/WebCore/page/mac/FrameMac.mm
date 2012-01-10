@@ -113,21 +113,17 @@ NSImage *Frame::rangeImage(Range* range, bool forceBlackText) const
     if (!view)
         return nil;
 
-    VisibleSelection visibleSelection(range);
-
-    if (!visibleSelection.isRange())
-        return nil;
-
-    Position start = visibleSelection.start();
+    Position start = range->startPosition();
     Position candidate = start.downstream();
-    if (candidate.isCandidate())
+    if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         start = candidate;
-    Position end = visibleSelection.end();
+
+    Position end = range->endPosition();
     candidate = end.upstream();
-    if (candidate.isCandidate())
+    if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         end = candidate;
 
-    if (start.isNull() || end.isNull() || visibleSelection.visibleStart() == visibleSelection.visibleEnd())
+    if (start.isNull() || end.isNull() || start == end)
         return nil;
 
     RenderObject* savedStartRenderer;
@@ -137,7 +133,12 @@ NSImage *Frame::rangeImage(Range* range, bool forceBlackText) const
     view->getSelection(savedStartRenderer, savedStartOffset, savedEndRenderer, savedEndOffset);
 
     RenderObject* startRenderer = start.deprecatedNode()->renderer();
+    if (!startRenderer)
+        return nil;
+
     RenderObject* endRenderer = end.deprecatedNode()->renderer();
+    if (!endRenderer)
+        return nil;
 
     view->setSelection(startRenderer, start.deprecatedEditingOffset(), endRenderer, end.deprecatedEditingOffset(), RenderView::RepaintNothing);
     NSImage* result = imageFromRect(view->selectionBounds());

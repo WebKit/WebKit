@@ -58,13 +58,18 @@ TEST(WebKit1, RenderedImageFromDOMRange)
 
     DOMDocument *document = webView.get().mainFrameDocument;
     DOMRange *range = [document createRange];
-    [range selectNode:[document getElementById:@"target"]];
+    DOMNode *target = [document getElementById:@"target"];
+    [range selectNode:target];
     NSImage *actualImage = [range renderedImageForcingBlackText:YES];
 
     [webView.get() setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
     id <WebDocumentView> documentView = webView.get().mainFrame.frameView.documentView;
     NSImage *expectedImage = [(id <WebDocumentSelection>)documentView selectionImageForcingBlackText:YES];
     EXPECT_TRUE([actualImage.TIFFRepresentation isEqual:expectedImage.TIFFRepresentation]);
+
+    [target.parentElement.style setProperty:@"-webkit-user-select" value:@"none" priority:nil];
+    NSImage *actualImageWithUserSelectNone = [range renderedImageForcingBlackText:YES];
+    EXPECT_TRUE([actualImageWithUserSelectNone.TIFFRepresentation isEqual:expectedImage.TIFFRepresentation]);
 }
 
 } // namespace TestWebKitAPI

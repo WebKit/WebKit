@@ -1,3 +1,14 @@
+2012-01-09  Dan Bernstein  <mitz@apple.com>
+
+        -[DOMRange renderedImageForcingBlackText:] fails with non-user-selectable text
+        https://bugs.webkit.org/show_bug.cgi?id=75920
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/mac/RenderedImageFromDOMRange.mm:
+        (TestWebKitAPI::TEST): Added a test for a range in a
+        -webkit-user-select: none; block.
+
 2012-01-09  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy.layout_tests.port.mock_drt_unittest.MockChromiumDRTTest has been failing on cr-win
