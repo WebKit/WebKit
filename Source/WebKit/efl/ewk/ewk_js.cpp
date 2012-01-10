@@ -612,6 +612,13 @@ void ewk_js_object_free(Ewk_JS_Object* jsObject)
         free(jsObject);
 }
 
+Evas_Object* ewk_js_object_view_get(const Ewk_JS_Object* jsObject)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
+    EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
+    return jsObject->view;
+}
+
 Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
@@ -704,6 +711,11 @@ Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
 }
 
 const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
+{
+    return 0;
+}
+
+Evas_Object* ewk_js_object_view_get(const Ewk_JS_Object* jsObject)
 {
     return 0;
 }

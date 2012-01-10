@@ -119,6 +119,21 @@ EAPI Eina_Hash *ewk_js_object_properties_get(const Ewk_JS_Object *obj);
 EAPI const char *ewk_js_object_name_get(const Ewk_JS_Object *obj);
 
 /**
+ * Returns the view associated with an Ewk_JS_Object.
+ *
+ * The returned view is the one passed to ewk_view_js_object_add. Right now,
+ * the object is always added to the view's main frame.
+ *
+ * @param obj The object to be queried.
+ *
+ * @return The view whose main frame the object has been inserted into, or
+ *         @c NULL if the object has not been added to a view yet.
+ *
+ * @sa ewk_view_js_object_add, ewk_view_frame_main_get
+ */
+EAPI Evas_Object *ewk_js_object_view_get(const Ewk_JS_Object *obj);
+
+/**
  * Release resources allocated by @a var.
  *
  * @param var @a Ewk_JS_Variant to be release
