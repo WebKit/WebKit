@@ -899,7 +899,7 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
         SparseArrayValueMap::const_iterator end = map->end();
         for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
             if (mode == IncludeDontEnumProperties || !(it->second.attributes & DontEnum))
-                keys.append(it->first);
+                keys.append(static_cast<unsigned>(it->first));
         }
 
         qsort(keys.begin(), keys.size(), sizeof(unsigned), compareKeysForQSort);
@@ -1114,7 +1114,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
             keys.reserveCapacity(min(map->size(), static_cast<size_t>(length - newLength)));
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                unsigned index = it->first;
+                unsigned index = static_cast<unsigned>(it->first);
                 if (index < length && index >= newLength)
                     keys.append(index);
             }
