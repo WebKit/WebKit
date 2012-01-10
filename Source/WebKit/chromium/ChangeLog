@@ -1,5 +1,11 @@
 2012-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Touch WebView.h in an attempt to clobber Chromium bots on build.webkit.org.
+
+        * public/WebView.h:
+
+2012-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Roll Chromium DEPS from 116459 to 116979.
 
         * DEPS:
