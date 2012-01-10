@@ -1,3 +1,23 @@
+2012-01-10  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Added smart pointers to Ewk_View_Paint_Context class and done minor refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=75837
+
+        Reviewed by Ryosuke Niwa.
+
+        Changed graphicContext raw pointer to OwnPtr smart pointer.
+        Renamed cr to cairo and made it a RefPtr.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_paint_context_new): Adjust to auto pointers use.
+        (ewk_view_paint_context_free): Removed explicit raw pointers delete.
+        Adjust to auto pointers use:
+        (ewk_view_paint_context_save):
+        (ewk_view_paint_context_restore):
+        (ewk_view_paint_context_clip):
+        (ewk_view_paint_context_paint):
+        (ewk_view_paint_context_paint_contents):
+
 2012-01-09  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Add getter for Ewk_JS_Object::view.

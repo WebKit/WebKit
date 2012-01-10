@@ -2562,57 +2562,54 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
  *       to define their own backing store.
  */
 struct _Ewk_View_Paint_Context {
-    WebCore::GraphicsContext* graphicContext;
     WebCore::FrameView* view;
-    cairo_t* cr;
+    OwnPtr<WebCore::GraphicsContext> graphicContext;
+    RefPtr<cairo_t> cairo;
 };
 
-Ewk_View_Paint_Context* ewk_view_paint_context_new(Ewk_View_Private_Data* priv, cairo_t* cr)
+Ewk_View_Paint_Context* ewk_view_paint_context_new(Ewk_View_Private_Data* priv, cairo_t* cairo)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(cr, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(cairo, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv->mainFrame, 0);
-    WebCore::FrameView* view = priv->mainFrame->view();
-    EINA_SAFETY_ON_NULL_RETURN_VAL(view, 0);
-    Ewk_View_Paint_Context* context = static_cast<Ewk_View_Paint_Context*>(malloc(sizeof(*context)));
-    EINA_SAFETY_ON_NULL_RETURN_VAL(context, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->mainFrame->view(), 0);
 
-    context->graphicContext = new WebCore::GraphicsContext(cr);
-    if (!context->graphicContext) {
-        free(context);
-        return 0;
-    }
-    context->view = view;
-    context->cr = cairo_reference(cr);
+    Ewk_View_Paint_Context* context = new Ewk_View_Paint_Context;
+    context->view = priv->mainFrame->view();
+    context->graphicContext = adoptPtr(new WebCore::GraphicsContext(cairo));
+    context->cairo = adoptRef(cairo_reference(cairo));
+
     return context;
 }
 
 void ewk_view_paint_context_free(Ewk_View_Paint_Context* context)
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
-    delete context->graphicContext;
-    cairo_destroy(context->cr);
-    free(context);
+
+    delete context;
 }
 
 void ewk_view_paint_context_save(Ewk_View_Paint_Context* context)
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
-    cairo_save(context->cr);
+
+    cairo_save(context->cairo.get());
     context->graphicContext->save();
 }
 
 void ewk_view_paint_context_restore(Ewk_View_Paint_Context* context)
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
+
     context->graphicContext->restore();
-    cairo_restore(context->cr);
+    cairo_restore(context->cairo.get());
 }
 
 void ewk_view_paint_context_clip(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
+
     context->graphicContext->clip(WebCore::IntRect(area->x, area->y, area->w, area->h));
 }
 
@@ -2625,7 +2622,7 @@ void ewk_view_paint_context_paint(Ewk_View_Paint_Context* context, const Eina_Re
 
     if (context->view->isTransparent())
         context->graphicContext->clearRect(rect);
-    context->view->paint(context->graphicContext, rect);
+    context->view->paint(context->graphicContext.get(), rect);
 }
 
 void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
@@ -2638,7 +2635,7 @@ void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* context, cons
     if (context->view->isTransparent())
         context->graphicContext->clearRect(rect);
 
-    context->view->paintContents(context->graphicContext, rect);
+    context->view->paintContents(context->graphicContext.get(), rect);
 }
 
 void ewk_view_paint_context_scale(Ewk_View_Paint_Context* context, float scaleX, float scaleY)
