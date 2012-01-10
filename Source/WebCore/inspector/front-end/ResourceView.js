@@ -82,8 +82,8 @@ WebInspector.ResourceView.nonSourceViewForResource = function(resource)
  */
 WebInspector.ResourceSourceFrame = function(resource)
 {
-    WebInspector.SourceFrame.call(this, resource.url);
     this._resource = resource;
+    WebInspector.SourceFrame.call(this, resource.url);
 }
 
 //This is a map from resource.type to mime types
@@ -147,11 +147,15 @@ WebInspector.EditableResourceSourceFrame.prototype = {
 
     cancelEditing: function()
     {
+        if (WebInspector.experimentsSettings.sourceFrameAlwaysEditable.isEnabled())
+            return false;
+
         this._clearIncrementalUpdateTimer();
         const majorChange = false;
         if (this._viewerState)
             this.resource.setContent(this._viewerState.textModelContent, majorChange);
         WebInspector.SourceFrame.prototype.cancelEditing.call(this);
+        return true;
     },
 
     afterTextChanged: function(oldRange, newRange)

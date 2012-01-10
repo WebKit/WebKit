@@ -168,7 +168,8 @@ WebInspector.ExperimentsSettings = function()
     // Add currently running experiments here.
     // FIXME: Move out from experiments once navigator is production-ready.
     this.useScriptsNavigator = this._createExperiment("useScriptsNavigator", "Use file navigator and tabbed editor container in scripts panel");
-    
+    this.sourceFrameAlwaysEditable = this._createExperiment("sourceFrameAlwaysEditable", "Make resources always editable");
+
     this._cleanUpSetting();
 }
 

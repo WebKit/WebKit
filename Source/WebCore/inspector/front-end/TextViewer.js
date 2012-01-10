@@ -329,8 +329,7 @@ WebInspector.TextViewer.prototype = {
         if (this.readOnly)
             return false;
 
-        this._delegate.cancelEditing();
-        return true;
+        return this._delegate.cancelEditing();
     }
 }
 

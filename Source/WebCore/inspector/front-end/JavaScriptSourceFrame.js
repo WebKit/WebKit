@@ -37,13 +37,14 @@
  */
 WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
 {
-    WebInspector.SourceFrame.call(this, uiSourceCode.url);
-
     this._scriptsPanel = scriptsPanel;
     this._model = model;
     this._uiSourceCode = uiSourceCode;
     this._popoverObjectGroup = "popover";
     this._breakpoints = {};
+
+    WebInspector.SourceFrame.call(this, uiSourceCode.url);
+
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
             this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this), true);
 
@@ -95,7 +96,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     setReadOnly: function(readOnly)
     {
-        if (!readOnly)
+        if (this._popoverHelper && !readOnly)
             this._popoverHelper.hidePopover();
         WebInspector.SourceFrame.prototype.setReadOnly.call(this, readOnly);
         if (readOnly)
@@ -202,10 +203,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     cancelEditing: function()
     {
+        if (WebInspector.experimentsSettings.sourceFrameAlwaysEditable.isEnabled())
+            return false;
+
         WebInspector.SourceFrame.prototype.cancelEditing.call(this);
 
         if (!this._javaScriptSourceFrameState)
-            return;
+            return true;
 
         if (typeof this._javaScriptSourceFrameState.executionLineNumber === "number") {
             this.clearExecutionLine();
@@ -225,6 +229,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         delete this._javaScriptSourceFrameState;
+        return true;
     },
 
     didEditContent: function(error)

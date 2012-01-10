@@ -1,3 +1,27 @@
+2012-01-10  pfeldman@chomium.org  <pavel.feldman@gmail.com>
+
+        Web Inspector: introduce experimental setting that makes source files always editable
+        https://bugs.webkit.org/show_bug.cgi?id=75626
+
+        Reviewed by Timothy Hatcher.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.setReadOnly):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.NavigatorScriptTreeElement.prototype.onselect):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.get statusBarItems):
+        (WebInspector.SourceFrame.prototype.setReadOnly):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+
 2012-01-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104507.
