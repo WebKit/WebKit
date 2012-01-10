@@ -1261,8 +1261,7 @@ DeserializationResult CloneDeserializer::deserialize()
                 fail();
                 goto error;
             }
-            JSArray* outArray = constructEmptyArray(m_exec, m_globalObject);
-            outArray->setLength(length);
+            JSArray* outArray = constructEmptyArray(m_exec, m_globalObject, length);
             m_gcBuffer.append(outArray);
             outputArrayStack.append(outArray);
             // fallthrough

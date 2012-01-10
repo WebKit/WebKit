@@ -380,7 +380,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
         curArg = (exec->argument(i));
         ++i;
     }
-    arr->setLength(n);
+    arr->setLength(exec, n);
     return JSValue::encode(arr);
 }
 
@@ -523,7 +523,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         if (v)
             resObj->methodTable()->putByIndex(resObj, exec, n, v);
     }
-    resObj->setLength(n);
+    resObj->setLength(exec, n);
     return JSValue::encode(result);
 }
 

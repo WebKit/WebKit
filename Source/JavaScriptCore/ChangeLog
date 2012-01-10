@@ -1,5 +1,41 @@
 2012-01-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Do not allow Array length to be set if it is non-configurable
+        https://bugs.webkit.org/show_bug.cgi?id=75935
+
+        Reviewed by Sam Weinig.
+
+        Do not allow Array length to be set if it is non-configurable, and if the new
+        length is less than the old length then intervening properties should removed
+        in reverse order. Removal of properties should cease if an intervening indexed
+        property being removed is non-configurable.
+
+        * JavaScriptCore.exp:
+            - Removed export for setLength.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+            - JSArray::setLength now takes an ExecState*
+        (JSC::arrayProtoFuncSlice):
+            - JSArray::setLength now takes an ExecState*
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+            - JSArray::setLength now takes an ExecState*
+        (JSC::JSArray::put):
+            - JSArray::setLength now takes an ExecState*
+        (JSC::compareKeysForQSort):
+            - Keys extracted from the map can be stored as unsigneds.
+        (JSC::JSArray::getOwnPropertyNames):
+            - Keys extracted from the map can be stored as unsigneds.
+        (JSC::JSArray::setLength):
+            - Check lengthIsReadOnly(), rather than copying the entire map to iterate
+              over to determine which keys to remove, instead just copy the keys from
+              the map to a Vector. When inSparseMode sort the keys in the Vector so
+              that we can remove properties in reverse order.
+        * runtime/JSArray.h:
+            - JSArray::setLength now takes an ExecState*
+
+2012-01-10  Gavin Barraclough  <barraclough@apple.com>
+
         Use SameValue to compare property descriptor values
         https://bugs.webkit.org/show_bug.cgi?id=75975
 

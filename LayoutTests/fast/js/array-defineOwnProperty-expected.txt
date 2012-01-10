@@ -6,6 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Object.defineProperty([], 'x', { get:function(){return true;} }).x is true
 PASS Object.defineProperty([], 'length', { value: 1 }).length is 1
 PASS var a = Object.defineProperty([], 'length', { writable: false }); a[1] = 1; a.length is 0
+PASS var a = Object.defineProperty([], 'length', { writable: false }); a.length = 1; a.length is 0
 PASS Object.defineProperty([], 'length', { get:function(){return true;} }) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
 PASS Object.defineProperty([], 'length', { enumerable: true }) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
 PASS Object.defineProperty([], 'length', { configurable: true }) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
@@ -13,7 +14,7 @@ PASS Object.defineProperty(Object.defineProperty([], 'length', { writable: false
 PASS var a = Object.defineProperty([], '0', { value: 42 }); a[0] is 42
 PASS var a = Object.defineProperty([42], '0', { writable: false }); a[0] = 1; a[0] is 42
 PASS var a = Object.defineProperty([42], '0', { enumerable: false }); a[0] + Object.keys(a).length is 42
-FAIL var a = Object.defineProperty([42], '0', { configurable: false }); a.length = 0; a[0] should be 42 (of type number). Was undefined (of type undefined).
+PASS var a = Object.defineProperty([42], '0', { configurable: false }); a.length = 0; a[0] is 42
 PASS var foo = 0; Object.defineProperty([], '0', { set:function(x){foo = x;} })[0] = 42; foo is 42
 PASS Object.defineProperty([], '0', { get:function(){return true;} })[0] is true
 PASS Object.defineProperty(Object.defineProperty([true], '0', { configurable:true, writable: false }), '0', { writable: true })[0] is true

@@ -1,3 +1,14 @@
+2012-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Do not allow Array length to be set if it is non-configurable
+        https://bugs.webkit.org/show_bug.cgi?id=75935
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserialize):
+            - remove unnecessary call to JSArray::setLength.
+
 2012-01-10  Adrienne Walker  <enne@google.com>
 
         [chromium] Draw debug tile borders on composited layers

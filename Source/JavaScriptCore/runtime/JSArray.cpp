@@ -346,6 +346,8 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
     if (descriptor.isDataDescriptor()) {
         if (descriptor.value())
             entryInMap->set(exec->globalData(), this, descriptor.value());
+        else if (oldDescriptor.isAccessorDescriptor())
+            entryInMap->set(exec->globalData(), this, jsUndefined());
         entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~(Getter | Setter);
         return;
     }
@@ -581,7 +583,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
         // l.i. Set oldLen to oldLen – 1.
         // l.ii. Let deleteSucceeded be the result of calling the [[Delete]] internal method of A passing ToString(oldLen) and false as arguments.
         // l.iii. If deleteSucceeded is false, then
-        if (!array->setLength(newLen, throwException)) {
+        if (!array->setLength(exec, newLen, throwException)) {
             // 1. Set newLenDesc.[[Value] to oldLen+1.
             // 2. If newWritable is false, set newLenDesc.[[Writable] to false.
             // 3. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and false as arguments.
@@ -710,7 +712,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
             throwError(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
-        thisObject->setLength(newLength, slot.isStrictMode());
+        thisObject->setLength(exec, newLength, slot.isStrictMode());
         return;
     }
 
@@ -870,8 +872,8 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 
 static int compareKeysForQSort(const void* a, const void* b)
 {
-    uint64_t da = *static_cast<const uint64_t*>(a);
-    uint64_t db = *static_cast<const uint64_t*>(b);
+    unsigned da = *static_cast<const unsigned*>(a);
+    unsigned db = *static_cast<const unsigned*>(b);
     return (da > db) - (da < db);
 }
 
@@ -891,7 +893,7 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        Vector<uint64_t> keys;
+        Vector<unsigned> keys;
         keys.reserveCapacity(map->size());
         
         SparseArrayValueMap::const_iterator end = map->end();
@@ -900,9 +902,9 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
                 keys.append(it->first);
         }
 
-        qsort(keys.begin(), keys.size(), sizeof(uint64_t), compareKeysForQSort);
+        qsort(keys.begin(), keys.size(), sizeof(unsigned), compareKeysForQSort);
         for (unsigned i = 0; i < keys.size(); ++i)
-            propertyNames.add(Identifier::from(exec, static_cast<unsigned>(keys[i])));
+            propertyNames.add(Identifier::from(exec, keys[i]));
     }
 
     if (mode == IncludeDontEnumProperties)
@@ -1091,38 +1093,67 @@ bool JSArray::unshiftCountSlowCase(unsigned count)
     return true;
 }
 
-bool JSArray::setLength(unsigned newLength, bool throwException)
+bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException)
 {
-    UNUSED_PARAM(throwException);
     checkConsistency();
 
     ArrayStorage* storage = m_storage;
-    
     unsigned length = storage->m_length;
 
+    // If the length is read only then we enter sparse mode, so should enter the following 'if'.
+    ASSERT(isLengthWritable() || storage->m_sparseValueMap);
+
+    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
+        // Fail if the length is not writable.
+        if (map->lengthIsReadOnly())
+            return reject(exec, throwException, StrictModeReadonlyPropertyWriteError);
+
+        if (newLength < length) {
+            // Copy any keys we might be interested in into a vector.
+            Vector<unsigned> keys;
+            keys.reserveCapacity(min(map->size(), static_cast<size_t>(length - newLength)));
+            SparseArrayValueMap::const_iterator end = map->end();
+            for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
+                unsigned index = it->first;
+                if (index < length && index >= newLength)
+                    keys.append(index);
+            }
+
+            // Check if the array is in sparse mode. If so there may be non-configurable
+            // properties, so we have to perform deletion with caution, if not we can
+            // delete values in any order.
+            if (map->sparseMode()) {
+                qsort(keys.begin(), keys.size(), sizeof(unsigned), compareKeysForQSort);
+                unsigned i = keys.size();
+                while (i) {
+                    unsigned index = keys[--i];
+                    SparseArrayValueMap::iterator it = map->find(index);
+                    ASSERT(it != map->notFound());
+                    if (it->second.attributes & DontDelete) {
+                        storage->m_length = index + 1;
+                        return reject(exec, throwException, "Unable to delete property.");
+                    }
+                    map->remove(it);
+                }
+            } else {
+                for (unsigned i = 0; i < keys.size(); ++i)
+                    map->remove(keys[i]);
+                if (map->isEmpty()) {
+                    delete map;
+                    storage->m_sparseValueMap = 0;
+                }
+            }
+        }
+    }
+
     if (newLength < length) {
+        // Delete properties from the vector.
         unsigned usedVectorLength = min(length, m_vectorLength);
         for (unsigned i = newLength; i < usedVectorLength; ++i) {
             WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
             bool hadValue = valueSlot;
             valueSlot.clear();
             storage->m_numValuesInVector -= hadValue;
-        }
-
-        // FIXME: properties should be removed in reverse numeric order, if any cannot be
-        // removed this method should reject (possibly throw / return false), and length
-        // should be set the after the last property that could not be removed.
-        if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-            SparseArrayValueMap copy = *map;
-            SparseArrayValueMap::const_iterator end = copy.end();
-            for (SparseArrayValueMap::const_iterator it = copy.begin(); it != end; ++it) {
-                if (it->first >= newLength)
-                    map->remove(it->first);
-            }
-            if (map->isEmpty() && !map->sparseMode()) {
-                delete map;
-                storage->m_sparseValueMap = 0;
-            }
         }
     }
 

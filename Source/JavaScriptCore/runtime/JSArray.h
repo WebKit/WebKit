@@ -166,7 +166,8 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
         
         unsigned length() const { return m_storage->m_length; }
-        bool setLength(unsigned, bool throwException = false); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
+        // OK to use on new arrays, but not if it might be a RegExpMatchArray.
+        bool setLength(ExecState*, unsigned, bool throwException = false);
 
         void sort(ExecState*);
         void sort(ExecState*, JSValue compareFunction, CallType, const CallData&);
