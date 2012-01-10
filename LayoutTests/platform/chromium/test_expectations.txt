@@ -939,15 +939,6 @@ BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
-BUGSENORBLANCO : svg/W3C-SVG-1.1/filters-color-01-b.svg = FAIL
-BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = FAIL
-BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = FAIL
-BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = FAIL
-BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = FAIL
-
-BUGSENORBLANCO : svg/filters/feColorMatrix-offset.svg = FAIL
-BUGSENORBLANCO : svg/filters/feColorMatrix-saturate.svg = FAIL
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
