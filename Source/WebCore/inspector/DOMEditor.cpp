@@ -232,7 +232,8 @@ bool DOMEditor::patchChildren(ContainerNode* oldParent, Vector<OwnPtr<NodeDigest
 
         ExceptionCode ec = 0;
         oldParent->insertBefore(newList[i]->m_node, oldParent->childNode(i + offset), ec);
-        return !ec;
+        if (ec)
+            return false;
     }
 
     return true;

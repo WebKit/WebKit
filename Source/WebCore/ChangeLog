@@ -1,3 +1,10 @@
+2012-01-10  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed, follow up to r104586: fix assertion within the loop.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::patchChildren):
+
 2012-01-10  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/9328684> and https://bugs.webkit.org/show_bug.cgi?id=62764
