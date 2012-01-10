@@ -52,6 +52,9 @@ class NativeWebKeyboardEvent;
 #if ENABLE(TOUCH_EVENTS)
 class NativeWebTouchEvent;
 #endif
+#if ENABLE(GESTURE_EVENTS)
+class WebGestureEvent;
+#endif
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;

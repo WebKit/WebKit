@@ -1,3 +1,9 @@
+2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed potential Mac WK2 build fix.
+
+        * UIProcess/PageClient.h: forward declare WebGestureEvent.
+
 2012-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out an accidental commit r104569.
