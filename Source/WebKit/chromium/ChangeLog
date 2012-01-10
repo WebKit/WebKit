@@ -1,3 +1,16 @@
+2012-01-09  W. James MacLean  <wjmaclean@chromium.org>
+
+        [Chromium] REGRESSION(r104368): Broke CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers
+        https://bugs.webkit.org/show_bug.cgi?id=75783
+
+        Updated unit test to reflect desired behaviour now that tile/quad culling
+        is implemented.
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::TEST_F):
+
 2012-01-09  Chris Rogers  <crogers@google.com>
 
         Fix potential issue in WebMediaPlayerClientImpl
