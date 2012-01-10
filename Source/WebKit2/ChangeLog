@@ -1,3 +1,15 @@
+2012-01-10  Chris Marrin  <cmarrin@apple.com>
+
+        Turn off the FilterTrigger in WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=75914
+
+        Reviewed by Simon Fraser.
+
+        Implement allowedCompositingTriggers to turn on all compositing triggers except FilterTrigger.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebKit::WebChromeClient::allowedCompositingTriggers):
+
 2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed potential Mac WK2 build fix.

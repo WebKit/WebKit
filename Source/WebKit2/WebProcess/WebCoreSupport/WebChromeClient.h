@@ -184,6 +184,16 @@ private:
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 #endif
 
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const
+    {
+        return static_cast<CompositingTriggerFlags>(
+            ThreeDTransformTrigger |
+            VideoTrigger |
+            PluginTrigger| 
+            CanvasTrigger |
+            AnimationTrigger);
+    }
+
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE;
 #endif

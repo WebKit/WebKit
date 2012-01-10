@@ -150,6 +150,16 @@ public:
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 #endif
 
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const
+    {
+        return static_cast<CompositingTriggerFlags>(
+            ThreeDTransformTrigger |
+            VideoTrigger |
+            PluginTrigger| 
+            CanvasTrigger |
+            AnimationTrigger);
+    }
+
 #if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*) OVERRIDE;
     virtual void enterFullscreenForNode(WebCore::Node*) OVERRIDE;

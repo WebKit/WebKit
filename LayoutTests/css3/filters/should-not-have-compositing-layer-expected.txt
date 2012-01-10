@@ -1,0 +1,8 @@
+Test to make sure a simple CSS filter does not create a compositing layer. Test is successful of render tree does not show any compositing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS no compositing layers
+
+

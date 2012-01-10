@@ -1,3 +1,15 @@
+2012-01-10  Chris Marrin  <cmarrin@apple.com>
+
+        Turn off the FilterTrigger in WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=75914
+
+        Reviewed by Simon Fraser.
+
+        Implement allowedCompositingTriggers to turn on all compositing triggers except FilterTrigger.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::allowedCompositingTriggers):
+
 2012-01-10  Dan Bernstein  <mitz@apple.com>
 
         Change -[WebHistoryItem copyWithZone:] to not use NSCopyObject()

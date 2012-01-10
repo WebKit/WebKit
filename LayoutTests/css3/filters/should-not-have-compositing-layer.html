@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        description("Test to make sure a simple CSS filter does not create a compositing layer. Test is successful of render tree does not show any compositing");
+        if (window.layoutTestController) {
+            var layers = layoutTestController.layerTreeAsText();
+            if (layers == "")
+                testPassed("no compositing layers");
+            else
+                testFailed("content has compositing layers");
+            document.getElementById("layertree").innerText = layers;
+            layoutTestController.notifyDone();
+        }
+    }
+    
+    window.addEventListener('load', doTest, false);
+
+</script>
+<img style="-webkit-filter: blur(0);" src="resources/reference.png">
+<div id="layertree"></div>
