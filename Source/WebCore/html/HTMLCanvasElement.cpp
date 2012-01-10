@@ -423,13 +423,13 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     UNUSED_PARAM(size);
-    return document()->settings()->canvasUsesAcceleratedDrawing();
+    return document()->settings() && document()->settings()->canvasUsesAcceleratedDrawing();
 #elif ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && !m_context->is2d())
         return false;
 
     Settings* settings = document()->settings();
-    if (!settings->accelerated2dCanvasEnabled())
+    if (!settings || !settings->accelerated2dCanvasEnabled())
         return false;
 
     // Do not use acceleration for small canvas.

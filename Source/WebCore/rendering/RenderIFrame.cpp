@@ -95,7 +95,7 @@ bool RenderIFrame::flattenFrame()
     }
 
     Frame* frame = element->document()->frame();
-    bool enabled = frame && frame->settings()->frameFlatteningEnabled();
+    bool enabled = frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
 
     if (!enabled || !frame->page())
         return false;

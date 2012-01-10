@@ -1,3 +1,39 @@
+2012-01-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Add NULL checks to setting access obtained on frame and document.
+        https://bugs.webkit.org/show_bug.cgi?id=72002
+
+        Reviewed by Andreas Kling.
+
+        Adds NULL checks to setting object where it's required.
+        Generally WebCore checks NULL which may be returned from setting object obtained
+        on frame or document but in some cases these are skipped. These checks are not
+        needed to setting's access on page object.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::shouldAccelerate):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableNode):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::flattenFrameSet):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::flattenFrame):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        * rendering/RenderText.cpp:
+        (WebCore::SecureTextTimer::restartWithNewText):
+
 2012-01-10  Andreas Kling  <awesomekling@apple.com>
 
         Matched declaration cache should support mapped attribute declarations.

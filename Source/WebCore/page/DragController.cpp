@@ -626,6 +626,7 @@ Node* DragController::draggableNode(const Frame* src, Node* startNode, const Int
             if (dragMode == DRAG_AUTO) {
                 if ((m_dragSourceAction & DragSourceActionImage)
                     && node->hasTagName(HTMLNames::imgTag)
+                    && src->settings()
                     && src->settings()->loadsImagesAutomatically()) {
                     state.m_dragType = static_cast<DragSourceAction>(state.m_dragType | DragSourceActionImage);
                     return node;

@@ -138,7 +138,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
 {
     ASSERT(frame && frame->page());
     
-    if (!frame->settings()->offlineWebApplicationCacheEnabled())
+    if (!frame->settings() || !frame->settings()->offlineWebApplicationCacheEnabled())
         return;
     
     DocumentLoader* documentLoader = frame->loader()->documentLoader();
@@ -193,7 +193,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
         return;
 
     // Don't change anything on disk if private browsing is enabled.
-    if (!frame->settings() || frame->settings()->privateBrowsingEnabled()) {
+    if (frame->settings()->privateBrowsingEnabled()) {
         postListenerTask(ApplicationCacheHost::CHECKING_EVENT, documentLoader);
         postListenerTask(ApplicationCacheHost::ERROR_EVENT, documentLoader);
         return;
@@ -211,7 +211,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
 
 void ApplicationCacheGroup::selectCacheWithoutManifestURL(Frame* frame)
 {
-    if (!frame->settings()->offlineWebApplicationCacheEnabled())
+    if (!frame->settings() || !frame->settings()->offlineWebApplicationCacheEnabled())
         return;
 
     DocumentLoader* documentLoader = frame->loader()->documentLoader();

@@ -109,7 +109,7 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
          // as opposed to third-party code such as Flash. The user agent decides whether or not they are
          // permitted, rather than WebKit.
          && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
-        || (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
+        || ((!settings || !settings->isJavaEnabled()) && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
         return false;
 
     if (m_frame->document()) {

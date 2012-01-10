@@ -68,7 +68,8 @@ public:
     void restartWithNewText(unsigned lastTypedCharacterOffset)
     {
         m_lastTypedCharacterOffset = lastTypedCharacterOffset;
-        startOneShot(m_renderText->document()->settings()->passwordEchoDurationInSeconds());
+        if (Settings* settings = m_renderText->document()->settings())
+            startOneShot(settings->passwordEchoDurationInSeconds());
     }
     void invalidate() { m_lastTypedCharacterOffset = -1; }
     unsigned lastTypedCharacterOffset() { return m_lastTypedCharacterOffset; }
