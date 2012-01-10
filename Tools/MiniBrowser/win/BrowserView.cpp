@@ -152,8 +152,10 @@ void BrowserView::setFrame(RECT rect)
 void BrowserView::goToURL(const std::wstring& urlString)
 {
     CFStringRef string = CFStringCreateWithCharacters(0, (const UniChar*)urlString.data(), urlString.size());
-    CFURLRef cfURL = CFURLCreateWithString(0, string, 0);
+    CFStringRef escapedString = CFURLCreateStringByAddingPercentEscapes(0, string, 0, 0, kCFStringEncodingUTF8);
     CFRelease(string);
+    CFURLRef cfURL = CFURLCreateWithString(0, escapedString, 0);
+    CFRelease(escapedString);
 
     WKURLRef url = WKURLCreateWithCFURL(cfURL);
     CFRelease(cfURL); 

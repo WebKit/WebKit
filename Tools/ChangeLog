@@ -1,3 +1,16 @@
+2012-01-10  Adam Roben  <aroben@apple.com>
+
+        Make MiniBrowser automatically escape invalid URL characters typed in its URL field
+
+        Fixes <http://webkit.org/b/75086> Crash when typing a data: URL containing double-quotes in
+        MiniBrowser on Windows
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::goToURL): Pass the typed string through
+        CFURLCreateStringByAddingPercentEscapes before trying to create a URL from it.
+
 2012-01-10  Ben Wells  <benwells@chromium.org>
 
         Adding myself (benwells) to committers.py
