@@ -939,6 +939,7 @@ BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = 
 BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = FAIL
 BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = FAIL
 BUGSENORBLANCO : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = FAIL
+
 BUGSENORBLANCO : svg/filters/feColorMatrix-offset.svg = FAIL
 BUGSENORBLANCO : svg/filters/feColorMatrix-saturate.svg = FAIL
 
@@ -3095,17 +3096,12 @@ BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS 
 // Has been going on for at least a few weeks (as of 20/5/2011)
 BUGCR83426 MAC : svg/as-border-image/svg-as-border-image-2.html = PASS IMAGE
 BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
-BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-02-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = PASS IMAGE
 BUGCR83426 MAC : svg/css/circle-in-mask-with-shadow.svg = PASS IMAGE
 BUGCR83426 MAC : svg/custom/foreign-object-skew.svg = PASS IMAGE
-BUGCR83426 MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = PASS IMAGE
-BUGCR83426 MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = PASS IMAGE
-BUGCR83426 MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = PASS IMAGE
-BUGCR83426 MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = PASS IMAGE
 BUGCR83426 MAC : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr.html = PASS IMAGE
 BUGCR83426 MAC : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop.html = PASS IMAGE
 BUGCR83426 MAC : svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html = PASS IMAGE
