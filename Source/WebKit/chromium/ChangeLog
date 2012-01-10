@@ -1,3 +1,9 @@
+2012-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from 116459 to 116979.
+
+        * DEPS:
+
 2012-01-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create iterators for the RenderSurface-Layer tree
