@@ -1,3 +1,13 @@
+2012-01-10  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Add font-related API tests for QWebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=75739
+
+        Reviewed by Zoltan Herczeg.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+        * UIProcess/API/qt/tests/qmltests/common/font-preferences.html: Added.
+
 2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix failing WK2 layout tests after r104557
