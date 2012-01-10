@@ -1,3 +1,13 @@
+2012-01-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create iterators for the RenderSurface-Layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=74203
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerIteratorTest.cpp: Added.
+
 2012-01-09  W. James MacLean  <wjmaclean@chromium.org>
 
         [Chromium] REGRESSION(r104368): Broke CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers

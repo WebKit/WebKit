@@ -96,6 +96,11 @@ private:
     TransformationMatrix m_originTransform;
     IntRect m_clipRect;
     Vector<RefPtr<LayerChromium> > m_layerList;
+
+    // For CCLayerIteratorActions
+    int m_targetRenderSurfaceLayerIndexHistory;
+    int m_currentLayerIndexHistory;
+    friend struct CCLayerIteratorActions;
 };
 
 }

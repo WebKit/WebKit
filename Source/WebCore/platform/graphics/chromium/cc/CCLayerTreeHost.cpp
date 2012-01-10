@@ -31,6 +31,7 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
+#include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -431,57 +432,41 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
 
 void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType)
 {
-    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
-        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
-        ASSERT(renderSurface);
-        ASSERT(renderSurface->drawOpacity());
+    // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
+    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-        paintMaskAndReplicaForRenderSurface(renderSurfaceLayer, paintType);
-
-        const LayerList& layerList = renderSurface->layerList();
-        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            LayerChromium* layer = layerList[layerIndex].get();
-
-            // Layers that start a new render surface will be painted when the render
-            // surface's list is processed.
-            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
-                continue;
-
-            ASSERT(!layer->bounds().isEmpty());
-
-            paintContentsIfDirty(layer, paintType);
+    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+        if (it.representsTargetRenderSurface()) {
+            ASSERT(it->renderSurface()->drawOpacity());
+            paintMaskAndReplicaForRenderSurface(*it, paintType);
+        } else if (it.representsItself()) {
+            ASSERT(it->opacity());
+            ASSERT(!it->bounds().isEmpty());
+            paintContentsIfDirty(*it, paintType);
         }
     }
 }
 
 void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
-    for (int surfaceIndex = m_updateList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        LayerChromium* renderSurfaceLayer = m_updateList[surfaceIndex].get();
-        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
-        ASSERT(renderSurface);
-        ASSERT(renderSurface->drawOpacity());
+    // Use BackToFront since it's cheap and this isn't order-dependent.
+    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
-        if (renderSurfaceLayer->maskLayer())
-            renderSurfaceLayer->maskLayer()->updateCompositorResources(context, updater);
+    CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
+        if (it.representsTargetRenderSurface()) {
+            ASSERT(it->renderSurface()->drawOpacity());
+            if (it->maskLayer())
+                it->maskLayer()->updateCompositorResources(context, updater);
 
-        if (renderSurfaceLayer->replicaLayer()) {
-            renderSurfaceLayer->replicaLayer()->updateCompositorResources(context, updater);
-            
-            if (renderSurfaceLayer->replicaLayer()->maskLayer())
-                renderSurfaceLayer->replicaLayer()->maskLayer()->updateCompositorResources(context, updater);
-        }
-        
-        const LayerList& layerList = renderSurface->layerList();
-        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            LayerChromium* layer = layerList[layerIndex].get();
-
-            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
-                continue;
-
-            layer->updateCompositorResources(context, updater);
-        }
+            if (it->replicaLayer()) {
+                it->replicaLayer()->updateCompositorResources(context, updater);
+                if (it->replicaLayer()->maskLayer())
+                    it->replicaLayer()->maskLayer()->updateCompositorResources(context, updater);
+            }
+        } else if (it.representsItself())
+            it->updateCompositorResources(context, updater);
     }
 }
 
