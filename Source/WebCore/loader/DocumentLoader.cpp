@@ -233,7 +233,17 @@ void DocumentLoader::stopLoading()
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
     m_applicationCacheHost->stopLoadingInFrame(m_frame);
 
-    if (!loading)
+    if (!loading) {
+        // If something above restarted loading we might run into mysterious crashes like 
+        // https://bugs.webkit.org/show_bug.cgi?id=62764 and <rdar://problem/9328684>
+        ASSERT(!m_loading);
+        return;
+    }
+
+    // We might run in to infinite recursion if we're stopping loading as the result of 
+    // detaching from the frame, so break out of that recursion here.
+    // See <rdar://problem/9673866> for more details.
+    if (m_isStopping)
         return;
     
     RefPtr<Frame> protectFrame(m_frame);
@@ -395,6 +405,10 @@ void DocumentLoader::attachToFrame()
 void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
+
+    // It never makes sense to have a document loader that is detached from its
+    // frame have any loads active, so go ahead and kill all the loads.
+    stopLoading();
 
     m_applicationCacheHost->setDOMApplicationCache(0);
     InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);

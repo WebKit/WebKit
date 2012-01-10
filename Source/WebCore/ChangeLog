@@ -1,3 +1,18 @@
+2012-01-10  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/9328684> and https://bugs.webkit.org/show_bug.cgi?id=62764
+        Frequent crashes due to null frame below ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+ 
+        Reviewed by Maciej Stachowiak.
+
+        This is a non-reproducible high volume crash, so no test :(. 
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading): Don't re-run actual "stop loading" logic if the document loader is already
+          stopping loading. Also add an ASSERT that might catch cases where new loads may have been started while old loads
+          were being stopped.
+        (WebCore::DocumentLoader::detachFromFrame): Be conservative and stop loading when we detach a document loader from a frame. 
+
 2012-01-10  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fixing the Mac build.
