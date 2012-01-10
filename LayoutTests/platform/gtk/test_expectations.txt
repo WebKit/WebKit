@@ -86,8 +86,6 @@ BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 
 BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS TEXT
 
-BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
-
 BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
 
 // End of Flaky tests
