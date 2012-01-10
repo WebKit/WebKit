@@ -33,7 +33,6 @@
 #include "RenderSurfaceChromium.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCLayerIterator.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCRenderSurface.h"
 
@@ -470,14 +469,15 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 template<typename LayerType, typename RenderSurfaceType>
 static void walkLayersAndCalculateVisibleLayerRects(const Vector<RefPtr<LayerType> >& renderSurfaceLayerList)
 {
-    // Use BackToFront since it's cheap and this isn't order-dependent.
-    typedef CCLayerIterator<LayerType, RenderSurfaceType, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerType* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceType* renderSurface = renderSurfaceLayer->renderSurface();
 
-    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
-        if (!it.representsTargetRenderSurface()) {
-            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerType>(*it);
-            it->setVisibleLayerRect(visibleLayerRect);
+        Vector<RefPtr<LayerType> >& layerList = renderSurface->layerList();
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            LayerType* layer = layerList[layerIndex].get();
+            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect<LayerType>(layer);
+            layer->setVisibleLayerRect(visibleLayerRect);
         }
     }
 }

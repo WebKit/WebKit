@@ -129,11 +129,6 @@ private:
 
     // Stored in the "surface space" where this damage can be used for scissoring.
     FloatRect m_damageRect;
-
-    // For CCLayerIteratorActions
-    int m_targetRenderSurfaceLayerIndexHistory;
-    int m_currentLayerIndexHistory;
-    friend struct CCLayerIteratorActions;
 };
 
 }

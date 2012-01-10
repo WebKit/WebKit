@@ -1,3 +1,14 @@
+2012-01-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104507.
+        http://trac.webkit.org/changeset/104507
+        https://bugs.webkit.org/show_bug.cgi?id=75936
+
+        Broke webkit_unit_tests (Requested by dimich on #webkit).
+
+        * WebKit.gypi:
+        * tests/CCLayerIteratorTest.cpp: Removed.
+
 2012-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch WebView.h in an attempt to clobber Chromium bots on build.webkit.org.

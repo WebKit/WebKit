@@ -64,7 +64,6 @@
             'tests/CCDelayBasedTimeSourceTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',
             'tests/CCLayerImplTest.cpp',
-            'tests/CCLayerIteratorTest.cpp',
             'tests/CCLayerQuadTest.cpp',
             'tests/CCLayerSorterTest.cpp',
             'tests/CCLayerTreeHostCommonTest.cpp',
