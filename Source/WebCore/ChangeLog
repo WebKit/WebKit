@@ -1,3 +1,22 @@
+2012-01-09  Jer Noble  <jer.noble@apple.com>
+
+        Elements can appear over fullscreen video
+        https://bugs.webkit.org/show_bug.cgi?id=75913
+
+        Reviewed by Simon Fraser.
+
+        No new tests; updated fullscreen/full-screen-zIndex.html to trigger error condition.
+
+        RenderFullScreenPlaceholder inherits the pre-fullscreen element's style, causing a stacking
+        context to be created.  Instead of making the placeholder the parent of the RenderFullScreen
+        object, make the two renderers siblings.  Then the stacking context created by the placeholder
+        will not affect the z-ordering of the RenderFullScreen.
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::wrapRenderer):
+        (RenderFullScreen::unwrapRenderer):
+        (RenderFullScreen::createPlaceholder):
+
 2012-01-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add "free flow DOM editing" experiment.

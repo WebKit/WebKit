@@ -117,21 +117,20 @@ RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, Document* doc
         fullscreenRenderer->addChild(object);
     }
     document->setFullScreenRenderer(fullscreenRenderer);
-    if (fullscreenRenderer->placeholder())
-        return fullscreenRenderer->placeholder();
     return fullscreenRenderer;
 }
 
 void RenderFullScreen::unwrapRenderer()
 {
-    RenderObject* holder = placeholder() ? placeholder() : this;
-    if (holder->parent()) {
+    if (parent()) {
         RenderObject* child;
         while ((child = firstChild())) {
             child->remove();
-            holder->parent()->addChild(child, holder);
+            parent()->addChild(child, this);
         }
     }
+    if (placeholder())
+        placeholder()->remove();
     remove();
     document()->setFullScreenRenderer(0);
 }
@@ -151,11 +150,8 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const In
     if (!m_placeholder) {
         m_placeholder = new (document()->renderArena()) RenderFullScreenPlaceholder(this);
         m_placeholder->setStyle(style);
-        if (parent()) {
+        if (parent())
             parent()->addChild(m_placeholder, this);
-            remove();
-        }
-        m_placeholder->addChild(this);
     } else
         m_placeholder->setStyle(style);
 }
