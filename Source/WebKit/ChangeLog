@@ -1,3 +1,18 @@
+2012-01-10  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Fix assertion failure in BackingStore::blitContents
+        https://bugs.webkit.org/show_bug.cgi?id=75976
+
+        Prevent an assertion failure in BackingStore::blitContents by
+        checking that the srcRect of the transformation matrix is non empty.
+
+        Reviewed by Adam Treat.
+
+        Upstream BlackBerry port is not yet building and testable.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+
 2012-01-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] Sort the resources of WebKit.xcodeproj

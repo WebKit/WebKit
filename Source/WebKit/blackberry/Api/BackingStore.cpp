@@ -1241,8 +1241,9 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 #endif
 
     // FIXME: This should not explicitely depend on WebCore::.
-    TransformationMatrix transformation = TransformationMatrix::rectToRect(
-        FloatRect(FloatPoint(0.0, 0.0), WebCore::IntSize(contents.size())), WebCore::IntRect(dstRect));
+    TransformationMatrix transformation;
+    if (!contents.isEmpty())
+        transformation = TransformationMatrix::rectToRect(FloatRect(FloatPoint(0.0, 0.0), WebCore::IntSize(contents.size())), WebCore::IntRect(dstRect));
 
     bool blittingDirectlyToCompositingWindow = m_webPage->d->m_client->window()->windowUsage() == BlackBerry::Platform::Graphics::Window::GLES2Usage;
 #if USE(ACCELERATED_COMPOSITING)
