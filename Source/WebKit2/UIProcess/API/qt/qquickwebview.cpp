@@ -924,7 +924,7 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
 
     switch(property) {
     case Qt::ImCursorRectangle:
-        return QRectF(state.cursorRect);
+        return QRectF(state.microFocus);
     case Qt::ImFont:
         return QVariant();
     case Qt::ImCursorPosition:

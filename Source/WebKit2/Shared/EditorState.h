@@ -63,8 +63,7 @@ struct EditorState {
     unsigned cursorPosition;
     unsigned anchorPosition;
 
-    WebCore::IntRect editorRect;
-    WebCore::IntRect cursorRect;
+    WebCore::IntRect microFocus;
     WebCore::IntRect compositionRect;
     WTF::String selectedText;
     WTF::String surroundingText;

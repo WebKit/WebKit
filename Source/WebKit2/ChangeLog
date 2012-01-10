@@ -1,3 +1,18 @@
+2012-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out an accidental commit r104569.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::inputMethodQuery):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed potential Mac WK2 build fix.

@@ -186,9 +186,8 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     EditorState state = m_page->editorState();
 
 #if PLATFORM(QT)
-    // FIXME: Move this to act on the vkb visibility change.
-    if (state.isContentEditable)
-        m_page->send(Messages::WebPageProxy::FocusEditableArea(state.cursorRect, state.editorRect));
+    if (Element* scope = frame->selection()->rootEditableElement())
+        m_page->send(Messages::WebPageProxy::FocusEditableArea(state.microFocus, scope->getRect()));
 #endif
 
     m_page->send(Messages::WebPageProxy::EditorStateChanged(state));
