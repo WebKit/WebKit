@@ -1,5 +1,11 @@
 2012-01-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed. WebInspector: Remove unnecessary logging from the test.
+
+        * inspector/first-open-resources.html:
+
+2012-01-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed. Restore test that was removed during migration from LayoutTests folder.
 
         * inspector/first-open-resources.html: Added.

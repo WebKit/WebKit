@@ -7,7 +7,6 @@
 function test()
 {
     WebInspector.showPanel("resources");
-console.log("test: " + WebInspector.inspectedPageURL);
     WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.inspectedPageURL);
 
     function test(timer)
