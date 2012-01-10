@@ -1,3 +1,13 @@
+2012-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r100130): Clean build feature is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=75863
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProject):
+
 2012-01-10  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Fix keyboard shortcuts in MiniBrowser.
