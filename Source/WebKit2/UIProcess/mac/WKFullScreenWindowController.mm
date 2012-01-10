@@ -185,8 +185,13 @@ using namespace WebCore;
         screen = [NSScreen mainScreen];
     NSRect screenFrame = [screen frame];
     
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     NSRect webViewFrame = [_webView convertRectToBase:[_webView frame]];
     webViewFrame.origin = [[_webView window] convertBaseToScreen:webViewFrame.origin];
+#else
+    NSRect webViewFrame = [[_webView window] convertRectToScreen:
+        [_webView convertRect:[_webView frame] toView:nil]];
+#endif
         
     // In the case of a multi-monitor setup where the webView straddles two
     // monitors, we must create a window large enough to contain the destination

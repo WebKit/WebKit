@@ -1,3 +1,21 @@
+2011-1-9  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 102377
+
+    2011-12-08  Jer Noble  <jer.noble@apple.com>
+
+            HiDPI: Switching a video element to full screen in HiDPI mode doesn't fit the screen correctly
+            https://bugs.webkit.org/show_bug.cgi?id=74119
+            rdar://problem/10356869
+
+            Reviewed by Darin Adler.
+
+            Use the Lion-only -[NSWindow convertRectToScreen:] function to convert between window 
+            coordinates and screen coordinates.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController enterFullScreen:]):
+
 2011-1-5  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98781
