@@ -1,3 +1,19 @@
+2011-1-9  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 101584
+
+    2011-11-30  Ken Buchanan <kenrb@chromium.org>
+
+            Crash from first letter text fragments having flows split
+            https://bugs.webkit.org/show_bug.cgi?id=72759
+
+            Reviewed by David Hyatt.
+
+            New test for fix to crash on bug 72759.
+
+            * fast/css/first-letter-inline-flow-split-crash-expected.txt: Added
+            * fast/css/first-letter-inline-flow-split-crash.html: Added
+
 2011-1-6  Lucas Forschler  <lforschler@apple.com>
 
     Merge 101091
