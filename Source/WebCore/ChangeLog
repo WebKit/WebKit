@@ -1,3 +1,17 @@
+2012-01-10  Mike Reed  <reed@google.com>
+
+        [skia] not all convex paths are convex, so recompute convexity for the problematic ones
+        https://bugs.webkit.org/show_bug.cgi?id=75960
+
+        Reviewed by Stephen White.
+
+        No new tests.
+        See related chrome issue
+        http://code.google.com/p/chromium/issues/detail?id=108605
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::setPathFromConvexPoints):
+
 2012-01-10  Gavin Barraclough  <barraclough@apple.com>
 
         Do not allow Array length to be set if it is non-configurable
