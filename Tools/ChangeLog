@@ -1,3 +1,14 @@
+2012-01-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS_FILTERS in Qt build
+        https://bugs.webkit.org/show_bug.cgi?id=75777
+
+        Add the CSS_FILTERS feature flag to Qt.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unreviewed -Werror build fix.

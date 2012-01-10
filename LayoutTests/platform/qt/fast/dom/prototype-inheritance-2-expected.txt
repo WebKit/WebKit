@@ -431,6 +431,7 @@ Never found SVGViewElement
 Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
+Never found WebKitCSSFilterValue
 Never found WebKitCSSMatrix
 Never found WebKitCSSTransformValue
 Never found WebKitPoint

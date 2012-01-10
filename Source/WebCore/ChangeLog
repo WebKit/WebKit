@@ -1,3 +1,16 @@
+2012-01-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS_FILTERS in Qt build
+        https://bugs.webkit.org/show_bug.cgi?id=75777
+
+        Enable CSS_FILTERS and unskip the tests.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Filter tests are now unskipped for Qt.
+
+        * Target.pri: add missing files to build.
+
 2012-01-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: typo: NetworkAgent.canClearBrowserCache -> NetworkAgent.canClearBrowserCookies.
