@@ -1,3 +1,20 @@
+2012-01-10  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Remove codes to move and resize the clip.
+        https://bugs.webkit.org/show_bug.cgi?id=75428
+
+        Reviewed by Andreas Kling.
+
+        Remove codes to move and resize the clip because clip is not used now.
+        We have to show whole area of evas_object_image so we don't have to
+        clip any area.
+        In the WebKit1 Efl, the clip is used to clip the area to show during
+        weak zoom, so we can use codes to manipulate the clip when we want to
+        implement weak zoom for WebKit2 Efl.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2012-01-09  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Pinch zoom should affect the page size

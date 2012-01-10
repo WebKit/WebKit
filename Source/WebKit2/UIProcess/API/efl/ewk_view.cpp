@@ -348,20 +348,17 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     smartData->changed.any = false;
 
     evas_object_geometry_get(ewkView, &x, &y, &width, &height);
-    Evas_Object* clip = evas_object_clip_get(smartData->image);
 
     if (smartData->changed.size) {
         if (priv->pageClient->page()->drawingArea())
             priv->pageClient->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
         smartData->view.w = width;
         smartData->view.h = height;
-        evas_object_resize(clip, width, height);
         smartData->changed.size = false;
     }
 
     if (smartData->changed.position) {
         evas_object_move(smartData->image, x, y);
-        evas_object_move(clip, x, y);
         smartData->view.x = x;
         smartData->view.y = y;
         smartData->changed.position = false;
