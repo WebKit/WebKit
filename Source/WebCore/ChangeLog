@@ -1,3 +1,16 @@
+2012-01-09  Matthew Delaney  <mdelaney@apple.com>
+
+        [Mac] Accelerate canvas layers with the same logic as accelerating the canvas itself
+        https://bugs.webkit.org/show_bug.cgi?id=75921
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Does not affect detectable behavior.
+
+        * rendering/RenderLayerCompositor.cpp: Use canvas's shouldAccelerate to avoid asking
+        uninitialized canvas's if they're accelerated or not.
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2012-01-10  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Do not recreate texture updater for image layer if one exists.

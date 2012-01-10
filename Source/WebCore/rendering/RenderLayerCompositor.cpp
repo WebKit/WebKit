@@ -373,7 +373,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
                 layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
             else if (layer->renderer()->isCanvas()) {
                 HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(layer->renderer()->node());
-                if (canvas->renderingContext() && canvas->renderingContext()->isAccelerated())
+                if (canvas->shouldAccelerate(canvas->size()))
                     layer->backing()->graphicsLayer()->setAcceleratesDrawing(true);
             }
 #endif
