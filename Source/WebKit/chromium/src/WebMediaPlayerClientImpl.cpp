@@ -237,7 +237,9 @@ void WebMediaPlayerClientImpl::load(const String& url)
     m_url = url;
 
     if (m_preload == MediaPlayer::None) {
+#if ENABLE(WEB_AUDIO)
         m_audioSourceProvider.wrap(0); // Clear weak reference to m_webMediaPlayer's WebAudioSourceProvider.
+#endif
         m_webMediaPlayer.clear();
         m_delayingLoad = true;
     } else
@@ -246,7 +248,9 @@ void WebMediaPlayerClientImpl::load(const String& url)
 
 void WebMediaPlayerClientImpl::loadInternal()
 {
+#if ENABLE(WEB_AUDIO)
     m_audioSourceProvider.wrap(0); // Clear weak reference to m_webMediaPlayer's WebAudioSourceProvider.
+#endif
 
     Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
     m_webMediaPlayer = createWebMediaPlayer(this, frame);
