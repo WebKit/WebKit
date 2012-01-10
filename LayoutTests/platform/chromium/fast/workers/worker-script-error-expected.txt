@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 10: Uncaught ReferenceError: foo is not defined
 Test Worker script error handling functionality. Should print a series of PASS messages, followed with DONE.
 
 PASS: onerror invoked for a script that has invalid syntax.
