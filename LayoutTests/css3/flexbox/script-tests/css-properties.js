@@ -69,36 +69,36 @@ shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'start');
 
 
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
 // The initial value is 'stretch'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
 
-flexbox.style.webkitFlexAlign = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
+flexbox.style.webkitFlexItemAlign = 'foo';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
 
-flexbox.style.webkitFlexAlign = 'start';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'start');
+flexbox.style.webkitFlexItemAlign = 'start';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'start');
 
-flexbox.style.webkitFlexAlign = 'end';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'end');
+flexbox.style.webkitFlexItemAlign = 'end';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'end');
 
-flexbox.style.webkitFlexAlign = 'center';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'center');
+flexbox.style.webkitFlexItemAlign = 'center';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'center');
 
-flexbox.style.webkitFlexAlign = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+flexbox.style.webkitFlexItemAlign = 'stretch';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
 
-flexbox.style.webkitFlexAlign = 'baseline';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'baseline');
+flexbox.style.webkitFlexItemAlign = 'baseline';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'baseline');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'baseline');
 
-flexbox.style.webkitFlexAlign = '';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+flexbox.style.webkitFlexItemAlign = '';
+shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
 
 shouldBeEqualToString('flexbox.style.webkitFlexDirection', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'row');

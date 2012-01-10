@@ -1158,6 +1158,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
+    case AlignAuto:
+        m_value.ident = CSSValueAuto;
+        break;
     case AlignStart:
         m_value.ident = CSSValueStart;
         break;
@@ -1179,6 +1182,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
 template<> inline CSSPrimitiveValue::operator EFlexAlign() const
 {
     switch (m_value.ident) {
+    case CSSValueAuto:
+        return AlignAuto;
     case CSSValueStart:
         return AlignStart;
     case CSSValueEnd:

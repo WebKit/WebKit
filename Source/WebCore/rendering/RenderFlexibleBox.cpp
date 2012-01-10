@@ -607,7 +607,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
-        if (child->style()->flexAlign() == AlignBaseline) {
+        if (child->style()->flexItemAlign() == AlignBaseline) {
             LayoutUnit ascent = marginBoxAscent(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
@@ -695,7 +695,10 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, LayoutUnit ma
         }
 
         // FIXME: Make sure this does the right thing with column flows.
-        switch (child->style()->flexAlign()) {
+        switch (child->style()->flexItemAlign()) {
+        case AlignAuto:
+            // FIXME: Handle this once we add flex-align.
+            break;
         case AlignStretch: {
             if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
                 LayoutUnit logicalHeightBefore = child->logicalHeight();

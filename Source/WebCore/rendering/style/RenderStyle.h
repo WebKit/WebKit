@@ -800,7 +800,7 @@ public:
     float flexboxHeightNegativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_heightNegativeFlex; }
     int flexOrder() const { return rareNonInheritedData->m_flexibleBox->m_flexOrder; }
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
-    EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
+    EFlexAlign flexItemAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexItemAlign); }
     EFlexDirection flexDirection() const { return static_cast<EFlexDirection>(rareNonInheritedData->m_flexibleBox->m_flexDirection); }
     bool isColumnFlexDirection() const { return flexDirection() == FlowColumn || flexDirection() == FlowColumnReverse; }
     EFlexWrap flexWrap() const { return static_cast<EFlexWrap>(rareNonInheritedData->m_flexibleBox->m_flexWrap); }
@@ -1220,7 +1220,7 @@ public:
     void setFlexboxHeightNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_heightNegativeFlex, f); }
     void setFlexOrder(int o) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexOrder, o); }
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
-    void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
+    void setFlexItemAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexItemAlign, a); }
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -1544,7 +1544,8 @@ public:
     static float initialFlexboxHeightNegativeFlex() { return 0; }
     static int initialFlexOrder() { return 0; }
     static EFlexPack initialFlexPack() { return PackStart; }
-    static EFlexAlign initialFlexAlign() { return AlignStretch; }
+    // FIXME: When we add in flex-align, default flex-item-align to AlignAuto.
+    static EFlexAlign initialFlexItemAlign() { return AlignStretch; }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
     static int initialMarqueeLoopCount() { return -1; }

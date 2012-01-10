@@ -1,3 +1,42 @@
+2012-01-10  Ojan Vafai  <ojan@chromium.org>
+
+        Rename flex-align to flex-item-align.
+        https://bugs.webkit.org/show_bug.cgi?id=75929
+
+        Reviewed by Darin Adler.
+
+        The spec has changed and now flex-align will be set on
+        the flexbox itself.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexAlign):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::flexItemAlign):
+        (WebCore::RenderStyleBitfields::setFlexItemAlign):
+        (WebCore::RenderStyleBitfields::initialFlexItemAlign):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2012-01-10  Eric Carlson  <eric.carlson@apple.com>
 
         Replace TextTrackCue "getCueAsSource" method with "text" attribute

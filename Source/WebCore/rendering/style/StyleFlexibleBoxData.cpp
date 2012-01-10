@@ -37,7 +37,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     , m_heightNegativeFlex(RenderStyle::initialFlexboxHeightNegativeFlex())
     , m_flexOrder(RenderStyle::initialFlexOrder())
     , m_flexPack(RenderStyle::initialFlexPack())
-    , m_flexAlign(RenderStyle::initialFlexAlign())
+    , m_flexItemAlign(RenderStyle::initialFlexItemAlign())
     , m_flexDirection(RenderStyle::initialFlexDirection())
     , m_flexWrap(RenderStyle::initialFlexWrap())
 {
@@ -51,7 +51,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     , m_heightNegativeFlex(o.m_heightNegativeFlex)
     , m_flexOrder(o.m_flexOrder)
     , m_flexPack(o.m_flexPack)
-    , m_flexAlign(o.m_flexAlign)
+    , m_flexItemAlign(o.m_flexItemAlign)
     , m_flexDirection(o.m_flexDirection)
     , m_flexWrap(o.m_flexWrap)
 {
@@ -61,7 +61,7 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 {
     return m_widthPositiveFlex == o.m_widthPositiveFlex && m_widthNegativeFlex == o.m_widthNegativeFlex
         && m_heightPositiveFlex == o.m_heightPositiveFlex && m_heightNegativeFlex == o.m_heightNegativeFlex
-        && m_flexOrder == o.m_flexOrder && m_flexPack == o.m_flexPack && m_flexAlign == o.m_flexAlign
+        && m_flexOrder == o.m_flexOrder && m_flexPack == o.m_flexPack && m_flexItemAlign == o.m_flexItemAlign
         && m_flexDirection == o.m_flexDirection && m_flexWrap == o.m_flexWrap;
 }
 
