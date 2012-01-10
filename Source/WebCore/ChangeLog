@@ -1,3 +1,31 @@
+2012-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up RenderLayerBacking code that looks for the body
+        https://bugs.webkit.org/show_bug.cgi?id=39502
+
+        Reviewed by Dave Hyatt.
+        
+        Consolidate code that propagates the <body> background to the
+        root, adding a utility method on RenderObject that is called
+        by RenderBox and RenderLayerBacking.
+        
+        Removed an unused method in RenderLayerBacking.
+        
+        The compositiong changes are not testable, since rendererBackgroundColor()
+        is only used by fullscreen at present.
+
+        Tests: fast/backgrounds/root-background-propagation.html
+               fast/backgrounds/root-background-propagation2.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::rendererBackgroundColor):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::rendererForRootBackground):
+        * rendering/RenderObject.h:
+
 2012-01-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create iterators for the RenderSurface-Layer tree

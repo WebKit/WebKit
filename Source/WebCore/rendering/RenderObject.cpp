@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Page.h"
@@ -2124,6 +2125,23 @@ bool RenderObject::isRooted(RenderView** view)
         *view = toRenderView(o);
 
     return true;
+}
+
+RenderObject* RenderObject::rendererForRootBackground()
+{
+    ASSERT(isRoot());
+    if (!hasBackground() && node() && node()->hasTagName(HTMLNames::htmlTag)) {
+        // Locate the <body> element using the DOM. This is easier than trying
+        // to crawl around a render tree with potential :before/:after content and
+        // anonymous blocks created by inline <body> tags etc. We can locate the <body>
+        // render object very easily via the DOM.
+        HTMLElement* body = document()->body();
+        RenderObject* bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
+        if (bodyObject)
+            return bodyObject;
+    }
+    
+    return this;
 }
 
 bool RenderObject::hasOutlineAnnotation() const

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: green;
+            height: 100px;
+        }
+        p {
+            color: green; /* Hide from pixel result */
+        }
+    </style>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText(true);
+    </script>
+</head>
+<body>
+    <p>The entire viewport should be filled with green</p>
+</body>
+</html>

@@ -858,23 +858,12 @@ void RenderBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
 {
-    const FillLayer* bgLayer = style()->backgroundLayers();
-    Color bgColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    RenderObject* bodyObject = 0;
-    if (!hasBackground() && node() && node()->hasTagName(HTMLNames::htmlTag)) {
-        // Locate the <body> element using the DOM.  This is easier than trying
-        // to crawl around a render tree with potential :before/:after content and
-        // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
-        // render object very easily via the DOM.
-        HTMLElement* body = document()->body();
-        bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
-        if (bodyObject) {
-            bgLayer = bodyObject->style()->backgroundLayers();
-            bgColor = bodyObject->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-        }
-    }
+    RenderObject* rootBackgroundRenderer = rendererForRootBackground();
+    
+    const FillLayer* bgLayer = rootBackgroundRenderer->style()->backgroundLayers();
+    Color bgColor = rootBackgroundRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
 
-    paintFillLayers(paintInfo, bgColor, bgLayer, view()->backgroundRect(this), BackgroundBleedNone, CompositeSourceOver, bodyObject);
+    paintFillLayers(paintInfo, bgColor, bgLayer, view()->backgroundRect(this), BackgroundBleedNone, CompositeSourceOver, rootBackgroundRenderer);
 }
 
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext* context) const

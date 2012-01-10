@@ -777,40 +777,13 @@ static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle* style)
     return hasBoxDecorations(style) || style->hasBackgroundImage();
 }
 
-bool RenderLayerBacking::rendererHasBackground() const
-{
-    // FIXME: share more code here
-    if (renderer()->node() && renderer()->node()->isDocumentNode()) {
-        RenderObject* htmlObject = renderer()->firstChild();
-        if (!htmlObject)
-            return false;
-        
-        if (htmlObject->hasBackground())
-            return true;
-        
-        RenderObject* bodyObject = htmlObject->firstChild();
-        if (!bodyObject)
-            return false;
-        
-        return bodyObject->hasBackground();
-    }
-    
-    return renderer()->hasBackground();
-}
-
 Color RenderLayerBacking::rendererBackgroundColor() const
 {
-    // FIXME: share more code here
-    if (renderer()->node() && renderer()->node()->isDocumentNode()) {
-        RenderObject* htmlObject = renderer()->firstChild();
-        if (htmlObject->hasBackground())
-            return htmlObject->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    RenderObject* backgroundRenderer = renderer();
+    if (backgroundRenderer->isRoot())
+        backgroundRenderer = backgroundRenderer->rendererForRootBackground();
 
-        RenderObject* bodyObject = htmlObject->firstChild();
-        return bodyObject->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    }
-
-    return renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    return backgroundRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
 }
 
 void RenderLayerBacking::updateBackgroundColor()

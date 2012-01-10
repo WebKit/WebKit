@@ -851,6 +851,9 @@ public:
         return outlineBoundsForRepaint(0);
     }
 
+    // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
+    RenderObject* rendererForRootBackground();
+
 protected:
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

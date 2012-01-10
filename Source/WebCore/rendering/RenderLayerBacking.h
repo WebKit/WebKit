@@ -194,7 +194,6 @@ private:
     bool isDirectlyCompositedImage() const;
     void updateImageContents();
 
-    bool rendererHasBackground() const;
     Color rendererBackgroundColor() const;
     void updateBackgroundColor();
 
