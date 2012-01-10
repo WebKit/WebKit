@@ -1,3 +1,12 @@
+2012-01-10  Stephen White  <senorblanco@chromium.org>
+
+        Fix Chrome/Mac build.
+
+        Build fix; unreviewed.
+
+        * platform/graphics/filters/skia/FEColorMatrixSkia.cpp:
+        (WebCore::luminanceToAlphaMatrix):
+
 2012-01-06  Stephen White  <senorblanco@chromium.org>
 
         [Skia] Switch FEColorMatrix to use a skia-based implementation when
