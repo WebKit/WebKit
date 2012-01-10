@@ -1,3 +1,9 @@
+2012-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from 116979 to 117006.
+
+        * DEPS:
+
 2012-01-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104507.
