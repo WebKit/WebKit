@@ -1,3 +1,18 @@
+2012-01-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove old WebMimeRegistry.h forwarding header
+        https://bugs.webkit.org/show_bug.cgi?id=75979
+
+        Reviewed by Ryosuke Niwa.
+
+        This isn't needed any more.
+
+        * WebKit.gyp:
+        * public/platform/WebMimeRegistry.h: Removed.
+        * src/FrameLoaderClientImpl.cpp:
+        * src/PlatformSupport.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+
 2012-01-10  Adrienne Walker  <enne@google.com>
 
         [chromium] Draw debug tile borders on composited layers

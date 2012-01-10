@@ -31,11 +31,11 @@
 #include "platform/WebCString.h"
 #include "platform/WebCanvas.h"
 #include "platform/WebKitPlatformSupport.h"
-#include "platform/WebMimeRegistry.h"
 #include "platform/WebRect.h"
 #include "platform/WebSize.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
+#include <public/WebMimeRegistry.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"

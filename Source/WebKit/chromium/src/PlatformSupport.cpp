@@ -57,11 +57,11 @@
 #include "platform/WebDragData.h"
 #include "platform/WebImage.h"
 #include "platform/WebKitPlatformSupport.h"
-#include "platform/WebMimeRegistry.h"
 #include "platform/WebSerializedScriptValue.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "platform/WebVector.h"
+#include <public/WebMimeRegistry.h>
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>

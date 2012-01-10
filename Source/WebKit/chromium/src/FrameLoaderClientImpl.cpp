@@ -68,7 +68,7 @@
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
-#include "platform/WebMimeRegistry.h"
+#include <public/WebMimeRegistry.h>
 #include "WebNode.h"
 #include "WebPermissionClient.h"
 #include "WebPlugin.h"
