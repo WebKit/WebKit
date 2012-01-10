@@ -32,16 +32,26 @@
 #import "DOMBlobInternal.h"
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
+#import "DOMDocumentInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMIDBKeyInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMOptionsObjectInternal.h"
+#import "DOMSVGDocumentInternal.h"
+#import "DOMSVGPointInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
 #import "DOMTestObjectAConstructorInternal.h"
 #import "DOMTestObjectBConstructorInternal.h"
 #import "DOMTestObjectCConstructorInternal.h"
+#import "DOMaInternal.h"
+#import "DOMbInternal.h"
+#import "DOMboolInternal.h"
+#import "DOMcInternal.h"
+#import "DOMdInternal.h"
+#import "DOMeInternal.h"
 #import "DOMlogInternal.h"
+#import "Document.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
 #import "HTMLNames.h"
@@ -50,6 +60,8 @@
 #import "KURL.h"
 #import "ObjCEventListener.h"
 #import "OptionsObject.h"
+#import "SVGDocument.h"
+#import "SVGStaticPropertyTearOff.h"
 #import "SerializedScriptValue.h"
 #import "TestObj.h"
 #import "TestObjectAConstructor.h"
@@ -58,6 +70,12 @@
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
+#import "a.h"
+#import "b.h"
+#import "bool.h"
+#import "c.h"
+#import "d.h"
+#import "e.h"
 #import "log.h"
 #import <wtf/GetPtr.h>
 
@@ -514,6 +532,52 @@
 }
 #endif
 
+- (DOMDocument *)contentDocument
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->contentDocument()));
+}
+
+- (DOMSVGPoint *)mutablePoint
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(WebCore::SVGStaticPropertyTearOff<WebCore::TestObj, WebCore::FloatPoint>::create(IMPL, IMPL->mutablePoint(), &WebCore::TestObj::updateMutablePoint)));
+}
+
+- (void)setMutablePoint:(DOMSVGPoint *)newMutablePoint
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newMutablePoint);
+
+    IMPL->setMutablePoint(core(newMutablePoint));
+}
+
+- (DOMSVGPoint *)immutablePoint
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->immutablePoint())));
+}
+
+- (void)setImmutablePoint:(DOMSVGPoint *)newImmutablePoint
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newImmutablePoint);
+
+    IMPL->setImmutablePoint(core(newImmutablePoint));
+}
+
+- (float)strictFloat
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->strictFloat();
+}
+
+- (void)setStrictFloat:(float)newStrictFloat
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setStrictFloat(newStrictFloat);
+}
+
 - (int)descriptionName
 {
     WebCore::JSMainThreadNullState state;
@@ -757,6 +821,72 @@
 }
 
 #endif
+
+- (DOMSVGDocument *)getSVGDocument
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMSVGDocument *result = kit(WTF::getPtr(IMPL->getSVGDocument(ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)convert1:(DOMa *)
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->convert1(core());
+}
+
+- (void)convert2:(DOMb *)
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->convert2(core());
+}
+
+- (void)convert3:(DOMc *)
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->convert3(core());
+}
+
+- (void)convert4:(DOMd *)
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->convert4(core());
+}
+
+- (void)convert5:(DOMe *)
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->convert5(core());
+}
+
+- (DOMSVGPoint *)mutablePointFunction
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->mutablePointFunction())));
+}
+
+- (DOMSVGPoint *)immutablePointFunction
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->immutablePointFunction())));
+}
+
+- (void)orange
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->orange();
+}
+
+- (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMbool *result = kit(WTF::getPtr(IMPL->strictFunction(str, a, b, ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
 
 @end
 

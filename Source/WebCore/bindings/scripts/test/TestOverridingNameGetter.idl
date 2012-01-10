@@ -26,14 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
-module test {
+module events {
+
     interface [
-        ConstructorTemplate=Event
-    ] TestEventConstructor {
-        // Attributes
-        readonly attribute DOMString attr1;
-        readonly attribute [InitializedByConstructor] DOMString attr2;
+        HasOverridingNameGetter
+    ] TestOverridingNameGetter {
+        void anotherFunction(in DOMString str);
     };
+
 }

@@ -179,6 +179,27 @@ module test {
         attribute double[]                  doubleArray;
 #endif
 
+        readonly attribute [CheckFrameSecurity] Document contentDocument;
+        [SVGCheckSecurityDocument] SVGDocument getSVGDocument()
+            raises(DOMException);
+
+        void convert1(in [ConvertNullStringTo=Null] a);
+        void convert2(in [ConvertNullStringTo=Undefined] b);
+        void convert3(in [ConvertNullStringTo=False] c);
+        void convert4(in [ConvertNullToNullString] d);
+        void convert5(in [ConvertUndefinedOrNullToNullString] e);
+
+        attribute SVGPoint mutablePoint;
+        attribute [Immutable] SVGPoint immutablePoint;
+        SVGPoint mutablePointFunction();
+        [Immutable] SVGPoint immutablePointFunction();
+
+        [ImplementationFunction=banana] void orange();
+
+        attribute [StrictTypeChecking] float strictFloat;
+        [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in int b)
+            raises(DOMException);
+
         // ObjectiveC reserved words.
         readonly attribute long      description;
         attribute long               id;

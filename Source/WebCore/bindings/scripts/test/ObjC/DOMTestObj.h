@@ -28,12 +28,21 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
+@class DOMDocument;
 @class DOMIDBKey;
 @class DOMOptionsObject;
+@class DOMSVGDocument;
+@class DOMSVGPoint;
 @class DOMTestObj;
 @class DOMTestObjectAConstructor;
 @class DOMTestObjectBConstructor;
 @class DOMTestObjectCConstructor;
+@class DOMa;
+@class DOMb;
+@class DOMbool;
+@class DOMc;
+@class DOMd;
+@class DOMe;
 @class DOMlog;
 @class NSString;
 @protocol DOMEventListener;
@@ -135,6 +144,13 @@ enum {
 - (DOMTestObjectCConstructor *)conditionalAttr6;
 - (void)setConditionalAttr6:(DOMTestObjectCConstructor *)newConditionalAttr6;
 #endif
+- (DOMDocument *)contentDocument;
+- (DOMSVGPoint *)mutablePoint;
+- (void)setMutablePoint:(DOMSVGPoint *)newMutablePoint;
+- (DOMSVGPoint *)immutablePoint;
+- (void)setImmutablePoint:(DOMSVGPoint *)newImmutablePoint;
+- (float)strictFloat;
+- (void)setStrictFloat:(float)newStrictFloat;
 - (int)descriptionName;
 - (int)idName;
 - (void)setIdName:(int)newIdName;
@@ -170,6 +186,16 @@ enum {
 - (int)classMethodWithOptional:(int)arg;
 - (void)overloadedMethod1:(int)arg;
 - (void)overloadedMethod1:(NSString *)type;
+- (DOMSVGDocument *)getSVGDocument;
+- (void)convert1:(DOMa *);
+- (void)convert2:(DOMb *);
+- (void)convert3:(DOMc *);
+- (void)convert4:(DOMd *);
+- (void)convert5:(DOMe *);
+- (DOMSVGPoint *)mutablePointFunction;
+- (DOMSVGPoint *)immutablePointFunction;
+- (void)orange;
+- (DOMbool *)strictFunction:(NSString *)str a:(float)a b:(int)b;
 @end
 
 #endif

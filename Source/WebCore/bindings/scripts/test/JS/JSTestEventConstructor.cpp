@@ -113,6 +113,8 @@ EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestE
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
 {
+    if (!dictionary.tryGetProperty("attr2", eventInit.attr2))
+        return false;
     return true;
 }
 

@@ -30,14 +30,22 @@ namespace WebCore {
 class TestObj;
 };
 
+class WebDOMDocument;
 class WebDOMEventListener;
 class WebDOMIDBKey;
 class WebDOMOptionsObject;
+class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestObj;
 class WebDOMTestObjectAConstructor;
 class WebDOMTestObjectBConstructor;
 class WebDOMTestObjectCConstructor;
+class WebDOMa;
+class WebDOMb;
+class WebDOMbool;
+class WebDOMc;
+class WebDOMd;
+class WebDOMe;
 
 class WebDOMTestObj : public WebDOMObject {
 public:
@@ -143,6 +151,13 @@ public:
     WebDOMTestObjectCConstructor conditionalAttr6() const;
     void setConditionalAttr6(const WebDOMTestObjectCConstructor&);
 #endif
+    WebDOMDocument contentDocument() const;
+    WebDOMSVGPoint mutablePoint() const;
+    void setMutablePoint(const WebDOMSVGPoint&);
+    WebDOMSVGPoint immutablePoint() const;
+    void setImmutablePoint(const WebDOMSVGPoint&);
+    float strictFloat() const;
+    void setStrictFloat(float);
     int description() const;
     int id() const;
     void setId(int);
@@ -178,6 +193,15 @@ public:
     int classMethodWithOptional(int arg);
     void overloadedMethod1(int arg);
     void overloadedMethod1(const WebDOMString& type);
+    void convert1(const WebDOMa& );
+    void convert2(const WebDOMb& );
+    void convert3(const WebDOMc& );
+    void convert4(const WebDOMd& );
+    void convert5(const WebDOMe& );
+    WebDOMSVGPoint mutablePointFunction();
+    WebDOMSVGPoint immutablePointFunction();
+    void orange();
+    WebDOMbool strictFunction(const WebDOMString& str, float a, int b);
 
     WebCore::TestObj* impl() const;
 

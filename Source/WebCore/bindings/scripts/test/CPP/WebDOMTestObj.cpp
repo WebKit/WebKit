@@ -21,17 +21,33 @@
 #include "config.h"
 #include "WebDOMTestObj.h"
 
+#include "Document.h"
 #include "HTMLNames.h"
 #include "IDBKey.h"
 #include "KURL.h"
 #include "OptionsObject.h"
+#include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
+#include "WebDOMDocument.h"
 #include "WebDOMIDBKey.h"
 #include "WebDOMOptionsObject.h"
+#include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
+#include "WebDOMa.h"
+#include "WebDOMb.h"
+#include "WebDOMbool.h"
+#include "WebDOMc.h"
+#include "WebDOMd.h"
+#include "WebDOMe.h"
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
+#include "a.h"
+#include "b.h"
+#include "bool.h"
+#include "c.h"
+#include "d.h"
+#include "e.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -619,6 +635,62 @@ void WebDOMTestObj::setConditionalAttr6(const WebDOMTestObjectCConstructor& newC
 }
 
 #endif
+WebDOMDocument WebDOMTestObj::contentDocument() const
+{
+    if (!impl())
+        return WebDOMDocument();
+
+    return toWebKit(WTF::getPtr(impl()->contentDocument()));
+}
+
+WebDOMSVGPoint WebDOMTestObj::mutablePoint() const
+{
+    if (!impl())
+        return WebDOMSVGPoint();
+
+    return toWebKit(WTF::getPtr(impl()->mutablePoint()));
+}
+
+void WebDOMTestObj::setMutablePoint(const WebDOMSVGPoint& newMutablePoint)
+{
+    if (!impl())
+        return;
+
+    impl()->setMutablePoint(toWebCore(newMutablePoint));
+}
+
+WebDOMSVGPoint WebDOMTestObj::immutablePoint() const
+{
+    if (!impl())
+        return WebDOMSVGPoint();
+
+    return toWebKit(WTF::getPtr(impl()->immutablePoint()));
+}
+
+void WebDOMTestObj::setImmutablePoint(const WebDOMSVGPoint& newImmutablePoint)
+{
+    if (!impl())
+        return;
+
+    impl()->setImmutablePoint(toWebCore(newImmutablePoint));
+}
+
+float WebDOMTestObj::strictFloat() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->strictFloat();
+}
+
+void WebDOMTestObj::setStrictFloat(float newStrictFloat)
+{
+    if (!impl())
+        return;
+
+    impl()->setStrictFloat(newStrictFloat);
+}
+
 int WebDOMTestObj::description() const
 {
     if (!impl())
@@ -904,6 +976,81 @@ void WebDOMTestObj::overloadedMethod1(const WebDOMString& type)
 }
 
 #endif
+
+void WebDOMTestObj::convert1(const WebDOMa& )
+{
+    if (!impl())
+        return;
+
+    impl()->convert1(toWebCore());
+}
+
+void WebDOMTestObj::convert2(const WebDOMb& )
+{
+    if (!impl())
+        return;
+
+    impl()->convert2(toWebCore());
+}
+
+void WebDOMTestObj::convert3(const WebDOMc& )
+{
+    if (!impl())
+        return;
+
+    impl()->convert3(toWebCore());
+}
+
+void WebDOMTestObj::convert4(const WebDOMd& )
+{
+    if (!impl())
+        return;
+
+    impl()->convert4(toWebCore());
+}
+
+void WebDOMTestObj::convert5(const WebDOMe& )
+{
+    if (!impl())
+        return;
+
+    impl()->convert5(toWebCore());
+}
+
+WebDOMSVGPoint WebDOMTestObj::mutablePointFunction()
+{
+    if (!impl())
+        return WebDOMSVGPoint();
+
+    return toWebKit(WTF::getPtr(impl()->mutablePointFunction()));
+}
+
+WebDOMSVGPoint WebDOMTestObj::immutablePointFunction()
+{
+    if (!impl())
+        return WebDOMSVGPoint();
+
+    return toWebKit(WTF::getPtr(impl()->immutablePointFunction()));
+}
+
+void WebDOMTestObj::orange()
+{
+    if (!impl())
+        return;
+
+    impl()->orange();
+}
+
+WebDOMbool WebDOMTestObj::strictFunction(const WebDOMString& str, float a, int b)
+{
+    if (!impl())
+        return WebDOMbool();
+
+    WebCore::ExceptionCode ec = 0;
+    WebDOMbool result = toWebKit(WTF::getPtr(impl()->strictFunction(str, a, b, ec)));
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return result;
+}
 
 WebCore::TestObj* toWebCore(const WebDOMTestObj& wrapper)
 {

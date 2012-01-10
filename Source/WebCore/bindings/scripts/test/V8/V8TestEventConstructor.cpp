@@ -58,7 +58,7 @@ static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v
 static const BatchedAttribute TestEventConstructorAttrs[] = {
     // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
     {"attr1", TestEventConstructorInternal::attr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedAtConstructor')
+    // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByConstructor')
     {"attr2", TestEventConstructorInternal::attr2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
@@ -91,6 +91,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const OptionsObject& options)
 {
+    options.get("attr2", eventInit.attr2);
     return true;
 }
 

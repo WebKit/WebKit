@@ -1,3 +1,68 @@
+2012-01-09  Adam Barth  <abarth@webkit.org>
+
+        run-bindings-tests should exercise all the IDL attributes we use
+        https://bugs.webkit.org/show_bug.cgi?id=75900
+
+        Reviewed by Eric Seidel.
+
+        I just grepped through the code generator script for IDL attributes and
+        wrote tests for them.
+
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.h: Added.
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.h: Added.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/CPP/WebDOMTestOverridingNameGetter.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestOverridingNameGetter.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObjectPrivate.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTargetPrivate.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverridingNameGetter.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestOverridingNameGetter.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestOverridingNameGetterPrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp: Added.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h: Added.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp: Added.
+        * bindings/scripts/test/JS/JSTestEventTarget.h: Added.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverridingNameGetter.cpp: Added.
+        * bindings/scripts/test/JS/JSTestOverridingNameGetter.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObjectInternal.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestEventTarget.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestEventTarget.mm: Added.
+        * bindings/scripts/test/ObjC/DOMTestEventTargetInternal.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/ObjC/DOMTestOverridingNameGetter.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestOverridingNameGetter.mm: Added.
+        * bindings/scripts/test/ObjC/DOMTestOverridingNameGetterInternal.h: Added.
+        * bindings/scripts/test/TestDomainSecurity.idl: Added.
+        * bindings/scripts/test/TestEventConstructor.idl:
+        * bindings/scripts/test/TestEventTarget.idl: Added.
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestOverridingNameGetter.idl: Added.
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp: Added.
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h: Added.
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp: Added.
+        * bindings/scripts/test/V8/V8TestEventTarget.h: Added.
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        * bindings/scripts/test/V8/V8TestOverridingNameGetter.cpp: Added.
+        * bindings/scripts/test/V8/V8TestOverridingNameGetter.h: Added.
+
 2012-01-09  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add documentation to updater classes

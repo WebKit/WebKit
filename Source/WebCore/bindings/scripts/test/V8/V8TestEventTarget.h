@@ -18,12 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
+#ifndef V8TestEventTarget_h
+#define V8TestEventTarget_h
 
-#ifndef V8TestInterface_h
-#define V8TestInterface_h
-
-#include "TestInterface.h"
+#include "TestEventTarget.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -32,55 +30,53 @@
 
 namespace WebCore {
 
-class V8TestInterface {
+class V8TestEventTarget {
 public:
-    static const bool hasDependentLifetime = true;
+    static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestInterface* toNative(v8::Handle<v8::Object> object)
+    static TestEventTarget* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestEventTarget*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestInterface*);
+    inline static v8::Handle<v8::Object> wrap(TestEventTarget*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
-    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
-    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> namedPropertySetter(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&);
-    static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestInterface*);
+    static v8::Handle<v8::Value> indexedPropertyGetter(uint32_t, const v8::AccessorInfo&);
+    static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
+    static const int eventListenerCacheIndex = v8DefaultWrapperInternalFieldCount + 0;
+    static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 1;
+    static v8::Handle<v8::Object> existingWrapper(TestEventTarget*);
 
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestInterface*);
+    static v8::Handle<v8::Object> wrapSlow(TestEventTarget*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestInterface::existingWrapper(TestInterface* impl)
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestEventTarget::existingWrapper(TestEventTarget* impl)
 {
-    return getActiveDOMObjectMap().get(impl);
+    return getDOMObjectMap().get(impl);
 }
 
-v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)
+v8::Handle<v8::Object> V8TestEventTarget::wrap(TestEventTarget* impl)
 {
         v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestInterface::wrapSlow(impl);
+    return V8TestEventTarget::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestInterface* impl)
+inline v8::Handle<v8::Value> toV8(TestEventTarget* impl)
 {
     if (!impl)
         return v8::Null();
-    return V8TestInterface::wrap(impl);
+    return V8TestEventTarget::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestInterface > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl)
 {
     return toV8(impl.get());
 }
 
 }
 
-#endif // V8TestInterface_h
-#endif // ENABLE(Condition1) || ENABLE(Condition2)
-
+#endif // V8TestEventTarget_h

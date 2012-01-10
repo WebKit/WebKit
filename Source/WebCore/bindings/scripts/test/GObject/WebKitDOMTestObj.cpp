@@ -24,20 +24,39 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "JSMainThreadExecState.h"
+#include "SVGPoint.h"
 #include "TestObj.h"
 #include "WebKitDOMBinding.h"
+#include "bool.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "webkit/WebKitDOMDocument.h"
+#include "webkit/WebKitDOMDocumentPrivate.h"
 #include "webkit/WebKitDOMIDBKey.h"
 #include "webkit/WebKitDOMIDBKeyPrivate.h"
 #include "webkit/WebKitDOMOptionsObject.h"
 #include "webkit/WebKitDOMOptionsObjectPrivate.h"
+#include "webkit/WebKitDOMSVGPoint.h"
+#include "webkit/WebKitDOMSVGPointPrivate.h"
 #include "webkit/WebKitDOMSerializedScriptValue.h"
 #include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestObj.h"
 #include "webkit/WebKitDOMTestObjPrivate.h"
+#include "webkit/WebKitDOMa.h"
+#include "webkit/WebKitDOMaPrivate.h"
+#include "webkit/WebKitDOMb.h"
+#include "webkit/WebKitDOMbPrivate.h"
+#include "webkit/WebKitDOMbool.h"
+#include "webkit/WebKitDOMboolPrivate.h"
+#include "webkit/WebKitDOMc.h"
+#include "webkit/WebKitDOMcPrivate.h"
+#include "webkit/WebKitDOMd.h"
+#include "webkit/WebKitDOMdPrivate.h"
+#include "webkit/WebKitDOMe.h"
+#include "webkit/WebKitDOMePrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -392,6 +411,130 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type
     WTF::String converted_type = WTF::String::fromUTF8(type);
     item->overloadedMethod1(converted_type);
 #endif /* ENABLE(Condition1) */
+}
+
+void
+webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMa* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::a * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->convert1(converted_);
+}
+
+void
+webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::b * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->convert2(converted_);
+}
+
+void
+webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, WebKitDOMc* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::c * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->convert3(converted_);
+}
+
+void
+webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMd* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::d * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->convert4(converted_);
+}
+
+void
+webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMe* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::e * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->convert5(converted_);
+}
+
+WebKitDOMSVGPoint*
+webkit_dom_test_obj_mutable_point_function(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::SVGPoint> g_res = WTF::getPtr(item->mutablePointFunction());
+    WebKitDOMSVGPoint* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+WebKitDOMSVGPoint*
+webkit_dom_test_obj_immutable_point_function(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::SVGPoint> g_res = WTF::getPtr(item->immutablePointFunction());
+    WebKitDOMSVGPoint* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_obj_orange(WebKitDOMTestObj* self)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->orange();
+}
+
+WebKitDOMbool*
+webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, gint b, GError **error)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_val_if_fail(str, 0);
+    WTF::String converted_str = WTF::String::fromUTF8(str);
+    WebCore::ExceptionCode ec = 0;
+    PassRefPtr<WebCore::bool> g_res = WTF::getPtr(item->strictFunction(converted_str, a, b, ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    WebKitDOMbool* res = WebKit::kit(g_res.get());
+    return res;
 }
 
 glong
@@ -1024,6 +1167,88 @@ webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value)
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
+WebKitDOMDocument*
+webkit_dom_test_obj_get_content_document(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::Document> g_res = WTF::getPtr(item->contentDocument());
+    WebKitDOMDocument* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+WebKitDOMSVGPoint*
+webkit_dom_test_obj_get_mutable_point(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::SVGPoint> g_res = WTF::getPtr(item->mutablePoint());
+    WebKitDOMSVGPoint* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_mutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoint* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SVGPoint * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setMutablePoint(converted_value);
+}
+
+WebKitDOMSVGPoint*
+webkit_dom_test_obj_get_immutable_point(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::SVGPoint> g_res = WTF::getPtr(item->immutablePoint());
+    WebKitDOMSVGPoint* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_immutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoint* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::SVGPoint * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setImmutablePoint(converted_value);
+}
+
+gfloat
+webkit_dom_test_obj_get_strict_float(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    gfloat res = item->strictFloat();
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_strict_float(WebKitDOMTestObj* self, gfloat value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setStrictFloat(value);
+}
+
 glong
 webkit_dom_test_obj_get_description(WebKitDOMTestObj* self)
 {
@@ -1119,6 +1344,10 @@ enum {
 #if ENABLE(Condition1) || ENABLE(Condition2)
     PROP_CONDITIONAL_ATTR3,
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    PROP_CONTENT_DOCUMENT,
+    PROP_MUTABLE_POINT,
+    PROP_IMMUTABLE_POINT,
+    PROP_STRICT_FLOAT,
     PROP_DESCRIPTION,
     PROP_ID,
     PROP_HASH,
@@ -1272,6 +1501,11 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
         break;
     }
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_STRICT_FLOAT:
+    {
+        coreSelf->setStrictFloat((g_value_get_float(value)));
+        break;
+    }
     case PROP_ID:
     {
         coreSelf->setId((g_value_get_long(value)));
@@ -1456,6 +1690,29 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
         break;
     }
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    case PROP_CONTENT_DOCUMENT:
+    {
+        RefPtr<WebCore::Document> ptr = coreSelf->contentDocument();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_MUTABLE_POINT:
+    {
+        RefPtr<WebCore::SVGPoint> ptr = coreSelf->mutablePoint();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_IMMUTABLE_POINT:
+    {
+        RefPtr<WebCore::SVGPoint> ptr = coreSelf->immutablePoint();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_STRICT_FLOAT:
+    {
+        g_value_set_float(value, coreSelf->strictFloat());
+        break;
+    }
     case PROP_DESCRIPTION:
     {
         g_value_set_long(value, coreSelf->description());
@@ -1744,6 +2001,36 @@ G_MAXLONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+    g_object_class_install_property(gobjectClass,
+                                    PROP_CONTENT_DOCUMENT,
+                                    g_param_spec_object("content-document", /* name */
+                                                           "test_obj_content-document", /* short description */
+                                                           "read-only  WebKitDOMDocument* TestObj.content-document", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_DOCUMENT, /* gobject type */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_MUTABLE_POINT,
+                                    g_param_spec_object("mutable-point", /* name */
+                                                           "test_obj_mutable-point", /* short description */
+                                                           "read-write  WebKitDOMSVGPoint* TestObj.mutable-point", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_IMMUTABLE_POINT,
+                                    g_param_spec_object("immutable-point", /* name */
+                                                           "test_obj_immutable-point", /* short description */
+                                                           "read-write  WebKitDOMSVGPoint* TestObj.immutable-point", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SVG_POINT, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_STRICT_FLOAT,
+                                    g_param_spec_float("strict-float", /* name */
+                                                           "test_obj_strict-float", /* short description */
+                                                           "read-write  gfloat TestObj.strict-float", /* longer - could do with some extra doc stuff here */
+                                                           -G_MAXFLOAT, /* min */
+G_MAXFLOAT, /* max */
+0.0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_DESCRIPTION,
                                     g_param_spec_long("description", /* name */

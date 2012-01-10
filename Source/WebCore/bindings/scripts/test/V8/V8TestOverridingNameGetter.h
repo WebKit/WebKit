@@ -18,12 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
+#ifndef V8TestOverridingNameGetter_h
+#define V8TestOverridingNameGetter_h
 
-#ifndef V8TestInterface_h
-#define V8TestInterface_h
-
-#include "TestInterface.h"
+#include "TestOverridingNameGetter.h"
 #include "V8DOMWrapper.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -32,55 +30,51 @@
 
 namespace WebCore {
 
-class V8TestInterface {
+class V8TestOverridingNameGetter {
 public:
-    static const bool hasDependentLifetime = true;
+    static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value>);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
-    static TestInterface* toNative(v8::Handle<v8::Object> object)
+    static TestOverridingNameGetter* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestOverridingNameGetter*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestInterface*);
+    inline static v8::Handle<v8::Object> wrap(TestOverridingNameGetter*);
     static void derefObject(void*);
     static WrapperTypeInfo info;
-    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
-    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
-    static v8::Handle<v8::Value> namedPropertySetter(v8::Local<v8::String>, v8::Local<v8::Value>, const v8::AccessorInfo&);
+    static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestInterface*);
+    static v8::Handle<v8::Object> existingWrapper(TestOverridingNameGetter*);
 
 private:
-    static v8::Handle<v8::Object> wrapSlow(TestInterface*);
+    static v8::Handle<v8::Object> wrapSlow(TestOverridingNameGetter*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestInterface::existingWrapper(TestInterface* impl)
+ALWAYS_INLINE v8::Handle<v8::Object> V8TestOverridingNameGetter::existingWrapper(TestOverridingNameGetter* impl)
 {
-    return getActiveDOMObjectMap().get(impl);
+    return getDOMObjectMap().get(impl);
 }
 
-v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)
+v8::Handle<v8::Object> V8TestOverridingNameGetter::wrap(TestOverridingNameGetter* impl)
 {
         v8::Handle<v8::Object> wrapper = existingWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestInterface::wrapSlow(impl);
+    return V8TestOverridingNameGetter::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestInterface* impl)
+inline v8::Handle<v8::Value> toV8(TestOverridingNameGetter* impl)
 {
     if (!impl)
         return v8::Null();
-    return V8TestInterface::wrap(impl);
+    return V8TestOverridingNameGetter::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestInterface > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestOverridingNameGetter > impl)
 {
     return toV8(impl.get());
 }
 
 }
 
-#endif // V8TestInterface_h
-#endif // ENABLE(Condition1) || ENABLE(Condition2)
-
+#endif // V8TestOverridingNameGetter_h

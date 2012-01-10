@@ -31,6 +31,7 @@
 module test {
     interface [
         ActiveDOMObject,
+        DelegatingPutFunction,
         Conditional=Condition1|Condition2,
         CallWith=ScriptExecutionContext,
         Constructor(in DOMString str1, in [Optional=CallWithDefaultValue] DOMString str2),

@@ -27,6 +27,8 @@
 #include "IDBKey.h"
 #include "OptionsObject.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGPropertyTearOff.h"
+#include "SVGStaticPropertyTearOff.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -35,10 +37,19 @@
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
+#include "V8Document.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include "V8SVGDocument.h"
+#include "V8SVGPoint.h"
 #include "V8TestCallback.h"
+#include "V8a.h"
 #include "V8any.h"
+#include "V8b.h"
+#include "V8bool.h"
+#include "V8c.h"
+#include "V8d.h"
+#include "V8e.h"
 #include "V8int.h"
 #include "V8log.h"
 #include <wtf/GetPtr.h>
@@ -674,6 +685,64 @@ static void doubleArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     return;
 }
 
+static v8::Handle<v8::Value> contentDocumentAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.contentDocument._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->contentDocument()))
+    return v8::Handle<v8::Value>();
+
+    return toV8(imp->contentDocument());
+}
+
+static v8::Handle<v8::Value> mutablePointAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.mutablePoint._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8(WTF::getPtr(SVGStaticPropertyTearOff<TestObj, FloatPoint>::create(imp, imp->mutablePoint(), &TestObj::updateMutablePoint)));
+}
+
+static void mutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.mutablePoint._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<SVGPropertyTearOff<FloatPoint> > v = V8SVGPoint::HasInstance(value) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setMutablePoint(WTF::getPtr(v));
+    return;
+}
+
+static v8::Handle<v8::Value> immutablePointAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.immutablePoint._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->immutablePoint())));
+}
+
+static void immutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.immutablePoint._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<SVGPropertyTearOff<FloatPoint> > v = V8SVGPoint::HasInstance(value) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setImmutablePoint(WTF::getPtr(v));
+    return;
+}
+
+static v8::Handle<v8::Value> strictFloatAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.strictFloat._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Number::New(imp->strictFloat());
+}
+
+static void strictFloatAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.strictFloat._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    float v = static_cast<float>(value->NumberValue());
+    imp->setStrictFloat(v);
+    return;
+}
+
 static v8::Handle<v8::Value> descriptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.description._get");
@@ -1278,6 +1347,122 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.getSVGDocument");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    if (!V8BindingSecurity::allowAccessToNode(V8BindingState::Only(), imp->getSVGDocument(ec)))
+        return v8::Handle<v8::Value>();
+    RefPtr<SVGDocument> result = imp->getSVGDocument(ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    return toV8(result.release());
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> convert1Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.convert1");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(a*, , V8a::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8a::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->convert1();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> convert2Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.convert2");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(b*, , V8b::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8b::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->convert2();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> convert3Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.convert3");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(c*, , V8c::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8c::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->convert3();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> convert4Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.convert4");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(d*, , V8d::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8d::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->convert4();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> convert5Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.convert5");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(e*, , V8e::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8e::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    imp->convert5();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> mutablePointFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.mutablePointFunction");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->mutablePointFunction())));
+}
+
+static v8::Handle<v8::Value> immutablePointFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.immutablePointFunction");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->immutablePointFunction())));
+}
+
+static v8::Handle<v8::Value> orangeCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.orange");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    imp->banana();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.strictFunction");
+    if (args.Length() < 3)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    EXCEPTION_BLOCK(float, a, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)->NumberValue()));
+    EXCEPTION_BLOCK(int, b, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined))) : 0);
+    RefPtr<bool> result = imp->strictFunction(str, a, b, ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    return toV8(result.release());
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
 } // namespace TestObjInternal
 
 static const BatchedAttribute TestObjAttrs[] = {
@@ -1371,6 +1556,14 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"floatArray", TestObjInternal::floatArrayAttrGetter, TestObjInternal::floatArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'doubleArray' (Type: 'attribute' ExtAttr: '')
     {"doubleArray", TestObjInternal::doubleArrayAttrGetter, TestObjInternal::doubleArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'contentDocument' (Type: 'readonly attribute' ExtAttr: 'CheckFrameSecurity')
+    {"contentDocument", TestObjInternal::contentDocumentAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'mutablePoint' (Type: 'attribute' ExtAttr: '')
+    {"mutablePoint", TestObjInternal::mutablePointAttrGetter, TestObjInternal::mutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'immutablePoint' (Type: 'attribute' ExtAttr: 'Immutable')
+    {"immutablePoint", TestObjInternal::immutablePointAttrGetter, TestObjInternal::immutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'strictFloat' (Type: 'attribute' ExtAttr: 'StrictTypeChecking')
+    {"strictFloat", TestObjInternal::strictFloatAttrGetter, TestObjInternal::strictFloatAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')
     {"description", TestObjInternal::descriptionAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'id' (Type: 'attribute' ExtAttr: '')
@@ -1412,6 +1605,11 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"conditionalMethod3", TestObjInternal::conditionalMethod3Callback},
 #endif
     {"overloadedMethod", TestObjInternal::overloadedMethodCallback},
+    {"getSVGDocument", TestObjInternal::getSVGDocumentCallback},
+    {"mutablePointFunction", TestObjInternal::mutablePointFunctionCallback},
+    {"immutablePointFunction", TestObjInternal::immutablePointFunctionCallback},
+    {"orange", TestObjInternal::orangeCallback},
+    {"strictFunction", TestObjInternal::strictFunctionCallback},
 };
 
 static const BatchedConstant TestObjConsts[] = {
@@ -1534,6 +1732,36 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
         proto->Set(v8::String::New("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod1Callback, v8::Handle<v8::Value>(), defaultSignature));
     if (RuntimeEnabledFeatures::featureNameEnabled())
         proto->Set(v8::String::New("enabledAtRuntimeMethod2"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod2Callback, v8::Handle<v8::Value>(), defaultSignature));
+
+    // Custom Signature 'convert1'
+    const int convert1Argc = 1;
+    v8::Handle<v8::FunctionTemplate> convert1Argv[convert1Argc] = { V8a::GetRawTemplate() };
+    v8::Handle<v8::Signature> convert1Signature = v8::Signature::New(desc, convert1Argc, convert1Argv);
+    proto->Set(v8::String::New("convert1"), v8::FunctionTemplate::New(TestObjInternal::convert1Callback, v8::Handle<v8::Value>(), convert1Signature));
+
+    // Custom Signature 'convert2'
+    const int convert2Argc = 1;
+    v8::Handle<v8::FunctionTemplate> convert2Argv[convert2Argc] = { V8b::GetRawTemplate() };
+    v8::Handle<v8::Signature> convert2Signature = v8::Signature::New(desc, convert2Argc, convert2Argv);
+    proto->Set(v8::String::New("convert2"), v8::FunctionTemplate::New(TestObjInternal::convert2Callback, v8::Handle<v8::Value>(), convert2Signature));
+
+    // Custom Signature 'convert3'
+    const int convert3Argc = 1;
+    v8::Handle<v8::FunctionTemplate> convert3Argv[convert3Argc] = { V8c::GetRawTemplate() };
+    v8::Handle<v8::Signature> convert3Signature = v8::Signature::New(desc, convert3Argc, convert3Argv);
+    proto->Set(v8::String::New("convert3"), v8::FunctionTemplate::New(TestObjInternal::convert3Callback, v8::Handle<v8::Value>(), convert3Signature));
+
+    // Custom Signature 'convert4'
+    const int convert4Argc = 1;
+    v8::Handle<v8::FunctionTemplate> convert4Argv[convert4Argc] = { V8d::GetRawTemplate() };
+    v8::Handle<v8::Signature> convert4Signature = v8::Signature::New(desc, convert4Argc, convert4Argv);
+    proto->Set(v8::String::New("convert4"), v8::FunctionTemplate::New(TestObjInternal::convert4Callback, v8::Handle<v8::Value>(), convert4Signature));
+
+    // Custom Signature 'convert5'
+    const int convert5Argc = 1;
+    v8::Handle<v8::FunctionTemplate> convert5Argv[convert5Argc] = { V8e::GetRawTemplate() };
+    v8::Handle<v8::Signature> convert5Signature = v8::Signature::New(desc, convert5Argc, convert5Argv);
+    proto->Set(v8::String::New("convert5"), v8::FunctionTemplate::New(TestObjInternal::convert5Callback, v8::Handle<v8::Value>(), convert5Signature));
     batchConfigureConstants(desc, proto, TestObjConsts, WTF_ARRAY_LENGTH(TestObjConsts));
 
     // Custom toString template

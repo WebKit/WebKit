@@ -18,25 +18,23 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef JSTestInterface_h
-#define JSTestInterface_h
-
-#if ENABLE(Condition1) || ENABLE(Condition2)
+#ifndef JSTestActiveDOMObject_h
+#define JSTestActiveDOMObject_h
 
 #include "JSDOMBinding.h"
-#include "TestInterface.h"
+#include "TestActiveDOMObject.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class JSTestInterface : public JSDOMWrapper {
+class JSTestActiveDOMObject : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
-    static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
+    static JSTestActiveDOMObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestActiveDOMObject> impl)
     {
-        JSTestInterface* ptr = new (NotNull, JSC::allocateCell<JSTestInterface>(globalObject->globalData().heap)) JSTestInterface(structure, globalObject, impl);
+        JSTestActiveDOMObject* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObject>(globalObject->globalData().heap)) JSTestActiveDOMObject(structure, globalObject, impl);
         ptr->finishCreation(globalObject->globalData());
         return ptr;
     }
@@ -44,8 +42,6 @@ public:
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
-    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
-    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);
     static void destroy(JSC::JSCell*);
     static const JSC::ClassInfo s_info;
 
@@ -55,74 +51,73 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
-
-    // Custom attributes
-    JSC::JSValue str3(TestInterface*, JSC::ExecState*) const;
-    TestInterface* impl() const { return m_impl; }
+    TestActiveDOMObject* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }
 
 private:
-    TestInterface* m_impl;
+    TestActiveDOMObject* m_impl;
 protected:
-    JSTestInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestInterface>);
+    JSTestActiveDOMObject(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestActiveDOMObject>);
     void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
-class JSTestInterfaceOwner : public JSC::WeakHandleOwner {
+class JSTestActiveDOMObjectOwner : public JSC::WeakHandleOwner {
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestInterface*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestActiveDOMObject*)
 {
-    DEFINE_STATIC_LOCAL(JSTestInterfaceOwner, jsTestInterfaceOwner, ());
-    return &jsTestInterfaceOwner;
+    DEFINE_STATIC_LOCAL(JSTestActiveDOMObjectOwner, jsTestActiveDOMObjectOwner, ());
+    return &jsTestActiveDOMObjectOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld* world, TestInterface*)
+inline void* wrapperContext(DOMWrapperWorld* world, TestActiveDOMObject*)
 {
     return world;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
-TestInterface* toTestInterface(JSC::JSValue);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestActiveDOMObject*);
+TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue);
 
-class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
+class JSTestActiveDOMObjectPrototype : public JSC::JSNonFinalObject {
 public:
     typedef JSC::JSNonFinalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
-    static JSTestInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    static JSTestActiveDOMObjectPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfacePrototype>(globalData.heap)) JSTestInterfacePrototype(globalData, globalObject, structure);
+        JSTestActiveDOMObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObjectPrototype>(globalData.heap)) JSTestActiveDOMObjectPrototype(globalData, globalObject, structure);
         ptr->finishCreation(globalData);
         return ptr;
     }
 
     static const JSC::ClassInfo s_info;
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 
 private:
-    JSTestInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
+    JSTestActiveDOMObjectPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
-class JSTestInterfaceConstructor : public DOMConstructorObject {
+class JSTestActiveDOMObjectConstructor : public DOMConstructorObject {
 private:
-    JSTestInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestActiveDOMObjectConstructor(JSC::Structure*, JSDOMGlobalObject*);
     void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestActiveDOMObjectConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestInterfaceConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(structure, globalObject);
+        JSTestActiveDOMObjectConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObjectConstructor>(*exec->heap())) JSTestActiveDOMObjectConstructor(structure, globalObject);
         ptr->finishCreation(exec, globalObject);
         return ptr;
     }
@@ -136,21 +131,17 @@ public:
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestInterface(JSC::ExecState*);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
+// Functions
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSC::ExecState*);
 // Attributes
 
-JSC::JSValue jsTestInterfaceStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-JSC::JSValue jsTestInterfaceStr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-void setJSTestInterfaceStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestInterfaceStr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-void setJSTestInterfaceStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestActiveDOMObjectExcitingAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore
-
-#endif // ENABLE(Condition1) || ENABLE(Condition2)
 
 #endif

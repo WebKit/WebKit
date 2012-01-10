@@ -335,6 +335,105 @@ WEBKIT_API void
 webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type);
 
 /**
+ * webkit_dom_test_obj_convert1:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMa
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMa* );
+
+/**
+ * webkit_dom_test_obj_convert2:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMb
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* );
+
+/**
+ * webkit_dom_test_obj_convert3:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMc
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, WebKitDOMc* );
+
+/**
+ * webkit_dom_test_obj_convert4:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMd
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMd* );
+
+/**
+ * webkit_dom_test_obj_convert5:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMe
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_convert5(WebKitDOMTestObj* self, WebKitDOMe* );
+
+/**
+ * webkit_dom_test_obj_mutable_point_function:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMSVGPoint*
+webkit_dom_test_obj_mutable_point_function(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_immutable_point_function:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMSVGPoint*
+webkit_dom_test_obj_immutable_point_function(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_orange:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_orange(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_strict_function:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ * @a: A #gfloat
+ * @b: A #gint
+ * @error: #GError
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMbool*
+webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, gint b, GError **error);
+
+/**
  * webkit_dom_test_obj_get_read_only_int_attr:
  * @self: A #WebKitDOMTestObj
  *
@@ -946,6 +1045,79 @@ webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self);
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_conditional_attr3(WebKitDOMTestObj* self, glong value);
+
+/**
+ * webkit_dom_test_obj_get_content_document:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMDocument*
+webkit_dom_test_obj_get_content_document(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_mutable_point:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMSVGPoint*
+webkit_dom_test_obj_get_mutable_point(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_mutable_point:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMSVGPoint
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_mutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoint* value);
+
+/**
+ * webkit_dom_test_obj_get_immutable_point:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMSVGPoint*
+webkit_dom_test_obj_get_immutable_point(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_immutable_point:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMSVGPoint
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_immutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoint* value);
+
+/**
+ * webkit_dom_test_obj_get_strict_float:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gfloat
+webkit_dom_test_obj_get_strict_float(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_strict_float:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gfloat
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_strict_float(WebKitDOMTestObj* self, gfloat value);
 
 /**
  * webkit_dom_test_obj_get_description:

@@ -184,6 +184,16 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(JSC
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert3(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(JSC::ExecState*);
 // Attributes
 
 JSC::JSValue jsTestObjReadOnlyIntAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
@@ -254,6 +264,13 @@ JSC::JSValue jsTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::JSValue,
 void setJSTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjCachedAttribute1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjCachedAttribute2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestObjContentDocument(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestObjMutablePoint(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjMutablePoint(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjImmutablePoint(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjImmutablePoint(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjStrictFloat(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjStrictFloat(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjDescription(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjId(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjId(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
