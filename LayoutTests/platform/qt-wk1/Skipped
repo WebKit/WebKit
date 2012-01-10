@@ -1,5 +1,9 @@
 # Tests failing on WK1 only (working on WK2)
 
+# New test introduced in r102048 fails on Qt-WK1
+# https://bugs.webkit.org/show_bug.cgi?id=73366
+fast/events/dont-loose-last-event.html
+
 # This has been fixed only on qt-wk2
 # https://bugs.webkit.org/show_bug.cgi?id=45666
 fast/events/click-count.html

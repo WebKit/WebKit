@@ -51,6 +51,7 @@ class EventSender : public QObject {
     Q_OBJECT
 public:
     EventSender(QWebPage* parent);
+    virtual bool eventFilter(QObject* watched, QEvent* event);
     void resetClickCount() { m_clickCount = 0; }
 
 public slots:
@@ -93,13 +94,15 @@ private:
 private:
     void sendTouchEvent(QEvent::Type);
     void sendOrQueueEvent(QEvent*);
-    void replaySavedEvents();
+    void replaySavedEvents(bool flush);
     QPoint m_mousePos;
     QPoint m_clickPos;
     Qt::MouseButtons m_mouseButtons;
     QWebPage* m_page;
     int m_clickCount;
     int m_currentButton;
+    bool m_mouseButtonPressed;
+    bool m_drag;
     QEventLoop* m_eventLoop;
     QWebFrame* frameUnderMouse() const;
     QBasicTimer m_clickTimer;
