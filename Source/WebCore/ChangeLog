@@ -1,3 +1,18 @@
+2012-01-10  John Bauman  <jbauman@chromium.org>
+
+        [chromium] Correctly recreate DrawingBuffer on lost device
+        https://bugs.webkit.org/show_bug.cgi?id=75912
+
+        Reviewed by Kenneth Russell.
+
+        Create new drawing buffer on new context, not old lost context. Also,
+        make sure to bind new drawing buffer.
+
+        No new tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+
 2012-01-10  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Partial revert of r104566, since it breaks the shared

@@ -5037,7 +5037,8 @@ void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
     // Construct a new drawing buffer with the new GraphicsContext3D.
     if (m_drawingBuffer) {
         m_drawingBuffer->discardResources();
-        m_drawingBuffer = DrawingBuffer::create(m_context.get(), m_drawingBuffer->size(), !m_attributes.preserveDrawingBuffer);
+        m_drawingBuffer = DrawingBuffer::create(context.get(), m_drawingBuffer->size(), !m_attributes.preserveDrawingBuffer);
+        m_drawingBuffer->bind();
     }
 
     m_context = context;
