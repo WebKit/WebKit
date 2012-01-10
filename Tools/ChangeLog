@@ -1,5 +1,13 @@
 2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Unreviewed -Werror build fix.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication): Re-order initialization to match
+        declaration.
+
+2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Remove dependency to uitools
         https://bugs.webkit.org/show_bug.cgi?id=75952
 

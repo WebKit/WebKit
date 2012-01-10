@@ -63,12 +63,12 @@ static inline bool isMouseEvent(const QEvent* event)
 
 MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     : QApplication(argc, argv)
-    , m_windowOptions(this)
     , m_realTouchEventReceived(false)
     , m_pendingFakeTouchEventCount(0)
     , m_isRobotized(false)
     , m_robotTimeoutSeconds(0)
     , m_robotExtraTimeSeconds(0)
+    , m_windowOptions(this)
 {
     setOrganizationName("Nokia");
     setApplicationName("QtMiniBrowser");
