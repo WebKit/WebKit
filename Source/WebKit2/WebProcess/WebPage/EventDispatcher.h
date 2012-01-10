@@ -66,9 +66,9 @@ private:
     void didReceiveEventDispatcherMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage);
 
     // Message handlers
-    void wheelEvent(uint64_t pageID, const WebWheelEvent&);
+    void wheelEvent(CoreIPC::Connection*, uint64_t pageID, const WebWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
-    void gestureEvent(uint64_t pageID, const WebGestureEvent&);
+    void gestureEvent(CoreIPC::Connection*, uint64_t pageID, const WebGestureEvent&);
 #endif
 
     // This is called on the main thread.

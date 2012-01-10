@@ -78,7 +78,7 @@ void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection
     }
 }
 
-void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
+void EventDispatcher::wheelEvent(CoreIPC::Connection*, uint64_t pageID, const WebWheelEvent& wheelEvent)
 {
 #if ENABLE(THREADED_SCROLLING)
     MutexLocker locker(m_scrollingCoordinatorsMutex);
@@ -96,7 +96,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 }
 
 #if ENABLE(GESTURE_EVENTS)
-void EventDispatcher::gestureEvent(uint64_t pageID, const WebGestureEvent& gestureEvent)
+void EventDispatcher::gestureEvent(CoreIPC::Connection*, uint64_t pageID, const WebGestureEvent& gestureEvent)
 {
 #if ENABLE(THREADED_SCROLLING)
     MutexLocker locker(m_scrollingCoordinatorsMutex);

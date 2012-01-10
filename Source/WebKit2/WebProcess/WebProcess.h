@@ -182,7 +182,7 @@ private:
 #endif
     
 #if ENABLE(PLUGIN_PROCESS)
-    void pluginProcessCrashed(const String& pluginPath);
+    void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath);
 #endif
 
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);

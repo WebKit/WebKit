@@ -1,3 +1,28 @@
+2012-01-10  Anders Carlsson  <andersca@apple.com>
+
+        DispatchOnConnectionQueue messages should have a Connection parameter
+        https://bugs.webkit.org/show_bug.cgi?id=75986
+
+        Reviewed by Adam Roben.
+
+        Message handlers for messages with the DispatchOnConnectionQueue should have a CoreIPC::Connection
+        parameter, making it easier to send messages back over that connection.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        (CoreIPC::handleMessageOnConnectionQueue):
+        * Scripts/webkit2/messages.py:
+        (async_case_statement):
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::gestureEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::pluginProcessCrashed):
+        * WebProcess/WebProcess.h:
+
 2012-01-10  Chris Marrin  <cmarrin@apple.com>
 
         Turn off the FilterTrigger in WebKit and WebKit2

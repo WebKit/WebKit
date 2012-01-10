@@ -685,7 +685,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
 {
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -693,7 +693,7 @@ void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*
 #endif
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::TestConnectionQueueID:
-        CoreIPC::handleMessage<Messages::WebPage::TestConnectionQueue>(arguments, this, &WebPage::testConnectionQueue);
+        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, arguments, this, &WebPage::testConnectionQueue);
         didHandleMessage = true;
         return;
     default:

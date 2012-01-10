@@ -949,7 +949,7 @@ void WebProcess::garbageCollectJavaScriptObjects()
 }
 
 #if ENABLE(PLUGIN_PROCESS)
-void WebProcess::pluginProcessCrashed(const String& pluginPath)
+void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath)
 {
     m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath);
 }
