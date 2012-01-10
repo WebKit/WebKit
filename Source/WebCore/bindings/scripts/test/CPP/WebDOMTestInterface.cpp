@@ -79,30 +79,30 @@ WebDOMTestInterface::~WebDOMTestInterface()
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-WebDOMString WebDOMTestInterface::str1() const
+WebDOMString WebDOMTestInterface::supplementalStr1() const
 {
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WTF::String&>(TestSupplemental::str1(impl()));
+    return static_cast<const WTF::String&>(TestSupplemental::supplementalStr1(impl()));
 }
 
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-WebDOMString WebDOMTestInterface::str2() const
+WebDOMString WebDOMTestInterface::supplementalStr2() const
 {
     if (!impl())
         return WebDOMString();
 
-    return static_cast<const WTF::String&>(TestSupplemental::str2(impl()));
+    return static_cast<const WTF::String&>(TestSupplemental::supplementalStr2(impl()));
 }
 
-void WebDOMTestInterface::setStr2(const WebDOMString& newStr2)
+void WebDOMTestInterface::setSupplementalStr2(const WebDOMString& newSupplementalStr2)
 {
     if (!impl())
         return;
 
-    TestSupplemental::setStr2(impl(), newStr2);
+    TestSupplemental::setSupplementalStr2(impl(), newSupplementalStr2);
 }
 
 #endif

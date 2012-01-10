@@ -47,27 +47,27 @@ WEBKIT_API GType
 webkit_dom_test_interface_get_type (void);
 
 /**
- * webkit_dom_test_interface_get_str1:
+ * webkit_dom_test_interface_get_supplemental_str1:
  * @self: A #WebKitDOMTestInterface
  *
  * Returns:
  *
 **/
 WEBKIT_API gchar*
-webkit_dom_test_interface_get_str1(WebKitDOMTestInterface* self);
+webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self);
 
 /**
- * webkit_dom_test_interface_get_str2:
+ * webkit_dom_test_interface_get_supplemental_str2:
  * @self: A #WebKitDOMTestInterface
  *
  * Returns:
  *
 **/
 WEBKIT_API gchar*
-webkit_dom_test_interface_get_str2(WebKitDOMTestInterface* self);
+webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
 
 /**
- * webkit_dom_test_interface_set_str2:
+ * webkit_dom_test_interface_set_supplemental_str2:
  * @self: A #WebKitDOMTestInterface
  * @value: A #gchar
  *
@@ -75,7 +75,7 @@ webkit_dom_test_interface_get_str2(WebKitDOMTestInterface* self);
  *
 **/
 WEBKIT_API void
-webkit_dom_test_interface_set_str2(WebKitDOMTestInterface* self, const gchar* value);
+webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, const gchar* value);
 
 G_END_DECLS
 

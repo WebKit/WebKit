@@ -71,38 +71,38 @@
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)str1
+- (NSString *)supplementalStr1
 {
     WebCore::JSMainThreadNullState state;
-    return TestSupplemental::str1(IMPL);
+    return TestSupplemental::supplementalStr1(IMPL);
 }
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)str2
+- (NSString *)supplementalStr2
 {
     WebCore::JSMainThreadNullState state;
-    return TestSupplemental::str2(IMPL);
+    return TestSupplemental::supplementalStr2(IMPL);
 }
 
-- (void)setStr2:(NSString *)newStr2
+- (void)setSupplementalStr2:(NSString *)newSupplementalStr2
 {
     WebCore::JSMainThreadNullState state;
-    TestSupplemental::setStr2(IMPL, newStr2);
+    TestSupplemental::setSupplementalStr2(IMPL, newSupplementalStr2);
 }
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-- (NSString *)str3
+- (NSString *)supplementalStr3
 {
     WebCore::JSMainThreadNullState state;
-    return TestSupplemental::str3(IMPL);
+    return TestSupplemental::supplementalStr3(IMPL);
 }
 
-- (void)setStr3:(NSString *)newStr3
+- (void)setSupplementalStr3:(NSString *)newSupplementalStr3
 {
     WebCore::JSMainThreadNullState state;
-    TestSupplemental::setStr3(IMPL, newStr3);
+    TestSupplemental::setSupplementalStr3(IMPL, newSupplementalStr3);
 }
 #endif
 

@@ -33,8 +33,8 @@ module test {
         Conditional=Condition11|Condition12,
         Supplemental=TestInterface
     ] TestSupplemental {
-        readonly attribute DOMString str1;
-        attribute DOMString str2;
-        attribute [CustomGetter, CustomSetter] DOMString str3;
+        readonly attribute DOMString supplementalStr1;
+        attribute DOMString supplementalStr2;
+        attribute [CustomGetter, CustomSetter] DOMString supplementalStr3;
     };
 }

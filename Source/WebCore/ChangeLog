@@ -1,3 +1,49 @@
+2012-01-10  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Rename attributes in TestSupplemental.idl to clarify
+        that they are supplemental attributes
+        https://bugs.webkit.org/show_bug.cgi?id=75942
+
+        Reviewed by Adam Barth.
+
+        This patch just renames attributes in TestSupplemental.idl
+        to make it easy to find in {JS,V8,WebKitDOM,DOM,WebDOM}TestInterface.cpp
+        which attributes originate from TestSupplemental.idl.
+
+        * bindings/scripts/test/TestSupplemental.idl: Just renamed three attributes.
+
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Updated the test result.
+        (WebDOMTestInterface::supplementalStr1):
+        (WebDOMTestInterface::supplementalStr2):
+        (WebDOMTestInterface::setSupplementalStr2):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp: Ditto.
+        (webkit_dom_test_interface_get_supplemental_str1):
+        (webkit_dom_test_interface_get_supplemental_str2):
+        (webkit_dom_test_interface_set_supplemental_str2):
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        (webkit_dom_test_interface_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterface):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::setJSTestInterface):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        (-[DOMTestInterface supplementalStr1]):
+        (-[DOMTestInterface supplementalStr2]):
+        (-[DOMTestInterface setSupplementalStr2:]):
+        (-[DOMTestInterface ]):
+        (-[DOMTestInterface set:]):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+        (WebCore::TestInterfaceInternal::supplementalStr1AttrGetter):
+        (WebCore::TestInterfaceInternal::supplementalStr2AttrGetter):
+        (WebCore::TestInterfaceInternal::supplementalStr2AttrSetter):
+
 2012-01-10  John Bauman  <jbauman@chromium.org>
 
         [chromium] Correctly recreate DrawingBuffer on lost device

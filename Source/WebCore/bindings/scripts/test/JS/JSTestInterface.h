@@ -57,7 +57,7 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
 
     // Custom attributes
-    JSC::JSValue str3(TestInterface*, JSC::ExecState*) const;
+    JSC::JSValue supplementalStr3(TestInterface*, JSC::ExecState*) const;
     TestInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
@@ -142,11 +142,11 @@ protected:
 
 // Attributes
 
-JSC::JSValue jsTestInterfaceStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-JSC::JSValue jsTestInterfaceStr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-void setJSTestInterfaceStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestInterfaceStr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-void setJSTestInterfaceStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestInterfaceSupplementalStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 
 } // namespace WebCore

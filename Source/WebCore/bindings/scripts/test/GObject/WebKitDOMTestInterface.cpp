@@ -53,13 +53,13 @@ WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
 } // namespace WebKit //
 
 gchar*
-webkit_dom_test_interface_get_str1(WebKitDOMTestInterface* self)
+webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestInterface * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(TestSupplemental::str1(item));
+    gchar* res = convertToUTF8String(TestSupplemental::supplementalStr1(item));
     return res;
 #else
     return NULL;
@@ -67,13 +67,13 @@ webkit_dom_test_interface_get_str1(WebKitDOMTestInterface* self)
 }
 
 gchar*
-webkit_dom_test_interface_get_str2(WebKitDOMTestInterface* self)
+webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestInterface * item = WebKit::core(self);
-    gchar* res = convertToUTF8String(TestSupplemental::str2(item));
+    gchar* res = convertToUTF8String(TestSupplemental::supplementalStr2(item));
     return res;
 #else
     return NULL;
@@ -81,7 +81,7 @@ webkit_dom_test_interface_get_str2(WebKitDOMTestInterface* self)
 }
 
 void
-webkit_dom_test_interface_set_str2(WebKitDOMTestInterface* self, const gchar* value)
+webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, const gchar* value)
 {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     g_return_if_fail(self);
@@ -89,7 +89,7 @@ webkit_dom_test_interface_set_str2(WebKitDOMTestInterface* self, const gchar* va
     WebCore::TestInterface * item = WebKit::core(self);
     g_return_if_fail(value);
     WTF::String converted_value = WTF::String::fromUTF8(value);
-    TestSupplemental::setStr2(item, converted_value);
+    TestSupplemental::setSupplementalStr2(item, converted_value);
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 }
 
@@ -112,10 +112,10 @@ WebCore::TestInterface* core(WebKitDOMTestInterface* request)
 enum {
     PROP_0,
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    PROP_STR1,
+    PROP_SUPPLEMENTAL_STR1,
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    PROP_STR2,
+    PROP_SUPPLEMENTAL_STR2,
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 };
 
@@ -143,9 +143,9 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint prop_i
     WebCore::TestInterface* coreSelf = WebKit::core(self);
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    case PROP_STR2:
+    case PROP_SUPPLEMENTAL_STR2:
     {
-        TestSupplemental::setStr2(coreSelf, WTF::String::fromUTF8(g_value_get_string(value)));
+        TestSupplemental::setSupplementalStr2(coreSelf, WTF::String::fromUTF8(g_value_get_string(value)));
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
@@ -163,16 +163,16 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint prop_i
     WebCore::TestInterface* coreSelf = WebKit::core(self);
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    case PROP_STR1:
+    case PROP_SUPPLEMENTAL_STR1:
     {
-        g_value_take_string(value, convertToUTF8String(TestSupplemental::str1(coreSelf)));
+        g_value_take_string(value, convertToUTF8String(TestSupplemental::supplementalStr1(coreSelf)));
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    case PROP_STR2:
+    case PROP_SUPPLEMENTAL_STR2:
     {
-        g_value_take_string(value, convertToUTF8String(TestSupplemental::str2(coreSelf)));
+        g_value_take_string(value, convertToUTF8String(TestSupplemental::supplementalStr2(coreSelf)));
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
@@ -200,19 +200,19 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
     g_object_class_install_property(gobjectClass,
-                                    PROP_STR1,
-                                    g_param_spec_string("str1", /* name */
-                                                           "test_interface_str1", /* short description */
-                                                           "read-only  gchar* TestInterface.str1", /* longer - could do with some extra doc stuff here */
+                                    PROP_SUPPLEMENTAL_STR1,
+                                    g_param_spec_string("supplemental-str1", /* name */
+                                                           "test_interface_supplemental-str1", /* short description */
+                                                           "read-only  gchar* TestInterface.supplemental-str1", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 #if ENABLE(Condition11) || ENABLE(Condition12)
     g_object_class_install_property(gobjectClass,
-                                    PROP_STR2,
-                                    g_param_spec_string("str2", /* name */
-                                                           "test_interface_str2", /* short description */
-                                                           "read-write  gchar* TestInterface.str2", /* longer - could do with some extra doc stuff here */
+                                    PROP_SUPPLEMENTAL_STR2,
+                                    g_param_spec_string("supplemental-str2", /* name */
+                                                           "test_interface_supplemental-str2", /* short description */
+                                                           "read-write  gchar* TestInterface.supplemental-str2", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READWRITE));
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
