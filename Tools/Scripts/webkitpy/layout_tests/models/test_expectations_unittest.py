@@ -199,7 +199,7 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertTrue(e.fatal)
-            exp_errors = [u"FAILURES FOR %s in LayoutTests/platform/test/test_expectations.txt" % self._port.test_configuration(),
+            exp_errors = [u"FAILURES FOR %s in %s" % (self._port.test_configuration(), self._port.path_to_test_expectations_file()),
                           u"Line:1 Unrecognized modifier 'foo' failures/expected/text.html",
                           u"Line:2 Missing expectations SKIP : failures/expected/image.html"]
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
@@ -212,7 +212,7 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertFalse(e.fatal)
-            exp_errors = [u'FAILURES FOR %s in LayoutTests/platform/test/test_expectations.txt' % self._port.test_configuration(),
+            exp_errors = [u'FAILURES FOR %s in %s' % (self._port.test_configuration(), self._port.path_to_test_expectations_file()),
                           u'Line:1 Test lacks BUG modifier. failures/expected/text.html']
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
             self.assertEqual(e.errors, exp_errors)

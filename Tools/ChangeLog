@@ -1,5 +1,33 @@
 2012-01-09  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy.layout_tests.port.mock_drt_unittest.MockChromiumDRTTest has been failing on cr-win
+        https://bugs.webkit.org/show_bug.cgi?id=75884
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix regression introduced (revealed?) in r104340. Chromium file         
+        url syntax is different on win32 and the test results weren't           
+        expecting that.                                                         
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations._report_errors):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_parse_error_nonfatal):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTTest.input_line):
+        (MockChromiumDRTTest.test_pixeltest__fails):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        (TestRebaseliner.make_rebaseliner):
+        (TestRebaseliner.test_one_platform):
+        (TestRebaseliner.test_all_platforms):
+        (TestRebaseliner.test_png_file_with_comment):
+        (TestRebaseliner.test_png_file_with_comment_remove_old_checksum):
+        (TestRebaseliner.test_png_file_with_comment_as_duplicate):
+        (TestRealMain.test_all_platforms):
+
+2012-01-09  Dirk Pranke  <dpranke@chromium.org>
+
         Fix regression in test-webkitpy introduced by removing the webkitpy/python24 directory.
 
         Unreviewed, build fix.

@@ -789,10 +789,8 @@ class TestExpectations(object):
             warnings.append(warning)
 
         if len(errors) or len(warnings):
-            webkit_base_path = self._port.webkit_base()
             test_expectation_path = self._port.path_to_test_expectations_file()
-            test_expectation_relative_path = test_expectation_path[len(webkit_base_path):].lstrip('/')
-            failure_title = "FAILURES FOR %s in %s" % (str(self._test_config), test_expectation_relative_path)
+            failure_title = "FAILURES FOR %s in %s" % (str(self._test_config), test_expectation_path)
             _log.error(failure_title)
 
             for error in errors:

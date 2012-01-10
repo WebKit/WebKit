@@ -195,7 +195,7 @@ class TestRebaseliner(unittest.TestCase):
         zip_factory = test_zip_factory()
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
-        filesystem.chdir("/test.checkout")
+        filesystem.chdir(filesystem.dirname(host_port_obj.layout_tests_dir()))
 
         rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host, host_port_obj,
             target_port_obj, platform, options, url_fetcher, zip_factory)
@@ -227,34 +227,37 @@ class TestRebaseliner(unittest.TestCase):
             "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
 
         rebaseliner.run()
+        layout_test_dir = rebaseliner._port.layout_tests_dir()
         # We expect to have written 13 files over the course of this rebaseline:
         # *) 3 files in /__im_tmp for the extracted archive members
-        # *) 3 new baselines under '/test.checkout/LayoutTests'
+        # *) 3 new baselines under layout_test_dir
         # *) 4 files in /tmp for the new and old baselines in the result file
         #    (-{old,new}.{txt,png}
         # *) 1 text diff in /tmp for the result file (-diff.txt).
         # *) 1 image diff in /tmp for the result file (-diff.png).
         # *) 1 updated test_expectations file
         self.assertEqual(len(filesystem.written_files), 13)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
 
     def test_all_platforms(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE : failures/expected/image.html = IMAGE")
+        layout_test_dir = rebaseliner._port.layout_tests_dir()
         rebaseliner.run()
         # See comment in test_one_platform for an explanation of the 13 written tests.
         # Note that even though the rebaseline is marked for all platforms, each
         # rebaseliner only ever does one.
         self.assertEqual(len(filesystem.written_files), 13)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
 
     def test_png_file_with_comment(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
+        layout_test_dir = rebaseliner._port.layout_tests_dir()
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
         self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
@@ -262,16 +265,17 @@ class TestRebaseliner(unittest.TestCase):
         # There is one less file written than |test_one_platform| because we only
         # write 2 expectations (the png and the txt file).
         self.assertEqual(len(filesystem.written_files), 12)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
-        self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None))
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertFalse(filesystem.files.get(layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None))
 
     def test_png_file_with_comment_remove_old_checksum(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'] = 'old'
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum'] = 'old'
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'] = 'old'
+        layout_test_dir = rebaseliner._port.layout_tests_dir()
+        filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'] = 'old'
+        filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum'] = 'old'
+        filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'] = 'old'
 
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
@@ -280,23 +284,24 @@ class TestRebaseliner(unittest.TestCase):
         # There is one more file written than |test_png_file_with_comment_remove_old_checksum|
         # because we also delete the old checksum.
         self.assertEqual(len(filesystem.written_files), 13)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
-        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files[layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertEqual(filesystem.files.get(layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
 
     def test_png_file_with_comment_as_duplicate(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.png'] = 'tEXtchecksum\x000123456789'
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.txt'] = 'png-comment-txt'
+        layout_test_dir = rebaseliner._port.layout_tests_dir()
+        filesystem.files[layout_test_dir + '/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.png'] = 'tEXtchecksum\x000123456789'
+        filesystem.files[layout_test_dir + '/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.txt'] = 'png-comment-txt'
 
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
         self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
         rebaseliner.run()
-        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png', None), None)
-        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt', None), None)
-        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
+        self.assertEqual(filesystem.files.get(layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.png', None), None)
+        self.assertEqual(filesystem.files.get(layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt', None), None)
+        self.assertEqual(filesystem.files.get(layout_test_dir + '/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
 
     def test_diff_baselines_txt(self):
         rebaseliner, filesystem = self.make_rebaseliner("")
@@ -331,7 +336,7 @@ class TestRealMain(unittest.TestCase):
         zip_factory = test_zip_factory()
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
-        filesystem.chdir("/test.checkout")
+        filesystem.chdir(filesystem.dirname(host_port_obj.layout_tests_dir()))
 
         oc = outputcapture.OutputCapture()
         oc.capture_output()

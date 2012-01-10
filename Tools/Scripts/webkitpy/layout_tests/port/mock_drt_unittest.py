@@ -90,12 +90,11 @@ class MockDRTPortTest(port_testcase.PortTestCase):
 class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):
         url = port.create_driver(0).test_to_uri(test_name)
-        # FIXME: we shouldn't have to work around platform-specific issues
-        # here.
-        if url.startswith('file:////'):
-            url = url[len('file:////') - 1:]
-        if url.startswith('file:///'):
-            url = url[len('file:///') - 1:]
+        if url.startswith('file://'):
+            if sys.platform == 'win32':
+                url = url[len('file:///'):]
+            else:
+                url = url[len('file://'):]
 
         if checksum:
             return url + "'" + checksum + '\n'
@@ -236,9 +235,10 @@ class MockChromiumDRTTest(MockDRTTest):
 
     def test_pixeltest__fails(self):
         host = MockHost()
+        url = '#URL:file://%s/failures/expected/checksum.html' % host.port_factory.get('test').layout_tests_dir()
         self.assertTest('failures/expected/checksum.html', pixel_tests=True,
             expected_checksum='wrong-checksum',
-            drt_output=['#URL:file:///test.checkout/LayoutTests/failures/expected/checksum.html\n',
+            drt_output=[url + '\n',
                         '#MD5:checksum-checksum\n',
                         'checksum-txt',
                         '\n',

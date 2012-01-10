@@ -31,6 +31,7 @@
 from __future__ import with_statement
 
 import base64
+import sys
 import time
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
@@ -220,7 +221,10 @@ layer at (0,0) size 800x34
 # this works. The path contains a '.' in the name because we've seen bugs
 # related to this before.
 
-LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
+if sys.platform == 'win32':
+    LAYOUT_TEST_DIR = 'c:/test.checkout/LayoutTests'
+else:
+    LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
 
 
 # Here we synthesize an in-memory filesystem from the test list
