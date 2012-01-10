@@ -1,3 +1,15 @@
+2012-01-09  Mark Rowe  <mrowe@apple.com>
+
+        JavaScriptCore executable targets shouldn't explicitly depend on the JavaScriptCore framework target
+        <http://webkit.org/b/75907> / <rdar://problem/10659862>
+
+        We'd like for it to be possible to build jsc without building JavaScriptCore.framework and the explicit
+        dependencies prevent this.
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-01-09  Adam Treat  <atreat@rim.com>
 
         Log is a little to verbose for blackberry port

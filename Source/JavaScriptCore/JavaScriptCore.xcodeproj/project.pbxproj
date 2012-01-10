@@ -720,13 +720,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		141211350A48796100480255 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 932F5B3E0822A1C700736975;
-			remoteInfo = JavaScriptCore;
-		};
 		141214BE0A49190E00480255 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -734,33 +727,12 @@
 			remoteGlobalIDString = 1412111F0A48793C00480255;
 			remoteInfo = minidom;
 		};
-		14270B070A451DA10080EEEA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 932F5B3E0822A1C700736975;
-			remoteInfo = JavaScriptCore;
-		};
-		14270B0B0A451DA40080EEEA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 932F5B3E0822A1C700736975;
-			remoteInfo = JavaScriptCore;
-		};
 		14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 14BD59BE0A3E8F9000BAF59C;
 			remoteInfo = testapi;
-		};
-		651122F914046A4C002B101D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 932F5B3E0822A1C700736975;
-			remoteInfo = JavaScriptCore;
 		};
 		651123081404768B002B101D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3029,7 +3001,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				141211360A48796100480255 /* PBXTargetDependency */,
 			);
 			name = minidom;
 			productName = minidom;
@@ -3048,7 +3019,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				14270B080A451DA10080EEEA /* PBXTargetDependency */,
 			);
 			name = testapi;
 			productName = testapi;
@@ -3065,7 +3035,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				651122F814046A4C002B101D /* PBXTargetDependency */,
 			);
 			name = testRegExp;
 			productInstallPath = /usr/local/bin;
@@ -3108,7 +3077,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				14270B0C0A451DA40080EEEA /* PBXTargetDependency */,
 			);
 			name = jsc;
 			productInstallPath = /usr/local/bin;
@@ -3564,35 +3532,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		141211360A48796100480255 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
-			targetProxy = 141211350A48796100480255 /* PBXContainerItemProxy */;
-		};
 		141214BF0A49190E00480255 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1412111F0A48793C00480255 /* minidom */;
 			targetProxy = 141214BE0A49190E00480255 /* PBXContainerItemProxy */;
 		};
-		14270B080A451DA10080EEEA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
-			targetProxy = 14270B070A451DA10080EEEA /* PBXContainerItemProxy */;
-		};
-		14270B0C0A451DA40080EEEA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
-			targetProxy = 14270B0B0A451DA40080EEEA /* PBXContainerItemProxy */;
-		};
 		14BD59C70A3E8FA400BAF59C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 14BD59BE0A3E8F9000BAF59C /* testapi */;
 			targetProxy = 14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */;
-		};
-		651122F814046A4C002B101D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
-			targetProxy = 651122F914046A4C002B101D /* PBXContainerItemProxy */;
 		};
 		651123091404768B002B101D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
