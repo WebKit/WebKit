@@ -31,6 +31,9 @@
 namespace JSC {
     class GetterSetter;
 
+    // See ES5.1 9.12
+    bool sameValue(ExecState*, JSValue, JSValue);
+
     class PropertyDescriptor {
     public:
         PropertyDescriptor()

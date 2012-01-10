@@ -786,7 +786,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
                 return false;
             }
             if (!current.writable()) {
-                if (descriptor.value() || !JSValue::strictEqual(exec, current.value(), descriptor.value())) {
+                if (descriptor.value() || !sameValue(exec, current.value(), descriptor.value())) {
                     if (throwException)
                         throwError(exec, createTypeError(exec, "Attempting to change value of a readonly property."));
                     return false;

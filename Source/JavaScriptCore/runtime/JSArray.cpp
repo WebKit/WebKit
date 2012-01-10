@@ -381,13 +381,6 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
     entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor);
 }
 
-static bool sameValue(ExecState* exec, JSValue a, JSValue b)
-{
-    if (a.isNumber())
-        return b.isNumber() && bitwise_cast<uint64_t>(a.asNumber()) == bitwise_cast<uint64_t>(b.asNumber());
-    return JSValue::strictEqual(exec, a, b);
-}
-
 static bool reject(ExecState* exec, bool throwException, const char* message)
 {
     if (throwException)
@@ -461,7 +454,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
     // 7. If the [[Configurable]] field of current is false then
     if (!current.configurable()) {
         // 7.a. Reject, if the [[Configurable]] field of Desc is true.
-        if (!descriptor.configurable())
+        if (descriptor.configurablePresent() && !descriptor.configurable())
             return reject(exec, throwException, "Attempting to change configurable attribute of unconfigurable property.");
         // 7.b. Reject, if the [[Enumerable]] field of Desc is present and the [[Enumerable]] fields of current and Desc are the Boolean negation of each other.
         if (descriptor.enumerablePresent() && current.enumerable() != descriptor.enumerable())

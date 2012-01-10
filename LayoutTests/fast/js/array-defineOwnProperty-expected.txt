@@ -17,7 +17,23 @@ FAIL var a = Object.defineProperty([42], '0', { configurable: false }); a.length
 PASS var foo = 0; Object.defineProperty([], '0', { set:function(x){foo = x;} })[0] = 42; foo is 42
 PASS Object.defineProperty([], '0', { get:function(){return true;} })[0] is true
 PASS Object.defineProperty(Object.defineProperty([true], '0', { configurable:true, writable: false }), '0', { writable: true })[0] is true
-PASS Object.defineProperty(Object.defineProperty([true], '0', { configurable:false, writable: false }), '0', { writable: true })[0] threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty([true], '0', { configurable:false, writable: false }), '0', { writable: true })[0] threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: 1, writable:true }), '0', { value: 2 })[0] is 2
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: 1 }), '0', { value: 1 })[0] is 1
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: Number.NaN }), '0', { value: -Number.NaN })[0] is Number.NaN
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: 'okay'.substring(0,2) }), '0', { value: 'not ok'.substring(4,6) })[0] is "ok"
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: true }), '0', { value: true })[0] is true
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: false }), '0', { value: false })[0] is false
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: null })[0] is null
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: undefined })[0] is undefined
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: Math }), '0', { value: Math })[0] is Math
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: 1 }), '0', { value: 2 })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: 'okay' }), '0', { value: 'not ok' })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: true }), '0', { value: false })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: false }), '0', { value: true })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: Math }), '0', { value: Object })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: undefined })[0] threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: null })[0] threw exception TypeError: Attempting to change value of a readonly property..
 PASS successfullyParsed is true
 
 TEST COMPLETE

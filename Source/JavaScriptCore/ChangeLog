@@ -1,3 +1,25 @@
+2012-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Use SameValue to compare property descriptor values
+        https://bugs.webkit.org/show_bug.cgi?id=75975
+
+        Reviewed by Sam Weinig.
+
+        Rather than strictEqual.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnNumericProperty):
+            - Missing configurablePresent() check.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnProperty):
+            - call sameValue.
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::sameValue):
+            - Moved from JSArray.cpp, fix NaN comparison.
+        (JSC::PropertyDescriptor::equalTo):
+            - call sameValue.
+        * runtime/PropertyDescriptor.h:
+            - Added declaration for sameValue.
 2012-01-09  Gavin Barraclough  <barraclough@apple.com>
 
         Error handling : in ISO8601 timezone

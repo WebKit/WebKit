@@ -30,5 +30,25 @@ shouldBeTrue("Object.defineProperty(Object.defineProperty([true], '0', { configu
 //
 shouldThrow("Object.defineProperty(Object.defineProperty([true], '0', { configurable:false, writable: false }), '0', { writable: true })[0]");
 
+// Reassigning the value is okay if the property is writable.
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: 1, writable:true }), '0', { value: 2 })[0]", '2');
+// Reassigning the value is okay if the value doesn't change.
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: 1 }), '0', { value: 1 })[0]", '1');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: Number.NaN }), '0', { value: -Number.NaN })[0]", 'Number.NaN');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: 'okay'.substring(0,2) }), '0', { value: 'not ok'.substring(4,6) })[0]", '"ok"');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: true }), '0', { value: true })[0]", 'true');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: false }), '0', { value: false })[0]", 'false');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: null })[0]", 'null');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: undefined })[0]", 'undefined');
+shouldBe("Object.defineProperty(Object.defineProperty([], '0', { value: Math }), '0', { value: Math })[0]", 'Math');
+// Reassigning the value is not okay if the value changes.
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: 1 }), '0', { value: 2 })[0]");
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: 'okay' }), '0', { value: 'not ok' })[0]");
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: true }), '0', { value: false })[0]");
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: false }), '0', { value: true })[0]");
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: Math }), '0', { value: Object })[0]");
+// Reassigning the value is not okay if the type changes.
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: null }), '0', { value: undefined })[0]");
+shouldThrow("Object.defineProperty(Object.defineProperty([], '0', { value: undefined }), '0', { value: null })[0]");
 
 successfullyParsed = true;
