@@ -35,10 +35,21 @@ window.testData = [
     "A bit3",
     "the BIGGEST string"
 ];
- 
+
+function test()
+{
+    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
+    shouldBeTrue("indexedDB != null");
+    evalAndLog("window.IDBCursor = window.IDBCursor || window.webkitIDBCursor");
+    shouldBeTrue("IDBCursor != null");
+    evalAndLog("window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
+    shouldBeTrue("IDBDatabaseException != null");
+    openDatabase();
+}
+
 function openDatabase()
 {
-    result = evalAndLog("webkitIndexedDB.open('cursor-continue')");
+    result = evalAndLog("indexedDB.open('cursor-continue')");
     result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;
 }
@@ -76,7 +87,7 @@ function addData()
 function ascendingTest()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, webkitIDBCursor.NEXT)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
     request.onsuccess = ascendingCallback;
     request.onerror = unexpectedErrorCallback;
     window.stage = 0;
@@ -131,7 +142,7 @@ function ascendingCallback()
 function descendingTest()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, webkitIDBCursor.PREV)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
     request.onsuccess = descendingCallback;
     request.onerror = unexpectedErrorCallback;
     window.stage = 0;
@@ -162,18 +173,62 @@ function descendingCallback()
         evalAndLog("event.target.result.continue(1)");
     } else if (window.stage == 7) {
         shouldBe("event.target.result.primaryKey", "0");
-        evalAndLog("event.target.result.continue(1)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 8) {
         shouldBeNull("event.target.result");
-        done();
+        ascendingErrorTest();
         return;
     } else {
         testFailed("Illegal stage.");
     }
     window.stage++;
 }
- 
-openDatabase(); // The first step.
+
+function ascendingErrorTest()
+{
+    debug("");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
+    window.stage = 0;
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        if (window.stage === 0) {
+            shouldBe("event.target.result.primaryKey", "0");
+            evalAndLog("event.target.result.continue(3.14159)");
+        } else if (window.stage == 1) {
+            shouldBe("event.target.result.primaryKey", "3");
+            evalAndExpectException("event.target.result.continue(1)", "IDBDatabaseException.DATA_ERR");
+            descendingErrorTest();
+            return;
+        } else {
+           testFailed("Illegal stage.");
+        }
+        window.stage++;
+    };
+}
+
+function descendingErrorTest()
+{
+    debug("");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
+    window.stage = 0;
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        if (window.stage == 0) {
+            shouldBe("event.target.result.primaryKey", "17");
+            evalAndLog("event.target.result.continue('A bit2')");
+        } else if (window.stage == 1) {
+            shouldBe("event.target.result.primaryKey", "15");
+            evalAndExpectException("event.target.result.continue('A bit3')", "IDBDatabaseException.DATA_ERR");
+            done();
+            return;
+        } else {
+           testFailed("Illegal stage.");
+        }
+        window.stage++;
+    };
+}
+
+test();
  
 </script>
 </body>
