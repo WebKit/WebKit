@@ -1,3 +1,20 @@
+2011-1-9  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 102509
+
+    2011-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG ArithMul power-of-two case does not check for overflow
+            https://bugs.webkit.org/show_bug.cgi?id=74230
+
+            Reviewed by Gavin Barraclough.
+
+            Disabled power-of-2 peephole optimization for multiplication, because it was wrong,
+            and any attempt to fix it would likely introduce code bloat and register pressure.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileArithMul):
+
 2012-01-09  Lucas Forschler  <lforschler@apple.com>
 
         Windows Build fix.

@@ -1,5 +1,23 @@
 2011-1-9  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 102509
+
+    2011-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG ArithMul power-of-two case does not check for overflow
+            https://bugs.webkit.org/show_bug.cgi?id=74230
+
+            Reviewed by Gavin Barraclough.
+
+            * fast/js/dfg-multiply-expected.txt: Added.
+            * fast/js/dfg-multiply.html: Added.
+            * fast/js/script-tests/dfg-multiply.js: Added.
+            (doMultiplyConstant2):
+            (doMultiplyConstant3):
+            (doMultiplyConstant4):
+
+2011-1-9  Lucas Forschler  <lforschler@apple.com>
+
     Merge 102263
 
     2011-12-07  Ken Buchanan <kenrb@chromium.org>
