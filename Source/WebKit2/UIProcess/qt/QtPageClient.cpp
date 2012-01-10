@@ -195,6 +195,20 @@ void QtPageClient::didReceiveMessageFromNavigatorQtObject(const String& message)
     QQuickWebViewPrivate::get(m_webView)->didReceiveMessageFromNavigatorQtObject(message);
 }
 
+void QtPageClient::updateTextInputState()
+{
+    ASSERT(m_eventHandler);
+    m_eventHandler->updateTextInputState();
+}
+
+#if ENABLE(GESTURE_EVENTS)
+void QtPageClient::doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled)
+{
+    ASSERT(m_eventHandler);
+    m_eventHandler->doneWithGestureEvent(event, wasEventHandled);
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 void QtPageClient::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {

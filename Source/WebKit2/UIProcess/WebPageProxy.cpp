@@ -968,6 +968,8 @@ void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
     if (!isValid())
         return;
 
+    m_gestureEventQueue.append(event);
+
     process()->responsivenessTimer()->start();
     process()->send(Messages::EventDispatcher::GestureEvent(m_pageID, event), 0);
 }
@@ -2427,6 +2429,8 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
 #if PLATFORM(MAC)
     m_pageClient->updateTextInputState(couldChangeSecureInputState);
+#elif PLATFORM(QT)
+    m_pageClient->updateTextInputState();
 #endif
 }
 
@@ -2911,9 +2915,15 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
-    case WebEvent::GestureSingleTap:
-#endif
+    case WebEvent::GestureSingleTap: {
+        WebGestureEvent event = m_gestureEventQueue.first();
+        MESSAGE_CHECK(type == event.type());
+
+        m_gestureEventQueue.removeFirst();
+        m_pageClient->doneWithGestureEvent(event, handled);
         break;
+    }
+#endif
     case WebEvent::MouseUp:
         m_currentlyProcessedMouseDownEvent = nullptr;
         break;

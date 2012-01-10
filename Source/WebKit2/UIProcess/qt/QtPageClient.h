@@ -93,10 +93,9 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
-
-#if ENABLE(TOUCH_EVENTS)
+    virtual void updateTextInputState();
+    virtual void doneWithGestureEvent(const WebGestureEvent&, bool wasEventHandled);
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
-#endif
 
 private:
     QQuickWebView* m_webView;

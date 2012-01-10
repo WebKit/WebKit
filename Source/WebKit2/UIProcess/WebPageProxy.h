@@ -952,6 +952,7 @@ private:
     WebCore::PolicyAction m_syncNavigationActionPolicyAction;
     uint64_t m_syncNavigationActionPolicyDownloadID;
 
+    Deque<WebGestureEvent> m_gestureEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     Deque<NativeWebWheelEvent> m_wheelEventQueue;
     Vector<NativeWebWheelEvent> m_currentlyProcessedWheelEvents;

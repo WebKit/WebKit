@@ -29,6 +29,7 @@
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>
+#include <QInputPanel>
 #include <QMimeData>
 #include <QtQuick/QQuickCanvas>
 #include <QStyleHints>
@@ -91,6 +92,7 @@ QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* q
     , m_webPage(qmlWebPage)
     , m_previousClickButton(Qt::NoButton)
     , m_clickCount(0)
+    , m_postponeTextInputStateChanged(false)
 {
 }
 
@@ -282,6 +284,8 @@ bool QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
 
 void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)
 {
+    m_postponeTextInputStateChanged = true;
+
     QTransform fromItemTransform = m_webPage->transformFromItem();
     WebGestureEvent gesture(WebEvent::GestureSingleTap, fromItemTransform.map(point.pos()).toPoint(), point.screenPos().toPoint(), WebEvent::Modifiers(0), 0);
     m_webPageProxy->handleGestureEvent(gesture);
@@ -415,6 +419,42 @@ void QtWebPageEventHandler::resetGestureRecognizers()
     m_panGestureRecognizer.reset();
     m_pinchGestureRecognizer.reset();
     m_tapGestureRecognizer.reset();
+}
+
+static void setInputPanelVisible(bool visible)
+{
+    if (qApp->inputPanel()->visible() == visible)
+        return;
+
+    qApp->inputPanel()->setVisible(visible);
+}
+
+void QtWebPageEventHandler::updateTextInputState()
+{
+    if (m_postponeTextInputStateChanged)
+        return;
+
+    const EditorState& editor = m_webPageProxy->editorState();
+
+    // Ignore input method requests not due to a tap gesture.
+    if (!editor.isContentEditable)
+        setInputPanelVisible(false);
+}
+
+void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled)
+{
+    if (event.type() != WebEvent::GestureSingleTap)
+        return;
+
+    m_postponeTextInputStateChanged = false;
+
+    if (!wasEventHandled)
+        return;
+
+    const EditorState& editor = m_webPageProxy->editorState();
+    bool newVisible = editor.isContentEditable;
+
+    setInputPanelVisible(newVisible);
 }
 
 void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)

@@ -1,3 +1,50 @@
+2012-01-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Implement the input panel request/close handling
+
+        Reviewed by Simon Hausmann.
+
+        With the current patch we only request the input panel as a
+        response to a user tap. Close requests, on the other hand,
+        is always respected.
+
+        As multiple show/hide requests can happen while processing
+        the tap gesture, input panel visibility changes are postponed
+        until the tap gesture ends.
+
+        The input panel will become visible if the WebCore editor is
+        in canEdit mode and thus work for content-editable, meaning
+        that it won't close the input panel if you click on a link
+        (eg. editCommand) while in content-editable mode.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleGestureEvent):
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::didReceiveEvent):
+
+            Add a new doneWithGestureEvent method to the PageClient
+            as well as add a updateTextInputState similar to that of mac.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::updateTextInputState):
+        (QtPageClient::doneWithGestureEvent):
+
+            Propagate the new events to the Qt EventHandler.
+
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::handleSingleTapEvent):
+        (setInputPanelVisible):
+        (QtWebPageEventHandler::updateTextInputState):
+        (QtWebPageEventHandler::doneWithGestureEvent):
+
+            Handle postponing of the input method visibility change
+            and the actual showing/hiding.
+
 2012-01-10  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Remove codes to move and resize the clip.
