@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("resources");
+console.log("test: " + WebInspector.inspectedPageURL);
+    WebInspector.settings.resourcesLastSelectedItem.set(WebInspector.inspectedPageURL);
+
+    function test(timer)
+    {
+        WebInspector.showPanel("audits");
+
+        var showPanelTimerCookie = timer.start("first-open-resources");
+        InspectorTest.addBackendResponseSniffer(PageAgent, "getResourceTree", function() {
+            timer.finish(showPanelTimerCookie);
+            timer.done("first-open");
+        });
+        WebInspector.panels.resources.reset();
+        WebInspector.panels.resources._initialized = false;
+        WebInspector.resourceTreeModel._fetchResourceTree();
+        WebInspector.showPanel("resources");
+    }
+
+    InspectorTest.runPerformanceTest(test, 5000);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</body>
+</html>
+

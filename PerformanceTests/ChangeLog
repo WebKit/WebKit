@@ -1,3 +1,9 @@
+2012-01-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Restore test that was removed during migration from LayoutTests folder.
+
+        * inspector/first-open-resources.html: Added.
+
 2012-01-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed test fix after r103683.
