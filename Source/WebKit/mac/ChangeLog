@@ -1,3 +1,14 @@
+2012-01-10  Dan Bernstein  <mitz@apple.com>
+
+        Change -[WebHistoryItem copyWithZone:] to not use NSCopyObject()
+        https://bugs.webkit.org/show_bug.cgi?id=75980
+
+        Reviewed by Mark Rowe.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]): Replaced NSCopyObject() with
+        -alloc, -initWithWebCoreHistoryItem:.
+
 2012-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Mitigate scrollbar differences when running pixel tests

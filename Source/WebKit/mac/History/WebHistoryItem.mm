@@ -141,11 +141,9 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 - (id)copyWithZone:(NSZone *)zone
 {
     WebCoreThreadViolationCheckRoundOne();
-    WebHistoryItem *copy = (WebHistoryItem *)NSCopyObject(self, 0, zone);
-    RefPtr<HistoryItem> item = core(_private)->copy();
-    copy->_private = kitPrivate(item.get());
-    historyItemWrappers().set(item.release().leakRef(), copy);
-    
+    WebHistoryItem *copy = [[WebHistoryItem alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+    historyItemWrappers().set(core(copy->_private), copy);
+
     return copy;
 }
 
