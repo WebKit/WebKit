@@ -200,8 +200,6 @@ BUGWK74653 SKIP : fast/workers/storage/interrupt-database.html = TIMEOUT
 
 BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
 
-BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
-
 BUGCR108798 LINUX : fast/filesystem/workers/file-writer-events.html = CRASH PASS
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
@@ -641,6 +639,9 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-embed.html = FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.html = FAIL
 
+// Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
+WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
+
 // Inspector tests in Debug build are very slow.
 BUG_DRT SLOW LINUX WIN DEBUG : inspector = PASS
 BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
@@ -659,6 +660,8 @@ WONTFIX SKIP : http/tests/inspector/network/network-size.html = FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
 WONTFIX SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
+BUGWK57754 SLOW WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH
+
 // PageAgent can not getCookies from DumpRenderTree.
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
 
@@ -674,7 +677,15 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGWK60109 SLOW WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
+BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
+
+BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
+
+BUGWK75186 SKIP LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TEXT TIMEOUT
+
 BUGWK75647 : http/tests/inspector/network/download.html = PASS CRASH TIMEOUT
+
+BUGWK75916 SKIP LINUX : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TEXT TIMEOUT
 
 // -----------------------------------------------------------------
 // Editing tests
@@ -2883,8 +2894,6 @@ BUGWK60094 : fast/encoding/parser-tests-120.html = PASS TIMEOUT
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
-BUGWK57754 SLOW WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH
-
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
 BUGWK58008 SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
@@ -3141,9 +3150,6 @@ BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html 
 
 BUGCR84031 : storage/domstorage/sessionstorage/delete-removal.html = PASS TIMEOUT
 BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
-
-// Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
-WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
 
@@ -3643,8 +3649,6 @@ BUGWK73865 : media/track/tracklist-is-reachable.html = TEXT CRASH
 BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT CRASH
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT CRASH
 
-BUGWK75186 SKIP LINUX : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TEXT TIMEOUT
-
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
@@ -3684,8 +3688,6 @@ BUGWK72272 WIN : security/crypto-random-values-types.html = TEXT PASS
 BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT TEXT PASS
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
-
-BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
 
 // Animations tests use an inherently-flaky timer-based design.
 BUGWK66953 : animations/animation-direction-normal.html = TEXT PASS
