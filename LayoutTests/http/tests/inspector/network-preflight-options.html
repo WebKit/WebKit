@@ -22,41 +22,60 @@ function sendXHR(url, forcePreflight, async, callback)
     }
 }
 
-var targetURL = "http://localhost:8000/inspector/resources/cors-target.php";
+var baseTargetURL = "http://localhost:8000/inspector/resources/cors-target.php";
+
+function targetURL(id, deny, addTimestamp)
+{
+    var result = baseTargetURL + "?id=" + id;
+    if (deny)
+        result += "&deny=yes";
+    if (addTimestamp)
+        result += "&date=" + Date.now();
+    return result;
+}
+
 function doCrossOriginXHR()
 {
     // Failed POSTs with no preflight check should result in a POST request being logged
-    sendXHR(targetURL + "?deny=yes", false, false);
+    sendXHR(targetURL(0, true, false), false, false);
     // Failed POSTs with preflight check should result in an OPTIONS request being logged
-    sendXHR(targetURL + "?deny=yes", true, false);
+    sendXHR(targetURL(1, true, false), true, false);
     // Successful POSTs with preflight check should result in an OPTIONS request followed by POST request being logged
     // Generate request name based on timestamp to defeat OPTIONS request caching (this is only relevant for repeated invocations of the test in signle instance of DRT)
-    sendXHR(targetURL + "?date=" + Date.now(), true, false);
+    sendXHR(targetURL(2, false, true), true, false);
 
     // And now send the same requests asynchronously
     // Add redundant async parameter to ensure this request differs from the one above.
-    sendXHR(targetURL + "?deny=yes", false, true, step2);
+    sendXHR(targetURL(3, true, false), false, true, step2);
 }
 
 function step2()
 {
-    sendXHR(targetURL + "?deny=yes", true, true, step3);
+    sendXHR(targetURL(4, true, false), true, true, step3);
 }
 
 function step3()
 {
-    sendXHR(targetURL + "?async=yes&date=" + Date.now(), true, true);
+    sendXHR(targetURL(5, false, true), true, true);
 }
 
 var test = function()
 {
+    var requestMessages = [];
     var postRequestsCount = 0;
     function onResource(event)
     {
         var resource = event.data;
-        InspectorTest.addResult(resource.requestMethod + " " + resource.url.replace(/[&?]date=\d+/, ""));
-        if (resource.requestMethod === "POST" && ++postRequestsCount === 4)
+        var idMatch = /\?id=([0-9]*)&/.exec(resource.url);
+        var requestId = idMatch[1];
+        var requestMessage = requestId + ":" + resource.requestMethod + " " + resource.url.replace(/[&?]date=\d+/, "");
+        requestMessages.push(requestMessage);
+        if (resource.requestMethod === "POST" && ++postRequestsCount === 4) {
+            requestMessages.sort();
+            for (var i = 0; i < requestMessages.length; i++)
+                InspectorTest.addResult(requestMessages[i]);
             InspectorTest.completeTest();
+        }
     }
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource);
     InspectorTest.evaluateInPage("doCrossOriginXHR();");
