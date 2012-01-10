@@ -1,3 +1,10 @@
+2012-01-10  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fixing the Mac build.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::patchChildren):
+
 2012-01-09  Jer Noble  <jer.noble@apple.com>
 
         Elements can appear over fullscreen video

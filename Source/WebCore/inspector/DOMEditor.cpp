@@ -211,13 +211,13 @@ bool DOMEditor::patchChildren(ContainerNode* oldParent, Vector<OwnPtr<NodeDigest
 
         // Check if this change is between stable nodes. If it is, consider it as "modified".
         if ((!i || oldMap[i - 1].first) && (i == oldMap.size() - 1 || oldMap[i + 1].first)) {
-            size_t anchorBefore = i ? oldMap[i - 1].second : -1;
-            size_t anchorAfter = i == oldMap.size() - 1 ? anchorBefore + 2 : oldMap[i + 1].second;
-            if (anchorAfter - anchorBefore == 2 && anchorBefore + 1 < newList.size()) {
-                if (!patchNode(oldList[i].get(), newList[anchorBefore + 1].get()))
+            size_t anchorCandidate = i ? oldMap[i - 1].second + 1 : 0;
+            size_t anchorAfter = i == oldMap.size() - 1 ? anchorCandidate + 1 : oldMap[i + 1].second;
+            if (anchorAfter - anchorCandidate == 1 && anchorCandidate < newList.size()) {
+                if (!patchNode(oldList[i].get(), newList[anchorCandidate].get()))
                     return false;
 
-                merges.add(newList[anchorBefore + 1].get());
+                merges.add(newList[anchorCandidate].get());
             } else
                 oldList[i]->m_node->parentNode()->removeChild(oldList[i]->m_node);
         } else {
