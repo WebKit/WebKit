@@ -29,11 +29,14 @@
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
 #include "TestInterface.h"
+#include "TestObj.h"
 #include "TestSupplemental.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMTestInterface.h"
 #include "webkit/WebKitDOMTestInterfacePrivate.h"
+#include "webkit/WebKitDOMTestObj.h"
+#include "webkit/WebKitDOMTestObjPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -51,6 +54,45 @@ WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
 }
     
 } // namespace WebKit //
+
+void
+webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestInterface * item = WebKit::core(self);
+    TestSupplemental::supplementalMethod1(item);
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+}
+
+WebKitDOMTestObj*
+webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* str_arg, WebKitDOMTestObj* obj_arg, GError **error)
+{
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestInterface * item = WebKit::core(self);
+    g_return_val_if_fail(str_arg, 0);
+    g_return_val_if_fail(obj_arg, 0);
+    WTF::String converted_str_arg = WTF::String::fromUTF8(str_arg);
+    WebCore::TestObj * converted_obj_arg = NULL;
+    if (obj_arg != NULL) {
+        converted_obj_arg = WebKit::core(obj_arg);
+        g_return_val_if_fail(converted_obj_arg, 0);
+    }
+    WebCore::ExceptionCode ec = 0;
+    PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(TestSupplemental::supplementalMethod2(item, converted_str_arg, converted_obj_arg, ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    WebKitDOMTestObj* res = WebKit::kit(g_res.get());
+    return res;
+#else
+    return NULL;
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+}
 
 gchar*
 webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self)

@@ -47,6 +47,29 @@ WEBKIT_API GType
 webkit_dom_test_interface_get_type (void);
 
 /**
+ * webkit_dom_test_interface_supplemental_method1:
+ * @self: A #WebKitDOMTestInterface
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
+
+/**
+ * webkit_dom_test_interface_supplemental_method2:
+ * @self: A #WebKitDOMTestInterface
+ * @str_arg: A #gchar
+ * @obj_arg: A #WebKitDOMTestObj
+ * @error: #GError
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMTestObj*
+webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* str_arg, WebKitDOMTestObj* obj_arg, GError **error);
+
+/**
  * webkit_dom_test_interface_get_supplemental_str1:
  * @self: A #WebKitDOMTestInterface
  *

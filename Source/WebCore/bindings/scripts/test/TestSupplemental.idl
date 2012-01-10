@@ -36,5 +36,8 @@ module test {
         readonly attribute DOMString supplementalStr1;
         attribute DOMString supplementalStr2;
         attribute [CustomGetter, CustomSetter] DOMString supplementalStr3;
+
+        void supplementalMethod1();
+        [CallWith=ScriptExecutionContext] TestObj supplementalMethod2(in DOMString strArg, in TestObj objArg) raises(DOMException);
     };
 }

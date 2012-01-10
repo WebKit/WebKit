@@ -1,5 +1,72 @@
 2012-01-10  Kentaro Hara  <haraken@chromium.org>
 
+        Support the [Supplemental] IDL on methods
+        https://bugs.webkit.org/show_bug.cgi?id=75944
+
+        Reviewed by Adam Barth.
+
+        The spec for the [Supplemental] IDL:
+        http://dev.w3.org/2006/webapi/WebIDL/#dfn-supplemental-interface
+
+        Currently the [Supplemental] IDL is supported on attributes but not supported
+        on methods. This patch makes a change to support it.
+
+        Specifically, assume the following IDL:
+
+            interface [Supplemental=X] Y {
+                void func();
+            }
+
+        Then the code generator generates the following V8X.cpp.
+
+            void funcCallback(Arguments& args) {
+                X* imp = V8X::toNative(args.Holder());
+                Y::func(imp);
+            }
+
+        Similar code is also generated for JS, ObjC, GObject and CPP bindings.
+
+        Test: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/CodeGeneratorCPP.pm: Modified as described above.
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorGObject.pm: Ditto.
+        (GenerateFunction):
+        * bindings/scripts/CodeGeneratorJS.pm: Ditto.
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateFunctionCallString):
+        * bindings/scripts/generate-bindings.pl: Ditto.
+
+        * bindings/scripts/test/TestSupplemental.idl: Added test cases for [Supplemental] methods.
+
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Updated the test result.
+        (WebDOMTestInterface::supplementalMethod1):
+        (WebDOMTestInterface::supplementalMethod2):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp: Ditto.
+        (webkit_dom_test_interface_supplemental_method1):
+        (webkit_dom_test_interface_supplemental_method2):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        (WebCore::JSTestInterfacePrototype::getOwnPropertySlot):
+        (WebCore::JSTestInterfacePrototype::getOwnPropertyDescriptor):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        (-[DOMTestInterface supplementalMethod1]):
+        (-[DOMTestInterface supplementalMethod2:objArg:]):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+        (WebCore::TestInterfaceInternal::supplementalMethod1Callback):
+        (WebCore::TestInterfaceInternal::supplementalMethod2Callback):
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+
+2012-01-10  Kentaro Hara  <haraken@chromium.org>
+
         [Refactoring] Rename attributes in TestSupplemental.idl to clarify
         that they are supplemental attributes
         https://bugs.webkit.org/show_bug.cgi?id=75942

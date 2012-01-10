@@ -2422,16 +2422,20 @@ sub GenerateParametersCheck
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
 
-    my $functionBase = "";
-    if ($function->isStatic) {
-        $functionBase = "${implClassName}::";
-    } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
-        $functionBase = "podImpl.";
-    } else {
-        $functionBase = "impl->";
-    }
-    my $functionName = "$functionBase$functionImplementationName";
     my @arguments;
+    my $functionName;
+    if ($function->isStatic) {
+        $functionName = "${implClassName}::${functionImplementationName}";
+    } elsif ($function->signature->extendedAttributes->{"ImplementedBy"}) {
+        my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+        AddToImplIncludes("${implementedBy}.h");
+        unshift(@arguments, "impl");
+        $functionName = "${implementedBy}::${functionImplementationName}";
+    } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
+        $functionName = "podImpl.${functionImplementationName}";
+    } else {
+        $functionName = "impl->${functionImplementationName}";
+    }
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"} and !$function->isStatic) {
         push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");

@@ -937,7 +937,15 @@ EOF
             }
             $getterContentHead = "${assign}convertToUTF8String(${functionName}(" . join(", ", @arguments) . "));\n";
         } else {
-            $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(" . join(", ", @callImplParams) . "));\n";
+            my @arguments = @callImplParams;
+            if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+                $implIncludes{"${implementedBy}.h"} = 1;
+                unshift(@arguments, "item");
+                $getterContentHead = "${assign}convertToUTF8String(${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "));\n";
+            } else {
+                $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(" . join(", ", @arguments) . "));\n";
+            }
         }
         push(@cBody, "    ${getterContentHead}");
     } else {
@@ -968,7 +976,15 @@ EOF
                 $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . "${assignPost});\n";
             }
         } else {
-            $contentHead = "${assign}${assignPre}item->${functionSigName}(" . join(", ", @callImplParams) . "${assignPost});\n";
+            my @arguments = @callImplParams;
+            if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+                $implIncludes{"${implementedBy}.h"} = 1;
+                unshift(@arguments, "item");
+                $contentHead = "${assign}${assignPre}${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
+            } else {
+                $contentHead = "${assign}${assignPre}item->${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
+            }
         }
         push(@cBody, "    ${contentHead}");
         

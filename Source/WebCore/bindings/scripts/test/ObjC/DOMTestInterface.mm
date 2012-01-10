@@ -39,10 +39,12 @@
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestInterfaceInternal.h"
+#import "DOMTestObjInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "TestInterface.h"
+#import "TestObj.h"
 #import "TestSupplemental.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
@@ -104,6 +106,29 @@
     WebCore::JSMainThreadNullState state;
     TestSupplemental::setSupplementalStr3(IMPL, newSupplementalStr3);
 }
+#endif
+
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (void)supplementalMethod1
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::supplementalMethod1(IMPL);
+}
+
+#endif
+
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(TestSupplemental::supplementalMethod2(IMPL, strArg, core(objArg), ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
 #endif
 
 @end

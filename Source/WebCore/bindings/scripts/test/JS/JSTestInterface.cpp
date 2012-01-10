@@ -27,7 +27,9 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSTestInterfaceCustom.h"
+#include "JSTestObj.h"
 #include "TestInterface.h"
+#include "TestObj.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
@@ -129,15 +131,33 @@ ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructDat
 
 static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalMethod1", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod1), (intptr_t)0, NoIntrinsic },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalMethod2", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod2), (intptr_t)2, NoIntrinsic },
+#endif
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestInterfacePrototypeTable = { 1, 0, JSTestInterfacePrototypeTableValues, 0 };
+static const HashTable JSTestInterfacePrototypeTable = { 5, 3, JSTestInterfacePrototypeTableValues, 0 };
 const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
+}
+
+bool JSTestInterfacePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(cell);
+    return getStaticFunctionSlot<JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
+}
+
+bool JSTestInterfacePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(object);
+    return getStaticFunctionDescriptor<JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, descriptor);
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, 0 , CREATE_METHOD_TABLE(JSTestInterface) };
@@ -252,6 +272,50 @@ JSValue JSTestInterface::getConstructor(ExecState* exec, JSGlobalObject* globalO
 {
     return getDOMConstructor<JSTestInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestInterface::s_info))
+        return throwVMTypeError(exec);
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    TestSupplemental::supplementalMethod1(impl);
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestInterface::s_info))
+        return throwVMTypeError(exec);
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    ExceptionCode ec = 0;
+    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return JSValue::encode(jsUndefined());
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(impl, scriptContext, strArg, objArg, ec)));
+    setDOMException(exec, ec);
+    return JSValue::encode(result);
+}
+
+#endif
 
 static inline bool isObservable(JSTestInterface* jsTestInterface)
 {

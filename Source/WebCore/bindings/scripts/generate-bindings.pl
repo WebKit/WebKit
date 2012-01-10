@@ -159,6 +159,18 @@ foreach my $idlFile (@supplementedIdlFiles) {
                 }
                 push(@{$targetDataNode->attributes}, $attribute);
             }
+
+            foreach my $function (@{$dataNode->functions}) {
+                # Record that this attribute is implemented by $interfaceName.
+                $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+
+                # Add interface-wide extended attributes to each attribute.
+                foreach my $extendedAttributeName (keys %{$dataNode->extendedAttributes}) {
+                    next if ($extendedAttributeName eq "Supplemental");
+                    $function->signature->extendedAttributes->{$extendedAttributeName} = $dataNode->extendedAttributes->{$extendedAttributeName};
+                }
+                push(@{$targetDataNode->functions}, $function);
+            }
         }
     }
 }

@@ -28,6 +28,7 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
+@class DOMTestObj;
 @class NSString;
 
 @interface DOMTestInterface : DOMObject
@@ -42,6 +43,8 @@
 - (NSString *)supplementalStr3;
 - (void)setSupplementalStr3:(NSString *)newSupplementalStr3;
 #endif
+- (void)supplementalMethod1;
+- (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 @end
 
 #endif

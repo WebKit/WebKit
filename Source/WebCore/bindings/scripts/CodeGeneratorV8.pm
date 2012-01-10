@@ -3182,9 +3182,21 @@ sub GenerateFunctionCallString()
         $name = $function->signature->extendedAttributes->{"ImplementationFunction"};
     }
 
-    my @arguments;
     my $index = 0;
     my $hasScriptState = 0;
+
+    my @arguments;
+    my $functionName;
+    if ($function->isStatic) {
+        $functionName = "${implClassName}::${name}";
+    } elsif ($function->signature->extendedAttributes->{"ImplementedBy"}) {
+        my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+        AddToImplIncludes("${implementedBy}.h");
+        unshift(@arguments, "imp");
+        $functionName = "${implementedBy}::${name}";
+    } else {
+        $functionName = "imp->${name}";
+    }
 
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     if ($callWith) {
@@ -3235,7 +3247,7 @@ sub GenerateFunctionCallString()
         push @arguments, "ec";
     }
 
-    my $functionString = ($function->isStatic ? "${implClassName}::${name}(" : "imp->${name}(") . join(", ", @arguments) . ")";
+    my $functionString = "$functionName(" . join(", ", @arguments) . ")";
 
     my $return = "result";
     my $returnIsRef = IsRefPtrType($returnType);

@@ -1607,9 +1607,13 @@ sub GenerateImplementation
                 splice(@parameterNames, $currentParameter, 1, "${paramName}Core->propertyReference()");
             }
 
-            my $content = $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
-
-            if ($svgPropertyType) {
+            my $content;
+            if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
+                my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+                $implIncludes{"${implementedBy}.h"} = 1;
+                unshift(@parameterNames, $caller);
+                $content = "${implementedBy}::" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
+            } elsif ($svgPropertyType) {
                 $implIncludes{"ExceptionCode.h"} = 1;
                 push(@functionContent, "    if (IMPL->role() == WebCore::AnimValRole) {\n");
                 push(@functionContent, "        WebCore::raiseOnDOMError(WebCore::NO_MODIFICATION_ALLOWED_ERR);\n");
@@ -1620,9 +1624,9 @@ sub GenerateImplementation
                 }
                 push(@functionContent, "    }\n");
                 push(@functionContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
-                $content = "podImpl.$content"; 
+                $content = "podImpl." . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
             } else {
-                $content = $caller . "->$content";
+                $content = "$caller->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
             }
 
             if ($returnType eq "void") {
