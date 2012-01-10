@@ -3,28 +3,28 @@ EVENT(canplaythrough)
 EVENT(seeked)
 EXPECTED (video.currentTime == '0.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'Lorem') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'Lorem') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
 
 RUN(video.currentTime = 1.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '1.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'ipsum') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'ipsum') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'ipsum') OK
 
 RUN(video.currentTime = 2.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '2.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'dolor') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'dolor') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'dolor') OK
 
 RUN(video.currentTime = 3.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '3.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'sit') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'sit') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'sit') OK
 
 Test the cue display colors and font.

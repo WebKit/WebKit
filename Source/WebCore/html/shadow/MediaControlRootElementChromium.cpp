@@ -376,7 +376,7 @@ void MediaControlRootElementChromium::updateTextTrackDisplay()
         if (!cue->track() || cue->track()->mode() != TextTrack::SHOWING)
             continue;
 
-        String cueText = cue->getCueAsSource();
+        String cueText = cue->text();
         if (!cueText.isEmpty()) {
             if (!nothingToDisplay)
                 m_textTrackDisplay->appendChild(document()->createElement(HTMLNames::brTag, false), ASSERT_NO_EXCEPTION);

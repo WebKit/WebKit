@@ -1,0 +1,23 @@
+Test that cue text is mutable.
+
+
+** Test initial cue info
+EXPECTED (testTrack.track.activeCues.length == '0') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
+EXPECTED (testTrack.track.cues[0].startTime == '1') OK
+EXPECTED (testTrack.track.cues[1].startTime == '3') OK
+EXPECTED (testTrack.track.cues[0].text == 'Lorem ipsum dolor sit amet,') OK
+EXPECTED (fragment.isEqualNode(testTrack.track.cues[0].getCueAsHTML()) == 'true') OK
+
+** Change the start time of cue #1, it should become visible.
+RUN(testTrack.track.cues[0].startTime = 0)
+EXPECTED (testTrack.track.cues[0].startTime == '0') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum dolor sit amet,') OK
+
+** Change the cue text, getCueAsHTML() should return a new, correct fragment.
+RUN(testTrack.track.cues[0].text = 'Lorem ipsum dolor sit amet,')
+EXPECTED (testTrack.track.cues[0].text == 'Lorem ipsum dolor sit amet,') OK
+EXPECTED (fragment.isEqualNode(testTrack.track.cues[0].getCueAsHTML()) == 'true') OK
+
+END OF TEST
+

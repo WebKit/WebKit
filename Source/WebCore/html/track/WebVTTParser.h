@@ -84,10 +84,12 @@ public:
     static String collectWord(const String&, unsigned*);
 
     // Input data to the parser to parse.
-    virtual void parseBytes(const char* data, unsigned length);
+    void parseBytes(const char* data, unsigned length);
 
     // Transfers ownership of last parsed cues to caller.
-    virtual void getNewCues(Vector<RefPtr<TextTrackCue> >&);
+    void getNewCues(Vector<RefPtr<TextTrackCue> >&);
+
+    PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(const String&);
 
 protected:
     WebVTTParser(WebVTTParserClient*, ScriptExecutionContext*);
@@ -101,7 +103,7 @@ private:
     ParseState collectCueText(const String&, unsigned length, unsigned);
     ParseState ignoreBadCue(const String&);
 
-    void processCueText();
+    void createNewCue();
     void resetCueValues();
     double collectTimeStamp(const String&, unsigned*);
     void skipWhiteSpace(const String&, unsigned*);
@@ -119,7 +121,6 @@ private:
     WebVTTToken m_token;
     OwnPtr<WebVTTTokenizer> m_tokenizer;
 
-    RefPtr<DocumentFragment> m_attachmentRoot;
     RefPtr<ContainerNode> m_currentNode;
 
     WebVTTParserClient* m_client;

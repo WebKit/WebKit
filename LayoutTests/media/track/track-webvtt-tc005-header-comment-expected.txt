@@ -6,21 +6,21 @@ EXPECTED (cues.length == '2') OK
 EXPECTED (cues[0].id == '1') OK
 EXPECTED (cues[0].startTime == '0') OK
 EXPECTED (cues[0].endTime == '30.5') OK
-EXPECTED (cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
 EXPECTED (cues[1].id == '2') OK
 EXPECTED (cues[1].startTime == '31') OK
 EXPECTED (cues[1].endTime == '1200.5') OK
-EXPECTED (cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '2') OK
 EXPECTED (cues[0].id == '1') OK
 EXPECTED (cues[0].startTime == '0') OK
 EXPECTED (cues[0].endTime == '30.5') OK
-EXPECTED (cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
 EXPECTED (cues[1].id == '2') OK
 EXPECTED (cues[1].startTime == '31') OK
 EXPECTED (cues[1].endTime == '1200.5') OK
-EXPECTED (cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
 END OF TEST
 

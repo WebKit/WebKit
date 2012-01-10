@@ -6,19 +6,19 @@ EXPECTED (cues.length == '4') OK
 EXPECTED (cues[0].id == 'random_id') OK
 EXPECTED (cues[0].startTime == '0') OK
 EXPECTED (cues[0].endTime == '30.5') OK
-EXPECTED (cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
 EXPECTED (cues[1].id == 'another random identifier') OK
 EXPECTED (cues[1].startTime == '31') OK
 EXPECTED (cues[1].endTime == '60.5') OK
-EXPECTED (cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
 EXPECTED (cues[2].id == 'identifier--too') OK
 EXPECTED (cues[2].startTime == '61') OK
 EXPECTED (cues[2].endTime == '120.5') OK
-EXPECTED (cues[2].getCueAsSource() == 'I said Bear is coming now!!!!') OK
+EXPECTED (cues[2].text == 'I said Bear is coming now!!!!') OK
 EXPECTED (cues[3].id == 'identifier--too') OK
 EXPECTED (cues[3].startTime == '121') OK
 EXPECTED (cues[3].endTime == '180.5') OK
-EXPECTED (cues[3].getCueAsSource() == 'Duplicate identifier') OK
+EXPECTED (cues[3].text == 'Duplicate identifier') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '0') OK

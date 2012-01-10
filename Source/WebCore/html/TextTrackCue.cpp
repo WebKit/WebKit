@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -161,7 +162,7 @@ void TextTrackCue::setPauseOnExit(bool value)
     cueDidChange();
 }
 
-String TextTrackCue::direction() const
+const String& TextTrackCue::direction() const
 {
     switch (m_writingDirection) {
     case Horizontal: 
@@ -172,7 +173,7 @@ String TextTrackCue::direction() const
         return verticallrKeyword();
     default:
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
 }
 
@@ -269,7 +270,7 @@ void TextTrackCue::setSize(int size, ExceptionCode& ec)
     cueDidChange();
 }
 
-String TextTrackCue::alignment() const
+const String& TextTrackCue::alignment() const
 {
     switch (m_cueAlignment) {
     case Start:
@@ -280,7 +281,7 @@ String TextTrackCue::alignment() const
         return endKeyword();
     default:
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
 }
 
@@ -310,13 +311,24 @@ void TextTrackCue::setAlignment(const String& value, ExceptionCode& ec)
     cueDidChange();
 }
     
-String TextTrackCue::getCueAsSource()
+void TextTrackCue::setText(const String& text)
 {
-    return m_content;
+    if (m_content == text)
+        return;
+    
+    cueWillChange();
+    // Clear the document fragment but don't bother to create it again just yet as we can do that
+    // when it is requested.
+    m_documentFragment = 0;
+    m_content = text;
+    cueDidChange();
 }
 
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
+    if (!m_documentFragment)
+        m_documentFragment = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
+
     return m_documentFragment;
 }
 

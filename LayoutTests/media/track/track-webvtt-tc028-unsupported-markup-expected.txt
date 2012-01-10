@@ -4,19 +4,19 @@ Tests that unsupported markup is properly ignored.
 *** Testing text track 0
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].getCueAsHTML().textContent == 'Bear is Coming!!!!! And what kind of a bear it is - just have look.') OK
-EXPECTED (cues[0].getCueAsSource() == '
+EXPECTED (cues[0].text == '
 Bear is Coming!!!!!
 
 And what kind of a bear it is - just have look.
 
 ') OK
 EXPECTED (cues[1].getCueAsHTML().textContent == ' I said Bear is coming!!!! I said Bear is still coming!!!! ') OK
-EXPECTED (cues[1].getCueAsSource() == '
+EXPECTED (cues[1].text == '
 I said Bear is coming!!!!
 I said Bear is still coming!!!!
 ') OK
 EXPECTED (cues[2].getCueAsHTML().textContent == ' I said Bear is coming now!!!! ') OK
-EXPECTED (cues[2].getCueAsSource() == '
+EXPECTED (cues[2].text == '
 I said Bear is coming now!!!!
 
 ') OK

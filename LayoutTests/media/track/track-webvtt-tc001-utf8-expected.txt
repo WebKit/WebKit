@@ -6,11 +6,11 @@ EXPECTED (cues.length == '2') OK
 EXPECTED (cues[0].id == '1') OK
 EXPECTED (cues[0].startTime == '0') OK
 EXPECTED (cues[0].endTime == '30.5') OK
-EXPECTED (cues[0].getCueAsSource() == '景気判断') OK
+EXPECTED (cues[0].text == '景気判断') OK
 EXPECTED (cues[1].id == '2') OK
 EXPECTED (cues[1].startTime == '31') OK
 EXPECTED (cues[1].endTime == '1200.5') OK
-EXPECTED (cues[1].getCueAsSource() == '電力不足') OK
+EXPECTED (cues[1].text == '電力不足') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '2') OK

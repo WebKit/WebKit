@@ -54,7 +54,7 @@ module html {
         attribute DOMString alignment
             setter raises (DOMException);
 
-        DOMString getCueAsSource();
+        attribute DOMString text;
         DocumentFragment getCueAsHTML();
         
         attribute EventListener onenter;

@@ -222,7 +222,7 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
 WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line, unsigned length, unsigned position)
 {
     if (line.isEmpty()) {
-        processCueText();
+        createNewCue();
         return Id;
     }
     if (!m_currentContent.isEmpty())
@@ -230,7 +230,7 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line, unsign
     m_currentContent.append(line);
 
     if (position >= length)
-        processCueText();
+        createNewCue();
                 
     return CueText;
 }
@@ -242,30 +242,42 @@ WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
     return Id;
 }
 
-void WebVTTParser::processCueText()
+PassRefPtr<DocumentFragment>  WebVTTParser::createDocumentFragmentFromCueText(const String& text)
 {
-    // 51 - Cue text processing based on
+    // Cue text processing based on
     // 4.8.10.13.4 WebVTT cue text parsing rules and
     // 4.8.10.13.5 WebVTT cue text DOM construction rules.
-    if (m_currentContent.length() <= 0)
-        return;
+
+    if (!text.length())
+        return 0;
 
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
-
-    m_attachmentRoot = DocumentFragment::create(document);
-    m_currentNode = m_attachmentRoot;
+    
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+    m_currentNode = fragment;
     m_tokenizer->reset();
     m_token.clear();
-
-    SegmentedString content(m_currentContent.toString());
+    
+    SegmentedString content(text);
     while (m_tokenizer->nextToken(content, m_token))
         constructTreeFromToken(document);
     
+    return fragment.release();
+}
+
+void WebVTTParser::createNewCue()
+{
+    if (!m_currentContent.length())
+        return;
+
+    RefPtr<DocumentFragment> attachmentRoot = createDocumentFragmentFromCueText(m_currentContent.toString());
+    
     RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentId, m_currentStartTime, m_currentEndTime, m_currentContent.toString(), m_currentSettings, false);
-    cue->setCueHTML(m_attachmentRoot);
+    cue->setCueHTML(attachmentRoot);
     m_cuelist.append(cue);
-    m_client->newCuesParsed();
+    if (m_client)
+        m_client->newCuesParsed();
 }
 
 void WebVTTParser::resetCueValues()
@@ -342,6 +354,8 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     AtomicString tokenTagName(m_token.name().data(), m_token.name().size());
     QualifiedName tagName(nullAtom, tokenTagName, xhtmlNamespaceURI);
 
+    // http://dev.w3.org/html5/webvtt/#webvtt-cue-text-dom-construction-rules
+    
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
         String content(m_token.characters().data(), m_token.characters().size());

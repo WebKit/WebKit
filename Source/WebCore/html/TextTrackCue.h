@@ -59,7 +59,7 @@ public:
     TextTrack* track() const;
     void setTrack(PassRefPtr<TextTrack>);
 
-    String id() const { return m_id; }
+    const String& id() const { return m_id; }
     void setId(const String&);
 
     double startTime() const { return m_startTime; }
@@ -71,7 +71,7 @@ public:
     bool pauseOnExit() const { return m_pauseOnExit; }
     void setPauseOnExit(bool);
 
-    String direction() const;
+    const String& direction() const;
     void setDirection(const String&, ExceptionCode&);
 
     bool snapToLines() const { return m_snapToLines; }
@@ -86,10 +86,11 @@ public:
     int size() const { return m_cueSize; }
     void setSize(int, ExceptionCode&);
 
-    String alignment() const;
+    const String& alignment() const;
     void setAlignment(const String&, ExceptionCode&);
 
-    String getCueAsSource();
+    const String& text() const { return m_content; }
+    void setText(const String&);
 
     PassRefPtr<DocumentFragment> getCueAsHTML();
     void setCueHTML(PassRefPtr<DocumentFragment>);

@@ -30,7 +30,7 @@
 
             testExpected("video.currentTime.toFixed(1)", time.toFixed(1));
             if (cueText.length)
-                testExpected("testTrack.track.activeCues[0].getCueAsSource()", cueText);
+                testExpected("testTrack.track.activeCues[0].text", cueText);
             testExpected("textTrackDisplayElement(video, 'display').innerText", cueText);
 
             if (seekedCount >= info.length) {

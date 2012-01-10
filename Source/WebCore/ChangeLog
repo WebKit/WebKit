@@ -1,3 +1,35 @@
+2012-01-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Replace TextTrackCue "getCueAsSource" method with "text" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=75646
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-cue-mutable-text.html
+
+        * html/HTMLMediaElement.h: getCueAsSource() -> text().
+
+        * html/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::setText): New. Set cue text and clear the document fragment.
+        (WebCore::TextTrackCue::getCueAsHTML): Allocate the document fragment if it doesn't exist.
+        * html/TextTrackCue.h:
+        (WebCore::TextTrackCue::text):
+        * html/TextTrackCue.idl: getCueAsSource() -> text().
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::updateTextTrackDisplay): getCueAsSource() -> text().
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::updateTextTrackDisplay): getCueAsSource() -> text().
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::collectCueText): processCueText is dead, long live createNewCue.
+        (WebCore::WebVTTParser::createDocumentFragmentFromCueText): New, split out of processCueText.
+            Create a document fragment from the String argument.
+        (WebCore::WebVTTParser::createNewCue): Split out of processCueText.
+        (WebCore::WebVTTParser::constructTreeFromToken): Add a comment pointing to the spec section
+            with the rules for DOM construction.
+        * html/track/WebVTTParser.h:
+
 2012-01-10  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r102024): Having the Bing homepage open prevents idle sleep

@@ -48,7 +48,7 @@
 
             testExpected("video.currentTime", seekedCount + .5);
             testExpected("testTrack.track.activeCues.length", 1);
-            testExpected("testTrack.track.activeCues[0].getCueAsSource()", info[seekedCount]);
+            testExpected("testTrack.track.activeCues[0].text", info[seekedCount]);
             testExpected("textTrackDisplayElement(video, 'display').innerText", info[seekedCount]);
 
             if (++seekedCount == info.length)

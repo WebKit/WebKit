@@ -8,7 +8,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 RUN(video.currentTime = 1.5)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '1.5') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'Lorem ipsum dolor sit amet,') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'Lorem ipsum dolor sit amet,') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum dolor sit amet,') OK
 
 RUN(video.currentTime = 2.5)
@@ -19,7 +19,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 RUN(video.currentTime = 3.3)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '3.3') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'consectetuer adipiscing elit,') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'consectetuer adipiscing elit,') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'consectetuer adipiscing elit,') OK
 
 RUN(video.currentTime = 0.6)
@@ -30,7 +30,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 RUN(video.currentTime = 5.9)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '5.9') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'sed diam nonummy nibh euismod tincidunt') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'sed diam nonummy nibh euismod tincidunt') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'sed diam nonummy nibh euismod tincidunt') OK
 
 RUN(video.currentTime = 4.4)
@@ -41,7 +41,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 RUN(video.currentTime = 7.9)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '7.9') OK
-EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'ut laoreet dolore magna aliquam erat volutpat.') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'ut laoreet dolore magna aliquam erat volutpat.') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'ut laoreet dolore magna aliquam erat volutpat.') OK
 
 END OF TEST
