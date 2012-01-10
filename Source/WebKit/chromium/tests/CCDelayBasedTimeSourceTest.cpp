@@ -224,7 +224,7 @@ TEST(CCDelayBasedTimeSourceTest, AchievesTargetRateWithNoNoise)
     EXPECT_NEAR(1000.0 / 60.0, averageInterval, 0.1);
 }
 
-TEST(CCDelayBasedTimeSource, TestUnrefWhilePending)
+TEST(CCDelayBasedTimeSource, TestDeactivateWhilePending)
 {
     FakeCCThread thread;
     FakeCCTimeSourceClient client;
@@ -233,7 +233,57 @@ TEST(CCDelayBasedTimeSource, TestUnrefWhilePending)
     timer->setActive(true); // Should post a task.
     timer->setActive(false);
     timer.clear();
-    thread.runPendingTask(); // Should run the posted task, and delete the timer object.
+    thread.runPendingTask(); // Should run the posted task without crashing.
+}
+
+TEST(CCDelayBasedTimeSource, TestDeactivateAndReactivateBeforeNextTickTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(1000.0 / 60.0, &thread);
+    timer->setClient(&client);
+
+    // Should run the activate task, and pick up a new timebase.
+    timer->setActive(true);
+    timer->setMonotonicallyIncreasingTimeMs(0);
+    thread.runPendingTask();
+
+    // Stop the timer
+    timer->setActive(false);
+
+    // Task will be pending anyway, run it
+    thread.runPendingTask();
+
+    // Start the timer again, but before the next tick time the timer previously
+    // planned on using. That same tick time should still be targeted.
+    timer->setMonotonicallyIncreasingTimeMs(4);
+    timer->setActive(true);
+    EXPECT_EQ(12, thread.pendingDelay());
+}
+
+TEST(CCDelayBasedTimeSource, TestDeactivateAndReactivateAfterNextTickTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(1000.0 / 60.0, &thread);
+    timer->setClient(&client);
+
+    // Should run the activate task, and pick up a new timebase.
+    timer->setActive(true);
+    timer->setMonotonicallyIncreasingTimeMs(0);
+    thread.runPendingTask();
+
+    // Stop the timer
+    timer->setActive(false);
+
+    // Task will be pending anyway, run it
+    thread.runPendingTask();
+
+    // Start the timer again, but before the next tick time the timer previously
+    // planned on using. That same tick time should still be targeted.
+    timer->setMonotonicallyIncreasingTimeMs(20);
+    timer->setActive(true);
+    EXPECT_EQ(13, thread.pendingDelay());
 }
 
 }

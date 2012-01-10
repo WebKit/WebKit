@@ -1,3 +1,17 @@
+2012-01-10  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Reuse old timebase when activating CCDelayBasedTimeSource
+        https://bugs.webkit.org/show_bug.cgi?id=75938
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp:
+        (WebCore::CCDelayBasedTimeSource::CCDelayBasedTimeSource):
+        (WebCore::CCDelayBasedTimeSource::setActive):
+        (WebCore::CCDelayBasedTimeSource::onTimerFired):
+        (WebCore::CCDelayBasedTimeSource::postNextTickTask):
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.h:
+
 2012-01-10  Kentaro Hara  <haraken@chromium.org>
 
         Support the [Supplemental] IDL on methods
