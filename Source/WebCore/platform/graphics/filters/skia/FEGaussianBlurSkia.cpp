@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-void FEGaussianBlur::platformApplySkia()
+bool FEGaussianBlur::platformApplySkia()
 {
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
-        return;
+        return false;
 
     FilterEffect* in = inputEffect(0);
 
@@ -57,7 +57,7 @@ void FEGaussianBlur::platformApplySkia()
     paint.setColor(0xFFFFFFFF);
     dstContext->drawImage(image.get(), ColorSpaceDeviceRGB, drawingRegion.location(), CompositeCopy);
     canvas->restore();
-    return;
+    return true;
 }
 
 };

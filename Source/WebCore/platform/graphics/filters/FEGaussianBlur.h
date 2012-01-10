@@ -74,7 +74,9 @@ private:
 
     inline void platformApplyGeneric(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
     inline void platformApplyNeon(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
-    void platformApplySkia();
+#if USE(SKIA)
+    virtual bool platformApplySkia();
+#endif
 
     float m_stdX;
     float m_stdY;

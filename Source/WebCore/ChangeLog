@@ -1,3 +1,43 @@
+2012-01-06  Stephen White  <senorblanco@chromium.org>
+
+        [Skia] Switch FEColorMatrix to use a skia-based implementation when
+        compiling with USE(SKIA).  This change will also switch the software
+        implementation of FEGaussianBlur to the skia implementation (ie.,
+        it removes the acceleration check).
+        https://bugs.webkit.org/show_bug.cgi?id=75582
+
+        Reviewed by Dirk Schulze.
+
+        Covered by svg/W3C-SVG-1.1/filters-color-01-b.svg and friends (will
+        need a rebaseline).
+
+        * WebCore.gypi:
+        Add FEColorMatrixSkia.cpp to the build.
+        * platform/graphics/filters/FEColorMatrix.h:
+        Add platformApplySkia().
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        Remove skia-specific code from FEGaussianBlur::platformApplySoftware().
+        * platform/graphics/filters/FEGaussianBlur.h:
+        Make platformApplySkia() virtual, and put it behind #if USE(SKIA).
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::apply):
+        Call out to platformApplySkia(), or fall back to
+        platformApplySoftware().
+        * platform/graphics/filters/FilterEffect.h:
+        Add platformApplySkia().
+        * platform/graphics/filters/skia/FEColorMatrixSkia.cpp: Added.
+        (WebCore::saturateMatrix):
+        (WebCore::hueRotateMatrix):
+        (WebCore::luminanceToAlphaMatrix):
+        (WebCore::FEColorMatrix::platformApplySkia):
+        Process color matrix effect, by calling out to generic matrix
+        version of SkColorMatrixFilter.
+        * platform/graphics/filters/skia/FEGaussianBlurSkia.cpp:
+        (WebCore::FEGaussianBlur::platformApplySkia):
+        Change the signature of FEGaussianBlur::platformApplySkia to be an
+        override of the new FilterEffect base class version.
+
 2012-01-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: fix DebuggerPresentationModel::uiSourceCodes - do not iterate

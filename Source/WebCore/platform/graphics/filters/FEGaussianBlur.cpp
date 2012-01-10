@@ -273,13 +273,6 @@ void FEGaussianBlur::determineAbsolutePaintRect()
 
 void FEGaussianBlur::platformApplySoftware()
 {
-#if USE(SKIA)
-    if (filter()->renderingMode() == Accelerated) {
-        platformApplySkia();
-        return;
-    }
-#endif
-
     FilterEffect* in = inputEffect(0);
 
     ByteArray* srcPixelArray = createPremultipliedImageResult();

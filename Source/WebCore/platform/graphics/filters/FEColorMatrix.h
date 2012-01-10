@@ -49,6 +49,9 @@ public:
     bool setValues(const Vector<float>&);
 
     virtual void platformApplySoftware();
+#if USE(SKIA)
+    virtual bool platformApplySkia();
+#endif
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
