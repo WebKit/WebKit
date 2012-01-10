@@ -1,3 +1,33 @@
+2012-01-09  Greg Billock  <gbillock@google.com>
+
+        Implement navigator.startActivity; add IntentRequest object for managing web intents callbacks.
+        Web content will invoke navigator.startActivity to launch a new Web
+        Intents call. Each such call will map to an IntentRequest broker
+        object which is used by client code to correlate any return data to
+        the (optional) callbacks supplied by web content calls.
+        https://bugs.webkit.org/show_bug.cgi?id=75756
+
+        Reviewed by Adam Barth.
+
+        Test: webintents/web-intents-api.html
+
+        * Modules/intents/Intent.cpp: Added.
+        (WebCore::Intent::identifier):
+        (WebCore::Intent::setIdentifier):
+        * Modules/intents/Intent.h: Added.
+        * Modules/intents/Intent.idl: Added.
+        * Modules/intents/IntentResultCallback.h: Added.
+        (WebCore::IntentResultCallback::~IntentResultCallback):
+        * Modules/intents/IntentResultCallback.idl: Added.
+        * Modules/intents/IntentsRequest.cpp: Added.
+        * Modules/intents/IntentsRequest.h: Added.
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetNativeTypeForCallbacks):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchIntent):
+
 2012-01-09  Dan Bernstein  <mitz@apple.com>
 
         -[DOMRange renderedImageForcingBlackText:] fails with non-user-selectable text

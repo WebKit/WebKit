@@ -5,8 +5,9 @@
 </head>
 <body>
 <script type="text/javascript">
+      shouldBeDefined("navigator.startActivity");
+      
       shouldThrow("var intent = new Intent()", "'TypeError: Not enough arguments'");;
-
       shouldThrow("new Intent('a')", "'TypeError: Not enough arguments'");
       shouldThrow("new Intent('','','')", "'Error: SYNTAX_ERR: DOM Exception 12'");
       shouldThrow("new Intent('','b','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
@@ -48,6 +49,8 @@
       shouldBeNull('intent8.data');
       var intent9 = new Intent('a', 'b', {});
       shouldEvaluateTo('intent9.data', {});
+
+      shouldThrow('navigator.startActivity(intent1)', "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

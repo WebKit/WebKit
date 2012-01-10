@@ -3405,6 +3405,7 @@ sub GetNativeTypeForCallbacks
 {
     my $type = shift;
     return "const String&" if $type eq "DOMString";
+    return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
 
     # Callbacks use raw pointers, so pass isParameter = 1
     return GetNativeType($type, 1);

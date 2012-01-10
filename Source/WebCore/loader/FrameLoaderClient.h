@@ -78,6 +78,9 @@ namespace WebCore {
 #endif
     class HTMLPlugInElement;
     class IntSize;
+#if ENABLE(WEB_INTENTS)
+    class IntentRequest;
+#endif
     class KURL;
     class MessageEvent;
     class NavigationAction;
@@ -323,6 +326,10 @@ namespace WebCore {
 
         // Returns true if the embedder intercepted the postMessage call
         virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
+
+#if ENABLE(WEB_INTENTS)
+        virtual void dispatchIntent(PassRefPtr<IntentRequest> intentRequest) { }
+#endif
     };
 
 } // namespace WebCore

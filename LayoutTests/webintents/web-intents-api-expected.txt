@@ -1,3 +1,4 @@
+PASS navigator.startActivity is defined.
 PASS var intent = new Intent() threw exception TypeError: Not enough arguments.
 PASS new Intent('a') threw exception TypeError: Not enough arguments.
 PASS new Intent('','','') threw exception Error: SYNTAX_ERR: DOM Exception 12.
@@ -25,6 +26,7 @@ PASS intent6.data is 4.5
 PASS intent7.data is true
 PASS intent8.data is null
 PASS intent9.data == '[object Object]' is true
+PASS navigator.startActivity(intent1) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS successfullyParsed is true
 
 TEST COMPLETE
