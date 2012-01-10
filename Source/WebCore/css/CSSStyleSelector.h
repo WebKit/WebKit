@@ -346,9 +346,14 @@ private:
     void loadPendingImages();
 
     struct MatchedStyleDeclaration {
-        MatchedStyleDeclaration();
-        CSSMutableStyleDeclaration* styleDeclaration;
-        unsigned linkMatchType;
+        MatchedStyleDeclaration() : possiblyPaddedMember(0) { }
+
+        RefPtr<CSSMutableStyleDeclaration> styleDeclaration;
+        union {
+            unsigned linkMatchType;
+            // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
+            void* possiblyPaddedMember;
+        };
     };
     static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
     struct MatchedStyleDeclarationCacheItem {
@@ -360,11 +365,16 @@ private:
     const MatchedStyleDeclarationCacheItem* findFromMatchedDeclarationCache(unsigned hash, const MatchResult&);
     void addToMatchedDeclarationCache(const RenderStyle*, const RenderStyle* parentStyle, unsigned hash, const MatchResult&);
 
+    // Every N additions to the matched declaration cache trigger a sweep where entries holding
+    // the last reference to a style declaration are garbage collected.
+    void sweepMatchedDeclarationCache();
+
     // We collect the set of decls that match in |m_matchedDecls|. We then walk the
     // set of matched decls four times, once for those properties that others depend on (like font-size),
     // and then a second time for all the remaining properties. We then do the same two passes
     // for any !important rules.
     Vector<MatchedStyleDeclaration, 64> m_matchedDecls;
+    unsigned m_matchedDeclarationCacheAdditionsSinceLastSweep;
 
     typedef HashMap<unsigned, MatchedStyleDeclarationCacheItem> MatchedStyleDeclarationCache;
     MatchedStyleDeclarationCache m_matchedStyleDeclarationCache;

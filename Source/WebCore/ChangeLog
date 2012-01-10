@@ -1,3 +1,29 @@
+2012-01-10  Andreas Kling  <awesomekling@apple.com>
+
+        Matched declaration cache should support mapped attribute declarations.
+        <http://webkit.org/b/75948>
+
+        Reviewed by Antti Koivisto.
+
+        Support caching of matches that include mapped attribute declarations.
+        To make this possible, let the cache hold references to the matched style declarations.
+        Otherwise, declarations are assumed to survive until ~CSSStyleSelector, which may not
+        be the case for CSSMappedAttributeDeclaration.
+
+        To avoid hoarding of stale CSSMappedAttributeDeclarations in the cache, do a sweep for
+        every 100 additions and garbage collect any entries containing a declaration that is
+        only referenced by the cache.
+
+        This increases cache hit rate by up to ~10% on the Alexa top sites.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::sweepMatchedDeclarationCache):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::addToMatchedDeclarationCache):
+        * css/CSSStyleSelector.h:
+
 2012-01-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         Complex path should be used when UVS exists in text run

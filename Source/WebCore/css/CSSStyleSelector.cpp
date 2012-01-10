@@ -330,6 +330,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
                                    bool strictParsing, bool matchAuthorAndUserStyles)
     : m_hasUAAppearance(false)
     , m_backgroundData(BackgroundFillLayer)
+    , m_matchedDeclarationCacheAdditionsSinceLastSweep(0)
     , m_checker(document, strictParsing)
     , m_parentStyle(0)
     , m_rootElementStyle(0)
@@ -481,6 +482,27 @@ CSSStyleSelector::~CSSStyleSelector()
     m_fontSelector->clearDocument();
 }
 
+void CSSStyleSelector::sweepMatchedDeclarationCache()
+{
+    // Look for cache entries containing a style declaration with a single ref and remove them.
+    // This may happen when an element attribute mutation causes it to swap out its Attribute::decl()
+    // for another CSSMappedAttributeDeclaration, potentially leaving this cache with the last ref.
+    Vector<unsigned, 16> toRemove;
+    MatchedStyleDeclarationCache::iterator it = m_matchedStyleDeclarationCache.begin();
+    MatchedStyleDeclarationCache::iterator end = m_matchedStyleDeclarationCache.end();
+    for (; it != end; ++it) {
+        Vector<MatchedStyleDeclaration>& matchedStyleDeclarations = it->second.matchedStyleDeclarations;
+        for (size_t i = 0; i < matchedStyleDeclarations.size(); ++i) {
+            if (matchedStyleDeclarations[i].styleDeclaration->hasOneRef()) {
+                toRemove.append(it->first);
+                break;
+            }
+        }
+    }
+    for (size_t i = 0; i < toRemove.size(); ++i)
+        m_matchedStyleDeclarationCache.remove(toRemove[i]);
+}
+
 CSSStyleSelector::Features::Features()
     : usesFirstLineRules(false)
     , usesBeforeAfterRules(false)
@@ -624,12 +646,6 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
         collectSpecialRulesInDefaultStyle();
     }
 #endif
-}
-
-CSSStyleSelector::MatchedStyleDeclaration::MatchedStyleDeclaration() 
-{  
-    // Make sure all memory is zero initializes as we calculate hash over the bytes of this object.
-    memset(this, 0, sizeof(*this));
 }
 
 void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType)
@@ -820,7 +836,6 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
                     if (result.firstAuthorRule == -1)
                         result.firstAuthorRule = result.lastAuthorRule;
                     addMatchedDeclaration(attr->decl());
-                    result.isCacheable = false;
                 }
             }
         }
@@ -2239,7 +2254,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
     if (m_style->insideLink() != NotInsideLink) {
         for (int i = startIndex; i <= endIndex; ++i) {
-            CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration;
+            CSSMutableStyleDeclaration* styleDeclaration = m_matchedDecls[i].styleDeclaration.get();
             unsigned linkMatchType = m_matchedDecls[i].linkMatchType;
             // FIXME: It would be nicer to pass these as arguments but that requires changes in many places.
             m_applyPropertyToRegularStyle = linkMatchType & SelectorChecker::MatchLink;
@@ -2252,7 +2267,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
         return;
     }
     for (int i = startIndex; i <= endIndex; ++i)
-        applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration, isImportant, inheritedOnly);
+        applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration.get(), isImportant, inheritedOnly);
 }
 
 unsigned CSSStyleSelector::computeDeclarationHash(MatchedStyleDeclaration* declarations, unsigned size)
@@ -2310,6 +2325,12 @@ const CSSStyleSelector::MatchedStyleDeclarationCacheItem* CSSStyleSelector::find
 
 void CSSStyleSelector::addToMatchedDeclarationCache(const RenderStyle* style, const RenderStyle* parentStyle, unsigned hash, const MatchResult& matchResult)
 {
+    static unsigned matchedDeclarationCacheAdditionsBetweenSweeps = 100;
+    if (++m_matchedDeclarationCacheAdditionsSinceLastSweep >= matchedDeclarationCacheAdditionsBetweenSweeps) {
+        sweepMatchedDeclarationCache();
+        m_matchedDeclarationCacheAdditionsSinceLastSweep = 0;
+    }
+
     ASSERT(hash);
     MatchedStyleDeclarationCacheItem cacheItem;
     cacheItem.matchedStyleDeclarations.append(m_matchedDecls);
