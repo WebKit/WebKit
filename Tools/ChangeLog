@@ -1,5 +1,19 @@
 2012-01-10  Adam Roben  <aroben@apple.com>
 
+        Make it possible to type data: URLs into MiniBrowser on Windows
+
+        Fixes <http://webkit.org/b/75084> Crash when trying to navigate to a data: URL in
+        MiniBrowser on Windows
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::handleMessage): Instead of checking for an "http://" prefix when deciding
+        whether to prepend "http://", just look for whether the typed URL contains a colon. If it
+        does, we assume it already has a scheme and don't modify it.
+
+2012-01-10  Adam Roben  <aroben@apple.com>
+
         Make MiniBrowser automatically escape invalid URL characters typed in its URL field
 
         Fixes <http://webkit.org/b/75086> Crash when typing a data: URL containing double-quotes in

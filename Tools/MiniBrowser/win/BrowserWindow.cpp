@@ -251,7 +251,7 @@ bool BrowserWindow::handleMessage(const MSG* message)
 
     std::wstring url(&buffer[0], buffer.size() - 1);
 
-    if (url.find(L"http://"))
+    if (url.find(L":") == std::wstring::npos)
         url = L"http://" + url;
 
     m_browserView.goToURL(url);
