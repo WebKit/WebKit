@@ -1,3 +1,12 @@
+2012-01-10  Ben Wells  <benwells@chromium.org>
+
+        Adding myself (benwells) to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=75971
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         AX: support helpText() in DumpRenderTree
