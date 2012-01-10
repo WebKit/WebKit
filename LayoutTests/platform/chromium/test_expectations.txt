@@ -3411,13 +3411,6 @@ BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
-BUG_REED MAC : fast/canvas/canvas-text-baseline.html = IMAGE
-BUG_REED MAC : fast/canvas/quadraticCurveTo.xml = IMAGE
-BUG_REED MAC : fast/canvas/canvas-lineWidth.html = TEXT
-BUG_REED WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
-BUG_REED WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
-BUG_REED WIN LINUX GPU : fast/canvas/canvas-lineWidth.html = TEXT
-
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
