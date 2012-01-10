@@ -1,3 +1,17 @@
+2012-01-10  pfeldman@chomium.org  <pavel.feldman@gmail.com>
+
+        Web Inspector: restore front-end compilation
+        https://bugs.webkit.org/show_bug.cgi?id=75625
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.replaceSourceFrames):
+        * inspector/front-end/TabbedPane.js:
+        * inspector/front-end/externs.js:
+        (WebInspector.isCompactMode):
+        * inspector/front-end/treeoutline.js:
+
 2012-01-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Add NULL checks to setting access obtained on frame and document.

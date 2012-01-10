@@ -184,3 +184,5 @@ WebInspector.showPanel = function(panel)
  * @type {string} 
  */
 WebInspector.inspectedPageDomain;
+
+WebInspector.isCompactMode = function() { return false; }

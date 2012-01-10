@@ -1529,7 +1529,7 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
     {
         this._currentSourceFrame.detach();
         this._currentSourceFrame = null;
-        this.showSourceFrame(title, sourceFrame);
+        this.showSourceFrame(title, sourceFrame, tooltip);
     },
 
     /**

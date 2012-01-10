@@ -484,7 +484,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {string=}
+     * @type {string|undefined}
      */
     get tooltip()
     {

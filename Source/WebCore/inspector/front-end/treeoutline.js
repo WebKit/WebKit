@@ -539,7 +539,7 @@ TreeOutline.prototype._searchInputKeyDown = function(event)
 
 /**
  * @param {string} searchText
- * @param {TreeElement=} startTreeElement
+ * @param {TreeElement} startTreeElement
  * @param {boolean} skipStartTreeElement
  */
 TreeOutline.prototype._nextSearchMatch = function(searchText, startTreeElement, skipStartTreeElement)
