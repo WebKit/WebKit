@@ -181,6 +181,17 @@ function runTests()
         assertTrue(document.getElementById('timeout-tests-table').textContent.indexOf('expected actual diff') != -1);
     });
 
+    function isExpanded(expandLink)
+    {
+        var enDash = '\u2013';
+        return expandLink.textContent == enDash;
+    }
+
+    function isCollapsed(expandLink)
+    {
+        return expandLink.textContent == '+';
+    }
+
     results = mockResults();
     var subtree = results.tests['foo'] = {}
     subtree['bar.html'] = mockExpectation('TEXT', 'PASS');
@@ -194,21 +205,19 @@ function runTests()
         expandAllExpectations();
         assertTrue(document.querySelectorAll('tbody tr').length == 8);
         var expandLinks = document.querySelectorAll('.expand-button-text');
-        var enDash = '\u2013';
-        for (var i = 0; i < expandLinks.length; i++) {
-            assertTrue(expandLinks[i].textContent == enDash);
-        }
+        for (var i = 0; i < expandLinks.length; i++)
+            assertTrue(isExpanded(expandLinks[i]));
         
         collapseAllExpectations();
         // Collapsed expectations stay in the dom, but are display:none.
         assertTrue(document.querySelectorAll('tbody tr').length == 8);
         var expandLinks = document.querySelectorAll('.expand-button-text');
         for (var i = 0; i < expandLinks.length; i++)
-            assertTrue(expandLinks[i].textContent == '+');
+            assertTrue(isCollapsed(expandLinks[i]));
             
         expandExpectations(expandLinks[1]);
-        assertTrue(expandLinks[0].textContent == '+');
-        assertTrue(expandLinks[1].textContent == enDash);
+        assertTrue(isCollapsed(expandLinks[0]));
+        assertTrue(isExpanded(expandLinks[1]));
 
         collapseExpectations(expandLinks[1]);
         assertTrue(expandLinks[1].textContent == '+');
@@ -547,6 +556,59 @@ function runTests()
         document.getElementById('unexpected-results').onchange();
         expandAllExpectations();
         assertTrue(visibleExpandLinks().length == 2);
+    });
+    
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar.html'] = mockExpectation('TEXT', 'FAIL');
+    subtree['bar1.html'] = mockExpectation('TEXT', 'FAIL');
+    subtree['bar2.html'] = mockExpectation('TEXT', 'FAIL');
+    
+    runTest(results, function() {
+        assertTrue(document.getElementById('results-table'));
+        assertTrue(visibleExpandLinks().length == 3);
+        
+        if (window.eventSender) {
+            eventSender.keyDown('i'); // first
+            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
+            assertTrue(expandButtons[0].classList.contains('current'));
+            assertTrue(!expandButtons[1].classList.contains('current'));
+            assertTrue(!expandButtons[2].classList.contains('current'));
+
+            eventSender.keyDown('j'); // next
+            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
+            assertTrue(!expandButtons[0].classList.contains('current'));
+            assertTrue(expandButtons[1].classList.contains('current'));
+            assertTrue(!expandButtons[2].classList.contains('current'));
+
+            eventSender.keyDown('k'); // previous
+            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
+            assertTrue(expandButtons[0].classList.contains('current'));
+            assertTrue(!expandButtons[1].classList.contains('current'));
+            assertTrue(!expandButtons[2].classList.contains('current'));
+
+            eventSender.keyDown('l'); // last
+            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
+            assertTrue(!expandButtons[0].classList.contains('current'));
+            assertTrue(!expandButtons[1].classList.contains('current'));
+            assertTrue(expandButtons[2].classList.contains('current'));
+
+            eventSender.keyDown('i'); // first
+            eventSender.keyDown('e'); // expand
+            var expandLinks = document.querySelectorAll('.expand-button-text');
+            assertTrue(isExpanded(expandLinks[0]));
+
+            eventSender.keyDown('c'); // collapse
+            assertTrue(isCollapsed(expandLinks[0]));
+
+            eventSender.keyDown('f'); // flag
+            var flaggedTestsTextbox = document.getElementById('flagged-tests');
+            flaggedTestsTextbox.innerText == 'bar.html';
+
+            eventSender.keyDown('f'); // unflag
+            flaggedTestsTextbox.innerText == '';
+        }
     });
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';

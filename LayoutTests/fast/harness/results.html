@@ -2,10 +2,17 @@
 <style>
 body {
     margin: 4px;
+    font-family: Helvetica, sans-serif;
+    font-size: 11pt;
 }
 
 body > p:first-of-type {
     margin-top: 0;
+}
+
+h1 {
+    font-size: 14pt;
+    margin-top: 1.5em;
 }
 
 p {
@@ -25,7 +32,7 @@ td:not(:first-of-type) {
 }
 
 td {
-    padding: 0 4px;
+    padding: 1px 4px;
 }
 
 th:empty, td:empty {
@@ -35,6 +42,11 @@ th:empty, td:empty {
 th {
     -webkit-user-select: none;
     -moz-user-select: none;
+}
+
+.note {
+    color: gray;
+    font-size: smaller;
 }
 
 .results-row {
@@ -53,27 +65,37 @@ th {
 #toolbar {
     position: fixed;
     padding: 4px;
-    top: 0;
-    right: 0;
+    top: 2px;
+    right: 2px;
     text-align: right;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid silver;
+    border-radius: 4px;
 }
 
 .expand-button {
     background-color: white;
-    color: blue;
     width: 11px;
-    height: 11px;
-    border: 1px solid blue;
+    height: 12px;
+    border: 1px solid gray;
     display: inline-block;
     margin: 0 3px 0 0;
     position: relative;
+    cursor: default;
+}
+
+.expand-button.current {
+    color: red;
 }
 
 .expand-button-text {
     position: absolute;
     top: -0.3em;
     left: 1px;
+}
+
+.test-link.flagged:after {
+    content: ' (flagged)';
 }
 
 .stopped-running-early-message {
@@ -165,6 +187,9 @@ th {
     image-rendering: -webkit-optimize-contrast;
 }
 
+#flagged-tests {
+    padding: 5px;
+}
 </style>
 <style id="unexpected-style"></style>
 
@@ -265,9 +290,9 @@ function togglingImage(prefix)
         prefix + '"></img></div>';
 }
 
-function toggleExpectations(e)
+function toggleExpectations(element)
 {
-    var expandLink = e.target;
+    var expandLink = element;
     if (expandLink.className != 'expand-button-text')
         expandLink = expandLink.querySelector('.expand-button-text');
 
@@ -401,7 +426,7 @@ function testLink(test)
 
 function testLinkWithExpandButton(test)
 {
-    return '<span class=expand-button onclick="toggleExpectations(event)"><span class=expand-button-text>+</span></span>' + testLink(test);
+    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test);
 }
 
 function resultLink(testPrefix, suffix, contents)
@@ -613,7 +638,7 @@ function testList(tests, header, tableId)
 {
     tests.sort();
 
-    var html = '<p>' + header + ':</p><table id="' + tableId + '"';
+    var html = '<h1>' + header + ':</h1><table id="' + tableId + '"';
     if (!hasUnexpected(tests))
         html += ' class=expected';
     html += '>';
@@ -881,6 +906,165 @@ PixelZoomer.handleMouseMove = function(e) {
 document.addEventListener('mousemove', PixelZoomer.handleMouseMove, false);
 document.addEventListener('mouseout', PixelZoomer.handleMouseOut, false);
 
+var TestNavigator = {};
+
+TestNavigator.currentTestIndex = 0;
+TestNavigator.flaggedTests = {};
+
+TestNavigator.handleKeyEvent = function(event)
+{
+    switch (String.fromCharCode(event.charCode)) {
+        case 'i':
+            TestNavigator._scrollToFirstTest();
+            break;
+        case 'j':
+            TestNavigator._scrollToNextTest();
+            break;
+        case 'k':
+            TestNavigator._scrollToPreviousTest();
+            break;
+        case 'l':
+            TestNavigator._scrollToLastTest();
+            break;
+        case 'e':
+            TestNavigator._expandCurrentTest();
+            break;
+        case 'c':
+            TestNavigator._collapseCurrentTest();
+            break;
+        case 't':
+            TestNavigator._toggleCurrentTest();
+            break;
+        case 'f':
+            TestNavigator._toggleCurrentTestFlagged();
+            break;
+    }
+}
+
+TestNavigator._scrollToFirstTest = function()
+{
+    if (TestNavigator._setCurrentTest(0))
+        TestNavigator._scrollToCurrentTest();
+}
+
+TestNavigator._scrollToLastTest = function()
+{
+    var links = visibleExpandLinks();
+    if (TestNavigator._setCurrentTest(links.length - 1))
+        TestNavigator._scrollToCurrentTest();
+}
+
+TestNavigator._scrollToNextTest = function()
+{
+    if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex + 1))
+        TestNavigator._scrollToCurrentTest();
+}
+
+TestNavigator._scrollToPreviousTest = function()
+{
+    if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex - 1))
+        TestNavigator._scrollToCurrentTest();
+}
+
+TestNavigator._currentTestLink = function()
+{
+    var links = visibleExpandLinks();
+    return links[TestNavigator.currentTestIndex];
+}
+
+TestNavigator._expandCurrentTest = function()
+{
+    expandExpectations(TestNavigator._currentTestLink());
+}
+
+TestNavigator._collapseCurrentTest = function()
+{
+    collapseExpectations(TestNavigator._currentTestLink());
+}
+
+TestNavigator._toggleCurrentTest = function()
+{
+    toggleExpectations(TestNavigator._currentTestLink());
+}
+
+TestNavigator._toggleCurrentTestFlagged = function()
+{
+    var testLink = parentOfType(TestNavigator._currentTestLink(), 'tbody').querySelector('.test-link');
+    var testName = testLink.innerText;
+    
+    if (testLink.classList.contains('flagged')) {
+        testLink.classList.remove('flagged');
+        delete TestNavigator.flaggedTests[testName];
+    } else {
+        testLink.classList.add('flagged');
+        TestNavigator.flaggedTests[testName] = 1;
+    }
+    
+    var flaggedTestTextbox = document.getElementById('flagged-tests');
+    if (!flaggedTestTextbox) {
+        var flaggedTestContainer = document.createElement('div');
+        flaggedTestContainer.className = 'flagged-test-container';
+        flaggedTestContainer.innerHTML = '<h2>Flagged Tests</h2><div id="flagged-tests" contentEditable></div>';
+        document.body.appendChild(flaggedTestContainer);
+
+        flaggedTestTextbox = document.getElementById('flagged-tests');
+    }
+
+
+    var flaggedTests = Object.keys(this.flaggedTests);
+    flaggedTests.sort();
+    flaggedTestTextbox.innerHTML = flaggedTests.join('<br>');
+}
+
+TestNavigator._setCurrentTest = function(testIndex)
+{
+    var links = visibleExpandLinks();
+    if (testIndex < 0 || testIndex >= links.length)
+        return false;
+
+    var currExpandLink = links[TestNavigator.currentTestIndex];
+    if (currExpandLink)
+        currExpandLink.parentNode.classList.remove('current');
+
+    TestNavigator.currentTestIndex = testIndex;
+
+    currExpandLink = links[TestNavigator.currentTestIndex];
+    currExpandLink.parentNode.classList.add('current');
+
+    return true;
+}
+
+TestNavigator._scrollToCurrentTest = function()
+{
+    var targetLink = TestNavigator._currentTestLink();
+    if (!targetLink)
+        return;
+
+    var rowRect = targetLink.getBoundingClientRect();
+    // rowRect is in client coords (i.e. relative to viewport), so we just want to add its top to the current scroll position.
+    window.scrollTo(window.scrollX, window.scrollY + rowRect.top - 20);
+}
+
+TestNavigator.onlyShowUnexpectedFailuresChanged = function()
+{
+    var currentTestLink = document.querySelector('.current .expand-button-text');
+    if (!currentTestLink)
+        return;
+
+    // If our currentTest became hidden, reset the currentTestIndex.
+    if (onlyShowUnexpectedFailures() && parentOfType(currentTestLink, 'tbody').classList.contains('expected'))
+        TestNavigator._scrollToFirstTest();
+    else {
+        // Recompute TestNavigator.currentTestIndex
+        var links = visibleExpandLinks();
+        TestNavigator.currentTestIndex = links.indexOf(currentTestLink);
+        window.console.log('TestNavigator.currentTestIndex is ', TestNavigator.currentTestIndex)
+    }
+}
+
+document.addEventListener('keypress', TestNavigator.handleKeyEvent, false);
+
+
 function onlyShowUnexpectedFailures()
 {
     return document.getElementById('unexpected-results').checked;
@@ -896,6 +1080,10 @@ function updateExpectedFailures()
 {
     document.getElementById('unexpected-style').textContent = onlyShowUnexpectedFailures() ?
         '.expected { display: none; }' : '';
+
+    TestNavigator.onlyShowUnexpectedFailuresChanged();
+    // if (onlyShowUnexpectedFailures() && parentOfType(TestNavigator.currentTestLink(), 'tbody').classList.contains('expected'))
+    //     TestNavigator.currentTestLink().classList.remove('current');
 }
 
 var OptionWriter = {};
@@ -975,7 +1163,7 @@ function convertToTogglingHandler(togglingImageFunction)
         else if (url.match('-actual.png$')) {
             var name = parentOfType(node, 'tbody').querySelector('.test-link').textContent;
             getResultContainer(node).outerHTML = togglingImageFunction(stripExtension(name));
-        }   
+        }
     }
 }
 
@@ -1014,7 +1202,7 @@ function failingTestsTable(tests, title, id)
     if (!hasUnexpected(tests))
         header += ' class=expected';
 
-    header += '><p>' + title + ':</p>' +
+    header += '><h1>' + title + ':</h1>' +
         '<table id="' + id + '"><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">results</th>' +
@@ -1038,6 +1226,7 @@ function generatePage()
     forEachTest(processGlobalStateFor);
 
     var html = '<div id=toolbar>' +
+        '<div class="note">Use the i, j, k and l keys to navigate, e, c to expand and collapse, and f to flag</div>' +
         '<a href="javascript:void()" onclick="expandAllExpectations()">expand all</a> ' +
         '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
         '<a href="javascript:void()" id=options-link onclick="toggleOptionsMenu()">options</a>' +
