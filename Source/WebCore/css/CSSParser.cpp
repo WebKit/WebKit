@@ -906,28 +906,28 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyPosition:             // static | relative | absolute | fixed | inherit
-        if (id == CSSValueStatic ||
-             id == CSSValueRelative ||
-             id == CSSValueAbsolute ||
-             id == CSSValueFixed)
+        if (id == CSSValueStatic
+            || id == CSSValueRelative
+            || id == CSSValueAbsolute
+            || id == CSSValueFixed)
             validPrimitive = true;
         break;
 
-    case CSSPropertyPageBreakAfter:     // auto | always | avoid | left | right | inherit
+    case CSSPropertyPageBreakAfter:       // auto | always | avoid | left | right | inherit
     case CSSPropertyPageBreakBefore:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitRegionBreakAfter:
     case CSSPropertyWebkitRegionBreakBefore:
-        if (id == CSSValueAuto ||
-             id == CSSValueAlways ||
-             id == CSSValueAvoid ||
-             id == CSSValueLeft ||
-             id == CSSValueRight)
+        if (id == CSSValueAuto
+            || id == CSSValueAlways
+            || id == CSSValueAvoid
+            || id == CSSValueLeft
+            || id == CSSValueRight)
             validPrimitive = true;
         break;
 
-    case CSSPropertyPageBreakInside:    // avoid | auto | inherit
+    case CSSPropertyPageBreakInside:     // avoid | auto | inherit
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitRegionBreakInside:
         if (id == CSSValueAuto || id == CSSValueAvoid)
@@ -935,8 +935,8 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyEmptyCells:          // show | hide | inherit
-        if (id == CSSValueShow ||
-             id == CSSValueHide)
+        if (id == CSSValueShow
+            || id == CSSValueHide)
             validPrimitive = true;
         break;
 
@@ -945,11 +945,11 @@ bool CSSParser::parseValue(int propId, bool important)
         return parseContent(propId, important);
 
     case CSSPropertyWhiteSpace:          // normal | pre | nowrap | inherit
-        if (id == CSSValueNormal ||
-            id == CSSValuePre ||
-            id == CSSValuePreWrap ||
-            id == CSSValuePreLine ||
-            id == CSSValueNowrap)
+        if (id == CSSValueNormal
+            || id == CSSValuePre
+            || id == CSSValuePreWrap
+            || id == CSSValuePreLine
+            || id == CSSValueNowrap)
             validPrimitive = true;
         break;
 
@@ -1036,8 +1036,8 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyClear:                // none | left | right | both | inherit
-        if (id == CSSValueNone || id == CSSValueLeft ||
-             id == CSSValueRight|| id == CSSValueBoth)
+        if (id == CSSValueNone || id == CSSValueLeft
+            || id == CSSValueRight|| id == CSSValueBoth)
             validPrimitive = true;
         break;
 
@@ -1045,7 +1045,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // left | right | center | justify | webkit_left | webkit_right | webkit_center | webkit_match_parent |
         // start | end | <string> | inherit
         if ((id >= CSSValueWebkitAuto && id <= CSSValueWebkitMatchParent) || id == CSSValueStart || id == CSSValueEnd
-             || value->unit == CSSPrimitiveValue::CSS_STRING)
+            || value->unit == CSSPrimitiveValue::CSS_STRING)
             validPrimitive = true;
         break;
 
@@ -1408,7 +1408,7 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseCounter(propId, 1, important);
         validPrimitive = true;
         break;
-     case CSSPropertyCounterReset:        // [ <identifier> <integer>? ]+ | none | inherit
+    case CSSPropertyCounterReset:        // [ <identifier> <integer>? ]+ | none | inherit
         if (id != CSSValueNone)
             return parseCounter(propId, 0, important);
         validPrimitive = true;
@@ -2009,7 +2009,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitTapHighlightColor:
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu
             || (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && !m_strict)) {
-             validPrimitive = true;
+            validPrimitive = true;
         } else {
             parsedValue = parseColor();
             if (parsedValue)
@@ -5170,7 +5170,7 @@ PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, i
 
             if (!parsedColor || !context.allowColor)
                 return 0; // This value is not a color or length and is invalid or
-                              // it is a color, but a color isn't allowed at this point.
+                          // it is a color, but a color isn't allowed at this point.
 
             context.commitColor(parsedColor.release());
         }
@@ -5458,7 +5458,7 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
 
 static bool isBorderImageRepeatKeyword(int id)
 {
-     return id == CSSValueStretch || id == CSSValueRepeat || id == CSSValueSpace || id == CSSValueRound;
+    return id == CSSValueStretch || id == CSSValueRepeat || id == CSSValueSpace || id == CSSValueRound;
 }
 
 bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
@@ -5543,7 +5543,7 @@ public:
             m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
         }
         if (!m_left)
-             m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
 
         // Now build a rect value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();
@@ -5659,7 +5659,7 @@ public:
             m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
         }
         if (!m_left)
-             m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
 
         // Now build a quad value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();
@@ -6619,7 +6619,7 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
     else if (equalIgnoringCase(name, "sepia("))
         filterType = WebKitCSSFilterValue::SepiaFilterOperation;
     else if (equalIgnoringCase(name, "saturate("))
-       filterType = WebKitCSSFilterValue::SaturateFilterOperation;
+        filterType = WebKitCSSFilterValue::SaturateFilterOperation;
     else if (equalIgnoringCase(name, "hue-rotate("))
         filterType = WebKitCSSFilterValue::HueRotateFilterOperation;
     else if (equalIgnoringCase(name, "invert("))

@@ -1,3 +1,20 @@
+2012-01-10  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Fix style errors in CSSParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=75854
+
+        Reviewed by Nikolas Zimmermann.
+
+        Minor style fixes.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::isBorderImageRepeatKeyword):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::filterInfoForName):
+
 2012-01-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r93614): Safari Reader doesn't repaint correctly when scrolling
