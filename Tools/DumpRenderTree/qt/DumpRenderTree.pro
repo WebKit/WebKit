@@ -10,7 +10,6 @@ TARGET = DumpRenderTree
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
 load(features)
-CONFIG += uitools
 
 WEBKIT += wtf webcore
 

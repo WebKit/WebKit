@@ -43,10 +43,6 @@
 #include <QPrintPreviewDialog>
 #endif
 
-#ifndef QT_NO_UITOOLS
-#include <QtUiTools/QUiLoader>
-#endif
-
 #include <QDebug>
 
 #include <cstdio>

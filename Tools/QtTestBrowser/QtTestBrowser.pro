@@ -35,8 +35,6 @@ HEADERS += \
     cookiejar.h
 
 
-CONFIG += uitools
-
 WEBKIT += webcore
 
 CONFIG += qtwebkit

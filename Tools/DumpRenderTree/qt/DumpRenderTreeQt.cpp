@@ -49,6 +49,7 @@
 #include <QFileInfo>
 #include <QFocusEvent>
 #include <QFontDatabase>
+#include <QLabel>
 #include <QLocale>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -58,15 +59,12 @@
 #ifndef QT_NO_PRINTER
 #include <QPrinter>
 #endif
+#include <QProgressBar>
 #include <QUndoStack>
 #include <QUrl>
 
 #include <qwebsettings.h>
 #include <qwebsecurityorigin.h>
-
-#ifndef QT_NO_UITOOLS
-#include <QtUiTools/QUiLoader>
-#endif
 
 #if HAVE(FONTCONFIG)
 #include <fontconfig/fontconfig.h>
@@ -363,13 +361,13 @@ QObject* WebPage::createPlugin(const QString& classId, const QUrl& url, const QS
     Q_UNUSED(url);
     Q_UNUSED(paramNames);
     Q_UNUSED(paramValues);
-#ifndef QT_NO_UITOOLS
-    QUiLoader loader;
-    return loader.createWidget(classId, view());
-#else
-    Q_UNUSED(classId);
+
+    if (classId == QLatin1String("QProgressBar"))
+        return new QProgressBar(view());
+    if (classId == QLatin1String("QLabel"))
+        return new QLabel(view());
+
     return 0;
-#endif
 }
 
 void WebPage::setViewGeometry(const QRect& rect)

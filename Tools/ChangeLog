@@ -1,3 +1,26 @@
+2012-01-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove dependency to uitools
+        https://bugs.webkit.org/show_bug.cgi?id=75952
+
+        Reviewed by Tor Arne Vestbø.
+
+        QUiLoader is used for creating QLabel/QProgressBar widgets for
+        a layout test, to verify some widget embedding feature. Unfortunately
+        in Qt 5, QUiLoader is part of qttools, which depends on webkit, which
+        depends on qttools. Since we don't really _need_ QUiLoader for our tests,
+        let's break the circular dependency.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::createPlugin):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/launcherwindow.h:
+        * QtTestBrowser/webpage.cpp:
+        (WebPage::createPlugin):
+        * qmake/mkspecs/features/minimal_qt.prf:
+        * qmake/mkspecs/features/uitools.prf: Removed.
+
 2012-01-10  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Don't expose m_windowOptions as part of the public interface in MiniBrowserApplication
