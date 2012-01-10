@@ -2330,7 +2330,10 @@ ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokeniz
 # Replace ";" with "space" in order to recognize feature definition in css files.
 SET(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "")
 FOREACH(_feature ${FEATURE_DEFINES})
-    SET(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${_feature}")
+    # filter out color input since we have our own solution
+    IF (NOT CMAKE_SYSTEM_NAME MATCHES "QNX" OR NOT _feature MATCHES "ENABLE_INPUT_COLOR")
+        SET(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${_feature}")
+    ENDIF()
 ENDFOREACH()
 
 

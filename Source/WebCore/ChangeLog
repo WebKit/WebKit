@@ -1,3 +1,14 @@
+2012-01-09  Rob Buis  <rbuis@rim.com>
+
+        Upstream change to disable input[color] css rules for BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=75719
+
+        Reviewed by Antonio Gomes.
+
+        Do not enable default css color rules for input["color"] for BlackBerry port.
+
+        * CMakeLists.txt:
+
 2012-01-09  Greg Billock  <gbillock@google.com>
 
         Implement navigator.startActivity; add IntentRequest object for managing web intents callbacks.
