@@ -76,7 +76,7 @@ WebInspector.NetworkLogView = function()
     {
         this._canClearBrowserCookies = result;
     }
-    NetworkAgent.canClearBrowserCache(onCanClearBrowserCookies.bind(this));
+    NetworkAgent.canClearBrowserCookies(onCanClearBrowserCookies.bind(this));
 }
 
 WebInspector.NetworkLogView.prototype = {

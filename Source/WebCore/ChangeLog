@@ -1,3 +1,13 @@
+2012-01-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: typo: NetworkAgent.canClearBrowserCache -> NetworkAgent.canClearBrowserCookies.
+        https://bugs.webkit.org/show_bug.cgi?id=75949
+
+        Reviewed by Andreas Kling.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+
 2012-01-10  pfeldman@chomium.org  <pavel.feldman@gmail.com>
 
         Web Inspector: restore front-end compilation
