@@ -74,12 +74,25 @@ static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t reque
     connection->send(Messages::WebProcess::SecItemResponse(requestID, response), 0);
 }
 
+static void dispatchFunctionOnQueue(dispatch_queue_t queue, const Function<void ()>& function)
+{
+#if COMPILER(CLANG)
+    dispatch_async(queue, function);
+#else
+    Function<void ()>* functionPtr = new Function<void ()>(function);
+    dispatch_async(queue, ^{
+        (*functionPtr)();
+        delete functionPtr;
+    });
+#endif
+}
+
 void WebProcessProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
     // Since we don't want the connection work queue to be held up, we do all
     // keychain interaction work on a global dispatch queue.
     dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(keychainWorkQueue, bind(handleSecItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
+    dispatchFunctionOnQueue(keychainWorkQueue, bind(handleSecItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
 }
 
 static void handleSecKeychainItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecKeychainItemRequestData& request)
@@ -128,7 +141,7 @@ void WebProcessProxy::secKeychainItemRequest(CoreIPC::Connection* connection, ui
     // Since we don't want the connection work queue to be held up, we do all
     // keychain interaction work on a global dispatch queue.
     dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(keychainWorkQueue, bind(handleSecKeychainItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
+    dispatchFunctionOnQueue(keychainWorkQueue, bind(handleSecKeychainItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
 }
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()

@@ -1,3 +1,14 @@
+2012-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix the Mac GCC build.
+
+        Work around the fact that GCC doesn't work very well with Blocks and C++ objets.
+
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::dispatchFunctionOnQueue):
+        (WebKit::WebProcessProxy::secItemRequest):
+        (WebKit::WebProcessProxy::secKeychainItemRequest):
+
 2012-01-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Directly-composited images sometimes appear with a wrong geometry
