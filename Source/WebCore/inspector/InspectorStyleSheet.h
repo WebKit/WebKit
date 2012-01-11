@@ -158,6 +158,7 @@ class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {
 public:
     typedef HashMap<CSSStyleDeclaration*, RefPtr<InspectorStyle> > InspectorStyleMap;
     static PassRefPtr<InspectorStyleSheet> create(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL);
+    static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 

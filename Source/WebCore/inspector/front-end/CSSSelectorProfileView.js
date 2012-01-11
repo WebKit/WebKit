@@ -52,6 +52,27 @@ WebInspector.CSSSelectorDataGridNode.prototype = {
     get rawData()
     {
         return this._data;
+    },
+
+    createCell: function(columnIdentifier)
+    {
+        var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+        if (columnIdentifier === "selector" && cell.firstChild) {
+            cell.firstChild.title = this.rawData.selector;
+            return cell;
+        }
+
+        if (columnIdentifier !== "source")
+            return cell;
+
+        cell.removeChildren();
+
+        if (this.rawData.url) {
+            var wrapperDiv = cell.createChild("div");
+            wrapperDiv.appendChild(WebInspector.linkifyResourceAsNode(this.rawData.url, this.rawData.lineNumber));
+        }
+
+        return cell;
     }
 }
 
@@ -70,11 +91,13 @@ WebInspector.CSSSelectorProfileView = function(profile)
 
     this.showTimeAsPercent = WebInspector.settings.createSetting("selectorProfilerShowTimeAsPercent", true);
 
-    var columns = { "selector": { title: WebInspector.UIString("Selector"), width: "650px", sortable: true },
+    var columns = { "selector": { title: WebInspector.UIString("Selector"), width: "550px", sortable: true },
+                    "source": { title: WebInspector.UIString("Source"), width: "100px", sortable: true },
                     "time": { title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true },
                     "matches": { title: WebInspector.UIString("Matches"), width: "72px", sortable: true } };
 
     this.dataGrid = new WebInspector.DataGrid(columns);
+    this.dataGrid.element.addStyleClass("selector-profile-view");
     this.dataGrid.addEventListener("sorting changed", this._sortProfile, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.dataGrid.show(this.element);
@@ -175,6 +198,16 @@ WebInspector.CSSSelectorProfileView.prototype = {
             return sortAscending ? -result : result;
         }
 
+        function sourceComparator(a, b)
+        {
+            var aRawData = a.rawData;
+            var bRawData = b.rawData;
+            var result = bRawData.url.localeCompare(aRawData.url);
+            if (!result)
+                result = bRawData.lineNumber - aRawData.lineNumber;
+            return sortAscending ? -result : result;
+        }
+
         function timeComparator(a, b)
         {
             const result = b.rawData.time - a.rawData.time;
@@ -197,6 +230,9 @@ WebInspector.CSSSelectorProfileView.prototype = {
             break;
         case "selector":
             comparator = selectorComparator;
+            break;
+        case "source":
+            comparator = sourceComparator;
             break;
         }
 

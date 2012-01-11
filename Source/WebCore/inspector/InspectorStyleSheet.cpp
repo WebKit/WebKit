@@ -657,6 +657,14 @@ PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(const String& id, Pa
     return adoptRef(new InspectorStyleSheet(id, pageStyleSheet, origin, documentURL));
 }
 
+// static
+String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
+{
+    if (pageStyleSheet && !pageStyleSheet->finalURL().isEmpty())
+        return pageStyleSheet->finalURL().string();
+    return emptyString();
+}
+
 InspectorStyleSheet::InspectorStyleSheet(const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, const String& origin, const String& documentURL)
     : m_id(id)
     , m_pageStyleSheet(pageStyleSheet)
@@ -674,9 +682,8 @@ InspectorStyleSheet::~InspectorStyleSheet()
 
 String InspectorStyleSheet::finalURL() const
 {
-    if (m_pageStyleSheet && !m_pageStyleSheet->finalURL().isEmpty())
-        return m_pageStyleSheet->finalURL().string();
-    return m_documentURL;
+    String url = styleSheetURL(m_pageStyleSheet.get());
+    return url.isEmpty() ? m_documentURL : url;
 }
 
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
@@ -704,7 +711,7 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     CSSStyleRule* rule = ruleForId(id);
     if (!rule)
         return false;
-    CSSStyleSheet* styleSheet = InspectorCSSAgent::parentStyleSheet(rule);
+    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady())
         return false;
 

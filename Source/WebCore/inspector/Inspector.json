@@ -1628,10 +1628,12 @@
                 "id": "SelectorProfileEntry",
                 "type": "object",
                 "properties": [
-                    { "name": "selector", "type": "string", "description": "CSS selector." },
-                    { "name": "time", "type": "number", "description": "Total time this selector handling contributed to the browser running time during profiling (in milliseconds.)" },
-                    { "name": "hitCount", "type": "integer", "description": "Number of times this selector was considered a candidate for matching against DOM elements." },
-                    { "name": "matchCount", "type": "integer", "description": "Number of times this selector actually matched a DOM element." }
+                    { "name": "selector", "type": "string", "description": "CSS selector of the corresponding rule." },
+                    { "name": "url", "type": "string", "description": "URL of the resource containing the corresponding rule." },
+                    { "name": "lineNumber", "type": "integer", "description": "Selector line number in the resource for the corresponding rule." },
+                    { "name": "time", "type": "number", "description": "Total time this rule handling contributed to the browser running time during profiling (in milliseconds.)" },
+                    { "name": "hitCount", "type": "integer", "description": "Number of times this rule was considered a candidate for matching against DOM elements." },
+                    { "name": "matchCount", "type": "integer", "description": "Number of times this rule actually matched a DOM element." }
                 ],
                 "description": "CSS selector profile entry."
             },

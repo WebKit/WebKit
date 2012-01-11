@@ -814,7 +814,7 @@ WebInspector.ProfilesPanel.prototype = {
     {
         var width = event.data;
         // Min width = <number of buttons on the left> * 31
-        this.profileViewStatusBarItemsContainer.style.left = Math.max(6 * 31, width) + "px";
+        this.profileViewStatusBarItemsContainer.style.left = Math.max(5 * 31, width) + "px";
     },
 
     setRecordingProfile: function(profileType, isProfiling)

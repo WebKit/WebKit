@@ -191,6 +191,10 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
     color: white;
 }
 
+.data-grid:focus tr.selected a {
+    color: white;
+}
+
 .data-grid:focus tr.parent.selected td.disclosure::before {
     content: url(Images/treeRightTriangleWhite.png);
 }

@@ -57,7 +57,6 @@ class SelectorProfile;
 class InspectorCSSAgent : public InspectorBaseAgent<InspectorCSSAgent>, public InspectorDOMAgent::DOMListener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
-    static CSSStyleSheet* parentStyleSheet(CSSRule*);
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
     static PassOwnPtr<InspectorCSSAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorDOMAgent* domAgent)

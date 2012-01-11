@@ -1,3 +1,41 @@
+2012-01-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: introduce "source" column in the CSS profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=75378
+
+        Reviewed by Pavel Feldman.
+
+        Rules are no longer merged by their selectors but are shown one per profile entry, with a link to
+        their selector in the source whenever the latter is available.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::RuleMatchingStats::RuleMatchingStats):
+        (WebCore::SelectorProfile::makeKey):
+        (WebCore::SelectorProfile::startSelector):
+        (WebCore::SelectorProfile::commitSelector):
+        (WebCore::SelectorProfile::commitSelectorTime):
+        (WebCore::SelectorProfile::toInspectorObject):
+        (WebCore::InspectorCSSAgent::willMatchRule):
+        (WebCore::InspectorCSSAgent::willProcessRule):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::styleSheetURL):
+        (WebCore::InspectorStyleSheet::finalURL):
+        (WebCore::InspectorStyleSheet::setRuleSelector):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/CSSSelectorProfileView.js:
+        (WebInspector.CSSSelectorDataGridNode.prototype.get rawData):
+        (WebInspector.CSSSelectorDataGridNode.prototype.createCell):
+        (WebInspector.CSSSelectorProfileView):
+        (WebInspector.CSSSelectorProfileView.prototype._createProfileNodes):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile.sourceComparator):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.sidebarResized):
+        * inspector/front-end/dataGrid.css:
+        (.data-grid:focus tr.selected a):
+
 2012-01-11  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: generate enum types.
