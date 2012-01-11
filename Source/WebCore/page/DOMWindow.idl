@@ -603,8 +603,6 @@ module window {
         attribute [EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
 #endif
 
-        attribute [Conditional=WEB_INTENTS] IntentConstructor Intent; // Usable with the new operator
-
         attribute DOMPluginConstructor Plugin;
         attribute DOMPluginArrayConstructor PluginArray;
 

@@ -1149,6 +1149,7 @@
             'Modules/gamepad/Gamepad.idl',
             'Modules/gamepad/GamepadList.idl',
             'Modules/gamepad/NavigatorGamepad.idl',
+            'Modules/intents/DOMWindowIntents.idl',
             'Modules/intents/Intent.idl',
             'Modules/intents/IntentResultCallback.idl',
             'Modules/intents/NavigatorIntents.idl',

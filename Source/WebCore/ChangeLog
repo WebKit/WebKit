@@ -1,3 +1,14 @@
+2012-01-11  Greg Billock  <gbillock@google.com>
+
+        Switch web intents to use supplemental IDL for DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=76092
+
+        Reviewed by Adam Barth.
+
+        * Modules/intents/DOMWindowIntents.idl: Added.
+        * WebCore.gypi:
+        * page/DOMWindow.idl:
+
 2012-01-11  Kent Tamura  <tkent@chromium.org>
 
         Rename HTMLInputElement::setDefaultName to setInitialName.
