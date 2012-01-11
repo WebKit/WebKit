@@ -22,4 +22,7 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "i8"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "i8"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This tests that a media elements ie: <Audio> or <video>, without tabindex are able to be reached through keyboard access

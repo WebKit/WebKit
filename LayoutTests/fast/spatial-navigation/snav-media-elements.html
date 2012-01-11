@@ -38,14 +38,14 @@
 
     function testCompleted()
     {
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      var scriptElement = document.createElement("script")
+      scriptElement.src = '../js/resources/js-test-post-async.js'
+      document.body.appendChild(scriptElement);
     }
 
     window.onload = runTest;
 
     </script>
-    <script src="js/resources/js-test-post.js"></script>
   </head>
 
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
