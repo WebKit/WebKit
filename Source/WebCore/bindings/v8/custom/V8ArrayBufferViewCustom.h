@@ -51,7 +51,7 @@ void installFastSet(v8::Handle<v8::Object> array);
 
 // Copy the elements from the source array to the typed destination array by
 // invoking the 'set' method of the destination array in JS.
-void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray);
+void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t offset);
 
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
@@ -171,7 +171,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
 
     if (!srcArray.IsEmpty())
-        copyElements(args.Holder(), srcArray);
+        copyElements(args.Holder(), srcArray, 0);
 
     return toV8(array.release(), args.Holder(), MarkIndependent);
 }
@@ -212,7 +212,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         else {
             if (!fastSetInstalled(args.Holder())) {
                 installFastSet(args.Holder());
-                copyElements(args.Holder(), array);
+                copyElements(args.Holder(), array, offset);
             } else {
                 for (uint32_t i = 0; i < length; i++)
                     impl->set(offset + i, array->Get(i)->NumberValue());

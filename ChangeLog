@@ -1,3 +1,15 @@
+2012-01-11  Ulan Degenbaev  <ulan@chromium.org>
+
+        [v8] Int16Array.set(array, offset) fails on first execution
+        https://bugs.webkit.org/show_bug.cgi?id=76040
+
+        Reviewed by Kenneth Russell.
+
+        * LayoutTests/fast/canvas/webgl/array-set-with-offset-expected.txt: Added.
+        * LayoutTests/fast/canvas/webgl/array-set-with-offset.html: Added.
+        * Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        * Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.h:
+
 2012-01-11  Eli Fidler  <efidler@rim.com>
 
         Fix OpenGL dependency in CMake build system

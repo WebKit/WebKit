@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test setting WebGL array with offset");
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=76040">https://bugs.webkit.org/show_bug.cgi?id=76040</a> : <code>Int16Array.set(array, offset) fails on first execution</code>');
+
+var webGLArray = null;
+var array = null;
+var bounds = null;
+
+function testSetters(typeName, low, high) {
+    bounds = [low, high];
+    var type = window[typeName];
+    var array_buffer = new ArrayBuffer(32);
+    webGLArray = new type(array_buffer);
+    debug("Testing " + typeName);
+    array = [1, 2, low, high];
+    webGLArray.set(array, 1);
+    shouldBe("webGLArray[0]", "0");
+    shouldBe("webGLArray[1]", "1");
+    shouldBe("webGLArray[2]", "2");
+    shouldBe("webGLArray[3]", "bounds[0]");
+    shouldBe("webGLArray[4]", "bounds[1]");
+}
+
+testSetters("Int8Array", -128, 127);
+testSetters("Uint8Array", 0, 255);
+testSetters("Int16Array", -32768, 32767);
+testSetters("Uint16Array", 0, 65535);
+testSetters("Int32Array", -2147483648, 2147483647);
+testSetters("Uint32Array", 0, 4294967295);
+testSetters("Float32Array", -2.5, 3.5);
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
