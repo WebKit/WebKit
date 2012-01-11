@@ -292,12 +292,6 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 #endif
 }
 
-#if ENABLE(CSS_SHADERS)
-void FilterEffectRenderer::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
-{
-    m_observer->filterNeedsRepaint();
-}
-
 void FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
 {
     if (!filterRect.isZero()) {
@@ -305,6 +299,12 @@ void FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
         if (filterRect != currentSourceRect)
             setSourceImageRect(filterRect);
     }
+}
+
+#if ENABLE(CSS_SHADERS)
+void FilterEffectRenderer::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
+{
+    m_observer->filterNeedsRepaint();
 }
 
 void FilterEffectRenderer::removeCustomFilterClients()
