@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<isindex id=isindex1>
+<script>
+var isindex = document.getElementById('isindex1');
+debug('Initial name:');
+shouldBeEqualToString('isindex.name', 'isindex');
+
+debug('Adding a name attribute:');
+shouldBeEqualToString('isindex.setAttribute("name", "foo"); isindex.name', 'foo');
+
+debug('Removing the name attribute:');
+// This behavior is compatible with IE, Firefox, and Opera.
+shouldBeEqualToString('isindex.removeAttribute("name"); isindex.name', '');
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

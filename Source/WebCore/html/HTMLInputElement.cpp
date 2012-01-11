@@ -1300,8 +1300,10 @@ void HTMLInputElement::setDefaultValue(const String &value)
     setAttribute(valueAttr, value);
 }
 
-void HTMLInputElement::setDefaultName(const AtomicString& name)
+void HTMLInputElement::setInitialName(const AtomicString& name)
 {
+    ASSERT(hasTagName(isindexTag));
+    ASSERT(m_name.isNull());
     m_name = name;
 }
 

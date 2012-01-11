@@ -1,3 +1,29 @@
+2012-01-11  Kent Tamura  <tkent@chromium.org>
+
+        Rename HTMLInputElement::setDefaultName to setInitialName.
+        https://bugs.webkit.org/show_bug.cgi?id=76039
+
+        Reviewed by Darin Adler.
+
+        Rename setDefaultName to setInitialName, make it protected, and add two
+        assertions.
+
+        This change should not change any behavior.
+
+        Test: fast/forms/isindex-name.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInitialName):
+        - Renamed from setDefaultName.
+        - Add assertions.
+        * html/HTMLInputElement.h:
+        Rename setDefaultName to setInitialName, and move it to protected.
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::HTMLIsIndexElement):
+        Update a setDefaultName callsite.
+        (WebCore::HTMLIsIndexElement::parseMappedAttribute):
+        A style fix.
+
 2012-01-11  Adam Treat  <atreat@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76088

@@ -36,7 +36,7 @@ HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document* d
     : HTMLInputElement(tagName, document, form, false)
 {
     ASSERT(hasTagName(isindexTag));
-    setDefaultName(isindexTag.localName());
+    setInitialName(isindexTag.localName());
 }
 
 PassRefPtr<HTMLIsIndexElement> HTMLIsIndexElement::create(Document* document, HTMLFormElement* form)
@@ -59,10 +59,11 @@ void HTMLIsIndexElement::parseMappedAttribute(Attribute* attr)
         setValue(attr->value());
     else if (attr->name() == placeholderAttr)
         updatePlaceholderVisibility(true);
-    else
+    else {
         // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support
         HTMLFormControlElement::parseMappedAttribute(attr);
+    }
 }
 
 } // namespace

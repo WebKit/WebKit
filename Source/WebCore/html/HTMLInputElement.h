@@ -188,8 +188,6 @@ public:
     String defaultValue() const;
     void setDefaultValue(const String&);
 
-    void setDefaultName(const AtomicString&);
-
     Vector<String> acceptMIMETypes();
     String accept() const;
     String alt() const;
@@ -243,6 +241,7 @@ public:
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     void createShadowSubtree();
+    void setInitialName(const AtomicString&);
     virtual void defaultEventHandler(Event*);
 
 private:
