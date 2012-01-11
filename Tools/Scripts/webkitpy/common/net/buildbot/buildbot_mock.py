@@ -90,8 +90,8 @@ class MockBuildBot(object):
             self._mock_builder2_status,
         ]
 
-    def last_green_revision(self):
-        return 9479
+    def last_green_revision(self, builder_name):
+        return builder_name + ': ' + str(9479)
 
     def light_tree_on_fire(self):
         self._mock_builder2_status["is_green"] = False

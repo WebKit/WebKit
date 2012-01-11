@@ -132,7 +132,7 @@ class LastGreenRevision(AbstractDeclarativeCommand):
     help_text = "Prints the last known good revision"
 
     def execute(self, options, args, tool):
-        print self._tool.buildbot.last_green_revision()
+        print self._tool.buildbot.last_green_revision(args[0])
 
 
 class WhatBroke(AbstractDeclarativeCommand):

@@ -55,8 +55,9 @@ class IRCCommand(object):
 
 class LastGreenRevision(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
-        return "%s: %s" % (nick,
-            urls.view_revision_url(tool.buildbot.last_green_revision()))
+        if not args:
+            return "%s: Usage: last-green-revision BUILDER_NAME" % nick
+        return "%s: %s" % (nick, tool.buildbot.last_green_revision(args[0]))
 
 
 class Restart(IRCCommand):
