@@ -358,6 +358,11 @@ class BuildBotTest(unittest.TestCase):
         <td class="success">failure</td>
       </tr>
       <tr class="">
+          <td>Jan 10 11:58</td>
+          <td><span class="revision" title="Revision ??"><a href="http://trac.webkit.org/changeset/%3F%3F">??</a></span></td>
+          <td class="retry">retry</td>
+        </tr>
+      <tr class="">
         <td>Jan 10 14:51</td>
         <td><span class="revision" title="Revision 104633"><a href="http://trac.webkit.org/changeset/104633">104633</a></span></td>
         <td class="failure">failure</td>
@@ -365,16 +370,69 @@ class BuildBotTest(unittest.TestCase):
     </table>
     </body>'''
 
-    def test_green_revision_for_builder(self):
+    def test_revisions_for_builder(self):
         buildbot = BuildBot()
         buildbot._fetch_builder_page = lambda builder: builder.page
         builder_with_success = Builder('Some builder', None)
         builder_with_success.page = self._fake_builder_page
-        self.assertEqual(buildbot._green_revision_for_builder(builder_with_success), (104635, 4))
+        self.assertEqual(buildbot._revisions_for_builder(builder_with_success), [(104643, False), (104636, False), (104635, True), (104633, False)])
 
         builder_without_success = Builder('Some builder', None)
         builder_without_success.page = self._fake_builder_page_without_success
-        self.assertEqual(buildbot._green_revision_for_builder(builder_without_success), (None, 4))
+        self.assertEqual(buildbot._revisions_for_builder(builder_without_success), [(104643, False), (104636, False), (104635, False), (104633, False)])
+
+    def test_find_green_revision(self):
+        buildbot = BuildBot()
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (3, True)],
+            'Builder 2': [(1, True), (3, False)],
+            'Builder 3': [(1, True), (3, True)],
+        }), 1)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, False), (3, True)],
+            'Builder 2': [(1, True), (3, True)],
+            'Builder 3': [(1, True), (3, True)],
+        }), 3)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (2, True)],
+            'Builder 2': [(1, False), (2, True), (3, True)],
+            'Builder 3': [(1, True), (3, True)],
+        }), None)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (2, True)],
+            'Builder 2': [(1, True), (2, True), (3, True)],
+            'Builder 3': [(1, True), (3, True)],
+        }), 2)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, False), (2, True)],
+            'Builder 2': [(1, True), (3, True)],
+            'Builder 3': [(1, True), (3, True)],
+        }), None)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (3, True)],
+            'Builder 2': [(1, False), (2, True), (3, True), (4, True)],
+            'Builder 3': [(2, True), (4, True)],
+        }), 3)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (3, True)],
+            'Builder 2': [(1, False), (2, True), (3, True), (4, False)],
+            'Builder 3': [(2, True), (4, True)],
+        }), None)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (3, True)],
+            'Builder 2': [(1, False), (2, True), (3, True), (4, False)],
+            'Builder 3': [(2, True), (3, True), (4, True)],
+        }), 3)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (2, True)],
+            'Builder 2': [],
+            'Builder 3': [(1, True), (2, True)],
+        }), None)
+        self.assertEqual(buildbot._find_green_revision({
+            'Builder 1': [(1, True), (3, False), (5, True), (10, True), (12, False)],
+            'Builder 2': [(1, True), (3, False), (7, True), (9, True), (12, False)],
+            'Builder 3': [(1, True), (3, True), (7, True), (11, False), (12, True)],
+        }), 7)
 
     def test_last_green_revision(self):
         buildbot = BuildBot()
@@ -385,20 +443,21 @@ class BuildBotTest(unittest.TestCase):
         # Revision, is_green
         # Ordered from newest (highest number) to oldest.
         fake_builder1 = Builder("Fake Builder 1", None)
-        fake_builder1.revision = 1234
-        fake_builder1.revision_count = 3
+        fake_builder1.revisions = [(1, True), (3, False), (5, True), (10, True), (12, False)]
         fake_builder2 = Builder("Fake Builder 2", None)
-        fake_builder2.revision = 1230
-        fake_builder2.revision_count = 4
+        fake_builder2.revisions = [(1, True), (3, False), (7, True), (9, True), (12, False)]
         some_builder = Builder("Some Builder", None)
-        some_builder.revision = None
-        some_builder.revision_count = 3
+        some_builder.revisions = [(1, True), (3, True), (7, True), (11, False), (12, True)]
 
         buildbot.builders = lambda: [fake_builder1, fake_builder2, some_builder]
-        buildbot._green_revision_for_builder = lambda builder: (builder.revision, builder.revision_count)
+        buildbot._revisions_for_builder = lambda builder: builder.revisions
         buildbot._latest_builds_from_builders = mock_builds_from_builders
         self.assertEqual(buildbot.last_green_revision(''),
-            "Fake Builder 1: 1234\nFake Builder 2: 1230\nSome Builder has had no green revision in the last 3 runs\n")
+            "The last known green revision is 7\nFake Builder 1: 10\nFake Builder 2: 9\nSome Builder: 12\n")
+
+        some_builder.revisions = [(1, False), (3, False)]
+        self.assertEqual(buildbot.last_green_revision(''),
+            "Fake Builder 1: 10\nFake Builder 2: 9\nSome Builder has had no green revision in the last 2 runs\n")
 
     def _fetch_build(self, build_number):
         if build_number == 5:

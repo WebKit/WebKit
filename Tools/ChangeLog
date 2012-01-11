@@ -1,3 +1,35 @@
+2012-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        last-green-revision should report the revision that succeeded on all bots
+        https://bugs.webkit.org/show_bug.cgi?id=76109
+
+        Reviewed by Adam Barth.
+
+        Add an algorithm to find the last known good revision among the specified bots. For a revision to be
+        considered green by this algorithm, all matching builders must have a successful run at the revision
+        or two consecutive successful runs before and after the revision.
+
+        Also fixed a bug in irc_command that the result wasn't posted on IRC properly and a bug in queries.py
+        that resulted in an exception when the user didn't pass BUILDER_NAME argument.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot._revisions_for_builder):
+        (BuildBot):
+        (BuildBot._find_green_revision):
+        (BuildBot.last_green_revision):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        (MockBuildBot.last_green_revision):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_revisions_for_builder):
+        (test_find_green_revision):
+        (test_last_green_revision):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (LastGreenRevision.execute):
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        (SheriffIRCBotTest.test_lgr):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (LastGreenRevision):
+
 2012-01-11  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, fix build bustage on win32 introduced by r104725.

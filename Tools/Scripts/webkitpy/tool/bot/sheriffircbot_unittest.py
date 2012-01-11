@@ -86,8 +86,8 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["help"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Builder: 9479\n"
-        OutputCapture().assert_outputs(self, run, args=["last-green-revision Builder"], expected_stderr=expected_stderr)
+        expected_stderr = "MOCK: irc.post: mock_nick: Some Builder 1: 9479\nMOCK: irc.post: mock_nick: Some Builder 2: 9400\n"
+        OutputCapture().assert_outputs(self, run, args=["last-green-revision Some Builder"], expected_stderr=expected_stderr)
 
     def test_restart(self):
         expected_stderr = "MOCK: irc.post: Restarting...\n"
