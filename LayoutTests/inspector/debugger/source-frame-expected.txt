@@ -8,7 +8,7 @@ Script source was shown.
 Breakpoint added to source frame at line 17
 
 Running: testConsoleMessage
-Message text: source-frame.html:10 test error message
+Message text: test error message
 
 Running: testShowResource
 Debugger was disabled.

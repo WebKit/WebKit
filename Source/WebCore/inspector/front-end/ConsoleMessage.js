@@ -152,9 +152,16 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
-        this.message = (urlElement ? urlElement.textContent + " " : "") + messageText.textContent;
+        this._message = messageText.textContent;
     },
 
+    get message()
+    {
+        // force message formatting
+        var formattedMessage = this.formattedMessage;
+        return this._message;
+    },
+   
     get formattedMessage()
     {
         if (!this._formattedMessage)

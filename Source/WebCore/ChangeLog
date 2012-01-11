@@ -1,5 +1,16 @@
 2012-01-11  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: "undefined" instead of error message in the SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=76060
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.ConsoleMessageImpl.prototype.get message):
+
+2012-01-11  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: make setOuterHTML use new DOMEditor, cover it with tests.
         https://bugs.webkit.org/show_bug.cgi?id=76056
 

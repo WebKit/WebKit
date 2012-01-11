@@ -31,7 +31,7 @@ function test()
     for (var i = 0; i < messages.length; ++i) {
         var m = messages[i];
         InspectorTest.addResult("Message[" + i + "]:");
-        InspectorTest.addResult("Message: " + m.message);
+        InspectorTest.addResult("Message: " + WebInspector.displayNameForURL(m.url) + ":" + m.line + " " + m.message);
     }
     InspectorTest.addResult("TEST COMPLETE.");
     InspectorTest.completeTest();
