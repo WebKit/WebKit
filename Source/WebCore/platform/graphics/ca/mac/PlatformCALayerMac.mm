@@ -29,6 +29,7 @@
 
 #import "PlatformCALayer.h"
 
+#import "AnimationUtilities.h"
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
@@ -43,6 +44,9 @@
 #import <wtf/UnusedParam.h>
 
 #define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
+
+using std::min;
+using std::max;
 
 using namespace WebCore;
 
@@ -746,9 +750,18 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
         }
         case FilterOperation::SEPIA: {
             const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
-            CIFilter* caFilter = [CIFilter filterWithName:@"CISepiaTone"];
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
             [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputIntensity"];
+            
+            double t = op->amount();
+            t = min(max(0.0, t), 1.0);
+
+            // FIXME: Should put these values into constants (https://bugs.webkit.org/show_bug.cgi?id=76008)
+            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(1.0, 0.393, t) Y:WebCore::blend(0.0, 0.769, t) Z:WebCore::blend(0.0, 0.189, t) W:0] forKey:@"inputRVector"];
+            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(0.0, 0.349, t) Y:WebCore::blend(1.0, 0.686, t) Z:WebCore::blend(0.0, 0.168, t) W:0] forKey:@"inputGVector"];
+            [caFilter setValue:[CIVector vectorWithX:WebCore::blend(0.0, 0.272, t) Y:WebCore::blend(0.0, 0.534, t) Z:WebCore::blend(1.0, 0.131, t) W:0] forKey:@"inputBVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
             [caFilter setName:@"sepiaFilter"];
             [array.get() addObject:caFilter];
             break;

@@ -1,3 +1,17 @@
+2012-01-10  Chris Marrin  <cmarrin@apple.com>
+
+        CIFilter version of Sepia Tone filter doesn't match software
+        https://bugs.webkit.org/show_bug.cgi?id=75129
+
+        Reviewed by Simon Fraser.
+
+        Changed sepia tone filter to use a CIColorMatrix filter with
+        values that match sw filter.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (interp):
+        (PlatformCALayer::setFilters):
+
 2012-01-10  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt][WK2]REGRESSION(r102435): It made tst_QQuickWebView::show() crash
