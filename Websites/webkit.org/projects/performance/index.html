@@ -22,12 +22,8 @@ for regressing performance. None.</p>
 <p>We have a number of benchmarks that we use to measure performance.</p>
 
 <ol>
-<li>The i-Bench test suite is the most well-known cross-browser benchmark.
-The HTML Load Speed and JavaScript tests are the most important sub-tests in the suite.
-No check-in can regress the benchmark scores for these tests.
-As of this writing, you can get the i-Bench test suite from
-<a href="http://www.lionbridge.com/lionbridge/en-US/services/outsourced-testing/benchmark-software.htm">this page</a> on the Lionbridge website.
-After accepting the license agreement you'll be able to download the suite from an FTP site at pcmag.com.</li>
+<li>The i-Bench test suite was the most well-known cross-browser benchmark. We used to use this for testing the performance.
+The suite was developed by Lionbridge, but unfortunately they no longer support it thus the suite isn't available now. We are looking for good alternatives.
 <li>Our internal page load test suite (called the PLT for short) must also not regress.
 The PLT contains pages that are representative of sites that are encountered in
 the real world. The harness itself is built into Safari and is accessible from the <i>Debug</i> menu.
