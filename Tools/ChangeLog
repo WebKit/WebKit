@@ -1,3 +1,12 @@
+2012-01-11  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt][WK2] Remove workaround introduced into bug 75470
+        https://bugs.webkit.org/show_bug.cgi?id=75889
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-01-10  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] Remove obsolete references to WebWorker class.
