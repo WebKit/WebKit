@@ -311,6 +311,19 @@ fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/text/zero-font-size.html
 fast/text/international/locale-sensitive-fonts.html
 http/tests/appcache/disabled.html
+css3/filters/custom-filter-shader-cache.html
+css3/filters/effect-blur.html
+css3/filters/effect-brightness.html
+css3/filters/effect-contrast.html
+css3/filters/effect-drop-shadow.html
+css3/filters/effect-grayscale.html
+css3/filters/effect-hue-rotate.html
+css3/filters/effect-invert.html
+css3/filters/effect-opacity.html
+css3/filters/effect-saturate.html
+css3/filters/effect-sepia.html
+css3/filters/missing-custom-filter-shader.html
+
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented - https://bugs.webkit.org/show_bug.cgi?id=57127
 http/tests/appcache/origin-usage.html
 http/tests/canvas/webgl/origin-clean-conformance.html
