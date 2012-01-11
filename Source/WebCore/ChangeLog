@@ -1,3 +1,17 @@
+2012-01-11  Greg Billock  <gbillock@google.com>
+
+        [Coverity] Address some uninit constructor issues in WebCore/dom
+        https://bugs.webkit.org/show_bug.cgi?id=74977
+
+        Reviewed by Ryosuke Niwa.
+
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::ParentStackFrame::ParentStackFrame):
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::DeviceMotionData):
+        * dom/DeviceOrientation.cpp:
+        (WebCore::DeviceOrientation::DeviceOrientation):
+
 2012-01-11  Kenneth Russell  <kbr@google.com>
 
         [chromium] Color profiles are incorrect for images without premultiplied alpha

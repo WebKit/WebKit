@@ -43,6 +43,9 @@ DeviceOrientation::DeviceOrientation()
     : m_canProvideAlpha(false)
     , m_canProvideBeta(false)
     , m_canProvideGamma(false)
+    , m_alpha(0)
+    , m_beta(0)
+    , m_gamma(0)
 {
 }
 

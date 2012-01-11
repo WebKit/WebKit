@@ -76,6 +76,7 @@ PassRefPtr<DeviceMotionData> DeviceMotionData::create(PassRefPtr<Acceleration> a
 
 DeviceMotionData::DeviceMotionData()
     : m_canProvideInterval(false)
+    , m_interval(0)
 {
 }
 

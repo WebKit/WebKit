@@ -115,7 +115,7 @@ private:
     mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 
     struct ParentStackFrame {
-        ParentStackFrame() { }
+        ParentStackFrame() : element(0) { }
         ParentStackFrame(Element* element) : element(element) { }
         Element* element;
         Vector<unsigned, 4> identifierHashes;
