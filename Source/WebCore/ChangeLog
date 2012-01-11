@@ -1,3 +1,19 @@
+2012-01-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Version change transaction should abort if constraints fail during createIndex
+        https://bugs.webkit.org/show_bug.cgi?id=76094
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/index-population.html
+
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::addingKeyAllowed):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+
 2012-01-11  Greg Billock  <gbillock@google.com>
 
         Switch web intents to use supplemental IDL for DOMWindow

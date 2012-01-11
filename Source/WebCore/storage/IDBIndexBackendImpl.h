@@ -58,7 +58,7 @@ public:
     void setId(int64_t id) { m_id = id; }
     bool hasValidId() const { return m_id != InvalidId; };
 
-    bool addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey);
+    bool addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey = 0);
 
     // Implements IDBIndexBackendInterface.
     virtual String name() { return m_name; }

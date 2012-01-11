@@ -659,7 +659,8 @@ bool IDBLevelDBBackingStore::forEachObjectStoreRecord(int64_t databaseId, int64_
         RefPtr<LevelDBRecordIdentifier> ri = LevelDBRecordIdentifier::create(encodeIDBKey(*primaryKey), version);
         String idbValue = decodeString(q, it->value().end());
 
-        callback.callback(ri.get(), idbValue);
+        if (!callback.callback(ri.get(), idbValue))
+            return false;
     }
 
     return true;

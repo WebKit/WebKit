@@ -192,7 +192,7 @@ bool IDBIndexBackendImpl::addingKeyAllowed(const IDBKey* indexKey, const IDBKey*
     bool found = m_backingStore->keyExistsInIndex(m_databaseId, m_objectStoreBackend->id(), m_id, *indexKey, foundPrimaryKey);
     if (!found)
         return true;
-    if (foundPrimaryKey->isEqual(primaryKey))
+    if (primaryKey && foundPrimaryKey->isEqual(primaryKey))
         return true;
     return false;
 }

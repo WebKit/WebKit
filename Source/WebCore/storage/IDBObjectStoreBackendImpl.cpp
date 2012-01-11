@@ -397,12 +397,16 @@ public:
             return true;
 
         if (!m_index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
+            if (!m_index->addingKeyAllowed(indexKey.get()))
+                return false;
             if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey, recordIdentifier))
                 return false;
         } else {
             ASSERT(m_index->multiEntry());
             ASSERT(indexKey->type() == IDBKey::ArrayType);
             for (size_t i = 0; i < indexKey->array().size(); ++i) {
+                if (!m_index->addingKeyAllowed(indexKey.get()))
+                    return false;
                 if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey->array()[i], recordIdentifier))
                     return false;
             }
