@@ -1,3 +1,48 @@
+2012-01-11  Michael Saboff  <msaboff@apple.com>
+
+        v8-regexp spends 35% of its time allocating and copying internal regexp results data
+        https://bugs.webkit.org/show_bug.cgi?id=76079
+
+        Reviewed by Geoffrey Garen.
+
+        Added a new RegExpResults struct that has the input string, the number of
+        subexpressions and the output vector.  Changed RegExpConstructor to
+        include a RegExpConstructorPrivate instead of having a reference to one.
+        Changed RegExpMatchesArray to include a RegExpResults instead of a 
+        reference to a RegExpConstructorPrivate.  Created an overloaded assignment
+        operator to assign a RegExpConstructorPrivate to a RegExpResults.
+        Collectively this change is worth 24% performance improvement to v8-regexp.
+        
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpResult::operator=):
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::finishCreation):
+        (JSC::RegExpMatchesArray::~RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::fillArrayInstance):
+        (JSC::RegExpConstructor::arrayOfMatches):
+        (JSC::RegExpConstructor::getBackref):
+        (JSC::RegExpConstructor::getLastParen):
+        (JSC::RegExpConstructor::getLeftContext):
+        (JSC::RegExpConstructor::getRightContext):
+        (JSC::RegExpConstructor::setInput):
+        (JSC::RegExpConstructor::input):
+        (JSC::RegExpConstructor::setMultiline):
+        (JSC::RegExpConstructor::multiline):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpResult::RegExpResult):
+        (JSC::RegExpConstructor::performMatch):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::create):
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        (JSC::RegExpMatchesArray::getOwnPropertySlotByIndex):
+        (JSC::RegExpMatchesArray::getOwnPropertyDescriptor):
+        (JSC::RegExpMatchesArray::put):
+        (JSC::RegExpMatchesArray::putByIndex):
+        (JSC::RegExpMatchesArray::deleteProperty):
+        (JSC::RegExpMatchesArray::deletePropertyByIndex):
+        (JSC::RegExpMatchesArray::getOwnPropertyNames):
+
 2012-01-11  Eugene Girard  <girard@google.com>
 
         Typo in error message: Unexpected token 'defualt'
