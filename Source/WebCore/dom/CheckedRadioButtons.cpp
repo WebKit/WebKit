@@ -25,34 +25,32 @@
 
 namespace WebCore {
 
-void CheckedRadioButtons::addButton(HTMLFormControlElement* element)
+static inline bool shouldMakeRadioGroup(HTMLInputElement* element)
 {
-    // We only want to add radio buttons.
-    if (!element->isRadioButton())
-        return;
+    return element->isRadioButton() && !element->name().isEmpty() && element->inDocument();
+}
 
-    // Without a name, there is no group.
-    if (element->name().isEmpty())
+void CheckedRadioButtons::addButton(HTMLInputElement* element)
+{
+    if (!shouldMakeRadioGroup(element))
         return;
-
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
 
     // We only track checked buttons.
-    if (!inputElement->checked())
+    if (!element->checked())
         return;
 
     if (!m_nameToCheckedRadioButtonMap)
         m_nameToCheckedRadioButtonMap = adoptPtr(new NameToInputMap);
 
-    pair<NameToInputMap::iterator, bool> result = m_nameToCheckedRadioButtonMap->add(element->name().impl(), inputElement);
+    pair<NameToInputMap::iterator, bool> result = m_nameToCheckedRadioButtonMap->add(element->name().impl(), element);
     if (result.second)
         return;
     
     HTMLInputElement* oldCheckedButton = result.first->second;
-    if (oldCheckedButton == inputElement)
+    if (oldCheckedButton == element)
         return;
 
-    result.first->second = inputElement;
+    result.first->second = element;
     oldCheckedButton->setChecked(false);
 }
 
@@ -66,7 +64,7 @@ HTMLInputElement* CheckedRadioButtons::checkedButtonForGroup(const AtomicString&
     return m_nameToCheckedRadioButtonMap->get(name.impl());
 }
 
-void CheckedRadioButtons::removeButton(HTMLFormControlElement* element)
+void CheckedRadioButtons::removeButton(HTMLInputElement* element)
 {
     if (element->name().isEmpty() || !m_nameToCheckedRadioButtonMap)
         return;
@@ -77,9 +75,7 @@ void CheckedRadioButtons::removeButton(HTMLFormControlElement* element)
     if (it == m_nameToCheckedRadioButtonMap->end() || it->second != element)
         return;
     
-    HTMLInputElement* inputElement = element->toInputElement();
-    ASSERT_UNUSED(inputElement, inputElement);
-    ASSERT(inputElement->shouldAppearChecked());
+    ASSERT(element->shouldAppearChecked());
     ASSERT(element->isRadioButton());
 
     m_nameToCheckedRadioButtonMap->remove(it);

@@ -116,11 +116,9 @@ HTMLInputElement::~HTMLInputElement()
     if (needsSuspensionCallback())
         document()->unregisterForPageCacheSuspensionCallbacks(this);
 
-    document()->checkedRadioButtons().removeButton(this);
-
-    // Need to remove this from the form while it is still an HTMLInputElement,
-    // so can't wait for the base class's destructor to do it.
-    removeFromForm();
+    // Need to remove form association while this is still an HTMLInputElement
+    // so that virtual functions are called correctly.
+    setForm(0);
 }
 
 const AtomicString& HTMLInputElement::formControlName() const
@@ -179,8 +177,7 @@ bool HTMLInputElement::shouldAutocomplete() const
 
 void HTMLInputElement::updateCheckedRadioButtons()
 {
-    if (attached() && checked())
-        checkedRadioButtons().addButton(this);
+    checkedRadioButtons().addButton(this);
 
     if (form()) {
         const Vector<FormAssociatedElement*>& controls = form()->associatedElements();
@@ -1500,6 +1497,32 @@ void HTMLInputElement::documentDidResumeFromPageCache()
 {
     ASSERT(needsSuspensionCallback());
     reset();
+}
+
+void HTMLInputElement::willChangeForm()
+{
+    checkedRadioButtons().removeButton(this);
+    HTMLTextFormControlElement::willChangeForm();
+}
+
+void HTMLInputElement::didChangeForm()
+{
+    HTMLTextFormControlElement::didChangeForm();
+    checkedRadioButtons().addButton(this);
+}
+
+void HTMLInputElement::insertedIntoDocument()
+{
+    HTMLTextFormControlElement::insertedIntoDocument();
+    ASSERT(inDocument());
+    checkedRadioButtons().addButton(this);
+}
+
+void HTMLInputElement::removedFromDocument()
+{
+    ASSERT(inDocument());
+    checkedRadioButtons().removeButton(this);
+    HTMLTextFormControlElement::removedFromDocument();
 }
 
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)

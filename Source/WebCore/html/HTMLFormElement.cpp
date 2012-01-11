@@ -95,7 +95,7 @@ HTMLFormElement::~HTMLFormElement()
         document()->unregisterForPageCacheSuspensionCallbacks(this);
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
-        m_associatedElements[i]->formDestroyed();
+        m_associatedElements[i]->formWillBeDestroyed();
     for (unsigned i = 0; i < m_imageElements.size(); ++i)
         m_imageElements[i]->m_form = 0;
 }
@@ -456,18 +456,11 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
 
 void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
 {
-    if (e->isFormControlElement()) {
-        HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(e);
-        document()->checkedRadioButtons().removeButton(element);
-        m_checkedRadioButtons.addButton(element);
-    }
     m_associatedElements.insert(formElementIndex(e), e);
 }
 
 void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 {
-    if (e->isFormControlElement())
-        m_checkedRadioButtons.removeButton(static_cast<HTMLFormControlElement*>(e));
     unsigned index;
     for (index = 0; index < m_associatedElements.size(); ++index) {
         if (m_associatedElements[index] == e)

@@ -55,21 +55,15 @@ using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser) 
     : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
-    , FormAssociatedElement(form)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
-    if (!this->form())
-        setForm(findFormAncestor());
-    if (this->form())
-        this->form()->registerFormElement(this);
+    setForm(form ? form : findFormAncestor());
 }
 
 inline HTMLObjectElement::~HTMLObjectElement()
 {
-    if (form())
-        form()->removeFormElement(this);
 }
 
 PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)

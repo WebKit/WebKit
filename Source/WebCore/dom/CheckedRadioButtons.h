@@ -27,13 +27,12 @@
 
 namespace WebCore {
 
-class HTMLFormControlElement;
 class HTMLInputElement;
 
 class CheckedRadioButtons {
 public:
-    void addButton(HTMLFormControlElement*);
-    void removeButton(HTMLFormControlElement*);
+    void addButton(HTMLInputElement*);
+    void removeButton(HTMLInputElement*);
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
 
 private:

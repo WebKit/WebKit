@@ -50,7 +50,6 @@ using namespace std;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
-    , FormAssociatedElement(form)
     , m_disabled(false)
     , m_readOnly(false)
     , m_required(false)
@@ -61,18 +60,12 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_wasChangedSinceLastFormControlChangeEvent(false)
     , m_hasAutofocused(false)
 {
-    if (!this->form())
-        setForm(findFormAncestor());
-    if (this->form())
-        this->form()->registerFormElement(this);
-
+    setForm(form ? form : findFormAncestor());
     setHasCustomWillOrDidRecalcStyle();
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()
 {
-    if (form())
-        form()->removeFormElement(this);
 }
 
 void HTMLFormControlElement::detach()
@@ -108,11 +101,9 @@ bool HTMLFormControlElement::formNoValidate() const
 
 void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == formAttr) {
+    if (attr->name() == formAttr)
         formAttributeChanged();
-        if (!form())
-            document()->checkedRadioButtons().addButton(this);
-    } else if (attr->name() == disabledAttr) {
+    else if (attr->name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled) {
@@ -205,9 +196,6 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
 void HTMLFormControlElement::insertedIntoTree(bool deep)
 {
     FormAssociatedElement::insertedIntoTree();
-    if (!form())
-        document()->checkedRadioButtons().addButton(this);
-
     HTMLElement::insertedIntoTree(deep);
 }
 

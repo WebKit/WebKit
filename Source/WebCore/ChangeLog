@@ -1,3 +1,86 @@
+2012-01-04  Kent Tamura  <tkent@chromium.org>
+
+        A radio button not in a document should not join a radio button group
+        https://bugs.webkit.org/show_bug.cgi?id=45719
+
+        Reviewed by Darin Adler.
+
+        As per the standard and other browser behaviors, we should not add a
+        radio button not in a document to a radio button group.
+
+        So, CheckedRadioButton member functions should be called in
+        insertedIntoDocument() and removedFromDocument(), and they should do
+        nothing if the specified radio button is not in a document.
+
+        This change also fixes a bug that form owner change by 'form' attribute
+        didn't update radio button groups correctly.
+
+        Test: fast/forms/radio/radio-group.html
+
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::shouldMakeRadioGroup): A helper function to check <input> state.
+        (WebCore::CheckedRadioButtons::addButton):
+        - Change the argument type: HTMLFormControlElement* -> HTMLInputElement*.
+        - Use shouldMakeRadioGroup().
+        (WebCore::CheckedRadioButtons::removeButton): ditto.
+        * dom/CheckedRadioButtons.h:
+         Change the argument types of addButton() and removeButton():
+         HTMLFormControlElement* -> HTMLInputElement*.
+        * html/FormAssociatedElement.cpp:
+         Do not update m_form except in setForm() and formWillBeDestroyed().
+         This helps us to call registerFormElement() and removeFromElement()
+         correctly, and call willChangeForm()/didChangeForm() hooks correctly.
+        (WebCore::FormAssociatedElement::FormAssociatedElement):
+        (WebCore::FormAssociatedElement::~FormAssociatedElement):
+        (WebCore::FormAssociatedElement::insertedIntoTree):
+        (WebCore::FormAssociatedElement::removedFromTree):
+        (WebCore::FormAssociatedElement::setForm):
+        (WebCore::FormAssociatedElement::willChangeForm):
+        This virtual function is called before the owner form is updated.
+        (WebCore::FormAssociatedElement::didChangeForm):
+        This virtual function is called after the owner form was updated.
+        (WebCore::FormAssociatedElement::formWillBeDestroyed):
+        - Renamaed from formDestroyed()
+        - Add calls to willChangeForm() and didChangeForm().
+        (WebCore::FormAssociatedElement::resetFormOwner): Use setForm().
+        (WebCore::FormAssociatedElement::formAttributeChanged): ditto.
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement): Use setForm().
+        (WebCore::HTMLFormControlElement::~HTMLFormControlElement):
+        removeFormElement() is not needed. ~FormAssociatedElement() treats it.
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        No need to handle CheckedRadioButtons here. It is handled by HTMLInputElement.
+        (WebCore::HTMLFormControlElement::insertedIntoTree): ditto.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+         Rename formDestroyed() with willDestroyForm().
+        (WebCore::HTMLFormElement::registerFormElement):
+        We don't need to handle radio button groups here.
+        (WebCore::HTMLFormElement::removeFormElement): ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        Calls setForm(0) so that it calls correct virtual functions of
+        HTMLInputElement.
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        Checking attached() was wrong.
+        (WebCore::HTMLInputElement::willChangeForm):
+        Remove this radio button from a radio button group for the old form.
+        (WebCore::HTMLInputElement::didChangeForm):
+        Add this radio button to a radio button group for the new form.
+        (WebCore::HTMLInputElement::insertedIntoDocument):
+        Add CheckedRadioButtons::addButton() call.
+        (WebCore::HTMLInputElement::removedFromDocument):
+        Add CheckedRadioButtons::removeButton() call.
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        We don't need to handle CheckedRadioButton() here because
+        removedFromDocument() handles it.
+        * html/HTMLInputElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement): Use setForm().
+        (WebCore::HTMLObjectElement::~HTMLObjectElement):
+        removeFormElement() is not needed. ~FormAssociatedElement() treats it.
+
 2012-01-10  Kentaro Hara  <haraken@chromium.org>
 
         Remove redundant code from DOMWindowSQLDatabase.cpp

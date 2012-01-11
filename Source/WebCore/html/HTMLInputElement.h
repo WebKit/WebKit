@@ -249,6 +249,10 @@ private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
     enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
+    virtual void willChangeForm() OVERRIDE;
+    virtual void didChangeForm() OVERRIDE;
+    virtual void insertedIntoDocument() OVERRIDE;
+    virtual void removedFromDocument() OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
