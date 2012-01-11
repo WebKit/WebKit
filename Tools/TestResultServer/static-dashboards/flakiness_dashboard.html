@@ -152,6 +152,9 @@ label {
 .N {
     background-color: #fff;
 }
+.X {
+    background-color: lightgray;
+}
 .C {
     background-color: #ffc343;
 }
@@ -2464,8 +2467,7 @@ function showLegend()
     }
 
     var html = '<div id=legend-toggle onclick="hideLegend()">Hide ' +
-        'legend [type esc]</div><div>Number of flaky tests listed next to ' +
-        'each builder</div><div id=legend-contents>';
+        'legend [type esc]</div><div id=legend-contents>';
     for (var expectation in expectationsMap())
         html += '<div class=' + expectation + '>' + expectationsMap()[expectation] + '</div>';
 

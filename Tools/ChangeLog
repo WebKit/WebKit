@@ -1,5 +1,17 @@
 2012-01-11  Ojan Vafai  <ojan@chromium.org>
 
+        Style skipped tests in the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=76091
+
+        Reviewed by Tony Chang.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        Removed "FLAKY" from this list since we don't ever mark individual runs
+        as flaky. Also deleted an outdated line.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2012-01-11  Ojan Vafai  <ojan@chromium.org>
+
         Remove gtest normalization code from the test results server
         https://bugs.webkit.org/show_bug.cgi?id=76089
 

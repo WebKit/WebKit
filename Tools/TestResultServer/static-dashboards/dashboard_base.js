@@ -67,9 +67,8 @@ function handleQueryParameterChange(params)
 var GTEST_EXPECTATIONS_MAP_ = {
     'P': 'PASS',
     'F': 'FAIL',
-    'L': 'FLAKY',
     'N': 'NO DATA',
-    'X': 'DISABLED'
+    'X': 'SKIPPED'
 };
 
 var LAYOUT_TEST_EXPECTATIONS_MAP_ = {
