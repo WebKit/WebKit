@@ -1,3 +1,11 @@
+2012-01-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, fix build bustage on win32 introduced by r104725.
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.make_port):
+        (MockChromiumDRTTest.test_pixeltest__fails):
+
 2012-01-11  Jochen Eisinger  <jochen@chromium.org>
 
         [Chromium] mimic the (old) behavior of the mac port for (re)setting the color profile
