@@ -52,6 +52,8 @@ public:
     virtual void paintContentsIfDirty();
     virtual void idlePaintContentsIfDirty();
 
+    virtual void setOpaque(bool);
+
 protected:
     explicit ContentLayerChromium(CCLayerDelegate*);
 

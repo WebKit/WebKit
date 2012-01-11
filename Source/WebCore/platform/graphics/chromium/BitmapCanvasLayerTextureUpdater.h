@@ -63,6 +63,8 @@ public:
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale);
     void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
+    virtual void setOpaque(bool);
+
 private:
     BitmapCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
 

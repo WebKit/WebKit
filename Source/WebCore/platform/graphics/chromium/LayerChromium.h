@@ -110,7 +110,7 @@ public:
     void setOpacity(float);
     float opacity() const { return m_opacity; }
 
-    void setOpaque(bool);
+    virtual void setOpaque(bool);
     bool opaque() const { return m_opaque; }
 
     void setPosition(const FloatPoint&);

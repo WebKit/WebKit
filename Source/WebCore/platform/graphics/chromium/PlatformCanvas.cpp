@@ -41,6 +41,7 @@
 namespace WebCore {
 
 PlatformCanvas::PlatformCanvas()
+    : m_opaque(false)
 {
 }
 
@@ -53,10 +54,27 @@ void PlatformCanvas::resize(const IntSize& size)
     if (m_size == size)
         return;
     m_size = size;
+    createBackingCanvas();
+}
+
+void PlatformCanvas::setOpaque(bool opaque)
+{
+    if (opaque == m_opaque)
+        return;
+
+    m_opaque = opaque;
+    createBackingCanvas();
+}
+
+void PlatformCanvas::createBackingCanvas()
+{
+    if (m_size.isEmpty())
+        return;
+
 #if USE(SKIA)
-    m_skiaCanvas = adoptPtr(skia::CreateBitmapCanvas(size.width(), size.height(), false));
+    m_skiaCanvas = adoptPtr(skia::CreateBitmapCanvas(m_size.width(), m_size.height(), m_opaque));
 #elif USE(CG)
-    size_t bufferSize = size.width() * size.height() * 4;
+    size_t bufferSize = m_size.width() * m_size.height() * 4;
     m_pixelData = adoptArrayPtr(new uint8_t[bufferSize]);
     memset(m_pixelData.get(), 0, bufferSize);
 #endif

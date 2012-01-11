@@ -131,6 +131,14 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 #endif // USE(SKIA)
 
     m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
+    m_textureUpdater->setOpaque(opaque());
+}
+
+void ContentLayerChromium::setOpaque(bool opaque)
+{
+    LayerChromium::setOpaque(opaque);
+    if (m_textureUpdater)
+        m_textureUpdater->setOpaque(opaque);
 }
 
 }

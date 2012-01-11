@@ -1,3 +1,30 @@
+2012-01-11  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Make Skia canvas opaque for root layer tiles
+        https://bugs.webkit.org/show_bug.cgi?id=75939
+
+        Reviewed by James Robinson.
+
+        Skia has extra optimizations if a bitmap has the "opaque" flag -- in
+        particular, it doesn't do an unnecessary memset at creation time.
+        Pass down the LayerChromium's opaque flag to Skia.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::setIsNonCompositedContent):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::setIsNonCompositedContent):
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::PlatformCanvas):
+        (WebCore::PlatformCanvas::resize):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        (WebCore::PlatformCanvas::setOpaque):
+        (WebCore::PlatformCanvas::opaque):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setIsNonCompositedContent):
+
 2012-01-11  Greg Billock  <gbillock@google.com>
 
         [Coverity] Address some uninit constructor issues in WebCore/dom

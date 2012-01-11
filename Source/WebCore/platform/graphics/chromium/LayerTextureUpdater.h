@@ -72,6 +72,8 @@ public:
     // If the format is TexelFormatBGRA, vec4.x is blue and vec4.z is red.
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
     virtual void prepareToUpdate(const IntRect& /* contentRect */, const IntSize& /* tileSize */, int /* borderTexels */, float /* contentsScale */) { }
+
+    virtual void setOpaque(bool) { }
 };
 
 } // namespace WebCore

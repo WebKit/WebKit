@@ -99,5 +99,10 @@ void BitmapCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* conte
     m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
 }
 
+void BitmapCanvasLayerTextureUpdater::setOpaque(bool opaque)
+{
+    m_canvas.setOpaque(opaque);
+}
+
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
