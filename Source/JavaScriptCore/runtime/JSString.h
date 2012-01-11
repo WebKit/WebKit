@@ -236,7 +236,7 @@ namespace JSC {
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
         static size_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_value); }
 
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         static void visitChildren(JSCell*, SlotVisitor&);
 

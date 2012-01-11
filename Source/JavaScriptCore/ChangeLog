@@ -1,3 +1,18 @@
+2012-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Assertion failure in JSC::allocateCell trying to allocate a JSString
+        https://bugs.webkit.org/show_bug.cgi?id=76101
+
+        Reviewed by Adam Roben.
+
+        Remove the ExecutableBase::s_info and JSString::s_info static member variables  from the .def file and
+        export them explicitly using the JS_EXPORTDATA macro.
+
+        member variables explicitly using 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/Executable.h:
+        * runtime/JSString.h:
+
 2012-01-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/10673792> jsc should install directly in to versioned Resources subfolder
