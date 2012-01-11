@@ -1,5 +1,32 @@
 2012-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Webpages flash white when switching between windows
+        https://bugs.webkit.org/show_bug.cgi?id=76080
+        <rdar://problem/9893565>
+
+        Reviewed by Dan Bernstein.
+
+        Introduce a _windowHasValidBackingStore boolean and only paint the background (white or clear)
+        if it's false.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+        Set _windowHasValidBackingStore to false if the new size is different from the old size.
+
+        (-[WKView viewDidMoveToWindow]):
+        Set _windowHasValidBackingStore to false.
+
+        (-[WKView _windowDidMiniaturize:]):
+        Set _windowHasValidBackingStore to false.
+
+        (-[WKView _windowDidChangeBackingProperties:]):
+        Set _windowHasValidBackingStore to false.
+
+        (-[WKView drawRect:]):
+        Only call drawPageBackground if _windowHasValidBackingStore is false. Set it to true after painting.
+
+2012-01-11  Anders Carlsson  <andersca@apple.com>
+
         Fix the Mac GCC build.
 
         Work around the fact that GCC doesn't work very well with Blocks and C++ objets.

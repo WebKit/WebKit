@@ -187,7 +187,14 @@ struct WKViewInterpretKeyEventsParameters {
     NSRect _windowBottomCornerIntersectionRect;
     
     unsigned _frameSizeUpdatesDisabledCount;
+
+    // Whether the containing window of the WKView has a valid backing store.
+    // The window server invalidates the backing store whenever the window is resized or minimized.
+    // We use this flag to determine when we need to paint the background (white or clear)
+    // when the web process is unresponsive or takes too long to paint.
+    BOOL _windowHasValidBackingStore;
 }
+
 @end
 
 @implementation WKViewData
@@ -324,6 +331,9 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)setFrameSize:(NSSize)size
 {
+    if (!NSEqualSizes(size, [self frame].size))
+        _data->_windowHasValidBackingStore = NO;
+
     [super setFrameSize:size];
     
     if (![self frameSizeUpdatesDisabled])
@@ -1818,6 +1828,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
     // update the active state.
     if ([self window]) {
+        _data->_windowHasValidBackingStore = NO;
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
         [self _updateWindowVisibility];
@@ -1883,6 +1894,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
+    _data->_windowHasValidBackingStore = NO;
+
     [self _updateWindowVisibility];
 }
 
@@ -1919,6 +1932,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (oldBackingScaleFactor == newBackingScaleFactor) 
         return; 
 
+    _data->_windowHasValidBackingStore = NO;
     _data->_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
 }
 
@@ -1963,9 +1977,15 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
             IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
             drawingArea->paint(context, rect, unpaintedRegion);
 
-            Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
-            for (size_t i = 0; i < unpaintedRects.size(); ++i)
-                drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
+            // If the window doesn't have a valid backing store, we need to fill the parts of the page that we
+            // didn't paint with the background color (white or clear), to avoid garbage in those areas.
+            if (!_data->_windowHasValidBackingStore) {
+                Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
+                for (size_t i = 0; i < unpaintedRects.size(); ++i)
+                    drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
+
+                _data->_windowHasValidBackingStore = YES;
+            }
         }
     } else 
         drawPageBackground(context, _data->_page.get(), enclosingIntRect(rect));
