@@ -3813,6 +3813,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnWidth:
     case CSSPropertyWebkitFlowInto:
     case CSSPropertyWebkitFlowFrom:
+    case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitHighlight:
     case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitHyphenateLimitAfter:
