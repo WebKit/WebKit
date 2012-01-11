@@ -237,6 +237,7 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         setItemRef(attr->value());
     } else if (attr->name() == itemtypeAttr) {
         setItemType(attr->value());
+        itemTypeAttributeChanged();
 #endif
     }
 // standard events

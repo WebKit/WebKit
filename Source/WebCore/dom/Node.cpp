@@ -955,12 +955,36 @@ void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
     removeNodeListCacheIfPossible(this, data);
 }
 
-void Node::invalidateNodeListsCacheAfterAttributeChanged()
+void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName)
 {
     if (hasRareData() && isAttributeNode()) {
         NodeRareData* data = rareData();
         ASSERT(!data->nodeLists());
         data->clearChildNodeListCache();
+    }
+
+    // This list should be sync'ed with NodeListsNodeData.
+    if (attrName != classAttr
+#if ENABLE(MICRODATA)
+        && attrName != itemscopeAttr
+        && attrName != itempropAttr
+#endif
+        && attrName != nameAttr)
+        return;
+
+    if (!treeScope()->hasNodeListCaches())
+        return;
+
+    for (Node* node = this; node; node = node->parentNode()) {
+        ASSERT(this == node || !node->isAttributeNode());
+        if (!node->hasRareData())
+            continue;
+        NodeRareData* data = node->rareData();
+        if (!data->nodeLists())
+            continue;
+
+        data->nodeLists()->invalidateCachesThatDependOnAttributes();
+        removeNodeListCacheIfPossible(node, data);
     }
 }
 
@@ -968,6 +992,36 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
 {
     if (hasRareData())
         rareData()->clearChildNodeListCache();
+
+    if (!treeScope()->hasNodeListCaches())
+        return;
+    for (Node* node = this; node; node = node->parentNode()) {
+        if (!node->hasRareData())
+            continue;
+        NodeRareData* data = node->rareData();
+        if (!data->nodeLists())
+            continue;
+
+        data->nodeLists()->invalidateCaches();
+
+        NodeListsNodeData::NodeListSet::iterator end = data->nodeLists()->m_listsWithCaches.end();
+        for (NodeListsNodeData::NodeListSet::iterator it = data->nodeLists()->m_listsWithCaches.begin(); it != end; ++it)
+            (*it)->invalidateCache();
+
+        removeNodeListCacheIfPossible(node, data);
+    }
+}
+
+void Node::notifyLocalNodeListsLabelChanged()
+{
+    if (!hasRareData())
+        return;
+    NodeRareData* data = rareData();
+    if (!data->nodeLists())
+        return;
+
+    if (data->nodeLists()->m_labelsNodeListCache)
+        data->nodeLists()->m_labelsNodeListCache->invalidateCache();
 }
 
 void Node::removeCachedClassNodeList(ClassNodeList* list, const String& className)
@@ -2150,6 +2204,23 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
+#if ENABLE(MICRODATA)
+void Node::itemTypeAttributeChanged()
+{
+    Node * rootNode = document();
+
+    if (!rootNode->hasRareData())
+        return;
+
+    NodeRareData* data = rootNode->rareData();
+
+    if (!data->nodeLists())
+        return;
+
+    data->nodeLists()->invalidateMicrodataItemListCaches();
+}
+#endif
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)
@@ -2278,7 +2349,11 @@ void NodeListsNodeData::invalidateCaches()
     TagNodeListCacheNS::const_iterator tagCacheNSEnd = m_tagNodeListCacheNS.end();
     for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheNSEnd; ++it)
         it->second->invalidateCache();
+    invalidateCachesThatDependOnAttributes();
+}
 
+void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
+{
     ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
     for (ClassNodeListCache::iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it)
         it->second->invalidateCache();
@@ -2292,7 +2367,6 @@ void NodeListsNodeData::invalidateCaches()
 #if ENABLE(MICRODATA)
     invalidateMicrodataItemListCaches();
 #endif
-    
 }
 
 #if ENABLE(MICRODATA)

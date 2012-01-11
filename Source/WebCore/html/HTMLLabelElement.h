@@ -50,6 +50,8 @@ private:
     virtual void defaultEventHandler(Event*);
 
     void focus(bool restorePreviousSelection = true);
+
+    virtual void parseMappedAttribute(Attribute*);
 };
 
 } //namespace

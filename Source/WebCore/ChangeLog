@@ -1,3 +1,36 @@
+2012-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r104210. It turned out that this patch makes improving the node list caches harder.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        (WebCore::DynamicSubtreeNodeList::invalidateCache):
+        (WebCore::DynamicSubtreeNodeList::Caches::create):
+        (WebCore::DynamicSubtreeNodeList::Caches::reset):
+        * dom/DynamicNodeList.h:
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged):
+        (WebCore::Node::notifyLocalNodeListsLabelChanged):
+        (WebCore::Node::itemTypeAttributeChanged):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes):
+        * dom/NodeRareData.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::parseMappedAttribute):
+        * html/HTMLLabelElement.h:
+
 2012-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104263 and r104381.
