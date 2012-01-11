@@ -1,3 +1,10 @@
+2012-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix release builds.
+
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+
 2012-01-11  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r101445): [V8] Generated code for custom getters and setters

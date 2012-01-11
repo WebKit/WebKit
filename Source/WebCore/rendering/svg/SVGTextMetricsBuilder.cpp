@@ -107,10 +107,9 @@ void SVGTextMetricsBuilder::advanceComplexText(bool startsSurrogatePair)
     m_totalWidth = m_complexStartToCurrentMetrics.width();
 }
 
-void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, const UChar*& lastCharacter, Vector<SVGTextMetrics>* textMetricsValues)
+void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText*, const UChar*& lastCharacter, Vector<SVGTextMetrics>* textMetricsValues)
 {
-    ASSERT(text);
-    ASSERT(textMetricsValues->isEmpty());
+    ASSERT(textMetricsValues ? textMetricsValues->isEmpty() : true);
     while (!m_finished) {
         advance();
 
