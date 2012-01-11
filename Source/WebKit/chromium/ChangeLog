@@ -1,3 +1,9 @@
+2012-01-10  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Unreviewed, roll Chromium DEPS to r117121.
+
+        * DEPS:
+
 2012-01-10  Nat Duca  <nduca@chromium.org>
 
         [chromium] Reuse old timebase when activating CCDelayBasedTimeSource
