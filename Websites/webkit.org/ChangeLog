@@ -1,3 +1,14 @@
+2012-01-11  Antti Koivisto  <antti@apple.com>
+
+        Remove S60 reference from webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=76044
+
+        Reviewed by Simon Hausmann.
+        
+        There is no S60.
+
+        * index.html:
+
 2012-01-10  Hajime Morrita  <morrita@chromium.org>
 
         [Website] i-Bench is no longer available.
