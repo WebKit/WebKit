@@ -699,6 +699,8 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
         settings->setAttribute(QWebSettings::HyperlinkAuditingEnabled, value.toBool());
     else if (name == "WebKitHixie76WebSocketProtocolEnabled")
         DumpRenderTreeSupportQt::setHixie76WebSocketProtocolEnabled(m_topLoadingFrame->page(), value.toBool());
+    else if (name == "WebKitAcceleratedCompositingEnabled")
+        settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, value.toBool());
     else
         printf("ERROR: LayoutTestController::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());

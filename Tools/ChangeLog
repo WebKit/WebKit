@@ -1,3 +1,13 @@
+2012-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Some css3 filter tests are failing after r104698
+        https://bugs.webkit.org/show_bug.cgi?id=76055
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::overridePreference): Add WebKitAcceleratedCompositingEnabled preference.
+
 2012-01-11  Tony Chang  <tony@chromium.org>
 
         Don't remove 0 byte files when running build-webkit --chromium

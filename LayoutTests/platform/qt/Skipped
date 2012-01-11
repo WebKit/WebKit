@@ -2570,16 +2570,3 @@ fast/js/date-constructor.html
 # [Qt] new test fast/forms/radio/radio-group.html failing after r104668
 # https://bugs.webkit.org/show_bug.cgi?id=76051
 fast/forms/radio/radio-group.html
-
-# [Qt] Some css3 filter tests are failing after r104698
-# https://bugs.webkit.org/show_bug.cgi?id=76055
-css3/filters/effect-blur.html
-css3/filters/effect-brightness.html
-css3/filters/effect-contrast.html
-css3/filters/effect-drop-shadow.html
-css3/filters/effect-grayscale.html
-css3/filters/effect-hue-rotate.html
-css3/filters/effect-invert.html
-css3/filters/effect-opacity.html
-css3/filters/effect-saturate.html
-css3/filters/effect-sepia.html
