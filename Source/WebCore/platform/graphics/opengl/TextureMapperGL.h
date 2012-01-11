@@ -55,7 +55,6 @@ public:
     virtual bool isOpenGLBacked() const { return true; }
 
 private:
-    void initializeShaders();
     inline TextureMapperGLData& data() { return *m_data; }
     TextureMapperGLData* m_data;
     GraphicsContext* m_context;

@@ -1,3 +1,21 @@
+2012-01-10  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt][WK2]REGRESSION(r102435): It made tst_QQuickWebView::show() crash
+        https://bugs.webkit.org/show_bug.cgi?id=74176
+
+        Reviewed by Noam Rosenthal.
+
+        Check texture mapper exists already in ensureRootLayer to avoid recrecation.
+        Check if root layer was deleted already in purgeGLResources.
+        Added multipleWebViewWindows and multipleWebViews API tests.
+
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::multipleWebViewWindows):
+        (tst_QQuickWebView::multipleWebViews):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+
 2012-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Snow Leopard build fix.

@@ -41,6 +41,16 @@
 #include <GL/gl.h>
 #endif
 
+#if defined(TEXMAP_OPENGL_ES_2)
+#include <EGL/egl.h>
+#elif OS(WINDOWS)
+#include <windows.h>
+#elif OS(MAC_OS_X)
+#include <AGL/agl.h>
+#elif defined(XP_UNIX)
+#include <GL/glx.h>
+#endif
+
 #if !defined(TEXMAP_OPENGL_ES_2) && !PLATFORM(QT)
 extern "C" {
     void glUniform1f(GLint, GLfloat);
@@ -103,7 +113,60 @@ inline static void debugGLCommand(const char* command, int line)
 #endif
 
 struct TextureMapperGLData {
-    static struct GlobalGLData {
+    struct SharedGLData : public RefCounted<SharedGLData> {
+#if defined(TEXMAP_OPENGL_ES_2)
+        typedef EGLContext GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return eglGetCurrentContext();
+        }
+#elif OS(WINDOWS)
+        typedef HGLRC GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return wglGetCurrentContext();
+        }
+#elif OS(MAC_OS_X)
+        typedef AGLContext GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return aglGetCurrentContext();
+        }
+#elif defined(XP_UNIX)
+        typedef GLXContext GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return glXGetCurrentContext();
+        }
+#else
+        // Default implementation for unknown opengl.
+        // Returns always increasing number and disables GL context data sharing.
+        typedef unsigned int GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            static GLContext dummyContextCounter = 0;
+            return ++dummyContextCounter;
+        }
+
+#endif
+
+        typedef HashMap<GLContext, SharedGLData*> GLContextDataMap;
+        static GLContextDataMap& glContextDataMap()
+        {
+            static GLContextDataMap map;
+            return map;
+        }
+
+        static PassRefPtr<SharedGLData> currentSharedGLData()
+        {
+            GLContext currentGLConext = getCurrentGLContext();
+            GLContextDataMap::iterator it = glContextDataMap().find(currentGLConext);
+            if (it != glContextDataMap().end())
+                return it->second;
+
+            return adoptRef(new SharedGLData(getCurrentGLContext()));
+        }
+
         enum ShaderProgramIndex {
             NoProgram = -1,
             SimpleProgram,
@@ -128,6 +191,9 @@ struct TextureMapperGLData {
             GLuint id;
             GLuint vertexAttrib;
             GLint vars[VariableCount];
+            GLuint vertexShader;
+            GLuint fragmentShader;
+            ProgramInfo() : id(0) { }
         };
 
         GLint getUniformLocation(ShaderProgramIndex prog, ShaderVariableIndex var, const char* name)
@@ -149,16 +215,53 @@ struct TextureMapperGLData {
             GL_CMD(glLinkProgram(programID))
             programs[index].vertexAttrib = glGetAttribLocation(programID, "InVertex");
             programs[index].id = programID;
+            programs[index].vertexShader = vertexShader;
+            programs[index].fragmentShader = fragmentShader;
         }
+
+        void deleteShaderProgram(ShaderProgramIndex index)
+        {
+            ProgramInfo& programInfo = programs[index];
+            GLuint programID = programInfo.id;
+            if (!programID)
+                return;
+
+            GL_CMD(glDetachShader(programID, programInfo.vertexShader))
+            GL_CMD(glDeleteShader(programInfo.vertexShader))
+            GL_CMD(glDetachShader(programID, programInfo.fragmentShader))
+            GL_CMD(glDeleteShader(programInfo.fragmentShader))
+            GL_CMD(glDeleteProgram(programID))
+        }
+
+        void initializeShaders();
 
         ProgramInfo programs[ProgramCount];
 
         int stencilIndex;
 
-        GlobalGLData()
-            : stencilIndex(1)
-        { }
-    } globalGLData;
+        SharedGLData(GLContext glContext) : stencilIndex(1)
+        {
+            glContextDataMap().add(glContext, this);
+            initializeShaders();
+        }
+
+        ~SharedGLData()
+        {
+            for (int i = SimpleProgram; i < ProgramCount; ++i)
+                deleteShaderProgram(ShaderProgramIndex(i));
+
+            GLContextDataMap::const_iterator end = glContextDataMap().end();
+            GLContextDataMap::iterator it;
+            for (it = glContextDataMap().begin(); it != end; ++it) {
+                if (it->second == this)
+                    break;
+            }
+
+            ASSERT(it != end);
+            glContextDataMap().remove(it);
+        }
+
+    };
 
     struct DirectlyCompositedImageRepository {
         struct Entry {
@@ -211,16 +314,21 @@ struct TextureMapperGLData {
         }
     } directlyCompositedImages;
 
+    SharedGLData& sharedGLData() const
+    {
+        return *(m_sharedGLData.get());
+    }
+
     TextureMapperGLData()
-        : currentProgram(TextureMapperGLData::GlobalGLData::NoProgram)
+        : currentProgram(SharedGLData::NoProgram)
+        , m_sharedGLData(TextureMapperGLData::SharedGLData::currentSharedGLData())
     { }
 
     TransformationMatrix projectionMatrix;
     int currentProgram;
     int previousProgram;
+    RefPtr<SharedGLData> m_sharedGLData;
 };
-
-TextureMapperGLData::GlobalGLData TextureMapperGLData::globalGLData;
 
 class BitmapTextureGL : public BitmapTexture {
 public:
@@ -289,11 +397,11 @@ private:
 };
 
 #define TEXMAP_GET_SHADER_VAR_LOCATION(prog, var) \
-    if (TextureMapperGLData::globalGLData.getUniformLocation(TextureMapperGLData::globalGLData.prog##Program, TextureMapperGLData::globalGLData.var##Variable, #var) < 0) \
+    if (getUniformLocation(prog##Program, var##Variable, #var) < 0) \
             LOG_ERROR("Couldn't find variable "#var" in program "#prog"\n");
 
 #define TEXMAP_BUILD_SHADER(program) \
-    TextureMapperGLData::globalGLData.createShaderProgram(vertexShaderSource##program, fragmentShaderSource##program, TextureMapperGLData::globalGLData.program##Program);
+    createShaderProgram(vertexShaderSource##program, fragmentShaderSource##program, program##Program);
 
 TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
@@ -301,12 +409,8 @@ TextureMapperGL::TextureMapperGL()
 {
 }
 
-void TextureMapperGL::initializeShaders()
+void TextureMapperGLData::SharedGLData::initializeShaders()
 {
-    static bool shadersCompiled = false;
-    if (shadersCompiled)
-        return;
-    shadersCompiled = true;
 #ifndef TEXMAP_OPENGL_ES_2
 #define OES2_PRECISION_DEFINITIONS \
     "#define lowp\n#define highp\n"
@@ -321,6 +425,9 @@ void TextureMapperGL::initializeShaders()
 #define FRAGMENT_SHADER(src...) OES2_PRECISION_DEFINITIONS\
                                 OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
                                 #src
+
+    if (!initializeOpenGLShims())
+        return;
 
     const char* fragmentShaderSourceOpacityAndMask =
         FRAGMENT_SHADER(
@@ -426,7 +533,6 @@ void TextureMapperGL::beginPainting()
     glClear(GL_STENCIL_BUFFER_BIT);
     bindSurface(0);
 #endif
-    initializeShaders();
 }
 
 void TextureMapperGL::endPainting()
@@ -454,13 +560,13 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 
 void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, bool flip)
 {
-    TextureMapperGLData::GlobalGLData::ShaderProgramIndex program;
+    TextureMapperGLData::SharedGLData::ShaderProgramIndex program;
     if (maskTexture)
-        program = TextureMapperGLData::GlobalGLData::OpacityAndMaskProgram;
+        program = TextureMapperGLData::SharedGLData::OpacityAndMaskProgram;
     else
-        program = TextureMapperGLData::GlobalGLData::SimpleProgram;
+        program = TextureMapperGLData::SharedGLData::SimpleProgram;
 
-    const TextureMapperGLData::GlobalGLData::ProgramInfo& programInfo = data().globalGLData.programs[program];
+    const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
     GL_CMD(glUseProgram(programInfo.id))
     data().currentProgram = program;
     GL_CMD(glEnableVertexAttribArray(programInfo.vertexAttrib))
@@ -487,10 +593,10 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
                                      0, 0, 1, 0,
                                      0, flip ? relativeSize.height() : 0, 0, 1};
 
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::GlobalGLData::InMatrixVariable], 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::GlobalGLData::InSourceMatrixVariable], 1, GL_FALSE, m4src))
-    GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::GlobalGLData::SourceTextureVariable], 0))
-    GL_CMD(glUniform1f(programInfo.vars[TextureMapperGLData::GlobalGLData::OpacityVariable], opacity))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMatrixVariable], 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InSourceMatrixVariable], 1, GL_FALSE, m4src))
+    GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::SharedGLData::SourceTextureVariable], 0))
+    GL_CMD(glUniform1f(programInfo.vars[TextureMapperGLData::SharedGLData::OpacityVariable], opacity))
 
     if (maskTexture && maskTexture->isValid()) {
         const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
@@ -500,8 +606,8 @@ void TextureMapperGL::drawTexture(uint32_t texture, bool opaque, const FloatSize
                                          0, maskTextureGL->relativeSize().height(), 0, 0,
                                          0, 0, 1, 0,
                                          0, 0, 0, 1};
-        GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::GlobalGLData::InMaskMatrixVariable], 1, GL_FALSE, m4mask));
-        GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::GlobalGLData::MaskTextureVariable], 1))
+        GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMaskMatrixVariable], 1, GL_FALSE, m4mask));
+        GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::SharedGLData::MaskTextureVariable], 1))
         GL_CMD(glActiveTexture(GL_TEXTURE0))
     }
 
@@ -670,7 +776,7 @@ static inline TransformationMatrix createProjectionMatrix(const IntSize& size, b
 
 void BitmapTextureGL::bind()
 {
-    int& stencilIndex = TextureMapperGLData::globalGLData.stencilIndex;
+    int& stencilIndex = m_textureMapper->data().sharedGLData().stencilIndex;
     if (m_surfaceNeedsReset || !m_fbo) {
         if (!m_fbo)
             GL_CMD(glGenFramebuffers(1, &m_fbo))
@@ -743,7 +849,7 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
     if (!surface) {
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0))
         data().projectionMatrix = createProjectionMatrix(viewportSize(), true).multiply(transform());
-        GL_CMD(glStencilFunc(data().globalGLData.stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().globalGLData.stencilIndex - 1, data().globalGLData.stencilIndex - 1))
+        GL_CMD(glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1))
         GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
         GL_CMD(glViewport(0, 0, viewportSize().width(), viewportSize().height()))
         return;
@@ -754,8 +860,8 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
 
 void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
 {
-    TextureMapperGLData::GlobalGLData::ShaderProgramIndex program = TextureMapperGLData::GlobalGLData::ClipProgram;
-    const TextureMapperGLData::GlobalGLData::ProgramInfo& programInfo = data().globalGLData.programs[program];
+    TextureMapperGLData::SharedGLData::ShaderProgramIndex program = TextureMapperGLData::SharedGLData::ClipProgram;
+    const TextureMapperGLData::SharedGLData::ProgramInfo& programInfo = data().sharedGLData().programs[program];
     GL_CMD(glUseProgram(programInfo.id))
     GL_CMD(glEnableVertexAttribArray(programInfo.vertexAttrib))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
@@ -775,9 +881,9 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
 
-    int& stencilIndex = data().globalGLData.stencilIndex;
+    int& stencilIndex = data().sharedGLData().stencilIndex;
 
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::GlobalGLData::InMatrixVariable], 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::SharedGLData::InMatrixVariable], 1, GL_FALSE, m4))
     GL_CMD(glEnable(GL_STENCIL_TEST))
     GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex))
     GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE))
@@ -791,8 +897,8 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
 void TextureMapperGL::endClip()
 {
-    data().globalGLData.stencilIndex >>= 1;
-    glStencilFunc(data().globalGLData.stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().globalGLData.stencilIndex - 1, data().globalGLData.stencilIndex - 1);
+    data().sharedGLData().stencilIndex >>= 1;
+    glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()

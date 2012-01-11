@@ -1,3 +1,37 @@
+2012-01-10  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt][WK2]REGRESSION(r102435): It made tst_QQuickWebView::show() crash
+        https://bugs.webkit.org/show_bug.cgi?id=74176
+
+        Reviewed by Noam Rosenthal.
+
+        Replaces static global GL resource holder with holder shared between
+        TextureMapperGL instances created on the same GL context. Also adds
+        deallocation of GL resources when last TextureMapperGL instance on the 
+        current GL context gets deleted.
+
+        Tested by multipleWebViewWindows and multipleWebViews Qt WK2 API tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::getCurrentGLContext):
+        (WebCore::TextureMapperGLData::SharedGLData::glContextDataMap):
+        (WebCore::TextureMapperGLData::SharedGLData::currentSharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::ProgramInfo::ProgramInfo):
+        (WebCore::TextureMapperGLData::SharedGLData::createShaderProgram):
+        (WebCore::TextureMapperGLData::SharedGLData::deleteShaderProgram):
+        (WebCore::TextureMapperGLData::SharedGLData::SharedGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::~SharedGLData):
+        (WebCore::TextureMapperGLData::sharedGLData):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        (WebCore::TextureMapperGLData::SharedGLData::initializeShaders):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::BitmapTextureGL::bind):
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGL::endClip):
+        * platform/graphics/opengl/TextureMapperGL.h:
+
 2012-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Disabled mock scrollbars should draw differently

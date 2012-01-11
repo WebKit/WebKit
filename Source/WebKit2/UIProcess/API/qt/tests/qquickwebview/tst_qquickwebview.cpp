@@ -51,6 +51,8 @@ private slots:
     void show();
     void showWebView();
     void removeFromCanvas();
+    void multipleWebViewWindows();
+    void multipleWebViews();
 
 private:
     inline QQuickWebView* webView() const;
@@ -267,6 +269,52 @@ void tst_QQuickWebView::removeFromCanvas()
     QTest::qWait(200);
     webView()->setParentItem(parent);
     webView()->setVisible(true);
+    QTest::qWait(200);
+}
+
+void tst_QQuickWebView::multipleWebViewWindows()
+{
+    showWebView();
+
+    // This should not crash.
+    QQuickWebView* webView1 = new QQuickWebView();
+    QScopedPointer<TestWindow> window1(new TestWindow(webView1));
+    QQuickWebView* webView2 = new QQuickWebView();
+    QScopedPointer<TestWindow> window2(new TestWindow(webView2));
+
+    webView1->setSize(QSizeF(300, 400));
+    webView1->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    QVERIFY(waitForSignal(webView1, SIGNAL(loadSucceeded())));
+    window1->show();
+    webView1->setVisible(true);
+
+    webView2->setSize(QSizeF(300, 400));
+    webView2->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForSignal(webView2, SIGNAL(loadSucceeded())));
+    window2->show();
+    webView2->setVisible(true);
+    QTest::qWait(200);
+}
+
+void tst_QQuickWebView::multipleWebViews()
+{
+    showWebView();
+
+    // This should not crash.
+    QScopedPointer<QQuickWebView> webView1(new QQuickWebView());
+    webView1->setParentItem(m_window->rootItem());
+    QScopedPointer<QQuickWebView> webView2(new QQuickWebView());
+    webView2->setParentItem(m_window->rootItem());
+
+    webView1->setSize(QSizeF(300, 400));
+    webView1->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    QVERIFY(waitForSignal(webView1.data(), SIGNAL(loadSucceeded())));
+    webView1->setVisible(true);
+
+    webView2->setSize(QSizeF(300, 400));
+    webView2->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForSignal(webView2.data(), SIGNAL(loadSucceeded())));
+    webView2->setVisible(true);
     QTest::qWait(200);
 }
 

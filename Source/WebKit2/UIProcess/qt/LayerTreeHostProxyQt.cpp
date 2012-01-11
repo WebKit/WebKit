@@ -460,7 +460,8 @@ void LayerTreeHostProxy::ensureRootLayer()
 
     // The root layer should not have zero size, or it would be optimized out.
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
-    m_textureMapper = TextureMapperGL::create();
+    if (!m_textureMapper)
+        m_textureMapper = TextureMapperGL::create();
     toTextureMapperNode(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 
@@ -623,7 +624,9 @@ void LayerTreeHostProxy::purgeGLResources()
 {
     TextureMapperNode* node = toTextureMapperNode(rootLayer());
 
-    node->purgeNodeTexturesRecursive();
+    if (node)
+        node->purgeNodeTexturesRecursive();
+
     m_directlyCompositedImages.clear();
 
     m_textureMapper.clear();
