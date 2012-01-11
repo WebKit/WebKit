@@ -88,115 +88,29 @@ static void _ewk_view_single_smart_resize(Evas_Object* ewkView, Evas_Coord width
     }
 }
 
-static inline void _ewk_view_4b_move_region_up(uint32_t* image, size_t rows, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
+static inline void _ewk_view_screen_move(uint32_t* image, size_t destinationX, size_t destinationY, size_t sourceX, size_t sourceY, size_t copyWidth, size_t copyHeight, size_t frameWidth)
 {
-    uint32_t* source;
-    uint32_t* destination;
+    uint32_t* sourceBegin = image + (frameWidth * sourceY) + sourceX;
+    uint32_t* destinationBegin = image + (frameWidth * destinationY) + destinationX;
 
-    destination = image + x + y * rowSize;
-    source = destination + rows * rowSize;
-    height -= rows;
+    size_t copyLength = copyWidth * 4;
+    const int moveLineUpDown = sourceY >= destinationY ? 1 : -1;
+    int startHeight = sourceY >= destinationY ? 0 : copyHeight - 1;
 
-    for (; height > 0; height--, destination += rowSize, source += rowSize)
-        memcpy(destination, source, width * 4);
-}
-
-static inline void _ewk_view_4b_move_region_down(uint32_t* image, size_t rows, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
-{
-    uint32_t* source;
-    uint32_t* destination;
-
-    height -= rows;
-    source = image + x + (y + height - 1) * rowSize;
-    destination = source + rows * rowSize;
-
-    for (; height > 0; height--, destination -= rowSize, source -= rowSize)
-        memcpy(destination, source, width * 4);
-}
-
-static inline void _ewk_view_4b_move_line_left(uint32_t* destination, const uint32_t* source, size_t count)
-{
-    uint32_t* endOfDestination = destination + count;
-    /* no memcpy() as it does not allow overlapping regions */
-    /* no memmove() as it will copy to a temporary buffer */
-    /* TODO: loop unrolling, copying up to quad-words would help */
-    for (; destination < endOfDestination; destination++, source++)
-        *destination = *source;
-}
-
-static inline void _ewk_view_4b_move_line_right(uint32_t* destination, uint32_t* source, size_t count)
-{
-    uint32_t* endOfDestination = destination - count;
-    /* no memcpy() as it does not allow overlapping regions */
-    /* no memmove() as it will copy to a temporary buffer */
-    /* TODO: loop unrolling, copying up to quad-words would help */
-    for (; destination > endOfDestination; destination--, source--)
-        *destination = *source;
-}
-
-static inline void _ewk_view_4b_move_region_left(uint32_t* image, size_t columns, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
-{
-    uint32_t* source;
-    uint32_t* destination;
-
-    destination = image + x + y * rowSize;
-    source = destination + columns;
-    width -= columns;
-
-    for (; height > 0; height--, destination += rowSize, source += rowSize)
-        _ewk_view_4b_move_line_left(destination, source, width);
-}
-
-static inline void _ewk_view_4b_move_region_right(uint32_t* image, size_t columns, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
-{
-    uint32_t* source;
-    uint32_t* destination;
-
-    width -= columns;
-    source = image + (x + width - 1) + y * rowSize;
-    destination = source + columns;
-
-    for (; height > 0; height--, destination += rowSize, source += rowSize)
-        _ewk_view_4b_move_line_right(destination, source, width);
-}
-
-/* catch-all function, not as optimized as the others, but does the work. */
-static inline void _ewk_view_4b_move_region(uint32_t* image, int deltaX, int deltaY, size_t x, size_t y, size_t width, size_t height, size_t rowSize)
-{
-    uint32_t* source;
-    uint32_t* destination;
-
-    if (deltaY < 0) {
-        height += deltaY;
-        destination = image + x + y * rowSize;
-        source = destination - deltaY * rowSize;
-        if (deltaX <= 0) {
-            width += deltaX;
-            source -= deltaX;
-            for (; height > 0; height--, destination += rowSize, source += rowSize)
-                _ewk_view_4b_move_line_left(destination, source, width);
-        } else {
-            width -= deltaX;
-            source += width - 1;
-            destination += width + deltaX -1;
-            for (; height > 0; height--, destination += rowSize, source += rowSize)
-                _ewk_view_4b_move_line_right(destination, source, width);
+    uint32_t* source, * destination;
+    if (sourceX >= destinationX) {
+        for (int i = 0; i < copyHeight; i++) {
+            source = sourceBegin + (frameWidth * startHeight);
+            destination = destinationBegin + (frameWidth * startHeight);
+            startHeight = startHeight + moveLineUpDown;
+            memcpy(destination, source, copyLength);
         }
     } else {
-        height -= deltaY;
-        source = image + x + (y + height - 1) * rowSize;
-        destination = source + deltaY * rowSize;
-        if (deltaX <= 0) {
-            width += deltaX;
-            source -= deltaX;
-            for (; height > 0; height--, destination -= rowSize, source -= rowSize)
-                _ewk_view_4b_move_line_left(destination, source, width);
-        } else {
-            width -= deltaX;
-            source += width - 1;
-            destination += width + deltaX - 1;
-            for (; height > 0; height--, destination -= rowSize, source -= rowSize)
-                _ewk_view_4b_move_line_right(destination, source, width);
+        for (int i = 0; i < copyHeight; i++) {
+            source = sourceBegin + (frameWidth * startHeight);
+            destination = destinationBegin + (frameWidth * startHeight);
+            startHeight = startHeight + moveLineUpDown;
+            memmove(destination, source, copyLength);
         }
     }
 }
@@ -241,105 +155,33 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
         scrollHeight = 0;
 
     EINA_SAFETY_ON_TRUE_RETURN(!scrollWidth || !scrollHeight);
-    if (!scrollRequest->dx) {
-        if (scrollRequest->dy < 0) {
-            DBG("scroll up: %+03d,%+03d update=%d,%d+%dx%d, "
-                "repaint=%d,%d+%dx%d",
-                scrollRequest->dx, scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight + scrollRequest->dy,
-                scrollX, scrollY + scrollHeight + scrollRequest->dy, scrollWidth, -scrollRequest->dy);
 
-            _ewk_view_4b_move_region_up
-                (static_cast<uint32_t*>(pixels), -scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight, width);
-            evas_object_image_data_update_add
-                (smartData->backing_store, scrollX, scrollY, scrollWidth, scrollHeight + scrollRequest->dy);
-
-            ewk_view_repaint_add(smartData->_priv, scrollX, scrollY + scrollHeight + scrollRequest->dy, scrollWidth, -scrollRequest->dy);
-        } else if (scrollRequest->dy > 0) {
-            DBG("scroll down: %+03d,%+03d update=%d,%d+%dx%d, "
-                "repaint=%d,%d+%dx%d",
-                scrollRequest->dx, scrollRequest->dy, scrollX, scrollY + scrollRequest->dy, scrollWidth, scrollHeight - scrollRequest->dy,
-                scrollX, scrollY, scrollWidth, scrollRequest->dy);
-
-            _ewk_view_4b_move_region_down
-                (static_cast<uint32_t*>(pixels), scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight, width);
-            evas_object_image_data_update_add
-                (smartData->backing_store, scrollX, scrollY + scrollRequest->dy, scrollWidth, scrollHeight - scrollRequest->dy);
-
-            ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollRequest->dy);
-        }
-    } else if (!scrollRequest->dy) {
-        if (scrollRequest->dx < 0) {
-            DBG("scroll left: %+03d,%+03d update=%d,%d+%dx%d, "
-                "repaint=%d,%d+%dx%d",
-                scrollRequest->dx, scrollRequest->dy, scrollX, scrollY, scrollWidth + scrollRequest->dx, scrollHeight,
-                scrollX + scrollWidth + scrollRequest->dx, scrollY, -scrollRequest->dx, scrollHeight);
-
-            _ewk_view_4b_move_region_left
-                (static_cast<uint32_t*>(pixels), -scrollRequest->dx, scrollX, scrollY, scrollWidth, scrollHeight, width);
-            evas_object_image_data_update_add
-                (smartData->backing_store, scrollX, scrollY, scrollWidth + scrollRequest->dx, scrollHeight);
-
-            ewk_view_repaint_add(smartData->_priv, scrollX + scrollWidth + scrollRequest->dx, scrollY, -scrollRequest->dx, scrollHeight);
-        } else if (scrollRequest->dx > 0) {
-            DBG("scroll up: %+03d,%+03d update=%d,%d+%dx%d, "
-                "repaint=%d,%d+%dx%d",
-                scrollRequest->dx, scrollRequest->dy, scrollX + scrollRequest->dx, scrollY, scrollWidth - scrollRequest->dx, scrollHeight,
-                scrollX, scrollY, scrollRequest->dx, scrollHeight);
-
-            _ewk_view_4b_move_region_right
-                (static_cast<uint32_t*>(pixels), scrollRequest->dx, scrollX, scrollY, scrollWidth, scrollHeight, width);
-            evas_object_image_data_update_add
-                (smartData->backing_store, scrollX + scrollRequest->dx, scrollY, scrollWidth - scrollRequest->dx, scrollHeight);
-
-            ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollRequest->dx, scrollHeight);
-        }
-    } else {
-        Evas_Coord moveX, moveY, moveWidth, moveHeight;
-        Evas_Coord verticalX, verticalY, verticalWidth, verticalHeight;
-        Evas_Coord horizontalX, horizontalY, horizontalWidth, horizontalHeight;
-
-        if (scrollRequest->dx < 0) {
-            moveX = scrollX;
-            moveWidth = scrollWidth + scrollRequest->dx;
-            verticalX = moveX + moveWidth;
-            verticalWidth = -scrollRequest->dx;
-        } else {
-            verticalX = scrollX;
-            verticalWidth = scrollRequest->dx;
-            moveX = verticalX + verticalWidth;
-            moveWidth = scrollWidth - scrollRequest->dx;
-        }
-
-        if (scrollRequest->dy < 0) {
-            moveY = scrollY;
-            moveHeight = scrollHeight + scrollRequest->dy;
-            horizontalY = moveY + moveHeight;
-            horizontalHeight = -scrollRequest->dy;
-        } else {
-            horizontalY = scrollY;
-            horizontalHeight = scrollRequest->dy;
-            moveY = horizontalY + horizontalHeight;
-            moveHeight = scrollHeight - scrollRequest->dy;
-        }
-
-        verticalY = moveY;
-        verticalHeight = moveHeight;
-        horizontalX = scrollX;
-        horizontalWidth = scrollWidth;
-
-        DBG("scroll diagonal: %+03d,%+03d update=%d,%d+%dx%d, "
-            "repaints: h=%d,%d+%dx%d v=%d,%d+%dx%d",
-            scrollRequest->dx, scrollRequest->dy, moveX, moveY, moveWidth, moveHeight,
-            verticalX, verticalY, verticalWidth, verticalHeight,
-            horizontalX, horizontalY, horizontalWidth, horizontalHeight);
-
-        _ewk_view_4b_move_region
-            (static_cast<uint32_t*>(pixels), scrollRequest->dx, scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight, width);
-
-        evas_object_image_data_update_add(smartData->backing_store, moveX, moveY, moveWidth, moveHeight);
-        ewk_view_repaint_add(smartData->_priv, verticalX, verticalY, verticalWidth, verticalHeight);
-        ewk_view_repaint_add(smartData->_priv, horizontalX, horizontalY, horizontalWidth, horizontalHeight);
+    int sourceX = scrollRequest->dx < 0 ? abs(scrollRequest->dx) : 0;
+    int sourceY = scrollRequest->dy < 0 ? abs(scrollRequest->dy) : 0;
+    int destinationX = scrollRequest->dx < 0 ? 0 : scrollRequest->dx;
+    int destinationY = scrollRequest->dy < 0 ? 0 : scrollRequest->dy;
+    int copyWidth = scrollWidth - abs(scrollRequest->dx);
+    int copyHeight = scrollHeight - abs(scrollRequest->dy);
+    if (scrollRequest->dx || scrollRequest->dy) {
+        _ewk_view_screen_move(static_cast<uint32_t*>(pixels), destinationX, destinationY, sourceX, sourceY, copyWidth, copyHeight, scrollWidth);
+        evas_object_image_data_update_add(smartData->backing_store, destinationX, destinationY, copyWidth, copyHeight);
     }
+
+    Eina_Rectangle verticalUpdate;
+    verticalUpdate.x = destinationX ? 0 : copyWidth - 1;
+    verticalUpdate.y = 0;
+    verticalUpdate.w = abs(scrollRequest->dx);
+    verticalUpdate.h = scrollHeight;
+    if (verticalUpdate.w && verticalUpdate.h)
+        ewk_view_repaint_add(smartData->_priv, verticalUpdate.x, verticalUpdate.y, verticalUpdate.w, verticalUpdate.h);
+
+    Eina_Rectangle horizontalUpdate;
+    horizontalUpdate.x = destinationX;
+    horizontalUpdate.y = destinationY ? 0 : copyHeight - 1;
+    horizontalUpdate.w = copyWidth;
+    horizontalUpdate.h = abs(scrollRequest->dy);
+    if (horizontalUpdate.w && horizontalUpdate.h)
+        ewk_view_repaint_add(smartData->_priv, horizontalUpdate.x, horizontalUpdate.y, horizontalUpdate.w, horizontalUpdate.h);
 }
 
 static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* smartData)

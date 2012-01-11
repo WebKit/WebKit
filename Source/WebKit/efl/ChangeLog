@@ -1,3 +1,18 @@
+2012-01-11  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Refactor single backing store scroll code.
+        https://bugs.webkit.org/show_bug.cgi?id=75243
+
+        Reviewed by Zoltan Herczeg.
+
+        Remove the duplicated code and refactor the scroll procedure.
+        Wherever the page is scrolled, there are one screen copy and two updates.
+        This patch optimises the scroll procedure by less calculation.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_screen_move):
+        (_ewk_view_single_scroll_process_single):
+
 2012-01-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix page rendering issue on ewk_view_tiled.
