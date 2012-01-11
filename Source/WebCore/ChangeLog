@@ -1,3 +1,13 @@
+2012-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Add TestWebKitAPI tests for KURL
+        <http://webkit.org/b/75774>
+
+        Reviewed by Adam Barth.
+
+        * WebCore.exp.in: Export additional KURL methods used in
+        testing.
+
 2012-01-10  Jer Noble  <jer.noble@apple.com>
 
         Crash in HTMLMediaElement::shouldDisableSleep()

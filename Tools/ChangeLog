@@ -1,5 +1,20 @@
 2012-01-10  David Kilzer  <ddkilzer@apple.com>
 
+        Add TestWebKitAPI tests for KURL
+        <http://webkit.org/b/75774>
+
+        Reviewed by Adam Barth.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add a
+        WebCore folder and KURL.cpp source file to the project.
+        * TestWebKitAPI/Tests/WebCore/KURL.cpp: Added.
+        (TestWebKitAPI::WebCore::SetUp): Initialize the main thread
+        during setup since this test doesn't go through WebKit or
+        WebKit2.
+        (TestWebKitAPI::TEST_F): Add two basic tests.
+
+2012-01-10  David Kilzer  <ddkilzer@apple.com>
+
         Extract common code for comparing WTF::String objects into WTFStringUtilities.h
 
         Reviewed by Adam Barth.

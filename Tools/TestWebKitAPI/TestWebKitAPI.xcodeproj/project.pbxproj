@@ -32,6 +32,7 @@
 		37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */; };
 		37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
+		440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 440A1D3814A0103A008A66F2 /* KURL.cpp */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		4BFDFFA9131477770061F24B /* HitTestResultNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
@@ -181,6 +182,7 @@
 		37A6895D148A9B50005100FA /* SubresourceErrorCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SubresourceErrorCrash.mm; sourceTree = "<group>"; };
 		37DC678B140D7C5000ABCCDB /* DOMRangeOfString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMRangeOfString.mm; sourceTree = "<group>"; };
 		37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMRangeOfString.html; sourceTree = "<group>"; };
+		440A1D3814A0103A008A66F2 /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle_Bundle.cpp; sourceTree = "<group>"; };
 		4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResultNodeHandle.cpp; sourceTree = "<group>"; };
@@ -355,6 +357,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		440A1D3614A01000008A66F2 /* WebCore */ = {
+			isa = PBXGroup;
+			children = (
+				440A1D3814A0103A008A66F2 /* KURL.cpp */,
+			);
+			path = WebCore;
+			sourceTree = "<group>";
+		};
 		BC029B1A1486B23800817DA9 /* ns */ = {
 			isa = PBXGroup;
 			children = (
@@ -504,6 +514,7 @@
 			children = (
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				C07E6CAD13FD67650038B22B /* mac */,
+				440A1D3614A01000008A66F2 /* WebCore */,
 				BC9096411255616000083756 /* WebKit2 */,
 				BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */,
 				BC9096461255618900083756 /* WTF */,
@@ -713,6 +724,7 @@
 				1AA9E55914980A9900001A8A /* Functional.cpp in Sources */,
 				BCAA485814A044D40088FAC4 /* EditorCommands.mm in Sources */,
 				BC55F5F914AD78EE00484BE1 /* Vector.cpp in Sources */,
+				440A1D3914A0103A008A66F2 /* KURL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
