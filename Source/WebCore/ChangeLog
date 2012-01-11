@@ -1,3 +1,26 @@
+2012-01-10  Kentaro Hara  <haraken@chromium.org>
+
+        Remove redundant code from DOMWindowSQLDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=76010
+
+        Reviewed by Adam Barth.
+
+        This patch removes redundant code from DOMWindowSQLDatabase.cpp.
+
+        - Remove window->frame() check, since window->frame() is always true when
+          window->isCurrentlyDisplayedInFrame() is true.
+        - window->frame()->document() can just be window->document()
+
+        Tests: storage/open-database-creation-callback-isolated-world.html
+               storage/open-database-creation-callback.html
+               storage/open-database-empty-version.html
+               storage/open-database-over-quota.html
+               storage/open-database-set-empty-version.html
+               storage/open-database-while-transaction-in-progress.html
+
+        * storage/DOMWindowSQLDatabase.cpp:
+        (WebCore::DOMWindowSQLDatabase::openDatabase):
+
 2012-01-10  Dale Curtis  <dalecurtis@chromium.org>
 
         Repaint video controls when buffering during pause.
