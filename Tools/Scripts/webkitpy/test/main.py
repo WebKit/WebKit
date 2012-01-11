@@ -116,7 +116,7 @@ class Tester(object):
             from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
             test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
         else:
-            test_runner = unittest.TextTestRunner()
+            test_runner = unittest.TextTestRunner
 
         if len(sys_argv) > 1 and not sys_argv[-1].startswith("-"):
             # Then explicit modules or test names were provided, which

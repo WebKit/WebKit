@@ -1,5 +1,30 @@
 2012-01-11  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: fix -v and eliminate some spurious warnings
+        https://bugs.webkit.org/show_bug.cgi?id=76099
+
+        Reviewed by Adam Barth.
+
+        when we added support for --xml output, we broke the -v flag.
+
+        Also, fix the code to swallow a harmless warning from
+        VCSUtils.pm and fix a deprecated warning in jsonchecker.py.
+
+        test-webkitpy is now silent again except for the one known
+        logging issue.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.commit_message_for_this_commit):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (test_commit_message_for_this_commit):
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONChecker.check):
+        (JSONChecker.line_number_from_json_exception):
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run_tests):
+
+2012-01-11  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: webkitpy.layout_tests.port tests should only use MockSystemHost, not MockHost
         https://bugs.webkit.org/show_bug.cgi?id=76084
 

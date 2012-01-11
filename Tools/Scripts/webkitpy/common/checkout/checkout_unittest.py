@@ -139,7 +139,9 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
         checkout = Checkout(mock_scm)
         checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelogs
-        commit_message = checkout.commit_message_for_this_commit(git_commit=None)
+        commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
+        # Throw away the first line - a warning about unknown VCS root.
+        commit_message.message_lines = commit_message.message_lines[1:]
         self.assertEqual(commit_message.message(), self.expected_commit_message)
 
 
