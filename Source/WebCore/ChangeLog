@@ -1,3 +1,23 @@
+2012-01-11  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Fix more style errors in CSSParser.cpp (followup patch)
+        https://bugs.webkit.org/show_bug.cgi?id=76038
+
+        Reviewed by Nikolas Zimmermann.
+
+        The previous was: http://trac.webkit.org/changeset/104576
+        This patch mostly contains C cast to static_cast rewrites.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::commitNumber):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::parseDeprecatedGradientPoint):
+
 2012-01-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix release builds.

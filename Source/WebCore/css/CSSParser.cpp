@@ -1037,7 +1037,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSSPropertyClear:                // none | left | right | both | inherit
         if (id == CSSValueNone || id == CSSValueLeft
-            || id == CSSValueRight|| id == CSSValueBoth)
+            || id == CSSValueRight || id == CSSValueBoth)
             validPrimitive = true;
         break;
 
@@ -2883,7 +2883,7 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
     int id = m_valueList->current()->id;
     if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu || id == CSSValueCurrentcolor ||
         (id >= CSSValueGrey && id < CSSValueWebkitText && !m_strict))
-       return cssValuePool()->createIdentifierValue(id);
+        return cssValuePool()->createIdentifierValue(id);
     return parseColor();
 }
 
@@ -5054,7 +5054,7 @@ struct ShadowParseContext {
 
     void commitLength(CSSParserValue* v)
     {
-        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
+        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
 
         if (allowX) {
             x = val.release();
@@ -5512,7 +5512,7 @@ public:
 
     void commitNumber(CSSParserValue* v)
     {
-        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
+        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
         if (!m_top)
             m_top = val;
         else if (!m_right)
@@ -5539,16 +5539,16 @@ public:
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
         if (!m_right) {
-            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
         }
         if (!m_bottom) {
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
         }
         if (!m_left)
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
 
         // Now build a rect value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();
@@ -5630,7 +5630,7 @@ public:
         if (v->id == CSSValueAuto)
             val = m_cssValuePool->createIdentifierValue(v->id);
         else
-            val = m_cssValuePool->createValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
+            val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
 
         if (!m_top)
             m_top = val;
@@ -5655,16 +5655,16 @@ public:
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
         if (!m_right) {
-            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
         }
         if (!m_bottom) {
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
         }
         if (!m_left)
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
 
         // Now build a quad value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();
@@ -5881,7 +5881,7 @@ static PassRefPtr<CSSPrimitiveValue> parseDeprecatedGradientPoint(CSSParserValue
         else if (equalIgnoringCase(a->string, "center"))
             result = cssValuePool->createValue(50., CSSPrimitiveValue::CSS_PERCENTAGE);
     } else if (a->unit == CSSPrimitiveValue::CSS_NUMBER || a->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
-        result = cssValuePool->createValue(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
+        result = cssValuePool->createValue(a->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(a->unit));
     return result;
 }
 
