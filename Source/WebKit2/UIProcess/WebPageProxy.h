@@ -107,6 +107,12 @@ class WKView;
 #endif
 #endif
 
+#if PLATFORM(GTK)
+typedef GtkWidget* PlatformWidget;
+#elif PLATFORM(EFL)
+typedef Evas_Object* PlatformWidget;
+#endif
+
 namespace WebKit {
 
 class NativeWebKeyboardEvent;
@@ -358,11 +364,8 @@ public:
 
     HWND nativeWindow() const;
 #endif
-#if PLATFORM(GTK)
-    GtkWidget* viewWidget();
-#endif
-#if PLATFORM(EFL)
-    Evas_Object* viewObject();
+#if USE(CAIRO)
+    PlatformWidget viewWidget();
 #endif
 #if USE(TILED_BACKING_STORE)
     void setFixedVisibleContentRect(const WebCore::IntRect&);

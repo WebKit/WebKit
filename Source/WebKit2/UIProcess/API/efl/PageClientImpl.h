@@ -33,13 +33,13 @@ namespace WebKit {
 
 class PageClientImpl : public PageClient {
 public:
-    static PassOwnPtr<PageClientImpl> create(WebContext* context, WebPageGroup* pageGroup, Evas_Object* viewObject)
+    static PassOwnPtr<PageClientImpl> create(WebContext* context, WebPageGroup* pageGroup, Evas_Object* viewWidget)
     {
-        return adoptPtr(new PageClientImpl(context, pageGroup, viewObject));
+        return adoptPtr(new PageClientImpl(context, pageGroup, viewWidget));
     }
     ~PageClientImpl();
 
-    Evas_Object* viewObject() const { return m_viewObject; }
+    Evas_Object* viewWidget() const { return m_viewWidget; }
 
     WebPageProxy* page() const { return m_page.get(); }
 
@@ -100,7 +100,7 @@ private:
 
 private:
     RefPtr<WebPageProxy> m_page;
-    Evas_Object* m_viewObject;
+    Evas_Object* m_viewWidget;
 };
 
 } // namespace WebKit

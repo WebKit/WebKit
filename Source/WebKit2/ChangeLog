@@ -1,3 +1,24 @@
+2012-01-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Rename viewObject to viewWidget
+        https://bugs.webkit.org/show_bug.cgi?id=75947
+
+        Reviewed by Martin Robinson.
+
+        Rename viewObject to viewWidget for the EFL port to use WidgetBackingStore
+        which calls viewWidget().
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::viewSize):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (WebKit::PageClientImpl::create):
+        (WebKit::PageClientImpl::viewWidget):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+
 2012-01-10  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r104377): All pages print blank on Snow Leopard

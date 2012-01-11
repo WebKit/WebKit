@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-Evas_Object* WebPageProxy::viewObject()
+Evas_Object* WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl*>(m_pageClient)->viewObject();
+    return static_cast<PageClientImpl*>(m_pageClient)->viewWidget();
 }
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
