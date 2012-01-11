@@ -75,14 +75,12 @@ public:
 
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual void error(CachedResource::Status);
+    virtual void setResponse(const ResourceResponse&);
     
     // For compatibility, images keep loading even if there are HTTP errors.
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
 
     virtual bool isImage() const { return true; }
-
-    void clear();
-    
     bool stillNeedsLoad() const { return !errorOccurred() && status() == Unknown && !isLoading(); }
     void load();
 
@@ -96,6 +94,8 @@ public:
 
 private:
     Image* lookupOrCreateImageForRenderer(const RenderObject*);
+
+    void clear();
 
     void createImage();
     size_t maximumDecodedImageSize();

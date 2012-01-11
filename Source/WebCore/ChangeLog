@@ -1,3 +1,29 @@
+2012-01-11  Nate Chapin  <japhet@chromium.org>
+
+        SubresourceLoader cleanup post r100311.
+        1. Simplify matching incrementRequestCount()/decrementRequestCount() calls.
+        2. Remove CachedImage custom code from SubresourceLoader.
+        3. Add a bunch of ASSERTs.
+        4. Remove the multipart-only call to didReceiveData() from didReceiveResponse(),
+           since didReceiveData() would get called immediately after anyway.
+        https://bugs.webkit.org/show_bug.cgi?id=75887
+
+        Reviewed by Adam Barth.
+
+        No new tests, refactor only.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Remove multipart special case, handle it in didReceiveData().
+        (WebCore::SubresourceLoader::didReceiveData): Handle multipart state here, since we will receive only one
+             didReceiveData() call per multipart segment, but no didFinishLoading() call.
+        * loader/SubresourceLoader.h: Add a RequestCountTracker subclass to reduce complexity of ensuring we don't
+            decrement request count twice on CachedResourceLoader.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::setResponse): Move CachedImage::clear() call out of SubresourceLoader, since it's
+            kind of a layering violation as is.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+
 2012-01-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Version change transaction should abort if constraints fail during createIndex

@@ -214,7 +214,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     m_resourceRequest.setPriority(loadPriority());
     
     m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
-    if (!m_loader || m_loader->reachedTerminalState()) {
+    if (!m_loader) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
         LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().data());
         if (m_resourceToRevalidate) 
@@ -224,7 +224,6 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     }
 
     m_status = Pending;
-    cachedResourceLoader->incrementRequestCount(this);
 }
 
 void CachedResource::checkNotify()

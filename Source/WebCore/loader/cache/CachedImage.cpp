@@ -387,6 +387,13 @@ void CachedImage::error(CachedResource::Status status)
     checkNotify();
 }
 
+void CachedImage::setResponse(const ResourceResponse& response)
+{
+    if (!m_response.isNull())
+        clear();
+    CachedResource::setResponse(response);
+}
+
 void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
