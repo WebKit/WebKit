@@ -2849,6 +2849,9 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.h \
+	Source/WebCore/platform/graphics/filters/CustomFilterOperation.h \
+	Source/WebCore/platform/graphics/filters/CustomFilterProgram.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterProgram.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterShader.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterShader.h \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
@@ -3579,7 +3582,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/CounterDirectives.h \
 	Source/WebCore/rendering/style/CursorData.h \
 	Source/WebCore/rendering/style/CursorList.h \
-	Source/WebCore/rendering/style/CustomFilterOperation.h \
 	Source/WebCore/rendering/style/DataRef.h \
 	Source/WebCore/rendering/style/FillLayer.cpp \
 	Source/WebCore/rendering/style/FillLayer.h \
@@ -3604,6 +3606,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleCachedImage.h \
 	Source/WebCore/rendering/style/StyleCachedShader.cpp \
 	Source/WebCore/rendering/style/StyleCachedShader.h \
+	Source/WebCore/rendering/style/StyleCustomFilterProgram.h \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \

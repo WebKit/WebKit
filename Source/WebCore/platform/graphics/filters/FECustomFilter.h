@@ -50,11 +50,12 @@ class Document;
 class DrawingBuffer;
 class GraphicsContext3D;
 class IntSize;
+class CustomFilterProgram;
 class Texture;
 
 class FECustomFilter : public FilterEffect {
 public:
-    static PassRefPtr<FECustomFilter> create(Filter*, Document*, const String& vertexShader, const String& fragmentShader,
+    static PassRefPtr<FECustomFilter> create(Filter*, Document*, PassRefPtr<CustomFilterProgram>,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
 
@@ -64,7 +65,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FECustomFilter(Filter*, Document*, const String& vertexShader, const String& fragmentShader,
+    FECustomFilter(Filter*, Document*, PassRefPtr<CustomFilterProgram>,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
     
@@ -81,9 +82,8 @@ private:
     RefPtr<CustomFilterShader> m_shader;
     RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
-    
-    String m_vertexShader;
-    String m_fragmentShader;
+
+    RefPtr<CustomFilterProgram> m_program;
 
     unsigned m_meshRows;
     unsigned m_meshColumns;

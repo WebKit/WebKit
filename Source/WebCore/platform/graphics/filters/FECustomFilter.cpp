@@ -34,6 +34,7 @@
 
 #include "CachedShader.h"
 #include "CustomFilterMesh.h"
+#include "CustomFilterProgram.h"
 #include "CustomFilterShader.h"
 #include "Document.h"
 #include "DrawingBuffer.h"
@@ -73,13 +74,12 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
     matrix.setM44(1.0f);
 }
 
-FECustomFilter::FECustomFilter(Filter* filter, Document* document, const String& vertexShader, const String& fragmentShader,
+FECustomFilter::FECustomFilter(Filter* filter, Document* document, PassRefPtr<CustomFilterProgram> program,
                                unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
                                CustomFilterOperation::MeshType meshType)
     : FilterEffect(filter)
     , m_document(document)
-    , m_vertexShader(vertexShader)
-    , m_fragmentShader(fragmentShader)
+    , m_program(program)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
     , m_meshBoxType(meshBoxType)
@@ -87,11 +87,11 @@ FECustomFilter::FECustomFilter(Filter* filter, Document* document, const String&
 {
 }
 
-PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, Document* document, const String& vertexShader, const String& fragmentShader,
+PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, Document* document, PassRefPtr<CustomFilterProgram> program,
                                            unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
                                            CustomFilterOperation::MeshType meshType)
 {
-    return adoptRef(new FECustomFilter(filter, document, vertexShader, fragmentShader, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new FECustomFilter(filter, document, program, meshRows, meshColumns, meshBoxType, meshType));
 }
 
 void FECustomFilter::platformApplySoftware()
@@ -137,10 +137,11 @@ void FECustomFilter::initializeContext(const IntSize& contextSize)
     attributes.preserveDrawingBuffer = true;
     attributes.premultipliedAlpha = false;
     
+    ASSERT(!m_context.get());
     m_context = GraphicsContext3D::create(attributes, m_document->view()->root()->hostWindow(), GraphicsContext3D::RenderOffscreen);
     m_drawingBuffer = DrawingBuffer::create(m_context.get(), contextSize, !attributes.preserveDrawingBuffer);
     
-    m_shader = CustomFilterShader::create(m_context.get(), m_vertexShader, m_fragmentShader);
+    m_shader = m_program->createShaderWithContext(m_context.get());
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
                                       FloatRect(0, 0, 1, 1),
                                       m_meshType);

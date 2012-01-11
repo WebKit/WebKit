@@ -125,6 +125,7 @@
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterOperation.h"
 #include "StyleCachedShader.h"
+#include "StyleCustomFilterProgram.h"
 #include "StylePendingShader.h"
 #include "StyleShader.h"
 #include "WebKitCSSShaderValue.h"
@@ -5105,13 +5106,15 @@ void CSSStyleSelector::loadPendingShaders()
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
         if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
             CustomFilterOperation* customFilter = static_cast<CustomFilterOperation*>(filterOperation.get());
-            if (customFilter->vertexShader() && customFilter->vertexShader()->isPendingShader()) {
-                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(customFilter->vertexShader())->cssShaderValue();
-                customFilter->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
+            ASSERT(customFilter->program());
+            StyleCustomFilterProgram* program = static_cast<StyleCustomFilterProgram*>(customFilter->program());
+            if (program->vertexShader() && program->vertexShader()->isPendingShader()) {
+                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->vertexShader())->cssShaderValue();
+                program->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
             }
-            if (customFilter->fragmentShader() && customFilter->fragmentShader()->isPendingShader()) {
-                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(customFilter->fragmentShader())->cssShaderValue();
-                customFilter->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
+            if (program->fragmentShader() && program->fragmentShader()->isPendingShader()) {
+                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->fragmentShader())->cssShaderValue();
+                program->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
             }
         }
     }
@@ -5180,8 +5183,8 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
             }
         }
     }
-    
-    return CustomFilterOperation::create(vertexShader, fragmentShader, meshRows, meshColumns, meshBoxType, meshType);
+    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release());
+    return CustomFilterOperation::create(program.release(), meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif
 

@@ -1,3 +1,89 @@
+2012-01-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Move CustomFilterOperation to the platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=74652
+
+        Reviewed by Chris Marrin.
+
+        FilterOperations are now part of the platform code and cannot reference style classes directly, but
+        CustomFilterOperation requires to link to the CachedShader for the vertex and the fragment shader.
+        
+        The fix is to introduce another object that will actually keep a link to the cached resources, so in this patch 
+        I'm adding a new class called CustomFilterProgram that will sit in the
+        platform/graphics/filters directory and will be referenced from CustomFilterOperation.
+
+        CustomFilterProgram is the base class of StyleCustomFilterProgram that is created from 
+        CSSStyleSelector when a new CustomFilterOperation is created. StyleCustomFilterProgram is responsible
+        with loading and keeping references to the StyleCachedShaders and the CachedShaders.
+
+        More patches will follow with optimizations about reusing 3D graphics contexts and compiled shaders.
+
+        Tests: css3/filters/custom-filter-shader-cache.html
+               css3/filters/missing-custom-filter-shader.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::loadPendingShaders):
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+            Updated to use the StyleCustomFilterProgram instead of the CustomFilterOperation.
+        
+        * platform/graphics/filters/CustomFilterOperation.h: Renamed from Source/WebCore/rendering/style/CustomFilterOperation.h.
+        (WebCore::CustomFilterOperation::create):
+            Accepts a CustomFilterProgram instead of vertex and fragment CachedShaders.
+            
+        (WebCore::CustomFilterOperation::program): Returns the CustomFilterProgram.
+        
+        (WebCore::CustomFilterOperation::CustomFilterOperation):
+            Accepts a CustomFilterProgram instead of vertex and fragment CachedShaders.
+            
+        * platform/graphics/filters/CustomFilterProgram.cpp: Added.
+        (WebCore::CustomFilterProgram::CustomFilterProgram):
+        (WebCore::CustomFilterProgram::~CustomFilterProgram):
+        (WebCore::CustomFilterProgram::addClient):
+        (WebCore::CustomFilterProgram::removeClient):
+        (WebCore::CustomFilterProgram::notifyClients):
+        (WebCore::CustomFilterProgram::createShaderWithContext):
+        * platform/graphics/filters/CustomFilterProgram.h: Added.
+        * platform/graphics/filters/CustomFilterProgramClient.h: Added.
+        (WebCore::CustomFilterProgramClient::~CustomFilterProgramClient):
+        
+        * platform/graphics/filters/FECustomFilter.cpp:
+            FECustomFilter will not use strings anymore. It will just get a reference to the CustomFilterProgram.
+        
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::create):
+        (WebCore::FECustomFilter::initializeContext):
+            Using the CustomFilterProgram to generate the CustomFilterShader instance. A better name for CustomFilterShader
+            would be CustomFilterCompiledProgram, but I would prefer to make that change in a different patch.
+        
+        * platform/graphics/filters/FECustomFilter.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::~FilterEffectRenderer):
+        (WebCore::FilterEffectRenderer::build):
+        (WebCore::FilterEffectRenderer::notifyCustomFilterProgramLoaded):
+        (WebCore::FilterEffectRenderer::removeCustomFilterClients):
+        * rendering/FilterEffectRenderer.h:
+        * rendering/style/StyleCustomFilterProgram.h: Added.
+        (WebCore::StyleCustomFilterProgram::create):
+        (WebCore::StyleCustomFilterProgram::setVertexShader):
+        (WebCore::StyleCustomFilterProgram::vertexShader):
+        (WebCore::StyleCustomFilterProgram::setFragmentShader):
+        (WebCore::StyleCustomFilterProgram::fragmentShader):
+        (WebCore::StyleCustomFilterProgram::vertexShaderString):
+        (WebCore::StyleCustomFilterProgram::fragmentShaderString):
+        (WebCore::StyleCustomFilterProgram::isLoaded):
+        (WebCore::StyleCustomFilterProgram::willHaveClients):
+        (WebCore::StyleCustomFilterProgram::didRemoveLastClient):
+        (WebCore::StyleCustomFilterProgram::notifyFinished):
+        (WebCore::StyleCustomFilterProgram::StyleCustomFilterProgram):
+
 2012-01-11  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Filters: apply the filters in RenderLayerBacking::paintIntoLayer when filters cannot be composited in hardware

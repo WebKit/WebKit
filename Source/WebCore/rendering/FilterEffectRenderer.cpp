@@ -42,7 +42,7 @@
 #include <wtf/MathExtras.h>
 
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-#include "CachedShader.h"
+#include "CustomFilterProgram.h"
 #include "CustomFilterOperation.h"
 #include "FECustomFilter.h"
 #include "Settings.h"
@@ -85,6 +85,9 @@ FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
 
 FilterEffectRenderer::~FilterEffectRenderer()
 {
+#if ENABLE(CSS_SHADERS)
+    removeCustomFilterClients();
+#endif
 }
 
 GraphicsContext* FilterEffectRenderer::inputContext()
@@ -97,7 +100,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 #if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
     UNUSED_PARAM(document);
 #else
-    CachedShaderList cachedShaders;
+    CustomFilterProgramList cachedCustomFilterPrograms;
 #endif
 
     m_effects.clear();
@@ -249,32 +252,11 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
                 continue;
             
             CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);
-            
-            // Check that the filters are already loaded. If not just skip them here.
-            String vertexShader, fragmentShader;
-            bool shadersLoaded = true;
-            if (customFilterOperation->vertexShader()) {
-                CachedShader* cachedShader = customFilterOperation->vertexShader()->cachedShader();
-                ASSERT(cachedShader);
-                cachedShaders.append(cachedShader);
-                cachedShader->addClient(this);
-                if (cachedShader->isLoaded())
-                    vertexShader = cachedShader->shaderString();
-                else
-                    shadersLoaded = false;
-            }
-            if (customFilterOperation->fragmentShader()) {
-                CachedShader* cachedShader = customFilterOperation->fragmentShader()->cachedShader();
-                ASSERT(cachedShader);
-                cachedShaders.append(cachedShader);
-                cachedShader->addClient(this);
-                if (cachedShader->isLoaded())
-                    fragmentShader = cachedShader->shaderString();
-                else
-                    shadersLoaded = false;
-            }
-            if (shadersLoaded) {
-                effect = FECustomFilter::create(this, document, vertexShader, fragmentShader,
+            RefPtr<CustomFilterProgram> program = customFilterOperation->program();
+            cachedCustomFilterPrograms.append(program);
+            program->addClient(this);
+            if (program->isLoaded()) {
+                effect = FECustomFilter::create(this, document, program,
                                                 customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
                                                 customFilterOperation->meshBoxType(), customFilterOperation->meshType());
             }
@@ -305,13 +287,13 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     setMaxEffectRects(m_sourceDrawingRegion);
     
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-    for (CachedShaderList::iterator iter = m_cachedShaders.begin(), end = m_cachedShaders.end(); iter != end; ++iter)
-        iter->get()->removeClient(this);
-    m_cachedShaders.swap(cachedShaders);
+    removeCustomFilterClients();
+    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
 #endif
 }
 
-void FilterEffectRenderer::notifyFinished(CachedResource*)
+#if ENABLE(CSS_SHADERS)
+void FilterEffectRenderer::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
 {
     m_observer->filterNeedsRepaint();
 }
@@ -324,6 +306,13 @@ void FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
             setSourceImageRect(filterRect);
     }
 }
+
+void FilterEffectRenderer::removeCustomFilterClients()
+{
+    for (CustomFilterProgramList::iterator iter = m_cachedCustomFilterPrograms.begin(), end = m_cachedCustomFilterPrograms.end(); iter != end; ++iter)
+        iter->get()->removeClient(this);
+}
+#endif
 
 void FilterEffectRenderer::prepare()
 {

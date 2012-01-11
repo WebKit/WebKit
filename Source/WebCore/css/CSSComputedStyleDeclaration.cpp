@@ -56,6 +56,7 @@
 #include "RenderStyle.h"
 #include "ShadowValue.h"
 #if ENABLE(CSS_FILTERS)
+#include "StyleCustomFilterProgram.h"
 #include "WebKitCSSFilterValue.h"
 #endif
 #include "WebKitCSSTransformValue.h"
@@ -801,13 +802,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
             
             // The output should be verbose, even if the values are the default ones.
             
+            ASSERT(customOperation->program());
+            StyleCustomFilterProgram* program = static_cast<StyleCustomFilterProgram*>(customOperation->program());
+            
             RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
-            if (customOperation->vertexShader())
-                shadersList->append(customOperation->vertexShader()->cssValue());
+            if (program->vertexShader())
+                shadersList->append(program->vertexShader()->cssValue());
             else
                 shadersList->append(cssValuePool->createIdentifierValue(CSSValueNone));
-            if (customOperation->fragmentShader())
-                shadersList->append(customOperation->fragmentShader()->cssValue());
+            if (program->fragmentShader())
+                shadersList->append(program->fragmentShader()->cssValue());
             else
                 shadersList->append(cssValuePool->createIdentifierValue(CSSValueNone));
             filterValue->append(shadersList.release());

@@ -28,8 +28,6 @@
 
 #if ENABLE(CSS_FILTERS)
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "FilterOperations.h"
@@ -43,12 +41,16 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterProgramClient.h"
+#endif
+
 namespace WebCore {
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
 class CachedShader;
+class CustomFilterProgram;
 class Document;
-class FilterEffectRenderer;
 class FilterEffectObserver;
 class GraphicsContext;
 class RenderLayer;
@@ -75,7 +77,11 @@ private:
     bool m_haveFilterEffect;
 };
 
-class FilterEffectRenderer : public Filter, public CachedResourceClient {
+class FilterEffectRenderer : public Filter
+#if ENABLE(CSS_SHADERS)
+    , public CustomFilterProgramClient
+#endif
+{
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<FilterEffectRenderer> create(FilterEffectObserver* observer)
@@ -105,9 +111,13 @@ public:
     
     IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
 
-    virtual void notifyFinished(CachedResource*);
-    
 private:
+#if ENABLE(CSS_SHADERS)
+    // Implementation of the CustomFilterProgramClient interface.
+    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*);
+    
+    void removeCustomFilterClients();
+#endif
 
     void setMaxEffectRects(const FloatRect& effectRect)
     {
@@ -134,8 +144,8 @@ private:
     FilterEffectObserver* m_observer; // No need for a strong references here. It owns us.
     
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-    typedef Vector<CachedResourceHandle<CachedShader> > CachedShaderList;
-    CachedShaderList m_cachedShaders;
+    typedef Vector<RefPtr<CustomFilterProgram> > CustomFilterProgramList;
+    CustomFilterProgramList m_cachedCustomFilterPrograms;
 #endif
     
     bool m_graphicsBufferAttached;

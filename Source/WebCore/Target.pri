@@ -2095,6 +2095,8 @@ HEADERS += \
     platform/graphics/CrossfadeGeneratedImage.h \
     platform/graphics/filters/CustomFilterMesh.h \
     platform/graphics/filters/CustomFilterShader.h \
+    platform/graphics/filters/CustomFilterOperation.h \
+    platform/graphics/filters/CustomFilterProgram.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
@@ -2389,7 +2391,6 @@ HEADERS += \
     rendering/style/CounterDirectives.h \
     rendering/style/CursorData.h \
     rendering/style/CursorList.h \
-    rendering/style/CustomFilterOperation.h \
     rendering/style/FillLayer.h \
     rendering/style/KeyframeList.h \
     rendering/style/NinePieceImage.h \
@@ -2400,6 +2401,7 @@ HEADERS += \
     rendering/style/StyleBoxData.h \
     rendering/style/StyleCachedImage.h \
     rendering/style/StyleCachedShader.h \
+    rendering/style/StyleCustomFilterProgram.h \
     rendering/style/StyleDeprecatedFlexibleBoxData.h \
     rendering/style/StyleFilterData.h \
     rendering/style/StyleFlexibleBoxData.h \
@@ -3261,6 +3263,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
     SOURCES += \
         platform/graphics/filters/CustomFilterMesh.cpp \
         platform/graphics/filters/CustomFilterShader.cpp \
+        platform/graphics/filters/CustomFilterProgram.cpp \
         platform/graphics/filters/DistantLightSource.cpp \
         platform/graphics/filters/FEBlend.cpp \
         platform/graphics/filters/FEColorMatrix.cpp \

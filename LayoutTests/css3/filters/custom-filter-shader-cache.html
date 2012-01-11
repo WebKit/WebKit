@@ -1,0 +1,63 @@
+<!-- This file should test that custom-filters cached resources are shared between multiple elements. -->
+<!doctype html>
+<html>
+    <head>
+        <title>Testing that cached shader resources are shared correctly between elements</title>
+        <script>
+            if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+                window.layoutTestController.dumpAsText(true);
+                window.layoutTestController.waitUntilDone();
+            }
+            
+            function runTest()
+            {
+                // We need to run the tests after the downloading succeeded.
+                // Using a timer is not ideal, but there seems to be no better options.
+                setTimeout(function() {
+                    if (window.layoutTestController)
+                        window.layoutTestController.notifyDone();
+                }, 200);
+            }
+        </script>
+        <style>
+            .vertex_shader
+            {
+                -webkit-filter: custom(url('resources/vertex-offset.vs'));
+            }
+            .fragment_shader
+            {
+                -webkit-filter: custom(none url('resources/color-offset.fs'));
+            }
+            .both_shaders
+            {
+                -webkit-filter: custom(url('resources/vertex-offset.vs') url('resources/color-offset.fs'));
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <!-- Test of cached custom filter shaders. You should see 12 blocks of color bars: 4 identical lines with 3 blocks each. Each line contains
+            a from left to right a block a bit offset to the right, a washed out block and a block with offset to the right and washed out. -->
+        <img class="vertex_shader" src="resources/reference.png" />
+        <img class="fragment_shader" src="resources/reference.png" />
+        <img class="both_shaders" src="resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="resources/reference.png" />
+        <img class="fragment_shader" src="resources/reference.png" />
+        <img class="both_shaders" src="resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="resources/reference.png" />
+        <img class="fragment_shader" src="resources/reference.png" />
+        <img class="both_shaders" src="resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="resources/reference.png" />
+        <img class="fragment_shader" src="resources/reference.png" />
+        <img class="both_shaders" src="resources/reference.png" />
+    </body>
+</html>

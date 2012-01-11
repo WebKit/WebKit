@@ -29600,6 +29600,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterOperation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterProgram.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterProgram.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterProgramClient.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterShader.cpp"
 						>
 					</File>
@@ -42459,10 +42475,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\style\CustomFilterOperation.h"
-					>
-				</File>
-				<File
 					RelativePath="..\rendering\style\DataRef.h"
 					>
 				</File>
@@ -42520,26 +42532,6 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\FillLayer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\FilterOperation.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\FilterOperation.h"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\FilterOperations.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\FilterOperations.h"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\CustomFilterOperation.h"
 					>
 				</File>
 				<File
@@ -43008,6 +43000,10 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\StyleCachedShader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleCustomFilterProgram.h"
 					>
 				</File>
 				<File
