@@ -559,7 +559,7 @@ private:
         case CASE: 
             return "case";
         case DEFAULT: 
-            return "defualt";
+            return "default";
         case FOR: 
             return "for";
         case NEW: 

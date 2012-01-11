@@ -301,8 +301,8 @@ PASS /default/.test(function g(default){  }) threw exception SyntaxError: Expect
 PASS (function(){/default/.test(function g(default){  })}); true threw exception SyntaxError: Expected an identifier but found 'default' instead.
 PASS try{}catch(default){}; true threw exception SyntaxError: Expected an identifier but found 'default' instead.
 PASS (function(){try{}catch(default){}; true}); true threw exception SyntaxError: Expected an identifier but found 'default' instead.
-PASS function default(){  }; true threw exception SyntaxError: Unexpected token 'defualt'.
-PASS (function(){function default(){  }; true}); true threw exception SyntaxError: Unexpected token 'defualt'.
+PASS function default(){  }; true threw exception SyntaxError: Unexpected token 'default'.
+PASS (function(){function default(){  }; true}); true threw exception SyntaxError: Unexpected token 'default'.
 PASS ({ "default": 42 }.default === 42) is true
 PASS (function(){({ "default": 42 }.default === 42)}); true is true
 PASS ({ default: 42 }.default === 42) is true
@@ -319,8 +319,8 @@ PASS "use strict";/default/.test(function g(default){ "use strict"; }) threw exc
 PASS (function(){"use strict";/default/.test(function g(default){ "use strict"; })}); true threw exception SyntaxError: Expected an identifier but found 'default' instead.
 PASS "use strict";try{}catch(default){}; true threw exception SyntaxError: Expected an identifier but found 'default' instead.
 PASS (function(){"use strict";try{}catch(default){}; true}); true threw exception SyntaxError: Expected an identifier but found 'default' instead.
-PASS "use strict";function default(){ "use strict"; }; true threw exception SyntaxError: Unexpected token 'defualt'.
-PASS (function(){"use strict";function default(){ "use strict"; }; true}); true threw exception SyntaxError: Unexpected token 'defualt'.
+PASS "use strict";function default(){ "use strict"; }; true threw exception SyntaxError: Unexpected token 'default'.
+PASS (function(){"use strict";function default(){ "use strict"; }; true}); true threw exception SyntaxError: Unexpected token 'default'.
 PASS "use strict";({ "default": 42 }.default === 42) is true
 PASS (function(){"use strict";({ "default": 42 }.default === 42)}); true is true
 PASS "use strict";({ default: 42 }.default === 42) is true

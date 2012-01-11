@@ -1,3 +1,13 @@
+2012-01-11  Eugene Girard  <girard@google.com>
+
+        Typo in error message: Unexpected token 'defualt'
+        https://bugs.webkit.org/show_bug.cgi?id=75105
+
+        Reviewed by Simon Fraser.
+
+        * parser/Parser.h:
+        (JSC::Parser::getTokenName):
+
 2012-01-11  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure in JSC::allocateCell trying to allocate a JSString
