@@ -3851,3 +3851,6 @@ BUGWK75933 WIN : webaudio/convolution-mono-mono.html = TEXT
 
 // New test, image results added but it is timing out on Leopard.
 BUGWK75570 LEOPARD : http/tests/media/video-buffering-repaints-controls.html = PASS TIMEOUT
+
+// New reftest failing on Win7.
+BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
