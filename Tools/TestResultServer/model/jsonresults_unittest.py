@@ -384,33 +384,7 @@ class JsonResultsTest(unittest.TestCase):
                            "results": [[7,"F"]],
                            "times": [[7,0]]}}})
 
-    def test_merge_remove_test_with_no_data(self):
-        # Remove test where there is no data in all runs.
-        self._test_merge(
-            # Aggregated results
-            {"builds": ["2", "1"],
-             "tests": {"001.html": {
-                           "results": [[200,"N"]],
-                           "times": [[200,0]]},
-                       "002.html": {
-                           "results": [[10,"F"]],
-                           "times": [[10,0]]}}},
-            # Incremental results
-            {"builds": ["3"],
-             "tests": {"001.html": {
-                           "results": [[1,"N"]],
-                           "times": [[1,0]]},
-                       "002.html": {
-                           "results": [[1,"P"]],
-                           "times": [[1,0]]}}},
-            # Expected results
-            {"builds": ["3", "2", "1"],
-             "tests": {"002.html": {
-                           "results": [[1,"P"],[10,"F"]],
-                           "times": [[11,0]]}}})
-
-    def test_merge_remove_test_with_all_pass(self):
-        # Remove test where all run pass and max running time < 1 seconds
+    def test_merge_remove_test(self):
         self._test_merge(
             # Aggregated results
             {"builds": ["2", "1"],
@@ -419,7 +393,11 @@ class JsonResultsTest(unittest.TestCase):
                            "times": [[200,0]]},
                        "002.html": {
                            "results": [[10,"F"]],
-                           "times": [[10,0]]}}},
+                           "times": [[10,0]]},
+                       "003.html": {
+                           "results": [[190, 'X'], [9, 'N'], [1,"F"]],
+                           "times": [[200,0]]},
+                       }},
             # Incremental results
             {"builds": ["3"],
              "tests": {"001.html": {
@@ -427,21 +405,26 @@ class JsonResultsTest(unittest.TestCase):
                            "times": [[1,0]]},
                        "002.html": {
                            "results": [[1,"P"]],
-                           "times": [[1,0]]}}},
+                           "times": [[1,0]]},
+                       "003.html": {
+                           "results": [[1,"P"]],
+                           "times": [[1,0]]},
+                       }},
             # Expected results
             {"builds": ["3", "2", "1"],
              "tests": {"002.html": {
                            "results": [[1,"P"],[10,"F"]],
-                           "times": [[11,0]]}}})
+                           "times": [[11,0]]}}},
+            max_builds=200)
 
     def test_merge_keep_test_with_all_pass_but_slow_time(self):
-        # Do not remove test where all run pass but max running time >= 1 seconds
+        # Do not remove test where all run pass but max running time >= 5 seconds
         self._test_merge(
             # Aggregated results
             {"builds": ["2", "1"],
              "tests": {"001.html": {
                            "results": [[200,"P"]],
-                           "times": [[200,0]]},
+                           "times": [[200,5]]},
                        "002.html": {
                            "results": [[10,"F"]],
                            "times": [[10,0]]}}},
@@ -457,7 +440,7 @@ class JsonResultsTest(unittest.TestCase):
             {"builds": ["3", "2", "1"],
              "tests": {"001.html": {
                            "results": [[201,"P"]],
-                           "times": [[1,1],[200,0]]},
+                           "times": [[1,1],[200,5]]},
                        "002.html": {
                            "results": [[1,"P"],[10,"F"]],
                            "times": [[11,0]]}}})

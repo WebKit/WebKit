@@ -44,8 +44,9 @@ JSON_RESULTS_TESTS = "tests"
 JSON_RESULTS_RESULTS = "results"
 JSON_RESULTS_TIMES = "times"
 JSON_RESULTS_PASS = "P"
+JSON_RESULTS_SKIP = "X"
 JSON_RESULTS_NO_DATA = "N"
-JSON_RESULTS_MIN_TIME = 1
+JSON_RESULTS_MIN_TIME = 5
 JSON_RESULTS_HIERARCHICAL_VERSION = 4
 JSON_RESULTS_MAX_BUILDS = 750
 JSON_RESULTS_MAX_BUILDS_SMALL = 200
@@ -208,12 +209,16 @@ class JsonResults(object):
         aggregated_test[JSON_RESULTS_RESULTS] = cls._remove_items_over_max_number_of_builds(aggregated_test[JSON_RESULTS_RESULTS], num_runs)
         aggregated_test[JSON_RESULTS_TIMES] = cls._remove_items_over_max_number_of_builds(aggregated_test[JSON_RESULTS_TIMES], num_runs)
 
-        is_all_pass = cls._is_results_all_of_type(aggregated_test[JSON_RESULTS_RESULTS], JSON_RESULTS_PASS)
-        is_all_no_data = cls._is_results_all_of_type(aggregated_test[JSON_RESULTS_RESULTS], JSON_RESULTS_NO_DATA)
+        deletable_types = set((JSON_RESULTS_PASS, JSON_RESULTS_NO_DATA, JSON_RESULTS_SKIP))
+        for result in aggregated_test[JSON_RESULTS_RESULTS]:
+            if result[1] not in deletable_types:
+                return
 
-        max_time = max([time[1] for time in aggregated_test[JSON_RESULTS_TIMES]])
-        if (is_all_no_data or (is_all_pass and max_time < JSON_RESULTS_MIN_TIME)):
-            del aggregated_json[test_name]
+        for time in aggregated_test[JSON_RESULTS_TIMES]:
+            if time[1] >= JSON_RESULTS_MIN_TIME:
+                return
+
+        del aggregated_json[test_name]
 
     @classmethod
     def _remove_items_over_max_number_of_builds(cls, encoded_list, num_runs):
