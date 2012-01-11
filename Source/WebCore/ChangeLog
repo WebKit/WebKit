@@ -1,3 +1,28 @@
+2012-01-11  Adam Treat  <atreat@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76088
+        The common case of content type = text/plain is not optimized and the plugin database is initialized instead
+
+        In the dom/DOMImplementation.cpp file you can find the comment that text/plain is
+        optimized so that the plugin database is not loaded. Unfortunately, this has been
+        regressed since the patch for http://bugs.webkit.org/show_bug.cgi?id=16815 which
+        refactored a bunch of the plugin code.  Now, the plugin database is initialized
+        before we handle text/plain.  This line in DOMImplementation.cpp triggers
+        the plugin initialization:
+
+                pluginData = frame->page()->pluginData();
+
+        The case of image types != PDF and the case of HTML5 video content type are also
+        not optimized to be handled before plugin initialization.
+
+        The solution is to refactor so all of these content types are handled before
+        we initialize the plugin database.
+
+        Reviewed by Adam Treat.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+
 2012-01-11  Alexandre Elias  <aelias@google.com>
 
         [chromium] Make Skia canvas opaque for root layer tiles
