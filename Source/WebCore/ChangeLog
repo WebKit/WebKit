@@ -1,3 +1,12 @@
+2011-12-21  Shaw Andy  <andy.shaw@digia.com>
+
+        Fix build issue on Windows when Qt is configured with -ltcg
+        https://bugs.webkit.org/show_bug.cgi?id=75003
+
+        Rubber-stamped by Simon Hausmann.
+
+        * WebCore.pri:
+
 2012-01-09  Avi Drissman  <avi@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=75860

@@ -220,8 +220,8 @@ win32-* {
 
 # Remove whole program optimizations due to miscompilations
 win32-msvc2005|win32-msvc2008|win32-msvc2010|wince*:{
-    QMAKE_CFLAGS_RELEASE -= -GL
-    QMAKE_CXXFLAGS_RELEASE -= -GL
+    QMAKE_CFLAGS_LTCG -= -GL
+    QMAKE_CXXFLAGS_LTCG -= -GL
 
     # Disable incremental linking for windows 32bit OS debug build as WebKit is so big
     # that linker failes to link incrementally in debug mode.
