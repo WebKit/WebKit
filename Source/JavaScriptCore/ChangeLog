@@ -1,3 +1,14 @@
+2012-01-10  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/10673792> jsc should install directly in to versioned Resources subfolder
+
+        This ensures that jsc ends up in a consistent location whether built in to the same DSTROOT
+        as JavaScriptCore.framework or in to a different one.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Configurations/JSC.xcconfig: Update INSTALL_PATH.
+
 2012-01-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlining block linking compares BlockIndex against bytecode index
