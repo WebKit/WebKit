@@ -1,3 +1,0 @@
-This tests accessing an item in node list and then querying the length of the node list after removing the item. WebKit should not crash.
-
-PASS

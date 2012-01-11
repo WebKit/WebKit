@@ -1,3 +1,23 @@
+2012-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104263 and r104381.
+        http://trac.webkit.org/changeset/104263
+        http://trac.webkit.org/changeset/104381
+        https://bugs.webkit.org/show_bug.cgi?id=76029
+
+        Preparation to rollout r104210 (Requested by rniwa on
+        #webkit).
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::setLengthCache):
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::setItemCache):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::item):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::isLengthCacheValid):
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::isItemCacheValid):
+        (WebCore::DynamicSubtreeNodeList::SubtreeCaches::domVersionIsConsistent):
+
 2012-01-10  David Kilzer  <ddkilzer@apple.com>
 
         Add TestWebKitAPI tests for KURL
