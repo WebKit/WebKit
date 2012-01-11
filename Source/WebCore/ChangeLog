@@ -1,3 +1,15 @@
+2012-01-10  Jer Noble  <jer.noble@apple.com>
+
+        Crash in HTMLMediaElement::shouldDisableSleep()
+        https://bugs.webkit.org/show_bug.cgi?id=76025
+
+        Reviewed by Dan Bernstein.
+
+        Check nullity of m_player before dereferencing.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldDisableSleep):
+
 2012-01-04  Kent Tamura  <tkent@chromium.org>
 
         A radio button not in a document should not join a radio button group

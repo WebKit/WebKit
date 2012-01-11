@@ -3758,7 +3758,7 @@ void HTMLMediaElement::updateDisableSleep()
 
 bool HTMLMediaElement::shouldDisableSleep() const
 {
-    return !m_player->paused() && hasVideo() && hasAudio() && !loop();
+    return m_player && !m_player->paused() && hasVideo() && hasAudio() && !loop();
 }
 #endif
 
