@@ -2566,3 +2566,7 @@ http/tests/workers/terminate-during-sync-operation.html
 # [Qt] REGRESSION(r104267): fast/js/date-constructor.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=75692
 fast/js/date-constructor.html
+
+# [Qt] new test fast/forms/radio/radio-group.html failing after r104668
+# https://bugs.webkit.org/show_bug.cgi?id=76051
+fast/forms/radio/radio-group.html
