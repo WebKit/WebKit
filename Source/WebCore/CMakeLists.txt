@@ -2121,14 +2121,10 @@ ENDIF ()
 
 IF (ENABLE_WEBGL)
     LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-        ${OPENGL_INCLUDE_DIR}
         ${THIRDPARTY_DIR}/ANGLE/src
         ${THIRDPARTY_DIR}/ANGLE/include
         ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
         ${WEBCORE_DIR}/platform/graphics/gpu
-    )
-    LIST(APPEND WebCore_LIBRARIES
-        ${OPENGL_gl_LIBRARY}
     )
     LIST(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp

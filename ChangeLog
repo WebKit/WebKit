@@ -1,3 +1,17 @@
+2012-01-11  Eli Fidler  <efidler@rim.com>
+
+        Fix OpenGL dependency in CMake build system
+        https://bugs.webkit.org/show_bug.cgi?id=73559
+
+        Reviewed by Daniel Bates.
+
+        Apparently the EFL port uses desktop OpenGL to implement WebGL, but
+        other ports such as BlackBerry use other libraries like OpenGL ES 2.0 or
+        ANGLE.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-01-09  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [AC] Simplify accelerated compositing build options
