@@ -24,12 +24,10 @@
 #include "InspectorController.h"
 #include "MD5.h"
 #include "Page.h"
+#include "qhttpheader_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include <QFile>
-#include <QHttpHeader>
-#include <QHttpRequestHeader>
-#include <QHttpResponseHeader>
 #include <QString>
 #include <QStringList>
 #include <QTcpServer>
@@ -176,7 +174,7 @@ InspectorServerRequestHandlerQt::~InspectorServerRequestHandlerQt()
 
 void InspectorServerRequestHandlerQt::tcpReadyRead()
 {
-    QHttpRequestHeader header;
+    WebKit::QHttpRequestHeader header;
     bool isWebSocket = false;
     if (!m_tcpConnection)
         return;
@@ -189,7 +187,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                 m_endOfHeaders = true;
         }
         if (m_endOfHeaders) {
-            header = QHttpRequestHeader(QString::fromLatin1(m_data));
+            header = WebKit::QHttpRequestHeader(QString::fromLatin1(m_data));
             if (header.isValid()) {
                 m_path = header.path();
                 m_contentType = header.contentType().toLatin1();
@@ -222,7 +220,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                 generateWebSocketChallengeResponse(number1, number2, (unsigned char*)key3.data(), (unsigned char*)responseData);
                 QByteArray response(responseData, sizeof(responseData));
 
-                QHttpResponseHeader responseHeader(101, QLatin1String("WebSocket Protocol Handshake"), 1, 1);
+                WebKit::QHttpResponseHeader responseHeader(101, QLatin1String("WebSocket Protocol Handshake"), 1, 1);
                 responseHeader.setValue(QLatin1String("Upgrade"), header.value(QLatin1String("Upgrade")));
                 responseHeader.setValue(QLatin1String("Connection"), header.value(QLatin1String("Connection")));
                 responseHeader.setValue(QLatin1String("Sec-WebSocket-Origin"), header.value(QLatin1String("Origin")));
@@ -284,7 +282,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
             }
         }
 
-        QHttpResponseHeader responseHeader(code, text, 1, 0);
+        WebKit::QHttpResponseHeader responseHeader(code, text, 1, 0);
         responseHeader.setContentLength(response.size());
         if (!m_contentType.isEmpty())
             responseHeader.setContentType(QString::fromLatin1(m_contentType));

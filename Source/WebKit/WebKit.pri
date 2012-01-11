@@ -13,7 +13,8 @@ SOURCES += \
     $$PWD/qt/Api/qwebscriptworld.cpp \
     $$PWD/qt/Api/qwebdatabase.cpp \
     $$PWD/qt/Api/qwebinspector.cpp \
-    $$PWD/qt/Api/qwebkitversion.cpp
+    $$PWD/qt/Api/qwebkitversion.cpp \
+    $$PWD/qt/Api/qhttpheader.cpp
 
 HEADERS += \
     $$PWD/qt/Api/qwebframe.h \
@@ -32,5 +33,6 @@ HEADERS += \
     $$PWD/qt/Api/qwebhistory.h \
     $$PWD/qt/Api/qwebinspector.h \
     $$PWD/qt/Api/qwebkitversion.h \
-    $$PWD/qt/Api/qwebplugindatabase_p.h
+    $$PWD/qt/Api/qwebplugindatabase_p.h \
+    $$PWD/qt/Api/qhttpheader_p.h
 
