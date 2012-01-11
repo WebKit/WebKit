@@ -77,4 +77,5 @@
 #include "SVGTextLayoutEngineSpacing.cpp"
 #include "SVGTextRunRenderingContext.cpp"
 #include "SVGTextMetrics.cpp"
+#include "SVGTextMetricsBuilder.cpp"
 #include "SVGTextQuery.cpp"

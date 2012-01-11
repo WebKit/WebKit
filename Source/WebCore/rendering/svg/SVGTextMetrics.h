@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,21 +21,34 @@
 #define SVGTextMetrics_h
 
 #if ENABLE(SVG)
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class RenderSVGInlineText;
+class SVGTextLayoutAttributes;
 class TextRun;
 
 class SVGTextMetrics {
 public:
-    static SVGTextMetrics emptyMetrics();
-    static SVGTextMetrics measureCharacterRange(RenderSVGInlineText*, unsigned position, unsigned length);
+    enum MetricsType {
+        SkippedSpaceMetrics
+    };
 
-    bool operator==(const SVGTextMetrics&);
+    SVGTextMetrics();
+    SVGTextMetrics(MetricsType);
+    SVGTextMetrics(RenderSVGInlineText*, unsigned position, unsigned length, float width, const String& glyphName);
+
+    static SVGTextMetrics measureCharacterRange(RenderSVGInlineText*, unsigned position, unsigned length);
+    static TextRun constructTextRun(RenderSVGInlineText*, const UChar* characters, unsigned position, unsigned length);
+
+    bool isEmpty() const { return !m_width && !m_height && !m_glyph.isValid && m_length == 1; }
 
     float width() const { return m_width; }
+    void setWidth(float width) { m_width = width; }
+
     float height() const { return m_height; }
     unsigned length() const { return m_length; }
 
@@ -61,11 +74,6 @@ public:
     const Glyph& glyph() const { return m_glyph; }
 
 private:
-    friend class SVGTextLayoutAttributesBuilder;
-    void setWidth(float width) { m_width = width; }
-
-private:
-    SVGTextMetrics();
     SVGTextMetrics(RenderSVGInlineText*, const TextRun&);
 
     float m_width;

@@ -1,3 +1,49 @@
+2012-01-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Large SVG text layout performance regression in r81168
+        https://bugs.webkit.org/show_bug.cgi?id=65711
+
+        Reviewed by Zoltan Herczeg.
+
+        Introduce SVGTextMetricsBuilder, which will be used to speed-up measuring of SVG text,
+        by using the simple code path, whenever possibly. It's not enabled yet, as it requires
+        a restructurization of SVGTextLayoutAttributesBuilder - its the first chunk of a set
+        of patches, that all together fix the performance regression and much more :-)
+
+        Doesn't affect any tests, SVGTextMetricsBuilder is not turned on yet.
+
+        * CMakeLists.txt: Add SVGTextMetricsBuilder.cpp/h to build.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/Font.h:
+        (WebCore::Font::codePath): Make it public, to be usable from SVGTextMetricsBuilder.
+        * rendering/svg/RenderSVGAllInOne.cpp: Add SVGTextMetricsBuilder.cpp to build.
+        * rendering/svg/RenderSVGText.cpp:
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::propagateLayoutAttributes): SVGTextMetrics::emptyMetrics() is gone, adapt code.
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterMetrics): Ditto.
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath): Ditto.
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics): Made public, now used in SVGTextLayoutEngine.
+        (WebCore::SVGTextMetrics::constructTextRun): Move to public static function, to be usable from SVGTextMetricsBuilder.
+        * rendering/svg/SVGTextMetrics.h:
+        (WebCore::SVGTextMetrics::isEmpty): Add new isEmpty method, which replaces the == empyMetrics().
+        (WebCore::SVGTextMetrics::setWidth): Remove friendship with SVGTextLayoutAttributesBuilder, and make it public, to avoid another friendship.
+        * rendering/svg/SVGTextMetricsBuilder.cpp: Added.
+        (WebCore::SVGTextMetricsBuilder::SVGTextMetricsBuilder):
+        (WebCore::SVGTextMetricsBuilder::advance):
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText): New variant using WidthIterator directly, this is finally possible as SVG Fonts have been integrated into the glyph pages concept a while ago.
+        (WebCore::SVGTextMetricsBuilder::advanceComplexText): Complex code path, accounting for sum of glyph widths != run width.
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer): Either measure the text renderer, or just figure out lastCharacter.
+        (WebCore::SVGTextMetricsBuilder::walkTreeUntilSpecificLeafIsReached): Walks SVG <text> tree, correctly computing "lastCharacter" until the leaf is reached.
+        (WebCore::SVGTextMetricsBuilder::measureAllCharactersOfRenderer): Use above method.
+        * rendering/svg/SVGTextMetricsBuilder.h: Added.
+
 2012-01-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10674686> Implement the font-kerning CSS property

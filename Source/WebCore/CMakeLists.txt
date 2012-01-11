@@ -1681,6 +1681,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextLayoutEngineSpacing.cpp
         rendering/svg/SVGTextRunRenderingContext.cpp
         rendering/svg/SVGTextMetrics.cpp
+        rendering/svg/SVGTextMetricsBuilder.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
         svg/SVGAElement.cpp

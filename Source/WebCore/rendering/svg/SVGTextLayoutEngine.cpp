@@ -359,8 +359,7 @@ bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttribu
 
 bool SVGTextLayoutEngine::currentLogicalCharacterMetrics(SVGTextLayoutAttributes& logicalAttributes, SVGTextMetrics& logicalMetrics)
 {
-    logicalMetrics = SVGTextMetrics::emptyMetrics();
-
+    logicalMetrics = SVGTextMetrics(SVGTextMetrics::SkippedSpaceMetrics);
     Vector<SVGTextMetrics>& textMetricsValues = logicalAttributes.textMetricsValues();
     unsigned textMetricsSize = textMetricsValues.size();
     while (true) {
@@ -376,7 +375,7 @@ bool SVGTextLayoutEngine::currentLogicalCharacterMetrics(SVGTextLayoutAttributes
         ASSERT(textMetricsSize);
         ASSERT(m_logicalMetricsListOffset < textMetricsSize);
         logicalMetrics = textMetricsValues.at(m_logicalMetricsListOffset);
-        if (logicalMetrics == SVGTextMetrics::emptyMetrics() || (!logicalMetrics.width() && !logicalMetrics.height())) {
+        if (logicalMetrics.isEmpty() || (!logicalMetrics.width() && !logicalMetrics.height())) {
             advanceToNextLogicalCharacter(logicalMetrics);
             continue;
         }
@@ -464,11 +463,11 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     // Main layout algorithm.
     while (true) {
         // Find the start of the current text box in this list, respecting ligatures.
-        SVGTextMetrics visualMetrics = SVGTextMetrics::emptyMetrics();
+        SVGTextMetrics visualMetrics(SVGTextMetrics::SkippedSpaceMetrics);
         if (!currentVisualCharacterMetrics(textBox, text, visualMetrics))
             break;
 
-        if (visualMetrics == SVGTextMetrics::emptyMetrics()) {
+        if (visualMetrics.isEmpty()) {
             advanceToNextVisualCharacter(visualMetrics);
             continue;
         }
@@ -477,7 +476,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
         if (!currentLogicalCharacterAttributes(logicalAttributes))
             break;
 
-        SVGTextMetrics logicalMetrics = SVGTextMetrics::emptyMetrics();
+        SVGTextMetrics logicalMetrics(SVGTextMetrics::SkippedSpaceMetrics);
         if (!currentLogicalCharacterMetrics(logicalAttributes, logicalMetrics))
             break;
 

@@ -2470,6 +2470,7 @@ HEADERS += \
     rendering/svg/SVGTextLayoutEngineBaseline.h \
     rendering/svg/SVGTextLayoutEngineSpacing.h \
     rendering/svg/SVGTextMetrics.h \
+    rendering/svg/SVGTextMetricsBuilder.h \
     rendering/svg/SVGTextQuery.h \
     rendering/svg/SVGTextRunRenderingContext.h \
     storage/AbstractDatabase.h \
@@ -3425,6 +3426,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/SVGTextLayoutEngineBaseline.cpp \
               rendering/svg/SVGTextLayoutEngineSpacing.cpp \
               rendering/svg/SVGTextMetrics.cpp \
+              rendering/svg/SVGTextMetricsBuilder.cpp \
               rendering/svg/SVGTextQuery.cpp \
               rendering/svg/SVGTextRunRenderingContext.cpp \
               svg/SVGDocumentExtensions.cpp \

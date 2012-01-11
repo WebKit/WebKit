@@ -3744,6 +3744,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGTextLayoutEngineSpacing.h \
 	Source/WebCore/rendering/svg/SVGTextMetrics.cpp \
 	Source/WebCore/rendering/svg/SVGTextMetrics.h \
+	Source/WebCore/rendering/svg/SVGTextMetricsBuilder.cpp \
+	Source/WebCore/rendering/svg/SVGTextMetricsBuilder.h \
 	Source/WebCore/rendering/svg/SVGTextQuery.cpp \
 	Source/WebCore/rendering/svg/SVGTextQuery.h \
 	Source/WebCore/rendering/svg/SVGTextRunRenderingContext.cpp \

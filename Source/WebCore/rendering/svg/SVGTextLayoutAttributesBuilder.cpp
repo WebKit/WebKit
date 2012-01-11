@@ -198,7 +198,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
     
             unsigned valueListPosition = atCharacter;
             unsigned metricsLength = 1;
-            SVGTextMetrics lastMetrics = SVGTextMetrics::emptyMetrics();
+            SVGTextMetrics lastMetrics(SVGTextMetrics::SkippedSpaceMetrics);
 
             for (unsigned textPosition = 0; textPosition < textLength; textPosition += metricsLength) {
                 const UChar& currentCharacter = characters[textPosition];
@@ -236,7 +236,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
 
                 if (!preserveWhiteSpace && characterIsSpace(currentCharacter) && characterIsSpaceOrNull(lastCharacter)) {
                     attributes.positioningLists().appendEmptyValues();
-                    attributes.textMetricsValues().append(SVGTextMetrics::emptyMetrics());
+                    attributes.textMetricsValues().append(SVGTextMetrics(SVGTextMetrics::SkippedSpaceMetrics));
                     continue;
                 }
 
