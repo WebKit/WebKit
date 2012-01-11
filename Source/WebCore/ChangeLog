@@ -1,3 +1,29 @@
+2012-01-11  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r101445): [V8] Generated code for custom getters and setters
+        with the [Supplemental] IDL is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=76034
+
+        Reviewed by Adam Barth.
+
+        This patch fixes the class name of the implementation of custom getters
+        and setters, as follows.
+
+        Previous V8TestInterface.cpp:
+            // Attribute 'supplementalStr3'
+            {"supplementalStr3", V8TestSupplemental::supplementalStr3AccessorGetter, V8TestSupplemental::supplementalStr3AccessorSetter, ...},
+
+        New V8TestInterface.cpp:
+            // Attribute 'supplementalStr3'
+            {"supplementalStr3", V8TestInterface::supplementalStr3AccessorGetter, V8TestInterface::supplementalStr3AccessorSetter, ...},
+
+        Test: bindings/scripts/test/TestInterface.idl
+              bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateSingleBatchedAttribute):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+
 2012-01-10  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Large SVG text layout performance regression in r81168

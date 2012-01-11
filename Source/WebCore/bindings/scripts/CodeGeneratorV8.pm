@@ -1931,12 +1931,7 @@ sub GenerateSingleBatchedAttribute
         "";
     if ($customAccessor eq 1) {
         # use the naming convension, interface + (capitalize) attr name
-        if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-            $customAccessor = $attribute->signature->extendedAttributes->{"ImplementedBy"} . "::" . $attrName;
-            AddToImplIncludes("V8" . $attribute->signature->extendedAttributes->{"ImplementedBy"} . ".h");
-        } else {
-            $customAccessor = $interfaceName . "::" . $attrName;
-        }
+        $customAccessor = $interfaceName . "::" . $attrName;
     }
 
     my $getter;
