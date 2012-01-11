@@ -1,5 +1,19 @@
 2012-01-11  Ojan Vafai  <ojan@chromium.org>
 
+        Remove gtest normalization code from the test results server
+        https://bugs.webkit.org/show_bug.cgi?id=76089
+
+        Reviewed by Tony Chang.
+
+        The normalization now happens on the gtest side.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults.merge):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest.test_gtest):
+
+2012-01-11  Ojan Vafai  <ojan@chromium.org>
+
         Be more aggressive about deleting unnecessary results from the test-results-server json files
         https://bugs.webkit.org/show_bug.cgi?id=76086
 
