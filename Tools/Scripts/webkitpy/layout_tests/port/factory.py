@@ -30,7 +30,6 @@
 """Factory method to retrieve the appropriate port implementation."""
 
 import re
-import sys
 
 from webkitpy.layout_tests.port import builders
 
@@ -47,35 +46,34 @@ class PortFactory(object):
 
     def _port_name_from_arguments_and_options(self, port_name, options, platform):
         if port_name == 'chromium-gpu':
-            if platform in ('cygwin', 'win32'):
+            if platform.is_win():
                 return 'chromium-gpu-win'
-            if platform.startswith('linux'):
+            if platform.is_linux():
                 return 'chromium-gpu-linux'
-            if platform == 'darwin':
+            if platform.is_mac():
                 return 'chromium-gpu-mac'
 
         if port_name:
             return port_name
 
-        if platform in ('win32', 'cygwin'):
+        if platform.is_win():
             if options and hasattr(options, 'chromium') and options.chromium:
                 return 'chromium-win'
             return 'win'
-        if platform.startswith('linux'):
+        if platform.is_linux():
             return 'chromium-linux'
-        if platform == 'darwin':
+        if platform.is_mac():
             if options and hasattr(options, 'chromium') and options.chromium:
                 return 'chromium-mac'
             return 'mac'
 
-        raise NotImplementedError('unknown port; platform = "%s"' % platform)
+        raise NotImplementedError('unknown port; os_name = "%s"' % platform.os_name)
 
-    def get(self, port_name=None, options=None, platform=None, **kwargs):
+    def get(self, port_name=None, options=None, **kwargs):
         """Returns an object implementing the Port interface. If
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
-        platform = platform or sys.platform
-        port_to_use = self._port_name_from_arguments_and_options(port_name, options, platform)
+        port_to_use = self._port_name_from_arguments_and_options(port_name, options, self._host.platform)
         if port_to_use.startswith('test'):
             import test
             maker = test.TestPort

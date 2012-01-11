@@ -32,13 +32,13 @@ class MockPlatformInfo(object):
     os_version = 'snowleopard'
 
     def is_mac(self):
-        return True
+        return self.os_name == 'mac'
 
     def is_linux(self):
-        return False
+        return self.os_name == 'linux'
 
-    def is_windows(self):
-        return False
+    def is_win(self):
+        return self.os_name == 'win'
 
     def display_name(self):
         return "MockPlatform 1.0"

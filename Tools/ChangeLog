@@ -1,3 +1,98 @@
+2012-01-11  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up version detection in webkitpy.layout_tests.port
+        https://bugs.webkit.org/show_bug.cgi?id=76016
+
+        Reviewed by Adam Barth.
+
+        This change updates the code in webkitpy.layout_tests.port to
+        use the new os_name and os_version fields on host.platform. This
+        gets layout_tests.port out of the version parsing business. Most
+        of the diffs are just cleaning up test code to accomodate the
+        changes.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive):
+        (MockExecutive.ignore_error):
+        (MockExecutive2):
+        (MockExecutive2.ignore_error):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_mac):
+        (MockPlatformInfo.is_linux):
+        (MockPlatformInfo.is_win):
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.__init__):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.__init__):
+        (ChromiumMacPort.check_wdiff):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest):
+        (ChromiumMacPortTest.assert_name):
+        (ChromiumMacPortTest.test_versions):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_all_test_configurations):
+        (ChromiumPortTest.TestMacPort.__init__):
+        (ChromiumPortTest.TestLinuxPort.__init__):
+        (ChromiumPortTest.TestWinPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest):
+        (ChromiumWinTest.assert_name):
+        (ChromiumWinTest.test_versions):
+        (ChromiumWinTest.test_baseline_path):
+        (ChromiumWinTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._port_name_from_arguments_and_options):
+        (PortFactory.get):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest):
+        (FactoryTest.setUp):
+        (FactoryTest.assert_port):
+        (FactoryTest.test_mac):
+        (FactoryTest.test_win):
+        (FactoryTest.test_google_chrome):
+        (FactoryTest.test_gtk):
+        (FactoryTest.test_qt):
+        (FactoryTest.test_chromium_gpu):
+        (FactoryTest.test_chromium_gpu_linux):
+        (FactoryTest.test_chromium_gpu_mac):
+        (FactoryTest.test_chromium_gpu_win):
+        (FactoryTest.test_chromium_mac):
+        (FactoryTest.test_chromium_linux):
+        (FactoryTest.test_chromium_win):
+        (FactoryTest.test_unknown_specified):
+        (FactoryTest.test_unknown_default):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (TestGoogleChromePort):
+        (TestGoogleChromePort._verify_baseline_path):
+        (TestGoogleChromePort._verify_expectations_overrides):
+        (TestGoogleChromePort.test_get_google_chrome_port):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest):
+        (assert_name):
+        (test_tests_for_other_platforms):
+        (test_version):
+        (test_versions):
+        (test_is_version_methods):
+        (test_setup_environ_for_server):
+        (_assert_search_path):
+        (test_show_results_html_file):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.make_port):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest):
+        (WinPortTest.test_show_results_html_file):
+        (WinPortTest._assert_search_path):
+        (WinPortTest._assert_version):
+
 2012-01-11  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] Remove workaround introduced into bug 75470

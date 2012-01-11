@@ -56,7 +56,7 @@ class ApplePort(WebKitPort):
         # instead of the individual port constructors.
         return port_name[len(self.port_name + '-'):]
 
-    def __init__(self, host, port_name=None, os_version_string=None, **kwargs):
+    def __init__(self, host, port_name=None, **kwargs):
         port_name = port_name or self.port_name
         WebKitPort.__init__(self, host, port_name=port_name, **kwargs)
 
@@ -67,8 +67,7 @@ class ApplePort(WebKitPort):
             self.set_option_default('webkit_test_runner', True)
 
         if port_name == self.port_name:
-            # FIXME: Use host.platforminfo.os_version instead.
-            self._version = self._detect_version(os_version_string) or self.FUTURE_VERSION
+            self._version = host.platform.os_version
             self._name = self.port_name + '-' + self._version
         else:
             allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]

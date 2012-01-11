@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import platform
 import re
 
 from webkitpy.layout_tests.port.apple import ApplePort
@@ -36,44 +35,12 @@ from webkitpy.layout_tests.port.leakdetector import LeakDetector
 
 _log = logging.getLogger(__name__)
 
-# FIXME: Delete this when we switch to using host.platforminfo.os_version instead.
-def os_version(os_version_string=None, supported_versions=None):
-    if not os_version_string:
-        if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
-            os_version_string = platform.mac_ver()[0]
-        else:
-            # Make up something for testing.
-            os_version_string = "10.5.6"
-    release_version = int(os_version_string.split('.')[1])
-    version_strings = {
-        5: 'leopard',
-        6: 'snowleopard',
-        7: 'lion',
-    }
-    assert release_version >= min(version_strings.keys())
-    version_string = version_strings.get(release_version, 'future')
-    if supported_versions:
-        assert version_string in supported_versions
-    return version_string
-
-
 class MacPort(ApplePort):
     port_name = "mac"
 
     # This is a list of all supported OS-VERSION pairs for the AppleMac port
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
-
-    # FIXME: Delete this when we switch to using host.platforminfo.os_version instead.
-    def _detect_version(self, os_version_string):
-        # FIXME: MacPort and WinPort implement _detect_version differently.
-        # WinPort uses os_version_string as a replacement for self.version.
-        # Thus just returns os_version_string from this function if not None.
-        # Mac (incorrectly) uses os_version_string as a way to unit-test
-        # the os_version parsing logic.  We should split the os_version parsing tests
-        # into separate unittests so that they do not need to construct
-        # MacPort objects just to test our version parsing.
-        return os_version(os_version_string)
 
     def __init__(self, host, **kwargs):
         ApplePort.__init__(self, host, **kwargs)

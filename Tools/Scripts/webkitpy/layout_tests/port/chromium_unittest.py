@@ -34,7 +34,7 @@ import unittest
 from webkitpy.common.system import logtesting
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
@@ -158,7 +158,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     def test_all_test_configurations(self):
         """Validate the complete set of configurations this port knows about."""
-        port = chromium.ChromiumPort(MockHost())
+        port = chromium.ChromiumPort(MockSystemHost())
         self.assertEquals(set(port.all_test_configurations()), set([
             TestConfiguration('leopard', 'x86', 'debug', 'cpu'),
             TestConfiguration('leopard', 'x86', 'debug', 'gpu'),
@@ -209,7 +209,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
     class TestMacPort(chromium_mac.ChromiumMacPort):
         def __init__(self, options=None):
             options = options or MockOptions()
-            chromium_mac.ChromiumMacPort.__init__(self, MockHost(), options=options)
+            chromium_mac.ChromiumMacPort.__init__(self, MockSystemHost(os_name='mac', os_version='leopard'), options=options)
 
         def default_configuration(self):
             self.default_configuration_called = True
@@ -218,7 +218,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
     class TestLinuxPort(chromium_linux.ChromiumLinuxPort):
         def __init__(self, options=None):
             options = options or MockOptions()
-            chromium_linux.ChromiumLinuxPort.__init__(self, MockHost(), options=options)
+            chromium_linux.ChromiumLinuxPort.__init__(self, MockSystemHost(os_name='linux', os_version='lucid'), options=options)
 
         def default_configuration(self):
             self.default_configuration_called = True
@@ -227,7 +227,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
     class TestWinPort(chromium_win.ChromiumWinPort):
         def __init__(self, options=None):
             options = options or MockOptions()
-            chromium_win.ChromiumWinPort.__init__(self, MockHost(), options=options)
+            chromium_win.ChromiumWinPort.__init__(self, MockSystemHost(os_name='win', os_version='xp'), options=options)
 
         def default_configuration(self):
             self.default_configuration_called = True

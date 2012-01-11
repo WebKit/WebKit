@@ -45,37 +45,6 @@ class WinPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
-    # FIXME: Use host.platforminfo.os_version instead.
-    def _version_string_from_windows_version_tuple(self, windows_version_tuple):
-        if windows_version_tuple[:3] == (6, 1, 7600):
-            return '7sp0'
-        if windows_version_tuple[:2] == (6, 0):
-            return 'vista'
-        if windows_version_tuple[:2] == (5, 1):
-            return 'xp'
-        return None
-
-    def _detect_version(self, os_version_string=None, run_on_non_windows_platforms=None):
-        # FIXME: os_version_string is for unit testing, but may eventually be provided by factory.py instead.
-        if os_version_string is not None:
-            return os_version_string
-
-        # No sense in trying to detect our windows version on non-windows platforms, unless we're unittesting.
-        if sys.platform != 'cygwin' and not run_on_non_windows_platforms:
-            return None
-
-        # Note, this intentionally returns None to mean that it can't detect what the current version is.
-        # Callers can then decide what version they want to pretend to be.
-        try:
-            ver_output = self._executive.run_command(['cmd', '/c', 'ver'])
-        except (ScriptError, OSError), e:
-            ver_output = ""
-            _log.error("Failed to detect Windows version, assuming latest.\n%s" % e)
-        match_object = re.search(r'(?P<major>\d)\.(?P<minor>\d)\.(?P<build>\d+)', ver_output)
-        if match_object:
-            version_tuple = tuple(map(int, match_object.groups()))
-            return self._version_string_from_windows_version_tuple(version_tuple)
-
     def compare_text(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
         if self.get_option('webkit_test_runner'):

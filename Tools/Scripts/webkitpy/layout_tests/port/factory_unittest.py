@@ -26,18 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.layout_tests.port.factory import PortFactory
 
 import chromium_gpu
 import chromium_linux
 import chromium_mac
 import chromium_win
 import dryrun
-import factory
 import google_chrome
 import gtk
 import mac
@@ -47,119 +46,95 @@ import win
 
 
 class FactoryTest(unittest.TestCase):
-    """Test factory creates proper port object for the target.
-
-    Target is specified by port_name, sys.platform and options.
-
-    """
+    """Test that the factory creates the proper port object for given combination of port_name, host.platform, and options."""
     # FIXME: The ports themselves should expose what options they require,
     # instead of passing generic "options".
 
     def setUp(self):
-        self.real_sys_platform = sys.platform
         self.webkit_options = MockOptions(pixel_tests=False)
         self.chromium_options = MockOptions(pixel_tests=False, chromium=True)
-        self.factory = factory.PortFactory(MockSystemHost())
 
-    def tearDown(self):
-        sys.platform = self.real_sys_platform
-
-    def assert_port(self, port_name, expected_port, port_obj=None, platform=None):
-        """Helper assert for port_name.
-
-        Args:
-          port_name: port name to get port object.
-          expected_port: class of expected port object.
-          port_obj: optional port object
-        """
-        port_obj = port_obj or self.factory.get(port_name=port_name, platform=platform)
-        self.assertTrue(isinstance(port_obj, expected_port))
-
-    def assert_platform_port(self, platform, options, expected_port):
-        """Helper assert for platform and options.
-
-        Args:
-          platform: sys.platform.
-          options: options to get port object.
-          expected_port: class of expected port object.
-
-        """
-        # FIXME: Hacking sys.platform like this is WRONG.
-        orig_platform = sys.platform
-        sys.platform = platform
-        # FIXME: We need a better way to mock this.
-        self.assertTrue(isinstance(self.factory.get(options=options), expected_port))
-        sys.platform = orig_platform
+    def assert_port(self, port_name=None, os_name=None, os_version=None, options=None, cls=None):
+        host = MockSystemHost(os_name=os_name, os_version=os_version)
+        port = PortFactory(host).get(port_name, options=options)
+        self.assertTrue(isinstance(port, cls))
 
     def test_mac(self):
-        self.assert_port("mac", mac.MacPort)
-        self.assert_platform_port("darwin", None, mac.MacPort)
-        self.assert_platform_port("darwin", self.webkit_options, mac.MacPort)
+        self.assert_port(port_name='mac', cls=mac.MacPort)
+        self.assert_port(port_name=None,  os_name='mac', os_version='leopard', cls=mac.MacPort)
 
     def test_win(self):
-        self.assert_port("win", win.WinPort)
-        self.assert_platform_port("win32", None, win.WinPort)
-        self.assert_platform_port("win32", self.webkit_options, win.WinPort)
-        self.assert_platform_port("cygwin", None, win.WinPort)
-        self.assert_platform_port("cygwin", self.webkit_options, win.WinPort)
+        self.assert_port(port_name='win', cls=win.WinPort)
+        self.assert_port(port_name=None, os_name='win', os_version='xp', cls=win.WinPort)
+        self.assert_port(port_name=None, os_name='win', os_version='xp', options=self.webkit_options, cls=win.WinPort)
 
     def test_google_chrome(self):
-        self.assert_port("google-chrome-linux32", google_chrome.GoogleChromeLinux32Port)
-        self.assert_port("google-chrome-linux64", google_chrome.GoogleChromeLinux64Port)
-        self.assert_port("google-chrome-win", google_chrome.GoogleChromeWinPort)
-        self.assert_port("google-chrome-mac", google_chrome.GoogleChromeMacPort)
+        self.assert_port(port_name='google-chrome-linux32',
+                         cls=google_chrome.GoogleChromeLinux32Port)
+        self.assert_port(port_name='google-chrome-linux64', os_name='linux', os_version='lucid',
+                         cls=google_chrome.GoogleChromeLinux64Port)
+        self.assert_port(port_name='google-chrome-linux64',
+                         cls=google_chrome.GoogleChromeLinux64Port)
+        self.assert_port(port_name='google-chrome-win-xp',
+                         cls=google_chrome.GoogleChromeWinPort)
+        self.assert_port(port_name='google-chrome-win', os_name='win', os_version='xp',
+                         cls=google_chrome.GoogleChromeWinPort)
+        self.assert_port(port_name='google-chrome-win-xp', os_name='win', os_version='xp',
+                         cls=google_chrome.GoogleChromeWinPort)
+        self.assert_port(port_name='google-chrome-mac', os_name='mac', os_version='leopard',
+                         cls=google_chrome.GoogleChromeMacPort)
+        self.assert_port(port_name='google-chrome-mac-leopard', os_name='mac', os_version='leopard',
+                         cls=google_chrome.GoogleChromeMacPort)
+        self.assert_port(port_name='google-chrome-mac-leopard',
+                         cls=google_chrome.GoogleChromeMacPort)
 
     def test_gtk(self):
-        self.assert_port("gtk", gtk.GtkPort)
+        self.assert_port(port_name='gtk', cls=gtk.GtkPort)
 
     def test_qt(self):
-        self.assert_port("qt", qt.QtPort)
+        self.assert_port(port_name='qt', cls=qt.QtPort)
 
     def test_chromium_gpu(self):
-        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuMacPort, platform='darwin')
-        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuWinPort, platform='win32')
-        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuWinPort, platform='cygwin')
-        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuLinuxPort, platform='linux2')
-        self.assert_port('chromium-gpu', chromium_gpu.ChromiumGpuLinuxPort, platform='linux3')
+        self.assert_port(port_name='chromium-gpu', os_name='mac', os_version='leopard',
+                         cls=chromium_gpu.ChromiumGpuMacPort)
+        self.assert_port(port_name='chromium-gpu', os_name='win', os_version='xp',
+                         cls=chromium_gpu.ChromiumGpuWinPort)
+        self.assert_port(port_name='chromium-gpu', os_name='linux', os_version='lucid',
+                         cls=chromium_gpu.ChromiumGpuLinuxPort)
 
     def test_chromium_gpu_linux(self):
-        self.assert_port("chromium-gpu-linux", chromium_gpu.ChromiumGpuLinuxPort)
+        self.assert_port(port_name='chromium-gpu-linux', cls=chromium_gpu.ChromiumGpuLinuxPort)
 
     def test_chromium_gpu_mac(self):
-        self.assert_port("chromium-gpu-mac", chromium_gpu.ChromiumGpuMacPort)
+        self.assert_port(port_name='chromium-gpu-mac-leopard', cls=chromium_gpu.ChromiumGpuMacPort)
 
     def test_chromium_gpu_win(self):
-        self.assert_port("chromium-gpu-win", chromium_gpu.ChromiumGpuWinPort)
+        self.assert_port(port_name='chromium-gpu-win-xp', cls=chromium_gpu.ChromiumGpuWinPort)
 
     def test_chromium_mac(self):
-        self.assert_port("chromium-mac", chromium_mac.ChromiumMacPort)
-        self.assert_platform_port("darwin", self.chromium_options,
-                                  chromium_mac.ChromiumMacPort)
+        self.assert_port(port_name='chromium-mac-leopard', cls=chromium_mac.ChromiumMacPort)
+        self.assert_port(port_name='chromium-mac', os_name='mac', os_version='leopard',
+                         cls=chromium_mac.ChromiumMacPort)
+        self.assert_port(port_name=None, os_name='mac', os_version='leopard', options=self.chromium_options,
+                         cls=chromium_mac.ChromiumMacPort)
 
     def test_chromium_linux(self):
-        self.assert_port("chromium-linux", chromium_linux.ChromiumLinuxPort)
-        self.assert_platform_port("linux2", self.chromium_options,
-                                  chromium_linux.ChromiumLinuxPort)
-        self.assert_platform_port("linux3", self.chromium_options,
-                                  chromium_linux.ChromiumLinuxPort)
+        self.assert_port(port_name='chromium-linux', cls=chromium_linux.ChromiumLinuxPort)
+        self.assert_port(port_name=None, os_name='linux', os_version='lucid', options=self.chromium_options,
+                         cls=chromium_linux.ChromiumLinuxPort)
 
     def test_chromium_win(self):
-        self.assert_port("chromium-win", chromium_win.ChromiumWinPort)
-        self.assert_platform_port("win32", self.chromium_options,
-                                  chromium_win.ChromiumWinPort)
-        self.assert_platform_port("cygwin", self.chromium_options,
-                                  chromium_win.ChromiumWinPort)
+        self.assert_port(port_name='chromium-win-xp', cls=chromium_win.ChromiumWinPort)
+        self.assert_port(port_name='chromium-win', os_name='win', os_version='xp',
+                         cls=chromium_win.ChromiumWinPort)
+        self.assert_port(port_name=None, os_name='win', os_version='xp', options=self.chromium_options,
+                         cls=chromium_win.ChromiumWinPort)
 
     def test_unknown_specified(self):
-        # Test what happens when you specify an unknown port.
-        self.assertRaises(NotImplementedError, self.factory.get, port_name='unknown')
+        self.assertRaises(NotImplementedError, PortFactory(MockSystemHost()).get, port_name='unknown')
 
     def test_unknown_default(self):
-        # Test what happens when you're running on an unknown platform.
-        orig_platform = sys.platform
-        sys.platform = 'unknown'
-        self.assertRaises(NotImplementedError, self.factory.get)
-        sys.platform = orig_platform
+        self.assertRaises(NotImplementedError, PortFactory(MockSystemHost(os_name='vms')).get)
 
 
 if __name__ == '__main__':

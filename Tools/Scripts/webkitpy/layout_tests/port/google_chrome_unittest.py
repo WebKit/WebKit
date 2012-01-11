@@ -26,35 +26,21 @@
 
 import unittest
 
-from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.layout_tests.port.factory import PortFactory
 
 
-class GetGoogleChromePortTest(unittest.TestCase):
-    def test_get_google_chrome_port(self):
-        test_ports = ('google-chrome-linux32', 'google-chrome-linux64', 'google-chrome-mac', 'google-chrome-win')
-        for port in test_ports:
-            self._verify_baseline_path(port, port)
-            self._verify_expectations_overrides(port)
-
-        self._verify_baseline_path('google-chrome-mac', 'google-chrome-mac-leopard')
-        self._verify_baseline_path('google-chrome-win', 'google-chrome-win-xp')
-        self._verify_baseline_path('google-chrome-win', 'google-chrome-win-vista')
-
+class TestGoogleChromePort(unittest.TestCase):
     def _verify_baseline_path(self, expected_path, port_name):
-        port = MockHost().port_factory.get(port_name=port_name)
+        port = PortFactory(MockSystemHost()).get(port_name=port_name)
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, port._filesystem.basename(path))
 
     def _verify_expectations_overrides(self, port_name):
-        # FIXME: Make this more robust when we have the Tree() abstraction.
-        # we should be able to test for the files existing or not, and
-        # be able to control the contents better.
-        # FIXME: What is the Tree() abstraction?
-
-        host = MockHost()
-        chromium_port = host.port_factory.get("chromium-mac")
+        host = MockSystemHost()
+        chromium_port = PortFactory(host).get("chromium-mac-leopard")
         chromium_base = chromium_port.path_from_chromium_base()
-        port = host.port_factory.get(port_name=port_name, options=None)
+        port = PortFactory(host).get(port_name=port_name, options=None)
 
         expected_chromium_overrides = '// chromium overrides\n'
         expected_chrome_overrides = '// chrome overrides\n'
@@ -69,6 +55,17 @@ class GetGoogleChromePortTest(unittest.TestCase):
         host.filesystem.files[chrome_path] = expected_chrome_overrides
         actual_chrome_overrides = port.test_expectations_overrides()
         self.assertEqual(actual_chrome_overrides, expected_chromium_overrides + expected_chrome_overrides)
+
+    def test_get_google_chrome_port(self):
+        self._verify_baseline_path('google-chrome-linux32', 'google-chrome-linux32')
+        self._verify_baseline_path('google-chrome-linux64', 'google-chrome-linux64')
+        self._verify_baseline_path('google-chrome-mac', 'google-chrome-mac-leopard')
+        self._verify_baseline_path('google-chrome-win', 'google-chrome-win-xp')
+
+        self._verify_expectations_overrides('google-chrome-mac-leopard')
+        self._verify_expectations_overrides('google-chrome-win-xp')
+        self._verify_expectations_overrides('google-chrome-linux32')
+        self._verify_expectations_overrides('google-chrome-linux64')
 
 
 if __name__ == '__main__':

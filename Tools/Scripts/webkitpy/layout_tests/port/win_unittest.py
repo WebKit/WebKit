@@ -27,20 +27,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import sys
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import port_testcase
 from webkitpy.layout_tests.port.win import WinPort
 from webkitpy.tool.mocktool import MockOptions
 
 
 class WinPortTest(port_testcase.PortTestCase):
+    os_name = 'win'
+    os_version = 'xp'
     port_maker = WinPort
 
     def test_show_results_html_file(self):
@@ -55,27 +56,9 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertTrue(stderr.startswith("MOCK run_command: ['Tools/Scripts/run-safari', '--release', '"))
         self.assertTrue(stderr.endswith("test.html'], cwd=/mock-checkout\n"))
 
-    def test_detect_version(self):
-        port = self.make_port()
-
-        def mock_run_command(cmd):
-            self.assertEquals(cmd, ['cmd', '/c', 'ver'])
-            return "6.1.7600"
-
-        port._executive = MockExecutive2(run_command_fn=mock_run_command)
-        self.assertEquals(port._detect_version(run_on_non_windows_platforms=True), '7sp0')
-
-        def mock_run_command(cmd):
-            raise ScriptError('Failure')
-
-        port._executive = MockExecutive2(run_command_fn=mock_run_command)
-        # Failures log to the python error log, but we have no easy way to capture/test that.
-        self.assertEquals(port._detect_version(run_on_non_windows_platforms=True), None)
-
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
-        port = WinPort(os_version_string=version,
-            options=MockOptions(webkit_test_runner=use_webkit2),
-            host=MockHost())
+        host = MockSystemHost(os_name='win', os_version=version)
+        port = WinPort(host, options=MockOptions(webkit_test_runner=use_webkit2))
         absolute_search_paths = map(port._webkit_baseline_path, expected_search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
@@ -91,7 +74,8 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['win-wk2', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'bogus', use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
-        port = WinPort(port_name=port_name, host=MockHost())
+        host = MockSystemHost(os_name='win', os_version=expected_version)
+        port = WinPort(host, port_name=port_name)
         self.assertEquals(port.version(), expected_version)
 
     def test_versions(self):

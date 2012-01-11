@@ -34,6 +34,10 @@ from webkitpy.common.system.executive import ScriptError
 
 # FIXME: This should be unified with MockExecutive2
 class MockExecutive(object):
+    @staticmethod
+    def ignore_error(error):
+        pass
+
     def __init__(self, should_log=False, should_throw=False, should_throw_when_run=None):
         self._should_log = should_log
         self._should_throw = should_throw
@@ -79,6 +83,10 @@ class MockExecutive(object):
 
 
 class MockExecutive2(object):
+    @staticmethod
+    def ignore_error(error):
+        pass
+
     def __init__(self, output='', exit_code=0, exception=None,
                  run_command_fn=None, stderr=''):
         self._output = output
