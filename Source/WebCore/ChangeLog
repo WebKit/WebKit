@@ -1,3 +1,48 @@
+2012-01-11  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Filters: apply the filters in RenderLayerBacking::paintIntoLayer when filters cannot be composited in hardware
+        https://bugs.webkit.org/show_bug.cgi?id=75842
+
+        Reviewed by Simon Fraser.
+
+        RenderLayers have two possible states: composited or not. When composited the RenderLayerBacking::paintIntoLayer is used
+        to render the result inside the graphics context of the GraphicsLayer. When not composited the RenderLayer::paintLayer method will draw
+        the result in the graphics context of the parent layer. 
+
+        Because a recent patch forced creation of composited layers for filters, this patch makes RenderLayerBacking::paintIntoLayer aware
+        that it might need to apply the filters when the composition engine failed to apply them in platform code.
+
+        No new tests needed, I've just updated some of the old tests to force disable the accelerated composition
+        so that we can still test software painted filters.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::clearFilters):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setFilters):
+            If filtersCanBeComposited() is false we need to reset the CoreAnimation layer to remove any previously applied filter.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::filtersCanBeComposited):
+            Added grayscale, brightness and contrast in the list of not accelerated filters. Otherwise an assert if triggered.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::updateBackingStore):
+            Moved this method from RenderLayer::updateFilterBackingStore. It had no dependencies on RenderLayer.
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect):
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect):
+            Consolidated the filter rendering inside this helper class that is now used in both RenderLayerBacking::paintIntoLayer and RenderLayer::paintLayer.
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRendererHelper::FilterEffectRendererHelper):
+        (WebCore::FilterEffectRendererHelper::haveFilterEffect):
+        (WebCore::FilterEffectRendererHelper::hasStartedFilterEffect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+            Filters should apply after the opacity is applied, so I moved this down to paintLayerContents.
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::filter):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+            Added software fallback rendering of the filters on composited RenderLayers.
+
 2012-01-11  Jochen Eisinger  <jochen@chromium.org>
 
         Move the check for canExecuteScripts out of V8Proxy::retrieve

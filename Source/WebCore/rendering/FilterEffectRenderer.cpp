@@ -36,6 +36,7 @@
 #include "FEMerge.h"
 #include "FilterEffectObserver.h"
 #include "FloatConversion.h"
+#include "RenderLayer.h"
 
 #include <algorithm>
 #include <wtf/MathExtras.h>
@@ -315,6 +316,15 @@ void FilterEffectRenderer::notifyFinished(CachedResource*)
     m_observer->filterNeedsRepaint();
 }
 
+void FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
+{
+    if (!filterRect.isZero()) {
+        FloatRect currentSourceRect = sourceImageRect();
+        if (filterRect != currentSourceRect)
+            setSourceImageRect(filterRect);
+    }
+}
+
 void FilterEffectRenderer::prepare()
 {
     // At this point the effect chain has been built, and the
@@ -331,6 +341,53 @@ void FilterEffectRenderer::prepare()
 void FilterEffectRenderer::apply()
 {
     lastEffect()->apply();
+}
+
+
+GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(RenderLayer* renderLayer, GraphicsContext* oldContext, const LayoutRect& filterRect)
+{
+    ASSERT(m_haveFilterEffect && renderLayer->filter());
+    m_savedGraphicsContext = oldContext;
+    m_renderLayer = renderLayer;
+    m_paintOffset = filterRect.location();
+    
+    FloatRect filterSourceRect = filterRect;
+    filterSourceRect.setLocation(LayoutPoint());
+    
+    FilterEffectRenderer* filter = renderLayer->filter();
+    filter->updateBackingStore(filterSourceRect);
+    filter->prepare();
+    
+    // Paint into the context that represents the SourceGraphic of the filter.
+    GraphicsContext* sourceGraphicsContext = filter->inputContext();
+    if (!sourceGraphicsContext) {
+        // Could not allocate a new graphics context. Disable the filters and continue.
+        m_haveFilterEffect = false;
+        return m_savedGraphicsContext;
+    }
+    
+    sourceGraphicsContext->save();
+    sourceGraphicsContext->translate(-filterRect.x(), -filterRect.y());
+    sourceGraphicsContext->clearRect(filterRect);
+    
+    return sourceGraphicsContext;
+}
+
+GraphicsContext* FilterEffectRendererHelper::applyFilterEffect()
+{
+    ASSERT(m_haveFilterEffect && m_renderLayer->filter());
+    FilterEffectRenderer* filter = m_renderLayer->filter();
+    filter->apply();
+    
+    filter->inputContext()->restore();
+    
+    // Get the filtered output and draw it in place.
+    IntRect destRect = filter->outputRect();
+    destRect.move(m_paintOffset.x(), m_paintOffset.y());
+    
+    m_savedGraphicsContext->drawImageBuffer(filter->output(), m_renderLayer->renderer()->style()->colorSpace(), destRect, CompositeSourceOver);
+    
+    return m_savedGraphicsContext;
 }
 
 } // namespace WebCore

@@ -569,12 +569,19 @@ void GraphicsLayerCA::setOpacity(float opacity)
 }
 
 #if ENABLE(CSS_FILTERS)
-bool GraphicsLayerCA::setFilters(const FilterOperations& filters)
+bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 {
-    GraphicsLayer::setFilters(filters);
-    noteLayerPropertyChanged(FiltersChanged);
-    
-    return PlatformCALayer::filtersCanBeComposited(filters);
+    bool canCompositeFilters = PlatformCALayer::filtersCanBeComposited(filterOperations);
+    if (canCompositeFilters) {
+        GraphicsLayer::setFilters(filterOperations);
+        noteLayerPropertyChanged(FiltersChanged);
+    } else if (filters().size()) {
+        // In this case filters are rendered in software, so we need to remove any 
+        // previously attached hardware filters.
+        clearFilters();
+        noteLayerPropertyChanged(FiltersChanged);
+    }
+    return canCompositeFilters;
 }
 #endif
 

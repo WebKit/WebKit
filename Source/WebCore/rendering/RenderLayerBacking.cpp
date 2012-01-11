@@ -53,6 +53,10 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 
+#if ENABLE(CSS_FILTERS)
+#include "FilterEffectRenderer.h"
+#endif
+
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
 #include "GraphicsContext3D.h"
 #endif
@@ -1128,6 +1132,12 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
+#if ENABLE(CSS_FILTERS)
+    FilterEffectRendererHelper filterPainter(m_owningLayer->paintsWithFilters());
+    if (filterPainter.haveFilterEffect())
+        context = filterPainter.beginFilterEffect(m_owningLayer, context, layerBounds);
+#endif
+
     if (paintingPhase & GraphicsLayerPaintBackground) {
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
@@ -1195,6 +1205,11 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             m_owningLayer->restoreClip(context, paintDirtyRect, damageRect);
         }
     }
+    
+#if ENABLE(CSS_FILTERS)
+    if (filterPainter.hasStartedFilterEffect())
+        context = filterPainter.applyFilterEffect();
+#endif
 
     ASSERT(!m_owningLayer->m_usedTransparency);
 }

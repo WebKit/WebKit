@@ -1,3 +1,9 @@
+<script>
+if (window.layoutTestController) {
+    // Force software rendering mode.
+    window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+}
+</script>
 <img style="-webkit-filter: invert(0)" src="resources/reference.png">
 <img style="-webkit-filter: invert(0.2)" src="resources/reference.png">
 <img style="-webkit-filter: invert(0.4)" src="resources/reference.png">

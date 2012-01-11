@@ -46,9 +46,34 @@
 namespace WebCore {
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
-class Document;
-class FilterEffectObserver;
 class CachedShader;
+class Document;
+class FilterEffectRenderer;
+class FilterEffectObserver;
+class GraphicsContext;
+class RenderLayer;
+
+class FilterEffectRendererHelper {
+public:
+    FilterEffectRendererHelper(bool haveFilterEffect)
+        : m_savedGraphicsContext(0)
+        , m_renderLayer(0)
+        , m_haveFilterEffect(haveFilterEffect)
+    {
+    }
+    
+    bool haveFilterEffect() const { return m_haveFilterEffect; }
+    bool hasStartedFilterEffect() const { return m_savedGraphicsContext; }
+
+    GraphicsContext* beginFilterEffect(RenderLayer*, GraphicsContext* oldContext, const LayoutRect& filterRect);
+    GraphicsContext* applyFilterEffect();
+
+private:
+    GraphicsContext* m_savedGraphicsContext;
+    RenderLayer* m_renderLayer;
+    LayoutPoint m_paintOffset;
+    bool m_haveFilterEffect;
+};
 
 class FilterEffectRenderer : public Filter, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -74,6 +99,7 @@ public:
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
     void build(Document*, const FilterOperations&);
+    void updateBackingStore(const FloatRect& filterRect);
     void prepare();
     void apply();
     

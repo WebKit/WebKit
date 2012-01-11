@@ -2756,46 +2756,6 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         return;
     }
     
-#if ENABLE(CSS_FILTERS)
-    if (paintsWithFilters() && !(paintFlags & PaintLayerAppliedFilters)) {
-        ASSERT(m_filter);
-        
-        // Update the filter's image if necessary.
-        // The filter is always built at this point.
-        LayoutRect filterRect = transparencyClipBox(this, rootLayer, paintBehavior);
-
-        FloatRect filterSourceRect = filterRect;
-        filterSourceRect.setLocation(LayoutPoint());
-
-        updateFilterBackingStore(filterSourceRect);
-        m_filter->prepare();
-        
-        // Paint into the context that represents the SourceGraphic of the filter.
-        GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
-        if (!sourceGraphicsContext)
-            return;
-        
-        {
-            GraphicsContextStateSaver sourceSaver(*sourceGraphicsContext);
-            sourceGraphicsContext->translate(-filterRect.x(), -filterRect.y());
-
-            sourceGraphicsContext->clearRect(filterRect);
-
-            // Now paint the layer and its children into the image buffer.
-            paintLayer(rootLayer, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags | PaintLayerAppliedFilters);
-        }
-        
-        m_filter->apply();
-        
-        // Get the filtered output and draw it in place.
-        IntRect destRect = m_filter->outputRect();
-        destRect.move(filterRect.x(), filterRect.y());
-        
-        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), destRect, CompositeSourceOver);
-        return;
-    }
-#endif
-    
     paintLayerContents(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
 }
 
@@ -2824,11 +2784,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* p,
     if (!renderer()->opacity())
         return;
 
-    PaintLayerFlags localPaintFlags = paintFlags & ~(PaintLayerAppliedTransform 
-#if ENABLE(CSS_FILTERS)
-        | PaintLayerAppliedFilters
-#endif
-        );
+    PaintLayerFlags localPaintFlags = paintFlags & ~(PaintLayerAppliedTransform);
     bool haveTransparency = localPaintFlags & PaintLayerHaveTransparency;
 
     // Paint the reflection first if we have one.
@@ -2871,12 +2827,21 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* p,
     if (overlapTestRequests && isSelfPaintingLayer)
         performOverlapTests(*overlapTestRequests, rootLayer, this);
 
+#if ENABLE(CSS_FILTERS)
+    FilterEffectRendererHelper filterPainter(paintsWithFilters());
+#endif
+
     // We want to paint our layer, but only if we intersect the damage rect.
     shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer);
     if (shouldPaintContent && !selectionOnly) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
             beginTransparencyLayers(p, rootLayer, paintBehavior);
+        
+#if ENABLE(CSS_FILTERS)
+        if (filterPainter.haveFilterEffect())
+            p = filterPainter.beginFilterEffect(this, p, transparencyClipBox(this, rootLayer, paintBehavior));
+#endif
         
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
@@ -2949,6 +2914,11 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* p,
         paintOverflowControls(p, paintOffset, damageRect.rect(), true);
         restoreClip(p, paintDirtyRect, damageRect);
     }
+
+#if ENABLE(CSS_FILTERS)
+    if (filterPainter.hasStartedFilterEffect())
+        p = filterPainter.applyFilterEffect();
+#endif
 
     // End our transparency layer
     if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
@@ -4474,15 +4444,6 @@ void RenderLayer::updateOrRemoveFilterEffect()
         m_filter->build(renderer()->document(), renderer()->style()->filter());
     } else {
         m_filter = 0;
-    }
-}
-
-void RenderLayer::updateFilterBackingStore(const FloatRect& filterRect)
-{
-    if (!filterRect.isZero()) {
-        FloatRect currentSourceRect = m_filter->sourceImageRect();
-        if (filterRect != currentSourceRect)
-            m_filter->setSourceImageRect(filterRect);
     }
 }
 

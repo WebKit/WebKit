@@ -420,6 +420,12 @@ public:
 #endif
 
 protected:
+#if ENABLE(CSS_FILTERS)
+    // This method is used by platform GraphicsLayer classes to clear the filters
+    // when compositing is not done in hardware. It is not virtual, so the caller
+    // needs to notifiy the change to the platform layer as needed.
+    void clearFilters() { m_filters.clear(); }
+#endif
 
     typedef Vector<TransformOperation::OperationType> TransformOperationList;
     // Given a list of TransformAnimationValues, return an array of transform operations.

@@ -1,3 +1,9 @@
+<script>
+if (window.layoutTestController) {
+    // Force software rendering mode.
+    window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+}
+</script>
 <style>
 img {
     margin: 10px;

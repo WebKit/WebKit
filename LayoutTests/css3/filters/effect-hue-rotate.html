@@ -1,3 +1,9 @@
+<script>
+if (window.layoutTestController) {
+    // Force software rendering mode.
+    window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+}
+</script>
 <img style="-webkit-filter: hue-rotate(0deg)" src="resources/reference.png">
 <img style="-webkit-filter: hue-rotate(45deg)" src="resources/reference.png">
 <img style="-webkit-filter: hue-rotate(90deg)" src="resources/reference.png">

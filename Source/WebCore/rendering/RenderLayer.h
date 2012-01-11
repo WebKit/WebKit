@@ -556,11 +556,12 @@ public:
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
-private:
 #if ENABLE(CSS_FILTERS)
     bool paintsWithFilters() const;
+    FilterEffectRenderer* filter() const { return m_filter.get(); }
 #endif
 
+private:
     void updateZOrderListsSlowCase();
 
     void computeRepaintRects(IntPoint* offsetFromRoot = 0);
@@ -695,7 +696,6 @@ private:
 
 #if ENABLE(CSS_FILTERS)
     void updateOrRemoveFilterEffect();
-    void updateFilterBackingStore(const FloatRect& filterRect);
 #endif
 
     void parentClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;

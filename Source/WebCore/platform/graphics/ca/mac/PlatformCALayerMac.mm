@@ -850,6 +850,9 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations& filters)
         const FilterOperation* filterOperation = filters.at(i);
         switch(filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE:
+        case FilterOperation::GRAYSCALE:
+        case FilterOperation::BRIGHTNESS:
+        case FilterOperation::CONTRAST:
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM:
 #endif
