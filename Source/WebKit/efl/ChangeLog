@@ -1,3 +1,21 @@
+2012-01-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Fix page rendering issue on ewk_view_tiled.
+        https://bugs.webkit.org/show_bug.cgi?id=75686
+
+        Reviewed by Andreas Kling.
+
+        As for now the discard of ewk_tiled_backing_store doesn't reset its own contents size information
+        and ewk_tiled_backing_store just ignores the request if new contents size change request would contain
+        the same size compared to the one that it owns,
+        contents size change request coming from ChromeClientEfl::contentsSizeChanged() API can be skipped
+        and therefore web page can't be presented properly.
+        In order to resolve this, I just add code to reset contents size information which ewk_tiled_backing_store owns
+        when it discards its own data.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (ewk_tiled_backing_store_flush):
+
 2012-01-10  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Added smart pointers to Ewk_View_Paint_Context class and done minor refactoring.

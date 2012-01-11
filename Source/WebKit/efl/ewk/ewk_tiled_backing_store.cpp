@@ -1821,6 +1821,8 @@ void ewk_tiled_backing_store_flush(Evas_Object* ewkBackingStore)
     priv->model.current.rows = 1;
     priv->model.old.columns = 0;
     priv->model.old.rows = 0;
+    priv->model.width = 0;
+    priv->model.height = 0;
     priv->changed.size = true;
 
 #ifdef DEBUG_MEM_LEAKS
