@@ -895,7 +895,7 @@ BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 // (wrong baseline was committed). No idea about when it really started to fail.
 BUGCR52692 LINUX WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
 BUGCR52692 BUGWK74788 LINUX WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT CRASH
-BUGCR52692 BUGWK74788 LINUX WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE+TEXT CRASH
+BUGCR52692 BUGWK74788 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-60-t.svg = PASS CRASH
 BUGWK74788 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS CRASH
 
 // Windows and Mac need rebaselining after 53378 patch.
