@@ -1,3 +1,12 @@
+2012-01-10  Dan Bernstein  <mitz@apple.com>
+
+        Made -[WebHistoryItem copyWithZone:] allocate an object of the same class as the receiver.
+
+        Reviewed by Mark Rowe.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem copyWithZone:]):
+
 2012-01-10  Chris Marrin  <cmarrin@apple.com>
 
         Wrapped allowedCompositingTriggers in ACCELERATED_COMPOSITING ifdef to make non-accelerated builds work

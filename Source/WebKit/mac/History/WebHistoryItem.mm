@@ -141,7 +141,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 - (id)copyWithZone:(NSZone *)zone
 {
     WebCoreThreadViolationCheckRoundOne();
-    WebHistoryItem *copy = [[WebHistoryItem alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
+    WebHistoryItem *copy = [[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()];
     historyItemWrappers().set(core(copy->_private), copy);
 
     return copy;
