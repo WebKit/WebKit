@@ -1,3 +1,18 @@
+2012-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Extract common code for comparing WTF::String objects into WTFStringUtilities.h
+
+        Reviewed by Adam Barth.
+
+        Needed for: <http://webkit.org/b/75774> Add TestWebKitAPI tests for KURL
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add
+        WTFStringUtilities.h to the project.
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp: Update to use
+        WTFStringUtilities.h.
+        * TestWebKitAPI/WTFStringUtilities.h: Added.
+        (WTF::operator<<):
+
 2012-01-10  Vincent Scheib  <scheib@chromium.org>
 
         Clarify run-webkit-tests options reset-results and new-baseline
