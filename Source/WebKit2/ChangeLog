@@ -1,3 +1,22 @@
+2012-01-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Directly-composited images sometimes appear with a wrong geometry
+        https://bugs.webkit.org/show_bug.cgi?id=75882
+
+        Reviewed by Simon Hausmann.
+
+        When assigning a directly composited image to a TextureMapperNode in WebKit2, we take
+        contentsRect() onto account. However, contentsRect() might be changed after the image
+        is already assigned.
+        We have to reassign the image when contentsRect() changes. This is a pretty cheap
+        operation, since the image is already converted to a texture and we simply change the
+        geometric values.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+
 2012-01-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add the editor rect to the EditorState

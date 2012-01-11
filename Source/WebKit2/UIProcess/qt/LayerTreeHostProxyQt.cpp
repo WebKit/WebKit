@@ -245,6 +245,7 @@ void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
     GraphicsLayer* layer = it->second;
+    bool needsToUpdateImageTiles = layerInfo.imageIsUpdated || layerInfo.contentsRect != layer->contentsRect();
 
     layer->setName(layerInfo.name);
 
@@ -261,7 +262,7 @@ void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
     layer->setContentsRect(layerInfo.contentsRect);
     layer->setDrawsContent(layerInfo.drawsContent);
 
-    if (layerInfo.imageIsUpdated)
+    if (needsToUpdateImageTiles)
         assignImageToLayer(layer, layerInfo.imageBackingStoreID);
 
     // Never make the root layer clip.

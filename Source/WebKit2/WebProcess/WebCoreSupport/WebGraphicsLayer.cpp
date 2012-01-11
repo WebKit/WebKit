@@ -415,10 +415,7 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     m_layerInfo.childrenTransform = childrenTransform();
     m_layerInfo.contentsOpaque = contentsOpaque();
     m_layerInfo.contentsRect = contentsRect();
-
-    // In the shadow layer tree we create in the UI process, layers with directly composited images are always considered to draw content.
-    // Otherwise, we'd have to check whether an layer with drawsContent==false has a directly composited image multiple times.
-    m_layerInfo.drawsContent = drawsContent() || m_image;
+    m_layerInfo.drawsContent = drawsContent();
     m_layerInfo.mask = toWebLayerID(maskLayer());
     m_layerInfo.masksToBounds = masksToBounds();
     m_layerInfo.opacity = opacity();
