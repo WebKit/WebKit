@@ -76,11 +76,6 @@ public:
     // is owned by the object implementing WebCommonWorkerClient.
     virtual WebNotificationPresenter* notificationPresenter() = 0;
 
-    // This can be called on any thread to create a nested WebWorker.
-    // WebSharedWorkers are not instantiated via this API - instead
-    // they are created via the WebSharedWorkerRepository.
-    virtual WebWorker* createWorker(WebSharedWorkerClient*) = 0;
-
     // Called on the main webkit thread in the worker process during initialization.
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) = 0;
 

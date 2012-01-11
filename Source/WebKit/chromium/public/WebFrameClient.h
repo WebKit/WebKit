@@ -83,9 +83,6 @@ public:
     virtual WebPlugin* createPlugin(WebFrame*, const WebPluginParams&) { return 0; }
 
     // May return null.
-    virtual WebWorker* createWorker(WebFrame*, WebSharedWorkerClient*) { return 0; }
-
-    // May return null.
     virtual WebSharedWorker* createSharedWorker(WebFrame*, const WebURL&, const WebString&, unsigned long long) { return 0; }
 
     // May return null.

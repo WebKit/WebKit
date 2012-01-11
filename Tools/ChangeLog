@@ -1,3 +1,14 @@
+2012-01-10  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] Remove obsolete references to WebWorker class.
+        https://bugs.webkit.org/show_bug.cgi?id=76020
+
+        Reviewed by David Levin.
+
+        * DumpRenderTree/chromium/TestWebWorker.h: Removed.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2012-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Some css3 filter tests are failing after r104698

@@ -35,7 +35,6 @@
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
-#include "TestWebWorker.h"
 #include "platform/WebCString.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
@@ -842,11 +841,6 @@ WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& par
         return new TestWebPlugin(frame, params);
 
     return webkit_support::CreateWebPlugin(frame, params);
-}
-
-WebWorker* WebViewHost::createWorker(WebFrame*, WebSharedWorkerClient*)
-{
-    return new TestWebWorker();
 }
 
 WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, WebMediaPlayerClient* client)

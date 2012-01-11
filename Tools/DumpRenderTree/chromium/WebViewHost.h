@@ -175,7 +175,6 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
 
     // WebKit::WebFrameClient
     virtual WebKit::WebPlugin* createPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
-    virtual WebKit::WebWorker* createWorker(WebKit::WebFrame*, WebKit::WebSharedWorkerClient*);
     virtual WebKit::WebMediaPlayer* createMediaPlayer(WebKit::WebFrame*, WebKit::WebMediaPlayerClient*);
     virtual WebKit::WebApplicationCacheHost* createApplicationCacheHost(WebKit::WebFrame*, WebKit::WebApplicationCacheHostClient*);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy);
