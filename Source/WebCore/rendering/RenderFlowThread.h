@@ -58,7 +58,6 @@ typedef ListHashSet<RenderRegion*> RenderRegionList;
 class RenderFlowThread: public RenderBlock {
 public:
     RenderFlowThread(Node*, const AtomicString& flowThread);
-    ~RenderFlowThread();
 
     virtual bool isRenderFlowThread() const { return true; }
 
@@ -136,8 +135,6 @@ private:
 
     bool shouldRepaint(const LayoutRect&) const;
 
-    void clearRenderRegionRangeMap();
-
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
 
@@ -146,6 +143,11 @@ private:
 
     class RenderRegionRange {
     public:
+        RenderRegionRange()
+        {
+            setRange(0, 0);
+        }
+
         RenderRegionRange(RenderRegion* start, RenderRegion* end)
         {
             setRange(start, end);
@@ -176,7 +178,7 @@ private:
     RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
 
     // A maps from RenderBox
-    typedef HashMap<const RenderBox*, RenderRegionRange*> RenderRegionRangeMap;
+    typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
 
     bool m_hasValidRegions;

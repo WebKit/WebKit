@@ -1,3 +1,23 @@
+2012-01-11  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Avoid separate heap allocation for each RenderRegionRange in RenderFlowThread
+        https://bugs.webkit.org/show_bug.cgi?id=75908
+
+        Reviewed by Darin Adler.
+
+        There's no benefit in explicit allocating RenderRegionRange in the heap. So this
+        patch changes the RenderRegionRangeMap to use the value type directly instead of
+        the pointer.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::removeRegionFromThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        (WebCore::RenderFlowThread::getRegionRangeForBox):
+        * rendering/RenderFlowThread.h: add default constructor to act as emptyValue()
+        for HashMap.
+
 2012-01-09  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Move CustomFilterOperation to the platform layer
