@@ -1279,6 +1279,7 @@ SOURCES += \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
     storage/AbstractDatabase.cpp \
+    storage/DOMWindowSQLDatabase.cpp \
     storage/Database.cpp \
     storage/DatabaseAuthorizer.cpp \
     storage/DatabaseSync.cpp \
@@ -2473,6 +2474,7 @@ HEADERS += \
     rendering/svg/SVGTextRunRenderingContext.h \
     storage/AbstractDatabase.h \
     storage/ChangeVersionWrapper.h \
+    storage/DOMWindowSQLDatabase.h \
     storage/DatabaseAuthorizer.h \
     storage/Database.h \
     storage/DatabaseCallback.h \

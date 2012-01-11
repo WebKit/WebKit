@@ -70526,6 +70526,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\DOMWindowSQLDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DOMWindowSQLDatabase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\Database.cpp"
 				>
 			</File>

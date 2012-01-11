@@ -3754,6 +3754,8 @@ webcore_sources += \
 	Source/WebCore/storage/AbstractDatabase.h \
 	Source/WebCore/storage/ChangeVersionWrapper.cpp \
 	Source/WebCore/storage/ChangeVersionWrapper.h \
+	Source/WebCore/storage/DOMWindowSQLDatabase.cpp \
+	Source/WebCore/storage/DOMWindowSQLDatabase.h \
 	Source/WebCore/storage/DatabaseAuthorizer.cpp \
 	Source/WebCore/storage/DatabaseAuthorizer.h \
 	Source/WebCore/storage/DatabaseCallback.h \
@@ -4600,6 +4602,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
 
 dom_binding_idls += \
+	$(WebCore)/storage/DOMWindowSQLDatabase.idl \
 	$(WebCore)/storage/Database.idl \
 	$(WebCore)/storage/DatabaseCallback.idl \
 	$(WebCore)/storage/DatabaseSync.idl \

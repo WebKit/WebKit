@@ -336,6 +336,7 @@ BINDING_IDLS = \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \
     $(WebCore)/plugins/DOMPlugin.idl \
     $(WebCore)/plugins/DOMPluginArray.idl \
+    $(WebCore)/storage/DOMWindowSQLDatabase.idl \
     $(WebCore)/storage/Database.idl \
     $(WebCore)/storage/DatabaseCallback.idl \
     $(WebCore)/storage/DatabaseSync.idl \

@@ -365,6 +365,7 @@ IDL_BINDINGS += \
     plugins/DOMMimeType.idl \
     plugins/DOMPluginArray.idl \
     plugins/DOMMimeTypeArray.idl \
+    storage/DOMWindowSQLDatabase.idl \
     storage/Database.idl \
     storage/DatabaseCallback.idl \
     storage/DatabaseSync.idl \

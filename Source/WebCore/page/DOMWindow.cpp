@@ -1381,23 +1381,6 @@ double DOMWindow::devicePixelRatio() const
     return page->deviceScaleFactor();
 }
 
-#if ENABLE(SQL_DATABASE)
-PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    if (!isCurrentlyDisplayedInFrame())
-        return 0;
-
-    RefPtr<Database> database = 0;
-    if (m_frame && AbstractDatabase::isAvailable() && m_frame->document()->securityOrigin()->canAccessDatabase())
-        database = Database::openDatabase(m_frame->document(), name, version, displayName, estimatedSize, creationCallback, ec);
-
-    if (!database && !ec)
-        ec = SECURITY_ERR;
-
-    return database;
-}
-#endif
-
 void DOMWindow::scrollBy(int x, int y) const
 {
     if (!isCurrentlyDisplayedInFrame())

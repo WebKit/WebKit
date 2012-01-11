@@ -1349,6 +1349,7 @@ SET(WebCore_SOURCES
 
     storage/AbstractDatabase.cpp
     storage/ChangeVersionWrapper.cpp
+    storage/DOMWindowSQLDatabase.cpp
     storage/Database.cpp
     storage/DatabaseAuthorizer.cpp
     storage/DatabaseSync.cpp
@@ -1468,6 +1469,7 @@ ENDIF ()
 
 IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_IDL_FILES
+        storage/DOMWindowSQLDatabase.idl
         storage/Database.idl
         storage/DatabaseCallback.idl
         storage/DatabaseSync.idl

@@ -163,10 +163,6 @@ module window {
                                                      in [Optional=CallWithDefaultValue] WebKitPoint p);
 
         readonly attribute [EnabledAtRuntime] DOMApplicationCache applicationCache;
-#if defined(ENABLE_SQL_DATABASE) && ENABLE_SQL_DATABASE
-        [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
-            raises(DOMException);
-#endif
 
         readonly attribute [EnabledAtRuntime] Storage sessionStorage
             getter raises(DOMException);
@@ -793,9 +789,6 @@ module window {
         attribute SVGFilterElementConstructor SVGFilterElement;
 #endif
 #endif
-
-        attribute [Conditional=SQL_DATABASE] SQLExceptionConstructor SQLException;
-
 
         attribute DOMFormDataConstructor FormData;
 

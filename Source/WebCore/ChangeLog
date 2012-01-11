@@ -1,3 +1,41 @@
+2012-01-10  Kentaro Hara  <haraken@chromium.org>
+
+        Use the [Supplemental] IDL in SQLDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=76004
+
+        Reviewed by Adam Barth.
+
+        We've been working on WebKit modularization. By using the [Supplemental] IDL,
+        we can move SQLDatabase related code from WebCore/page/DOMWindow.{h,cpp,idl}
+        to WebCore/storage/DOMWindowSQLDatabase.{h,cpp,idl}.
+
+        Tests: storage/open-database-creation-callback-isolated-world.html
+               storage/open-database-creation-callback.html
+               storage/open-database-empty-version.html
+               storage/open-database-over-quota.html
+               storage/open-database-set-empty-version.html
+               storage/open-database-while-transaction-in-progress.html
+
+        * CMakeLists.txt: Added DOMWindowSQLDatabase.{idl,h,cpp} to the build script.
+        * DerivedSources.make: Ditto.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/DOMWindow.cpp: Removed SQLDatabase related code.
+        * page/DOMWindow.idl: Ditto.
+        * page/DOMWindow.h: Ditto. Moved isCurrentlyDisplayedInFrame() from private: to public:
+        so that DOMWindowSQLDatabase::openDatabase() can access it.
+
+        * storage/DOMWindowSQLDatabase.cpp: Added. Moved openDatabase() from DOMWindow.cpp to here.
+        (WebCore::DOMWindowSQLDatabase::openDatabase):
+        * storage/DOMWindowSQLDatabase.h: Added. Moved openDatabase() from DOMWindow.h to here.
+        * storage/DOMWindowSQLDatabase.idl: Added. Using the [Supplemental] IDL, moved openDatabase()
+        and SQLException from DOMWindow.idl to here.
+
 2012-01-10  Chris Marrin  <cmarrin@apple.com>
 
         CIFilter version of Sepia Tone filter doesn't match software

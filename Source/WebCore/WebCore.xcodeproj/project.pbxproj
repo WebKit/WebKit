@@ -4048,6 +4048,8 @@
 		A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80040A19516E00A8EF5F /* StyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8EA800D0A19516E00A8EF5F /* StyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */; };
 		A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80060A19516E00A8EF5F /* MediaList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A8F457A014BC1A88000CEA59 /* DOMWindowSQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F4579D14BC13EC000CEA59 /* DOMWindowSQLDatabase.cpp */; };
+		A8F457A114BC1A94000CEA59 /* DOMWindowSQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F4579E14BC13EC000CEA59 /* DOMWindowSQLDatabase.h */; };
 		A8F46A840CB20A9D003A9670 /* DOMSVGClipPathElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8503612C0ACE007B001F3D9E /* DOMSVGClipPathElement.h */; };
 		A8F46A880CB20A9D003A9670 /* DOMSVGGradientElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C9A2EC0AD7E90300FBFF1E /* DOMSVGGradientElement.h */; };
 		A8F46A890CB20A9D003A9670 /* DOMSVGAnimateColorElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 850361280ACE007B001F3D9E /* DOMSVGAnimateColorElement.h */; };
@@ -11321,6 +11323,9 @@
 		A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheet.cpp; sourceTree = "<group>"; };
 		A8EA80060A19516E00A8EF5F /* MediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaList.h; sourceTree = "<group>"; };
 		A8F4578F14B2B004000CEA59 /* resolve-supplemental.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "resolve-supplemental.pl"; path = "scripts/resolve-supplemental.pl"; sourceTree = "<group>"; };
+		A8F4579D14BC13EC000CEA59 /* DOMWindowSQLDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowSQLDatabase.cpp; sourceTree = "<group>"; };
+		A8F4579E14BC13EC000CEA59 /* DOMWindowSQLDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowSQLDatabase.h; sourceTree = "<group>"; };
+		A8F4579F14BC13EC000CEA59 /* DOMWindowSQLDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowSQLDatabase.idl; sourceTree = "<group>"; };
 		A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
 		A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pattern.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
@@ -14392,6 +14397,9 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				A8F4579D14BC13EC000CEA59 /* DOMWindowSQLDatabase.cpp */,
+				A8F4579E14BC13EC000CEA59 /* DOMWindowSQLDatabase.h */,
+				A8F4579F14BC13EC000CEA59 /* DOMWindowSQLDatabase.idl */,
 				B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */,
 				B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
@@ -24904,6 +24912,7 @@
 				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
+				A8F457A114BC1A94000CEA59 /* DOMWindowSQLDatabase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27811,6 +27820,7 @@
 				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
 				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
 				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
+				A8F457A014BC1A88000CEA59 /* DOMWindowSQLDatabase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
