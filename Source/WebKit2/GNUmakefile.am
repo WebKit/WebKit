@@ -1011,6 +1011,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFL
 lib_LTLIBRARIES += \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
+# Artificial dependency to make sure libwebkit2gtk and libwebkitgtk are not linked at the same time
+# The variable creation is to avoid having automake override the entire rule instead of adding the
+# dependency.
+webkit2gtk_lib_for_dep = libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+$(webkit2gtk_lib_for_dep): libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_ladir = \
 	$(libwebkit2gtkincludedir)/WebKit2
 
@@ -1270,6 +1276,10 @@ libWebCoreGtk2_la_CPPFLAGS = \
 
 libexec_PROGRAMS += \
 	Programs/WebKitPluginProcess
+
+# Serialize linking of the plugin process with both webkit libraries.
+plugin_process_for_dep = Programs/WebKitPluginProcess
+$(plugin_process_for_dep): libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
 Programs_WebKitPluginProcess_CPPFLAGS = \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \

@@ -1,3 +1,18 @@
+2012-01-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Linking of big binaries should be serialized to avoid thrashing
+        https://bugs.webkit.org/show_bug.cgi?id=75977
+
+        Reviewed by Martin Robinson.
+
+        Added artificial dependencies so that libwebkitgtk is always
+        linked first, libwebkit2gtk second, and WebKitPluginProcess
+        last. Automake unfortunately replaces the whole rule used to build
+        the libraries if the actual name is used to add the dependency, so
+        we use helper variables to work around that.
+
+        * GNUmakefile.am:
+
 2012-01-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Rename viewObject to viewWidget
