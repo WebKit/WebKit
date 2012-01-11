@@ -182,10 +182,12 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         unsigned fragmentEnd = 0;
         PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL, &fragmentStart, &fragmentEnd);
 
-        RefPtr<DocumentFragment> fragment =
-            createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, FragmentScriptingNotAllowed);
-        if (fragment)
-            return fragment.release();
+        if (!markup.isEmpty()) {
+          RefPtr<DocumentFragment> fragment =
+              createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, srcURL, FragmentScriptingNotAllowed);
+          if (fragment)
+              return fragment.release();
+        }
     }
 
     if (allowPlainText) {

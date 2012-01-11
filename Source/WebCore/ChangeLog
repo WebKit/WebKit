@@ -1,3 +1,15 @@
+2012-01-10  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Pasteboard::documentFragment should fall back to text if there's no HTML text
+        https://bugs.webkit.org/show_bug.cgi?id=75923
+
+        Reviewed by Tony Chang.
+
+        Test: editing/pasteboard/pasting-empty-html-falls-back-to-text.html
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2012-01-10  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL in SQLDatabase
