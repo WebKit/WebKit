@@ -707,14 +707,14 @@ class TypeBindings:
 
                                 writer.newline_multiline(
 """    enum {
-        NO_FIELDS_SET = 0,
+        NoFieldsSet = 0,
 """)
 
                                 state_enum_items = []
                                 if len(main_properties) > 0:
                                     pos = 0
                                     for p in main_properties:
-                                        item_name = Capitalizer.camel_case_to_capitalized_with_underscores(p["name"]) + "_SET"
+                                        item_name = Capitalizer.lower_camel_case_to_upper(p["name"]) + "Set"
                                         state_enum_items.append(item_name)
                                         writer.newline("        %s = 1 << %s,\n" % (item_name, pos))
                                         pos += 1
@@ -723,7 +723,7 @@ class TypeBindings:
                                     all_fields_set_value = "0"
 
                                 writer.newline_multiline(
-"""        ALL_FIELDS_SET = %s
+"""        AllFieldsSet = %s
     };
 
     template<int STATE>
@@ -738,7 +738,7 @@ class TypeBindings:
 
         Builder(PassRefPtr<%s> ptr)
         {
-            COMPILE_ASSERT(STATE == NO_FIELDS_SET, builder_created_in_non_init_state);
+            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
             m_result = ptr;
         }
         friend class %s;
@@ -779,7 +779,7 @@ class TypeBindings:
                                 writer.newline_multiline("""
         operator RefPtr<%s>& ()
         {
-            COMPILE_ASSERT(STATE == ALL_FIELDS_SET, result_is_not_ready);
+            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             return *reinterpret_cast<RefPtr<%s>*>(&m_result);
         }
 
@@ -800,9 +800,9 @@ class TypeBindings:
                                 writer.append_multiline(";\n     */\n")
 
                                 writer.newline_multiline(
-"""    static Builder<NO_FIELDS_SET> create()
+"""    static Builder<NoFieldsSet> create()
     {
-        return Builder<NO_FIELDS_SET>(adoptRef(new %s()));
+        return Builder<NoFieldsSet>(adoptRef(new %s()));
     }
 """ % class_name)
 

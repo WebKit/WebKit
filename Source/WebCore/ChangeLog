@@ -1,3 +1,14 @@
+2012-01-11  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: fix codestyle of generated enums
+        https://bugs.webkit.org/show_bug.cgi?id=76062
+
+        Reviewed by Yury Semikhatsky.
+
+        This only changes how constants are named in generated .h file.
+
+        * inspector/CodeGeneratorInspector.py:
+
 2012-01-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: "undefined" instead of error message in the SourceFrame.
