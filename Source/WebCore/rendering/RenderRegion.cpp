@@ -50,11 +50,6 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
 {
 }
 
-RenderRegion::~RenderRegion()
-{
-    deleteAllRenderBoxRegionInfo();
-}
-
 LayoutRect RenderRegion::regionOverflowRect() const
 {
     // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
@@ -206,30 +201,27 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
     if (!m_isValid || !m_flowThread)
         return 0;
 
-    RenderBoxRegionInfo* existingBoxInfo = m_renderBoxRegionInfo.get(box);
-    if (existingBoxInfo) {
-        *existingBoxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
-        return existingBoxInfo;
-    }
-    
-    RenderBoxRegionInfo* newBoxInfo = new RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
-    m_renderBoxRegionInfo.set(box, newBoxInfo);
-    return newBoxInfo;
+    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).first->second;
+    if (boxInfo)
+        *boxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
+    else
+        boxInfo = adoptPtr(new RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset));
+
+    return boxInfo.get();
 }
 
-RenderBoxRegionInfo* RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
+PassOwnPtr<RenderBoxRegionInfo> RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
 {
     return m_renderBoxRegionInfo.take(box);
 }
 
 void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
 {
-    delete m_renderBoxRegionInfo.take(box);
+    m_renderBoxRegionInfo.remove(box);
 }
 
 void RenderRegion::deleteAllRenderBoxRegionInfo()
 {
-    deleteAllValues(m_renderBoxRegionInfo);
     m_renderBoxRegionInfo.clear();
 }
 

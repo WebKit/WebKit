@@ -1,3 +1,20 @@
+2012-01-11  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Use HashMap<OwnPtr> for RenderBoxRegionInfo map in RenderRegion
+        https://bugs.webkit.org/show_bug.cgi?id=75348
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegions): use OwnPtr.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRenderBoxRegionInfo): use HashMap::add() instead of
+        get() potentially followed by set().
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo): change to return PassOwnPtr.
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::deleteAllRenderBoxRegionInfo):
+        * rendering/RenderRegion.h:
+
 2012-01-11  Joel Webber  <jgw@google.com>
 
         Implement setCurrentTime() and pauseAnimations() on SVGSVGElement

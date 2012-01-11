@@ -650,13 +650,11 @@ bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, La
 
         ASSERT(!region->needsLayout());
 
-        RenderBoxRegionInfo* oldInfo = region->takeRenderBoxRegionInfo(block);
+        OwnPtr<RenderBoxRegionInfo> oldInfo = region->takeRenderBoxRegionInfo(block);
         if (!oldInfo)
             continue;
 
         LayoutUnit oldLogicalWidth = oldInfo->logicalWidth();
-        delete oldInfo;
-
         RenderBoxRegionInfo* newInfo = block->renderBoxRegionInfo(region, offsetFromLogicalTopOfFirstPage);
         if (!newInfo || newInfo->logicalWidth() != oldLogicalWidth)
             return true;
