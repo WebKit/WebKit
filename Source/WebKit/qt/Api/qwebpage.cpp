@@ -125,7 +125,6 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QFileDialog>
-#include <QHttpRequestHeader>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QNetworkProxy>

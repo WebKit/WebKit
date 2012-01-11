@@ -1,3 +1,10 @@
+2012-01-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed trivial build fix: Removed unnecessary QHttpRequestHeader
+        inclusion (and the file is removed in newer Qt 5 versions).
+
+        * Api/qwebpage.cpp:
+
 2012-01-11  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Fix the build for newer Qt5
