@@ -124,8 +124,6 @@ public:
     void setStringAttrWithGetterException(const WebDOMString&);
     WebDOMString stringAttrWithSetterException() const;
     void setStringAttrWithSetterException(const WebDOMString&);
-    int customAttr() const;
-    void setCustomAttr(int);
     WebDOMString scriptStringAttr() const;
 #if ENABLE(Condition1)
     int conditionalAttr1() const;
@@ -174,8 +172,6 @@ public:
     void idbKey(const WebDOMIDBKey& key);
     void optionsObject(const WebDOMOptionsObject& oo, const WebDOMOptionsObject& ooo);
     void methodWithException();
-    void customMethod();
-    void customMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void addEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
     void removeEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
     void withScriptStateVoid();

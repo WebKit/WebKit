@@ -192,7 +192,7 @@ sub GetParent
     return $parent;
 }
 
-sub ShouldSkipTypeInImplementation
+sub ShouldSkipType
 {
     my $typeInfo = shift;
 
@@ -202,21 +202,6 @@ sub ShouldSkipTypeInImplementation
     return 1 if $typeInfo->signature->extendedAttributes->{"CustomArgumentHandling"}
              or $typeInfo->signature->extendedAttributes->{"CustomGetter"}
              or $typeInfo->signature->extendedAttributes->{"CPPCustom"};
-
-    # FIXME: We don't generate bindings for SVG related interfaces yet
-    return 1 if $typeInfo->signature->name =~ /getSVGDocument/;
-
-    return 1 if $typeInfo->signature->name =~ /Constructor/;
-    return 0;
-}
-
-sub ShouldSkipTypeInHeader
-{
-    my $typeInfo = shift;
-
-    # FIXME: We currently ignore any attribute/function needing custom code
-    return 1 if $typeInfo->signature->extendedAttributes->{"CustomArgumentHandling"}
-             or $typeInfo->signature->extendedAttributes->{"CustomGetter"};
 
     # FIXME: We don't generate bindings for SVG related interfaces yet
     return 1 if $typeInfo->signature->name =~ /getSVGDocument/;
@@ -443,7 +428,7 @@ sub GenerateHeader
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
-            next if ShouldSkipTypeInHeader($attribute);
+            next if ShouldSkipType($attribute);
 
             my $attributeConditionalString = GenerateConditionalString($attribute->signature);
             my $attributeName = $attribute->signature->name;
@@ -482,7 +467,7 @@ sub GenerateHeader
     # - Add functions.
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            next if ShouldSkipTypeInHeader($function);
+            next if ShouldSkipType($function);
             my $functionName = $function->signature->name;
 
             my $returnType = GetCPPType($function->signature->type, 0);
@@ -694,7 +679,7 @@ sub GenerateImplementation
     # - Attributes
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
-            next if ShouldSkipTypeInImplementation($attribute);
+            next if ShouldSkipType($attribute);
             AddIncludesForType($attribute->signature->type);
 
             my $idlType = $codeGenerator->StripModule($attribute->signature->type);
@@ -805,7 +790,7 @@ sub GenerateImplementation
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
             # Treat PureInterface as Custom as well, since the WebCore versions will take a script context as well
-            next if ShouldSkipTypeInImplementation($function) || $dataNode->extendedAttributes->{"PureInterface"};
+            next if ShouldSkipType($function) || $dataNode->extendedAttributes->{"PureInterface"};
             AddIncludesForType($function->signature->type);
 
             my $functionName = $function->signature->name;

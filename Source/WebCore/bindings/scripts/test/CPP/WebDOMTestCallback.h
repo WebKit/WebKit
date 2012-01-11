@@ -35,8 +35,6 @@ class TestCallback;
 class WebDOMClass1;
 class WebDOMClass2;
 class WebDOMClass3;
-class WebDOMClass5;
-class WebDOMClass6;
 class WebDOMDOMStringList;
 
 class WebDOMTestCallback : public WebDOMObject {
@@ -51,7 +49,6 @@ public:
     bool callbackWithClass1Param(const WebDOMClass1& class1Param);
     bool callbackWithClass2Param(const WebDOMClass2& class2Param, const WebDOMString& strArg);
     int callbackWithNonBoolReturnType(const WebDOMClass3& class3Param);
-    int customCallback(const WebDOMClass5& class5Param, const WebDOMClass6& class6Param);
     bool callbackWithStringList(const WebDOMDOMStringList& listParam);
 
     WebCore::TestCallback* impl() const;

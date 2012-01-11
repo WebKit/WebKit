@@ -1,3 +1,24 @@
+2012-01-11  Kentaro Hara  <haraken@chromium.org>
+
+        ShouldSkipTypeInHeader() and ShouldSkipTypeInImplementation() should be the same
+        https://bugs.webkit.org/show_bug.cgi?id=76030
+
+        Reviewed by Adam Barth.
+
+        Because the attributes/methods that do not appear in the implementation
+        do not need to appear in the header.
+
+        Tests: bindings/scripts/test/TestCallback.idl
+               bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (ShouldSkipType): Renamed from ShouldSkipTypeInImplementation().
+        (GenerateHeader): Replaced ShouldSkipTypeInImplementation() with ShouldSkipType(),
+        and replaced ShouldSkipTypeInHeader() with ShouldSkipType().
+        (GenerateImplementation): Ditto.
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h: Updated the test result.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Ditto.
+
 2012-01-11  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Fix more style errors in CSSParser.cpp (followup patch)
