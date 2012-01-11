@@ -1664,20 +1664,26 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         var treeOutline = this.treeOutline;
         var node = this.representedObject;
+        var parentNode = node.parentNode;
+        var index = node.index;
         var wasExpanded = this.expanded;
 
         function selectNode(error, nodeId)
         {
-            if (error || !nodeId)
+            if (error)
                 return;
 
-            var node = WebInspector.domAgent.nodeForId(nodeId);
             // Select it and expand if necessary. We force tree update so that it processes dom events and is up to date.
             treeOutline._updateModifiedNodes();
-            treeOutline.selectDOMNode(node, true);
+
+            var newNode = parentNode ? parentNode.children[index] || parentNode : null;
+            if (!newNode)
+                return;
+
+            treeOutline.selectDOMNode(newNode, true);
 
             if (wasExpanded) {
-                var newTreeItem = treeOutline.findTreeElement(node);
+                var newTreeItem = treeOutline.findTreeElement(newNode);
                 if (newTreeItem)
                     newTreeItem.expand();
             }

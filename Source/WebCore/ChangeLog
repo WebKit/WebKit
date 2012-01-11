@@ -1,3 +1,33 @@
+2012-01-11  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make setOuterHTML use new DOMEditor, cover it with tests.
+        https://bugs.webkit.org/show_bug.cgi?id=76056
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/elements/set-outer-html.html
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::Digest::Digest):
+        (WebCore::DOMEditor::patchDocument):
+        (WebCore::DOMEditor::patchNode):
+        (WebCore::DOMEditor::innerPatchHTMLElement):
+        (WebCore::DOMEditor::innerPatchNode):
+        (WebCore::DOMEditor::diff):
+        (WebCore::DOMEditor::innerPatchChildren):
+        (WebCore::DOMEditor::createDigest):
+        * inspector/DOMEditor.h:
+        * inspector/Inspector-0.1.json:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype._renumber):
+        * inspector/front-end/ElementsTreeOutline.js:
+        ():
+
 2012-01-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: introduce "source" column in the CSS profiler.

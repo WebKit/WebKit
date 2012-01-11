@@ -52,7 +52,7 @@ WebInspector.DOMNode = function(doc, payload) {
     this.children = null;
 
     this.nextSibling = null;
-    this.prevSibling = null;
+    this.previousSibling = null;
     this.firstChild = null;
     this.lastChild = null;
     this.parentNode = null;
@@ -422,7 +422,7 @@ WebInspector.DOMNode.prototype = {
             var child = this.children[i];
             child.index = i;
             child.nextSibling = i + 1 < this._childNodeCount ? this.children[i + 1] : null;
-            child.prevSibling = i - 1 >= 0 ? this.children[i - 1] : null;
+            child.previousSibling = i - 1 >= 0 ? this.children[i - 1] : null;
             child.parentNode = this;
         }
     },

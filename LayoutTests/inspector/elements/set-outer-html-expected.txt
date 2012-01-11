@@ -1,0 +1,203 @@
+Tests DOMAgent.setOuterHTML protocol method.
+
+
+Running: testSetUp
+
+Running: testChangeCharacterData
+Replacing 'Getting involved' with 'Getting not involved' and back'
+Event CharacterDataModified: 
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting not involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+Event CharacterDataModified: 
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+
+Running: testChangeAttributes
+Replacing '<a href' with '<a foo="bar" href' and back'
+Event AttrRemoved: A
+Event AttrModified: A
+Event AttrModified: A
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a foo="bar" href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+Event AttrRemoved: A
+Event AttrRemoved: A
+Event AttrModified: A
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+
+Running: testRemoveLastChild
+Replacing 'Getting involved' with '' and back'
+Event NodeRemoved: 
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2></h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+Event NodeInserted: 
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+
+Running: testSplitNode
+Replacing 'Getting involved' with 'Getting</h2><h2>involved' and back'
+Event CharacterDataModified: 
+Event NodeInserted: H2
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting</h2><h2>involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+Event NodeRemoved: H2
+Event NodeRemoved: H2
+Event NodeInserted: H2
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+
+Running: testChangeNodeName
+Replacing '<h2>Getting involved</h2>' with '<h3>Getting involved</h3>' and back'
+Event NodeRemoved: H2
+Event NodeInserted: H3
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h3>Getting involved</h3>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+Event NodeRemoved: H3
+Event NodeInserted: H2
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+
+Running: testChangeMultipleThings
+Event AttrModified: H2
+Event AttrModified: H2
+Event NodeRemoved: LI
+==========8<==========
+<div id="container" style="display:none">
+<h2 foo="bar" bar="baz">Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   
+</ul>
+</div>
+==========>8==========
+Event AttrRemoved: H2
+Event AttrRemoved: H2
+Event NodeInserted: LI
+==========8<==========
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+</ul>
+</div>
+==========>8==========
+

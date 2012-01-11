@@ -631,12 +631,11 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
     *errorString = "Only HTMLElements, Comments, and Text nodes are supported";
 }
 
-void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML, int* newId)
+void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML)
 {
     if (!nodeId) {
         DOMEditor domEditor(m_document.get());
-        domEditor.patch(outerHTML);
-        *newId = 0;
+        domEditor.patchDocument(outerHTML);
         return;
     }
 
@@ -656,42 +655,29 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    Node* previousSibling = node->previousSibling(); // Remember previous sibling before replacing node.
-
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
-    fragment->parseHTML(outerHTML, parentNode->nodeType() == Node::ELEMENT_NODE ? static_cast<Element*>(parentNode) : document->documentElement());
-
-    ExceptionCode ec = 0;
-    parentNode->replaceChild(fragment.release(), node, ec);
-    if (ec) {
-        *errorString = "Failed to replace Node with new contents";
+    DOMEditor domEditor(document);
+    Node* newNode = domEditor.patchNode(errorString, node, outerHTML);
+    if (!errorString->isEmpty())
         return;
-    }
 
-    bool requiresTotalUpdate = false;
-    if (node->isHTMLElement())
-        requiresTotalUpdate = node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD";
-
+    bool requiresTotalUpdate = node->isHTMLElement() && (node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD");
     if (requiresTotalUpdate) {
         RefPtr<Document> document = m_document;
         reset();
         setDocument(document.get());
-        *newId = 0;
         return;
     }
 
-    Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
     if (!newNode) {
         // The only child node has been deleted.
-        *newId = 0;
         return;
     }
 
-    *newId = pushNodePathToFrontend(newNode);
+    int newId = pushNodePathToFrontend(newNode);
 
     bool childrenRequested = m_childrenRequested.contains(nodeId);
     if (childrenRequested)
-        pushChildNodesToFrontend(*newId);
+        pushChildNodesToFrontend(newId);
 }
 
 void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const String& value)

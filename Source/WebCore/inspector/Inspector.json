@@ -1267,9 +1267,6 @@
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set markup for." },
                     { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
                 ],
-                "returns": [
-                    { "name": "nodeId", "$ref": "NodeId", "description": "Setting outer HTML can change node's id." }
-                ],
                 "description": "Sets node HTML markup, returns new node id."
             },
             {

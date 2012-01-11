@@ -97,8 +97,8 @@ Running: testEditAsHTML
 <div id="node-to-edit-as-html"><span id="span">Text</span></div>
 ==== after ====
 - <div id="testEditAsHTML">
-    - <div foo="bar">
+    - <span foo="bar">
           <span id="inner-span">Span contents</span>
-      </div>
+      </span>
   </div>
 

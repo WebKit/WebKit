@@ -147,7 +147,7 @@ function test()
                 function step2()
                 {
                     InspectorTest.addResult(treeElement._htmlEditElement.textContent);
-                    treeElement._htmlEditElement.textContent = "<div foo=\"bar\"><span id=\"inner-span\">Span contents</span></div>";
+                    treeElement._htmlEditElement.textContent = "<span foo=\"bar\"><span id=\"inner-span\">Span contents</span></span>";
                     var event = InspectorTest.createKeyEvent("Enter");
                     event.isMetaOrCtrlForTest = true;
                     treeElement._htmlEditElement.dispatchEvent(event);

@@ -126,7 +126,7 @@ public:
     void removeNode(ErrorString*, int nodeId);
     void setNodeName(ErrorString*, int nodeId, const String& name, int* newId);
     void getOuterHTML(ErrorString*, int nodeId, WTF::String* outerHTML);
-    void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML, int* newId);
+    void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML);
     void setNodeValue(ErrorString*, int nodeId, const String& value);
     void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount);

@@ -41,7 +41,11 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
+class HTMLElement;
+class NamedNodeMap;
 class Node;
+
+typedef String ErrorString;
 
 #if ENABLE(INSPECTOR)
 
@@ -50,16 +54,18 @@ public:
     explicit DOMEditor(Document*);
     virtual ~DOMEditor();
 
-    void patch(const String& markup);
+    void patchDocument(const String& markup);
+    Node* patchNode(ErrorString*, Node*, const String& markup);
 
 private:
-    struct NodeDigest;
+    struct Digest;
+    typedef Vector<pair<Digest*, size_t> > ResultMap;
 
-    bool patchElement(Element* oldElement, Element* newElement);
-    bool patchNode(NodeDigest* oldNode, NodeDigest* newNode);
-    bool patchChildren(ContainerNode* oldParent, Vector<OwnPtr<NodeDigest> >& oldChildren, Vector<OwnPtr<NodeDigest> >& newChildren);
-    PassOwnPtr<NodeDigest> createNodeDigest(Node*);
-
+    void innerPatchHTMLElement(ErrorString*, HTMLElement* oldElement, HTMLElement* newElement);
+    void innerPatchNode(ErrorString*, Digest* oldNode, Digest* newNode);
+    std::pair<ResultMap, ResultMap> diff(Vector<OwnPtr<Digest> >& oldChildren, Vector<OwnPtr<Digest> >& newChildren);
+    void innerPatchChildren(ErrorString*, Element*, Vector<OwnPtr<Digest> >& oldChildren, Vector<OwnPtr<Digest> >& newChildren);
+    PassOwnPtr<Digest> createDigest(Node*);
     Document* m_document;
 };
 
