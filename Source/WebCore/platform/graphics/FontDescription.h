@@ -72,6 +72,8 @@ public:
     enum GenericFamilyType { NoFamily, StandardFamily, SerifFamily, SansSerifFamily, 
                              MonospaceFamily, CursiveFamily, FantasyFamily, PictographFamily };
 
+    enum Kerning { AutoKerning, NormalKerning, NoneKerning };
+
     FontDescription()
         : m_specifiedSize(0)
         , m_computedSize(0)
@@ -85,6 +87,7 @@ public:
         , m_genericFamily(NoFamily)
         , m_usePrinterFont(false)
         , m_renderingMode(NormalRenderingMode)
+        , m_kerning(AutoKerning)
         , m_keywordSize(0)
         , m_fontSmoothing(AutoSmoothing)
         , m_textRendering(AutoTextRendering)
@@ -112,6 +115,7 @@ public:
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return genericFamily() == MonospaceFamily && !family().next() && family().family() == monospaceFamily; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
+    Kerning kerning() const { return static_cast<Kerning>(m_kerning); }
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
@@ -141,6 +145,7 @@ public:
     void setUsePrinterFont(bool p) { m_usePrinterFont = p; }
 #endif
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
+    void setKerning(Kerning kerning) { m_kerning = kerning; }
     void setKeywordSize(unsigned s) { m_keywordSize = s; }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
@@ -173,6 +178,7 @@ private:
     bool m_usePrinterFont : 1;
 
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
+    unsigned m_kerning : 2; // Kerning
 
     unsigned m_keywordSize : 4; // We cache whether or not a font is currently represented by a CSS keyword (e.g., medium).  If so,
                            // then we can accurately translate across different generic families to adjust for different preference settings
@@ -196,6 +202,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_genericFamily == other.m_genericFamily
         && m_usePrinterFont == other.m_usePrinterFont
         && m_renderingMode == other.m_renderingMode
+        && m_kerning == other.m_kerning
         && m_keywordSize == other.m_keywordSize
         && m_fontSmoothing == other.m_fontSmoothing
         && m_textRendering == other.m_textRendering

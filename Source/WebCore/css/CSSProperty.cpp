@@ -318,6 +318,7 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitBoxDirection:
     case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitFontFeatureSettings:
+    case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitLocale:
     case CSSPropertyWebkitHighlight:

@@ -2228,6 +2228,11 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseFontFeatureSettings(important);
         break;
 
+    case CSSPropertyWebkitFontKerning:
+        if (id == CSSValueAuto || id == CSSValueNormal || id == CSSValueNone)
+            validPrimitive = true;
+        break;
+
     case CSSPropertyWebkitWrapShapeInside:
     case CSSPropertyWebkitWrapShapeOutside:
         if (id == CSSValueAuto)

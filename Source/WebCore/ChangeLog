@@ -1,3 +1,41 @@
+2012-01-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10674686> Implement the font-kerning CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=76033
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/text/font-kerning-expected.html
+               fast/text/font-kerning.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added code to handle
+        font-kerning.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added mapping from FontDescription::Kerning.
+        (WebCore::CSSPrimitiveValue::operator FontDescription::Kerning): Added mapping to
+        FontDescription::Kerning.
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Added font-kerning to the set of inherited
+        properties.
+        * css/CSSPropertyNames.in: Added -webkit-font-kerning.
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty): Added a handler for font-kerning.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclaration): Updated for the number of properties that
+        affect the font.
+        * platform/graphics/Font.h:
+        (WebCore::Font::typesettingFeatures): Changed to enable kerning if font-kerning is set to
+        normal, disable it if font-kerning is set to none, and leave it to the default (determined
+        by the text-rendering property) if font-kerning is set to auto.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription): Added a Kerning enum.
+        (WebCore::FontDescription::kerning): Added this getter.
+        (WebCore::FontDescription::setKerning): Added this setter.
+        (WebCore::FontDescription::operator==): Updated to compare the m_kerning member.
+
 2012-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Forgot to revert Node.h.

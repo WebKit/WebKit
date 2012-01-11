@@ -2826,6 +2826,41 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontDescription::Kerning kerning)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (kerning) {
+    case FontDescription::AutoKerning:
+        m_value.ident = CSSValueAuto;
+        return;
+    case FontDescription::NormalKerning:
+        m_value.ident = CSSValueNormal;
+        return;
+    case FontDescription::NoneKerning:
+        m_value.ident = CSSValueNone;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    m_value.ident = CSSValueAuto;
+}
+
+template<> inline CSSPrimitiveValue::operator FontDescription::Kerning() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return FontDescription::AutoKerning;
+    case CSSValueNormal:
+        return FontDescription::NormalKerning;
+    case CSSValueNone:
+        return FontDescription::NoneKerning;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FontDescription::AutoKerning;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSmoothingMode smoothing)
     : CSSValue(PrimitiveClass)
 {

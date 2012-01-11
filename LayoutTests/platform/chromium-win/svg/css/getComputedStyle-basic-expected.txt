@@ -294,6 +294,8 @@ rect: style.getPropertyValue(-webkit-flex-flow) : row nowrap
 rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-flex-wrap) : nowrap
 rect: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-font-kerning) : auto
+rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
@@ -802,6 +804,8 @@ g: style.getPropertyValue(-webkit-flex-flow) : row nowrap
 g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-flex-wrap) : nowrap
 g: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-font-kerning) : auto
+g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none

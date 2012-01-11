@@ -221,6 +221,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitFlexDirection,
     CSSPropertyWebkitFlexFlow,
     CSSPropertyWebkitFlexWrap,
+    CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
 #if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyWebkitGridColumns,
@@ -1866,6 +1867,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->matchNearestMailBlockquoteColor());
         case CSSPropertyResize:
             return cssValuePool->createValue(style->resize());
+        case CSSPropertyWebkitFontKerning:
+            return cssValuePool->createValue(style->fontDescription().kerning());
         case CSSPropertyWebkitFontSmoothing:
             return cssValuePool->createValue(style->fontDescription().fontSmoothing());
         case CSSPropertyZIndex:
