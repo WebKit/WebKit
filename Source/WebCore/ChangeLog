@@ -1,3 +1,23 @@
+2012-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler. Prepared by Sheriff Bot. Rolling out r94902.
+        http://trac.webkit.org/changeset/94902
+        https://bugs.webkit.org/show_bug.cgi?id=75905
+
+        Disagrees with general direction for WebKit, and makes
+        refactoring harder (Requested by ap on #webkit).
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::deprecatedFrameEncoding):
+        * loader/DocumentWriter.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray):
+        * platform/network/ResourceRequestBase.h:
+
 2012-01-11  Eli Fidler  <efidler@rim.com>
 
         Fix OpenGL dependency in CMake build system

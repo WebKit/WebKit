@@ -57,7 +57,6 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     request->updateResourceRequest();
     request->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
     size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
         String encoding1 = data->m_responseContentDispositionEncodingFallbackArray[0];
@@ -71,7 +70,6 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
         ASSERT(encodingCount <= 3);
         request->setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
     }
-#endif
     request->setHTTPBody(data->m_httpBody);
     request->setAllowCookies(data->m_allowCookies);
     request->doPlatformAdopt(data);
@@ -89,13 +87,11 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_priority = priority();
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
     data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
     for (size_t index = 0; index < encodingArraySize; ++index) {
         data->m_responseContentDispositionEncodingFallbackArray.append(m_responseContentDispositionEncodingFallbackArray[index].isolatedCopy());
     }
-#endif
     if (m_httpBody)
         data->m_httpBody = m_httpBody->deepCopy();
     data->m_allowCookies = m_allowCookies;
@@ -275,7 +271,6 @@ void ResourceRequestBase::clearHTTPOrigin()
         m_platformRequestUpdated = false;
 }
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
 void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2, const String& encoding3)
 {
     updateResourceRequest(); 
@@ -291,7 +286,6 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
     if (url().protocolInHTTPFamily())
         m_platformRequestUpdated = false;
 }
-#endif
 
 FormData* ResourceRequestBase::httpBody() const 
 { 

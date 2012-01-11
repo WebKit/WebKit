@@ -2585,13 +2585,10 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     // Make sure we send the Origin header.
     addHTTPOriginIfNeeded(request, String());
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
-    // The Apple Mac and Windows ports have decided not to behave like other
-    // browsers and instead use a quirky fallback array.
-    // FIXME: We should remove this code once CFNetwork implements RFC 6266.
+    // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
+    // For a newly opened frame with an empty URL, encoding() should not be used, because this methods asks decoder, which uses ISO-8859-1.
     Settings* settings = m_frame->settings();
     request.setResponseContentDispositionEncodingFallbackArray("UTF-8", activeDocumentLoader()->writer()->deprecatedFrameEncoding(), settings ? settings->defaultTextEncodingName() : String());
-#endif
 }
 
 void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& origin)
