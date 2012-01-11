@@ -411,15 +411,30 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     return 0; // Invalid page number.
 }
 
+static NSString *pdfKitFrameworkPath()
+{
+    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, NO) objectAtIndex:0];
+    return [systemLibraryPath stringByAppendingPathComponent:@"Frameworks/Quartz.framework/Frameworks/PDFKit.framework"];
+}
+
+static Class classFromPDFKit(NSString *className)
+{
+    static NSBundle *pdfKitBundle = [NSBundle bundleWithPath:pdfKitFrameworkPath()];
+    [pdfKitBundle load];
+    return [pdfKitBundle classNamed:className];
+}
+
 static Class pdfAnnotationLinkClass()
 {
-    static Class pdfAnnotationLinkClass = NSClassFromString(@"PDFAnnotationLink");
+    static Class pdfAnnotationLinkClass = classFromPDFKit(@"PDFAnnotationLink");
+    ASSERT(pdfAnnotationLinkClass);
     return pdfAnnotationLinkClass;
 }
 
 static Class pdfDocumentClass()
 {
-    static Class pdfDocumentClass = NSClassFromString(@"PDFDocument");
+    static Class pdfDocumentClass = classFromPDFKit(@"PDFDocument");
+    ASSERT(pdfDocumentClass);
     return pdfDocumentClass;
 }
 

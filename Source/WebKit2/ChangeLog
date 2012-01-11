@@ -1,3 +1,22 @@
+2012-01-10  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r104377): All pages print blank on Snow Leopard
+        <http://webkit.org/b/75879> / <rdar://problem/10674335>
+
+        We need to explicitly load PDFKit.framework before using PDFDocument and friends.
+        On SnowLeopard the framework is not necessarily loaded by anything else before we
+        print, which would lead to us failing to allocate the PDFDocument that we use for
+        drawing the content from the web process.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pdfKitFrameworkPath): Construct the path to the PDFKit framework.
+        (classFromPDFKit): Ensure that the PDFKit framework is loaded, and then retrieve the
+        given class from it.
+        (pdfAnnotationLinkClass): ASSERT that we found the class.
+        (pdfDocumentClass): Ditto.
+
 2012-01-10  Chris Marrin  <cmarrin@apple.com>
 
         Wrapped allowedCompositingTriggers in ACCELERATED_COMPOSITING ifdef to make non-accelerated builds work
