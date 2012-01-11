@@ -1,3 +1,21 @@
+2012-01-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][Texmap] LayoutTests/compositing/masks/masked-ancestor does not render correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=75910
+
+        Reviewed by Simon Hausmann.
+
+        Handle the mask surface correctly when drawing in two passes. Also, improve the readability
+        of the code that decides whether to draw in two passes.
+
+        LayoutTests/compositing/masks/masked-ancestor.html tests this.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::computeAllTransforms):
+        (WebCore::TextureMapperNode::hasMoreThanOneTile):
+        (WebCore::TextureMapperNode::paintRecursive):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
 2012-01-11  Dmitry Titov  <dimich@chromium.org>
 
         Add new CSS enum value to a switch() in CSSStyleSelector::applyProperty() to fix compile error.

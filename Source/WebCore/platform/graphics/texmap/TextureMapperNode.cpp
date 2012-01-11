@@ -112,14 +112,15 @@ void TextureMapperNode::computeAllTransforms()
     computeReplicaTransformIfNeeded();
     computePerspectiveTransformIfNeeded();
 
-    m_transforms.target = TransformationMatrix(m_parent ? m_parent->m_transforms.forDescendants : TransformationMatrix()).multiply(m_transforms.local);
+    TextureMapperNode* parent = m_parent ? m_parent : m_effectTarget;
+    m_transforms.target = TransformationMatrix(parent ? parent->m_transforms.forDescendants : TransformationMatrix()).multiply(m_transforms.local);
 
     m_state.visible = m_state.backfaceVisibility || m_transforms.target.inverse().m33() >= 0;
     if (!m_state.visible)
         return;
 
     // This transform is only applied if using a two-pass for the replica, because the transform needs to be adjusted to the size of the intermediate surface, insteaf of the size of the content layer.
-    if (m_parent && m_parent->m_state.preserves3D)
+    if (parent && parent->m_state.preserves3D)
         m_transforms.centerZ = m_transforms.target.mapPoint(FloatPoint3D(m_size.width() / 2, m_size.height() / 2, 0)).z();
 
     if (!m_children.size())
@@ -247,6 +248,35 @@ bool TextureMapperNode::collectVisibleContentsRects(NodeRectMap& rectMap, const 
     return true;
 }
 #endif
+
+bool TextureMapperNode::hasMoreThanOneTile() const
+{
+    int tiles = 0;
+
+#if USE(TILED_BACKING_STORE)
+    if (m_state.tileOwnership == ExternallyManagedTiles) {
+        HashMap<int, ExternallyManagedTile>::const_iterator end = m_externallyManagedTiles.end();
+        for (HashMap<int, ExternallyManagedTile>::const_iterator it = m_externallyManagedTiles.begin(); it != end; ++it) {
+            if (it->second.frontBuffer.texture) {
+                if (++tiles > 1)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+#endif
+
+    for (size_t i = 0; i < m_ownedTiles.size(); ++i) {
+        if (m_ownedTiles[i].texture) {
+            if (++tiles > 1)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 
 void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
 {
@@ -515,8 +545,14 @@ void TextureMapperNode::paintRecursive(TextureMapperPaintOptions options)
 
     options.opacity *= m_opacity;
     RefPtr<BitmapTexture> surface;
-    const bool needsTwoPass = ((m_state.replicaLayer || m_state.maskLayer) && !m_children.isEmpty()) || (m_opacity < 0.99 && m_state.mightHaveOverlaps) || (m_opacity < 0.99 && m_state.replicaLayer);
+
+    bool hasReplica = m_state.replicaLayer;
+    bool hasMask = m_state.maskLayer;
+    bool needsBlending = m_opacity < 0.99 || hasMask;
+    bool paintsMoreThanOneTexture = !m_children.isEmpty() || hasMoreThanOneTile() || (hasMask && m_state.maskLayer->hasMoreThanOneTile());
+    bool hasOverlaps = m_state.mightHaveOverlaps || hasReplica;
     const IntSize viewportSize = options.textureMapper->viewportSize();
+    bool needsTwoPass = ((hasReplica || hasMask) && paintsMoreThanOneTexture) || (needsBlending && hasOverlaps);
     options.isSurface = false;
 
     TextureMapperPaintOptions optionsForDescendants(options);
@@ -530,11 +566,12 @@ void TextureMapperNode::paintRecursive(TextureMapperPaintOptions options)
 
     RefPtr<BitmapTexture> maskSurface;
 
-    // The mask has to be adjusted to target coordinates.
     if (m_state.maskLayer) {
         maskSurface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
         options.textureMapper->bindSurface(maskSurface.get());
-        options.textureMapper->drawTexture(*m_state.maskLayer->texture(), entireRect(), m_transforms.target, 1.0, 0);
+        TextureMapperPaintOptions optionsForMask(options);
+        optionsForMask.isSurface = true;
+        m_state.maskLayer->paintSelf(optionsForMask);
     }
 
     surface = options.textureMapper->acquireTextureFromPool(options.textureMapper->viewportSize());
@@ -547,7 +584,7 @@ void TextureMapperNode::paintRecursive(TextureMapperPaintOptions options)
 
     if (!paintReflection(options, surface.get())) {
         options.textureMapper->bindSurface(options.surface);
-        options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), options.opacity, 0);
+        options.textureMapper->drawTexture(*surface.get(), viewportRect, TransformationMatrix(), options.opacity, maskSurface.get());
     }
 
     options.textureMapper->releaseTextureToPool(surface.get());

@@ -206,7 +206,7 @@ private:
     void applyTransformAnimation(const TextureMapperAnimation&, const TransformOperations* start, const TransformOperations* end, double);
     bool hasOpacityAnimation() const;
     bool hasTransformAnimation() const;
-
+    bool hasMoreThanOneTile() const;
     struct TransformData {
         TransformationMatrix target;
         TransformationMatrix replica;
