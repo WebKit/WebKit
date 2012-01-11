@@ -182,7 +182,6 @@ private:
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) OVERRIDE;
     virtual void setNeedsOneShotDrawingSynchronization() OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
-#endif
 
     virtual CompositingTriggerFlags allowedCompositingTriggers() const
     {
@@ -193,6 +192,7 @@ private:
             CanvasTrigger |
             AnimationTrigger);
     }
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE;

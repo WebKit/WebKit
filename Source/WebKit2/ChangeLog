@@ -1,3 +1,11 @@
+2012-01-10  Chris Marrin  <cmarrin@apple.com>
+
+        Wrapped allowedCompositingTriggers in ACCELERATED_COMPOSITING ifdef to make non-accelerated builds work
+
+        Unreviewed.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2012-01-10  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt][WK2]REGRESSION(r102435): It made tst_QQuickWebView::show() crash

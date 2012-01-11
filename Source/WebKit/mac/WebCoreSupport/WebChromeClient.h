@@ -148,7 +148,6 @@ public:
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) OVERRIDE;
     virtual void setNeedsOneShotDrawingSynchronization() OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
-#endif
 
     virtual CompositingTriggerFlags allowedCompositingTriggers() const
     {
@@ -159,6 +158,7 @@ public:
             CanvasTrigger |
             AnimationTrigger);
     }
+#endif
 
 #if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*) OVERRIDE;
