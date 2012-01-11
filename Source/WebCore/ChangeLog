@@ -1,3 +1,17 @@
+2012-01-11  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Color profiles are incorrect for images without premultiplied alpha
+        https://bugs.webkit.org/show_bug.cgi?id=75999
+
+        Reviewed by Stephen White.
+
+        Don't apply the color profile if the user has requested separate alpha.
+
+        Test: fast/canvas/webgl/texture-color-profile.html
+
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::setStatus):
+
 2012-01-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap] LayoutTests/compositing/masks/masked-ancestor does not render correctly.

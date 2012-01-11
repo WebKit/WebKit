@@ -158,7 +158,9 @@ void ImageFrame::setStatus(FrameStatus status)
     if (m_status == FrameComplete) {
         m_bitmap.setDataComplete();  // Tell the bitmap it's done.
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-        if (m_colorProfile.isEmpty())
+        // resolveColorSpace() and callees assume that the alpha channel is
+        // premultiplied, so don't apply the color profile if it isn't.
+        if (m_colorProfile.isEmpty() || !m_premultiplyAlpha)
             return;
         RetainPtr<CGColorSpaceRef> cgColorSpace(AdoptCF, createColorSpace(m_colorProfile));
         resolveColorSpace(m_bitmap.bitmap(), cgColorSpace.get());
