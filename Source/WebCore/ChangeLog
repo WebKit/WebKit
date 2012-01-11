@@ -1,5 +1,11 @@
 2012-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Forgot to revert Node.h.
+
+        * dom/Node.h:
+
+2012-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert r104210. It turned out that this patch makes improving the node list caches harder.
 
         * dom/Attr.cpp:
