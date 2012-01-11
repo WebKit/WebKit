@@ -398,6 +398,9 @@ EditorState WebPage::editorState() const
     if (!scope)
         return result;
 
+    if (selectionRoot)
+        result.editorRect = frame->view()->contentsToWindow(selectionRoot->getRect());
+
     RefPtr<Range> range;
     if (result.hasComposition && (range = frame->editor()->compositionRange())) {
         frame->editor()->getCompositionSelection(result.anchorPosition, result.cursorPosition);
@@ -415,7 +418,7 @@ EditorState WebPage::editorState() const
     }
 
     if (range)
-        result.microFocus = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(range.get()));
+        result.cursorRect = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(range.get()));
 
     // FIXME: We should only transfer innerText when it changes and do this on the UI side.
     if (result.isContentEditable && !result.isInPasswordField) {

@@ -1,3 +1,23 @@
+2012-01-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add the editor rect to the EditorState
+        https://bugs.webkit.org/show_bug.cgi?id=76053
+
+        Reviewed by Simon Hausmann.
+
+        Also rename some members to match the new Qt naming scheme.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::inputMethodQuery):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-01-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Linking of big binaries should be serialized to avoid thrashing
