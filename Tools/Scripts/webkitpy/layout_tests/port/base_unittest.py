@@ -40,19 +40,22 @@ from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
-from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.layout_tests.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
 import config
 import config_mock
 
 class PortTest(unittest.TestCase):
-    def make_port(self, executive=None, **kwargs):
-        host = MockHost()
+    def make_port(self, executive=None, with_tests=False, **kwargs):
+        host = MockSystemHost()
         if executive:
             host.executive = executive
+        if with_tests:
+            add_unit_tests_to_mock_filesystem(host.filesystem)
+            return TestPort(host, **kwargs)
         return Port(host, **kwargs)
 
     def test_default_child_processes(self):
@@ -284,28 +287,28 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port.uses_test_expectations_file())
 
     def test_find_no_paths_specified(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         layout_tests_dir = port.layout_tests_dir()
         tests = port.tests([])
         self.assertNotEqual(len(tests), 0)
 
     def test_find_one_test(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         tests = port.tests(['failures/expected/image.html'])
         self.assertEqual(len(tests), 1)
 
     def test_find_glob(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         tests = port.tests(['failures/expected/im*'])
         self.assertEqual(len(tests), 2)
 
     def test_find_with_skipped_directories(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         tests = port.tests('userscripts')
         self.assertTrue('userscripts/resources/iframe.html' not in tests)
 
     def test_find_with_skipped_directories_2(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         tests = port.tests(['userscripts/resources'])
         self.assertEqual(tests, set([]))
 
@@ -325,7 +328,7 @@ class PortTest(unittest.TestCase):
         self.assertFalse(Port._is_test_file(filesystem, '', 'notref-foo.xhr'))
 
     def test_parse_reftest_list(self):
-        port = TestPort(MockHost())
+        port = self.make_port(with_tests=True)
         port.host.filesystem.files['bar/reftest.list'] = "\n".join(["== test.html test-ref.html",
         "",
         "# some comment",
@@ -360,14 +363,11 @@ class PortTest(unittest.TestCase):
         _, _, logs = capture.restore_output()
         self.assertEqual('httpd seems broken. Cannot run http tests.\n', logs)
 
-
-class VirtualTest(unittest.TestCase):
-    """Tests that various methods expected to be virtual are."""
     def assertVirtual(self, method, *args, **kwargs):
         self.assertRaises(NotImplementedError, method, *args, **kwargs)
 
     def test_virtual_methods(self):
-        port = Port(MockHost())
+        port = Port(MockSystemHost())
         self.assertVirtual(port.baseline_path)
         self.assertVirtual(port.baseline_search_path)
         self.assertVirtual(port.check_build, None)
@@ -386,29 +386,6 @@ class VirtualTest(unittest.TestCase):
         self.assertVirtual(port._path_to_lighttpd_modules)
         self.assertVirtual(port._path_to_lighttpd_php)
         self.assertVirtual(port._path_to_wdiff)
-
-    def test_virtual_driver_methods(self):
-        driver = Driver(Port(MockHost()), None, pixel_tests=False)
-        self.assertVirtual(driver.run_test, None)
-        self.assertVirtual(driver.stop)
-        self.assertVirtual(driver.cmd_line)
-
-
-# FIXME: This should be moved to driver_unittest.py or just deleted.
-class DriverTest(unittest.TestCase):
-
-    def _assert_wrapper(self, wrapper_string, expected_wrapper):
-        wrapper = Driver(Port(MockHost()), None, pixel_tests=False)._command_wrapper(wrapper_string)
-        self.assertEqual(wrapper, expected_wrapper)
-
-    def test_command_wrapper(self):
-        self._assert_wrapper(None, [])
-        self._assert_wrapper("valgrind", ["valgrind"])
-
-        # Validate that shlex works as expected.
-        command_with_spaces = "valgrind --smc-check=\"check with spaces!\" --foo"
-        expected_parse = ["valgrind", "--smc-check=check with spaces!", "--foo"]
-        self._assert_wrapper(command_with_spaces, expected_parse)
 
 
 if __name__ == '__main__':

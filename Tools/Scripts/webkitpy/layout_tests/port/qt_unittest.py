@@ -28,13 +28,12 @@
 
 import unittest
 
-from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.layout_tests.port.qt import QtPort
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.layout_tests.port.qt import QtPort
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.host_mock import MockHost
 
 
 class QtPortTest(port_testcase.PortTestCase):
@@ -44,7 +43,7 @@ class QtPortTest(port_testcase.PortTestCase):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
-        host = MockHost()
+        host = MockSystemHost()
         host.executive = MockExecutive2(self._qt_version(qt_version))
         port = QtPort(host, sys_platform=sys_platform, options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)

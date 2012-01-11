@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.common.system import executive_mock
-from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.layout_tests.port import chromium_linux
 from webkitpy.layout_tests.port import port_testcase
@@ -39,7 +39,7 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
     port_maker = chromium_linux.ChromiumLinuxPort
 
     def assert_architecture(self, port_name=None, file_output=None, expected_architecture=None):
-        host = MockHost()
+        host = MockSystemHost()
         host.filesystem.exists = lambda x: 'DumpRenderTree' in x
         if file_output:
             host.executive = executive_mock.MockExecutive2(file_output)
@@ -67,16 +67,16 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
     def test_check_illegal_port_names(self):
         # FIXME: Check that, for now, these are illegal port names.
         # Eventually we should be able to do the right thing here.
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockHost(), port_name='chromium-x86-linux')
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockHost(), port_name='chromium-linux-x86-gpu')
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockSystemHost(), port_name='chromium-x86-linux')
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockSystemHost(), port_name='chromium-linux-x86-gpu')
 
     def test_determine_architecture_fails(self):
         # Test that we default to 'x86' if the driver doesn't exist.
-        port = chromium_linux.ChromiumLinuxPort(MockHost())
+        port = chromium_linux.ChromiumLinuxPort(MockSystemHost())
         self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we default to 'x86' on an unknown architecture.
-        host = MockHost()
+        host = MockSystemHost()
         host.filesystem.exists = lambda x: True
         host.executive = executive_mock.MockExecutive2('win32')
         port = chromium_linux.ChromiumLinuxPort(host)

@@ -30,18 +30,27 @@ import sys
 import unittest
 
 from webkitpy.common.system.path import abspath_to_uri
-from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 
 
 class DriverTest(unittest.TestCase):
     def make_port(self):
-        return Port(MockHost())
+        return Port(MockSystemHost())
+
+    def assertVirtual(self, method, *args, **kwargs):
+        self.assertRaises(NotImplementedError, method, *args, **kwargs)
 
     def _assert_wrapper(self, wrapper_string, expected_wrapper):
-        wrapper = Driver(Port(MockHost()), None, pixel_tests=False)._command_wrapper(wrapper_string)
+        wrapper = Driver(self.make_port(), None, pixel_tests=False)._command_wrapper(wrapper_string)
         self.assertEqual(wrapper, expected_wrapper)
+
+    def test_virtual_driver_methods(self):
+        driver = Driver(self.make_port(), None, pixel_tests=False)
+        self.assertVirtual(driver.run_test, None)
+        self.assertVirtual(driver.stop)
+        self.assertVirtual(driver.cmd_line)
 
     def test_command_wrapper(self):
         self._assert_wrapper(None, [])

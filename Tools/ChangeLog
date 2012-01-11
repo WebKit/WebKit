@@ -1,3 +1,56 @@
+2012-01-11  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: webkitpy.layout_tests.port tests should only use MockSystemHost, not MockHost
+        https://bugs.webkit.org/show_bug.cgi?id=76084
+
+        Reviewed by Adam Barth.
+
+        This will help make it easier to catch layering violations. This
+        change just refactors test code; there are no changes to
+        production code.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.make_port):
+        (PortTest.test_find_no_paths_specified):
+        (PortTest.test_find_one_test):
+        (PortTest.test_find_glob):
+        (PortTest.test_find_with_skipped_directories):
+        (PortTest.test_find_with_skipped_directories_2):
+        (PortTest.test_parse_reftest_list):
+        (PortTest.test_httpd_returns_error_code):
+        (PortTest.test_virtual_methods):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        (ChromiumGpuTest.assert_port_works):
+        (ChromiumGpuTest._assert_baseline_path):
+        (ChromiumGpuTest.test_graphics_type):
+        (ChromiumGpuTest.test_default_tests_paths.test_paths):
+        (ChromiumGpuTest.test_test_files):
+        (ChromiumGpuTest.test_test_files.test_paths):
+        (ChromiumGpuTest):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.assert_architecture):
+        (ChromiumLinuxPortTest.test_check_illegal_port_names):
+        (ChromiumLinuxPortTest.test_determine_architecture_fails):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.make_port):
+        (DriverTest):
+        (DriverTest.assertVirtual):
+        (DriverTest._assert_wrapper):
+        (DriverTest.test_virtual_driver_methods):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.make_port):
+        (MockDRTPortTest.test_port_name_in_constructor):
+        (MockDRTTest.assertTest):
+        (MockDRTTest.test_main):
+        (MockChromiumDRTTest.test_pixeltest__fails):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest._assert_search_path):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (TestWebKitPort.__init__):
+        (WebKitPortUnitTests.test_default_options):
+        (test_runtime_feature_list):
+        (test_test_expectations):
+
 2012-01-11  Ojan Vafai  <ojan@chromium.org>
 
         Style skipped tests in the flakiness dashboard
