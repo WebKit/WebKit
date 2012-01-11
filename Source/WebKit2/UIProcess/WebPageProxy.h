@@ -364,7 +364,7 @@ public:
 
     HWND nativeWindow() const;
 #endif
-#if USE(CAIRO)
+#if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
     PlatformWidget viewWidget();
 #endif
 #if USE(TILED_BACKING_STORE)

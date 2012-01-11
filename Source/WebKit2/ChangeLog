@@ -1,3 +1,9 @@
+2012-01-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        WinCairo build correction.
+
+        * UIProcess/WebPageProxy.h: Don't define viewWidget for WinCairo port.
+
 2012-01-11  Anders Carlsson  <andersca@apple.com>
 
         Webpages flash white when switching between windows
@@ -7,8 +13,6 @@
         Reviewed by Dan Bernstein.
 
         Introduce a _windowHasValidBackingStore boolean and only paint the background (white or clear)
-        if it's false.
-
         * UIProcess/API/mac/WKView.mm:
         (-[WKView setFrameSize:]):
         Set _windowHasValidBackingStore to false if the new size is different from the old size.
