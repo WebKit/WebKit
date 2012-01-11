@@ -49,9 +49,11 @@ SOURCES += \
     assembler/ARMv7Assembler.cpp \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
+    bytecode/CallLinkInfo.cpp \
     bytecode/CodeBlock.cpp \
     bytecode/DFGExitProfile.cpp \
     bytecode/JumpTable.cpp \
+    bytecode/MethodCallLinkInfo.cpp \
     bytecode/Opcode.cpp \
     bytecode/PredictedType.cpp \
     bytecode/SamplingTool.cpp \

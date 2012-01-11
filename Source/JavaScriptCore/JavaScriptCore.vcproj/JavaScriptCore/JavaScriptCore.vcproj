@@ -1450,6 +1450,46 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\HandlerInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CallLinkInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\LineInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\MethodCallLinkInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CallReturnOffsetToBytecodeOffset.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CodeType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ExpressionRangeInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\MethodCallLinkInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CallLinkInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\GlobalResolveInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\CodeBlock.cpp"
 				>
 			</File>

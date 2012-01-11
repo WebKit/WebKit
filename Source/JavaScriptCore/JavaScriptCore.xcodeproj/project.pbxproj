@@ -48,6 +48,16 @@
 		0BAC94A01338728400CF135B /* ThreadRestrictionVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BCD83571485845200EA2003 /* TemporaryChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BCD83541485841200EA2003 /* TemporaryChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
+		0F0B83A714BCF50700885B4F /* CodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A514BCF50400885B4F /* CodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A814BCF55E00885B4F /* HandlerInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AC14BCF60200885B4F /* LineInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */; };
+		0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83B414BCF86000885B4F /* MethodCallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */; };
+		0F0B83B514BCF86200885B4F /* MethodCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83B714BCF8E100885B4F /* GlobalResolveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F16D726142C39C000CF784A /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F16D724142C39A200CF784A /* BitVector.cpp */; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -805,6 +815,16 @@
 		0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadRestrictionVerifier.h; sourceTree = "<group>"; };
 		0BCD83541485841200EA2003 /* TemporaryChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryChange.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
+		0F0B83A514BCF50400885B4F /* CodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeType.h; sourceTree = "<group>"; };
+		0F0B83A814BCF55E00885B4F /* HandlerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerInfo.h; sourceTree = "<group>"; };
+		0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionRangeInfo.h; sourceTree = "<group>"; };
+		0F0B83AC14BCF60200885B4F /* LineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineInfo.h; sourceTree = "<group>"; };
+		0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfo.cpp; sourceTree = "<group>"; };
+		0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfo.h; sourceTree = "<group>"; };
+		0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MethodCallLinkInfo.cpp; sourceTree = "<group>"; };
+		0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodCallLinkInfo.h; sourceTree = "<group>"; };
+		0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalResolveInfo.h; sourceTree = "<group>"; };
+		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
 		0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPaths.h; sourceTree = "<group>"; };
 		0F16D724142C39A200CF784A /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
@@ -2454,6 +2474,16 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
+				0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */,
+				0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */,
+				0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */,
+				0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */,
+				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
+				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
+				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
+				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,
+				0F0B83A514BCF50400885B4F /* CodeType.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,
@@ -2983,6 +3013,14 @@
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
 				0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */,
+				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
+				0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */,
+				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
+				0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */,
+				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
+				0F0B83B514BCF86200885B4F /* MethodCallLinkInfo.h in Headers */,
+				0F0B83B714BCF8E100885B4F /* GlobalResolveInfo.h in Headers */,
+				0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3518,6 +3556,8 @@
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
 				0F46808314BA573100BFE272 /* JITExceptions.cpp in Sources */,
+				0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */,
+				0F0B83B414BCF86000885B4F /* MethodCallLinkInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

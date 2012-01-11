@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "CodeBlock.h"
 #include <MacroAssembler.h>
 #include <wtf/Noncopyable.h>
 

@@ -231,8 +231,18 @@ namespace JSC {
         CodeLocationLabel hotPathBegin;
     };
 
+    inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
+    {
+        return structureStubInfo->callReturnLocation.executableAddress();
+    }
+
+    inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
+    {
+        return structureStubInfo->bytecodeIndex;
+    }
+
 } // namespace JSC
 
-#endif
+#endif // ENABLE(JIT)
 
 #endif // StructureStubInfo_h

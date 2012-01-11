@@ -1,3 +1,54 @@
+2012-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock.h declares too many things
+        https://bugs.webkit.org/show_bug.cgi?id=76001
+
+        Rubber stamped by Gavin Barraclough.
+        
+        Removed all non-CodeBlock type declarations from CodeBlock.h, and put them
+        into separate header files. Also removed all non-CodeBlock method implementations
+        from CodeBlock.cpp and put them into corresponding cpp files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/RepatchBuffer.h:
+        * bytecode/CallLinkInfo.cpp: Added.
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CallLinkInfo.h: Added.
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::~CallLinkInfo):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::seenOnce):
+        (JSC::CallLinkInfo::setSeen):
+        (JSC::getCallLinkInfoReturnLocation):
+        (JSC::getCallLinkInfoBytecodeIndex):
+        * bytecode/CallReturnOffsetToBytecodeOffset.h: Added.
+        (JSC::CallReturnOffsetToBytecodeOffset::CallReturnOffsetToBytecodeOffset):
+        (JSC::getCallReturnOffset):
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeType.h: Added.
+        * bytecode/ExpressionRangeInfo.h: Added.
+        * bytecode/GlobalResolveInfo.h: Added.
+        (JSC::GlobalResolveInfo::GlobalResolveInfo):
+        * bytecode/HandlerInfo.h: Added.
+        * bytecode/LineInfo.h: Added.
+        * bytecode/MethodCallLinkInfo.cpp: Added.
+        (JSC::MethodCallLinkInfo::reset):
+        * bytecode/MethodCallLinkInfo.h: Added.
+        (JSC::MethodCallLinkInfo::MethodCallLinkInfo):
+        (JSC::MethodCallLinkInfo::seenOnce):
+        (JSC::MethodCallLinkInfo::setSeen):
+        (JSC::getMethodCallLinkInfoReturnLocation):
+        (JSC::getMethodCallLinkInfoBytecodeIndex):
+        * bytecode/StructureStubInfo.h:
+        (JSC::getStructureStubInfoReturnLocation):
+        (JSC::getStructureStubInfoBytecodeIndex):
+
 2012-01-10  Anders Carlsson  <andersca@apple.com>
 
         Hang opening movie that requires authentication

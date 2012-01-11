@@ -81,6 +81,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
+	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
+	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
+	Source/JavaScriptCore/bytecode/CallReturnOffsetToBytecodeOffset.h \
+	Source/JavaScriptCore/bytecode/CodeType.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
@@ -88,9 +92,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
+	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
+	Source/JavaScriptCore/bytecode/GlobalResolveInfo.h \
+	Source/JavaScriptCore/bytecode/HandelerInfo.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
 	Source/JavaScriptCore/bytecode/JumpTable.h \
+	Source/JavaScriptCore/bytecode/LineInfo.h \
+	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.cpp \
+	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
 	Source/JavaScriptCore/bytecode/Opcode.h \
 	Source/JavaScriptCore/bytecode/PredictedType.cpp \

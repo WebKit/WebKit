@@ -2056,38 +2056,6 @@ void CodeBlock::createActivation(CallFrame* callFrame)
 }
     
 #if ENABLE(JIT)
-void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer)
-{
-    ASSERT(isLinked());
-    
-    if (isDFG) {
-#if ENABLE(DFG_JIT)
-        repatchBuffer.relink(CodeLocationCall(callReturnLocation), callType == Construct ? operationLinkConstruct : operationLinkCall);
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    } else
-        repatchBuffer.relink(CodeLocationNearCall(callReturnLocation), callType == Construct ? globalData.jitStubs->ctiVirtualConstructLink() : globalData.jitStubs->ctiVirtualCallLink());
-    hasSeenShouldRepatch = false;
-    callee.clear();
-
-    // It will be on a list if the callee has a code block.
-    if (isOnList())
-        remove();
-}
-
-void MethodCallLinkInfo::reset(RepatchBuffer& repatchBuffer, JITCode::JITType jitType)
-{
-    cachedStructure.clearToMaxUnsigned();
-    cachedPrototype.clear();
-    cachedPrototypeStructure.clearToMaxUnsigned();
-    cachedFunction.clear();
-    
-    ASSERT_UNUSED(jitType, jitType == JITCode::BaselineJIT);
-    
-    repatchBuffer.relink(callReturnLocation, cti_op_get_by_id_method_check);
-}
-
 void CodeBlock::unlinkCalls()
 {
     if (!!m_alternative)

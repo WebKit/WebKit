@@ -30,22 +30,31 @@
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
+#include "CallLinkInfo.h"
+#include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeOrigin.h"
+#include "CodeType.h"
 #include "CompactJITCodeMap.h"
 #include "DFGCodeBlocks.h"
 #include "DFGExitProfile.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "EvalCodeCache.h"
+#include "ExpressionRangeInfo.h"
+#include "GlobalResolveInfo.h"
+#include "HandlerInfo.h"
+#include "MethodCallLinkInfo.h"
 #include "Options.h"
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITWriteBarrier.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
+#include "LineInfo.h"
 #include "Nodes.h"
 #include "PredictionTracker.h"
 #include "RegExpObject.h"
+#include "StructureStubInfo.h"
 #include "UString.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
@@ -53,12 +62,8 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
-#include <wtf/SentinelLinkedList.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(JIT)
 #include "StructureStubInfo.h"
-#endif
 
 // Register numbers used in bytecode operations have different meaning according to their ranges:
 //      0x80000000-0xFFFFFFFF  Negative indices from the CallFrame pointer are entries in the call frame, see RegisterFile.h.
@@ -68,190 +73,12 @@ static const int FirstConstantRegisterIndex = 0x40000000;
 
 namespace JSC {
 
-    enum HasSeenShouldRepatch {
-        hasSeenShouldRepatch
-    };
-
     class ExecState;
     class DFGCodeBlocks;
-
-    enum CodeType { GlobalCode, EvalCode, FunctionCode };
 
     inline int unmodifiedArgumentsRegister(int argumentsRegister) { return argumentsRegister - 1; }
 
     static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
-
-    struct HandlerInfo {
-        uint32_t start;
-        uint32_t end;
-        uint32_t target;
-        uint32_t scopeDepth;
-#if ENABLE(JIT)
-        CodeLocationLabel nativeCode;
-#endif
-    };
-
-    struct ExpressionRangeInfo {
-        enum {
-            MaxOffset = (1 << 7) - 1, 
-            MaxDivot = (1 << 25) - 1
-        };
-        uint32_t instructionOffset : 25;
-        uint32_t divotPoint : 25;
-        uint32_t startOffset : 7;
-        uint32_t endOffset : 7;
-    };
-
-    struct LineInfo {
-        uint32_t instructionOffset;
-        int32_t lineNumber;
-    };
-
-#if ENABLE(JIT)
-    struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
-        enum CallType { None, Call, CallVarargs, Construct };
-        static CallType callTypeFor(OpcodeID opcodeID)
-        {
-            if (opcodeID == op_call || opcodeID == op_call_eval)
-                return Call;
-            if (opcodeID == op_construct)
-                return Construct;
-            ASSERT(opcodeID == op_call_varargs);
-            return CallVarargs;
-        }
-        
-        CallLinkInfo()
-            : hasSeenShouldRepatch(false)
-            , isDFG(false)
-            , callType(None)
-        {
-        }
-        
-        ~CallLinkInfo()
-        {
-            if (isOnList())
-                remove();
-        }
-
-        CodeLocationLabel callReturnLocation; // it's a near call in the old JIT, or a normal call in DFG
-        CodeLocationDataLabelPtr hotPathBegin;
-        CodeLocationNearCall hotPathOther;
-        JITWriteBarrier<JSFunction> callee;
-        WriteBarrier<JSFunction> lastSeenCallee;
-        bool hasSeenShouldRepatch : 1;
-        bool isDFG : 1;
-        CallType callType : 2;
-        unsigned bytecodeIndex;
-
-        bool isLinked() { return callee; }
-        void unlink(JSGlobalData&, RepatchBuffer&);
-
-        bool seenOnce()
-        {
-            return hasSeenShouldRepatch;
-        }
-
-        void setSeen()
-        {
-            hasSeenShouldRepatch = true;
-        }
-    };
-
-    struct MethodCallLinkInfo {
-        MethodCallLinkInfo()
-            : seen(false)
-        {
-        }
-
-        bool seenOnce()
-        {
-            return seen;
-        }
-
-        void setSeen()
-        {
-            seen = true;
-        }
-        
-        void reset(RepatchBuffer&, JITCode::JITType);
-
-        unsigned bytecodeIndex;
-        CodeLocationCall callReturnLocation;
-        JITWriteBarrier<Structure> cachedStructure;
-        JITWriteBarrier<Structure> cachedPrototypeStructure;
-        // We'd like this to actually be JSFunction, but InternalFunction and JSFunction
-        // don't have a common parent class and we allow specialisation on both
-        JITWriteBarrier<JSObject> cachedFunction;
-        JITWriteBarrier<JSObject> cachedPrototype;
-        bool seen;
-    };
-
-    struct GlobalResolveInfo {
-        GlobalResolveInfo(unsigned bytecodeOffset)
-            : offset(0)
-            , bytecodeOffset(bytecodeOffset)
-        {
-        }
-
-        WriteBarrier<Structure> structure;
-        unsigned offset;
-        unsigned bytecodeOffset;
-    };
-
-    // This structure is used to map from a call return location
-    // (given as an offset in bytes into the JIT code) back to
-    // the bytecode index of the corresponding bytecode operation.
-    // This is then used to look up the corresponding handler.
-    // FIXME: This should be made inlining aware! Currently it isn't
-    // because we never inline code that has exception handlers.
-    struct CallReturnOffsetToBytecodeOffset {
-        CallReturnOffsetToBytecodeOffset(unsigned callReturnOffset, unsigned bytecodeOffset)
-            : callReturnOffset(callReturnOffset)
-            , bytecodeOffset(bytecodeOffset)
-        {
-        }
-
-        unsigned callReturnOffset;
-        unsigned bytecodeOffset;
-    };
-
-    // valueAtPosition helpers for the binarySearch algorithm.
-
-    inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
-    {
-        return structureStubInfo->callReturnLocation.executableAddress();
-    }
-
-    inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
-    {
-        return structureStubInfo->bytecodeIndex;
-    }
-
-    inline void* getCallLinkInfoReturnLocation(CallLinkInfo* callLinkInfo)
-    {
-        return callLinkInfo->callReturnLocation.executableAddress();
-    }
-
-    inline unsigned getCallLinkInfoBytecodeIndex(CallLinkInfo* callLinkInfo)
-    {
-        return callLinkInfo->bytecodeIndex;
-    }
-
-    inline void* getMethodCallLinkInfoReturnLocation(MethodCallLinkInfo* methodCallLinkInfo)
-    {
-        return methodCallLinkInfo->callReturnLocation.executableAddress();
-    }
-
-    inline unsigned getMethodCallLinkInfoBytecodeIndex(MethodCallLinkInfo* methodCallLinkInfo)
-    {
-        return methodCallLinkInfo->bytecodeIndex;
-    }
-
-    inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
-    {
-        return pc->callReturnOffset;
-    }
-#endif
 
     class CodeBlock : public UnconditionalFinalizer, public WeakReferenceHarvester {
         WTF_MAKE_FAST_ALLOCATED;
