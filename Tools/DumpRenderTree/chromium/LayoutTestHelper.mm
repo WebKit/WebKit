@@ -38,49 +38,56 @@
 // test script, so it can do the job for multiple DumpRenderTree while they are
 // running layout tests.
 
-static CMProfileRef userColorProfile = 0;
+namespace {
 
-static void saveCurrentColorProfile()
-{
-    CGDirectDisplayID displayID = CGMainDisplayID();
-    CMProfileRef previousProfile;
-    CMError error = CMGetProfileByAVID((UInt32)displayID, &previousProfile);
-    if (error) {
-        NSLog(@"failed to get the current color profile, pixmaps won't match. "
-              @"Error: %d", (int)error);
-    } else {
-        userColorProfile = previousProfile;
-    }
-}
+const char colorProfilePath[] = "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc";
+
+CMProfileLocation initialColorProfileLocation; // The locType field is initialized to 0 which is the same as cmNoProfileBase.
+
+} // namespace
 
 static void installLayoutTestColorProfile()
 {
     // To make sure we get consistent colors (not dependent on the Main display),
     // we force the generic rgb color profile.  This cases a change the user can
     // see.
+    const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
 
-    CGDirectDisplayID displayID = CGMainDisplayID();
-    NSColorSpace* genericSpace = [NSColorSpace genericRGBColorSpace];
-    CMProfileRef genericProfile = (CMProfileRef)[genericSpace colorSyncProfile];
-    CMError error = CMSetProfileByAVID((UInt32)displayID, genericProfile);
+    CMProfileRef profile = 0;
+    int error = CMGetProfileByAVID((CMDisplayIDType)kCGDirectMainDisplay, &profile);
+    if (!error) {
+        UInt32 size = sizeof(initialColorProfileLocation);
+        error = NCMGetProfileLocation(profile, &initialColorProfileLocation, &size);
+        CMCloseProfile(profile);
+    }
     if (error) {
-        NSLog(@"failed install the generic color profile, pixmaps won't match. "
-              @"Error: %d", (int)error);
+        NSLog(@"failed to get the current color profile, pixmaps won't match. Error: %d", (int)error);
+        initialColorProfileLocation.locType = cmNoProfileBase;
+        return;
+    }
+
+    CMProfileLocation location;
+    location.locType = cmPathBasedProfile;
+    strncpy(location.u.pathLoc.path, colorProfilePath, sizeof(location.u.pathLoc.path));
+    error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
+    if (error) {
+        NSLog(@"failed install the generic color profile, pixmaps won't match. Error: %d", (int)error);
+        initialColorProfileLocation.locType = cmNoProfileBase;
     }
 }
 
 static void restoreUserColorProfile(void)
 {
-    if (!userColorProfile)
-        return;
-    CGDirectDisplayID displayID = CGMainDisplayID();
-    CMError error = CMSetProfileByAVID((UInt32)displayID, userColorProfile);
-    CMCloseProfile(userColorProfile);
-    if (error) {
-        NSLog(@"Failed to restore color profile, use System Preferences -> "
-              @"Displays -> Color to reset. Error: %d", (int)error);
+    // This is used as a signal handler, and thus the calls into ColorSync are unsafe.
+    // But we might as well try to restore the user's color profile, we're going down anyway...
+    if (initialColorProfileLocation.locType != cmNoProfileBase) {
+        const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
+        int error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &initialColorProfileLocation);
+        if (error) {
+            NSLog(@"Failed to restore color profile, use System Preferences -> Displays -> Color to reset. Error: %d", (int)error);
+        }
+        initialColorProfileLocation.locType = cmNoProfileBase;
     }
-    userColorProfile = 0;
 }
 
 static void simpleSignalHandler(int sig)
@@ -100,7 +107,6 @@ int main(int argc, char* argv[])
     signal(SIGTERM, simpleSignalHandler);
 
     // Save off the current profile, and then install the layout test profile.
-    saveCurrentColorProfile();
     installLayoutTestColorProfile();
 
     // Let the script know we're ready

@@ -1,3 +1,17 @@
+2012-01-11  Jochen Eisinger  <jochen@chromium.org>
+
+        [Chromium] mimic the (old) behavior of the mac port for (re)setting the color profile
+        https://bugs.webkit.org/show_bug.cgi?id=75618
+
+        Eventually, we should get away from setting the display's color profile, as the mac port is doing now.
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/LayoutTestHelper.mm:
+        (installLayoutTestColorProfile):
+        (restoreUserColorProfile):
+        (main):
+
 2012-01-11  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: fix -v and eliminate some spurious warnings
