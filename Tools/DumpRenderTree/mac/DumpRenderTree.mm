@@ -469,6 +469,9 @@ static void adjustFonts()
 
 - (void)drawKnob
 {
+    if (![self isEnabled])
+        return;
+
     NSRect knobRect = [self rectForPart:NSScrollerKnob];
     
     static NSColor *knobColor = [[NSColor colorWithDeviceRed:0x80 / 255.0 green:0x80 / 255.0 blue:0x80 / 255.0 alpha:1] retain];
@@ -480,7 +483,12 @@ static void adjustFonts()
 - (void)drawRect:(NSRect)dirtyRect
 {
     static NSColor *trackColor = [[NSColor colorWithDeviceRed:0xC0 / 255.0 green:0xC0 / 255.0 blue:0xC0 / 255.0 alpha:1] retain];
-    [trackColor set];
+    static NSColor *disabledTrackColor = [[NSColor colorWithDeviceRed:0xE0 / 255.0 green:0xE0 / 255.0 blue:0xE0 / 255.0 alpha:1] retain];
+
+    if ([self isEnabled])
+        [trackColor set];
+    else
+        [disabledTrackColor set];
 
     NSRectFill(dirtyRect);
     

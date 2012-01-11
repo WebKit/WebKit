@@ -42,14 +42,15 @@ int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize)
     return cScrollbarThickness[controlSize];
 }
 
-void ScrollbarThemeMock::paintTrackBackground(GraphicsContext* context, Scrollbar*, const IntRect& trackRect)
+void ScrollbarThemeMock::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& trackRect)
 {
-    context->fillRect(trackRect, Color::lightGray, ColorSpaceDeviceRGB);
+    context->fillRect(trackRect, scrollbar->enabled() ? Color::lightGray : Color(0xFFE0E0E0), ColorSpaceDeviceRGB);
 }
 
-void ScrollbarThemeMock::paintThumb(GraphicsContext* context, Scrollbar*, const IntRect& thumbRect)
+void ScrollbarThemeMock::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& thumbRect)
 {
-    context->fillRect(thumbRect, Color::darkGray, ColorSpaceDeviceRGB);
+    if (scrollbar->enabled())
+        context->fillRect(thumbRect, Color::darkGray, ColorSpaceDeviceRGB);
 }
 
 }

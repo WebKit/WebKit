@@ -1,3 +1,19 @@
+2012-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Disabled mock scrollbars should draw differently
+        https://bugs.webkit.org/show_bug.cgi?id=75995
+
+        Reviewed by James Robinson.
+        
+        When the scrollbar is disabled, paint the entire track of
+        mock scrollbars with a lighter gray, and hide the thumb.
+
+        No tests, since mock scrollbars aren't enabled by default on Mac yet.
+
+        * platform/mock/ScrollbarThemeMock.cpp:
+        (WebCore::ScrollbarThemeMock::paintTrackBackground):
+        (WebCore::ScrollbarThemeMock::paintThumb):
+
 2012-01-10  Tony Chang  <tony@chromium.org>
 
         Need to handle absolutely positioned elements inside flexboxes
