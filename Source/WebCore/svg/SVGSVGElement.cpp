@@ -524,9 +524,12 @@ float SVGSVGElement::getCurrentTime() const
     return narrowPrecisionToFloat(m_timeContainer->elapsed().value());
 }
 
-void SVGSVGElement::setCurrentTime(float /* seconds */)
+void SVGSVGElement::setCurrentTime(float seconds)
 {
-    // FIXME: Implement me, bug 12073
+    if (isnan(seconds))
+        return;
+    seconds = max(seconds, 0.0f);
+    m_timeContainer->setElapsed(seconds);
 }
 
 bool SVGSVGElement::selfHasRelativeLengths() const

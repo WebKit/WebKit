@@ -59,7 +59,8 @@ public:
     void begin();
     void pause();
     void resume();
-    
+    void setElapsed(SMILTime);
+
     void setDocumentOrderIndexesDirty() { m_documentOrderIndexesDirty = true; }
 
     // Move to a specific time. Only used for DRT testing purposes.
@@ -81,6 +82,7 @@ private:
     double m_beginTime;
     double m_pauseTime;
     double m_accumulatedPauseTime;
+    double m_presetStartTime;
 
     bool m_documentOrderIndexesDirty;
     

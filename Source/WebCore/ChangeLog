@@ -1,3 +1,29 @@
+2012-01-11  Joel Webber  <jgw@google.com>
+
+        Implement setCurrentTime() and pauseAnimations() on SVGSVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=12073
+
+        Reviewed by Nikolas Zimmermann.
+
+        Adds the ability to reset an SVGSMILElement internally. SVGSMILElements are no longer removed
+        from their containers when they become inactive, because they sometimes have to be reactivated
+        when the container's current time is changed.
+
+        Test: svg/animations/animate-setcurrenttime.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentTime):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::setElapsed):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::reset):
+        * svg/animation/SVGSMILElement.h:
+
 2012-01-11  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: fix codestyle of generated enums

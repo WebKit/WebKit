@@ -46,6 +46,7 @@ SMILTimeContainer::SMILTimeContainer(SVGSVGElement* owner)
     : m_beginTime(0)
     , m_pauseTime(0)
     , m_accumulatedPauseTime(0)
+    , m_presetStartTime(0)
     , m_documentOrderIndexesDirty(false)
     , m_timer(this, &SMILTimeContainer::timerFired)
     , m_ownerSVGElement(owner)
@@ -89,17 +90,25 @@ bool SMILTimeContainer::isPaused() const
 void SMILTimeContainer::begin()
 {
     ASSERT(!m_beginTime);
-    m_beginTime = currentTime();
-    updateAnimations(0);
+    double now = currentTime();
+
+    m_beginTime = now - m_presetStartTime;
+    updateAnimations(SMILTime(m_presetStartTime));
+    m_presetStartTime = 0;
+
+    if (m_pauseTime) {
+        m_pauseTime = now;
+        m_timer.stop();
+    }
 }
 
 void SMILTimeContainer::pause()
 {
-    if (!m_beginTime)
-        return;
     ASSERT(!isPaused());
     m_pauseTime = currentTime();
-    m_timer.stop();
+
+    if (m_beginTime)
+        m_timer.stop();
 }
 
 void SMILTimeContainer::resume()
@@ -110,6 +119,26 @@ void SMILTimeContainer::resume()
     m_accumulatedPauseTime += currentTime() - m_pauseTime;
     m_pauseTime = 0;
     startTimer(0);
+}
+
+void SMILTimeContainer::setElapsed(SMILTime time)
+{
+    if (!m_beginTime) {
+        m_presetStartTime = time.value();
+        return;
+    }
+
+    double now = currentTime();
+    m_beginTime = now - time.value();
+    m_accumulatedPauseTime = 0;
+
+    Vector<SVGSMILElement*> toReset;
+    copyToVector(m_scheduledAnimations, toReset);
+    for (unsigned n = 0; n < toReset.size(); ++n)
+        toReset[n]->reset();
+
+    if (isPaused())
+        updateAnimations(now - m_beginTime - m_accumulatedPauseTime);
 }
 
 void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
@@ -123,7 +152,7 @@ void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
     SMILTime delay = max(fireTime - elapsed(), minimumDelay);
     m_timer.startOneShot(delay.value());
 }
-    
+
 void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
 {
     ASSERT(m_beginTime);
@@ -131,7 +160,7 @@ void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
     SMILTime elapsed = this->elapsed();
     updateAnimations(elapsed);
 }
- 
+
 void SMILTimeContainer::updateDocumentOrderIndexes()
 {
     unsigned timingElementCount = 0;
@@ -277,11 +306,6 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, double nextManualSamp
         SMILTime nextFireTime = animation->nextProgressTime();
         if (nextFireTime.isFinite())
             earliersFireTime = min(nextFireTime, earliersFireTime);
-        else if (!animation->isContributing(elapsed)) {
-            m_scheduledAnimations.remove(animation);
-            if (m_scheduledAnimations.isEmpty())
-                m_savedBaseValues.clear();
-        }
     }
     
     Vector<SVGSMILElement*> animationsToApply;

@@ -92,6 +92,8 @@ public:
     void progress(SMILTime elapsed, SVGSMILElement* resultsElement);
     SMILTime nextProgressTime() const;
 
+    void reset();
+
     static SMILTime parseClockValue(const String&);
     static SMILTime parseOffsetValue(const String&);
 
