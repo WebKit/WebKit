@@ -51,6 +51,7 @@ DOMAIN_DEFINE_NAME_MAP = {
 # Manually-filled map of type name replacements.
 TYPE_NAME_FIX_MAP = {
     "RGBA": "Rgba",  # RGBA is reported to be conflicting with a define name in Windows CE.
+    "": "Empty",
 }
 
 
@@ -519,6 +520,28 @@ class Writer:
         return Writer(new_output, self.indent + additional_indent)
 
 
+class EnumConstants:
+    map_ = {}
+    constants_ = []
+
+    @classmethod
+    def add_constant(cls, value):
+        if value in cls.map_:
+            return cls.map_[value]
+        else:
+            pos = len(cls.map_)
+            cls.map_[value] = pos
+            cls.constants_.append(value)
+            return pos
+
+    @classmethod
+    def get_enum_constant_code(cls):
+        output = []
+        for item in cls.constants_:
+            output.append("    \"" + item + "\"")
+        return join(output, ",\n") + "\n"
+
+
 class TypeBindings:
     @staticmethod
     def create_named_type_declaration(json_typable, context_domain_name, type_data):
@@ -526,6 +549,7 @@ class TypeBindings:
 
         class Helper:
             is_ad_hoc = False
+            full_name_prefix = "TypeBuilder::" + context_domain_name + "::"
 
             @staticmethod
             def write_doc(writer):
@@ -546,6 +570,7 @@ class TypeBindings:
     def create_ad_hoc_type_declaration(json_typable, context_domain_name, ad_hoc_type_context):
         class Helper:
             is_ad_hoc = True
+            full_name_prefix = ""
 
             @staticmethod
             def write_doc(writer):
@@ -571,23 +596,28 @@ class TypeBindings:
                         class CodeGenerator:
                             @staticmethod
                             def generate_type_builder(writer, forward_listener):
-                                if comment_out:
-                                    writer = writer.get_indented("// ")
                                 enum = json_typable["enum"]
                                 helper.write_doc(writer)
                                 enum_name = fixed_type_name.class_name
                                 fixed_type_name.output_comment(writer)
-                                writer.newline("namespace ")
+                                writer.newline("struct ")
                                 writer.append(enum_name)
                                 writer.append(" {\n")
+                                writer.newline("    enum Enum {\n")
                                 for enum_item in enum:
+                                    enum_pos = EnumConstants.add_constant(enum_item)
+
                                     item_c_name = enum_item.replace('-', '_')
-                                    writer.newline("const char* const ")
-                                    writer.append(Capitalizer.upper_camel_case_to_lower(item_c_name))
-                                    writer.append(" = \"")
-                                    writer.append(enum_item)
-                                    writer.append("\";\n")
-                                writer.newline("} // namespace ")
+                                    item_c_name = Capitalizer.lower_camel_case_to_upper(item_c_name)
+                                    if item_c_name in TYPE_NAME_FIX_MAP:
+                                        item_c_name = TYPE_NAME_FIX_MAP[item_c_name]
+                                    writer.newline("        ")
+                                    writer.append(item_c_name)
+                                    writer.append(" = ")
+                                    writer.append("%s" % enum_pos)
+                                    writer.append(",\n")
+                                writer.newline("    };\n")
+                                writer.newline("}; // struct ")
                                 writer.append(enum_name)
                                 writer.append("\n\n")
 
@@ -599,7 +629,11 @@ class TypeBindings:
 
                     @classmethod
                     def get_in_c_type_text(cls, optional):
-                        return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+                        return helper.full_name_prefix + fixed_type_name.class_name + "::Enum"
+
+                    @staticmethod
+                    def get_setter_value_expression_pattern():
+                        return "getEnumConstantValue(%s)"
 
                     @staticmethod
                     def reduce_to_raw_type():
@@ -632,6 +666,10 @@ class TypeBindings:
                     @staticmethod
                     def reduce_to_raw_type():
                         return RawTypes.String
+
+                    @staticmethod
+                    def get_setter_value_expression_pattern():
+                        return None
 
                     @classmethod
                     def get_in_c_type_text(cls, optional):
@@ -715,27 +753,28 @@ class TypeBindings:
 
                                     param_type_binding = resolve_param_type(prop, context_domain_name, ad_hoc_type_context)
                                     param_raw_type = param_type_binding.reduce_to_raw_type()
-                                    annotated_type = get_annotated_type_text(param_raw_type.get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text(),
-                                        param_type_binding.get_in_c_type_text(False))
-                                    writer.newline_multiline("""
+                                    for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
+                                        writer.newline_multiline("""
         Builder<STATE | %s>& set%s(%s value)
         {
             COMPILE_ASSERT(!(STATE & %s), property_%s_already_set);
-            m_result->set%s("%s", value);
+            m_result->set%s("%s", %s);
             return castState<%s>();
         }
 """
-                                    % (state_enum_items[pos],
-                                       Capitalizer.lower_camel_case_to_upper(prop_name),
-                                       annotated_type,
-                                       state_enum_items[pos], prop_name,
-                                       param_raw_type.get_setter_name(), prop_name, state_enum_items[pos]))
+                                        % (state_enum_items[pos],
+                                           Capitalizer.lower_camel_case_to_upper(prop_name),
+                                           param_type_opt.get_c_param_type_text(param_type_binding),
+                                           state_enum_items[pos], prop_name,
+                                           param_raw_type.get_setter_name(), prop_name,
+                                           param_type_opt.get_setter_value_expression(param_type_binding, "value"),
+                                           state_enum_items[pos]))
+
+                                        code_generator = param_type_binding.get_code_generator()
+                                        if code_generator:
+                                            code_generator.register_use(forward_listener)
 
                                     pos += 1
-
-                                    code_generator = param_type_binding.get_code_generator()
-                                    if code_generator:
-                                        code_generator.register_use(forward_listener)
 
                                 writer.newline_multiline("""
         operator RefPtr<%s>& ()
@@ -773,13 +812,15 @@ class TypeBindings:
 
                                     param_type_binding = resolve_param_type(prop, context_domain_name, ad_hoc_type_context)
                                     setter_name = "set%s" % Capitalizer.lower_camel_case_to_upper(prop_name)
-                                    writer.append_multiline("\n    void %s" % setter_name)
-                                    annotated_type = get_annotated_type_text(param_type_binding.reduce_to_raw_type().get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text(),
-                                        param_type_binding.get_in_c_type_text(False))
-                                    writer.append("(%s value)\n" % annotated_type)
-                                    writer.newline("    {\n")
-                                    writer.newline("        this->set%s(\"%s\", value);\n" % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop["name"]))
-                                    writer.newline("    }\n")
+
+                                    for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
+                                        writer.append_multiline("\n    void %s" % setter_name)
+                                        writer.append("(%s value)\n" % param_type_opt.get_c_param_type_text(param_type_binding))
+                                        writer.newline("    {\n")
+                                        writer.newline("        this->set%s(\"%s\", %s);\n"
+                                            % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop["name"],
+                                               param_type_opt.get_setter_value_expression(param_type_binding, "value")))
+                                        writer.newline("    }\n")
 
                                     code_generator = param_type_binding.get_code_generator()
                                     if code_generator:
@@ -825,7 +866,11 @@ class TypeBindings:
 
                     @classmethod
                     def get_in_c_type_text(cls, optional):
-                        return "PassRefPtr<TypeBuilder::" + context_domain_name + "::" + fixed_type_name.class_name + ">"
+                        return "PassRefPtr<" + helper.full_name_prefix + fixed_type_name.class_name + ">"
+
+                    @staticmethod
+                    def get_setter_value_expression_pattern():
+                        return None
 
                     @staticmethod
                     def reduce_to_raw_type():
@@ -842,6 +887,10 @@ class TypeBindings:
                     @classmethod
                     def get_in_c_type_text(cls, optional):
                         return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+                    @staticmethod
+                    def get_setter_value_expression_pattern():
+                        return None
 
                     @staticmethod
                     def reduce_to_raw_type():
@@ -893,6 +942,10 @@ class TypeBindings:
             @classmethod
             def get_in_c_type_text(cls, optional):
                 return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+            @staticmethod
+            def get_setter_value_expression_pattern():
+                return None
 
             @staticmethod
             def reduce_to_raw_type():
@@ -1099,6 +1152,9 @@ typedef String ErrorString;
 
 namespace TypeBuilder {
 ${forwards}
+
+String getEnumConstantValue(int code);
+
 ${typeBuilders}
 } // namespace TypeBuilder
 
@@ -1541,6 +1597,17 @@ $constructorInit{
 
 $methods
 
+namespace TypeBuilder {
+
+const char* const enum_constant_values[] = {
+$enumConstantValues};
+
+String getEnumConstantValue(int code) {
+    return enum_constant_values[code];
+}
+
+} // namespace TypeBuilder
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
@@ -1567,6 +1634,59 @@ def get_annotated_type_text(raw_type, annotated_type):
         return "/*%s*/ %s" % (annotated_type, raw_type)
     else:
         return raw_type
+
+
+# Chooses method generate modes for a particular type. A particular setter
+# can be generated as one method with a simple parameter type,
+# as one method with a raw type name and commented annotation about expected
+# specialized type name or as overloaded method when raw and specialized
+# parameter types require different behavior.
+class MethodGenerateModes:
+    @classmethod
+    def get_modes(cls, type_binding):
+        if type_binding.get_setter_value_expression_pattern():
+            # In raw and strict modes method code is actually different.
+            return [cls.StrictParameterMode, cls.RawParameterMode]
+        else:
+            # In raw and strict modes method code is the same.
+            # Only put strict parameter type in comments.
+            return [cls.CombinedMode]
+
+    class StrictParameterMode:
+        @staticmethod
+        def get_c_param_type_text(type_binding):
+            return type_binding.get_in_c_type_text(False)
+
+        @staticmethod
+        def get_setter_value_expression(param_type_binding, value_ref):
+            pattern = param_type_binding.get_setter_value_expression_pattern()
+            if pattern:
+                return pattern % value_ref
+            else:
+                return value_ref
+
+    class RawParameterMode:
+        @staticmethod
+        def get_c_param_type_text(type_binding):
+            return type_binding.reduce_to_raw_type().get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text()
+
+        @staticmethod
+        def get_setter_value_expression(param_type_binding, value_ref):
+            return value_ref
+
+    class CombinedMode:
+        @staticmethod
+        def get_c_param_type_text(type_binding):
+            return get_annotated_type_text(type_binding.reduce_to_raw_type().get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text(),
+                type_binding.get_in_c_type_text(False))
+
+        @staticmethod
+        def get_setter_value_expression(param_type_binding, value_ref):
+            pattern = param_type_binding.get_setter_value_expression_pattern()
+            if pattern:
+                return pattern % value_ref
+            else:
+                return value_ref
 
 class Generator:
     frontend_class_field_lines = []
@@ -1690,7 +1810,7 @@ class Generator:
         backend_js_event_param_list = []
         ad_hoc_type_output = []
         frontend_method_declaration_lines.append(ad_hoc_type_output)
-        ad_hoc_type_writer = Writer(ad_hoc_type_output, "    ")
+        ad_hoc_type_writer = Writer(ad_hoc_type_output, "        ")
         if "parameters" in json_event:
             method_line_list.append("    RefPtr<InspectorObject> paramsObject = InspectorObject::create();\n")
             for json_parameter in json_event["parameters"]:
@@ -1952,7 +2072,8 @@ backend_h_file.write(Templates.backend_h.substitute(None,
 
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
     constructorInit=join(Generator.frontend_constructor_init_list, ""),
-    methods=join(Generator.frontend_method_list, "\n")))
+    methods=join(Generator.frontend_method_list, "\n"),
+    enumConstantValues=EnumConstants.get_enum_constant_code()))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
