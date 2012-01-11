@@ -1,3 +1,17 @@
+2012-01-11  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] ASSERT failure in BackingStorePrivate::blitVisibleContents()
+        https://bugs.webkit.org/show_bug.cgi?id=76096
+
+        Reviewed by Rob Buis.
+
+        We shouldn't blit visible contents for direct rendering. Guard it from
+        call sites.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+
 2012-01-11  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Fix the build for newer Qt5

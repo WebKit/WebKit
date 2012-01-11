@@ -333,7 +333,7 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
 #endif
 
         if (immediate) {
-            if (render(rect))
+            if (render(rect) && !shouldDirectRenderingToWindow())
                 blitVisibleContents();
         } else
             m_renderQueue->addToQueue(RenderQueue::RegularRender, rect);
@@ -354,7 +354,7 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
     Platform::IntRect rect = m_webPage->d->mapToTransformed(m_client->mapFromViewportToContents(windowRect));
 
     if (immediate) {
-        if (render(rect) && !isSuspended())
+        if (render(rect) && !isSuspended() && !shouldDirectRenderingToWindow())
             blitVisibleContents();
     } else {
         m_renderQueue->addToQueue(RenderQueue::VisibleScroll, rect);
