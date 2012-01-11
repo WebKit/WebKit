@@ -227,7 +227,7 @@ void WebDevToolsAgentImpl::didNavigate()
 void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
 {
     WebCore::V8Proxy* proxy = WebCore::V8Proxy::retrieve(webframe->frame());
-    if (proxy)
+    if (proxy && webframe->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
         proxy->setContextDebugId(m_hostId);
 }
 

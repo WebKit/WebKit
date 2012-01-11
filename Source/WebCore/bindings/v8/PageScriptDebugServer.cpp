@@ -76,9 +76,10 @@ PageScriptDebugServer::PageScriptDebugServer()
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
-    if (!proxy)
+    ScriptController* scriptController = page->mainFrame()->script();
+    if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
         return;
+    V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
 
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();

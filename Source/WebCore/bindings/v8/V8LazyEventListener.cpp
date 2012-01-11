@@ -65,8 +65,11 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionCo
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-    if (V8Proxy* proxy = V8Proxy::retrieve(context))
-        return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+    if (V8Proxy* proxy = V8Proxy::retrieve(context)) {
+        Frame* frame = static_cast<Document*>(context)->frame();
+        if (frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+            return proxy->callFunction(handlerFunction, receiver, 1, parameters);
+    }
 
     return v8::Local<v8::Value>();
 }
@@ -88,6 +91,9 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     V8Proxy* proxy = V8Proxy::retrieve(context);
     if (!proxy)
+        return;
+    ASSERT(context->isDocument());
+    if (!static_cast<Document*>(context)->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     // Use the outer scope to hold context.

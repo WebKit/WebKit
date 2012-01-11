@@ -216,8 +216,11 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
         v8::Handle<v8::Context> context = v8::Context::GetCurrent();
         if (!context.IsEmpty()) {
             v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
-            if (isWrapperOfType(globalPrototype, &V8DOMWindow::info))
-                proxy = V8Proxy::retrieve(V8DOMWindow::toNative(globalPrototype)->frame());
+            if (isWrapperOfType(globalPrototype, &V8DOMWindow::info)) {
+                Frame* frame = V8DOMWindow::toNative(globalPrototype)->frame();
+                if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+                    proxy = V8Proxy::retrieve(frame);
+            }
 #if ENABLE(WORKERS)
             else
                 workerContext = V8WorkerContext::toNative(lookupDOMWrapper(V8WorkerContext::GetTemplate(), context->Global()));

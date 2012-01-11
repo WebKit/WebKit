@@ -1,3 +1,13 @@
+2012-01-11  Jochen Eisinger  <jochen@chromium.org>
+
+        Move the check for canExecuteScripts out of V8Proxy::retrieve
+        https://bugs.webkit.org/show_bug.cgi?id=75533
+
+        Reviewed by Adam Barth.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::didClearWindowObject):
+
 2012-01-10  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Unreviewed, roll Chromium DEPS to r117121.

@@ -59,6 +59,9 @@ void ScriptCachedFrameData::restore(Frame* frame)
     if (m_context.get().IsEmpty())
         return;
 
+    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+        return;
+
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context.get());
 

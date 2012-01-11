@@ -190,7 +190,7 @@ bool V8Proxy::handleOutOfMemory()
     Frame* frame = V8Proxy::retrieveFrame(context);
 
     V8Proxy* proxy = V8Proxy::retrieve(frame);
-    if (proxy) {
+    if (proxy && frame->script()->canExecuteScripts(NotAboutToExecuteScript)) {
         // Clean m_context, and event handlers.
         proxy->clearForClose();
 
@@ -505,9 +505,7 @@ V8Proxy* V8Proxy::retrieve()
 
 V8Proxy* V8Proxy::retrieve(Frame* frame)
 {
-    if (!frame)
-        return 0;
-    return frame->script()->canExecuteScripts(NotAboutToExecuteScript) ? frame->script()->proxy() : 0;
+    return frame ? frame->script()->proxy() : 0;
 }
 
 V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
@@ -708,8 +706,11 @@ int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
 {
     if (context->isDocument()) {
-        if (V8Proxy* proxy = V8Proxy::retrieve(context))
-            return worldContext.adjustedContext(proxy);
+        if (V8Proxy* proxy = V8Proxy::retrieve(context)) {
+            Frame* frame = static_cast<Document*>(context)->frame();
+            if (frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+                return worldContext.adjustedContext(proxy);
+        }
 #if ENABLE(WORKERS)
     } else if (context->isWorkerContext()) {
         if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())

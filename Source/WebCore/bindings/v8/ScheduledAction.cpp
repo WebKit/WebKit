@@ -94,15 +94,20 @@ ScheduledAction::~ScheduledAction()
 
 void ScheduledAction::execute(ScriptExecutionContext* context)
 {
-    V8Proxy* proxy = V8Proxy::retrieve(context);
-    if (proxy)
+    if (context->isDocument()) {
+        Frame* frame = static_cast<Document*>(context)->frame();
+        ScriptController* scriptController = frame->script();
+        if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
+            return;
+        V8Proxy* proxy = V8Proxy::retrieve(frame);
         execute(proxy);
+    }
 #if ENABLE(WORKERS)
-    else if (context->isWorkerContext())
+    else {
+        ASSERT(context->isWorkerContext());
         execute(static_cast<WorkerContext*>(context));
+    }
 #endif
-    // It's possible that Javascript is disabled and that we have neither a V8Proxy
-    // nor a WorkerContext.  Do nothing in that case.
 }
 
 void ScheduledAction::execute(V8Proxy* proxy)
