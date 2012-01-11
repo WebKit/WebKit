@@ -1,3 +1,26 @@
+2012-01-10  Dale Curtis  <dalecurtis@chromium.org>
+
+        Repaint video controls when buffering during pause.
+        https://bugs.webkit.org/show_bug.cgi?id=73957
+
+        Pipes support for a new bufferingProgressed() method on MediaControls
+        elements. Allows controls to be repainted as data buffers when paused.
+
+        Reviewed by Hajime Morita.
+
+        Test: http/tests/media/video-buffering-repaints-controls.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::bufferingProgressed):
+        * html/shadow/MediaControlRootElement.h:
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::bufferingProgressed):
+        * html/shadow/MediaControlRootElementChromium.h:
+        * html/shadow/MediaControls.h:
+
 2012-01-10  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Pasteboard::documentFragment should fall back to text if there's no HTML text

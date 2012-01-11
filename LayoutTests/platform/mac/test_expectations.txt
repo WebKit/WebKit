@@ -189,3 +189,6 @@ BUGWK74888 : fast/dom/HTMLTableElement/colSpan.html = IMAGE+TEXT
 BUGWK74888 : fast/dom/HTMLTableElement/createCaption.html = IMAGE+TEXT
 BUGWK74888 : fast/repaint/table-section-repaint.html = TEXT
 BUGWK74888 : fast/table/frame-and-rules.html = TEXT
+
+// New test, needs image results added.
+BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE

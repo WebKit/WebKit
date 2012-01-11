@@ -99,6 +99,8 @@ public:
     void updateTextTrackDisplay();
 #endif
 
+    void bufferingProgressed();
+
     virtual bool shouldHideControls();
 
 private:

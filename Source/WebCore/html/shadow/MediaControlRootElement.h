@@ -112,6 +112,8 @@ public:
 
     virtual bool shouldHideControls();
 
+    void bufferingProgressed();
+
 private:
     MediaControlRootElement(Document*);
 

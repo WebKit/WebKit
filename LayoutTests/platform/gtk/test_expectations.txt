@@ -96,4 +96,5 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK75432 : fast/dom/constructed-objects-prototypes.html = FAIL
 
-
+// New test, needs image results added.
+BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE

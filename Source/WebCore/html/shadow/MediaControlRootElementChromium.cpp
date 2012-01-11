@@ -398,6 +398,14 @@ const AtomicString& MediaControlRootElementChromium::shadowPseudoId() const
     return id;
 }
 
+void MediaControlRootElementChromium::bufferingProgressed()
+{
+    // We only need to update buffering progress when paused, during normal
+    // playback playbackProgressed() will take care of it.
+    if (m_mediaController->paused())
+        m_timeline->setPosition(m_mediaController->currentTime());
+}
+
 }
 
 #endif

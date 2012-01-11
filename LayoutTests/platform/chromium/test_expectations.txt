@@ -3848,3 +3848,6 @@ BUGWK75932 : fast/js/array-defineOwnProperty.html = TEXT
 BUGWK75932 : fast/js/mozilla/strict/15.4.4.6.html = TEXT
 
 BUGWK75933 WIN : webaudio/convolution-mono-mono.html = TEXT
+
+// New test, needs image results added.
+BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE

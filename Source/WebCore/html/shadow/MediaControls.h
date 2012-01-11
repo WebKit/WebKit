@@ -78,6 +78,8 @@ class MediaControls : public HTMLDivElement {
     virtual void updateTextTrackDisplay() = 0;
 #endif
 
+    virtual void bufferingProgressed() = 0;
+
 protected:
     MediaControls(Document*);
 
