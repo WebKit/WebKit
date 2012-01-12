@@ -1,3 +1,49 @@
+2012-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r104805.
+        http://trac.webkit.org/changeset/104805
+        https://bugs.webkit.org/show_bug.cgi?id=76180
+
+        Breaks apple win compilation. (Requested by vsevik on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore::SelectorQuery::queryAll):
+        (WebCore::SelectorQuery::queryFirst):
+        (WebCore::SelectorQuery::canUseIdLookup):
+        (WebCore::SelectorQuery::execute):
+        * dom/SelectorQuery.h:
+        * dom/ShadowContentElement.cpp:
+        (WebCore::ShadowContentElement::create):
+        (WebCore::ShadowContentElement::ShadowContentElement):
+        (WebCore::ShadowContentElement::shouldInclude):
+        * dom/ShadowContentElement.h:
+        * dom/ShadowContentSelectorQuery.cpp: Removed.
+        * dom/ShadowContentSelectorQuery.h: Removed.
+        * dom/ShadowInclusionSelector.cpp:
+        (WebCore::ShadowInclusionSelector::select):
+        * dom/ShadowInclusionSelector.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsContentElement::DetailsContentElement):
+        (WebCore::DetailsContentElement::shouldInclude):
+        (WebCore::DetailsSummaryElement::DetailsSummaryElement):
+        (WebCore::DetailsSummaryElement::shouldInclude):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::SummaryContentElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createShadowContentElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-01-12  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Fix turbulence bug when stitch tiles enabled and rendered in parallel

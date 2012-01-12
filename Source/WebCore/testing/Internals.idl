@@ -35,7 +35,7 @@ module window {
         Element includerFor(in Node node) raises (DOMException);
         void removeShadowRoot(in Element host) raises (DOMException);
         DOMString shadowPseudoId(in Element element) raises (DOMException);
-        Element createShadowContentElement(in Document document, in [Optional=CallWithNullValue] DOMString select) raises(DOMException);
+        Element createShadowContentElement(in Document document) raises(DOMException);
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
 
 #if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR

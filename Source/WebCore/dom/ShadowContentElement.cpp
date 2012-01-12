@@ -28,31 +28,21 @@
 #include "ShadowContentElement.h"
 
 #include "HTMLNames.h"
-#include "QualifiedName.h"
-#include "ShadowContentSelectorQuery.h"
 #include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-static const QualifiedName& selectAttr()
-{
-    DEFINE_STATIC_LOCAL(QualifiedName, attr, (nullAtom, "select", HTMLNames::xhtmlNamespaceURI));
-    return attr;
-}
-
-PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document, const AtomicString& select)
+PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
 {
     DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
-    return adoptRef(new ShadowContentElement(tagName, document, select));
+    return adoptRef(new ShadowContentElement(tagName, document));
 }
 
-ShadowContentElement::ShadowContentElement(const QualifiedName& name, Document* document, const AtomicString& select)
+ShadowContentElement::ShadowContentElement(const QualifiedName& name, Document* document)
     : StyledElement(name, document, CreateHTMLElement)
     , m_inclusions(adoptPtr(new ShadowInclusionList()))
 {
-    setAttribute(selectAttr(), select);
 }
 
 ShadowContentElement::~ShadowContentElement()
@@ -86,9 +76,10 @@ void ShadowContentElement::detach()
     StyledElement::detach();
 }
 
-const AtomicString& ShadowContentElement::select() const
+bool ShadowContentElement::shouldInclude(Node*)
 {
-    return getAttribute(selectAttr());
+    return true;
 }
+
 
 }

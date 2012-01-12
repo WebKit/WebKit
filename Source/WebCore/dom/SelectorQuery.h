@@ -37,44 +37,28 @@ class Element;
 class CSSSelector;
 class CSSSelectorList;
 
-class SelectorDataList {
+class SelectorQuery {
+    WTF_MAKE_NONCOPYABLE(SelectorQuery);
 public:
-    SelectorDataList();
-    explicit SelectorDataList(const CSSSelectorList&);
-
-    void initialize(const CSSSelectorList&);
-
-    int size() const { return m_selectors.size(); }
-
-    bool matches(const SelectorChecker&, Element*) const;
-    PassRefPtr<NodeList> queryAll(const SelectorChecker&, Node* rootNode) const;
-    PassRefPtr<Element> queryFirst(const SelectorChecker&, Node* rootNode) const;
+    SelectorQuery(Node* rootNode, const CSSSelectorList&);
+    
+    PassRefPtr<NodeList> queryAll() const;
+    PassRefPtr<Element> queryFirst() const;
 
 private:
+    bool canUseIdLookup() const;
+
+    template <bool firstMatchOnly>
+    void execute(Vector<RefPtr<Node> >&) const;
+    
     struct SelectorData {
         SelectorData(CSSSelector* selector, bool isFastCheckable) : selector(selector), isFastCheckable(isFastCheckable) { }
         CSSSelector* selector;
         bool isFastCheckable;
     };
-
-    bool canUseIdLookup(Node* rootNode) const;
-    template <bool firstMatchOnly>
-    void execute(const SelectorChecker&, Node* rootNode, Vector<RefPtr<Node> >&) const;
-
-    Vector<SelectorData> m_selectors;
-};
-
-class SelectorQuery {
-    WTF_MAKE_NONCOPYABLE(SelectorQuery);
-public:
-    SelectorQuery(Node* rootNode, const CSSSelectorList&);
-
-    PassRefPtr<NodeList> queryAll() const;
-    PassRefPtr<Element> queryFirst() const;
-private:
     Node* m_rootNode;
+    Vector<SelectorData> m_selectors;
     SelectorChecker m_selectorChecker;
-    SelectorDataList m_selectors;
 };
 
 }

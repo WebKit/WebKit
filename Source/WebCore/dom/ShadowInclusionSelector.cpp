@@ -28,7 +28,6 @@
 #include "ShadowInclusionSelector.h"
 
 #include "ShadowContentElement.h"
-#include "ShadowContentSelectorQuery.h"
 #include "ShadowRoot.h"
 
 
@@ -112,12 +111,11 @@ void ShadowInclusionSelector::select(ShadowContentElement* contentElement, Shado
 {
     ASSERT(inclusions->isEmpty());
 
-    ShadowContentSelectorQuery query(contentElement);
     for (size_t i = 0; i < m_candidates.size(); ++i) {
         Node* child = m_candidates[i].get();
         if (!child)
             continue;
-        if (!query.matches(child))
+        if (!contentElement->shouldInclude(child))
             continue;
 
         RefPtr<ShadowInclusion> inclusion = ShadowInclusion::create(contentElement, child);

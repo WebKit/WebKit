@@ -126,14 +126,14 @@ bool Internals::isPreloaded(Document* document, const String& url)
     return document->cachedResourceLoader()->isPreloaded(url);
 }
 
-PassRefPtr<Element> Internals::createShadowContentElement(Document* document, const String& select, ExceptionCode& ec)
+PassRefPtr<Element> Internals::createShadowContentElement(Document* document, ExceptionCode& ec)
 {
     if (!document) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
 
-    return ShadowContentElement::create(document, select);
+    return ShadowContentElement::create(document);
 }
 
 Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode& ec)

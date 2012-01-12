@@ -33,47 +33,27 @@
 
 namespace WebCore {
 
-SelectorDataList::SelectorDataList()
+SelectorQuery::SelectorQuery(Node* rootNode, const CSSSelectorList& selectorList)
+    : m_rootNode(rootNode)
+    , m_selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode())
 {
-}
-
-SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
-{
-    initialize(selectorList);
-}
-
-void SelectorDataList::initialize(const CSSSelectorList& selectorList)
-{
-    ASSERT(m_selectors.isEmpty());
+    m_selectorChecker.setCollectingRulesOnly(true);
 
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         m_selectors.append(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
 }
-
-bool SelectorDataList::matches(const SelectorChecker& selectorChecker, Element* targetElement) const
-{
-    ASSERT(targetElement);
-
-    unsigned selectorCount = m_selectors.size();
-    for (unsigned i = 0; i < selectorCount; ++i) {
-        if (selectorChecker.checkSelector(m_selectors[i].selector, targetElement, m_selectors[i].isFastCheckable))
-            return true;
-    }
-
-    return false;
-}
-
-PassRefPtr<NodeList> SelectorDataList::queryAll(const SelectorChecker& selectorChecker, Node* rootNode) const
+    
+PassRefPtr<NodeList> SelectorQuery::queryAll() const
 {
     Vector<RefPtr<Node> > result;
-    execute<false>(selectorChecker, rootNode, result);
+    execute<false>(result);
     return StaticNodeList::adopt(result);
 }
 
-PassRefPtr<Element> SelectorDataList::queryFirst(const SelectorChecker& selectorChecker, Node* rootNode) const
-{
+PassRefPtr<Element> SelectorQuery::queryFirst() const 
+{ 
     Vector<RefPtr<Node> > result;
-    execute<true>(selectorChecker, rootNode, result);
+    execute<true>(result);
     if (result.isEmpty())
         return 0;
     ASSERT(result.size() == 1);
@@ -81,7 +61,7 @@ PassRefPtr<Element> SelectorDataList::queryFirst(const SelectorChecker& selector
     return static_cast<Element*>(result.first().get());
 }
 
-bool SelectorDataList::canUseIdLookup(Node* rootNode) const
+bool SelectorQuery::canUseIdLookup() const
 {
     // We need to return the matches in document order. To use id lookup while there is possiblity of multiple matches
     // we would need to sort the results. For now, just traverse the document in that case.
@@ -89,37 +69,37 @@ bool SelectorDataList::canUseIdLookup(Node* rootNode) const
         return false;
     if (m_selectors[0].selector->m_match != CSSSelector::Id)
         return false;
-    if (!rootNode->inDocument())
+    if (!m_rootNode->inDocument())
         return false;
-    if (rootNode->document()->inQuirksMode())
+    if (m_rootNode->document()->inQuirksMode())
         return false;
-    if (rootNode->document()->containsMultipleElementsWithId(m_selectors[0].selector->value()))
+    if (m_rootNode->document()->containsMultipleElementsWithId(m_selectors[0].selector->value()))
         return false;
     return true;
 }
 
 template <bool firstMatchOnly>
-void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
+void SelectorQuery::execute(Vector<RefPtr<Node> >& matchedElements) const
 {
-    if (canUseIdLookup(rootNode)) {
+    if (canUseIdLookup()) {
         ASSERT(m_selectors.size() == 1);
         CSSSelector* selector = m_selectors[0].selector;
-        Element* element = rootNode->document()->getElementById(selector->value());
-        if (!element || !(rootNode->isDocumentNode() || element->isDescendantOf(rootNode)))
+        Element* element = m_rootNode->document()->getElementById(selector->value());
+        if (!element || !(m_rootNode->isDocumentNode() || element->isDescendantOf(m_rootNode)))
             return;
-        if (selectorChecker.checkSelector(m_selectors[0].selector, element, m_selectors[0].isFastCheckable))
+        if (m_selectorChecker.checkSelector(selector, element, m_selectors[0].isFastCheckable))
             matchedElements.append(element);
         return;
     }
-
+    
     unsigned selectorCount = m_selectors.size();
-
-    Node* n = rootNode->firstChild();
+    
+    Node* n = m_rootNode->firstChild();
     while (n) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             for (unsigned i = 0; i < selectorCount; ++i) {
-                if (selectorChecker.checkSelector(m_selectors[i].selector, element, m_selectors[i].isFastCheckable)) {
+                if (m_selectorChecker.checkSelector(m_selectors[i].selector, element, m_selectors[i].isFastCheckable)) {
                     matchedElements.append(element);
                     if (firstMatchOnly)
                         return;
@@ -133,29 +113,11 @@ void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* roo
         }
         while (!n->nextSibling()) {
             n = n->parentNode();
-            if (n == rootNode)
+            if (n == m_rootNode)
                 return;
         }
         n = n->nextSibling();
     }
-}
-
-SelectorQuery::SelectorQuery(Node* rootNode, const CSSSelectorList& selectorList)
-    : m_rootNode(rootNode)
-    , m_selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode())
-    , m_selectors(selectorList)
-{
-    m_selectorChecker.setCollectingRulesOnly(true);
-}
-
-PassRefPtr<NodeList> SelectorQuery::queryAll() const
-{
-    return m_selectors.queryAll(m_selectorChecker, m_rootNode);
-}
-
-PassRefPtr<Element> SelectorQuery::queryFirst() const
-{
-    return m_selectors.queryFirst(m_selectorChecker, m_rootNode);
 }
 
 }
