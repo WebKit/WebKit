@@ -1,3 +1,14 @@
+2012-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: performance tests: fix memory leak in first-open-resources test.
+        https://bugs.webkit.org/show_bug.cgi?id=76049
+
+        first-open-resources doesn't reset resource panel properly after test run.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/first-open-resources.html:
+
 2012-01-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. WebInspector: Remove unnecessary logging from the test.

@@ -12,18 +12,26 @@ function test()
     function test(timer)
     {
         WebInspector.showPanel("audits");
+        var resources = WebInspector.panels.resources;
+        resources.reset();
+        var treeModel = WebInspector.resourceTreeModel;
+        treeModel.removeEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, resources._frameAdded, resources);
+        treeModel.removeEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, resources._frameNavigated, resources);
+        treeModel.removeEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, resources._frameDetached, resources);
+        treeModel.removeEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resources._resourceAdded, resources);
+        resources._initialized = false;
 
+        InspectorTest.addBackendResponseSniffer(ApplicationCacheAgent, "getFramesWithManifests", finish);
         var showPanelTimerCookie = timer.start("first-open-resources");
-        InspectorTest.addBackendResponseSniffer(PageAgent, "getResourceTree", function() {
+        treeModel._fetchResourceTree();
+        WebInspector.showPanel("resources");
+
+        function finish()
+        {
             timer.finish(showPanelTimerCookie);
             timer.done("first-open");
-        });
-        WebInspector.panels.resources.reset();
-        WebInspector.panels.resources._initialized = false;
-        WebInspector.resourceTreeModel._fetchResourceTree();
-        WebInspector.showPanel("resources");
+        }
     }
-
     InspectorTest.runPerformanceTest(test, 5000);
 }
 
