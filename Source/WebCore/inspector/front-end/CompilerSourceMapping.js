@@ -83,7 +83,7 @@ WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL, scriptSou
             WebInspector.ClosureCompilerSourceMapping.prototype._base64Map[base64Digits.charAt(i)] = i;
     }
 
-    this._sourceMappingURL = this._resolveSourceMapURL(sourceMappingURL, scriptSourceOrigin);
+    this._sourceMappingURL = this._canonicalizeURL(sourceMappingURL, scriptSourceOrigin);
     this._mappings = [];
     this._reverseMappingsBySourceURL = {};
 }
@@ -197,7 +197,10 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
 
         var sources = [];
         for (var i = 0; i < map.sources.length; ++i) {
-            var url = this._canonicalizeURL(map.sourceRoot, map.sources[i]);
+            var sourceURL = map.sources[i];
+            if (map.sourceRoot)
+                sourceURL = map.sourceRoot + "/" + sourceURL;
+            var url = this._canonicalizeURL(sourceURL, this._sourceMappingURL);
             sources.push(url);
             if (!this._reverseMappingsBySourceURL[url])
                 this._reverseMappingsBySourceURL[url] = [];
@@ -262,24 +265,19 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         return negative ? -result : result;
     },
 
-    _canonicalizeURL: function(sourceRoot, sourceURL)
+    _canonicalizeURL: function(url, baseURL)
     {
-        return sourceRoot ? sourceRoot + "/" + sourceURL : sourceURL;
-    },
+        if (!url || !baseURL || url.asParsedURL())
+            return url;
 
-    _resolveSourceMapURL: function(sourceMappingURL, scriptSourceOrigin)
-    {
-        if (!sourceMappingURL || !scriptSourceOrigin)
-            return sourceMappingURL;
+        var base = baseURL.asParsedURL();
+        if (!base)
+            return url;
 
-        if (sourceMappingURL.asParsedURL())
-            return sourceMappingURL;
-
-        var origin = scriptSourceOrigin.asParsedURL();
-        var baseURL = origin.scheme + "://" + origin.host + (origin.port ? ":" + origin.port : "");
-        if (sourceMappingURL[0] === "/")
-            return baseURL + sourceMappingURL;
-        return baseURL + origin.firstPathComponents + sourceMappingURL;
+        var baseHost = base.scheme + "://" + base.host + (base.port ? ":" + base.port : "");
+        if (url[0] === "/")
+            return baseHost + url;
+        return baseHost + base.firstPathComponents + url;
     },
 
     _VLQ_BASE_SHIFT: 5,

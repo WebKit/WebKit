@@ -119,7 +119,7 @@ function test()
 
         function testResolveSourceMappingURL(next)
         {
-            var func = WebInspector.ClosureCompilerSourceMapping.prototype._resolveSourceMapURL;
+            var func = WebInspector.ClosureCompilerSourceMapping.prototype._canonicalizeURL;
             InspectorTest.assertEquals("http://example.com/map.json", func("http://example.com/map.json", "http://example.com/script.js"));
             InspectorTest.assertEquals("http://example.com/map.json", func("/map.json", "http://example.com/script.js"));
             InspectorTest.assertEquals("http://example.com/scripts/../maps/map.json", func("../maps/map.json", "http://example.com/scripts/script.js"));
