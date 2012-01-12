@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "DFGDriver.h"
 #include "JIT.h"
+#include "JITDriver.h"
 #include "Parser.h"
 #include "UStringBuilder.h"
 #include "Vector.h"
@@ -209,27 +210,8 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
 
 #if ENABLE(JIT)
-    if (exec->globalData().canUseJIT()) {
-        bool dfgCompiled = false;
-        if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompile(exec, m_evalCodeBlock.get(), m_jitCodeForCall);
-        if (dfgCompiled)
-            ASSERT(!m_evalCodeBlock->alternative() || !m_evalCodeBlock->alternative()->hasIncomingCalls());
-        else {
-            if (m_evalCodeBlock->alternative()) {
-                // There is already an alternative piece of code compiled with a different
-                // JIT, so we can silently fail.
-                m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
-                return 0;
-            }
-            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_evalCodeBlock.get());
-        }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_evalCodeBlock->handleBytecodeDiscardingOpportunity();
-#endif
-        m_evalCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
-    }
+    if (!jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, jitType))
+        return 0;
 #endif
 
 #if ENABLE(JIT)
@@ -354,26 +336,8 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
 
 #if ENABLE(JIT)
-    if (exec->globalData().canUseJIT()) {
-        bool dfgCompiled = false;
-        if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompile(exec, m_programCodeBlock.get(), m_jitCodeForCall);
-        if (dfgCompiled) {
-            if (m_programCodeBlock->alternative())
-                m_programCodeBlock->alternative()->unlinkIncomingCalls();
-        } else {
-            if (m_programCodeBlock->alternative()) {
-                m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
-                return 0;
-            }
-            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_programCodeBlock.get());
-        }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_programCodeBlock->handleBytecodeDiscardingOpportunity();
-#endif
-        m_programCodeBlock->setJITCode(m_jitCodeForCall, MacroAssemblerCodePtr());
-    }
+    if (!jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, jitType))
+        return 0;
 #endif
 
 #if ENABLE(JIT)
@@ -540,29 +504,8 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    if (globalData->canUseJIT()) {
-        bool dfgCompiled = false;
-        if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompileFunction(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
-        if (dfgCompiled) {
-            if (m_codeBlockForCall->alternative())
-                m_codeBlockForCall->alternative()->unlinkIncomingCalls();
-        } else {
-            if (m_codeBlockForCall->alternative()) {
-                m_codeBlockForCall = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForCall->releaseAlternative());
-                m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
-                return 0;
-            }
-            m_jitCodeForCall = JIT::compile(globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
-        }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForCall->handleBytecodeDiscardingOpportunity();
-#endif
-        
-        m_codeBlockForCall->setJITCode(m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
-    }
+    if (!jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType))
+        return 0;
 #endif
 
 #if ENABLE(JIT)
@@ -603,29 +546,8 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    JSGlobalData* globalData = scopeChainNode->globalData;
-    if (globalData->canUseJIT()) {
-        bool dfgCompiled = false;
-        if (jitType == JITCode::DFGJIT)
-            dfgCompiled = DFG::tryCompileFunction(exec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
-        if (dfgCompiled) {
-            if (m_codeBlockForConstruct->alternative())
-                m_codeBlockForConstruct->alternative()->unlinkIncomingCalls();
-        } else {
-            if (m_codeBlockForConstruct->alternative()) {
-                m_codeBlockForConstruct = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForConstruct->releaseAlternative());
-                m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
-                return 0;
-            }
-            m_jitCodeForConstruct = JIT::compile(globalData, m_codeBlockForConstruct.get(), &m_jitCodeForConstructWithArityCheck);
-        }
-#if !ENABLE(OPCODE_SAMPLING)
-        if (!BytecodeGenerator::dumpsGeneratedCode())
-            m_codeBlockForConstruct->handleBytecodeDiscardingOpportunity();
-#endif
-        
-        m_codeBlockForConstruct->setJITCode(m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
-    }
+    if (!jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType))
+        return 0;
 #endif
 
 #if ENABLE(JIT)

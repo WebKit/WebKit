@@ -1,3 +1,22 @@
+2012-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Code duplication for invoking the JIT and DFG should be reduced
+        https://bugs.webkit.org/show_bug.cgi?id=76117
+        <rdar://problem/10680189>
+
+        Rubber stamped by Geoff Garen.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITDriver.h: Added.
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
 2012-01-11  Geoffrey Garen  <ggaren@apple.com>
 
         Bytecode dumping is broken for call opcodes (due to two new operands)
