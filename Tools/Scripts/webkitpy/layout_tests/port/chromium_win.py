@@ -74,7 +74,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
         if port_name.endswith('-win'):
             assert host.platform.is_win()
-            if host.platform.os_version == '7sp0':
+            if host.platform.os_version in ('7sp0', '7sp1', 'future'):
                 self._version = 'win7'
             else:
                 self._version = host.platform.os_version
