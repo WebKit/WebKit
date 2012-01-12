@@ -1,3 +1,30 @@
+2012-01-12  Adam Barth  <abarth@webkit.org>
+
+        NodeIterator loses track of the reference node when the reference node is removed from the document (IETC ni_removeReferenceNode)
+        https://bugs.webkit.org/show_bug.cgi?id=76146
+
+        Reviewed by Eric Seidel.
+
+        In the case where we're removing the reference node we can end up with
+        the wrong reference node.  This patch makes sure we traverse outside of
+        the removed node's subtree.
+
+        This bug was caught by the following IE Test Center test:
+
+        http://samples.msdn.microsoft.com/ietestcenter/domtraversal/showdomtraversaltest.htm?ni_removeReferenceNode
+
+        Our new behavior also match Firefox.
+
+        I experimented a bit with adding ASSERT_NOT_REACHED to various branches
+        in NodeIterator::updateForNodeRemoval, and it seems our test coverage
+        for this function is relatively poor.  In the future, we should
+        consider adding more tests for this complicated function.
+
+        Test: fast/dom/node-iterator-reference-node-removed.html
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::updateForNodeRemoval):
+
 2012-01-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw exception if IDBCursor.continue() called with key equal to current

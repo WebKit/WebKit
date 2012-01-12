@@ -179,12 +179,10 @@ void NodeIterator::updateForNodeRemoval(Node* removedNode, NodePointer& referenc
     if (referenceNode.isPointerBeforeNode) {
         Node* node = removedNode->traverseNextNode(root());
         if (node) {
-            // Move out from under the node being removed if the reference node is
-            // a descendant of the node being removed.
-            if (willRemoveReferenceNodeAncestor) {
-                while (node && node->isDescendantOf(removedNode))
-                    node = node->traverseNextNode(root());
-            }
+            // Move out from under the node being removed if the new reference
+            // node is a descendant of the node being removed.
+            while (node && node->isDescendantOf(removedNode))
+                node = node->traverseNextNode(root());
             if (node)
                 referenceNode.node = node;
         } else {
@@ -217,6 +215,7 @@ void NodeIterator::updateForNodeRemoval(Node* removedNode, NodePointer& referenc
             if (node)
                 referenceNode.node = node;
         } else {
+            // FIXME: This branch doesn't appear to have any LayoutTests.
             node = removedNode->traverseNextNode(root());
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
