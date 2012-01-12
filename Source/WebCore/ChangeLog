@@ -1,3 +1,24 @@
+2012-01-12  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Fix turbulence bug when stitch tiles enabled and rendered in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=76042
+
+        Reviewed by Nikolas Zimmermann.
+
+        The width / height / wrap members are used by all threads
+        in the same time. The patch makes them local for all threads.
+
+        Fixes the layout fails in svg/dynamic-updates/SVGFETurbulence*
+
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::noise2D):
+        (WebCore::Noise::if):
+        (WebCore::FETurbulence::calculateTurbulenceValueForPoint):
+        (WebCore::FETurbulence::fillRegion):
+        * platform/graphics/filters/FETurbulence.h:
+        (WebCore::FETurbulence::PaintingData::PaintingData):
+        (WebCore::FETurbulence::StitchData::StitchData):
+
 2012-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: performance: restore 'log 300 messages into console' test.

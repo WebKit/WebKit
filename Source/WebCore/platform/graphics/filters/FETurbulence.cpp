@@ -148,16 +148,6 @@ bool FETurbulence::setStitchTiles(bool stitch)
 // The turbulence calculation code is an adapted version of what appears in the SVG 1.1 specification:
 // http://www.w3.org/TR/SVG11/filters.html#feTurbulence
 
-FETurbulence::PaintingData::PaintingData(long paintingSeed, const IntSize& paintingSize)
-    : seed(paintingSeed)
-    , width(0)
-    , height(0)
-    , wrapX(0)
-    , wrapY(0)
-    , filterSize(paintingSize)
-{
-}
-
 // Compute pseudo random number.
 inline long FETurbulence::PaintingData::random()
 {
@@ -225,7 +215,7 @@ inline void checkNoise(int& noiseValue, int limitValue, int newValue)
         noiseValue -= newValue - 1;
 }
 
-float FETurbulence::noise2D(int channel, PaintingData& paintingData, const FloatPoint& noiseVector)
+float FETurbulence::noise2D(int channel, PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
 {
     struct Noise {
         int noisePositionIntegerValue;
@@ -246,8 +236,8 @@ float FETurbulence::noise2D(int channel, PaintingData& paintingData, const Float
 
     // If stitching, adjust lattice points accordingly.
     if (m_stitchTiles) {
-        checkNoise(noiseX.noisePositionIntegerValue, paintingData.wrapX, paintingData.width);
-        checkNoise(noiseY.noisePositionIntegerValue, paintingData.wrapY, paintingData.height);
+        checkNoise(noiseX.noisePositionIntegerValue, stitchData.wrapX, stitchData.width);
+        checkNoise(noiseY.noisePositionIntegerValue, stitchData.wrapY, stitchData.height);
     }
 
     noiseX.noisePositionIntegerValue &= s_blockMask;
@@ -276,57 +266,58 @@ float FETurbulence::noise2D(int channel, PaintingData& paintingData, const Float
     return linearInterpolation(sy, a, b);
 }
 
-unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, PaintingData& paintingData, const FloatPoint& point)
+unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
 {
     float tileWidth = paintingData.filterSize.width();
-    ASSERT(tileWidth > 0);
     float tileHeight = paintingData.filterSize.height();
-    ASSERT(tileHeight > 0);
+    ASSERT(tileWidth > 0 && tileHeight > 0);
+    float baseFrequencyX = m_baseFrequencyX;
+    float baseFrequencyY = m_baseFrequencyY;
     // Adjust the base frequencies if necessary for stitching.
     if (m_stitchTiles) {
         // When stitching tiled turbulence, the frequencies must be adjusted
         // so that the tile borders will be continuous.
-        if (m_baseFrequencyX) {
-            float lowFrequency = floorf(tileWidth * m_baseFrequencyX) / tileWidth;
-            float highFrequency = ceilf(tileWidth * m_baseFrequencyX) / tileWidth;
+        if (baseFrequencyX) {
+            float lowFrequency = floorf(tileWidth * baseFrequencyX) / tileWidth;
+            float highFrequency = ceilf(tileWidth * baseFrequencyX) / tileWidth;
             // BaseFrequency should be non-negative according to the standard.
-            if (m_baseFrequencyX / lowFrequency < highFrequency / m_baseFrequencyX)
-                m_baseFrequencyX = lowFrequency;
+            if (baseFrequencyX / lowFrequency < highFrequency / baseFrequencyX)
+                baseFrequencyX = lowFrequency;
             else
-                m_baseFrequencyX = highFrequency;
+                baseFrequencyX = highFrequency;
         }
-        if (m_baseFrequencyY) {
-            float lowFrequency = floorf(tileHeight * m_baseFrequencyY) / tileHeight;
-            float highFrequency = ceilf(tileHeight * m_baseFrequencyY) / tileHeight;
-            if (m_baseFrequencyY / lowFrequency < highFrequency / m_baseFrequencyY)
-                m_baseFrequencyY = lowFrequency;
+        if (baseFrequencyY) {
+            float lowFrequency = floorf(tileHeight * baseFrequencyY) / tileHeight;
+            float highFrequency = ceilf(tileHeight * baseFrequencyY) / tileHeight;
+            if (baseFrequencyY / lowFrequency < highFrequency / baseFrequencyY)
+                baseFrequencyY = lowFrequency;
             else
-                m_baseFrequencyY = highFrequency;
+                baseFrequencyY = highFrequency;
         }
         // Set up TurbulenceInitial stitch values.
-        paintingData.width = roundf(tileWidth * m_baseFrequencyX);
-        paintingData.wrapX = s_perlinNoise + paintingData.width;
-        paintingData.height = roundf(tileHeight * m_baseFrequencyY);
-        paintingData.wrapY = s_perlinNoise + paintingData.height;
+        stitchData.width = roundf(tileWidth * baseFrequencyX);
+        stitchData.wrapX = s_perlinNoise + stitchData.width;
+        stitchData.height = roundf(tileHeight * baseFrequencyY);
+        stitchData.wrapY = s_perlinNoise + stitchData.height;
     }
     float turbulenceFunctionResult = 0;
-    FloatPoint noiseVector(point.x() * m_baseFrequencyX, point.y() * m_baseFrequencyY);
+    FloatPoint noiseVector(point.x() * baseFrequencyX, point.y() * baseFrequencyY);
     float ratio = 1;
     for (int octave = 0; octave < m_numOctaves; ++octave) {
         if (m_type == FETURBULENCE_TYPE_FRACTALNOISE)
-            turbulenceFunctionResult += noise2D(channel, paintingData, noiseVector) / ratio;
+            turbulenceFunctionResult += noise2D(channel, paintingData, stitchData, noiseVector) / ratio;
         else
-            turbulenceFunctionResult += fabsf(noise2D(channel, paintingData, noiseVector)) / ratio;
+            turbulenceFunctionResult += fabsf(noise2D(channel, paintingData, stitchData, noiseVector)) / ratio;
         noiseVector.setX(noiseVector.x() * 2);
         noiseVector.setY(noiseVector.y() * 2);
         ratio *= 2;
         if (m_stitchTiles) {
             // Update stitch values. Subtracting s_perlinNoiseoise before the multiplication and
             // adding it afterward simplifies to subtracting it once.
-            paintingData.width *= 2;
-            paintingData.wrapX = 2 * paintingData.wrapX - s_perlinNoise;
-            paintingData.height *= 2;
-            paintingData.wrapY = 2 * paintingData.wrapY - s_perlinNoise;
+            stitchData.width *= 2;
+            stitchData.wrapX = 2 * stitchData.wrapX - s_perlinNoise;
+            stitchData.height *= 2;
+            stitchData.wrapY = 2 * stitchData.wrapY - s_perlinNoise;
         }
     }
 
@@ -345,6 +336,7 @@ inline void FETurbulence::fillRegion(ByteArray* pixelArray, PaintingData& painti
     IntPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
     int channel;
+    StitchData stitchData;
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
@@ -352,7 +344,7 @@ inline void FETurbulence::fillRegion(ByteArray* pixelArray, PaintingData& painti
         for (int x = 0; x < filterRegion.width(); ++x) {
             point.setX(point.x() + 1);
             for (channel = 0; channel < 4; ++channel, ++indexOfPixelChannel)
-                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, filter()->mapAbsolutePointToLocalPoint(point)));
+                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, stitchData, filter()->mapAbsolutePointToLocalPoint(point)));
         }
     }
 }
