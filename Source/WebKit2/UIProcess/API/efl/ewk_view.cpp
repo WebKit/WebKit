@@ -479,7 +479,7 @@ Evas_Object* ewk_view_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef 
         return 0;
     }
 
-    priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), smartData->image);
+    priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
 
     return ewkView;
 }
@@ -490,4 +490,24 @@ WKPageRef ewk_view_page_get(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     return toAPI(priv->pageClient->page());
+}
+
+void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    if (!smartData->image)
+        return;
+
+    evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
+}
+
+void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSize& size)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    if (!imageData || !smartData->image)
+        return;
+
+    evas_object_resize(smartData->image, size.width(), size.height());
+    evas_object_image_size_set(smartData->image, size.width(), size.height());
+    evas_object_image_data_copy_set(smartData->image, imageData);
 }

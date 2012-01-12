@@ -32,6 +32,7 @@
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
+#include "ewk_private.h"
 
 using namespace WebCore;
 
@@ -56,7 +57,7 @@ PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    evas_object_image_data_update_add(m_viewWidget, rect.x(), rect.y(), rect.width(), rect.height());
+    ewk_view_display(m_viewWidget, rect);
 }
 
 void PageClientImpl::displayView()

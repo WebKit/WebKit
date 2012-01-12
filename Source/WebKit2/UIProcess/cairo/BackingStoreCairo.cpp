@@ -33,6 +33,10 @@
 #include <WebCore/GraphicsContext.h>
 #include <cairo/cairo.h>
 
+#if PLATFORM(EFL)
+#include "ewk_private.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -64,6 +68,11 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
         bitmap->paint(graphicsContext, updateRect.location(), srcRect);
     }
+
+#if PLATFORM(EFL)
+    // Update ewk_view with new backingStore image.
+    ewk_view_image_data_set(m_webPageProxy->viewWidget(), cairo_image_surface_get_data(m_backingStore->cairoSurface()), m_size);
+#endif
 }
 
 void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)

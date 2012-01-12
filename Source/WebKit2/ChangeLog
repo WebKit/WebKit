@@ -1,3 +1,27 @@
+2012-01-12  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Update and show ewk_view with updated webpage.
+        https://bugs.webkit.org/show_bug.cgi?id=76023
+
+        Reviewed by Andreas Kling.
+
+        Update ewk_view with BackingStore image which is rendered webpage
+        image by WebProcess, and show updated image's area when
+        PageClientImpl::setViewNeedsDisplay() is called.
+        The ewk_view_display() function is used to display updated area of
+        evas_object_image and the ewk_view_image_data_set() function is used
+        to set evas_object_image's data with rendered webpage.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        * UIProcess/API/efl/ewk_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_add):
+        (ewk_view_display):
+        (ewk_view_image_data_set):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+
 2012-01-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Network is not available when SOUP is enabled.
