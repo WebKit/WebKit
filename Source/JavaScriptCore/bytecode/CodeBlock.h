@@ -989,6 +989,7 @@ namespace JSC {
         void printBinaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printConditionalJump(ExecState*, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator&, int location, const char* op) const;
         void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
+        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
 #endif
         void visitStructures(SlotVisitor&, Instruction* vPC) const;

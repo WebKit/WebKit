@@ -1,3 +1,19 @@
+2012-01-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Bytecode dumping is broken for call opcodes (due to two new operands)
+        https://bugs.webkit.org/show_bug.cgi?id=75886
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp): Made a helper function, so I wouldn't have
+        to fix this more than once. The helper function skips the extra two operands
+        at the end of the opcode, used for optimization.
+        
+        (JSC::CodeBlock::dump): Used the helper function.
+
+        * bytecode/CodeBlock.h: Declared the helper function.
+
 2012-01-09  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: d3 Bullet Charts demo doesn't work (call with argument assignment is broken)
