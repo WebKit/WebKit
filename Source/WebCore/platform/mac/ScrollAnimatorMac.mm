@@ -1395,8 +1395,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             m_scrollElasticityController.m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
             m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
-            immediateScrollTo(m_scrollElasticityController.m_origOrigin);
-
+            m_scrollElasticityController.m_client->immediateScrollBy(m_scrollElasticityController.m_origOrigin - m_scrollElasticityController.m_client->absoluteScrollPosition());
             m_scrollElasticityController.m_client->stopSnapRubberbandTimer();
 
             m_scrollElasticityController.m_stretchScrollForce = FloatSize();

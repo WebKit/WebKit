@@ -1,3 +1,15 @@
+2012-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove the last non-ScrollElasticityController call from ScrollAnimatorMac::snapRubberBandTimerFired
+        https://bugs.webkit.org/show_bug.cgi?id=76193
+
+        Reviewed by Andreas Kling.
+
+        Use ScrollElasticityControllerClient::immediateScrollBy for the final scroll before the rubber-band timer stops.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+
 2011-09-26  Jer Noble  <jer.noble@apple.com>
 
         Emit an error event when a request to enter full-screen is rejected.
