@@ -1,3 +1,47 @@
+2012-01-11  Kentaro Hara  <haraken@chromium.org>
+
+        [JSC] Remove redundant arguments from [Supplemental] custom methods
+        https://bugs.webkit.org/show_bug.cgi?id=76127
+
+        Reviewed by Adam Barth.
+
+        Since in JSC a callback of custom methods is non-static, we do not need
+        to pass a pointer of an implementation object.
+
+        Before (JSTestInterface.cpp):
+            JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, ...)
+            {
+                JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+                TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+                return castedThis->supplementalStr3(impl, exec);
+            }
+
+        After (JSTestInterface.cpp):
+            JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, ...)
+            {
+                JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+                 return castedThis->supplementalStr3(exec);  // JSTestInterface knows 'impl'.
+            }
+
+        Tests: bindings/scripts/test/TestInterface.idl
+               http/tests/websocket/tests/*
+               webaudio/*
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Previously when we specify [CustomGetter, CustomSetter], the header for
+        the custom setter was not generated. This patch fixes the bug.
+        (GenerateImplementation):
+
+        * bindings/js/JSDOMWindowWebAudioCustom.cpp: Removed redundant DOMWindow* from webkitAudioContext().
+        (WebCore::JSDOMWindow::webkitAudioContext):
+        * bindings/js/JSDOMWindowWebSocketCustom.cpp: Removed redundant DOMWindow* from webSocket().
+        (WebCore::JSDOMWindow::webSocket):
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Updated the test result.
+        (WebCore::jsTestInterfaceSupplementalStr3):
+        (WebCore::setJSTestInterfaceSupplementalStr3):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+
 2012-01-11  Adam Barth  <abarth@webkit.org>
 
         iframe sandbox doesn't block autofocus (IETC automatic-feature-block-autofocus-form-control)

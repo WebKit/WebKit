@@ -230,8 +230,7 @@ JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, const
 JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
-    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
-    return castedThis->supplementalStr3(impl, exec);
+    return castedThis->supplementalStr3(exec);
 }
 
 #endif
@@ -264,9 +263,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
-    JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
-    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
-    castedThis->setSupplementalStr3(impl, exec, value);
+    static_cast<JSTestInterface*>(thisObject)->setSupplementalStr3(exec, value);
 }
 
 #endif

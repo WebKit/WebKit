@@ -37,7 +37,7 @@ static Settings* settingsForWindowWebSocket(const JSDOMWindow* window)
     return 0;
 }
 
-JSValue JSDOMWindow::webSocket(DOMWindow*, ExecState* exec) const
+JSValue JSDOMWindow::webSocket(ExecState* exec) const
 {
     if (!settingsForWindowWebSocket(this))
         return jsUndefined();

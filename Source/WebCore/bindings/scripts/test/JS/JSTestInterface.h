@@ -57,7 +57,8 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
 
     // Custom attributes
-    JSC::JSValue supplementalStr3(TestInterface*, JSC::ExecState*) const;
+    JSC::JSValue supplementalStr3(JSC::ExecState*) const;
+    void setSupplementalStr3(JSC::ExecState*, JSC::JSValue);
 
     // Custom functions
     JSC::JSValue supplementalMethod3(JSC::ExecState*);

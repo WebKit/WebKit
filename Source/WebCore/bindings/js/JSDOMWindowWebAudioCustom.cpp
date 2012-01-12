@@ -37,7 +37,7 @@ static Settings* settingsForWindowWebAudio(const JSDOMWindow* window)
     return 0;
 }
 
-JSValue JSDOMWindow::webkitAudioContext(DOMWindow*, ExecState* exec) const
+JSValue JSDOMWindow::webkitAudioContext(ExecState* exec) const
 {
     Settings* settings = settingsForWindowWebAudio(this);
     if (settings && settings->webAudioEnabled())

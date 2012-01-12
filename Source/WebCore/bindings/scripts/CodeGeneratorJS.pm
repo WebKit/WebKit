@@ -902,26 +902,12 @@ sub GenerateHeader
         push(@headerContent, "\n    // Custom attributes\n");
 
         foreach my $attribute (@{$dataNode->attributes}) {
-            if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"}) {
-                push(@headerContent, "    JSC::JSValue " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(JSC::ExecState*) const;\n");
-                if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
-                }
-            } elsif (($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"})) {
+            if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
                 my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
-                if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                    push(@headerContent, "    JSC::JSValue " . $methodName . "(" . $interfaceName . "*, JSC::ExecState*) const;\n");
-                } else {
-                    push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
-                }
-            } elsif (($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"})) {
-                if ($attribute->type !~ /^readonly/) {
-                    if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                        push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(" . $interfaceName . "*, JSC::ExecState*, JSC::JSValue);\n");
-                    } else {
-                        push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
-                    }
-                }
+                push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
+            }
+            if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && $attribute->type !~ /^readonly/) {
+                push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
             }
         }
     }
@@ -1746,12 +1732,7 @@ sub GenerateImplementation
                 }
 
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
-                    if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                        push(@implContent, "    ${interfaceName}* impl = static_cast<${interfaceName}*>(castedThis->impl());\n");
-                        push(@implContent, "    return castedThis->$implGetterFunctionName(impl, exec);\n");
-                    } else {
-                        push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
-                    }
+                    push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
                 } elsif ($attribute->signature->extendedAttributes->{"allowAccessToNode"}) {
                     $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
@@ -1934,13 +1915,7 @@ sub GenerateImplementation
                         }
 
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) {
-                            if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                                push(@implContent, "    ${className}* castedThis = static_cast<${className}*>(thisObject);\n");
-                                push(@implContent, "    ${interfaceName}* impl = static_cast<${interfaceName}*>(castedThis->impl());\n");
-                                push(@implContent, "    castedThis->set$implSetterFunctionName(impl, exec, value);\n");
-                            } else {
-                                push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
-                            }
+                            push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
