@@ -2609,8 +2609,7 @@ void ewk_view_paint_context_clip(Ewk_View_Paint_Context* context, const Eina_Rec
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
-
-    context->graphicContext->clip(WebCore::IntRect(area->x, area->y, area->w, area->h));
+    context->graphicContext->clip(WebCore::IntRect(*area));
 }
 
 void ewk_view_paint_context_paint(Ewk_View_Paint_Context* context, const Eina_Rectangle* area)
@@ -2618,7 +2617,7 @@ void ewk_view_paint_context_paint(Ewk_View_Paint_Context* context, const Eina_Re
     EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
 
-    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
+    WebCore::IntRect rect(*area);
 
     if (context->view->isTransparent())
         context->graphicContext->clearRect(rect);
@@ -2630,7 +2629,7 @@ void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context* context, cons
     EINA_SAFETY_ON_NULL_RETURN(context);
     EINA_SAFETY_ON_NULL_RETURN(area);
 
-    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
+    WebCore::IntRect rect(*area);
 
     if (context->view->isTransparent())
         context->graphicContext->clearRect(rect);
@@ -2663,7 +2662,7 @@ Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Re
     if (view->needsLayout())
         view->forceLayout();
     WebCore::GraphicsContext graphicsContext(cr);
-    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
+    WebCore::IntRect rect(*area);
 
     cairo_save(cr);
     graphicsContext.save();
@@ -2686,7 +2685,7 @@ Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, cairo_t* cr, cons
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
     WebCore::GraphicsContext graphicsContext(cr);
-    WebCore::IntRect rect(area->x, area->y, area->w, area->h);
+    WebCore::IntRect rect(*area);
 
     cairo_save(cr);
     graphicsContext.save();

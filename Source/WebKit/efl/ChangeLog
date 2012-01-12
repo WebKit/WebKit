@@ -1,3 +1,19 @@
+2012-01-12  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Modify some API's implementation to let it directly pass Eina_Rectangle into IntRect.
+        https://bugs.webkit.org/show_bug.cgi?id=75695
+
+        Reviewed by Andreas Kling.
+
+        Dereference Eina_Rectangle pointers so the shorter IntRect constructor can be used.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_paint_context_clip):
+        (ewk_view_paint_context_paint):
+        (ewk_view_paint_context_paint_contents):
+        (ewk_view_paint):
+        (ewk_view_paint_contents):
+
 2012-01-11  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Refactor single backing store scroll code.
