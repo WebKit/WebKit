@@ -742,8 +742,13 @@ void ScrollAnimatorMac::mouseMovedInContentArea() const
 
 void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
+    // At this time, only legacy scrollbars needs to send notifications here.
+    if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
+        return;
+
     if (!scrollableArea()->isOnActivePage())
         return;
+
     if (isScrollbarOverlayAPIAvailable()) {
         if (!supportsUIStateTransitionProgress())
             return;
@@ -754,8 +759,13 @@ void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 
 void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
+    // At this time, only legacy scrollbars needs to send notifications here.
+    if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
+        return;
+
     if (!scrollableArea()->isOnActivePage())
         return;
+
     if (isScrollbarOverlayAPIAvailable()) {
         if (!supportsUIStateTransitionProgress())
             return;

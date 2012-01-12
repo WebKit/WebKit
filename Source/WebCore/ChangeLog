@@ -1,3 +1,17 @@
+2012-01-12  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76133
+        ScrollAnimatorMac::mouseEnteredScrollbar() and mouseExitedScrollbar() should 
+        only do stuff for legacy scrollbars
+        -and corresponding-
+        <rdar://problem/10603290>
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+
 2012-01-12  Dan Bernstein  <mitz@apple.com>
 
         When generating derived sources, use the same compiler that is used to compile WebCore.
