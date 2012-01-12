@@ -1,3 +1,25 @@
+2011-12-12  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio: Use Logging instead of printf.
+        https://bugs.webkit.org/show_bug.cgi?id=74322
+
+        Reviewed by Darin Adler.
+
+        No new tests; no net change in functionality.
+
+        Add a new WebCoreLogLevel for WebAudio, and use this new log level instead of 
+        printf statements in webaudio classes.
+
+        * platform/Logging.cpp:
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+        * platform/mac/LoggingMac.mm:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::print):
+        * webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::initialize):
+
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
         Make ScrollElasticityController members private

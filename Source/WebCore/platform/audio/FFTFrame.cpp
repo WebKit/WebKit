@@ -36,6 +36,7 @@
 #include <stdio.h>
 #endif
 
+#include "Logging.h"
 #include <wtf/Complex.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
@@ -253,8 +254,8 @@ void FFTFrame::print()
     FFTFrame& frame = *this;
     float* realP = frame.realData();
     float* imagP = frame.imagData();
-    printf("**** \n");
-    printf("DC = %f : nyquist = %f\n", realP[0], imagP[0]);
+    LOG(WebAudio, "**** \n");
+    LOG(WebAudio, "DC = %f : nyquist = %f\n", realP[0], imagP[0]);
 
     int n = m_FFTSize / 2;
 
@@ -262,9 +263,9 @@ void FFTFrame::print()
         double mag = sqrt(realP[i] * realP[i] + imagP[i] * imagP[i]);
         double phase = atan2(realP[i], imagP[i]);
 
-        printf("[%d] (%f %f)\n", i, mag, phase);
+        LOG(WebAudio, "[%d] (%f %f)\n", i, mag, phase);
     }
-    printf("****\n");
+    LOG(WebAudio, "****\n");
 }
 #endif // NDEBUG
 
