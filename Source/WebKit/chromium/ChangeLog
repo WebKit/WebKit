@@ -1,3 +1,21 @@
+2012-01-11  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Add WebArrayBuffer support in WebSocket to WebKit API.
+        https://bugs.webkit.org/show_bug.cgi?id=75080
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSocket.h: Add interface to send WebArrayBuffer, and set and get receiving binary object type.
+        * public/WebSocketClient.h: Add interface to receive WebArrayBuffer.
+        (WebKit::WebSocketClient::didReceiveArrayBuffer):
+        * src/WebSocketImpl.cpp: Add various binary types handling.
+        (WebKit::WebSocketImpl::WebSocketImpl):
+        (WebKit::WebSocketImpl::binaryType):
+        (WebKit::WebSocketImpl::setBinaryType):
+        (WebKit::WebSocketImpl::sendArrayBuffer):
+        (WebKit::WebSocketImpl::didReceiveBinaryData):
+        * src/WebSocketImpl.h: Add methods to handle various binary types.
+
 2012-01-11  Scott Violet  <sky@google.com>
 
         [chromium] TiledLayerChromium drops invalidates that occur during

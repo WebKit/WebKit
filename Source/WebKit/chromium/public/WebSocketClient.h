@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,7 @@
 
 namespace WebKit {
 
+class WebArrayBuffer;
 class WebString;
 
 class WebSocketClient {
@@ -49,6 +50,7 @@ public:
     virtual void didConnect() { }
     virtual void didReceiveMessage(const WebString& message) { }
     virtual void didReceiveBinaryData(const WebData& binaryData) { }
+    virtual void didReceiveArrayBuffer(const WebArrayBuffer& arrayBuffer) { }
     virtual void didReceiveMessageError() { }
     virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) { }
     virtual void didStartClosingHandshake() { }

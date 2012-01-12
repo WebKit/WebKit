@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebSocketImpl.h"
 
+#include "ArrayBuffer.h"
 #include "Document.h"
 #include "KURL.h"
 #if ENABLE(WEB_SOCKETS)
@@ -43,9 +44,10 @@ class WebSocketChannel {
 } // namespace WebCore
 #endif
 
-#include "platform/WebData.h"
+#include "WebArrayBuffer.h"
 #include "WebDocument.h"
 #include "WebSocketClient.h"
+#include "platform/WebData.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 
@@ -53,8 +55,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
+// FIXME: Default m_binaryType must be Blob after supporting WebBlob.
 WebSocketImpl::WebSocketImpl(const WebDocument& document, WebSocketClient* client)
     : m_client(client)
+    , m_binaryType(BinaryTypeData)
 {
 #if ENABLE(WEB_SOCKETS)
     m_private = WebSocketChannel::create(PassRefPtr<Document>(document).get(), this);
@@ -70,6 +74,19 @@ WebSocketImpl::~WebSocketImpl()
 #else
     ASSERT_NOT_REACHED();
 #endif
+}
+
+WebSocket::BinaryType WebSocketImpl::binaryType() const
+{
+    return m_binaryType;
+}
+
+bool WebSocketImpl::setBinaryType(BinaryType binaryType)
+{
+    if (binaryType > BinaryTypeArrayBuffer)
+        return false;
+    m_binaryType = binaryType;
+    return true;
 }
 
 void WebSocketImpl::connect(const WebURL& url, const WebString& protocol)
@@ -103,6 +120,15 @@ bool WebSocketImpl::sendBinary(const WebData& binaryData)
 {
 #if ENABLE(WEB_SOCKETS)
     return m_private->send(binaryData.data(), binaryData.size());
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+bool WebSocketImpl::sendArrayBuffer(const WebArrayBuffer& webArrayBuffer)
+{
+#if ENABLE(WEB_SOCKETS)
+    return m_private->send(*PassRefPtr<ArrayBuffer>(webArrayBuffer));
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -166,7 +192,15 @@ void WebSocketImpl::didReceiveMessage(const String& message)
 void WebSocketImpl::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
 {
 #if ENABLE(WEB_SOCKETS)
-    m_client->didReceiveBinaryData(WebData(binaryData->data(), binaryData->size()));
+    switch (m_binaryType) {
+    case BinaryTypeData:
+    case BinaryTypeBlob: // FIXME: Handle Blob after supporting WebBlob.
+        m_client->didReceiveBinaryData(WebData(binaryData->data(), binaryData->size()));
+        break;
+    case BinaryTypeArrayBuffer:
+        m_client->didReceiveArrayBuffer(WebArrayBuffer(ArrayBuffer::create(binaryData->data(), binaryData->size())));
+        break;
+    }
 #else
     ASSERT_NOT_REACHED();
 #endif
