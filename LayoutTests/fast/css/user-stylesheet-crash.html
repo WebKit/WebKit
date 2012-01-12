@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+function createIframe()
+{
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    var iframeDocument = iframe.contentDocument;
+    var link = iframeDocument.createElement("link");
+    link.setAttribute("rel", "stylesheet");
+    link.setAttribute("href", "does_not_exist.css");
+    iframeDocument.head.appendChild(link);
+    if (window.layoutTestController) {
+        layoutTestController.addUserStyleSheet("#test { color: blue: }", true);
+        setTimeout("window.layoutTestController.notifyDone()", 100);
+    }
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.addUserStyleSheet("#test { color: red: }", true);
+}
+setTimeout("createIframe()", 0);
+
+</script>
+</head>
+<body>
+This test requires DRT. It passes if it doesn't crash.
+</body>
+</html>

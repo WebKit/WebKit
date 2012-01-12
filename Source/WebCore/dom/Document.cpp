@@ -2981,8 +2981,10 @@ void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
 {
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
-    if (!attached() || (!m_didCalculateStyleSelector && !haveStylesheetsLoaded()))
+    if (!attached() || (!m_didCalculateStyleSelector && !haveStylesheetsLoaded())) {
+        m_styleSelector.clear();
         return;
+    }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())

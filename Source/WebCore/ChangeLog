@@ -1,3 +1,23 @@
+2012-01-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r104060): Setting user stylesheet may leave CSSStyleSelector with stale rule pointers 
+        https://bugs.webkit.org/show_bug.cgi?id=76191
+
+        Reviewed by Andreas Kling.
+        
+        Setting the user style sheet frees the existing user style sheet data structures. The code
+        in Document::updatePageGroupUserSheets then relies on styleSelectorChanged to clear the
+        style selector so it is not left with stale pointers. However under certain conditions
+        involving pending stylesheets it may bail out quickly without clearing.
+        
+        Document::styleSelectorChanged has to take care that it never leaves the style selector stale
+        even when bailing out early.
+
+        Test: fast/css/user-stylesheet-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleSelectorChanged):
+
 2012-01-12  Nat Duca  <nduca@chromium.org>
 
         [chromium] Turn off FrameRateController timesource when it is not needed
