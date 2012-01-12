@@ -1,3 +1,38 @@
+2012-01-12  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Avoid string operations in mobile theme's caching mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=75010
+
+        The string operations constantly performed in the mobile theme
+        to fetch or put controls in the pixmap cache can be pretty expensive.
+        The new mechanism harnesses the QPixmapCache::Key API instead.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests, internal refactoring.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::qHash):
+        (WebCore::StylePainterMobile::findCachedControl):
+        (WebCore::StylePainterMobile::insertIntoCache):
+        (WebCore::StylePainterMobile::findCheckBox):
+        (WebCore::StylePainterMobile::drawRadio):
+        (WebCore::StylePainterMobile::findRadio):
+        (WebCore::StylePainterMobile::drawMultipleComboButton):
+        (WebCore::StylePainterMobile::drawSimpleComboButton):
+        (WebCore::StylePainterMobile::getButtonImageSize):
+        (WebCore::StylePainterMobile::findComboButton):
+        (WebCore::StylePainterMobile::findLineEdit):
+        (WebCore::StylePainterMobile::findPushButton):
+        (WebCore::StylePainterMobile::drawComboBox):
+        (WebCore::StylePainterMobile::drawProgress):
+        (WebCore::StylePainterMobile::drawSliderThumb):
+        (WebCore::RenderThemeQtMobile::paintTextField):
+        (WebCore::RenderThemeQtMobile::paintMenuList):
+        * platform/qt/RenderThemeQtMobile.h:
+        (WebCore::KeyIdentifier::KeyIdentifier):
+        (WebCore::KeyIdentifier::operator==):
+
 2012-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104805.
