@@ -1,3 +1,18 @@
+2012-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Borders and box masks behave incorrectly with overlapping offsets
+        https://bugs.webkit.org/show_bug.cgi?id=76137
+
+        Reviewed by Dave Hyatt.
+        
+        When border-image-slice sizes add up to more than the height or width
+        of the border-image, the middle sections should not be rendered, per spec.
+        
+        Test: fast/borders/border-image-slice-constrained.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
         Make all calls to pinnedInDirection go through the ScrollElasticityController
