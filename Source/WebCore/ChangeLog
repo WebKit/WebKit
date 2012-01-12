@@ -1,3 +1,20 @@
+2012-01-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: [JSC] //@ sourceURL is not respected.
+        https://bugs.webkit.org/show_bug.cgi?id=65532
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/source-url-comment.html
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::findMagicComment):
+        (WebCore::ContentSearchUtils::findSourceURL):
+        (WebCore::ContentSearchUtils::findSourceMapURL):
+        * inspector/ContentSearchUtils.h:
+
 2012-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial buildfix after r104828.

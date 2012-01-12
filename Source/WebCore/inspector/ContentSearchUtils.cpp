@@ -140,11 +140,11 @@ PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String&
     return result;
 }
 
-String findSourceMapURL(const String& content)
+static String findMagicComment(const String& content, const String& name)
 {
-    DEFINE_STATIC_LOCAL(String, patternString, ("//@[\040\t]sourceMappingURL=[\040\t]*([^\\s\'\"]*)"));
-    const char* error;
-    JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), false, false, &error);
+    String patternString = "//@[\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
+    const char* error = 0;
+    JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), false, true, &error);
     ASSERT(!error);
     BumpPointerAllocator regexAllocator;
     OwnPtr<JSC::Yarr::BytecodePattern> bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
@@ -157,7 +157,17 @@ String findSourceMapURL(const String& content)
     if (result < 0)
         return String();
     ASSERT(matches[2] > 0 && matches[3] > 0);
-    return content.substring(matches[2], matches[3]);
+    return content.substring(matches[2], matches[3] - matches[2]);
+}
+
+String findSourceURL(const String& content)
+{
+    return findMagicComment(content, "sourceURL");
+}
+
+String findSourceMapURL(const String& content)
+{
+    return findMagicComment(content, "sourceMappingURL");
 }
 
 } // namespace ContentSearchUtils

@@ -33,6 +33,7 @@
 
 #include "ScriptDebugServer.h"
 
+#include "ContentSearchUtils.h"
 #include "EventLoop.h"
 #include "Frame.h"
 #include "JSJavaScriptCallFrame.h"
@@ -234,6 +235,9 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
+
+    if (script.url.isEmpty())
+        script.url = ContentSearchUtils::findSourceURL(script.source);
 
     int sourceLength = script.source.length();
     int lineCount = 1;

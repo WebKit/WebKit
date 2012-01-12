@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function doEval()
+{
+    eval("function keepAlive() {}\n//@ sourceURL=evalURL.js");
+}
+
+function test()
+{
+    InspectorTest.runDebuggerTestSuite([
+        function testSourceURLComment(next)
+        {
+            InspectorTest.showScriptSource("evalURL.js", didShowScriptSource);
+            InspectorTest.evaluateInPage("setTimeout(doEval, 0)");
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addResult(sourceFrame.textModel.text);
+                next();
+            }
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that evals with sourceURL comment are shown in scripts panel.</p>
+</body>
+</html>
