@@ -1,3 +1,18 @@
+2012-01-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Throw exception if IDBCursor.continue() called with key equal to current
+        https://bugs.webkit.org/show_bug.cgi?id=76100
+
+        The fix for https://bugs.webkit.org/show_bug.cgi?id=74213 missed the "or equal" clause
+        in the spec.
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/cursor-continue.html
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+
 2012-01-12  Jon Lee  <jonlee@apple.com>
 
         Setting value on a select element to a non existing option value should clear selection

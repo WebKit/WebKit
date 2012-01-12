@@ -101,12 +101,12 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
     if (m_cursor && key) {
         ASSERT(m_cursor->key());
         if (m_direction == IDBCursor::NEXT || m_direction == IDBCursor::NEXT_NO_DUPLICATE) {
-            if (key->isLessThan(m_cursor->key().get())) {
+            if (!m_cursor->key()->isLessThan(key.get())) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
         } else {
-            if (m_cursor->key()->isLessThan(key.get())) {
+            if (!key->isLessThan(m_cursor->key().get())) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }

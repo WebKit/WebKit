@@ -101,10 +101,10 @@ function ascendingCallback()
         evalAndLog("event.target.result.continue(3.14159)");
     } else if (window.stage == 1) {
         shouldBe("event.target.result.primaryKey", "3");
-        evalAndLog("event.target.result.continue(3.14159)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 2) {
         shouldBe("event.target.result.primaryKey", "4");
-        evalAndLog("event.target.result.continue(3.14159)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 3) {
         shouldBe("event.target.result.primaryKey", "5");
         evalAndLog("event.target.result.continue(12)");
@@ -113,10 +113,10 @@ function ascendingCallback()
         evalAndLog("event.target.result.continue(date)");
     } else if (window.stage == 5) {
         shouldBe("event.target.result.primaryKey", "9");
-        evalAndLog("event.target.result.continue(date)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 6) {
         shouldBe("event.target.result.primaryKey", "10");
-        evalAndLog("event.target.result.continue(date)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 7) {
         shouldBe("event.target.result.primaryKey", "11");
         evalAndLog("event.target.result.continue('A bit1')");
@@ -128,7 +128,7 @@ function ascendingCallback()
         evalAndLog("event.target.result.continue('the BIGGEST string')");
     } else if (window.stage == 10) {
         shouldBe("event.target.result.primaryKey", "17");
-        evalAndLog("event.target.result.continue('the BIGGEST string')");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 11) {
         shouldBeNull("event.target.result");
         descendingTest();
@@ -155,28 +155,28 @@ function descendingCallback()
         evalAndLog("event.target.result.continue('A bit2')");
     } else if (window.stage == 1) {
         shouldBe("event.target.result.primaryKey", "15");
-        evalAndLog("event.target.result.continue('A bit2')");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 2) {
         shouldBe("event.target.result.primaryKey", "14");
         evalAndLog("event.target.result.continue(date)");
     } else if (window.stage == 3) {
         shouldBe("event.target.result.primaryKey", "10");
-        evalAndLog("event.target.result.continue(date)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 4) {
         shouldBe("event.target.result.primaryKey", "9");
         evalAndLog("event.target.result.continue(1)");
     } else if (window.stage == 5) {
         shouldBe("event.target.result.primaryKey", "2");
-        evalAndLog("event.target.result.continue(1)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 6) {
         shouldBe("event.target.result.primaryKey", "1");
-        evalAndLog("event.target.result.continue(1)");
+        evalAndLog("event.target.result.continue()");
     } else if (window.stage == 7) {
         shouldBe("event.target.result.primaryKey", "0");
         evalAndLog("event.target.result.continue()");
     } else if (window.stage == 8) {
         shouldBeNull("event.target.result");
-        ascendingErrorTest();
+        ascendingErrorTestLessThan();
         return;
     } else {
         testFailed("Illegal stage.");
@@ -184,7 +184,7 @@ function descendingCallback()
     window.stage++;
 }
 
-function ascendingErrorTest()
+function ascendingErrorTestLessThan()
 {
     debug("");
     var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
@@ -197,7 +197,7 @@ function ascendingErrorTest()
         } else if (window.stage == 1) {
             shouldBe("event.target.result.primaryKey", "3");
             evalAndExpectException("event.target.result.continue(1)", "IDBDatabaseException.DATA_ERR");
-            descendingErrorTest();
+            ascendingErrorTestEqual();
             return;
         } else {
            testFailed("Illegal stage.");
@@ -206,7 +206,29 @@ function ascendingErrorTest()
     };
 }
 
-function descendingErrorTest()
+function ascendingErrorTestEqual()
+{
+    debug("");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
+    window.stage = 0;
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        if (window.stage === 0) {
+            shouldBe("event.target.result.primaryKey", "0");
+            evalAndLog("event.target.result.continue(3.14159)");
+        } else if (window.stage == 1) {
+            shouldBe("event.target.result.primaryKey", "3");
+            evalAndExpectException("event.target.result.continue(3.14159)", "IDBDatabaseException.DATA_ERR");
+            descendingErrorTestGreaterThan();
+            return;
+        } else {
+           testFailed("Illegal stage.");
+        }
+        window.stage++;
+    };
+}
+
+function descendingErrorTestGreaterThan()
 {
     debug("");
     var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
@@ -219,6 +241,28 @@ function descendingErrorTest()
         } else if (window.stage == 1) {
             shouldBe("event.target.result.primaryKey", "15");
             evalAndExpectException("event.target.result.continue('A bit3')", "IDBDatabaseException.DATA_ERR");
+            descendingErrorTestEqual();
+            return;
+        } else {
+           testFailed("Illegal stage.");
+        }
+        window.stage++;
+    };
+}
+
+function descendingErrorTestEqual()
+{
+    debug("");
+    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
+    window.stage = 0;
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        if (window.stage == 0) {
+            shouldBe("event.target.result.primaryKey", "17");
+            evalAndLog("event.target.result.continue('A bit2')");
+        } else if (window.stage == 1) {
+            shouldBe("event.target.result.primaryKey", "15");
+            evalAndExpectException("event.target.result.continue('A bit2')", "IDBDatabaseException.DATA_ERR");
             done();
             return;
         } else {

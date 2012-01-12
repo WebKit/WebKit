@@ -40,17 +40,17 @@ indexObject.openKeyCursor(null, IDBCursor.NEXT)
 PASS event.target.result.primaryKey is 0
 event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
-event.target.result.continue(3.14159)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 4
-event.target.result.continue(3.14159)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 5
 event.target.result.continue(12)
 PASS event.target.result.primaryKey is 7
 event.target.result.continue(date)
 PASS event.target.result.primaryKey is 9
-event.target.result.continue(date)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 10
-event.target.result.continue(date)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 11
 event.target.result.continue('A bit1')
 PASS event.target.result.primaryKey is 14
@@ -58,24 +58,24 @@ event.target.result.continue('A bit3')
 PASS event.target.result.primaryKey is 16
 event.target.result.continue('the BIGGEST string')
 PASS event.target.result.primaryKey is 17
-event.target.result.continue('the BIGGEST string')
+event.target.result.continue()
 PASS event.target.result is null
 
 indexObject.openKeyCursor(null, IDBCursor.PREV)
 PASS event.target.result.primaryKey is 17
 event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15
-event.target.result.continue('A bit2')
+event.target.result.continue()
 PASS event.target.result.primaryKey is 14
 event.target.result.continue(date)
 PASS event.target.result.primaryKey is 10
-event.target.result.continue(date)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 9
 event.target.result.continue(1)
 PASS event.target.result.primaryKey is 2
-event.target.result.continue(1)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 1
-event.target.result.continue(1)
+event.target.result.continue()
 PASS event.target.result.primaryKey is 0
 event.target.result.continue()
 PASS event.target.result is null
@@ -88,11 +88,27 @@ Expecting exception from event.target.result.continue(1)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
+indexObject.openKeyCursor(null, IDBCursor.NEXT)
+PASS event.target.result.primaryKey is 0
+event.target.result.continue(3.14159)
+PASS event.target.result.primaryKey is 3
+Expecting exception from event.target.result.continue(3.14159)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
 indexObject.openKeyCursor(null, IDBCursor.PREV)
 PASS event.target.result.primaryKey is 17
 event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15
 Expecting exception from event.target.result.continue('A bit3')
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+indexObject.openKeyCursor(null, IDBCursor.PREV)
+PASS event.target.result.primaryKey is 17
+event.target.result.continue('A bit2')
+PASS event.target.result.primaryKey is 15
+Expecting exception from event.target.result.continue('A bit2')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
