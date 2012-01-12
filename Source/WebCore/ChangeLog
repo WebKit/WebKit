@@ -1,3 +1,60 @@
+2012-01-12  Dana Jansens  <danakj@chromium.org>
+
+        [skia] Track a simple opaque area when painting via PlatformContextSkia and save in LayerTextureUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=74352
+
+        Reviewed by Stephen White.
+
+        New unit tests in PlatformContextSkiaTest.cpp
+
+        * WebCore.gypi:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::drawOuterPath):
+        (WebCore::drawInnerPath):
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        * platform/graphics/skia/OpaqueRegionSkia.cpp: Added.
+        (WebCore::OpaqueRegionSkia::OpaqueRegionSkia):
+        (WebCore::OpaqueRegionSkia::~OpaqueRegionSkia):
+        (WebCore::OpaqueRegionSkia::asRect):
+        (WebCore::xfermodeIsOpaque):
+        (WebCore::xfermodePreservesOpaque):
+        (WebCore::paintIsOpaque):
+        (WebCore::OpaqueRegionSkia::didDrawRect):
+        (WebCore::OpaqueRegionSkia::didDrawPath):
+        (WebCore::OpaqueRegionSkia::didDrawPoints):
+        (WebCore::OpaqueRegionSkia::didDrawBounded):
+        (WebCore::OpaqueRegionSkia::didDraw):
+        (WebCore::OpaqueRegionSkia::didDrawUnbounded):
+        (WebCore::OpaqueRegionSkia::markRectAsOpaque):
+        (WebCore::OpaqueRegionSkia::markRectAsNonOpaque):
+        * platform/graphics/skia/OpaqueRegionSkia.h: Added.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::clippedToImage):
+        (WebCore::PlatformContextSkia::drawRect):
+        (WebCore::PlatformContextSkia::paintSkPaint):
+        (WebCore::PlatformContextSkia::didDrawRect):
+        (WebCore::PlatformContextSkia::didDrawPath):
+        (WebCore::PlatformContextSkia::didDrawPoints):
+        (WebCore::PlatformContextSkia::didDrawBounded):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::setTrackOpaqueRegion):
+        (WebCore::PlatformContextSkia::opaqueRegion):
+
 2012-01-12  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76209

@@ -248,6 +248,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
         // we don't send extra pixels.
         canvas->drawBitmapRect(bitmap.bitmap(), &srcRect, destRect, &paint);
     }
+    platformContext->didDrawRect(destRect, paint, &bitmap.bitmap());
 }
 
 // Transforms the given dimensions with the given matrix. Used to see how big

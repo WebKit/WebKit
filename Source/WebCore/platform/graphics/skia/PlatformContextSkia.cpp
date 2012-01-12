@@ -179,6 +179,7 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 // Danger: canvas can be NULL.
 PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
+    , m_trackOpaqueRegion(false)
     , m_printing(false)
     , m_deferred(false)
     , m_drawingToImageBuffer(false)
@@ -266,6 +267,11 @@ void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
     canvas()->clipPath(clipPath, SkRegion::kIntersect_Op, true);
 }
 
+const SkBitmap& PlatformContextSkia::clippedToImage() const
+{
+    return m_state->m_imageBufferClip;
+}
+
 void PlatformContextSkia::restore()
 {
     if (!m_state->m_imageBufferClip.empty()) {
@@ -287,6 +293,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
     if (fillcolorNotTransparent) {
         setupPaintForFilling(&paint);
         canvas()->drawRect(rect, paint);
+        didDrawRect(rect, paint);
     }
 
     if (m_state->m_strokeStyle != NoStroke
@@ -299,12 +306,16 @@ void PlatformContextSkia::drawRect(SkRect rect)
 
         SkRect topBorder = { rect.fLeft, rect.fTop, rect.fRight, rect.fTop + 1 };
         canvas()->drawRect(topBorder, paint);
+        didDrawRect(topBorder, paint);
         SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.fRight, rect.fBottom };
         canvas()->drawRect(bottomBorder, paint);
+        didDrawRect(bottomBorder, paint);
         SkRect leftBorder = { rect.fLeft, rect.fTop + 1, rect.fLeft + 1, rect.fBottom - 1 };
         canvas()->drawRect(leftBorder, paint);
+        didDrawRect(leftBorder, paint);
         SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, rect.fRight, rect.fBottom - 1 };
         canvas()->drawRect(rightBorder, paint);
+        didDrawRect(rightBorder, paint);
     }
 }
 
@@ -539,6 +550,7 @@ void PlatformContextSkia::paintSkPaint(const SkRect& rect,
                                        const SkPaint& paint)
 {
     m_canvas->drawRect(rect, paint);
+    didDrawRect(rect, paint);
 }
 
 const SkBitmap* PlatformContextSkia::bitmap() const
@@ -595,6 +607,30 @@ void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap&
 void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)
 {
     m_gpuContext = context;
+}
+
+void PlatformContextSkia::didDrawRect(const SkRect& rect, const SkPaint& paint, const SkBitmap* bitmap)
+{
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawRect(this, rect, paint, bitmap);
+}
+
+void PlatformContextSkia::didDrawPath(const SkPath& path, const SkPaint& paint)
+{
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawPath(this, path, paint);
+}
+
+void PlatformContextSkia::didDrawPoints(SkCanvas::PointMode mode, int numPoints, const SkPoint points[], const SkPaint& paint)
+{
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawPoints(this, mode, numPoints, points, paint);
+}
+
+void PlatformContextSkia::didDrawBounded(const SkRect& rect, const SkPaint& paint)
+{
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawBounded(this, rect, paint);
 }
 
 } // namespace WebCore

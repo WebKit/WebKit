@@ -33,6 +33,7 @@
 
 #include "GraphicsContext.h"
 #include "Noncopyable.h"
+#include "OpaqueRegionSkia.h"
 
 #include "SkCanvas.h"
 #include "SkDashPathEffect.h"
@@ -98,6 +99,8 @@ public:
     // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
     void beginLayerClippedToImage(const FloatRect&, const ImageBuffer*);
     void clipPathAntiAliased(const SkPath&);
+    // If non-empty, the layer is clipped to the bitmap.
+    const SkBitmap& clippedToImage() const;
 
     // Sets up the common flags on a paint for antialiasing, effects, etc.
     // This is implicitly called by setupPaintFill and setupPaintStroke, but
@@ -187,6 +190,18 @@ public:
     bool isDeferred() const { return m_deferred; }
     void setDeferred(bool deferred) { m_deferred = deferred; }
 
+    void setTrackOpaqueRegion(bool track) { m_trackOpaqueRegion = track; }
+
+    // This will be an empty region unless tracking is enabled.
+    const OpaqueRegionSkia& opaqueRegion() const { return m_opaqueRegion; }
+
+    // After drawing in the context's canvas, use these functions to notify the context so it can track the opaque region.
+    void didDrawRect(const SkRect&, const SkPaint&, const SkBitmap* = 0);
+    void didDrawPath(const SkPath&, const SkPaint&);
+    void didDrawPoints(SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    // For drawing operations that do not fill the entire rect.
+    void didDrawBounded(const SkRect&, const SkPaint&);
+
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
@@ -209,6 +224,10 @@ private:
     // Pointer to the current drawing state. This is a cached value of
     // mStateStack.back().
     State* m_state;
+
+    // Tracks the region painted opaque via the GraphicsContext.
+    OpaqueRegionSkia m_opaqueRegion;
+    bool m_trackOpaqueRegion;
 
     // Stores image sizes for a hint to compute image resampling modes.
     // Values are used in ImageSkia.cpp

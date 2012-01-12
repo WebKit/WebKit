@@ -119,6 +119,7 @@
                 'webkit_unittest_files': [
                     'tests/DragImageTest.cpp',
                     'tests/ImageLayerChromiumTest.cpp',
+                    'tests/PlatformContextSkiaTest.cpp',
                 ],
             }],
             ['OS=="win"', {

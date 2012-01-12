@@ -3928,6 +3928,8 @@
             'platform/graphics/skia/IntRectSkia.cpp',
             'platform/graphics/skia/NativeImageSkia.cpp',
             'platform/graphics/skia/NativeImageSkia.h',
+            'platform/graphics/skia/OpaqueRegionSkia.cpp',
+            'platform/graphics/skia/OpaqueRegionSkia.h',
             'platform/graphics/skia/PathSkia.cpp',
             'platform/graphics/skia/PatternSkia.cpp',
             'platform/graphics/skia/PlatformContextSkia.cpp',

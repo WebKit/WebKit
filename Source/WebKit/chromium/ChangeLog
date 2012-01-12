@@ -1,3 +1,14 @@
+2012-01-12  Dana Jansens  <danakj@chromium.org>
+
+        [skia] Track a simple opaque area when painting via PlatformContextSkia and save in LayerTextureUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=74352
+
+        Reviewed by Stephen White.
+
+        * WebKit.gypi:
+        * tests/PlatformContextSkiaTest.cpp: Added.
+        (WebCore::TEST):
+
 2012-01-12  Nat Duca  <nduca@chromium.org>
 
         [chromium] Turn off FrameRateController timesource when it is not needed
