@@ -498,8 +498,13 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
         return;
 
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
-    if (document() && document()->domWindow())
+    if (document() && document()->domWindow()) {
+        // Call selectionChanged, causing the element to cache the selection,
+        // so that the text event inserts the text in this element even if
+        // focus has moved away from it.
+        input->selectionChanged(false);
         input->dispatchEvent(TextEvent::create(document()->domWindow(), results.isEmpty() ? "" : results[0]->utterance(), TextEventInputOther));
+    }
 
     // This event is sent after the text event so the website can perform actions using the input field content immediately.
     // It provides alternative recognition hypotheses and notifies that the results come from speech input.

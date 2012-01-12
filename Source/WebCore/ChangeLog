@@ -1,3 +1,18 @@
+2012-01-12  Hans Wennborg  <hans@chromium.org>
+
+        Speech input: Send text to correct element even if focus has changed
+        https://bugs.webkit.org/show_bug.cgi?id=76071
+
+        Reviewed by Steve Block.
+
+        Make sure that the text from speech input ends up in the correct
+        element even if focus has changed since the user clicked on it.
+
+        Test: fast/speech/change-focus.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+
 2012-01-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: make source urls relative to source map url.
