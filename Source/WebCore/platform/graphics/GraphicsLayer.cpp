@@ -30,6 +30,8 @@
 #include "GraphicsLayer.h"
 
 #include "FloatPoint.h"
+#include "GraphicsContext.h"
+#include "LayoutTypes.h"
 #include "RotateTransformOperation.h"
 #include "TextStream.h"
 #include <wtf/text/CString.h>
@@ -261,6 +263,17 @@ void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
     m_replicaLayer = layer;
 }
 
+void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset)
+{
+    if (offset == m_offsetFromRenderer)
+        return;
+
+    m_offsetFromRenderer = offset;
+
+    // If the compositing layer offset changes, we need to repaint.
+    setNeedsDisplay();
+}
+
 void GraphicsLayer::setBackgroundColor(const Color& color)
 {
     m_backgroundColor = color;
@@ -278,8 +291,15 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const I
 #ifndef NDEBUG
     s_inPaintContents = true;
 #endif
-    if (m_client)
-        m_client->paintContents(this, context, m_paintingPhase, clip);
+    if (m_client) {
+        LayoutSize offset = offsetFromRenderer();
+        context.translate(-offset);
+
+        LayoutRect clipRect(clip);
+        clipRect.move(offset);
+
+        m_client->paintContents(this, context, m_paintingPhase, clipRect);
+    }
 #ifndef NDEBUG
     s_inPaintContents = false;
 #endif

@@ -1,3 +1,24 @@
+2012-01-11  Adrienne Walker  <enne@google.com>
+
+        Repaint all graphics layers when their renderer offset changes
+        https://bugs.webkit.org/show_bug.cgi?id=75730
+
+        Reviewed by Simon Fraser.
+
+        In RenderLayerBacking, only the main graphics layer gets repainted
+        when the offset changes. If the offset on other graphics layers (e.g.
+        the foreground layer) changes, they should get repainted as well.
+
+        Test: compositing/geometry/foreground-offset-change.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setOffsetFromRenderer):
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/GraphicsLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::paintContents):
+
 2012-01-11  Scott Violet  <sky@google.com>
 
         [chromium] TiledLayerChromium drops invalidates that occur during

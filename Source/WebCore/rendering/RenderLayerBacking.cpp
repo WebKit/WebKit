@@ -453,13 +453,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
 
     m_graphicsLayer->setPosition(FloatPoint() + (relativeCompositingBounds.location() - graphicsLayerParentLocation));
-    
-    LayoutSize oldOffsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
     m_graphicsLayer->setOffsetFromRenderer(localCompositingBounds.location() - LayoutPoint());
-    
-    // If the compositing layer offset changes, we need to repaint.
-    if (oldOffsetFromRenderer != m_graphicsLayer->offsetFromRenderer())
-        m_graphicsLayer->setNeedsDisplay();
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
@@ -1234,15 +1228,9 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     if (graphicsLayer == m_graphicsLayer.get() || graphicsLayer == m_foregroundLayer.get() || graphicsLayer == m_maskLayer.get()) {
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), clip);
 
-        LayoutSize offset = graphicsLayer->offsetFromRenderer();
-        context.translate(-offset);
-
-        LayoutRect clipRect(clip);
-        clipRect.move(offset);
-
         // The dirtyRect is in the coords of the painting root.
         LayoutRect dirtyRect = compositedBounds();
-        dirtyRect.intersect(clipRect);
+        dirtyRect.intersect(clip);
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
