@@ -1,3 +1,10 @@
+2012-01-12  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Unreviewed build fix after r104828.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::StylePainterMobile::findComboButton):
+
 2012-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104829.

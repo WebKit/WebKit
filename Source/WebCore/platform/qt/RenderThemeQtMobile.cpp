@@ -338,7 +338,7 @@ QPixmap StylePainterMobile::findComboButton(const QSize& size, bool multiple, bo
         const qreal border = painterScale(painter);
         const QSizeF padding(2 * border, 2 * border);
         const QSizeF innerSize = size - padding;
-        ASSERT(innerSize > padding.toSize());
+        ASSERT(innerSize.isValid());
         result.fill(Qt::transparent);
         QPainter cachePainter(&result);
         cachePainter.translate(border, border);
