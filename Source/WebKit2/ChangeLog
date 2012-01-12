@@ -1,3 +1,19 @@
+2012-01-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add PLATFORM(EFL) in SharedMemory.h, WebProcessStore.h, WebEditorClient.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=76115
+
+        Reviewed by Andreas Kling.
+
+        This patch added PLATFORM(EFL) guard in SharedMemory.h to use UNIX_DOMAIN_SOCKETS
+        and WebProcessStore.h to have font family preference
+        and WebEditorClient.cpp to use platform specific handleKeyboardEvent(),
+        handleInputMethodKeydown()
+
+        * Platform/SharedMemory.h:
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+
 2012-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web process should use the same locale than UI process

@@ -30,7 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
 #include "Attachment.h"
 #include <wtf/text/WTFString.h>
 #endif
