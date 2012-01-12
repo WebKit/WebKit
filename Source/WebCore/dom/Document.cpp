@@ -1846,6 +1846,7 @@ void Document::detach()
     m_eventQueue->close();
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenChangeEventTargetQueue.clear();
+    m_fullScreenErrorEventTargetQueue.clear();
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -5011,23 +5012,29 @@ bool Document::fullScreenIsAllowedForElement(Element* element) const
 
 void Document::requestFullScreenForElement(Element* element, unsigned short flags, FullScreenCheckType checkType)
 {
-    if (!page() || !page()->settings()->fullScreenEnabled())
-        return;
+    do {
+        if (!page() || !page()->settings()->fullScreenEnabled())
+            break;
 
-    if (!element)
-        element = documentElement();
-    
-    if (checkType == EnforceIFrameAllowFulScreenRequirement && !fullScreenIsAllowedForElement(element))
+        if (!element)
+            element = documentElement();
+        
+        if (checkType == EnforceIFrameAllowFulScreenRequirement && !fullScreenIsAllowedForElement(element))
+            break;
+        
+        if (!ScriptController::processingUserGesture())
+            break;
+        
+        if (!page()->chrome()->client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT))
+            break;
+        
+        m_areKeysEnabledInFullScreen = flags & Element::ALLOW_KEYBOARD_INPUT;
+        page()->chrome()->client()->enterFullScreenForElement(element);
         return;
+    } while (0);
     
-    if (!ScriptController::processingUserGesture())
-        return;
-    
-    if (!page()->chrome()->client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT))
-        return;
-    
-    m_areKeysEnabledInFullScreen = flags & Element::ALLOW_KEYBOARD_INPUT;
-    page()->chrome()->client()->enterFullScreenForElement(element);
+    m_fullScreenErrorEventTargetQueue.append(element ? element : documentElement());
+    m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::webkitCancelFullScreen()
@@ -5194,6 +5201,18 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
             m_fullScreenChangeEventTargetQueue.append(documentElement());
         
         element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+    }
+
+    while (!m_fullScreenErrorEventTargetQueue.isEmpty()) {
+        RefPtr<Element> element = m_fullScreenErrorEventTargetQueue.takeFirst();
+        if (!element)
+            element = documentElement();
+        
+        // If the element was removed from our tree, also message the documentElement.
+        if (!contains(element.get()))
+            m_fullScreenErrorEventTargetQueue.append(documentElement());
+        
+        element->dispatchEvent(Event::create(eventNames().webkitfullscreenerrorEvent, true, false));
     }
 }
 

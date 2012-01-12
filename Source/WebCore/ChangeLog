@@ -1,3 +1,27 @@
+2011-09-26  Jer Noble  <jer.noble@apple.com>
+
+        Emit an error event when a request to enter full-screen is rejected.
+        https://bugs.webkit.org/show_bug.cgi?id=62320
+
+        Reviewed by Eric Carlson.
+
+        Tests: fullscreen/full-screen-request-rejected.html
+               fullscreen/full-screen-request-removed.html
+
+        When a request to enter full-screen is rejected, emit an event 
+        (webkitfullscreenerror) in response.  But emit the event during the next
+        trip through the run-loop, like the webkitfullscreenchange event, and so a new
+        timer and queue are necessary.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestFullScreenForElement): Emit the error event
+            if the request does not pass all our requirements.
+        * dom/Document.h: Add new ivars.
+        * dom/Document.idl: Add support for setting an onfullscreenerror attribute.
+        * dom/Element.h: Ditto.
+        * dom/Element.idl: Ditto.
+        * dom/EventNames.h: Add the name for the error event.
+
 2012-01-12  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76133

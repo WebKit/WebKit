@@ -246,6 +246,7 @@ onwebkitanimationend
 onwebkitbeginfullscreen
 onwebkitendfullscreen
 onwebkitfullscreenchange
+onwebkitfullscreenerror
 onwebkittransitionend
 open
 optimum

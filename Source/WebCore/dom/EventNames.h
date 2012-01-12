@@ -181,6 +181,7 @@ namespace WebCore {
     macro(loadend) \
     \
     macro(webkitfullscreenchange) \
+    macro(webkitfullscreenerror) \
     \
     macro(webkitspeechchange) \
     \

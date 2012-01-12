@@ -11,13 +11,11 @@ function runTest() {
             endTest();
     });
 
+    waitForEventAndEnd(frame.contentDocument, 'webkitfullscreenerror', function() {
+        consoleWrite("SUCCEED - did not enter full screen!");
+    });
+
     runWithKeyDown(function() {
-
-        setTimeout(function() { 
-            consoleWrite("SUCCEED - did not enter full screen!"); 
-            endTest(); 
-        }, 50);
-
         frame.contentDocument.documentElement.webkitRequestFullScreen();
     });
 }

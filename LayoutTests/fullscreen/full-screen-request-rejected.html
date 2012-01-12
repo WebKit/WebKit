@@ -1,0 +1,16 @@
+<body>
+<script src="full-screen-test.js"></script>
+<div>This tests that a full-screen request which is not user-initiated will be rejected.
+<script>
+    // Bail out early if the full screen API is not enabled or is missing:
+    if (Element.prototype.webkitRequestFullScreen == undefined) {
+        logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+        endTest();
+    } else {
+        waitForEvent(document, 'webkitfullscreenchange', function() {
+           logResult("Entered full screen.", false); 
+        });
+        waitForEventAndEnd(document, 'webkitfullscreenerror');
+        document.documentElement.webkitRequestFullScreen();
+    }
+</script>

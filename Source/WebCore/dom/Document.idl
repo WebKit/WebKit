@@ -321,6 +321,7 @@ module core {
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
         attribute [DontEnum, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
+        attribute [DontEnum, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS

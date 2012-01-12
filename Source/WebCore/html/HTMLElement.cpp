@@ -330,6 +330,8 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
 #if ENABLE(FULLSCREEN_API)
     } else if (attr->name() == onwebkitfullscreenchangeAttr) {
         setAttributeEventListener(eventNames().webkitfullscreenchangeEvent, createAttributeEventListener(this, attr));
+    } else if (attr->name() == onwebkitfullscreenerrorAttr) {
+        setAttributeEventListener(eventNames().webkitfullscreenerrorEvent, createAttributeEventListener(this, attr));
 #endif
     }
 }
