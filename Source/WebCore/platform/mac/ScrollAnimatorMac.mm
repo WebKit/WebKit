@@ -1150,7 +1150,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
         }
 
         if (isVerticallyStretched) {
-            if (!isHorizontallyStretched && pinnedInDirection(deltaX, 0)) {                
+            if (!isHorizontallyStretched && m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
                 // Stretching only in the vertical.
                 if (deltaY != 0 && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
                     deltaX = 0;
@@ -1162,7 +1162,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
             }
         } else if (isHorizontallyStretched) {
             // Stretching only in the horizontal.
-            if (pinnedInDirection(0, deltaY)) {
+            if (m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(0, deltaY))) {
                 if (deltaX != 0 && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
                     deltaY = 0;
                 else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
@@ -1173,7 +1173,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
             }
         } else {
             // Not stretching at all yet.
-            if (pinnedInDirection(deltaX, deltaY)) {
+            if (m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(deltaX, deltaY))) {
                 if (fabsf(deltaY) >= fabsf(deltaX)) {
                     if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                         m_scrollElasticityController.m_overflowScrollDelta.setWidth(m_scrollElasticityController.m_overflowScrollDelta.width() + deltaX);

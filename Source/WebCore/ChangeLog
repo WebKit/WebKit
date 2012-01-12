@@ -1,3 +1,13 @@
+2012-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Make all calls to pinnedInDirection go through the ScrollElasticityController
+        https://bugs.webkit.org/show_bug.cgi?id=76204
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+
 2012-01-12  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Re-enable Skia feColorMatrix filter implementation.
