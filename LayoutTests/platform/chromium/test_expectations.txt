@@ -3793,6 +3793,7 @@ BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH TIMEOUT
 BUGWK75111 RELEASE : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
 
+BUGWK75896 MAC DEBUG : css3/calc/block-mask-overlay-image-outset.html = PASS CRASH
 
 BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
