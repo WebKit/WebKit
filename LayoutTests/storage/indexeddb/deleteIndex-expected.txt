@@ -29,7 +29,7 @@ PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 Expecting exception from objectStore.deleteIndex('second')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

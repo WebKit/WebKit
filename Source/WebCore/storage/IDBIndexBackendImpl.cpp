@@ -109,7 +109,7 @@ void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsign
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
     if (!transaction->scheduleTask(createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexCursor, callbacks, transaction)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
@@ -119,7 +119,7 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, uns
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
     if (!transaction->scheduleTask(createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexKeyCursor, callbacks, transaction)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
@@ -142,7 +142,7 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
 void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     if (!transaction->scheduleTask(createCallbackTask(&countInternal, this, range, callbacks, transaction)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, bool getObject, PassRefPtr<IDBCallbacks> callbacks)
@@ -171,7 +171,7 @@ void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, key, true, callbacks)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -180,7 +180,7 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallba
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, key, false, callbacks)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 bool IDBIndexBackendImpl::addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey)

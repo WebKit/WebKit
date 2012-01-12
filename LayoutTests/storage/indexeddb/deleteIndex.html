@@ -56,7 +56,7 @@ function twiddleIndexes()
 function postTwiddling()
 {
     evalAndExpectException("db.createObjectStore('bar');", "IDBDatabaseException.NOT_ALLOWED_ERR");
-    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
     done();
 }
 

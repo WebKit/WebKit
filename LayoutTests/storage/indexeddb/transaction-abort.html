@@ -14,7 +14,14 @@ if (window.layoutTestController)
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('name')");
+    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
+    shouldBeTrue("indexedDB != null");
+    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
+    shouldBeTrue("IDBTransaction != null");
+    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
+    shouldBeTrue("IDBDatabaseException != null");
+
+    request = evalAndLog("indexedDB.open('name')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -45,7 +52,7 @@ function deleteExisting()
 
 function startTest()
 {
-    trans = evalAndLog("trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = transactionAborted");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     store = evalAndLog("store = trans.objectStore('storeName')");
@@ -63,18 +70,18 @@ function startTest()
 
 function firstAdd()
 {
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.ABORT_ERR");
+    shouldBe("event.target.errorCode", "IDBDatabaseException.ABORT_ERR");
     shouldBeFalse("firstError");
     shouldBeFalse("secondError");
     shouldBeFalse("abortFired");
     firstError = true;
 
-    evalAndExpectException("store.add({x: 'value4', y: 'zzz4'}, 'key4')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("store.add({x: 'value4', y: 'zzz4'}, 'key4')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
 }
 
 function secondAdd()
 {
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.ABORT_ERR");
+    shouldBe("event.target.errorCode", "IDBDatabaseException.ABORT_ERR");
     shouldBeTrue("firstError");
     shouldBeFalse("secondError");
     shouldBeFalse("abortFired");
@@ -88,7 +95,7 @@ function transactionAborted()
     shouldBeFalse("abortFired");
     abortFired = true;
 
-    evalAndExpectException("store.add({x: 'value5', y: 'zzz5'}, 'key5')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("store.add({x: 'value5', y: 'zzz5'}, 'key5')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
     done();
 }
 

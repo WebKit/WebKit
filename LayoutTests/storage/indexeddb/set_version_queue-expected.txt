@@ -3,11 +3,14 @@
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS IndexedDB == null is false
-IndexedDB.open('set-version-queue')
-IndexedDB.open('set-version-queue')
-IndexedDB.open('set-version-queue')
-IndexedDB.open('set-version-queue')
+window.indexedDB = window.indexedDB || window.webkitIndexedDB
+PASS indexedDB != null is true
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException
+PASS IDBDatabaseException != null is true
+indexedDB.open('set-version-queue')
+indexedDB.open('set-version-queue')
+indexedDB.open('set-version-queue')
+indexedDB.open('set-version-queue')
 connections[0].setVersion('version 0')
 connections[1].setVersion('version 1')
 connections[2].setVersion('version 2')
@@ -52,17 +55,17 @@ Note: This means that a connection can receive a blocked event after its close()
 PASS event.version is "version 3"
 
 PASS connection[0] got error event
-PASS event.target.errorCode is 13
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 
 PASS connection[2] got error event
-PASS event.target.errorCode is 13
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 
 PASS connection[3] got error event
-PASS event.target.errorCode is 13
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS event.target.webkitErrorMessage.length > 0 is true
 Connection was closed before set version transaction was created
 

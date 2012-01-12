@@ -46,13 +46,12 @@ module storage {
         const unsigned short CONSTRAINT_ERR = 4;
         const unsigned short DATA_ERR = 5;
         const unsigned short NOT_ALLOWED_ERR = 6;
-        const unsigned short SERIAL_ERR = 7;
-        const unsigned short RECOVERABLE_ERR = 8;
-        const unsigned short TRANSIENT_ERR = 9;
+        const unsigned short TRANSACTION_INACTIVE_ERR = 7;
+        const unsigned short ABORT_ERR = 8;
+        const unsigned short READ_ONLY_ERR = 9;
         const unsigned short TIMEOUT_ERR = 10;
-        const unsigned short DEADLOCK_ERR = 11;
-        const unsigned short READ_ONLY_ERR = 12;
-        const unsigned short ABORT_ERR = 13;
+        const unsigned short QUOTA_ERR = 11;
+        const unsigned short VER_ERR = 12;
     };
 
 }

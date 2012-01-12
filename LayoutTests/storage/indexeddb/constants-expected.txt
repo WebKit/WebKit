@@ -9,11 +9,12 @@ PASS webkitIDBDatabaseException.NOT_FOUND_ERR is 3
 PASS webkitIDBDatabaseException.CONSTRAINT_ERR is 4
 PASS webkitIDBDatabaseException.DATA_ERR is 5
 PASS webkitIDBDatabaseException.NOT_ALLOWED_ERR is 6
-PASS webkitIDBDatabaseException.SERIAL_ERR is 7
-PASS webkitIDBDatabaseException.RECOVERABLE_ERR is 8
-PASS webkitIDBDatabaseException.TRANSIENT_ERR is 9
+PASS webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR is 7
+PASS webkitIDBDatabaseException.ABORT_ERR is 8
+PASS webkitIDBDatabaseException.READ_ONLY_ERR is 9
 PASS webkitIDBDatabaseException.TIMEOUT_ERR is 10
-PASS webkitIDBDatabaseException.DEADLOCK_ERR is 11
+PASS webkitIDBDatabaseException.QUOTA_ERR is 11
+PASS webkitIDBDatabaseException.VER_ERR is 12
 PASS webkitIDBRequest.LOADING is 1
 PASS webkitIDBRequest.DONE is 2
 PASS webkitIDBCursor.NEXT is 0

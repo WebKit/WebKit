@@ -3,9 +3,12 @@ Test IndexedDB transaction basics.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'webkitIndexedDB' in window is true
-PASS webkitIndexedDB == null is false
-webkitIndexedDB.open('transaction-basics')
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+
+indexedDB.open('transaction-basics')
 openSuccess():
 db = event.target.result
 request = db.setVersion('version 1')
@@ -50,6 +53,41 @@ PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
 
+testInactiveAbortedTransaction():
+Expecting exception from index.openCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.openKeyCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.get(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.getKey(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.count()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.put(0, 0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.add(0, 0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.delete(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.clear()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.get(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.openCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+
 testSetVersionAbort4():
 PASS window.db.objectStoreNames is []
 PASS window.db.objectStoreNames.length is 0
@@ -60,6 +98,41 @@ trans = event.target.result
 PASS trans !== null is true
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x', false)
+
+testInactiveCompletedTransaction():
+Expecting exception from index.openCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.openKeyCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.get(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.getKey(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from index.count()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.put(0, 0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.add(0, 0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.delete(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.clear()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.get(0)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+Expecting exception from store.openCursor()
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 
 testSetVersionAbort5():
 PASS db.objectStoreNames is ['storeFail']

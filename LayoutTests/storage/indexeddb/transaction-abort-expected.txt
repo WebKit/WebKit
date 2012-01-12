@@ -3,7 +3,13 @@ Test transaction aborts send the proper onabort messages..
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('name')
+window.indexedDB = window.indexedDB || window.webkitIndexedDB
+PASS indexedDB != null is true
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
+PASS IDBTransaction != null is true
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException
+PASS IDBDatabaseException != null is true
+indexedDB.open('name')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -13,20 +19,20 @@ trans.oncomplete = startTest
 Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
 store.add({x: 'value2', y: 'zzz2'}, 'key2')
 store.add({x: 'value3', y: 'zzz3'}, 'key3')
-PASS event.target.errorCode is webkitIDBDatabaseException.ABORT_ERR
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS firstError is false
 PASS secondError is false
 PASS abortFired is false
 Expecting exception from store.add({x: 'value4', y: 'zzz4'}, 'key4')
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
-PASS event.target.errorCode is webkitIDBDatabaseException.ABORT_ERR
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS event.target.errorCode is IDBDatabaseException.ABORT_ERR
 PASS firstError is true
 PASS secondError is false
 PASS abortFired is false
@@ -35,7 +41,7 @@ PASS secondError is true
 PASS abortFired is false
 Expecting exception from store.add({x: 'value5', y: 'zzz5'}, 'key5')
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

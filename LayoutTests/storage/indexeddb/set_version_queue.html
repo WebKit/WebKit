@@ -15,17 +15,17 @@ if (window.layoutTestController)
 connections = []
 function test()
 {
-    if ('webkitIndexedDB' in window)
-        IndexedDB = webkitIndexedDB;
-    else if ('mozIndexedDB' in window)
-        IndexedDB = mozIndexedDB;
-    shouldBeFalse("IndexedDB == null");
+    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
+    shouldBeTrue("indexedDB != null");
+    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
+    shouldBeTrue("IDBDatabaseException != null");
+
     openDBConnection();
 }
 
 function openDBConnection()
 {
-    result = evalAndLog("IndexedDB.open('set-version-queue')");
+    result = evalAndLog("indexedDB.open('set-version-queue')");
     result.onsuccess = openSuccess;
     result.onerror = unexpectedErrorCallback;
 }
@@ -115,8 +115,8 @@ function connectionError(event, connectionId)
 {
     debug("")
     testPassed("connection[" + connectionId + "] got error event");
-    shouldBe("event.target.errorCode", "13")
-    if ('webkitIndexedDB' in window) {
+    shouldBe("event.target.errorCode", "IDBDatabaseException.ABORT_ERR")
+    if ('webkitErrorMessage' in event.target) {
         shouldBe("event.target.webkitErrorMessage.length > 0", "true");
         debug(event.target.webkitErrorMessage);
     }

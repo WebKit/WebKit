@@ -114,7 +114,7 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
     }
 
     if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, key, prpCallbacks)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 // IMPORTANT: If this ever 1) fires an 'error' event and 2) it's possible to fire another event afterwards,
@@ -146,7 +146,7 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
 void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::prefetchContinueInternal, this, numberToFetch, prpCallbacks)))
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)

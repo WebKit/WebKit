@@ -1,3 +1,38 @@
+2012-01-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Methods should throw TRANSACTION_INACTIVE_ERR when transaction is completed/aborted
+        https://bugs.webkit.org/show_bug.cgi?id=76108
+
+        Updated IDBDatabaseException error codes to match spec (the pre-DOM4 version),
+        including updated description strings, and changed relevant store and index 
+        methods to raise the expected exception type now that it is detailed in the spec.
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/transaction-basics.html
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::prefetchContinue):
+        * storage/IDBDatabaseException.cpp:
+        * storage/IDBDatabaseException.h:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::count):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::count):
+
 2012-01-11  Kentaro Hara  <haraken@chromium.org>
 
         Implement the [Supplemental] IDL for custom methods

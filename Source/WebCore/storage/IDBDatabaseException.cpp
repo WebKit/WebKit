@@ -42,13 +42,12 @@ static const char* const exceptionNames[] = {
     "CONSTRAINT_ERR",
     "DATA_ERR",
     "NOT_ALLOWED_ERR",
-    "SERIAL_ERR",
-    "RECOVERABLE_ERR",
-    "TRANSIENT_ERR",
-    "TIMEOUT_ERR",
-    "DEADLOCK_ERR",
+    "TRANSACTION_INACTIVE_ERR",
+    "ABORT_ERR",
     "READ_ONLY_ERR",
-    "ABORT_ERR"
+    "TIMEOUT_ERR",
+    "QUOTA_ERR",
+    "VER_ERR"
 };
 
 static const char* const exceptionDescriptions[] = {
@@ -58,13 +57,12 @@ static const char* const exceptionDescriptions[] = {
     "The request cannot be completed due to a failed constraint.",
     "The data provided does not meet the requirements of the function.",
     "This function is not allowed to be called in such a context.",
-    "The data supplied cannot be serialized according to the structured cloning algorithm.",
-    "RECOVERABLE_ERR", // FIXME: This isn't even used.
-    "TRANSIENT_ERR", // FIXME: This isn't even used.
-    "TIMEOUT_ERR", // This can't be thrown.
-    "DEADLOCK_ERR", // This can't be thrown.
-    "Write operations cannot be preformed on a read-only transaction.",
-    "The transaction was aborted, so the request cannot be fulfilled."
+    "A request was placed against a transaction which is either currently not active, or which is finished.",
+    "The transaction was aborted, so the request cannot be fulfilled.",
+    "A write operation was attempted in a read-only transaction.",
+    "A lock for the transaction could not be obtained in a reasonable time.", // FIXME: This isn't used yet.
+    "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", // FIXME: This isn't used yet
+    "An attempt was made to open a database using a lower version than the existing version.", // FIXME: This isn't used yet
 };
 
 COMPILE_ASSERT(WTF_ARRAY_LENGTH(exceptionNames) == WTF_ARRAY_LENGTH(exceptionDescriptions), IDBDatabaseExceptionTablesMustMatch);

@@ -43,20 +43,19 @@ public:
     static const int IDBDatabaseExceptionMax = 1299;
 
     enum IDBDatabaseExceptionCode {
-        NO_ERR = IDBDatabaseExceptionOffset + 0,
-        UNKNOWN_ERR = IDBDatabaseExceptionOffset + 1,
-        NON_TRANSIENT_ERR = IDBDatabaseExceptionOffset + 2,
-        NOT_FOUND_ERR = IDBDatabaseExceptionOffset + 3,
-        CONSTRAINT_ERR = IDBDatabaseExceptionOffset + 4,
-        DATA_ERR = IDBDatabaseExceptionOffset + 5,
-        NOT_ALLOWED_ERR = IDBDatabaseExceptionOffset + 6,
-        SERIAL_ERR = IDBDatabaseExceptionOffset + 7,
-        RECOVERABLE_ERR = IDBDatabaseExceptionOffset + 8,
-        TRANSIENT_ERR = IDBDatabaseExceptionOffset + 9,
-        TIMEOUT_ERR = IDBDatabaseExceptionOffset + 10,
-        DEADLOCK_ERR = IDBDatabaseExceptionOffset + 11,
-        READ_ONLY_ERR = IDBDatabaseExceptionOffset + 12,
-        ABORT_ERR = IDBDatabaseExceptionOffset + 13
+        NO_ERR = IDBDatabaseExceptionOffset,
+        UNKNOWN_ERR,
+        NON_TRANSIENT_ERR,
+        NOT_FOUND_ERR,
+        CONSTRAINT_ERR,
+        DATA_ERR,
+        NOT_ALLOWED_ERR,
+        TRANSACTION_INACTIVE_ERR,
+        ABORT_ERR,
+        READ_ONLY_ERR,
+        TIMEOUT_ERR,
+        QUOTA_ERR,
+        VER_ERR
     };
 
     static int ErrorCodeToExceptionCode(int errorCode)
