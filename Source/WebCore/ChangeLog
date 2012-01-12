@@ -1,3 +1,17 @@
+2012-01-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Raise NON_TRANSIENT_ERR when invalid mode specified for transaction
+        https://bugs.webkit.org/show_bug.cgi?id=76072
+
+        Spec was updated to detail what should be thrown: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/transaction-basics.html
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
         Remove the last non-ScrollElasticityController call from ScrollAnimatorMac::snapRubberBandTimerFired

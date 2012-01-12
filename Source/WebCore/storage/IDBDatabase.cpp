@@ -150,8 +150,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     }
 
     if (mode != IDBTransaction::READ_WRITE && mode != IDBTransaction::READ_ONLY) {
-        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
-        ec = IDBDatabaseException::CONSTRAINT_ERR;
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }
     if (m_closePending) {
