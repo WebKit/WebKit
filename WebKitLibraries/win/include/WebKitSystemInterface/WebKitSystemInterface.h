@@ -44,6 +44,8 @@ typedef struct CGContext* CGContextRef;
 typedef unsigned short CGFontIndex;
 typedef struct CGFont* CGFontRef;
 typedef CGFontIndex CGGlyph;
+typedef struct CGImage* CGImageRef;
+typedef struct CGPattern* CGPatternRef;
 typedef wchar_t UChar;
 typedef struct _CFURLResponse* CFURLResponseRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
@@ -182,6 +184,14 @@ void wkCACFContextAddUpdateRect(WKCACFContext*, const CGRect&);
 WKCACFUpdateRectEnumerator* wkCACFContextCopyUpdateRectEnumerator(WKCACFContext*);
 const CGRect* wkCACFUpdateRectEnumeratorNextRect(WKCACFUpdateRectEnumerator*);
 void wkCACFUpdateRectEnumeratorRelease(WKCACFUpdateRectEnumerator*);
+
+typedef enum {
+    wkPatternTilingNoDistortion,
+    wkPatternTilingConstantSpacingMinimalDistortion,
+    wkPatternTilingConstantSpacing
+} wkPatternTiling;
+
+CGPatternRef wkCGPatternCreateWithImageAndTransform(CGImageRef image, CGAffineTransform transform, int tiling);
 
 CFDictionaryRef wkCFURLRequestCreateSerializableRepresentation(CFURLRequestRef cfRequest, CFTypeRef tokenNull);
 CFURLRequestRef wkCFURLRequestCreateFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
