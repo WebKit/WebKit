@@ -299,7 +299,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperty(ExecState* exec)
     PropertyDescriptor descriptor;
     if (!toPropertyDescriptor(exec, exec->argument(2), descriptor))
         return JSValue::encode(jsNull());
-    ASSERT((descriptor.attributes() & (Getter | Setter)) || (!descriptor.isAccessorDescriptor()));
+    ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
     ASSERT(!exec->hadException());
     O->methodTable()->defineOwnProperty(O, exec, Identifier(exec, propertyName), descriptor, true);
     return JSValue::encode(O);

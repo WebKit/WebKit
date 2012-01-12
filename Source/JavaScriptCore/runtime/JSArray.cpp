@@ -229,7 +229,7 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
 {
     SparseArrayEntry& entry = add(array, i).first->second;
 
-    if (!(entry.attributes & (Getter | Setter))) {
+    if (!(entry.attributes & Accessor)) {
         if (entry.attributes & ReadOnly) {
             // FIXME: should throw if being called from strict mode.
             // throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
@@ -348,7 +348,7 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
             entryInMap->set(exec->globalData(), this, descriptor.value());
         else if (oldDescriptor.isAccessorDescriptor())
             entryInMap->set(exec->globalData(), this, jsUndefined());
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~(Getter | Setter);
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~Accessor;
         return;
     }
 

@@ -1,5 +1,48 @@
 2012-01-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Merge 'Getter'/'Setter' attributes into 'Accessor'
+        https://bugs.webkit.org/show_bug.cgi?id=76141
+
+        Reviewed by Filip Pizlo.
+
+        These are currently ambiguous (and used inconsistently). It would logically appear
+        that either being bit set implies that the corresponding type of accessor is present
+        but (a) we don't correctly enforce this, and (b) this means the attributes would not
+        be able to distinguish between a data descriptor and an accessor descriptor with
+        neither a getter nor setter defined (which is a descriptor permissible under the spec).
+        This ambiguity would lead to unsafe property caching behavior (though this does not
+        represent an actual current bug, since we are currently unable to create descriptors
+        that have neither a getter nor setter, it just prevents us from doing so).
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+        * runtime/JSArray.cpp:
+        (JSC::SparseArrayValueMap::put):
+        (JSC::JSArray::putDescriptor):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::initializeGetterSetterProperty):
+        (JSC::JSObject::defineSetter):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorDefineProperty):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        (JSC::PropertyDescriptor::setSetter):
+        (JSC::PropertyDescriptor::setGetter):
+        (JSC::PropertyDescriptor::attributesOverridingCurrent):
+
+2012-01-11  Gavin Barraclough  <barraclough@apple.com>
+
         Object.defineProperty([], 'length', {}) should not make length read-only
         https://bugs.webkit.org/show_bug.cgi?id=76097
 

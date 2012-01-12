@@ -87,19 +87,16 @@ JSValue PropertyDescriptor::setter() const
 void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 {
     ASSERT(value);
+    ASSERT(value.isGetterSetter() == !!(attributes & Accessor));
+
     m_attributes = attributes;
     if (value.isGetterSetter()) {
         GetterSetter* accessor = asGetterSetter(value);
 
         m_getter = accessor->getter();
-        if (m_getter)
-            m_attributes |= Getter;
-
         m_setter = accessor->setter();
-        if (m_setter)
-            m_attributes |= Setter;
-
         ASSERT(m_getter || m_setter);
+
         m_seenAttributes = EnumerablePresent | ConfigurablePresent;
         m_attributes &= ~ReadOnly;
     } else {
@@ -110,10 +107,8 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 
 void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned attributes)
 {
-    ASSERT(attributes & (Getter | Setter));
+    ASSERT(attributes & Accessor);
     ASSERT(accessor->getter() || accessor->setter());
-    ASSERT(!accessor->getter() == !(attributes & Getter));
-    ASSERT(!accessor->setter() == !(attributes & Setter));
     m_attributes = attributes;
     m_getter = accessor->getter();
     m_setter = accessor->setter();
@@ -151,14 +146,14 @@ void PropertyDescriptor::setConfigurable(bool configurable)
 void PropertyDescriptor::setSetter(JSValue setter)
 {
     m_setter = setter;
-    m_attributes |= Setter;
+    m_attributes |= Accessor;
     m_attributes &= ~ReadOnly;
 }
 
 void PropertyDescriptor::setGetter(JSValue getter)
 {
     m_getter = getter;
-    m_attributes |= Getter;
+    m_attributes |= Accessor;
     m_attributes &= ~ReadOnly;
 }
 
@@ -225,7 +220,7 @@ unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescripto
     if (configurablePresent())
         overrideMask |= DontDelete;
     if (isAccessorDescriptor())
-        overrideMask |= (Getter | Setter);
+        overrideMask |= Accessor;
     return (m_attributes & overrideMask) | (current.m_attributes & ~overrideMask);
 }
 

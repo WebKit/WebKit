@@ -66,8 +66,7 @@ namespace JSC {
         DontEnum     = 1 << 2,  // property doesn't appear in (for .. in ..)
         DontDelete   = 1 << 3,  // property can't be deleted
         Function     = 1 << 4,  // property is a function - only used by static hashtables
-        Getter       = 1 << 5,  // property is a getter
-        Setter       = 1 << 6   // property is a setter
+        Accessor     = 1 << 5,  // property is a getter/setter
     };
 
     class JSObject : public JSCell {

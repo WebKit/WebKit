@@ -109,7 +109,7 @@ void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
 
     d->overrodeCaller = true;
     PropertyDescriptor descriptor;
-    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Getter | Setter);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Accessor);
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().caller, descriptor, false);
 }
 
@@ -120,7 +120,7 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     
     d->overrodeCallee = true;
     PropertyDescriptor descriptor;
-    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Getter | Setter);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Accessor);
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
 }
 

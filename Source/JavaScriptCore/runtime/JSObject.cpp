@@ -361,7 +361,7 @@ void JSObject::defineGetter(JSObject* thisObject, ExecState* exec, const Identif
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    thisObject->putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
+    thisObject->putDirectInternal(globalData, propertyName, getterSetter, attributes | Accessor, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -379,12 +379,11 @@ void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier&
 {
     // Set an inital property on an object; the property must not already exist & the attribute flags must be set correctly.
     ASSERT(structure()->get(exec->globalData(), propertyName) == WTF::notFound);
-    ASSERT(static_cast<bool>(getterSetter->getter()) == static_cast<bool>(attributes & Getter));
-    ASSERT(static_cast<bool>(getterSetter->setter()) == static_cast<bool>(attributes & Setter));
+    ASSERT(static_cast<bool>(attributes & Accessor));
 
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
-    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
+    putDirectInternal(globalData, propertyName, getterSetter, attributes, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -413,7 +412,7 @@ void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identif
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    thisObject->putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot, 0);
+    thisObject->putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Accessor, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -693,11 +692,11 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
             GetterSetter* accessor = GetterSetter::create(exec);
             if (oldDescriptor.getter()) {
-                attributes |= Getter;
+                attributes |= Accessor;
                 accessor->setGetter(exec->globalData(), asObject(oldDescriptor.getter()));
             }
             if (oldDescriptor.setter()) {
-                attributes |= Setter;
+                attributes |= Accessor;
                 accessor->setSetter(exec->globalData(), asObject(oldDescriptor.setter()));
             }
             target->methodTable()->putWithAttributes(target, exec, propertyName, accessor, attributes);
@@ -708,7 +707,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->methodTable()->putWithAttributes(target, exec, propertyName, newValue, attributes & ~(Getter | Setter));
+        target->methodTable()->putWithAttributes(target, exec, propertyName, newValue, attributes & ~Accessor);
         return true;
     }
     attributes &= ~ReadOnly;
@@ -832,10 +831,8 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
     }
     object->methodTable()->deleteProperty(object, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
-    if (descriptor.setter())
-        attrs |= Setter;
-    if (descriptor.getter())
-        attrs |= Getter;
+    if (descriptor.setter() || descriptor.getter())
+        attrs |= Accessor;
     object->putDirect(exec->globalData(), propertyName, getterSetter, attrs);
     return true;
 }
