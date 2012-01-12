@@ -626,7 +626,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         RenderObject* container = object->container();
         if (!container && !object->isRenderView())
             return;
-        if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
+        if (!last->isText() && last->style()->isPositioned()) {
             bool willSkipRelativelyPositionedInlines = !object->isRenderBlock();
             while (object && !object->isRenderBlock()) // Skip relatively positioned inlines and get to the enclosing RenderBlock.
                 object = object->container();
@@ -666,7 +666,7 @@ void RenderObject::setPreferredLogicalWidthsDirty(bool b, bool markParents)
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
     m_bitfields.setPreferredLogicalWidthsDirty(b);
-    if (b && !alreadyDirty && markParents && (isText() || (style()->position() != FixedPosition && style()->position() != AbsolutePosition)))
+    if (b && !alreadyDirty && markParents && (isText() || !style()->isPositioned()))
         invalidateContainerPreferredLogicalWidths();
 }
 
@@ -683,7 +683,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
             break;
 
         o->m_bitfields.setPreferredLogicalWidthsDirty(true);
-        if (o->style()->position() == FixedPosition || o->style()->position() == AbsolutePosition)
+        if (o->style()->isPositioned())
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
             break;

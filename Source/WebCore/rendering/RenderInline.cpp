@@ -1053,7 +1053,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
 
     LayoutPoint topLeft = rect.location();
 
-    if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
+    if (o->isBlockFlow() && !style()->isPositioned()) {
         RenderBlock* cb = toRenderBlock(o);
         if (cb->hasColumns()) {
             LayoutRect repaintRect(topLeft, rect.size());

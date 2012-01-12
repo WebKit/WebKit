@@ -409,7 +409,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
     if (isRootObject || isViewObject)
         setHasBoxDecorations(true);
 
-    setPositioned(style()->position() == AbsolutePosition || style()->position() == FixedPosition);
+    setPositioned(style()->isPositioned());
     setFloating(style()->isFloating() && (!isPositioned() || style()->floating() == PositionedFloat));
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
@@ -1397,7 +1397,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
         offset += relativePositionOffset();
 
     if (!isInline() || isReplaced()) {
-        if (style()->position() != AbsolutePosition && style()->position() != FixedPosition && o->hasColumns()) {
+        if (!style()->isPositioned() && o->hasColumns()) {
             RenderBlock* block = toRenderBlock(o);
             LayoutRect columnRect(frameRect());
             block->adjustStartEdgeForWritingModeIncludingColumns(columnRect);

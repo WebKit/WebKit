@@ -2759,7 +2759,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransform
 
     LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
 
-    if (style()->position() != AbsolutePosition && style()->position() != FixedPosition && o->hasColumns()) {
+    if (!style()->isPositioned() && o->hasColumns()) {
         RenderBlock* block = static_cast<RenderBlock*>(o);
         LayoutPoint point(roundedLayoutPoint(transformState.mappedPoint()));
         point -= containerOffset;

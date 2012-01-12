@@ -508,6 +508,7 @@ public:
     bool hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 
     EPosition position() const { return static_cast<EPosition>(noninherited_flags._position); }
+    bool isPositioned() const { return position() == AbsolutePosition || position() == FixedPosition; }
     EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }
 
     Length width() const { return m_box->width(); }

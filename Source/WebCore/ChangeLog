@@ -1,3 +1,30 @@
+2012-01-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Add RenderStyle::isPositioned() helper method
+        https://bugs.webkit.org/show_bug.cgi?id=75959
+
+        Reviewed by Tony Chang.
+
+        No new tests since this is refactoring of existing code.
+        Replace (style()->position() == AbsolutePosition || style()->position() == FixedPosition) 
+        with (style()->isPositioned()).
+        Replace (style()->position() != AbsolutePosition && style()->position() != FixedPosition) 
+        with (!style()->isPositioned()).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        (WebCore::RenderObject::setPreferredLogicalWidthsDirty):
+        (WebCore::RenderObject::invalidateContainerPreferredLogicalWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::isPositioned):
+
 2012-01-11  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Rename parameter and variable name 'r' to 'rect' in IntRectEfl.cpp.
