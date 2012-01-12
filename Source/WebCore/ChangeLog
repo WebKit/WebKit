@@ -1,3 +1,37 @@
+2012-01-12  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: generate array types.
+        https://bugs.webkit.org/show_bug.cgi?id=75284
+
+        Reviewed by Yury Semikhatsky.
+
+        New classes are generated for ecah array type instance.
+
+        * inspector/CodeGeneratorInspector.py:
+        (ArrayBinding):
+        (ArrayBinding.get_code_generator):
+        (ArrayBinding.get_code_generator.CodeGenerator):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder.AdHocTypeContext):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix.NameFix):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix.NameFix.output_comment):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder.AdHocTypeContext.call_generate_type_builder):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_forward_declaration):
+        (ArrayBinding.get_code_generator.CodeGenerator.register_use):
+        (ArrayBinding.get_in_c_type_text):
+        (ArrayBinding.get_setter_value_expression_pattern):
+        (ArrayBinding.reduce_to_raw_type):
+        (RawTypeBinding):
+        (RawTypeBinding.__init__):
+        (RawTypeBinding.get_code_generator):
+        (RawTypeBinding.get_in_c_type_text):
+        (RawTypeBinding.get_setter_value_expression_pattern):
+        (RawTypeBinding.reduce_to_raw_type):
+        (TypeData.__init__):
+        (TypeData.get_binding):
+        * inspector/InspectorValues.h:
+
 2012-01-12  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Avoid string operations in mobile theme's caching mechanism
