@@ -44,6 +44,8 @@ public:
     virtual void deleteTexture(unsigned, const IntSize&, GC3Denum) { }
 };
 
+class FakeTiledLayerChromium;
+
 class FakeLayerTextureUpdater : public LayerTextureUpdater {
 public:
     class Texture : public LayerTextureUpdater::Texture {
@@ -54,12 +56,29 @@ public:
         virtual void updateRect(GraphicsContext3D*, TextureAllocator*, const IntRect&, const IntRect&) { }
     };
 
-    FakeLayerTextureUpdater() { }
+    FakeLayerTextureUpdater() : m_prepareCount(0) { }
     virtual ~FakeLayerTextureUpdater() { }
+
+    // Sets the rect to invalidate during the next call to prepareToUpdate(). After the next
+    // call to prepareToUpdate() the rect is reset.
+    void setRectToInvalidate(const IntRect&, FakeTiledLayerChromium*);
+
+    // Number of times prepareToUpdate has been invoked.
+    int prepareCount() const { return m_prepareCount; }
+    void clearPrepareCount() { m_prepareCount = 0; }
+
+    // Last rect passed to prepareToUpdate().
+    const IntRect& lastUpdateRect()  const { return m_lastUpdateRect; }
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
-    virtual void prepareToUpdate(const IntRect&, const IntSize&, int, float) { }
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float);
+
+private:
+    int m_prepareCount;
+    IntRect m_rectToInvalidate;
+    IntRect m_lastUpdateRect;
+    RefPtr<FakeTiledLayerChromium> m_layer;
 };
 
 class FakeCCTiledLayerImpl : public CCTiledLayerImpl {
@@ -108,6 +127,8 @@ public:
         return TiledLayerChromium::needsIdlePaint(rect);
     }
 
+    FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
+
     virtual TextureManager* textureManager() const { return m_textureManager; }
 
 private:
@@ -121,6 +142,23 @@ private:
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     TextureManager* m_textureManager;
 };
+
+void FakeLayerTextureUpdater::setRectToInvalidate(const IntRect& rect, FakeTiledLayerChromium* layer)
+{
+    m_rectToInvalidate = rect;
+    m_layer = layer;
+}
+
+void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float)
+{
+    m_prepareCount++;
+    m_lastUpdateRect = contentRect;
+    if (!m_rectToInvalidate.isEmpty()) {
+        m_layer->invalidateRect(m_rectToInvalidate);
+        m_rectToInvalidate = IntRect();
+        m_layer = 0;
+    }
+}
 
 TEST(TiledLayerChromiumTest, pushDirtyTiles)
 {
@@ -257,6 +295,47 @@ TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
 
     layer->updateCompositorResources(0, updater);
     layer->pushPropertiesTo(layerImpl.get());
+}
+
+TEST(TiledLayerChromiumTest, invalidateFromPrepare)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    RefPtr<FakeCCTiledLayerImpl> layerImpl = adoptRef(new FakeCCTiledLayerImpl(0));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The tile size is 100x100, so this invalidates and then paints two tiles.
+    layer->setBounds(IntSize(100, 200));
+    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200));
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have both tiles on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
+
+    textureManager->unprotectAllTextures();
+
+    layer->fakeLayerTextureUpdater()->clearPrepareCount();
+    // Invoke prepareToUpdate again. As the layer is valid prepareToUpdate shouldn't be invoked on
+    // the LayerTextureUpdater.
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200));
+    EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareCount());
+
+    layer->invalidateRect(IntRect(0, 0, 50, 50));
+    // setRectToInvalidate triggers invalidateRect() being invoked from prepareToUpdate.
+    layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(25, 25, 50, 50), layer.get());
+    layer->fakeLayerTextureUpdater()->clearPrepareCount();
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200));
+    EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
+    layer->fakeLayerTextureUpdater()->clearPrepareCount();
+    // The layer should still be invalid as prepareToUpdate invoked invalidate.
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200));
+    EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
 }
 
 } // namespace

@@ -59,7 +59,11 @@ public:
     ManagedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !m_dirtyRect.isEmpty(); }
-    void clearDirty() { m_dirtyRect = IntRect(); }
+    void copyAndClearDirty()
+    {
+        m_updateRect = m_dirtyRect;
+        m_dirtyRect = IntRect();
+    }
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
@@ -366,7 +370,9 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     }
 
     // Create tiles as needed, expanding a dirty rect to contain all
-    // the dirty regions currently being drawn.
+    // the dirty regions currently being drawn. All dirty tiles that are to be painted
+    // get their m_updateRect set to m_dirtyRect and m_dirtyRect cleared. This way if
+    // invalidateRect is invoked during prepareToUpdate we don't lose the request.
     IntRect dirtyLayerRect;
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
@@ -387,6 +393,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             }
 
             dirtyLayerRect.unite(tile->m_dirtyRect);
+            tile->copyAndClearDirty();
         }
     }
 
@@ -414,18 +421,16 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 CRASH();
 
-            if (!tile->isDirty())
+            // Use m_updateRect as copyAndClearDirty above moved the existing dirty rect to m_updateRect.
+            const IntRect& dirtyRect = tile->m_updateRect;
+            if (dirtyRect.isEmpty())
                 continue;
 
             IntRect sourceRect = m_tiler->tileRect(tile);
-            sourceRect.intersect(tile->m_dirtyRect);
+            sourceRect.intersect(dirtyRect);
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.
             sourceRect.intersect(m_paintRect);
-
-            // updateCompositorResources() uses m_updateRect to determine
-            // the tiles to update so we can clear the dirty rectangle here.
-            tile->clearDirty();
 
             tile->m_updateRect = sourceRect;
             if (sourceRect.isEmpty())
