@@ -73,10 +73,9 @@ public:
 
     StyleSheet* sheet() const;
 
+    // FIXME: This should be remaned isStyleSheetLoading as this is only used for stylesheets.
     bool isLoading() const;
-
-    bool isDisabled() const { return m_disabledState == Disabled; }
-    bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
+    bool isEnabledViaScript() const { return m_isEnabledViaScript; }
     bool disabled() const;
     void setDisabled(bool);
 
@@ -100,10 +99,8 @@ private:
 #endif
     virtual bool sheetLoaded();
 
-    bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
+    bool isAlternate() const { return m_relAttribute.m_isAlternate; }
     
-    void setDisabledState(bool _disabled);
-
     virtual bool isURLAttribute(Attribute*) const;
 
 public:
@@ -121,12 +118,6 @@ private:
 private:
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
 
-    enum DisabledState {
-        Unset,
-        EnabledViaScript,
-        Disabled
-    };
-
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
 #if ENABLE(LINK_PREFETCH)
@@ -136,9 +127,9 @@ private:
     KURL m_url;
     String m_type;
     String m_media;
-    DisabledState m_disabledState;
     RelAttribute m_relAttribute;
     bool m_loading;
+    bool m_isEnabledViaScript;
     bool m_createdByParser;
     bool m_isInShadowTree;
     
