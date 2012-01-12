@@ -247,10 +247,13 @@ String HTMLSelectElement::value() const
 
 void HTMLSelectElement::setValue(const String &value)
 {
-    if (value.isNull())
+    // We clear the previously selected option(s) when needed, to guarantee calling setSelectedIndex() only once.
+    if (value.isNull()) {
+        setSelectedIndex(-1);
         return;
-    // find the option with value() matching the given parameter
-    // and make it the current selection.
+    }
+
+    // Find the option with value() matching the given parameter and make it the current selection.
     const Vector<HTMLElement*>& items = listItems();
     unsigned optionIndex = 0;
     for (unsigned i = 0; i < items.size(); i++) {
@@ -262,6 +265,8 @@ void HTMLSelectElement::setValue(const String &value)
             optionIndex++;
         }
     }
+
+    setSelectedIndex(-1);
 }
 
 void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
