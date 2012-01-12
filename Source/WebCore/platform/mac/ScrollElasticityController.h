@@ -39,6 +39,8 @@ protected:
     virtual ~ScrollElasticityControllerClient() { } 
 
 public:
+    virtual bool allowsHorizontalStretching() = 0;
+    virtual bool allowsVerticalStretching() = 0;
     virtual IntSize stretchAmount() = 0;
     virtual bool pinnedInDirection(const FloatSize&) = 0;
     virtual bool canScrollHorizontally() = 0;

@@ -995,6 +995,42 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
     return false;
 }
 
+bool ScrollAnimatorMac::allowsVerticalStretching()
+{
+    switch (m_scrollableArea->verticalScrollElasticity()) {
+    case ScrollElasticityAutomatic: {
+        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
+        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
+        return (((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled())));
+    }
+    case ScrollElasticityNone:
+        return false;
+    case ScrollElasticityAllowed:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool ScrollAnimatorMac::allowsHorizontalStretching()
+{
+    switch (m_scrollableArea->horizontalScrollElasticity()) {
+    case ScrollElasticityAutomatic: {
+        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
+        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
+        return (((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled())));
+    }
+    case ScrollElasticityNone:
+        return false;
+    case ScrollElasticityAllowed:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 IntSize ScrollAnimatorMac::stretchAmount()
 {
     return m_scrollableArea->overhangAmount();
@@ -1054,42 +1090,6 @@ void ScrollAnimatorMac::startSnapRubberbandTimer()
 void ScrollAnimatorMac::stopSnapRubberbandTimer()
 {
     m_snapRubberBandTimer.stop();
-}
-
-bool ScrollAnimatorMac::allowsVerticalStretching() const
-{
-    switch (m_scrollableArea->verticalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
-        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
-        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
-        return (((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled())));
-    }
-    case ScrollElasticityNone:
-        return false;
-    case ScrollElasticityAllowed:
-        return true;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool ScrollAnimatorMac::allowsHorizontalStretching() const
-{
-    switch (m_scrollableArea->horizontalScrollElasticity()) {
-    case ScrollElasticityAutomatic: {
-        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
-        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
-        return (((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled())));
-    }
-    case ScrollElasticityNone:
-        return false;
-    case ScrollElasticityAllowed:
-        return true;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEvent)
@@ -1197,7 +1197,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
                 m_scrollElasticityController.m_client->immediateScrollBy(FloatSize(deltaX, 0));
             }
         } else {
-            if (!allowsHorizontalStretching()) {
+            if (!m_scrollElasticityController.m_client->allowsHorizontalStretching()) {
                 deltaX = 0;
                 eventCoalescedDeltaX = 0;
             } else if ((deltaX != 0) && !isHorizontallyStretched && !pinnedInDirection(deltaX, 0)) {
@@ -1207,7 +1207,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
                 deltaX = 0;
             }
             
-            if (!allowsVerticalStretching()) {
+            if (!m_scrollElasticityController.m_client->allowsVerticalStretching()) {
                 deltaY = 0;
                 eventCoalescedDeltaY = 0;
             } else if ((deltaY != 0) && !isVerticallyStretched && !pinnedInDirection(0, deltaY)) {

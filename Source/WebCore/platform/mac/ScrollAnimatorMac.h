@@ -127,6 +127,8 @@ private:
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
     virtual IntSize stretchAmount() OVERRIDE;
+    virtual bool allowsHorizontalStretching() OVERRIDE;
+    virtual bool allowsVerticalStretching() OVERRIDE;
     virtual bool pinnedInDirection(const FloatSize&) OVERRIDE;
     virtual bool canScrollHorizontally() OVERRIDE;
     virtual bool canScrollVertically() OVERRIDE;
@@ -136,8 +138,6 @@ private:
     virtual void startSnapRubberbandTimer() OVERRIDE;
     virtual void stopSnapRubberbandTimer() OVERRIDE;
 
-    bool allowsVerticalStretching() const;
-    bool allowsHorizontalStretching() const;
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
     bool smoothScrollWithEvent(const PlatformWheelEvent&);
