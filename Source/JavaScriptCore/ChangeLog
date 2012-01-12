@@ -1,3 +1,14 @@
+2012-01-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Object.defineProperty([], 'length', {}) should not make length read-only
+        https://bugs.webkit.org/show_bug.cgi?id=76097
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+            - We should be checking writablePresent().
+
 2012-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Code duplication for invoking the JIT and DFG should be reduced

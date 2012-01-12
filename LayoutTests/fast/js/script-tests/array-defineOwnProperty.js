@@ -7,6 +7,8 @@ shouldBeTrue("Object.defineProperty([], 'x', { get:function(){return true;} }).x
 shouldBe("Object.defineProperty([], 'length', { value: 1 }).length", '1');
 shouldBe("var a = Object.defineProperty([], 'length', { writable: false }); a[1] = 1; a.length", '0');
 shouldBe("var a = Object.defineProperty([], 'length', { writable: false }); a.length = 1; a.length", '0');
+// If writable is not specified, it should not change.
+shouldBe("var a = Object.defineProperty([], 'length', {}); a.length = 1; a.length", '1');
 
 // The length property can be replaced with an accessor, or made either enumerable or configurable.
 shouldThrow("Object.defineProperty([], 'length', { get:function(){return true;} })");

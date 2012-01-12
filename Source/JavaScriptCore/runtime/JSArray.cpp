@@ -531,10 +531,10 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
     if (propertyName == exec->propertyNames().length) {
         // All paths through length definition call the default [[DefineOwnProperty]], hence:
         // from ES5.1 8.12.9 7.a.
-        if (descriptor.configurable())
+        if (descriptor.configurablePresent() && descriptor.configurable())
             return reject(exec, throwException, "Attempting to change configurable attribute of unconfigurable property.");
         // from ES5.1 8.12.9 7.b.
-        if (descriptor.enumerable())
+        if (descriptor.enumerablePresent() && descriptor.enumerable())
             return reject(exec, throwException, "Attempting to change enumerable attribute of unconfigurable property.");
 
         // a. If the [[Value]] field of Desc is absent, then
@@ -542,11 +542,12 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
         if (descriptor.isAccessorDescriptor())
             return reject(exec, throwException, "Attempting to change access mechanism for an unconfigurable property.");
         // from ES5.1 8.12.9 10.a.
-        if (!array->isLengthWritable() && descriptor.writable())
+        if (!array->isLengthWritable() && descriptor.writablePresent() && descriptor.writable())
             return reject(exec, throwException, "Attempting to change writable attribute of unconfigurable property.");
         // This descriptor is either just making length read-only, or changing nothing!
         if (!descriptor.value()) {
-            array->setLengthWritable(exec, descriptor.writable());
+            if (descriptor.writablePresent())
+                array->setLengthWritable(exec, descriptor.writable());
             return true;
         }
         
@@ -561,7 +562,8 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
 
         // Based on SameValue check in 8.12.9, this is always okay.
         if (newLen == array->length()) {
-            array->setLengthWritable(exec, descriptor.writable());
+            if (descriptor.writablePresent())
+                array->setLengthWritable(exec, descriptor.writable());
             return true;
         }
 
@@ -588,13 +590,17 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
             // 2. If newWritable is false, set newLenDesc.[[Writable] to false.
             // 3. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and false as arguments.
             // 4. Reject.
-            array->setLengthWritable(exec, descriptor.writable());
+            if (descriptor.writablePresent())
+                array->setLengthWritable(exec, descriptor.writable());
             return false;
         }
 
         // m. If newWritable is false, then
-        // i. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Property Descriptor{[[Writable]]: false}, and false as arguments. This call will always return true.
-        array->setLengthWritable(exec, descriptor.writable());
+        // i. Call the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length",
+        //    Property Descriptor{[[Writable]]: false}, and false as arguments. This call will always
+        //    return true.
+        if (descriptor.writablePresent())
+            array->setLengthWritable(exec, descriptor.writable());
         // n. Return true.
         return true;
     }

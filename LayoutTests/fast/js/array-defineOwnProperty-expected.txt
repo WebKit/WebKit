@@ -7,6 +7,7 @@ PASS Object.defineProperty([], 'x', { get:function(){return true;} }).x is true
 PASS Object.defineProperty([], 'length', { value: 1 }).length is 1
 PASS var a = Object.defineProperty([], 'length', { writable: false }); a[1] = 1; a.length is 0
 PASS var a = Object.defineProperty([], 'length', { writable: false }); a.length = 1; a.length is 0
+PASS var a = Object.defineProperty([], 'length', {}); a.length = 1; a.length is 1
 PASS Object.defineProperty([], 'length', { get:function(){return true;} }) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
 PASS Object.defineProperty([], 'length', { enumerable: true }) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
 PASS Object.defineProperty([], 'length', { configurable: true }) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
