@@ -1,3 +1,17 @@
+2012-01-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [WK2] Share cairo specific codes with EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=75457
+
+        Reviewed by Brent Fulgham.
+
+        Change PLATFORM(GTK) to USE(CAIRO) in WebGraphicsContext{h,cpp} to share
+        with EFL port.
+
+        * Shared/WebGraphicsContext.cpp:
+        (WebKit::WebGraphicsContext::WebGraphicsContext):
+        * Shared/WebGraphicsContext.h:
+
 2012-01-11  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75904

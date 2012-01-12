@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebGraphicsContext.h"
 
-#if PLATFORM(GTK) 
-#include <WebCore/PlatformContextCairo.h> 
-#endif 
+#if USE(CAIRO)
+#include <WebCore/PlatformContextCairo.h>
+#endif
 
 using namespace WebCore;
 
@@ -37,7 +37,7 @@ namespace WebKit {
 WebGraphicsContext::WebGraphicsContext(GraphicsContext* graphicsContext)
 #if USE(CG)
     : m_platformContext(graphicsContext->platformContext())
-#elif PLATFORM(GTK)
+#elif USE(CAIRO)
     : m_platformContext(graphicsContext->platformContext()->cr())
 #endif
 {
