@@ -1,5 +1,19 @@
 2011-12-12  Jer Noble  <jer.noble@apple.com>
 
+        WebAudio: AudioBus::loadPlatformResource should mmap file on Mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=74326
+
+        Reviewed by Darin Adler.
+
+        No new tests; no net change in functionality.
+
+        Use NSDataReadingMappedIfSafe when reading platform audio file data.
+
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+
+2011-12-12  Jer Noble  <jer.noble@apple.com>
+
         WebAudio: Use Logging instead of printf.
         https://bugs.webkit.org/show_bug.cgi?id=74322
 

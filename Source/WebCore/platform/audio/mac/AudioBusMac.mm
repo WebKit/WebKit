@@ -47,8 +47,8 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float samp
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreAudioBundleClass class]];
-    NSString *audioFilePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"wav" inDirectory:@"audio"];
-    NSData *audioData = [NSData dataWithContentsOfFile:audioFilePath];
+    NSURL *audioFileURL = [bundle URLForResource:[NSString stringWithUTF8String:name] withExtension:@"wav" subdirectory:@"audio"];
+    NSData *audioData = [NSData dataWithContentsOfURL:audioFileURL options:NSDataReadingMappedIfSafe error:nil];
 
     if (audioData) {
         OwnPtr<AudioBus> bus(createBusFromInMemoryAudioFile([audioData bytes], [audioData length], false, sampleRate));
