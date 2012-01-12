@@ -1,3 +1,37 @@
+2012-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Need a script to run tests in PerformanceTests
+        https://bugs.webkit.org/show_bug.cgi?id=76132
+
+        Reviewed by Adam Barth.
+
+        Add run-perf-tests to run performance tests using parser/resources/runner.js.
+        Unfortunately, there isn't an easy way of telling which test uses which format
+        so hard-code directory that uses Chromium perf-bot style (only inspector perf. tests for now).
+
+        All test outputs are re-formatted to match Chromium perf-bot style.
+
+        * Scripts/run-inspector-perf-tests.py:
+        * Scripts/run-perf-tests: Added.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._print_status):
+        (PerfTestsRunner._run_tests_set):
+        (PerfTestsRunner._process_chromium_style_test_result):
+        (PerfTestsRunner._should_ignore_line_in_parser_test_result):
+        (PerfTestsRunner._process_parser_test_result):
+        (PerfTestsRunner._run_single_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.TestDriver.run_test):
+        (create_runner):
+        (run_test):
+        (test_run_test_set):
+        (test_run_test_set_for_parser_tests):
+        (test_collect_tests):
+
 2012-01-12  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up port unit tests in preparation for making port_name mandatory

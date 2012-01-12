@@ -48,16 +48,56 @@ class MainTest(unittest.TestCase):
             text = ''
             timeout = False
             crash = False
-            if driver_input.test_name == 'pass.html':
+            if driver_input.test_name.endswith('pass.html'):
                 text = 'RESULT group_name: test_name= 42 ms'
-            elif driver_input.test_name == 'timeout.html':
+            elif driver_input.test_name.endswith('timeout.html'):
                 timeout = True
-            elif driver_input.test_name == 'failed.html':
+            elif driver_input.test_name.endswith('failed.html'):
                 text = None
-            elif driver_input.test_name == 'tonguey.html':
+            elif driver_input.test_name.endswith('tonguey.html'):
                 text = 'we are not expecting an output from perf tests but RESULT blablabla'
-            elif driver_input.test_name == 'crash.html':
+            elif driver_input.test_name.endswith('crash.html'):
                 crash = True
+            elif driver_input.test_name.endswith('event-target-wrapper.html'):
+                text = """Running 20 times
+Ignoring warm-up run (1502)
+1504
+1505
+1510
+1504
+1507
+1509
+1510
+1487
+1488
+1472
+1472
+1488
+1473
+1472
+1475
+1487
+1486
+1486
+1475
+1471
+
+avg 1489.05
+median 1487
+stdev 14.46
+min 1471
+max 1510
+"""
+            elif driver_input.test_name.endswith('some-parser.html'):
+                text = """Running 20 times
+Ignoring warm-up run (1115)
+
+avg 1100
+median 1101
+stdev 11
+min 1080
+max 1120
+"""
             return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 
         def stop(self):
@@ -66,12 +106,12 @@ class MainTest(unittest.TestCase):
     def create_runner(self, buildbot_output=None):
         buildbot_output = buildbot_output or array_stream.ArrayStream()
         regular_output = array_stream.ArrayStream()
-        return PerfTestsRunner('', regular_output, buildbot_output, args=[])
+        return PerfTestsRunner(regular_output, buildbot_output, args=[])
 
     def run_test(self, test_name):
         runner = self.create_runner()
         driver = MainTest.TestDriver()
-        return runner._run_single_test(test_name, driver)
+        return runner._run_single_test(test_name, driver, is_chromium_style=True)
 
     def test_run_passing_test(self):
         test_failed, driver_need_restart = self.run_test('pass.html')
@@ -106,20 +146,38 @@ class MainTest(unittest.TestCase):
     def test_run_test_set(self):
         buildbot_output = array_stream.ArrayStream()
         runner = self.create_runner(buildbot_output)
+        runner._base_path = '/test.checkout/PerformanceTests'
         port = MainTest.TestPort()
-        tests = ['pass.html', 'silent.html', 'failed.html', 'tonguey.html', 'timeout.html', 'crash.html']
+        dirname = runner._base_path + '/inspector/'
+        tests = [dirname + 'pass.html', dirname + 'silent.html', dirname + 'failed.html',
+            dirname + 'tonguey.html', dirname + 'timeout.html', dirname + 'crash.html']
         unexpected_result_count = runner._run_tests_set(tests, port)
         self.assertEqual(unexpected_result_count, len(tests) - 1)
         self.assertEqual(len(buildbot_output.get()), 1)
         self.assertEqual(buildbot_output.get()[0], 'RESULT group_name: test_name= 42 ms\n')
 
+    def test_run_test_set_for_parser_tests(self):
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output)
+        runner._base_path = '/test.checkout/PerformanceTests/'
+        port = MainTest.TestPort()
+        tests = [runner._base_path + 'Bindings/event-target-wrapper.html', runner._base_path + 'Parser/some-parser.html']
+        unexpected_result_count = runner._run_tests_set(tests, port)
+        self.assertEqual(unexpected_result_count, 0)
+        self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
+        self.assertEqual(buildbot_output.get()[2], 'RESULT Parser: some-parser= 1100 ms\n')
+        self.assertEqual(buildbot_output.get()[3], 'median= 1101 ms, stdev= 11 ms, min= 1080 ms, max= 1120 ms\n')
+
     def test_collect_tests(self):
         runner = self.create_runner()
-        webkit_base = '/test.checkout'
+        runner._base_path = '/test.checkout/PerformanceTests'
         filesystem = MockFileSystem()
-        filename = filesystem.join(webkit_base, 'PerformanceTests', 'a_file.html')
+        filename = filesystem.join(runner._base_path, 'inspector', 'a_file.html')
+        filesystem.maybe_make_directory(runner._base_path, 'inspector')
         filesystem.files[filename] = 'a content'
-        tests = runner._collect_tests(webkit_base, filesystem)
+        runner._host.filesystem = filesystem
+        tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
 
     def test_parse_args(self):
