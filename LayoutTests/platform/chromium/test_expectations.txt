@@ -1235,7 +1235,8 @@ BUGCR10357 : fast/dom/cssTarget-crash.html = PASS TIMEOUT
 BUGCR10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 
 // Windows is missing the green box. Started to pass in roll to WebKit r50313
-BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
+// Started crashing on XP after http://trac.webkit.org/changeset/104756
+BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT CRASH
 
 // -----------------------------------------------------------------
 // MAC PORT TESTS
@@ -3855,9 +3856,6 @@ BUGWK75570 LEOPARD : http/tests/media/video-buffering-repaints-controls.html = P
 
 // New reftest failing on Win7.
 BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
-
-// Started crashing after http://trac.webkit.org/changeset/104756
-BUGCR8729 XP : http/tests/multipart/invalid-image-data.html = CRASH
 
 // Started flaking presumably at http://trac.webkit.org/changeset/104368
 BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
