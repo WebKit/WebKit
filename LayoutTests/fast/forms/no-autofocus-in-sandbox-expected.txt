@@ -1,0 +1,2 @@
+ALERT: BODY
+This test passes if the activeElement is the body rather than the input element (which it would be if the sandbox didn't succeed in blocking autofocus). 

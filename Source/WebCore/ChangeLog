@@ -1,3 +1,17 @@
+2012-01-11  Adam Barth  <abarth@webkit.org>
+
+        iframe sandbox doesn't block autofocus (IETC automatic-feature-block-autofocus-form-control)
+        https://bugs.webkit.org/show_bug.cgi?id=76120
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/forms/no-autofocus-in-sandbox.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+            - The HTML5 spec says that we shouldn't autofocus elements when the
+              automatic features are sandboxed.
+
 2012-01-11  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75904
