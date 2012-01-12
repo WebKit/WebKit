@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.container > div {
+    border: 5px solid pink;
+    overflow: auto;
+    height: 100px;
+    width: 100px;
+}
+
+.container > div > div {
+    width: 120px;
+    height: 120px;
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
+}
+</style>
+</head>
+<body>
+    <p>Scrollbars should work in all the flexboxes and each row should show four identical boxes.</p>
+</body>
+<script>
+var origins = ['', 'bottomLeft', 'topRight', ''];
+
+origins.forEach(function(origin) {
+    for (var i = 0; i < 4; ++i) {
+        var containerClass = 'container ' + origin;
+        document.body.innerHTML +=
+            "<div class='" + containerClass + "'>" +
+            "<div><div></div></div>" +
+            "</div>";
+    }
+    document.body.innerHTML += "<br>";
+});
+
+Array.prototype.forEach.call(document.querySelectorAll('.bottomLeft'), function(element) {
+    element.firstChild.scrollTop = 1000;
+});
+
+Array.prototype.forEach.call(document.querySelectorAll('.topRight'), function(element) {
+    element.firstChild.scrollLeft = 1000;
+});
+
+</script>
+</body>
+</html>

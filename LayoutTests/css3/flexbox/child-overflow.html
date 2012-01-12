@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+
+.row {
+    -webkit-flex-direction: row;
+}
+
+.row-reverse {
+    -webkit-flex-direction: row-reverse;
+}
+
+.column {
+    -webkit-flex-direction: column;
+}
+
+.column-reverse {
+    -webkit-flex-direction: column-reverse;
+}
+
+.flexbox {
+    border: 5px solid pink;
+    display: -webkit-flexbox;
+    height: 100px;
+    width: 100px;
+}
+
+.flexbox > div {
+    overflow: auto;
+}
+
+.flexbox > div > div {
+    width: 120px;
+    height: 120px;
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
+}
+</style>
+</head>
+<body>
+    <p>Scrollbars should work in all the flexboxes and each row should show four identical boxes.</p>
+</body>
+<script>
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-lr'];
+var flexDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
+writingModes.forEach(function(writingMode) {
+    flexDirections.forEach(function(flexDirection) {
+        var containerClass = 'container ' + writingMode;
+        var flexboxClass = 'flexbox ' + flexDirection;
+        document.body.innerHTML +=
+            "<div class='" + containerClass + "'>" +
+            "<div class='" + flexboxClass + "'>" +
+            "<div style='width: -webkit-flex(0 1 auto); height: -webkit-flex(0 1 auto)'><div></div></div>" +
+            "</div>" +
+            "</div>";
+    });
+    document.body.innerHTML += "<br>";
+});
+
+</script>
+</body>
+</html>
