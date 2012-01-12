@@ -1,3 +1,19 @@
+2012-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Move snapRubberBandTimerFired to ScrollElasticityController
+        https://bugs.webkit.org/show_bug.cgi?id=76196
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::elasticDeltaForTimeDelta):
+        (WebCore::roundTowardZero):
+        (WebCore::roundToDevicePixelTowardZero):
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired):
+
 2012-01-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Raise NON_TRANSIENT_ERR when invalid mode specified for transaction

@@ -917,24 +917,10 @@ static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;
 
-static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
-{
-    float amplitude = rubberbandAmplitude;
-    float period = rubberbandPeriod;
-    float criticalDampeningFactor = expf((-elapsedTime * rubberbandStiffness) / period);
-             
-    return (initialPosition + (-initialVelocity * elapsedTime * amplitude)) * criticalDampeningFactor;
-}
-
 static float elasticDeltaForReboundDelta(float delta)
 {
     float stiffness = std::max(rubberbandStiffness, 1.0f);
     return delta / stiffness;
-}
-
-static float reboundDeltaForElasticDelta(float delta)
-{
-    return delta * rubberbandStiffness;
 }
 
 static float scrollWheelMultiplier()
@@ -1332,83 +1318,9 @@ void ScrollAnimatorMac::snapRubberBand()
     m_scrollElasticityController.m_snapRubberbandTimerIsActive = true;
 }
 
-static inline float roundTowardZero(float num)
-{
-    return num > 0 ? ceilf(num - 0.5f) : floorf(num + 0.5f);
-}
-
-static inline float roundToDevicePixelTowardZero(float num)
-{
-    float roundedNum = roundf(num);
-    if (fabs(num - roundedNum) < 0.125)
-        num = roundedNum;
-
-    return roundTowardZero(num);
-}
-
 void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 {
-    if (!m_scrollElasticityController.m_momentumScrollInProgress || m_scrollElasticityController.m_ignoreMomentumScrolls) {
-        CFTimeInterval timeDelta = [NSDate timeIntervalSinceReferenceDate] - m_scrollElasticityController.m_startTime;
-
-        if (m_scrollElasticityController.m_startStretch == FloatSize()) {
-            m_scrollElasticityController.m_startStretch = m_scrollElasticityController.m_client->stretchAmount();
-            if (m_scrollElasticityController.m_startStretch == FloatSize()) {
-                m_scrollElasticityController.m_client->stopSnapRubberbandTimer();
-
-                m_scrollElasticityController.m_stretchScrollForce = FloatSize();
-                m_scrollElasticityController.m_startTime = 0;
-                m_scrollElasticityController.m_startStretch = FloatSize();
-                m_scrollElasticityController.m_origOrigin = FloatPoint();
-                m_scrollElasticityController.m_origVelocity = FloatSize();
-                m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
-
-                return;
-            }
-
-            m_scrollElasticityController.m_origOrigin = m_scrollElasticityController.m_client->absoluteScrollPosition() - m_scrollElasticityController.m_startStretch;
-            m_scrollElasticityController.m_origVelocity = m_scrollElasticityController.m_momentumVelocity;
-
-            // Just like normal scrolling, prefer vertical rubberbanding
-            if (fabsf(m_scrollElasticityController.m_origVelocity.height()) >= fabsf(m_scrollElasticityController.m_origVelocity.width()))
-                m_scrollElasticityController.m_origVelocity.setWidth(0);
-            
-            // Don't rubber-band horizontally if it's not possible to scroll horizontally
-            if (!m_scrollElasticityController.m_client->canScrollHorizontally())
-                m_scrollElasticityController.m_origVelocity.setWidth(0);
-            
-            // Don't rubber-band vertically if it's not possible to scroll vertically
-            if (!m_scrollElasticityController.m_client->canScrollVertically())
-                m_scrollElasticityController.m_origVelocity.setHeight(0);
-        }
-
-        FloatPoint delta(roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_scrollElasticityController.m_startStretch.width(), -m_scrollElasticityController.m_origVelocity.width(), (float)timeDelta)),
-                         roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_scrollElasticityController.m_startStretch.height(), -m_scrollElasticityController.m_origVelocity.height(), (float)timeDelta)));
-
-        if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
-            FloatPoint newOrigin = m_scrollElasticityController.m_origOrigin + delta;
-
-            m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_scrollElasticityController.m_client->stretchAmount());
-
-            FloatSize newStretch = m_scrollElasticityController.m_client->stretchAmount();
-            
-            m_scrollElasticityController.m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
-            m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
-        } else {
-            m_scrollElasticityController.m_client->immediateScrollBy(m_scrollElasticityController.m_origOrigin - m_scrollElasticityController.m_client->absoluteScrollPosition());
-            m_scrollElasticityController.m_client->stopSnapRubberbandTimer();
-
-            m_scrollElasticityController.m_stretchScrollForce = FloatSize();
-            m_scrollElasticityController.m_startTime = 0;
-            m_scrollElasticityController.m_startStretch = FloatSize();
-            m_scrollElasticityController.m_origOrigin = FloatPoint();
-            m_scrollElasticityController.m_origVelocity = FloatSize();
-            m_scrollElasticityController.m_snapRubberbandTimerIsActive = false;
-        }
-    } else {
-        m_scrollElasticityController.m_startTime = [NSDate timeIntervalSinceReferenceDate];
-        m_scrollElasticityController.m_startStretch = FloatSize();
-    }
+    m_scrollElasticityController.snapRubberBandTimerFired();
 }
 #endif
 

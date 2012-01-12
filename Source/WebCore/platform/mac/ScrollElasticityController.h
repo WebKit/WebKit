@@ -61,6 +61,8 @@ public:
 
     void beginScrollGesture();
 
+    void snapRubberBandTimerFired();
+
 private:
     void stopSnapRubberbandTimer();
 
