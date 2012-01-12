@@ -45,6 +45,7 @@ private:
     ~MemoryPressureHandler();
 
     void respondToMemoryPressure();
+    void releaseMemory(bool critical);
 
     bool m_installed;
     time_t m_lastRespondTime;

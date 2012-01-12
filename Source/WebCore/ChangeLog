@@ -1,3 +1,19 @@
+2012-01-12  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by Benjamin Poulain.
+
+        https://bugs.webkit.org/show_bug.cgi?id=75991
+        Make the code in MemoryPressureHandler::respondToMemoryPressure shareable.
+
+        Move memory pressure handling code inside a new function (releaseMemory) so that
+        we could shared it between mac and iOS.
+
+        * Configurations/WebCore.xcconfig: add MemoryPressureHandlerMac.mm into iOS build.
+        * platform/MemoryPressureHandler.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2012-01-12  Eric Seidel  <eric@webkit.org>
 
         Refactor DOMImplementation.hasFeature logic into helper functions.
