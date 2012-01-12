@@ -1,3 +1,28 @@
+2012-01-10  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: push more logic into webkitpy.test.main, clean up code
+        https://bugs.webkit.org/show_bug.cgi?id=76021
+
+        Reviewed by Eric Seidel.
+
+        I plan to add more functionality to test-webkitpy, but it is
+        difficult to hack on now; this patch is the first of two that
+        brings test-webkitpy more inline with current coding style by
+        pushing more logic into the webkitpy.test.main.Tester class (so
+        that it will be testable itself).
+        
+        There should be no functional changes in this patch.
+
+        * Scripts/test-webkitpy:
+        (_path_from_webkit_root):
+        * Scripts/webkitpy/test/main.py:
+        (Tester):
+        (Tester.init):
+        (Tester.configure_logging):
+        (Tester.configure_logging.filter):
+        (Tester.clean_packages):
+        (Tester.run_tests):
+
 2012-01-11  Wei Jia  <wjia@chromium.org>
 
         implement layout tests for <video> with media stream

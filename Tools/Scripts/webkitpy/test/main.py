@@ -20,35 +20,141 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Contains the entry method for test-webkitpy."""
+"""unit testing code for webkitpy."""
 
 import logging
 import os
 import sys
 import unittest
 
-import webkitpy
-
+# NOTE: We intentionally do not depend on anything else in webkitpy here to avoid breaking test-webkitpy.
 
 _log = logging.getLogger(__name__)
 
 
 class Tester(object):
+    """webkitpy unit tests driver (finds and runs tests)."""
 
-    """Discovers and runs webkitpy unit tests."""
+    def init(self, command_args):
+        """Execute code prior to importing from webkitpy.unittests.
 
-    def _find_test_files(self, webkitpy_dir, suffix):
-        """Return a list of paths to all unit-test files."""
-        unittest_paths = []  # Return value.
+        Args:
+            command_args: The list of command-line arguments -- usually
+                        sys.argv[1:].
 
-        for dir_path, dir_names, file_names in os.walk(webkitpy_dir):
+        """
+        verbose_logging_flag = "--verbose-logging"
+        is_verbose_logging = verbose_logging_flag in command_args
+        if is_verbose_logging:
+            # Remove the flag so it doesn't cause unittest.main() to error out.
+            #
+            # FIXME: Get documentation for the --verbose-logging flag to show
+            #        up in the usage instructions, which are currently generated
+            #        by unittest.main().  It's possible that this will require
+            #        re-implementing the option parser for unittest.main()
+            #        since there may not be an easy way to modify its existing
+            #        option parser.
+            sys.argv.remove(verbose_logging_flag)
+
+        if is_verbose_logging:
+            self.configure_logging(logging.DEBUG)
+            _log.debug("Verbose WebKit logging enabled.")
+        else:
+            self.configure_logging(logging.INFO)
+
+    # Verbose logging is useful for debugging test-webkitpy code that runs
+    # before the actual unit tests -- things like autoinstall downloading and
+    # unit-test auto-detection logic.  This is different from verbose logging
+    # of the unit tests themselves (i.e. the unittest module's --verbose flag).
+    def configure_logging(self, log_level):
+        """Configure the root logger.
+
+        Configure the root logger not to log any messages from webkitpy --
+        except for messages from the autoinstall module.  Also set the
+        logging level as described below.
+        """
+        handler = logging.StreamHandler(sys.stderr)
+        # We constrain the level on the handler rather than on the root
+        # logger itself.  This is probably better because the handler is
+        # configured and known only to this module, whereas the root logger
+        # is an object shared (and potentially modified) by many modules.
+        # Modifying the handler, then, is less intrusive and less likely to
+        # interfere with modifications made by other modules (e.g. in unit
+        # tests).
+        handler.setLevel(log_level)
+        formatter = logging.Formatter("%(message)s")
+        handler.setFormatter(formatter)
+
+        logger = logging.getLogger()
+        logger.addHandler(handler)
+        logger.setLevel(logging.NOTSET)
+
+        # Filter out most webkitpy messages.
+        #
+        # Messages can be selectively re-enabled for this script by updating
+        # this method accordingly.
+        def filter(record):
+            """Filter out autoinstall and non-third-party webkitpy messages."""
+            # FIXME: Figure out a way not to use strings here, for example by
+            #        using syntax like webkitpy.test.__name__.  We want to be
+            #        sure not to import any non-Python 2.4 code, though, until
+            #        after the version-checking code has executed.
+            if (record.name.startswith("webkitpy.common.system.autoinstall") or
+                record.name.startswith("webkitpy.test")):
+                return True
+            if record.name.startswith("webkitpy"):
+                return False
+            return True
+
+        testing_filter = logging.Filter()
+        testing_filter.filter = filter
+
+        # Display a message so developers are not mystified as to why
+        # logging does not work in the unit tests.
+        _log.info("Suppressing most webkitpy logging while running unit tests.")
+        handler.addFilter(testing_filter)
+
+    def clean_packages(self, dirs):
+        """Delete all .pyc files under dirs that have no .py file."""
+        # We clean orphaned *.pyc files from the packages prior to importing from
+        # them to make sure that no import statements falsely succeed.
+        # This helps to check that import statements have been updated correctly
+        # after any file moves.  Otherwise, incorrect import statements can
+        # be masked.
+        #
+        # For example, if webkitpy/common/host.py were moved to a
+        # different location without changing any import statements, and if
+        # the corresponding .pyc file were left behind without deleting it,
+        # then "import webkitpy.common.host" would continue to succeed
+        # even though it would fail for someone checking out a fresh copy
+        # of the source tree.  This is because of a Python feature:
+        #
+        # "It is possible to have a file called spam.pyc (or spam.pyo when -O
+        # is used) without a file spam.py for the same module. This can be used
+        # to distribute a library of Python code in a form that is moderately
+        # hard to reverse engineer."
+        #
+        # ( http://docs.python.org/tutorial/modules.html#compiled-python-files )
+        #
+        # Deleting the orphaned .pyc file prior to importing, however, would
+        # cause an ImportError to occur on import as desired.
+        for dir_to_clean in dirs:
+            _log.debug("Cleaning orphaned *.pyc files from: %s" % dir_to_clean)
+            for dir_path, dir_names, file_names in os.walk(dir_to_clean):
+                for file_name in file_names:
+                    if file_name.endswith(".pyc") and file_name[:-1] not in file_names:
+                        file_path = os.path.join(dir_path, file_name)
+                        _log.info("Deleting orphan *.pyc file: %s" % file_path)
+                        os.remove(file_path)
+
+    def _find_under(self, dir_to_search, suffix):
+        """Return a list of paths to all files under dir_to_search ending in suffix."""
+        paths = []
+        for dir_path, dir_names, file_names in os.walk(dir_to_search):
             for file_name in file_names:
-                if not file_name.endswith(suffix):
-                    continue
-                unittest_path = os.path.join(dir_path, file_name)
-                unittest_paths.append(unittest_path)
-
-        return unittest_paths
+                if file_name.endswith(suffix):
+                    paths.append(os.path.join(dir_path, file_name))
+        return paths
 
     def _modules_from_paths(self, package_root, paths):
         """Return a list of fully-qualified module names given paths."""
@@ -93,56 +199,41 @@ class Tester(object):
             'webkitpy.to_be_moved.deduplicate_tests_unittest',
         ]
 
-    def run_tests(self, sys_argv, external_package_paths=None):
-        """Run the unit tests in all *_unittest.py modules in webkitpy.
+    def run_tests(self, argv, dirs):
+        """Run all the tests found under dirs."""
+        # FIXME: We should consider moving webkitpy off of using "webkitpy." to prefix
+        # all includes.  If we did that, then this would use path instead of dirname(path).
+        # QueueStatusServer.__init__ has a sys.path import hack due to this code.
+        sys.path.extend(set(os.path.dirname(path) for path in dirs))
 
-        This method excludes "webkitpy.common.checkout.scm.scm_unittest" unless
-        the --all option is the second element of sys_argv.
-
-        Args:
-          sys_argv: A reference to sys.argv.
-
-        """
-        if external_package_paths is None:
-            external_package_paths = []
-        else:
-            # FIXME: We should consider moving webkitpy off of using "webkitpy." to prefix
-            # all includes.  If we did that, then this would use path instead of dirname(path).
-            # QueueStatusServer.__init__ has a sys.path import hack due to this code.
-            sys.path.extend(set(os.path.dirname(path) for path in external_package_paths))
-
-        if '--xml' in sys.argv:
-            sys.argv.remove('--xml')
+        if '--xml' in argv:
+            argv.remove('--xml')
             from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
             test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
         else:
             test_runner = unittest.TextTestRunner
 
-        if len(sys_argv) > 1 and not sys_argv[-1].startswith("-"):
+        if len(argv) > 1 and not argv[-1].startswith("-"):
             # Then explicit modules or test names were provided, which
             # the unittest module is equipped to handle.
-            unittest.main(argv=sys_argv, module=None, testRunner=test_runner)
+            unittest.main(argv=argv, module=None, testRunner=test_runner)
             # No need to return since unitttest.main() exits.
 
         # Otherwise, auto-detect all unit tests.
 
-        # FIXME: This should be combined with the external_package_paths code above.
-        webkitpy_dir = os.path.dirname(webkitpy.__file__)
-
         skip_integration_tests = False
-        if len(sys_argv) > 1 and sys.argv[1] == "--skip-integrationtests":
-            sys.argv.remove("--skip-integrationtests")
+        if len(argv) > 1 and argv[1] == "--skip-integrationtests":
+            argv.remove("--skip-integrationtests")
             skip_integration_tests = True
 
         modules = []
-        for path in [webkitpy_dir] + external_package_paths:
-            modules.extend(self._modules_from_paths(path, self._find_test_files(path, "_unittest.py")))
+        for dir_to_search in dirs:
+            modules.extend(self._modules_from_paths(dir_to_search, self._find_under(dir_to_search, "_unittest.py")))
             if not skip_integration_tests:
-                modules.extend(self._modules_from_paths(path, self._find_test_files(path, "_integrationtest.py")))
+                modules.extend(self._modules_from_paths(dir_to_search, self._find_under(dir_to_search, "_integrationtest.py")))
         modules.sort()
 
-        # This is a sanity check to ensure that the unit-test discovery
-        # methods are working.
+        # This is a sanity check to ensure that the unit-test discovery methods are working.
         if len(modules) < 1:
             raise Exception("No unit-test modules found.")
 
@@ -151,8 +242,8 @@ class Tester(object):
 
         # FIXME: This is a hack, but I'm tired of commenting out the test.
         #        See https://bugs.webkit.org/show_bug.cgi?id=31818
-        if len(sys_argv) > 1 and sys.argv[1] == "--all":
-            sys.argv.remove("--all")
+        if len(argv) > 1 and argv[1] == "--all":
+            argv.remove("--all")
         else:
             excluded_module = "webkitpy.common.checkout.scm.scm_unittest"
             _log.info("Excluding: %s (use --all to include)" % excluded_module)
@@ -166,11 +257,11 @@ class Tester(object):
         for module in modules:
             __import__(module)
 
-        sys_argv.extend(modules)
+        argv.extend(modules)
 
         # We pass None for the module because we do not want the unittest
         # module to resolve module names relative to a given module.
         # (This would require importing all of the unittest modules from
         # this module.)  See the loadTestsFromName() method of the
         # unittest.TestLoader class for more details on this parameter.
-        unittest.main(argv=sys_argv, module=None, testRunner=test_runner)
+        unittest.main(argv=argv, module=None, testRunner=test_runner)
