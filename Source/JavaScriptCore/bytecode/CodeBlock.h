@@ -780,7 +780,7 @@ namespace JSC {
         // Functions for controlling when tiered compilation kicks in. This
         // controls both when the optimizing compiler is invoked and when OSR
         // entry happens. Two triggers exist: the loop trigger and the return
-        // trigger. In either case, when an addition to m_executeCounter
+        // trigger. In either case, when an addition to m_jitExecuteCounter
         // causes it to become non-negative, the optimizing compiler is
         // invoked. This includes a fast check to see if this CodeBlock has
         // already been optimized (i.e. replacement() returns a CodeBlock
@@ -821,14 +821,14 @@ namespace JSC {
             return Options::executionCounterValueForOptimizeAfterLongWarmUp << reoptimizationRetryCounter();
         }
         
-        int32_t* addressOfExecuteCounter()
+        int32_t* addressOfJITExecuteCounter()
         {
-            return &m_executeCounter;
+            return &m_jitExecuteCounter;
         }
         
-        static ptrdiff_t offsetOfExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_executeCounter); }
+        static ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter); }
 
-        int32_t executeCounter() const { return m_executeCounter; }
+        int32_t jitExecuteCounter() const { return m_jitExecuteCounter; }
         
         unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
         
@@ -837,7 +837,7 @@ namespace JSC {
         // expensive than executing baseline code.
         void optimizeNextInvocation()
         {
-            m_executeCounter = Options::executionCounterValueForOptimizeNextInvocation;
+            m_jitExecuteCounter = Options::executionCounterValueForOptimizeNextInvocation;
         }
         
         // Call this to prevent optimization from happening again. Note that
@@ -847,7 +847,7 @@ namespace JSC {
         // the future as well.
         void dontOptimizeAnytimeSoon()
         {
-            m_executeCounter = Options::executionCounterValueForDontOptimizeAnytimeSoon;
+            m_jitExecuteCounter = Options::executionCounterValueForDontOptimizeAnytimeSoon;
         }
         
         // Call this to reinitialize the counter to its starting state,
@@ -858,14 +858,14 @@ namespace JSC {
         // counter that this corresponds to is also available directly.
         void optimizeAfterWarmUp()
         {
-            m_executeCounter = counterValueForOptimizeAfterWarmUp();
+            m_jitExecuteCounter = counterValueForOptimizeAfterWarmUp();
         }
         
         // Call this to force an optimization trigger to fire only after
         // a lot of warm-up.
         void optimizeAfterLongWarmUp()
         {
-            m_executeCounter = counterValueForOptimizeAfterLongWarmUp();
+            m_jitExecuteCounter = counterValueForOptimizeAfterLongWarmUp();
         }
         
         // Call this to cause an optimization trigger to fire soon, but
@@ -888,7 +888,7 @@ namespace JSC {
         // in the baseline code.
         void optimizeSoon()
         {
-            m_executeCounter = Options::executionCounterValueForOptimizeSoon << reoptimizationRetryCounter();
+            m_jitExecuteCounter = Options::executionCounterValueForOptimizeSoon << reoptimizationRetryCounter();
         }
         
         // The speculative JIT tracks its success rate, so that we can
@@ -1130,7 +1130,7 @@ namespace JSC {
 
         OwnPtr<CodeBlock> m_alternative;
         
-        int32_t m_executeCounter;
+        int32_t m_jitExecuteCounter;
         uint32_t m_speculativeSuccessCounter;
         uint32_t m_speculativeFailCounter;
         uint8_t m_optimizationDelayCounter;
