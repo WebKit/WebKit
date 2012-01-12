@@ -1,0 +1,24 @@
+FAIL document.getElementById("simple-all").parentNode.offsetWidth should be 250. Was 200.
+FAIL document.getElementById("simple-all").parentNode.offsetHeight should be 170. Was 120.
+FAIL document.getElementById("simple-left").parentNode.offsetWidth should be 225. Was 200.
+PASS document.getElementById("simple-left").parentNode.offsetHeight is 120
+FAIL document.getElementById("simple-right").parentNode.offsetWidth should be 225. Was 200.
+PASS document.getElementById("simple-right").parentNode.offsetHeight is 120
+PASS document.getElementById("simple-top").parentNode.offsetWidth is 200
+FAIL document.getElementById("simple-top").parentNode.offsetHeight should be 145. Was 120.
+PASS document.getElementById("simple-bottom").parentNode.offsetWidth is 200
+FAIL document.getElementById("simple-bottom").parentNode.offsetHeight should be 145. Was 120.
+FAIL document.getElementById("percent-all").parentNode.offsetWidth should be 250. Was 200.
+FAIL document.getElementById("percent-all").parentNode.offsetHeight should be 170. Was 120.
+FAIL document.getElementById("percent-left").parentNode.offsetWidth should be 225. Was 200.
+PASS document.getElementById("percent-left").parentNode.offsetHeight is 120
+FAIL document.getElementById("percent-right").parentNode.offsetWidth should be 225. Was 200.
+PASS document.getElementById("percent-right").parentNode.offsetHeight is 120
+PASS document.getElementById("percent-top").parentNode.offsetWidth is 200
+FAIL document.getElementById("percent-top").parentNode.offsetHeight should be 145. Was 120.
+PASS document.getElementById("percent-bottom").parentNode.offsetWidth is 200
+FAIL document.getElementById("percent-bottom").parentNode.offsetHeight should be 145. Was 120.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

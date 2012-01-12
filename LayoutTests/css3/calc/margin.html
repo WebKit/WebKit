@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+    div { display: inline-block; }
+    p { width: 200px; height: 120px; margin: 0px; }
+    #simple-all { margin: -webkit-calc(13px + 12px); }
+    #simple-left { margin-left: -webkit-calc(13px + 12px); }
+    #simple-right { margin-right: -webkit-calc(13px + 12px); }
+    #simple-top { margin-top: -webkit-calc(13px + 12px); }
+    #simple-bottom { margin-bottom: -webkit-calc(13px + 12px); }
+    #percent-all { margin: -webkit-calc(10% - 5px); }
+    #percent-left { margin-left: -webkit-calc(10% - 5px); }
+    #percent-right { margin-right: -webkit-calc(10% - 5px); }
+    #percent-top { margin-top: -webkit-calc(10% - 5px); }
+    #percent-bottom { margin-bottom: -webkit-calc(10% - 5px); }
+</style>
+
+<div id="test-container">
+    <div><p id="simple-all">This element should have an overall margin of 25 pixels.</p></div><br/>
+    <div><p id="simple-left">This element should have a left margin of 25 pixels.</p></div><br/>
+    <div><p id="simple-right">This element should have a right margin of 25 pixels.</p></div><br/>
+    <div><p id="simple-top">This element should have a top margin of 25 pixels.</p></div><br/>
+    <div><p id="simple-bottom">This element should have a bottom margin of 25 pixels.</p></div><br/>
+    <div id="wrapper" style="width: 300px; background-color: cornsilk; display: block;">
+        <div><p id="percent-all">This element should have an overall margin of 25 pixels (10% of parent width of 300px minus 5px).</p></div><br/>
+        <div><p id="percent-left">This element should have a left margin of 25 pixels (10% of parent width of 300px minus 5px).</p></div><br/>
+        <div><p id="percent-right">This element should have a right margin of 25 pixels (10% of parent width of 300px minus 5px).</p></div><br/>
+        <div><p id="percent-top">This element should have a top margin of 25 pixels (10% of parent width of 300px minus 5px).</p></div><br/>
+        <div><p id="percent-bottom">This element should have a bottom margin of 25 pixels (10% of parent width of 300px minus 5px).</p></div><br/>
+    </div>
+</div>
+<script>
+    var innerWidth = 200;
+    var innerHeight = 120;
+    var margin = 25;
+
+    var tests = document.getElementsByTagName("p");
+    for (var i = 0; i < tests.length; ++i) {
+        var outerElement = tests[i].parentNode;
+        var innerElement = tests[i];
+        var width = outerElement.offsetWidth;
+        var height = outerElement.offsetHeight;
+
+        var expectedWidth = innerWidth;
+        var expectedHeight = innerHeight;
+    
+        switch (innerElement.id.split("-")[1]) {
+        case "all":
+            expectedWidth += 2 * margin;
+            expectedHeight += 2 * margin;
+            break;
+        case "top":
+        case "bottom":
+            expectedHeight += margin;
+            break;
+        case "left":
+        case "right":
+            expectedWidth += margin;
+            break;
+        }
+
+        shouldEvaluateTo('document.getElementById("' + innerElement.id + '").parentNode.offsetWidth', expectedWidth);
+        shouldEvaluateTo('document.getElementById("' + innerElement.id + '").parentNode.offsetHeight', expectedHeight);
+    
+        var error = [];
+        if (width != expectedWidth)
+            error.push("expected width " + expectedWidth + ", was " + width);
+        if (height != expectedHeight)
+            error.push("expected height " + expectedHeight + ", was " + height);
+
+        if (error == "") {
+            innerElement.style.backgroundColor = "green";
+            innerElement.innerHTML += " => PASS";
+        } else {
+            innerElement.style.backgroundColor = "red";
+            innerElement.innerHTML += " => FAIL: " + error.join(", ");
+        }
+    }
+    
+    if (window.layoutTestController) {
+        var testContainer = document.getElementById("test-container");
+        if (testContainer)
+            document.body.removeChild(testContainer);   
+    }    
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
