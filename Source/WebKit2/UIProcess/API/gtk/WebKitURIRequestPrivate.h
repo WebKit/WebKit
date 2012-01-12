@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitURIResponsePrivate_h
-#define WebKitURIResponsePrivate_h
+#ifndef WebKitURIRequestPrivate_h
+#define WebKitURIRequestPrivate_h
 
-#include "WebKitURIResponse.h"
-#include <WebCore/ResourceResponse.h>
+#include "WebKitURIRequest.h"
+#include <WebCore/ResourceRequest.h>
 
-WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse&);
-const WebCore::ResourceResponse& webkitURIResponseGetResourceResponse(WebKitURIResponse*);
+WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest&);
 
-#endif // WebKitURIResponsePrivate_h
+#endif // WebKitURIRequestPrivate_h

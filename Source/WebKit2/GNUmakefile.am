@@ -533,6 +533,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitUIClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIRequest.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitURIRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponse.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponsePrivate.h \

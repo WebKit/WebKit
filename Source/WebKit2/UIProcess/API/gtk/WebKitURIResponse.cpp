@@ -22,10 +22,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitURIResponsePrivate.h"
-#include "WebURLResponse.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GOwnPtr.h>
-#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 enum {
@@ -41,9 +38,8 @@ using namespace WebCore;
 G_DEFINE_TYPE(WebKitURIResponse, webkit_uri_response, G_TYPE_OBJECT)
 
 struct _WebKitURIResponsePrivate {
+    WebCore::ResourceResponse resourceResponse;
     CString uri;
-    GRefPtr<SoupMessage> message;
-    guint64 contentLength;
 };
 
 static void webkitURIResponseFinalize(GObject* object)
@@ -71,26 +67,12 @@ static void webkitURIResponseGetProperty(GObject* object, guint propId, GValue* 
     }
 }
 
-static void webkitURIResponseSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
-{
-    WebKitURIResponse* response = WEBKIT_URI_RESPONSE(object);
-
-    switch (propId) {
-    case PROP_URI:
-        response->priv->uri = g_value_get_string(value);
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
-    }
-}
-
 static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(responseClass);
 
     objectClass->finalize = webkitURIResponseFinalize;
     objectClass->get_property = webkitURIResponseGetProperty;
-    objectClass->set_property = webkitURIResponseSetProperty;
 
     /**
      * WebKitURIResponse:uri:
@@ -103,7 +85,7 @@ static void webkit_uri_response_class_init(WebKitURIResponseClass* responseClass
                                                         _("URI"),
                                                         _("The URI for which the response was made."),
                                                         0,
-                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+                                                      WEBKIT_PARAM_READABLE));
     /**
      * WebKitURIResponse:status-code:
      *
@@ -150,6 +132,7 @@ const gchar* webkit_uri_response_get_uri(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
+    response->priv->uri = response->priv->resourceResponse.url().string().utf8();
     return response->priv->uri.data();
 }
 
@@ -168,10 +151,7 @@ guint webkit_uri_response_get_status_code(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), SOUP_STATUS_NONE);
 
-    if (!response->priv->message)
-        return SOUP_STATUS_NONE;
-
-    return response->priv->message->status_code;
+    return response->priv->resourceResponse.httpStatusCode();
 }
 
 /**
@@ -187,30 +167,12 @@ guint64 webkit_uri_response_get_content_length(WebKitURIResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), 0);
 
-    if (response->priv->contentLength)
-        return response->priv->contentLength;
-
-    if (!response->priv->message)
-        return 0;
-
-    SoupMessage* message = response->priv->message.get();
-    return static_cast<guint64>(soup_message_headers_get_content_length(message->response_headers));
+    return response->priv->resourceResponse.expectedContentLength();
 }
 
-WebKitURIResponse* webkitURIResponseCreateForSoupMessage(SoupMessage* message)
+WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse& resourceResponse)
 {
-    GOwnPtr<char> uri(soup_uri_to_string(soup_message_get_uri(message), FALSE));
-    WebKitURIResponse* response = WEBKIT_URI_RESPONSE(g_object_new(WEBKIT_TYPE_URI_RESPONSE, "uri", uri.get(), NULL));
-    response->priv->message = message;
-    return response;
-}
-
-SoupMessage* webkitURIResponseGetSoupMessage(WebKitURIResponse* response)
-{
-    return response->priv->message.get();
-}
-
-void webkitURIResponseSetContentLength(WebKitURIResponse* response, guint64 contentLength)
-{
-    response->priv->contentLength = contentLength;
+    WebKitURIResponse* uriResponse = WEBKIT_URI_RESPONSE(g_object_new(WEBKIT_TYPE_URI_RESPONSE, NULL));
+    uriResponse->priv->resourceResponse = resourceResponse;
+    return uriResponse;
 }

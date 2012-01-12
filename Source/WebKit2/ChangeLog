@@ -1,3 +1,29 @@
+2012-01-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] WebKitURIRequest and WebKitURIResponse should wrap the corresponding WebCore classes
+        https://bugs.webkit.org/show_bug.cgi?id=74478
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Have WebKitURIRequest wrap a ResourceRquesst and WebKitURIResponse wrap a ResourceResponse.
+        They are the WebCore types they are meant to represent and we will need to expose more
+        information from them in the future to make them useful. Later we can have ResourceResponse
+        generate a SoupMessage lazily if necessary.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (webkit_uri_request_class_init): Remove the set property vmethod.
+        (webkit_uri_request_new): The URI property is no longer settable.
+        (webkitURIRequestCreateForResourceRequest): Added this private constructor.
+        (webkit_uri_request_get_uri): Now we just get the URI directly from the ResourceRequest.
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkit_uri_response_class_init): Remove the set property vmethod.
+        (webkit_uri_response_get_uri): Get the URI directly from the ResourceReponse.
+        (webkit_uri_response_get_status_code): Get the status code directly from the ResourceResponse.
+        (webkit_uri_response_get_content_length): Get the content length directly from the ResourceResponse.
+        (webkitURIResponseCreateForResourceResponse): Added this private constructor.
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h: Removed unnecessary methods.
+
 2012-01-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] WebProcesses crashes when composited reflections/masks are present

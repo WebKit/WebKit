@@ -21,9 +21,8 @@
 #include "WebKitURIRequest.h"
 
 #include "WebKitPrivate.h"
-#include "WebURLRequest.h"
+#include "WebKitURIRequestPrivate.h"
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 enum {
@@ -37,6 +36,7 @@ using namespace WebCore;
 G_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
 
 struct _WebKitURIRequestPrivate {
+    WebCore::ResourceRequest resourceRequest;
     CString uri;
 };
 
@@ -65,7 +65,7 @@ static void webkitURIRequestSetProperty(GObject* object, guint propId, const GVa
 
     switch (propId) {
     case PROP_URI:
-        request->priv->uri = g_value_get_string(value);
+        request->priv->resourceRequest.setURL(KURL(KURL(), g_value_get_string(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -117,6 +117,13 @@ WebKitURIRequest* webkit_uri_request_new(const gchar* uri)
     return WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, "uri", uri, NULL));
 }
 
+WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest& resourceRequest)
+{
+    WebKitURIRequest* uriRequest = WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, NULL));
+    uriRequest->priv->resourceRequest = resourceRequest;
+    return uriRequest;
+}
+
 /**
  * webkit_uri_request_get_uri:
  * @request: a #WebKitURIRequest
@@ -127,6 +134,7 @@ const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), 0);
 
+    request->priv->uri = request->priv->resourceRequest.url().string().utf8();
     return request->priv->uri.data();
 }
 
