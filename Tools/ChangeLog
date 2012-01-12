@@ -1,3 +1,13 @@
+2012-01-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        WebKitTestRunner should not print console message line number when it is equal to zero.
+        https://bugs.webkit.org/show_bug.cgi?id=76167
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+
 2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Make default console messages line numbers consistent.
