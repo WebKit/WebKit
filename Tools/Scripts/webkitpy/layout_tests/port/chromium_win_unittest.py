@@ -42,6 +42,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
             self.register_cygwin = True
             self.results_directory = '/'
 
+    port_name = 'chromium-win'
     port_maker = chromium_win.ChromiumWinPort
     os_name = 'win'
     os_version = 'xp'

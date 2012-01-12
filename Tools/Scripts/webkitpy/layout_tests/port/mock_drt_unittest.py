@@ -45,6 +45,7 @@ mock_options = mocktool.MockOptions(configuration='Release')
 
 
 class MockDRTPortTest(port_testcase.PortTestCase):
+
     def make_port(self, options=mock_options):
         host = MockSystemHost()
         test.add_unit_tests_to_mock_filesystem(host.filesystem)
@@ -53,7 +54,7 @@ class MockDRTPortTest(port_testcase.PortTestCase):
             host.platform.os_name = 'win'
             host.platform.os_version = 'xp'
             return mock_drt.MockDRTPort(host, port_name='mock-chromium-win', options=options)
-        return mock_drt.MockDRTPort(host, options=options)
+        return mock_drt.MockDRTPort(host, port_name='mock-mac', options=options)
 
     def test_default_worker_model(self):
         # only overridding the default test; we don't care about this one.

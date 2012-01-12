@@ -310,6 +310,9 @@ def get_test_config(test_files=[], result_files=[]):
     class TestMacPort(WebKitPort):
         port_name = "mac"
 
+        def __init__(self, host):
+            WebKitPort.__init__(self, host, port_name=self.port_name)
+
     return TestConfig(
         TestMacPort(host),
         layout_tests_directory,

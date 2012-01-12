@@ -38,6 +38,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 class MacTest(port_testcase.PortTestCase):
     os_name = 'mac'
     os_version = 'leopard'
+    port_name = 'mac-leopard'
     port_maker = MacPort
 
     def assert_skipped_file_search_paths(self, port_name, expected_paths):

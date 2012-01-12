@@ -35,6 +35,7 @@ from webkitpy.layout_tests.port import port_testcase
 class ChromiumMacPortTest(port_testcase.PortTestCase):
     os_name = 'mac'
     os_version = 'leopard'
+    port_name = 'chromium-mac'
     port_maker = chromium_mac.ChromiumMacPort
 
     def test_check_wdiff(self):

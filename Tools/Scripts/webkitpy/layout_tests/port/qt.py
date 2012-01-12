@@ -49,20 +49,11 @@ class QtPort(WebKitPort):
     def _port_flag_for_scripts(self):
         return "--qt"
 
-    def _operating_system_for_platform(self, platform):
-        if platform.startswith('linux'):
-            return "linux"
-        elif platform in ('win32', 'cygwin'):
-            return "win"
-        elif platform == 'darwin':
-            return "mac"
-        return None
-
     # sys_platform exists only for unit testing.
-    def __init__(self, host, port_name=None, sys_platform=None, **kwargs):
+    def __init__(self, host, port_name=None, **kwargs):
         port_name = port_name or self.port_name
         WebKitPort.__init__(self, host, port_name=None, **kwargs)
-        self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
+        self._operating_system = host.platform.os_name
         self._version = self.operating_system()
 
         # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths

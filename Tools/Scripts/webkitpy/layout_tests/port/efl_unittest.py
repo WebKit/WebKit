@@ -33,6 +33,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class EflPortTest(port_testcase.PortTestCase):
+    port_name = 'efl'
     port_maker = EflPort
 
     def test_show_results_html_file(self):

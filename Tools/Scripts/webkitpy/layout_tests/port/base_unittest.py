@@ -244,14 +244,6 @@ class PortTest(unittest.TestCase):
         port = self.make_port()
         self.assertEqual(port.get_option('foo', 'bar'), 'bar')
 
-    def test_name__unset(self):
-        port = self.make_port()
-        self.assertEqual(port.name(), None)
-
-    def test_name__set(self):
-        port = self.make_port(port_name='foo')
-        self.assertEqual(port.name(), 'foo')
-
     def test_additional_platform_directory(self):
         port = self.make_port(port_name='foo')
         port.baseline_search_path = lambda: ['LayoutTests/platform/foo']

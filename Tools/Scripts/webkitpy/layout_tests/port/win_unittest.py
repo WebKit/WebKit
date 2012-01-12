@@ -42,6 +42,7 @@ from webkitpy.tool.mocktool import MockOptions
 class WinPortTest(port_testcase.PortTestCase):
     os_name = 'win'
     os_version = 'xp'
+    port_name = 'win-xp'
     port_maker = WinPort
 
     def test_show_results_html_file(self):
@@ -57,8 +58,7 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertTrue(stderr.endswith("test.html'], cwd=/mock-checkout\n"))
 
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
-        host = MockSystemHost(os_name='win', os_version=version)
-        port = WinPort(host, options=MockOptions(webkit_test_runner=use_webkit2))
+        port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))
         absolute_search_paths = map(port._webkit_baseline_path, expected_search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
@@ -66,12 +66,10 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-lion', 'mac'], 'xp')
         self._assert_search_path(['win-vista', 'win-7sp0', 'win', 'mac-lion', 'mac'], 'vista')
         self._assert_search_path(['win-7sp0', 'win', 'mac-lion', 'mac'], '7sp0')
-        self._assert_search_path(['win', 'mac-lion', 'mac'], 'bogus')
 
         self._assert_search_path(['win-wk2', 'win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'xp', use_webkit2=True)
         self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'vista', use_webkit2=True)
         self._assert_search_path(['win-wk2', 'win-7sp0', 'win', 'mac-wk2', 'mac-lion', 'mac'], '7sp0', use_webkit2=True)
-        self._assert_search_path(['win-wk2', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'bogus', use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)

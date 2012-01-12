@@ -1,5 +1,62 @@
 2012-01-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up port unit tests in preparation for making port_name mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=76123
+
+        Reviewed by Adam Barth.
+
+        This change updates the unit tests to be more consistent in how
+        ports are created, in preparation for making port_name a
+        mandatory parameter to the constructor and removing any version
+        interpretation from it.
+
+        There should be no functional changes in this patch, but some
+        tests that are no longer relevant have been removed or reworked.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_get_option__default):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest):
+        (ChromiumLinuxPortTest.assert_architecture):
+        (ChromiumLinuxPortTest.test_determine_architecture_fails):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest):
+        (ChromiumPortTest.test_all_test_configurations):
+        (ChromiumPortTest.TestMacPort.__init__):
+        (ChromiumPortTest.TestLinuxPort.__init__):
+        (ChromiumPortTest.TestWinPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest):
+        * Scripts/webkitpy/layout_tests/port/efl_unittest.py:
+        (EflPortTest):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest):
+        (MockDRTPortTest.make_port):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._port_flag_for_scripts):
+        (QtPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest):
+        (QtPortTest._assert_search_path):
+        (QtPortTest.test_baseline_search_path):
+        (QtPortTest.test_operating_system):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitPortTest):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest):
+        (WinPortTest._assert_search_path):
+        (WinPortTest.test_baseline_search_path):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (get_test_config.TestMacPort.__init__):
+
+2012-01-12  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: clean up logging and provide a real --help message
         https://bugs.webkit.org/show_bug.cgi?id=76142
 

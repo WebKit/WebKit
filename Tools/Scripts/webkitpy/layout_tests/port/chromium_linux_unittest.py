@@ -36,6 +36,7 @@ from webkitpy.layout_tests.port import port_testcase
 
 
 class ChromiumLinuxPortTest(port_testcase.PortTestCase):
+    port_name = 'chromium-linux'
     port_maker = chromium_linux.ChromiumLinuxPort
 
     def assert_architecture(self, port_name=None, file_output=None, expected_architecture=None):
@@ -44,7 +45,7 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
         if file_output:
             host.executive = executive_mock.MockExecutive2(file_output)
 
-        port = chromium_linux.ChromiumLinuxPort(host, port_name=port_name)
+        port = self.make_port(host, port_name=port_name)
         self.assertEquals(port.architecture(), expected_architecture)
         if expected_architecture == 'x86':
             self.assertTrue(port.baseline_path().endswith('chromium-linux-x86'))
@@ -72,19 +73,19 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
 
     def test_determine_architecture_fails(self):
         # Test that we default to 'x86' if the driver doesn't exist.
-        port = chromium_linux.ChromiumLinuxPort(MockSystemHost())
+        port = self.make_port()
         self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we default to 'x86' on an unknown architecture.
         host = MockSystemHost()
         host.filesystem.exists = lambda x: True
         host.executive = executive_mock.MockExecutive2('win32')
-        port = chromium_linux.ChromiumLinuxPort(host)
+        port = self.make_port(host=host)
         self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we raise errors if something weird happens.
         host.executive = executive_mock.MockExecutive2(exception=AssertionError)
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, host)
+        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, host, self.port_name)
 
     def test_operating_system(self):
         self.assertEqual('linux', self.make_port().operating_system())
