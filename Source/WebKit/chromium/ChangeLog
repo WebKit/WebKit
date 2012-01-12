@@ -1,3 +1,13 @@
+2012-01-12  David Levin  <levin@chromium.org>
+
+        [chromium] Fix DC leak in WebScreenInfoFactory.
+        https://bugs.webkit.org/show_bug.cgi?id=76203
+
+        Reviewed by Dmitry Titov.
+
+        * src/win/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo): Use OwnGetDC to ensure its release.
+
 2012-01-12  Dana Jansens  <danakj@chromium.org>
 
         [skia] Track a simple opaque area when painting via PlatformContextSkia and save in LayerTextureUpdater

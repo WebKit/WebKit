@@ -648,6 +648,7 @@
             'wtf/unicode/wince/UnicodeWinCE.cpp',
             'wtf/unicode/wince/UnicodeWinCE.h',
             'wtf/win/MainThreadWin.cpp',
+            'wtf/win/OwnGetDCWin.h',
             'wtf/win/OwnPtrWin.cpp',
             'wtf/wince/FastMallocWinCE.h',
             'wtf/wince/MemoryManager.cpp',

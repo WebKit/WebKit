@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +33,8 @@
 
 #include "WebScreenInfo.h"
 
+#include <wtf/win/OwnGetDCWin.h>
+
 #include <windows.h>
 
 namespace WebKit {
@@ -60,7 +62,8 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(HWND window)
     devMode.dmDriverExtra = 0;
     EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
 
-    HDC hdc = GetDC(0);
+    OwnGetDC hdc(0);
+    ASSERT(hdc);
 
     WebScreenInfo results;
     results.horizontalDPI = GetDeviceCaps(hdc, LOGPIXELSX);
