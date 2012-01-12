@@ -1,3 +1,24 @@
+2012-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Move wheel event handling to ScrollElasticityController::handleWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=76205
+
+        Reviewed by Andreas Kling.
+
+        Move the code in ScrollAnimatorMac::smoothScrollWithEvent to ScrollElasticityController::handleWheelEvent and
+        change ScrollAnimatorMac::handleWheelEvent to just call ScrollElasticityController::handleWheelEvent.
+        This means that we'll not set m_haveScrolledSincePageLoad = true anymore (we used to set it in ScrollAnimatorMac::smoothScrollWithEvent),
+        but we already set it to true in ScrollAnimatorMac::handleWheelEvent so it already had no effect.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::elasticDeltaForReboundDelta):
+        (WebCore::scrollWheelMultiplier):
+        (WebCore::ScrollElasticityController::handleWheelEvent):
+
 2012-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Borders and box masks behave incorrectly with overlapping offsets

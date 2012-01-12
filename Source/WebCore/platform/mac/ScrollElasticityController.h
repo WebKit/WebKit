@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class PlatformWheelEvent;
+
 class ScrollElasticityControllerClient {
 protected:
     virtual ~ScrollElasticityControllerClient() { } 
@@ -63,6 +65,7 @@ public:
 
     void beginScrollGesture();
 
+    bool handleWheelEvent(const PlatformWheelEvent&);
     void snapRubberBandTimerFired();
 
 private:

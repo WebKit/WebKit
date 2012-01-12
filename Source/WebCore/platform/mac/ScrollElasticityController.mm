@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollElasticityController.h"
 
+#include "PlatformWheelEvent.h"
 #include <sys/time.h>
 #include <sys/sysctl.h>
 
@@ -67,6 +68,8 @@ namespace WebCore {
 
 static const float scrollVelocityZeroingTimeout = 0.10f;
 static const float rubberbandStiffness = 20;
+static const float rubberbandDirectionLockStretchRatio = 1;
+static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;
 
@@ -79,9 +82,26 @@ static float elasticDeltaForTimeDelta(float initialPosition, float initialVeloci
     return (initialPosition + (-initialVelocity * elapsedTime * amplitude)) * criticalDampeningFactor;
 }
 
+static float elasticDeltaForReboundDelta(float delta)
+{
+    float stiffness = std::max(rubberbandStiffness, 1.0f);
+    return delta / stiffness;
+}
+
 static float reboundDeltaForElasticDelta(float delta)
 {
     return delta * rubberbandStiffness;
+}
+
+static float scrollWheelMultiplier()
+{
+    static float multiplier = -1;
+    if (multiplier < 0) {
+        multiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"NSScrollWheelMultiplier"];
+        if (multiplier <= 0)
+            multiplier = 1;
+    }
+    return multiplier;
 }
 
 ScrollElasticityController::ScrollElasticityController(ScrollElasticityControllerClient* client)
@@ -110,6 +130,157 @@ void ScrollElasticityController::beginScrollGesture()
     m_overflowScrollDelta = FloatSize();
 
     stopSnapRubberbandTimer();
+}
+
+bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+{
+    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
+    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimerIsActive)) {
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
+            m_ignoreMomentumScrolls = false;
+            return true;
+        }
+        return false;
+    }
+
+    float deltaX = m_overflowScrollDelta.width();
+    float deltaY = m_overflowScrollDelta.height();
+
+    // Reset overflow values because we may decide to remove delta at various points and put it into overflow.
+    m_overflowScrollDelta = FloatSize();
+
+    float eventCoalescedDeltaX = -wheelEvent.deltaX();
+    float eventCoalescedDeltaY = -wheelEvent.deltaY();
+
+    deltaX += eventCoalescedDeltaX;
+    deltaY += eventCoalescedDeltaY;
+
+    // Slightly prefer scrolling vertically by applying the = case to deltaY
+    if (fabsf(deltaY) >= fabsf(deltaX))
+        deltaX = 0;
+    else
+        deltaY = 0;
+
+    bool isVerticallyStretched = false;
+    bool isHorizontallyStretched = false;
+    bool shouldStretch = false;
+
+    IntSize stretchAmount = m_client->stretchAmount();
+
+    isHorizontallyStretched = stretchAmount.width();
+    isVerticallyStretched = stretchAmount.height();
+
+    PlatformWheelEventPhase phase = wheelEvent.momentumPhase();
+
+    // If we are starting momentum scrolling then do some setup.
+    if (!m_momentumScrollInProgress && (phase == PlatformWheelEventPhaseBegan || phase == PlatformWheelEventPhaseChanged))
+        m_momentumScrollInProgress = true;
+
+    CFTimeInterval timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
+    if (m_inScrollGesture || m_momentumScrollInProgress) {
+        if (m_lastMomentumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
+            m_momentumVelocity.setWidth(eventCoalescedDeltaX / (float)timeDelta);
+            m_momentumVelocity.setHeight(eventCoalescedDeltaY / (float)timeDelta);
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
+        } else {
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
+            m_momentumVelocity = FloatSize();
+        }
+
+        if (isVerticallyStretched) {
+            if (!isHorizontallyStretched && m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
+                // Stretching only in the vertical.
+                if (deltaY != 0 && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
+                    deltaX = 0;
+                else if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                    m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
+                    deltaX = 0;
+                } else
+                    m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
+            }
+        } else if (isHorizontallyStretched) {
+            // Stretching only in the horizontal.
+            if (m_client->pinnedInDirection(FloatSize(0, deltaY))) {
+                if (deltaX != 0 && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
+                    deltaY = 0;
+                else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                    m_overflowScrollDelta.setHeight(m_overflowScrollDelta.height() + deltaY);
+                    deltaY = 0;
+                } else
+                    m_overflowScrollDelta.setHeight(m_overflowScrollDelta.height() + deltaY);
+            }
+        } else {
+            // Not stretching at all yet.
+            if (m_client->pinnedInDirection(FloatSize(deltaX, deltaY))) {
+                if (fabsf(deltaY) >= fabsf(deltaX)) {
+                    if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                        m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
+                        deltaX = 0;
+                    } else
+                        m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
+                }
+                shouldStretch = true;
+            }
+        }
+    }
+
+    if (deltaX != 0 || deltaY != 0) {
+        if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
+            if (deltaY != 0) {
+                deltaY *= scrollWheelMultiplier();
+                m_client->immediateScrollBy(FloatSize(0, deltaY));
+            }
+            if (deltaX != 0) {
+                deltaX *= scrollWheelMultiplier();
+                m_client->immediateScrollBy(FloatSize(deltaX, 0));
+            }
+        } else {
+            if (!m_client->allowsHorizontalStretching()) {
+                deltaX = 0;
+                eventCoalescedDeltaX = 0;
+            } else if ((deltaX != 0) && !isHorizontallyStretched && !m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
+                deltaX *= scrollWheelMultiplier();
+
+                m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
+                deltaX = 0;
+            }
+
+            if (!m_client->allowsVerticalStretching()) {
+                deltaY = 0;
+                eventCoalescedDeltaY = 0;
+            } else if ((deltaY != 0) && !isVerticallyStretched && !m_client->pinnedInDirection(FloatSize(0, deltaY))) {
+                deltaY *= scrollWheelMultiplier();
+
+                m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
+                deltaY = 0;
+            }
+
+            IntSize stretchAmount = m_client->stretchAmount();
+
+            if (m_momentumScrollInProgress) {
+                if ((m_client->pinnedInDirection(FloatSize(eventCoalescedDeltaX, eventCoalescedDeltaY)) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_lastMomentumScrollTimestamp) {
+                    m_ignoreMomentumScrolls = true;
+                    m_momentumScrollInProgress = false;
+                    snapRubberBand();
+                }
+            }
+
+            m_stretchScrollForce.setWidth(m_stretchScrollForce.width() + deltaX);
+            m_stretchScrollForce.setHeight(m_stretchScrollForce.height() + deltaY);
+
+            FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
+
+            m_client->immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
+        }
+    }
+
+    if (m_momentumScrollInProgress && phase == PlatformWheelEventPhaseEnded) {
+        m_momentumScrollInProgress = false;
+        m_ignoreMomentumScrolls = false;
+        m_lastMomentumScrollTimestamp = 0;
+    }
+
+    return true;
 }
 
 static inline float roundTowardZero(float num)

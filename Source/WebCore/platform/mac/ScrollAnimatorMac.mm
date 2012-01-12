@@ -877,30 +877,6 @@ void ScrollAnimatorMac::cancelAnimations()
 
 #if ENABLE(RUBBER_BANDING)
 
-static const float scrollVelocityZeroingTimeout = 0.10f;
-static const float rubberbandStiffness = 20;
-static const float rubberbandDirectionLockStretchRatio = 1;
-static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
-static const float rubberbandAmplitude = 0.31f;
-static const float rubberbandPeriod = 1.6f;
-
-static float elasticDeltaForReboundDelta(float delta)
-{
-    float stiffness = std::max(rubberbandStiffness, 1.0f);
-    return delta / stiffness;
-}
-
-static float scrollWheelMultiplier()
-{
-    static float multiplier = -1;
-    if (multiplier < 0) {
-        multiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"NSScrollWheelMultiplier"];
-        if (multiplier <= 0)
-            multiplier = 1;
-    }
-    return multiplier;
-}
-
 static inline bool isScrollingLeftAndShouldNotRubberBand(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
 {
     return wheelEvent.deltaX() > 0 && !scrollableArea->shouldRubberBandInDirection(ScrollLeft);
@@ -958,7 +934,7 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         }
     }
 
-    return smoothScrollWithEvent(wheelEvent);
+    return m_scrollElasticityController.handleWheelEvent(wheelEvent);
 }
 
 void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
@@ -1090,159 +1066,6 @@ void ScrollAnimatorMac::startSnapRubberbandTimer()
 void ScrollAnimatorMac::stopSnapRubberbandTimer()
 {
     m_snapRubberBandTimer.stop();
-}
-
-bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEvent)
-{
-    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
-    if (m_scrollElasticityController.m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_scrollElasticityController.m_snapRubberbandTimerIsActive)) {
-        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
-            m_scrollElasticityController.m_ignoreMomentumScrolls = false;
-            return true;
-        }
-        return false;
-    }
-
-    m_haveScrolledSincePageLoad = true;
-
-    float deltaX = m_scrollElasticityController.m_overflowScrollDelta.width();
-    float deltaY = m_scrollElasticityController.m_overflowScrollDelta.height();
-
-    // Reset overflow values because we may decide to remove delta at various points and put it into overflow.
-    m_scrollElasticityController.m_overflowScrollDelta = FloatSize();
-
-    float eventCoalescedDeltaX = -wheelEvent.deltaX();
-    float eventCoalescedDeltaY = -wheelEvent.deltaY();
-
-    deltaX += eventCoalescedDeltaX;
-    deltaY += eventCoalescedDeltaY;
-
-    // Slightly prefer scrolling vertically by applying the = case to deltaY
-    if (fabsf(deltaY) >= fabsf(deltaX))
-        deltaX = 0;
-    else
-        deltaY = 0;
-
-    bool isVerticallyStretched = false;
-    bool isHorizontallyStretched = false;
-    bool shouldStretch = false;
-    
-    IntSize stretchAmount = m_scrollElasticityController.m_client->stretchAmount();
-
-    isHorizontallyStretched = stretchAmount.width();
-    isVerticallyStretched = stretchAmount.height();
-
-    PlatformWheelEventPhase phase = wheelEvent.momentumPhase();
-
-    // If we are starting momentum scrolling then do some setup.
-    if (!m_scrollElasticityController.m_momentumScrollInProgress && (phase == PlatformWheelEventPhaseBegan || phase == PlatformWheelEventPhaseChanged))
-        m_scrollElasticityController.m_momentumScrollInProgress = true;
-
-    CFTimeInterval timeDelta = wheelEvent.timestamp() - m_scrollElasticityController.m_lastMomentumScrollTimestamp;
-    if (m_scrollElasticityController.m_inScrollGesture || m_scrollElasticityController.m_momentumScrollInProgress) {
-        if (m_scrollElasticityController.m_lastMomentumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
-            m_scrollElasticityController.m_momentumVelocity.setWidth(eventCoalescedDeltaX / (float)timeDelta);
-            m_scrollElasticityController.m_momentumVelocity.setHeight(eventCoalescedDeltaY / (float)timeDelta);
-            m_scrollElasticityController.m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
-        } else {
-            m_scrollElasticityController.m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
-            m_scrollElasticityController.m_momentumVelocity = FloatSize();
-        }
-
-        if (isVerticallyStretched) {
-            if (!isHorizontallyStretched && m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(deltaX, 0))) {
-                // Stretching only in the vertical.
-                if (deltaY != 0 && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
-                    deltaX = 0;
-                else if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                    m_scrollElasticityController.m_overflowScrollDelta.setWidth(m_scrollElasticityController.m_overflowScrollDelta.width() + deltaX);
-                    deltaX = 0;
-                } else
-                    m_scrollElasticityController.m_overflowScrollDelta.setWidth(m_scrollElasticityController.m_overflowScrollDelta.width() + deltaX);
-            }
-        } else if (isHorizontallyStretched) {
-            // Stretching only in the horizontal.
-            if (m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(0, deltaY))) {
-                if (deltaX != 0 && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
-                    deltaY = 0;
-                else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                    m_scrollElasticityController.m_overflowScrollDelta.setHeight(m_scrollElasticityController.m_overflowScrollDelta.height() + deltaY);
-                    deltaY = 0;
-                } else
-                    m_scrollElasticityController.m_overflowScrollDelta.setHeight(m_scrollElasticityController.m_overflowScrollDelta.height() + deltaY);
-            }
-        } else {
-            // Not stretching at all yet.
-            if (m_scrollElasticityController.m_client->pinnedInDirection(FloatSize(deltaX, deltaY))) {
-                if (fabsf(deltaY) >= fabsf(deltaX)) {
-                    if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                        m_scrollElasticityController.m_overflowScrollDelta.setWidth(m_scrollElasticityController.m_overflowScrollDelta.width() + deltaX);
-                        deltaX = 0;
-                    } else
-                        m_scrollElasticityController.m_overflowScrollDelta.setWidth(m_scrollElasticityController.m_overflowScrollDelta.width() + deltaX);
-                }
-                shouldStretch = true;
-            }
-        }
-    }
-
-    if (deltaX != 0 || deltaY != 0) {
-        if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
-            if (deltaY != 0) {
-                deltaY *= scrollWheelMultiplier();
-                m_scrollElasticityController.m_client->immediateScrollBy(FloatSize(0, deltaY));
-            }
-            if (deltaX != 0) {
-                deltaX *= scrollWheelMultiplier();
-                m_scrollElasticityController.m_client->immediateScrollBy(FloatSize(deltaX, 0));
-            }
-        } else {
-            if (!m_scrollElasticityController.m_client->allowsHorizontalStretching()) {
-                deltaX = 0;
-                eventCoalescedDeltaX = 0;
-            } else if ((deltaX != 0) && !isHorizontallyStretched && !pinnedInDirection(deltaX, 0)) {
-                deltaX *= scrollWheelMultiplier();
-
-                m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
-                deltaX = 0;
-            }
-            
-            if (!m_scrollElasticityController.m_client->allowsVerticalStretching()) {
-                deltaY = 0;
-                eventCoalescedDeltaY = 0;
-            } else if ((deltaY != 0) && !isVerticallyStretched && !pinnedInDirection(0, deltaY)) {
-                deltaY *= scrollWheelMultiplier();
-
-                m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
-                deltaY = 0;
-            }
-            
-            IntSize stretchAmount = m_scrollElasticityController.m_client->stretchAmount();
-        
-            if (m_scrollElasticityController.m_momentumScrollInProgress) {
-                if ((pinnedInDirection(eventCoalescedDeltaX, eventCoalescedDeltaY) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_scrollElasticityController.m_lastMomentumScrollTimestamp) {
-                    m_scrollElasticityController.m_ignoreMomentumScrolls = true;
-                    m_scrollElasticityController.m_momentumScrollInProgress = false;
-                    m_scrollElasticityController.snapRubberBand();
-                }
-            }
-
-            m_scrollElasticityController.m_stretchScrollForce.setWidth(m_scrollElasticityController.m_stretchScrollForce.width() + deltaX);
-            m_scrollElasticityController.m_stretchScrollForce.setHeight(m_scrollElasticityController.m_stretchScrollForce.height() + deltaY);
-
-            FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.height())));
-
-            m_scrollElasticityController.m_client->immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
-        }
-    }
-
-    if (m_scrollElasticityController.m_momentumScrollInProgress && phase == PlatformWheelEventPhaseEnded) {
-        m_scrollElasticityController.m_momentumScrollInProgress = false;
-        m_scrollElasticityController.m_ignoreMomentumScrolls = false;
-        m_scrollElasticityController.m_lastMomentumScrollTimestamp = 0;
-    }
-
-    return true;
 }
 
 void ScrollAnimatorMac::beginScrollGesture()
