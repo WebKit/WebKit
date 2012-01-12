@@ -3856,3 +3856,9 @@ BUGWK75570 LEOPARD : http/tests/media/video-buffering-repaints-controls.html = P
 
 // New reftest failing on Win7.
 BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
+
+// Started crashing after http://trac.webkit.org/changeset/104756
+BUGCR8729 XP : http/tests/multipart/invalid-image-data.html = CRASH
+
+// Started flaking presumably at http://trac.webkit.org/changeset/104368
+BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
