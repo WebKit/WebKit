@@ -1,5 +1,12 @@
 2012-01-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Sheriffbot build fix. Don't emit empty lines on IRC.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (LastGreenRevision.execute):
+
+2012-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         last-green-revision should report the revision that succeeded on all bots
         https://bugs.webkit.org/show_bug.cgi?id=76109
 
