@@ -132,6 +132,11 @@ void ScrollElasticityController::beginScrollGesture()
     stopSnapRubberbandTimer();
 }
 
+void ScrollElasticityController::endScrollGesture()
+{
+    snapRubberBand();
+}
+
 bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
@@ -305,15 +310,13 @@ void ScrollElasticityController::snapRubberBandTimerFired()
         if (m_startStretch == FloatSize()) {
             m_startStretch = m_client->stretchAmount();
             if (m_startStretch == FloatSize()) {
-                m_client->stopSnapRubberbandTimer();
+                stopSnapRubberbandTimer();
 
                 m_stretchScrollForce = FloatSize();
                 m_startTime = 0;
                 m_startStretch = FloatSize();
                 m_origOrigin = FloatPoint();
                 m_origVelocity = FloatSize();
-                m_snapRubberbandTimerIsActive = false;
-
                 return;
             }
 
@@ -347,14 +350,13 @@ void ScrollElasticityController::snapRubberBandTimerFired()
             m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
             m_client->immediateScrollBy(m_origOrigin - m_client->absoluteScrollPosition());
-            m_client->stopSnapRubberbandTimer();
 
+            stopSnapRubberbandTimer();
             m_stretchScrollForce = FloatSize();
             m_startTime = 0;
             m_startStretch = FloatSize();
             m_origOrigin = FloatPoint();
             m_origVelocity = FloatSize();
-            m_snapRubberbandTimerIsActive = false;
         }
     } else {
         m_startTime = [NSDate timeIntervalSinceReferenceDate];

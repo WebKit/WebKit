@@ -1085,7 +1085,7 @@ void ScrollAnimatorMac::endScrollGesture()
 {
     didEndScrollGesture();
 
-    m_scrollElasticityController.snapRubberBand();
+    m_scrollElasticityController.endScrollGesture();
 }
 
 void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)

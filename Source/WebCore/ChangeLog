@@ -1,5 +1,26 @@
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
+        Make ScrollElasticityController members private
+        https://bugs.webkit.org/show_bug.cgi?id=76208
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::endScrollGesture):
+        Call ScrollElasticityController::endScrollGesture.
+
+        * platform/mac/ScrollElasticityController.h:
+        Make members private.
+
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::endScrollGesture):
+        Call snapRubberBand.
+
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired):
+        Call stopSnapRubberbandTimer.
+
+2012-01-12  Anders Carlsson  <andersca@apple.com>
+
         Move wheel event handling to ScrollElasticityController::handleWheelEvent
         https://bugs.webkit.org/show_bug.cgi?id=76205
 
