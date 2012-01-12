@@ -365,9 +365,10 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
 RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (RefPtr<RegisterID> local = generator.registerFor(m_ident)) {
+        RefPtr<RegisterID> function = generator.emitMove(generator.tempDestination(dst), local.get());
         CallArguments callArguments(generator, m_args);
         generator.emitLoad(callArguments.thisRegister(), jsUndefined());
-        return generator.emitCall(generator.finalDestinationOrIgnored(dst, callArguments.thisRegister()), local.get(), callArguments, divot(), startOffset(), endOffset());
+        return generator.emitCall(generator.finalDestinationOrIgnored(dst, callArguments.thisRegister()), function.get(), callArguments, divot(), startOffset(), endOffset());
     }
 
     int index = 0;
@@ -505,6 +506,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             RefPtr<RegisterID> profileHookRegister;
             if (generator.shouldEmitProfileHooks())
                 profileHookRegister = generator.newTemporary();
+            RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
             RefPtr<RegisterID> thisRegister = generator.emitNode(m_args->m_listNode->m_expr);
             RefPtr<RegisterID> argsRegister;
             ArgumentListNode* args = m_args->m_listNode->m_next;
@@ -518,7 +520,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             while ((args = args->m_next))
                 generator.emitNode(args->m_expr);
 
-            generator.emitCallVarargs(finalDestinationOrIgnored.get(), base.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), profileHookRegister.get(), divot(), startOffset(), endOffset());
+            generator.emitCallVarargs(finalDestinationOrIgnored.get(), realFunction.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), profileHookRegister.get(), divot(), startOffset(), endOffset());
         }
         generator.emitJump(end.get());
     }

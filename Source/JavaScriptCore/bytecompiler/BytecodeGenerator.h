@@ -274,7 +274,7 @@ namespace JSC {
                 return dst;
             }
 
-            return PassRefPtr<RegisterID>(emitNode(n));
+            return emitNode(n);
         }
 
         RegisterID* emitLoad(RegisterID* dst, bool);

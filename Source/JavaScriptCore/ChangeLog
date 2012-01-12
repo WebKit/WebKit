@@ -1,3 +1,18 @@
+2012-01-09  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: d3 Bullet Charts demo doesn't work (call with argument assignment is broken)
+        https://bugs.webkit.org/show_bug.cgi?id=75911
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeForLeftHandSide): Cleanup: No need to
+        explicitly cast to our return type in C++.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode): Make sure to copy our function
+        into a temporary register before evaluating our arguments, since argument
+        evaluation might include function calls or assignments that overwrite our callee by name.
+
 2012-01-11  Michael Saboff  <msaboff@apple.com>
 
         v8-regexp spends 35% of its time allocating and copying internal regexp results data
