@@ -277,8 +277,8 @@ WebInspector.ConsoleView.prototype = {
 
         function scrollIntoView()
         {
-            this.promptElement.scrollIntoView(true);
             delete this._scrollIntoViewTimer;
+            this.promptElement.scrollIntoView(true);
         }
         this._scrollIntoViewTimer = setTimeout(scrollIntoView.bind(this), 20);
     },

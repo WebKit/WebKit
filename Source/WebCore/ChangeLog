@@ -1,3 +1,16 @@
+2012-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: performance: restore 'log 300 messages into console' test.
+        https://bugs.webkit.org/show_bug.cgi?id=76170
+
+        It was removed in order of transition from layout tests to perf tests.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView.scrollIntoView):
+        (WebInspector.ConsoleView.prototype._scheduleScrollIntoView):
+
 2012-01-12  Hans Wennborg  <hans@chromium.org>
 
         Speech input: Send text to correct element even if focus has changed

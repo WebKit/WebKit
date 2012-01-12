@@ -1,0 +1,80 @@
+<html>
+<head>
+<script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function makeConsoleEvents(count)
+{
+    for (var i = 0; i < count; ++i)
+        console.log("Console log: " + i);
+}
+
+function test()
+{
+    var message = {
+        "method":"Console.messageAdded",
+        "params":{
+            "message":{
+                "source":"console-api",
+                "level":"log",
+                "text":"Console log message",
+                "type":"log",
+                "line":10,
+                "url":"file://./console-300-lines.html",
+                "repeatCount":1,
+                "parameters":[{
+                    "type":"string",
+                    "value":"Console log: 42"
+                }],
+                "stackTrace":[
+                    {
+                        "functionName":"makeConsoleEvents",
+                        "url":"file://./console-300-lines.html",
+                        "lineNumber":10,
+                        "columnNumber":17
+                    },
+                    {
+                        "functionName":"",
+                        "url":"file://./console-300-lines.html",
+                        "lineNumber":37,
+                        "columnNumber":9
+                    }
+                ]
+            }
+        }
+    };
+
+    WebInspector.showPanel("console");
+
+    function test(timer)
+    {
+        WebInspector.console.clearMessages();
+        InspectorTest.addSniffer(WebInspector.consoleView.promptElement, "scrollIntoView", finish);
+
+        var cookie = timer.start("console-300-lines");
+        for (var i = 0; i < 300; ++i)
+            InspectorBackend.dispatch(message);
+
+        function finish()
+        {
+            timer.finish(cookie);
+            timer.done("panel-update");
+        }
+    }
+
+    InspectorTest.runPerformanceTest(test, 10000);
+}
+
+if (!window.layoutTestController) {
+    setTimeout(function() {
+        makeConsoleEvents(300);
+    }, 3000);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+</body>
+</html>
