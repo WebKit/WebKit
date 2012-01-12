@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -60,9 +60,15 @@ class WebSpeechInputController;
 class WebSpeechInputControllerMock;
 class WebSpeechInputListener;
 class WebURL;
+class WebUserMediaClientMock;
 struct WebRect;
 struct WebURLError;
 struct WebWindowFeatures;
+}
+
+namespace webkit_support {
+class MediaStreamUtil;
+class TestMediaStreamClient;
 }
 
 class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
@@ -150,6 +156,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebGeolocationClient* geolocationClient();
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
+    virtual WebKit::WebUserMediaClient* userMediaClient();
 
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);
@@ -280,6 +287,10 @@ private:
     void resetScrollRect();
     void discardBackingStore();
 
+    WebKit::WebUserMediaClientMock* userMediaClientMock();
+    webkit_support::MediaStreamUtil* mediaStreamUtil();
+    webkit_support::TestMediaStreamClient* testMediaStreamClient();
+
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
     // don't actually want to open the mail program.
@@ -355,6 +366,9 @@ private:
 
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
+
+    OwnPtr<WebKit::WebUserMediaClientMock> m_userMediaClientMock;
+    OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
 
     OwnPtr<TestNavigationController> m_navigationController;
 

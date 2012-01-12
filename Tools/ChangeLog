@@ -1,3 +1,27 @@
+2012-01-11  Wei Jia  <wjia@chromium.org>
+
+        implement layout tests for <video> with media stream
+        https://bugs.webkit.org/show_bug.cgi?id=74882
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp: Added.
+        (WebKit::WebUserMediaClientMock::create):
+        (WebKit::WebUserMediaClientMock::IsMockStream):
+        (WebKit::WebUserMediaClientMock::requestUserMedia):
+        (WebKit::WebUserMediaClientMock::cancelUserMediaRequest):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.h: Added.
+        (WebKit::WebUserMediaClientMock::~WebUserMediaClientMock):
+        (WebKit::WebUserMediaClientMock::WebUserMediaClientMock):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::userMediaClient):
+        (WebViewHost::userMediaClientMock):
+        (WebViewHost::createMediaPlayer):
+        (WebViewHost::mediaStreamUtil):
+        (WebViewHost::testMediaStreamClient):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2012-01-11  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML">
+<html>
+<head>
+<script src=../../../media/media-file.js></script>
+<script src=../../../media/video-test.js></script>
+<script src=../../../media/video-played.js></script>
+
+<script type="text/javascript">
+
+var previewURL = "";
+var localStream = null;
+
+function startPreview()
+{
+    video.src = previewURL;
+}
+
+function gotStream(stream)
+{
+    consoleWrite("got a stream");
+    previewURL = webkitURL.createObjectURL(stream);
+    startPreview();
+    consoleWrite("start preview");
+    localStream = stream;
+    var playTimeInMillisecond = 2500;
+    var replayIfTimeIsReached = function ()
+    {
+        startPreview();
+        consoleWrite("restart preview");
+        setTimeout(endTest, playTimeInMillisecond);
+    }
+
+    setTimeout(replayIfTimeIsReached, playTimeInMillisecond);
+}
+
+function gotStreamFailed(error)
+{
+    consoleWrite("Failed to get access to local media. Error code was " + error.code);
+}
+
+function playPreview()
+{
+    findMediaElement();
+    try {
+        consoleWrite("request access to local media");
+        navigator.webkitGetUserMedia("video", gotStream, gotStreamFailed);
+    } catch (e) {
+        consoleWrite("getUserMedia error " + "(" + e.name + " / " + e.message + ")");
+    }
+
+    waitForEvent("error");
+    waitForEvent("loadstart");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEvent("canplaythrough");
+    waitForEvent("play");
+}
+
+</script>
+</head>
+
+<body onload="playPreview()">
+<video width="320" height="240" autoplay="autoplay"></video>
+</body> 
+</html> 
+

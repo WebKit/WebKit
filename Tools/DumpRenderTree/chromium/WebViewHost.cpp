@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -59,12 +59,14 @@
 #include "WebStorageNamespace.h"
 #include "WebTextCheckingCompletion.h"
 #include "WebTextCheckingResult.h"
+#include "WebUserMediaClientMock.h"
 #include "platform/WebThread.h"
 #include "platform/WebURLRequest.h"
 #include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
 #include "skia/ext/platform_canvas.h"
+#include "webkit/support/test_media_stream_client.h"
 #include "webkit/support/webkit_support.h"
 
 #include <wtf/Assertions.h>
@@ -694,6 +696,18 @@ WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
     return deviceOrientationClientMock();
 }
 
+WebUserMediaClient* WebViewHost::userMediaClient()
+{
+    return userMediaClientMock();
+}
+
+WebUserMediaClientMock* WebViewHost::userMediaClientMock()
+{
+    if (!m_userMediaClientMock.get())
+        m_userMediaClientMock = WebUserMediaClientMock::create();
+    return m_userMediaClientMock.get();
+}
+
 // WebWidgetClient -----------------------------------------------------------
 
 void WebViewHost::didInvalidateRect(const WebRect& rect)
@@ -845,7 +859,7 @@ WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& par
 
 WebMediaPlayer* WebViewHost::createMediaPlayer(WebFrame* frame, WebMediaPlayerClient* client)
 {
-    return webkit_support::CreateMediaPlayer(frame, client);
+    return webkit_support::CreateMediaPlayer(frame, client, testMediaStreamClient());
 }
 
 WebApplicationCacheHost* WebViewHost::createApplicationCacheHost(WebFrame* frame, WebApplicationCacheHostClient* client)
@@ -1552,6 +1566,18 @@ void WebViewHost::exitFullScreenNow()
 {
     webView()->willExitFullScreen();
     webView()->didExitFullScreen();
+}
+
+webkit_support::MediaStreamUtil* WebViewHost::mediaStreamUtil()
+{
+    return userMediaClientMock();
+}
+
+webkit_support::TestMediaStreamClient* WebViewHost::testMediaStreamClient()
+{
+    if (!m_testMediaStreamClient.get())
+        m_testMediaStreamClient = adoptPtr(new webkit_support::TestMediaStreamClient(mediaStreamUtil()));
+    return m_testMediaStreamClient.get();
 }
 
 // Painting functions ---------------------------------------------------------

@@ -46,6 +46,8 @@
             'chromium/WebPermissions.h',
             'chromium/WebPreferences.cpp',
             'chromium/WebPreferences.h',
+            'chromium/WebUserMediaClientMock.cpp',
+            'chromium/WebUserMediaClientMock.h',
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],
