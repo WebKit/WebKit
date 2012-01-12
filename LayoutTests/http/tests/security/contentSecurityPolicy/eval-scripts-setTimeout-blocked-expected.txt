@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to evaluate script because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to evaluate script because of Content-Security-Policy.
 
 ALERT: PASS
 

@@ -171,16 +171,16 @@ void SharedWorkerProxy::postExceptionToWorkerObject(const String& errorMessage, 
         (*iter)->postTask(createCallbackTask(&postExceptionTask, errorMessage, lineNumber, sourceURL));
 }
 
-static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+static void postConsoleMessageTask(ScriptExecutionContext* document, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber)
 {
-    document->addMessage(source, type, level, message, lineNumber, sourceURL, 0);
+    document->addConsoleMessage(source, type, level, message, sourceURL, lineNumber);
 }
 
 void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
     MutexLocker lock(m_workerDocumentsLock);
     for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
-        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, type, level, message, lineNumber, sourceURL));
+        (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, type, level, message, sourceURL, lineNumber));
 }
 
 #if ENABLE(INSPECTOR)

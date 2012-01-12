@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: [Report Only] Refused to execute inline script because of Content-Security-Policy.
+CONSOLE MESSAGE: [Report Only] Refused to execute inline script because of Content-Security-Policy.
 
 ALERT: PASS
 CSP report received:

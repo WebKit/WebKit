@@ -48,6 +48,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/css
     ${WEBCORE_DIR}/html
+    ${WEBCORE_DIR}/inspector
     ${WEBCORE_DIR}/page
     ${WEBCORE_DIR}/page/animation
     ${WEBCORE_DIR}/platform

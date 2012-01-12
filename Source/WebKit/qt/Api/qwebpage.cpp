@@ -2092,8 +2092,12 @@ void QWebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, 
     // Catch plugin logDestroy message for LayoutTests/plugins/open-and-close-window-with-plugin.html
     // At this point DRT's WebPage has already been destroyed
     if (QWebPagePrivate::drtRun) {
-        if (message == QLatin1String("PLUGIN: NPP_Destroy"))
-            fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.toUtf8().constData());
+        if (message == QLatin1String("PLUGIN: NPP_Destroy")) {
+            fprintf(stdout, "CONSOLE MESSAGE: ");
+            if (lineNumber)
+                fprintf(stdout, "line %d: ", lineNumber);
+            fprintf(stdout, "%s\n", message.toUtf8().constData());
+        }
     }
 }
 

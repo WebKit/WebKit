@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/cross-frame-access-callback-explicit-domain-DENY.html from frame with URL http://127.0.0.1:8000/security/resources/cross-frame-iframe-callback-explicit-domain-DENY.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/cross-frame-access-callback-explicit-domain-DENY.html from frame with URL http://127.0.0.1:8000/security/resources/cross-frame-iframe-callback-explicit-domain-DENY.html. Domains, protocols and ports must match.
 
 Test that a child frame can't define a function and the use it to access parent properties after document.domain write blocks the access.  
 

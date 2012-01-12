@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 1: Refused to load script from 'http://127.0.0.1:8080/security/contentSecurityPolicy/resources/alert-fail.js' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load script from 'http://127.0.0.1:8080/security/contentSecurityPolicy/resources/alert-fail.js' because of Content-Security-Policy.
 
 This page should neither alert "FAIL" nor generate any mixed content warnings in the console. 

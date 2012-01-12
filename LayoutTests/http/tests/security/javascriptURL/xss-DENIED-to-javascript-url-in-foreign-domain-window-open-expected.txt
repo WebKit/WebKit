@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html. Domains, protocols and ports must match.
 
 PASS: Cross frame access to a javascript: URL embed in a frame window.open'ed on foreign domain denied!
 

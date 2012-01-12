@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Error during WebSocket handshake: location mismatch: ws://127.0.0.1:8880/websocket/tests/hixie76/no-query? != /websocket/tests/hixie76/no-query
+CONSOLE MESSAGE: Error during WebSocket handshake: location mismatch: ws://127.0.0.1:8880/websocket/tests/hixie76/no-query? != /websocket/tests/hixie76/no-query
 Make sure handshake with URL with query components fails against server that doesn't support query component.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

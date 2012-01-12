@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Received new data frame but previous continuous frame is unfinished.
+CONSOLE MESSAGE: Received new data frame but previous continuous frame is unfinished.
 Test whether WebSocket rejects interleaved fragmented frames.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

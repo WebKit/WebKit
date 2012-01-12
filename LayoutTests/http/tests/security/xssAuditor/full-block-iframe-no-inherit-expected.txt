@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to execute a JavaScript script. Source code of script found within request.
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
 
 This tests that the header X-XSS-Protection is not inherited by the iframe below:
 

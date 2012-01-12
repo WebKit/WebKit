@@ -565,7 +565,7 @@ bool AbstractDatabase::isInterrupted()
 
 void AbstractDatabase::logErrorMessage(const String& message)
 {
-    m_scriptExecutionContext->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, String(), 0);
+    m_scriptExecutionContext->addConsoleMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 
 #if PLATFORM(CHROMIUM)

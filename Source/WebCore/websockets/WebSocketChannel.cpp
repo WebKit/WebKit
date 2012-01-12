@@ -218,7 +218,7 @@ void WebSocketChannel::fail(const String& reason)
     LOG(Network, "WebSocketChannel %p fail: %s", this, reason.utf8().data());
     ASSERT(!m_suspended);
     if (m_context)
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake->clientOrigin(), 0);
+        m_context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, m_handshake->clientOrigin());
     if (!m_useHixie76Protocol) {
         // Hybi-10 specification explicitly states we must not continue to handle incoming data
         // once the WebSocket connection is failed (section 7.1.7).
@@ -347,7 +347,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
         ASSERT(failingURL.isNull() || m_handshake->url().string() == failingURL);
         if (failingURL.isNull())
             failingURL = m_handshake->url().string();
-        m_context->addMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
+        m_context->addConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, failingURL);
     }
     m_shouldDiscardReceivedData = true;
     handle->disconnect();

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Not allowed to load local resource: cssStyle.css
+CONSOLE MESSAGE: Not allowed to load local resource: cssStyle.css
 This test is to see if a remote file can include a local CSS style. 
 Currently this test cannot be run manually on Windows because we do not have a function like pathToLocalResource() outside of DRT. 
 

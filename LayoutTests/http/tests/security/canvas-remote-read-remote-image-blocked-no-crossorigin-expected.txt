@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 Untainted canvas:
 PASS: Calling getImageData() from an untainted canvas was allowed.
 PASS: Calling toDataURL() on an untainted canvas was allowed.

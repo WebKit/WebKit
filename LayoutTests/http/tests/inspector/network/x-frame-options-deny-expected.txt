@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to display document because display forbidden by X-Frame-Options.
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
 
 Tests that responseReceived is called on NetworkDispatcher for resource requests denied due to X-Frame-Options header.
 

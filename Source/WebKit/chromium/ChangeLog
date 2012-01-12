@@ -1,3 +1,15 @@
+2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Make default console messages line numbers consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=74075
+
+        Reviewed by Pavel Feldman.
+
+        Unset line numbers are not printed to console now.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMessageToConsole):
+
 2012-01-11  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Add WebArrayBuffer support in WebSocket to WebKit API.

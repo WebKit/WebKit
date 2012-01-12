@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 1: Refused to display document because display forbidden by X-Frame-Options.
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
 
 

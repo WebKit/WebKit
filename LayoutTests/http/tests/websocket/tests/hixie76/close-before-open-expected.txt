@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: WebSocket is closed before the connection is established.
 Test if Web Socket fires close event when WebSocket is opened and closed fore open event is received.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

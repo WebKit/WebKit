@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 Test that if an image is served with "Access-Control-Allow-Origin: *", then loading it first without and then with a CORS request works the second time.
 Testing uploading without CORS headers
 PASS: image tainted canvas

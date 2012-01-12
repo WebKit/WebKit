@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: Not allowed to load local resource: file-redirect-target.html
+CONSOLE MESSAGE: Not allowed to load local resource: file-redirect-target.html
 
 This attempts to open a redirect link to a file URL, which should be blocked.

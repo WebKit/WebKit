@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Test for:
 
 bug 40996: Progress event should not be fired during synchronous XMLHttpRequest;

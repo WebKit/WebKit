@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-window-open-parent.html from frame with URL http://localhost:8080/security/resources/xss-DENIED-window-open-parent-attacker.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-window-open-parent.html from frame with URL http://localhost:8080/security/resources/xss-DENIED-window-open-parent-attacker.html. Domains, protocols and ports must match.
 
 This test passes if there is no alert dialog.
 

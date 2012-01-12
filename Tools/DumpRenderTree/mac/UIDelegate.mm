@@ -66,7 +66,10 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     if (range.location != NSNotFound)
         message = [[message substringToIndex:range.location] stringByAppendingString:[[message substringFromIndex:NSMaxRange(range)] lastPathComponent]];
 
-    printf ("CONSOLE MESSAGE: line %d: %s\n", [lineNumber intValue], [message UTF8String]);
+    printf ("CONSOLE MESSAGE: ");
+    if (lineNumber)
+        printf ("line %d: ", [lineNumber intValue]);
+    printf ("%s\n", [message UTF8String]);
 }
 
 - (void)modalWindowWillClose:(NSNotification *)notification

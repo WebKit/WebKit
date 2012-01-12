@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to execute inline event handler because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute inline event handler because of Content-Security-Policy.
 
   
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/iframe-with-element.html from frame with URL http://127.0.0.1:8000/security/xss-DENIED-htmlelelment-with-iframe-proto.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/iframe-with-element.html from frame with URL http://127.0.0.1:8000/security/xss-DENIED-htmlelelment-with-iframe-proto.html. Domains, protocols and ports must match.
 
 
 Tests that making other frame window a prototype doesn't expose that window subframe

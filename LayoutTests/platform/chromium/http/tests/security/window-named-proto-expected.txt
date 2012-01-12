@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8080/security/resources/innocent-victim-with-iframe.html from frame with URL data:text/html,<script>(function () {            setTimeout(function() {                if (window.layoutTestController)                    layoutTestController.notifyDone();            }, 0);            window.name = "__proto__";            parent.__proto__.alert.constructor("alert(document.body.innerHTML)")();        })()</script>. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8080/security/resources/innocent-victim-with-iframe.html from frame with URL data:text/html,<script>(function () {            setTimeout(function() {                if (window.layoutTestController)                    layoutTestController.notifyDone();            }, 0);            window.name = "__proto__";            parent.__proto__.alert.constructor("alert(document.body.innerHTML)")();        })()</script>. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 1: Uncaught TypeError: Cannot read property 'alert' of undefined
 

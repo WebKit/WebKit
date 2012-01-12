@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=0&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=1&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=3&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=4&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=0&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=1&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=3&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/inspector/resources/cors-target.php?id=4&deny=yes. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Tests that preflight OPTIONS requests appear in Network resources
 
 Bug 63712

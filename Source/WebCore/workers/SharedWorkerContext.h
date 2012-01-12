@@ -63,7 +63,7 @@ namespace WebCore {
     private:
         SharedWorkerContext(const String& name, const KURL&, const String&, SharedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
-        virtual void logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
+        virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack>);
 
         String m_name;
     };

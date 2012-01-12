@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Invalid UTF-8 sequence in header name
+CONSOLE MESSAGE: Invalid UTF-8 sequence in header name
 Make sure WebSocket doesn't crash with bad handshake message.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

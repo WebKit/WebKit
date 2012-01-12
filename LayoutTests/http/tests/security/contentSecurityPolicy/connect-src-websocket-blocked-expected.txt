@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to load connect from 'ws://localhost:8880/websocket/tests/hybi/echo' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load connect from 'ws://localhost:8880/websocket/tests/hybi/echo' because of Content-Security-Policy.
 
 Pass
 

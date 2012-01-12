@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Status line does not end with CRLF
+CONSOLE MESSAGE: Status line does not end with CRLF
 Handshake should fail when the first line does not end with CRLF.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

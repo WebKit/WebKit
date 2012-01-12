@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
-CONSOLE MESSAGE: line 1: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
 PASS event.clientX is 50
 PASS event.clientY is 50
 PASS event.pageX is 50

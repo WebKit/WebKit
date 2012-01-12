@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 This tests that drawing a remote SVG image onto a canvas from a data URL taints the canvas
 
 PASS: getImageData failed. Canvas tainted.

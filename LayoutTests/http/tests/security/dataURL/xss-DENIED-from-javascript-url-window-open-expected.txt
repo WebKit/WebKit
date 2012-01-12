@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-javascript-url-window-open.html from frame with URL data:text/html,<html><head><script>function test() {try {opener.document.getElementById("accessMe").innerHTML = "FAIL: Access from a window opened with a data: URL was allowed!";} catch (e) {}if (window.layoutTestController)layoutTestController.globalFlag = true;}</script></head><body onload="test();"><p>Opened Frame.</p></body></html>. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-javascript-url-window-open.html from frame with URL data:text/html,<html><head><script>function test() {try {opener.document.getElementById("accessMe").innerHTML = "FAIL: Access from a window opened with a data: URL was allowed!";} catch (e) {}if (window.layoutTestController)layoutTestController.globalFlag = true;}</script></head><body onload="test();"><p>Opened Frame.</p></body></html>. Domains, protocols and ports must match.
 
 Opener Frame
 

@@ -4650,8 +4650,7 @@ bool WebGLRenderingContext::validateStencilFunc(GC3Denum func)
 
 void WebGLRenderingContext::printWarningToConsole(const String& message)
 {
-    canvas()->document()->frame()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel,
-                                                                      message, 0, canvas()->document()->url().string());
+    canvas()->document()->frame()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, canvas()->document()->url().string());
 }
 
 bool WebGLRenderingContext::validateFramebufferFuncParameters(GC3Denum target, GC3Denum attachment)

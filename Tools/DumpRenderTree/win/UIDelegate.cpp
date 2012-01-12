@@ -491,7 +491,10 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole(
             newMessage = newMessage.substr(0, fileProtocol) + lastPathComponent(newMessage.substr(fileProtocol));
     }
 
-    printf("CONSOLE MESSAGE: line %d: %s\n", lineNumber, toUTF8(newMessage).c_str());
+    printf("CONSOLE MESSAGE: ");
+    if (lineNumber)
+        printf("line %d: ", lineNumber);
+    printf("%s\n", toUTF8(newMessage).c_str());
     return S_OK;
 }
 

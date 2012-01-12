@@ -286,7 +286,10 @@ void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const
                 + urlSuitableForTestResult(newMessage.substr(fileProtocol));
         }
     }
-    printf("CONSOLE MESSAGE: line %d: %s\n", sourceLine, newMessage.data());
+    printf("CONSOLE MESSAGE: ");
+    if (sourceLine)
+        printf("line %d: ", sourceLine);
+    printf("%s\n", newMessage.data());
 }
 
 void WebViewHost::didStartLoading()

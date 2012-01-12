@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: EventSource's response has a MIME type ("text/bogus") that is not "text/event-stream". Aborting the connection.
+CONSOLE MESSAGE: EventSource's response has a MIME type ("text/bogus") that is not "text/event-stream". Aborting the connection.
 Test EventSource with an event-stream with incorrect mime-type.
 
 PASS

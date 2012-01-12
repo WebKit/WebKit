@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-sandboxed-iframe-denied.cgi. Cannot make any requests from null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-sandboxed-iframe-denied.cgi. Cannot make any requests from null.
 This test verifies that sandboxed iframe does not have XmlHttpRequest access to its server. It will print "PASS" on success.
 
 

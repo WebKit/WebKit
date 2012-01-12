@@ -1,4 +1,4 @@
 main frame - has 1 onunload handler(s)
-CONSOLE MESSAGE: line 1: Blocked alert('before unload') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked alert('unload') during unload.
+CONSOLE MESSAGE: Blocked alert('before unload') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('unload') during unload.
 If you didn't hit an assert you PASS.

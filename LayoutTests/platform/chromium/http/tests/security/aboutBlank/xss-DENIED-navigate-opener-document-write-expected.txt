@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim-with-notify.html from frame with URL http://127.0.0.1:8000/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim-with-notify.html from frame with URL http://127.0.0.1:8000/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 1: Uncaught TypeError: Cannot read property 'body' of undefined
 This page opens a window to "", injects malicious code, and then navigates its opener to the victim. The opened window then tries to scripts its opener after document.writeing a new document.

@@ -1,3 +1,15 @@
+2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Make default console messages line numbers consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=74075
+
+        Reviewed by Pavel Feldman.
+
+        Unset line numbers are not printed to console now.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::javaScriptConsoleMessage):
+
 2012-01-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed trivial build fix: Removed unnecessary QHttpRequestHeader

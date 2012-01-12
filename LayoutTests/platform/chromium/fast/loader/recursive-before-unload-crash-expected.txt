@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Blocked alert('onbeforeunload called, and iframe hasn't been added yet.') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('onbeforeunload called, and iframe hasn't been added yet.') during beforeunload.
 ALERT: Adding iframe
 This test demonstrates a problem with our handling of the beforeunload event.
 If a script manages to try and navigate the frame from beforeunload - when a navigation is already pending - we end up blowing out the stack by recursively consulting the policy delegate then running onbeforeunload repeatedly.

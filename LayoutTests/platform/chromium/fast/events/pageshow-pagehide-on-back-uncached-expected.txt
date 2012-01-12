@@ -1,7 +1,7 @@
 main frame - has 1 onunload handler(s)
 ALERT: window.onload
 ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
-CONSOLE MESSAGE: line 1: Blocked alert('window.onpagehide, target = [object HTMLDocument], persisted = false') during pagehide.
+CONSOLE MESSAGE: Blocked alert('window.onpagehide, target = [object HTMLDocument], persisted = false') during pagehide.
 main frame "pageshow/pagehide" - has 1 onunload handler(s)
 ALERT: window.onload
 ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false

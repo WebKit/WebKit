@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 Let's check that rendering an SVG pattern to a canvas taints it!
 See https://bugs.webkit.org/show_bug.cgi?id=36838
 

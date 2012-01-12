@@ -67,7 +67,7 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 
     if (lookupNamespaceURIFunc.IsEmpty() && !m_resolver->IsFunction()) {
         if (ScriptExecutionContext* context = getScriptExecutionContext())
-            context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String(), 0);
+            context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
         return String();
     }
 

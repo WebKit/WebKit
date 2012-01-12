@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
-CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: WebSocket is closed before the connection is established.
 Verify WebSocket::close behaviors in Worker.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

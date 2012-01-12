@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 0: Invalid url for WebSocket ws://javascript:a
-CONSOLE MESSAGE: line 0: Invalid url for WebSocket /applet
-CONSOLE MESSAGE: line 0: Wrong url scheme for WebSocket javascript:a
-CONSOLE MESSAGE: line 0: WebSocket port 25 blocked
-CONSOLE MESSAGE: line 0: URL has fragment component ws://127.0.0.1/path#
-CONSOLE MESSAGE: line 0: URL has fragment component ws://127.0.0.1/path#fragment
+CONSOLE MESSAGE: Invalid url for WebSocket ws://javascript:a
+CONSOLE MESSAGE: Invalid url for WebSocket /applet
+CONSOLE MESSAGE: Wrong url scheme for WebSocket javascript:a
+CONSOLE MESSAGE: WebSocket port 25 blocked
+CONSOLE MESSAGE: URL has fragment component ws://127.0.0.1/path#
+CONSOLE MESSAGE: URL has fragment component ws://127.0.0.1/path#fragment
 Test WebSocket URL parsing.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

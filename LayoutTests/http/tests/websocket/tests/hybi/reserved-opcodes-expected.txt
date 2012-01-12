@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 3
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 4
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 5
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 6
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 7
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 11
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 12
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 13
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 14
-CONSOLE MESSAGE: line 0: Unrecognized frame opcode: 15
+CONSOLE MESSAGE: Unrecognized frame opcode: 3
+CONSOLE MESSAGE: Unrecognized frame opcode: 4
+CONSOLE MESSAGE: Unrecognized frame opcode: 5
+CONSOLE MESSAGE: Unrecognized frame opcode: 6
+CONSOLE MESSAGE: Unrecognized frame opcode: 7
+CONSOLE MESSAGE: Unrecognized frame opcode: 11
+CONSOLE MESSAGE: Unrecognized frame opcode: 12
+CONSOLE MESSAGE: Unrecognized frame opcode: 13
+CONSOLE MESSAGE: Unrecognized frame opcode: 14
+CONSOLE MESSAGE: Unrecognized frame opcode: 15
 Tests whether WebSocket ignores frames with reserved opcode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

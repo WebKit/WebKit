@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: line 1: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 Tests loading cross-domain <track>.
 
 Loading without Access-Control-Allow-Origin header, no "crossorigin" attribute on <video>

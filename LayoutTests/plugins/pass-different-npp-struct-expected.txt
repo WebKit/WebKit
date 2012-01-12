@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: PLUGIN: NPN_GetValue(NPNVprivateModeBool) with a different NPP struct succeeded
+CONSOLE MESSAGE: PLUGIN: NPN_GetValue(NPNVprivateModeBool) with a different NPP struct succeeded
 
 This tests that no assertions fire when a plugin passes a different NPP struct to one of the NPN* functions (specifically, NPN_GetValue).

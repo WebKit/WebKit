@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-origin-add.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-origin-add-step1.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-origin-add.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-origin-add-step1.html. Domains, protocols and ports must match.
 
 Test that adding allow-origin after creating an iframe doesn't modify the origin of an existing document, but it doesn modify the origin of the next document.
 

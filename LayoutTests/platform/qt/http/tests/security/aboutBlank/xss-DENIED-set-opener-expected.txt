@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL http://127.0.0.1:8000/security/aboutBlank/xss-DENIED-set-opener.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL http://127.0.0.1:8000/security/aboutBlank/xss-DENIED-set-opener.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL about:blank. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL about:blank. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 0: TypeError: 'undefined' is not an object
 This page opens a window to "", injects malicious code, and then uses window.open.call to set its opener to the victim. The opened window then tries to scripts its opener.

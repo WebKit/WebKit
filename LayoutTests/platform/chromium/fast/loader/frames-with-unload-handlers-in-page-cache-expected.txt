@@ -1,7 +1,7 @@
 frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
 ALERT: Subframe onload
 ALERT: Subframe onpageshow
-CONSOLE MESSAGE: line 1: Blocked alert('Main frame window.onpagehide called') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked alert('Subframe onpagehide') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked alert('Subframe onunload') during unload.
+CONSOLE MESSAGE: Blocked alert('Main frame window.onpagehide called') during pagehide.
+CONSOLE MESSAGE: Blocked alert('Subframe onpagehide') during pagehide.
+CONSOLE MESSAGE: Blocked alert('Subframe onunload') during unload.
 

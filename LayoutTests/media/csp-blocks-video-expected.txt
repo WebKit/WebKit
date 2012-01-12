@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to load media from 'test.mp4' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load media from 'test.mp4' because of Content-Security-Policy.
 
 END OF TEST
 This test passes if it doesn't alert failure.

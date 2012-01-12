@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: WebSocket frame length too large: 9223372036854775808 bytes
+CONSOLE MESSAGE: WebSocket frame length too large: 9223372036854775808 bytes
 Tests whether WebSocket correctly aborts the connection when it receives a frame with too long payload.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

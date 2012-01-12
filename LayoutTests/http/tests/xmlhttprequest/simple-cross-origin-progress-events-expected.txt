@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Test that upload progress events are not dispatched for simple cross-origin requests (i.e. if the listener is set after calling send(), and there are no other reasons to make a preflight request).
 
 Test 1: The URL is allowed for cross-origin requests

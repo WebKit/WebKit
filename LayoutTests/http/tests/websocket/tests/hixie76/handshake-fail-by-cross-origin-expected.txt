@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Error during WebSocket handshake: origin mismatch: http://127.0.0.1:8000 != http://example.com
+CONSOLE MESSAGE: Error during WebSocket handshake: origin mismatch: http://127.0.0.1:8000 != http://example.com
 Make sure Web Socket connection failed if origin mismatches.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

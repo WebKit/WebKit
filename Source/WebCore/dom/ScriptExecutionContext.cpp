@@ -85,8 +85,7 @@ public:
 
 void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionContext* context)
 {
-    // FIXME: We should call addConsoleMessage instead, but that uses 1 as the fifth parameter instead of 0.
-    context->addMessage(m_source, m_type, m_level, m_message, 0, String(), 0);
+    context->addConsoleMessage(m_source, m_type, m_level, m_message);
 }
 
 ScriptExecutionContext::ScriptExecutionContext()
@@ -316,21 +315,21 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
 
     // First report the original exception and only then all the nested ones.
     if (!dispatchErrorEvent(errorMessage, lineNumber, sourceURL))
-        logExceptionToConsole(errorMessage, lineNumber, sourceURL, callStack);
+        logExceptionToConsole(errorMessage, sourceURL, lineNumber, callStack);
 
     if (!m_pendingExceptions)
         return;
 
     for (size_t i = 0; i < m_pendingExceptions->size(); i++) {
         PendingException* e = m_pendingExceptions->at(i).get();
-        logExceptionToConsole(e->m_errorMessage, e->m_lineNumber, e->m_sourceURL, e->m_callStack);
+        logExceptionToConsole(e->m_errorMessage, e->m_sourceURL, e->m_lineNumber, e->m_callStack);
     }
     m_pendingExceptions.clear();
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(source, type, level, message, 1, String(), 0);
+    addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
 }
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL)

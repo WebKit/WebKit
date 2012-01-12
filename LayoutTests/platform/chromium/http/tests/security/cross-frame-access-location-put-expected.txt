@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-location-put-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-location-put.html. Domains, protocols and ports must match.
 
 
 

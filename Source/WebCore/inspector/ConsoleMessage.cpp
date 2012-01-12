@@ -45,13 +45,13 @@
 
 namespace WebCore {
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u, const String& requestId)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& u, unsigned li, const String& requestId)
     : m_source(s)
     , m_type(t)
     , m_level(l)
     , m_message(m)
-    , m_line(li)
     , m_url(u)
+    , m_line(li)
     , m_repeatCount(1)
     , m_requestId(requestId)
 {
@@ -63,8 +63,8 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_level(l)
     , m_message(m)
     , m_arguments(arguments)
-    , m_line(0)
     , m_url()
+    , m_line(0)
     , m_repeatCount(1)
 {
     if (callStack && callStack->size()) {
@@ -80,8 +80,8 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_type(t)
     , m_level(l)
     , m_message(m)
-    , m_line(0)
     , m_url(responseUrl)
+    , m_line(0)
     , m_repeatCount(1)
     , m_requestId(requestId)
 {

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim-with-notify.html from frame with URL about:blank. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim-with-notify.html from frame with URL about:blank. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 0: TypeError: 'undefined' is not an object
 This page opens a window to "", injects malicious code, and then navigates its opener to the victim. The opened window then tries to scripts its opener after document.writeing a new document.

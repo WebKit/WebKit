@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Failed to load Blob: error code = 1
+CONSOLE MESSAGE: Failed to load Blob: error code = 1
 WebSocket should fail the connection if it has failed to read a Blob.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 < [index] >
 security.pattern.cross
 Using an unclean pattern makes the target canvas origin-unclean, not the pattern canvas

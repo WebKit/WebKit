@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/security/isolatedWorld/resources/cross-origin-xhr.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Tests that isolated worlds can have XHRs run in a different origin.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

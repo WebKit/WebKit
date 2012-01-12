@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Refused to execute inline script because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute inline script because of Content-Security-Policy.
 
 CSP report received:
 CONTENT_TYPE: application/x-www-form-urlencoded

@@ -303,7 +303,10 @@ void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, c
         }
     }
 
-    fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, newMessage.toUtf8().constData());
+    fprintf(stdout, "CONSOLE MESSAGE: ");
+    if (lineNumber)
+        fprintf(stdout, "line %d: ", lineNumber);
+    fprintf(stdout, "%s\n", newMessage.toUtf8().constData());
 }
 
 bool WebPage::javaScriptConfirm(QWebFrame*, const QString& msg)

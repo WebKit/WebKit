@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Error during WebSocket handshake: Sec-WebSocket-Accept mismatch
+CONSOLE MESSAGE: Error during WebSocket handshake: Sec-WebSocket-Accept mismatch
 Test whether WebSocket handshake fails if the server sends incorrect Sec-WebSocket-Accept header.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: PLUGIN: src: resources/test.testnetscape
+CONSOLE MESSAGE: PLUGIN: src: resources/test.testnetscape
 This test checks that bug 50568 is fixed. It runs logSrc test as found in the test plugin which prints the src attribute to stdout. If the bug is present, the logSrc attrbitute that triggers the test will be lost and nothing will be displayed on screen. Upon success, this test should display the src attribute.
 
 

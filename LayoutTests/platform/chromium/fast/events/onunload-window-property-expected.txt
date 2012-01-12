@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 1: Blocked alert('unload') during unload.
+CONSOLE MESSAGE: Blocked alert('unload') during unload.
 You should have seen an unload alert appear.

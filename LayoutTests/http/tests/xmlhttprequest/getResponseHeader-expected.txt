@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "SeT-COoKie"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "sEt-coOkIE2"
+CONSOLE MESSAGE: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: Refused to get unsafe header "sEt-coOkIE2"
+CONSOLE MESSAGE: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: Refused to get unsafe header "sEt-coOkIE2"
+CONSOLE MESSAGE: Refused to get unsafe header "SeT-COoKie"
+CONSOLE MESSAGE: Refused to get unsafe header "sEt-coOkIE2"
 Test page for bug 15356 and bug 29121
 
 Assertion: Invoking the getResponseHeader method when readyState >= 2 (HEADERS_RECEIVED) returns a header value if the header exists.

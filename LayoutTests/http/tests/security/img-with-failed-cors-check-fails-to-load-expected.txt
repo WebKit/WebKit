@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 1: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
 This test passes if the image below does not load. 

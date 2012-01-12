@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL data:text/html,<html><head><script>function fireSentinel() {if (window.layoutTestController)layoutTestController.globalFlag = true;}</script></head><body onload="fireSentinel();"><p id="accessMe">PASS: Cross frame access to a data: URL 2 levels deep was denied.</p><p>Inner-inner iframe.</p></body></html> from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<html><head><script>function fireSentinel() {if (window.layoutTestController)layoutTestController.globalFlag = true;}</script></head><body onload="fireSentinel();"><p id="accessMe">PASS: Cross frame access to a data: URL 2 levels deep was denied.</p><p>Inner-inner iframe.</p></body></html> from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html. Domains, protocols and ports must match.
 
 This tests that the main frame doesn't have access to a data: URL loaded in an iframe inside another data: URL loaded iframe.
 

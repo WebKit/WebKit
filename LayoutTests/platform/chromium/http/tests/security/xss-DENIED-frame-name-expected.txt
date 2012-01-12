@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-frame-name.html from frame with URL http://localhost:8000/security/resources/frame-for-parent-name.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/xss-DENIED-frame-name.html from frame with URL http://localhost:8000/security/resources/frame-for-parent-name.html. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 2: Uncaught TypeError: Cannot read property 'prop' of undefined
    This test passes if it doesn't alert fail.

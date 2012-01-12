@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: WebSocket frame length too large
+CONSOLE MESSAGE: WebSocket frame length too large
 Make sure WebSocket does not crash and report error when it sees length overflow
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

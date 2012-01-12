@@ -1,32 +1,32 @@
 frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
-CONSOLE MESSAGE: line 1: Blocked alert('mainFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked confirm('mainFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked prompt('mainFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame beforeunload PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked alert('mainFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked confirm('mainFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked prompt('mainFrame click PASS') during beforeunload.
-CONSOLE MESSAGE: line 1: Blocked alert('mainFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked confirm('mainFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked prompt('mainFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame click PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame click PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame click PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked alert('mainFrame unload PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked confirm('mainFrame unload PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked prompt('mainFrame unload PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame click PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame click PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame click PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame pagehide PASS') during pagehide.
-CONSOLE MESSAGE: line 1: Blocked alert('iFrame unload PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked confirm('iFrame unload PASS') during unload.
-CONSOLE MESSAGE: line 1: Blocked prompt('iFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked alert('mainFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked confirm('mainFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked prompt('mainFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('iFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked confirm('iFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked prompt('iFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('iFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked confirm('iFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked prompt('iFrame beforeunload PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('mainFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked confirm('mainFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked prompt('mainFrame click PASS') during beforeunload.
+CONSOLE MESSAGE: Blocked alert('mainFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked confirm('mainFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked prompt('mainFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked alert('iFrame click PASS') during pagehide.
+CONSOLE MESSAGE: Blocked confirm('iFrame click PASS') during pagehide.
+CONSOLE MESSAGE: Blocked prompt('iFrame click PASS') during pagehide.
+CONSOLE MESSAGE: Blocked alert('mainFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked confirm('mainFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked prompt('mainFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked alert('iFrame click PASS') during unload.
+CONSOLE MESSAGE: Blocked confirm('iFrame click PASS') during unload.
+CONSOLE MESSAGE: Blocked prompt('iFrame click PASS') during unload.
+CONSOLE MESSAGE: Blocked alert('iFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked confirm('iFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked prompt('iFrame pagehide PASS') during pagehide.
+CONSOLE MESSAGE: Blocked alert('iFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked confirm('iFrame unload PASS') during unload.
+CONSOLE MESSAGE: Blocked prompt('iFrame unload PASS') during unload.
 PASS

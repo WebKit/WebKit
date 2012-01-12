@@ -849,7 +849,10 @@ static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message,
         }
     }
 
-    fprintf(stdout, "CONSOLE MESSAGE: line %d: %s\n", line, testMessage ? testMessage : message);
+    fprintf(stdout, "CONSOLE MESSAGE: ");
+    if (line)
+        fprintf(stdout, "line %d: ", line);
+    fprintf(stdout, "%s\n", testMessage ? testMessage : message);
     g_free(testMessage);
 
     return TRUE;

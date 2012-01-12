@@ -2,7 +2,7 @@ http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta
 <unknown> - didFinishLoading
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, http status code 200>
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html">
-CONSOLE MESSAGE: line 1: Refused to display document because display forbidden by X-Frame-Options.
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
 
 about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag.html, http method GET> redirectResponse (null)
 about:blank - didReceiveResponse <NSURLResponse about:blank, http status code 0>

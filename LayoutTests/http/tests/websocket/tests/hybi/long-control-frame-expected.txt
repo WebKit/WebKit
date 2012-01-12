@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Received control frame having too long payload: 126 bytes
+CONSOLE MESSAGE: Received control frame having too long payload: 126 bytes
 Test whether WebSocket rejects control frames longer than 125 bytes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

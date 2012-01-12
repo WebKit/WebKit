@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: PLUGIN: NPP_SetWindow: 800 200
+CONSOLE MESSAGE: PLUGIN: NPP_SetWindow: 800 200
 
 This tests that a plug-in with a percentage width gets a correct NPP_SetWindow the first time.

@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "Set-Cookie"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "set-cookie"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "Set-Cookie2"
-CONSOLE MESSAGE: line 1: Refused to get unsafe header "set-cookie2"
+CONSOLE MESSAGE: Refused to get unsafe header "Set-Cookie"
+CONSOLE MESSAGE: Refused to get unsafe header "set-cookie"
+CONSOLE MESSAGE: Refused to get unsafe header "Set-Cookie2"
+CONSOLE MESSAGE: Refused to get unsafe header "set-cookie2"
 Test that getResponseHeader and getAllResponseHeaders cannot be used to get the cookie header fields.
 
 PASS

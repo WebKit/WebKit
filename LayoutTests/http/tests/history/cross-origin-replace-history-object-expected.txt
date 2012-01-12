@@ -1,6 +1,6 @@
 ALERT: Parent window's history object before attempt to clear: [object History]
 ALERT: Attempting to clear parent window's history object:
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/history/cross-origin-replace-history-object.html from frame with URL http://localhost:8000/history/resources/cross-origin-replaces-history-object-iframe.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/history/cross-origin-replace-history-object.html from frame with URL http://localhost:8000/history/resources/cross-origin-replaces-history-object-iframe.html. Domains, protocols and ports must match.
 
 ALERT: Parent window's history object after attempt to clear: [object History]
 

@@ -1,7 +1,7 @@
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
-CONSOLE MESSAGE: line 1: Refused to execute a JavaScript script. Source code of script found within request.
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
 
 didDetectXSS
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame

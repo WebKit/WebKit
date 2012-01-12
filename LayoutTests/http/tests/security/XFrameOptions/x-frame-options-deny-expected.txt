@@ -1,6 +1,6 @@
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, http method GET> redirectResponse (null)
 <unknown> - didFinishLoading
-CONSOLE MESSAGE: line 1: Refused to display document because display forbidden by X-Frame-Options.
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
 
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi">
 There should be no content in the iframe below

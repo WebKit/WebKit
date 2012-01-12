@@ -31,6 +31,7 @@
 
 #include "ConsoleTypes.h"
 #include "DOMWindowProperty.h"
+#include "ScriptCallStack.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
@@ -54,8 +55,7 @@ public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();
 
-    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
-    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack);
+    void addMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& sourceURL = String(), unsigned lineNumber = 0, PassRefPtr<ScriptCallStack> = 0);
 
     void debug(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void error(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);

@@ -42,7 +42,10 @@ static Ewk_View_Smart_Class gParentSmartClass = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
 static void onConsoleMessage(Ewk_View_Smart_Data*, const char* message, unsigned int lineNumber, const char*)
 {
-    printf("CONSOLE MESSAGE: line %u: %s\n", lineNumber, message);
+    printf("CONSOLE MESSAGE: ");
+    if (lineNumber)
+        printf("line %u: ", lineNumber);
+    printf("%s\n", message);
 }
 
 static void onJavaScriptAlert(Ewk_View_Smart_Data*, Evas_Object*, const char* message)

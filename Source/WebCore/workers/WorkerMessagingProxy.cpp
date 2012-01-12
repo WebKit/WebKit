@@ -320,7 +320,7 @@ static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessag
 {
     if (messagingProxy->askedToTerminate())
         return;
-    context->addMessage(source, type, level, message, lineNumber, sourceURL, 0);
+    context->addConsoleMessage(source, type, level, message, sourceURL, lineNumber);
 }
 
 void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)

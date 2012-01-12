@@ -1,3 +1,109 @@
+2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Make default console messages line numbers consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=74075
+
+        Reviewed by Pavel Feldman.
+
+        Added default values for Console::addMessage sourceURL, lineNumber and
+        callStack parameters, moved lineNumber after sourceURL.
+        Made virtual method ScriptExecutionContext::addMessage private
+        Added default values to ScriptExecutionContext::AddConsoleMessage sourceURL, lineNumber and
+        callStack parameters, moved lineNumber after sourceURL.
+        Reorder ScriptExecutionContext::logExceptionToConsole parameters, move lineNumber after sourceURL.
+        Reordered sourceURL and lineNumber parameters in inspector methods.
+        Made all calls to Console::addMessage() pass 0 as lineNumber by default (i.e. when line number is unknown / irrelevant).
+        Unset line numbers are not printed to console in QT now.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * dom/Document.cpp:
+        (WebCore::Document::logExceptionToConsole):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::performTask):
+        (WebCore::ScriptExecutionContext::reportException):
+        (WebCore::ScriptExecutionContext::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::warnDeprecatedLayerXYUsage):
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::printWarningToConsole):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::enable):
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+        (WebCore::InspectorConsoleAgent::stopTiming):
+        (WebCore::InspectorConsoleAgent::count):
+        (WebCore::InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorProfilerAgent::addStartProfilingMessageToConsole):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        (WebCore::Console::groupEnd):
+        * page/Console.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::printErrorMessage):
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::logErrorMessage):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::reportMessage):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::postConsoleMessageTask):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::logExceptionToConsole):
+        * workers/SharedWorkerContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::logExceptionToConsole):
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::addMessageToWorkerConsole):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::postConsoleMessageTask):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTMessageHandler::handleMessage):
+
 2012-01-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Add RenderStyle::isPositioned() helper method
