@@ -1,3 +1,34 @@
+2012-01-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75904
+        WebKit 1: Scrollbar uiStateTransitionProgress requires tracking the mouse all 
+        the time
+        -and corresponding-
+        <rdar://problem/10498816>
+
+        Reviewed by Darin Adler.
+
+        New ivar trackingAreaForNonKeyWindow stores our NSTrackingArea whenever we 
+        have one.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLViewPrivate clear]):
+
+        When we know that mouse movements won't affect anything other than 
+        scrollbars, call our new function passMouseMovedEventToScrollbars(), 
+        otherwise we'll call the old mouseMoved().
+        (mouseEventIsPartOfClickOrDrag):
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+
+        Make sure not to remove the mouse observer when there are legacy scrollbars.
+        (-[WebHTMLView removeMouseMovedObserver]):
+
+        Set up a tracking area when the window is not key to ensure that the WebView 
+        gets the relevant events. Remove it when the window is key again so that we 
+        rely on the existing mechanism.
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+
 2012-01-10  Dan Bernstein  <mitz@apple.com>
 
         Made -[WebHistoryItem copyWithZone:] allocate an object of the same class as the receiver.

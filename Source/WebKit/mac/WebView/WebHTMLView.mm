@@ -521,6 +521,8 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
     SEL selectorForDoCommandBySelector;
 
+    NSTrackingArea *trackingAreaForNonKeyWindow;
+
 #ifndef NDEBUG
     BOOL enumeratingSubviews;
 #endif
@@ -584,6 +586,7 @@ static NSCellStateValue kit(TriState state)
     [completionController release];
     [dataSource release];
     [highlighters release];
+    [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
@@ -609,6 +612,7 @@ static NSCellStateValue kit(TriState state)
     [completionController release];
     [dataSource release];
     [highlighters release];
+    [trackingAreaForNonKeyWindow release];
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
 
@@ -619,6 +623,7 @@ static NSCellStateValue kit(TriState state)
     completionController = nil;
     dataSource = nil;
     highlighters = nil;
+    trackingAreaForNonKeyWindow = nil;
     promisedDragTIFFDataSource = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1545,6 +1550,24 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return [[_private->toolTip copy] autorelease];
 }
 
+static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+            return true;
+        default:
+            return false;
+    }
+}
+
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
     if (_private->closed)
@@ -1586,8 +1609,17 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     lastHitView = view;
 
     if (view) {
-        if (Frame* coreFrame = core([view _frame]))
-            coreFrame->eventHandler()->mouseMoved(event);
+        if (Frame* coreFrame = core([view _frame])) {
+            // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+            // button is currently pressed. It is possible that neither of those things will be true on Lion and
+            // newer when legacy scrollbars are enabled, because then WebKit receives mouse events all the time. 
+            // If it is one of those cases where the page is not active and the mouse is not pressed, then we can
+            // fire a much more restricted and efficient scrollbars-only version of the event.
+            if ([[self window] isKeyWindow] || mouseEventIsPartOfClickOrDrag(event))
+                coreFrame->eventHandler()->mouseMoved(event);
+            else
+                coreFrame->eventHandler()->passMouseMovedEventToScrollbars(event);
+        }
 
         [view release];
     }
@@ -2800,6 +2832,12 @@ WEBCORE_COMMAND(yankAndSelect)
         return;
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // Legacy scrollbars require tracking the mouse at all times.
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+        return;
+#endif
+
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [self _removeMouseMovedObserverUnconditionally];
 }
@@ -3333,6 +3371,14 @@ static void setMenuTargets(NSMenu* menu)
         return;
     }
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (_private->trackingAreaForNonKeyWindow) {
+        [self removeTrackingArea:_private->trackingAreaForNonKeyWindow];
+        [_private->trackingAreaForNonKeyWindow release];
+        _private->trackingAreaForNonKeyWindow = nil;
+    }
+#endif
+
     NSWindow *keyWindow = [notification object];
 
     if (keyWindow == [self window]) {
@@ -3357,6 +3403,19 @@ static void setMenuTargets(NSMenu* menu)
         [self _updateSecureInputState];
         [_private->completionController endRevertingChange:NO moveLeft:NO];
     }
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy) {
+        // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
+        // It's easiest to do this with a tracking area, which we will remove when the window is key
+        // again.
+        _private->trackingAreaForNonKeyWindow = [[NSTrackingArea alloc] initWithRect:[self bounds]
+                                                    options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingActiveAlways
+                                                    owner:self
+                                                    userInfo:nil];
+        [self addTrackingArea:_private->trackingAreaForNonKeyWindow];
+    }
+#endif
 }
 
 - (void)windowWillOrderOnScreen:(NSNotification *)notification

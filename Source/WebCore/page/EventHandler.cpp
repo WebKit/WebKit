@@ -1557,13 +1557,10 @@ static RenderLayer* layerForNode(Node* node)
     return layer;
 }
 
-bool EventHandler::mouseMoved(const PlatformMouseEvent& event, bool onlyUpdateScrollbars)
+bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
     HitTestResult hoveredNode = HitTestResult(LayoutPoint());
-    bool result = handleMouseMoveEvent(event, &hoveredNode, onlyUpdateScrollbars);
-
-    if (onlyUpdateScrollbars)
-        return result;
+    bool result = handleMouseMoveEvent(event, &hoveredNode);
 
     Page* page = m_frame->page();
     if (!page)
@@ -1581,6 +1578,12 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event, bool onlyUpdateSc
     page->chrome()->mouseDidMoveOverElement(hoveredNode, event.modifierFlags());
     page->chrome()->setToolTip(hoveredNode);
     return result;
+}
+
+bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& event)
+{
+    HitTestResult hoveredNode;
+    return handleMouseMoveEvent(event, &hoveredNode, true);
 }
 
 bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, HitTestResult* hoveredNode, bool onlyUpdateScrollbars)

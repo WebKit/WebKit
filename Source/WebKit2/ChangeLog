@@ -1,3 +1,19 @@
+2012-01-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75904
+        WebKit 1: Scrollbar uiStateTransitionProgress requires tracking the mouse all 
+        the time
+        -and corresponding-
+        <rdar://problem/10498816>
+
+        Reviewed by Darin Adler.
+
+        This patch gets rid of the optional parameter called onlyUpdateScrollbars for 
+        WebCore::EventHandler::mouseMoved() and instead moves that functionality into 
+        its own function called passMouseMovedEventToScrollbars().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+
 2012-01-11  Brent Fulgham  <bfulgham@webkit.org>
 
         WinCairo build correction.

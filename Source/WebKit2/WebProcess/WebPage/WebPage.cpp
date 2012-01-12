@@ -1208,7 +1208,9 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page, bool o
         case PlatformEvent::MouseReleased:
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case PlatformEvent::MouseMoved:
-            return frame->eventHandler()->mouseMoved(platformMouseEvent, onlyUpdateScrollbars);
+            if (onlyUpdateScrollbars)
+                return frame->eventHandler()->passMouseMovedEventToScrollbars(platformMouseEvent);
+            return frame->eventHandler()->mouseMoved(platformMouseEvent);
         default:
             ASSERT_NOT_REACHED();
             return false;

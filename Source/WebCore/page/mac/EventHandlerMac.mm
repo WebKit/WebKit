@@ -593,6 +593,19 @@ void EventHandler::mouseMoved(NSEvent *event)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event)
+{
+    // Reject a mouse moved if the button is down - screws up tracking during autoscroll
+    // These happen because WebKit sometimes has to fake up moved events.
+    if (!m_frame->view() || m_mousePressed || m_sendingEventToSubview)
+        return;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    CurrentEventScope scope(event);
+    passMouseMovedEventToScrollbars(currentPlatformMouseEvent());
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 static bool frameHasPlatformWidget(Frame* frame)
 {
     if (FrameView* frameView = frame->view()) {
