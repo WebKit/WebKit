@@ -25,16 +25,16 @@
 
 namespace WebCore {
 
-IntRect::IntRect(const Eina_Rectangle& r)
-    : m_location(IntPoint(r.x, r.y))
-    , m_size(r.w, r.h)
+IntRect::IntRect(const Eina_Rectangle& rect)
+    : m_location(IntPoint(rect.x, rect.y))
+    , m_size(rect.w, rect.h)
 {
 }
 
 IntRect::operator Eina_Rectangle() const
 {
-    Eina_Rectangle r = {x(), y(), width(), height()};
-    return r;
+    Eina_Rectangle rect = {x(), y(), width(), height()};
+    return rect;
 }
 
 }
