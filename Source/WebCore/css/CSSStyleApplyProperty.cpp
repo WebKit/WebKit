@@ -724,6 +724,90 @@ public:
     }
 };
 
+class ApplyPropertyFontVariantLigatures {
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        const FontDescription& parentFontDescription = selector->parentFontDescription();
+        FontDescription fontDescription = selector->fontDescription();
+
+        fontDescription.setCommonLigaturesState(parentFontDescription.commonLigaturesState());
+        fontDescription.setDiscretionaryLigaturesState(parentFontDescription.discretionaryLigaturesState());
+        fontDescription.setHistoricalLigaturesState(parentFontDescription.historicalLigaturesState());
+
+        selector->setFontDescription(fontDescription);
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        FontDescription fontDescription = selector->fontDescription();
+
+        fontDescription.setCommonLigaturesState(FontDescription::NormalLigaturesState);
+        fontDescription.setDiscretionaryLigaturesState(FontDescription::NormalLigaturesState);
+        fontDescription.setHistoricalLigaturesState(FontDescription::NormalLigaturesState);
+
+        selector->setFontDescription(fontDescription);
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        FontDescription::LigaturesState commonLigaturesState = FontDescription::NormalLigaturesState;
+        FontDescription::LigaturesState discretionaryLigaturesState = FontDescription::NormalLigaturesState;
+        FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
+
+        if (value->isValueList()) {
+            CSSValueList* valueList = static_cast<CSSValueList*>(value);
+            for (size_t i = 0; i < valueList->length(); ++i) {
+                CSSValue* item = valueList->itemWithoutBoundsCheck(i);
+                ASSERT(item->isPrimitiveValue());
+                if (item->isPrimitiveValue()) {
+                    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+                    switch (primitiveValue->getIdent()) {
+                    case CSSValueNoCommonLigatures:
+                        commonLigaturesState = FontDescription::DisabledLigaturesState;
+                        break;
+                    case CSSValueCommonLigatures:
+                        commonLigaturesState = FontDescription::EnabledLigaturesState;
+                        break;
+                    case CSSValueNoDiscretionaryLigatures:
+                        discretionaryLigaturesState = FontDescription::DisabledLigaturesState;
+                        break;
+                    case CSSValueDiscretionaryLigatures:
+                        discretionaryLigaturesState = FontDescription::EnabledLigaturesState;
+                        break;
+                    case CSSValueNoHistoricalLigatures:
+                        historicalLigaturesState = FontDescription::DisabledLigaturesState;
+                        break;
+                    case CSSValueHistoricalLigatures:
+                        historicalLigaturesState = FontDescription::EnabledLigaturesState;
+                        break;
+                    default:
+                        ASSERT_NOT_REACHED();
+                        break;
+                    }
+                }
+            }
+        }
+#if !ASSERT_DISABLED
+        else {
+            ASSERT(value->isPrimitiveValue());
+            ASSERT(static_cast<CSSPrimitiveValue*>(value)->getIdent() == CSSValueNormal);
+        }
+#endif
+
+        FontDescription fontDescription = selector->fontDescription();
+        fontDescription.setCommonLigaturesState(commonLigaturesState);
+        fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
+        fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
+        selector->setFontDescription(fontDescription);
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+
 enum BorderImageType { Image = 0, Mask };
 template <BorderImageType borderImageType,
           CSSPropertyID property,
@@ -1684,6 +1768,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitFontKerning, ApplyPropertyFont<FontDescription::Kerning, &FontDescription::kerning, &FontDescription::setKerning, FontDescription::AutoKerning>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFontSmoothing, ApplyPropertyFont<FontSmoothingMode, &FontDescription::fontSmoothing, &FontDescription::setFontSmoothing, AutoSmoothing>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextOrientation, ApplyPropertyFont<TextOrientation, &FontDescription::textOrientation, &FontDescription::setTextOrientation, TextOrientationVerticalRight>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFontVariantLigatures, ApplyPropertyFontVariantLigatures::createHandler());
     setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
 
     setPropertyHandler(CSSPropertyTextAlign, ApplyPropertyTextAlign::createHandler());

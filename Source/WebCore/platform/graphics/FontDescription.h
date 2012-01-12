@@ -74,6 +74,8 @@ public:
 
     enum Kerning { AutoKerning, NormalKerning, NoneKerning };
 
+    enum LigaturesState { NormalLigaturesState, DisabledLigaturesState, EnabledLigaturesState };
+
     FontDescription()
         : m_specifiedSize(0)
         , m_computedSize(0)
@@ -88,6 +90,9 @@ public:
         , m_usePrinterFont(false)
         , m_renderingMode(NormalRenderingMode)
         , m_kerning(AutoKerning)
+        , m_commonLigaturesState(NormalLigaturesState)
+        , m_discretionaryLigaturesState(NormalLigaturesState)
+        , m_historicalLigaturesState(NormalLigaturesState)
         , m_keywordSize(0)
         , m_fontSmoothing(AutoSmoothing)
         , m_textRendering(AutoTextRendering)
@@ -116,6 +121,9 @@ public:
     bool useFixedDefaultSize() const { return genericFamily() == MonospaceFamily && !family().next() && family().family() == monospaceFamily; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     Kerning kerning() const { return static_cast<Kerning>(m_kerning); }
+    LigaturesState commonLigaturesState() const { return static_cast<LigaturesState>(m_commonLigaturesState); }
+    LigaturesState discretionaryLigaturesState() const { return static_cast<LigaturesState>(m_discretionaryLigaturesState); }
+    LigaturesState historicalLigaturesState() const { return static_cast<LigaturesState>(m_historicalLigaturesState); }
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
@@ -146,6 +154,9 @@ public:
 #endif
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
     void setKerning(Kerning kerning) { m_kerning = kerning; }
+    void setCommonLigaturesState(LigaturesState commonLigaturesState) { m_commonLigaturesState = commonLigaturesState; }
+    void setDiscretionaryLigaturesState(LigaturesState discretionaryLigaturesState) { m_discretionaryLigaturesState = discretionaryLigaturesState; }
+    void setHistoricalLigaturesState(LigaturesState historicalLigaturesState) { m_historicalLigaturesState = historicalLigaturesState; }
     void setKeywordSize(unsigned s) { m_keywordSize = s; }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
@@ -180,6 +191,10 @@ private:
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
     unsigned m_kerning : 2; // Kerning
 
+    unsigned m_commonLigaturesState : 2;
+    unsigned m_discretionaryLigaturesState : 2;
+    unsigned m_historicalLigaturesState : 2;
+
     unsigned m_keywordSize : 4; // We cache whether or not a font is currently represented by a CSS keyword (e.g., medium).  If so,
                            // then we can accurately translate across different generic families to adjust for different preference settings
                            // (e.g., 13px monospace vs. 16px everything else).  Sizes are 1-8 (like the HTML size values for <font>).
@@ -203,6 +218,9 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_usePrinterFont == other.m_usePrinterFont
         && m_renderingMode == other.m_renderingMode
         && m_kerning == other.m_kerning
+        && m_commonLigaturesState == other.m_commonLigaturesState
+        && m_discretionaryLigaturesState == other.m_discretionaryLigaturesState
+        && m_historicalLigaturesState == other.m_historicalLigaturesState
         && m_keywordSize == other.m_keywordSize
         && m_fontSmoothing == other.m_fontSmoothing
         && m_textRendering == other.m_textRendering

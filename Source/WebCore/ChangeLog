@@ -1,3 +1,62 @@
+2012-01-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10679035> Implement font-variant-ligatures: {no-}common-ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=76103
+
+        Reviewed by Sam Weinig.
+
+        Tests: fast/css/parsing-font-variant-ligatures.html
+               fast/text/font-variant-ligatures-expected.html
+               fast/text/font-variant-ligatures.html
+
+        Added support for all font-variant-ligatures values in the style system and in
+        FontDescription, and made the {no-}common-ligatures value keywords control basic ligatures.
+        The {no-}{discretionary,historical}-ligatures keywords have no effect on rendering at this
+        time.
+
+        font-variant-ligatures was not made part of the font shorthand property.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added code to handle
+        font-variant-ligatures.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Added code to handle font-variant-ligatures.
+        (WebCore::CSSParser::parseFontVariantLigatures): Added. Parses font-variant-ligatures.
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Added font-variant-ligatures to the set of
+        inherited properties.
+        * css/CSSPropertyNames.in: Added -webkit-font-variant-ligatures.
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyFontVariantLigatures::applyInheritValue): Added. Copies
+        {common,discretionary,historical}LigaturesState from the parent style font description.
+        (WebCore::ApplyPropertyFontVariantLigatures::applyInitialValue): Added. Sets
+        {common,discretionary,historical}LigaturesState to normal.
+        (WebCore::ApplyPropertyFontVariantLigatures::applyValue): Added.
+        (WebCore::ApplyPropertyFontVariantLigatures::createHandler): Added.
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty): Added a handler for
+        font-variant-ligatures.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclaration): Updated for the number of properties that
+        affect the font.
+        (WebCore::CSSStyleSelector::applyProperty): Added CSSPropertyWebkitFontVariantLigatures to
+        the switch statement, which needs to list all values in SVG-disabled builds.
+        * css/CSSValueKeywords.in: Added the value keywords
+        {no-}{common,discretionary,historical}-ligatures.
+        * platform/graphics/Font.h:
+        (WebCore::Font::typesettingFeatures): Changed to enable ligatures if common ligatures are
+        enabled in the font description, disable them if they are disabled, and leave them to the
+        default (determined by the text-rendering property) if they are in the normal state.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription): Added initializers.
+        (WebCore::FontDescription::commonLigaturesState): Added this accessor.
+        (WebCore::FontDescription::discretionaryLigaturesState): Ditto.
+        (WebCore::FontDescription::historicalLigaturesState): Ditto.
+        (WebCore::FontDescription::setCommonLigaturesState): Ditto.
+        (WebCore::FontDescription::setDiscretionaryLigaturesState): Ditto.
+        (WebCore::FontDescription::setHistoricalLigaturesState): Ditto.
+        (WebCore::FontDescription::operator==): Updated to compare the ligatures state members.
+
 2012-01-11  Adrienne Walker  <enne@google.com>
 
         Repaint all graphics layers when their renderer offset changes

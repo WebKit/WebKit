@@ -23,6 +23,7 @@ text-rendering
 -webkit-font-feature-settings
 -webkit-font-kerning
 -webkit-font-smoothing
+-webkit-font-variant-ligatures
 -webkit-locale
 -webkit-text-orientation
 -epub-text-orientation = -webkit-text-orientation

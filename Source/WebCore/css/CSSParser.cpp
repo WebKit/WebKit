@@ -2233,6 +2233,13 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
+    case CSSPropertyWebkitFontVariantLigatures:
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else
+            return parseFontVariantLigatures(important);
+        break;
+
     case CSSPropertyWebkitWrapShapeInside:
     case CSSPropertyWebkitWrapShapeOutside:
         if (id == CSSValueAuto)
@@ -7225,6 +7232,51 @@ bool CSSParser::parseFontFeatureSettings(bool important)
         return true;
     }
     return false;
+}
+
+bool CSSParser::parseFontVariantLigatures(bool important)
+{
+    RefPtr<CSSValueList> ligatureValues = CSSValueList::createSpaceSeparated();
+    bool sawCommonLigaturesValue = false;
+    bool sawDiscretionaryLigaturesValue = false;
+    bool sawHistoricalLigaturesValue = false;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueNoCommonLigatures:
+        case CSSValueCommonLigatures:
+            if (sawCommonLigaturesValue)
+                return false;
+            sawCommonLigaturesValue = true;
+            ligatureValues->append(cssValuePool()->createIdentifierValue(value->id));
+            break;
+        case CSSValueNoDiscretionaryLigatures:
+        case CSSValueDiscretionaryLigatures:
+            if (sawDiscretionaryLigaturesValue)
+                return false;
+            sawDiscretionaryLigaturesValue = true;
+            ligatureValues->append(cssValuePool()->createIdentifierValue(value->id));
+            break;
+        case CSSValueNoHistoricalLigatures:
+        case CSSValueHistoricalLigatures:
+            if (sawHistoricalLigaturesValue)
+                return false;
+            sawHistoricalLigaturesValue = true;
+            ligatureValues->append(cssValuePool()->createIdentifierValue(value->id));
+            break;
+        default:
+            return false;
+        }
+    }
+
+    if (!ligatureValues->length())
+        return false;
+
+    addProperty(CSSPropertyWebkitFontVariantLigatures, ligatureValues.release(), important);
+    return true;
 }
 
 static inline int yyerror(const char*) { return 1; }

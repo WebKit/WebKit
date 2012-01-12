@@ -218,6 +218,8 @@ public:
     bool parseFlowThread(int propId, bool important);
     bool parseRegionThread(int propId, bool important);
 
+    bool parseFontVariantLigatures(bool important);
+
     int yyparse();
 
     CSSParserSelector* createFloatingSelector();

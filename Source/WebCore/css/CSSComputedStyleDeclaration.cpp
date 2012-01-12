@@ -224,6 +224,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitFlexWrap,
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
+    CSSPropertyWebkitFontVariantLigatures,
 #if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyWebkitGridColumns,
     CSSPropertyWebkitGridRows,
@@ -1875,6 +1876,23 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->fontDescription().kerning());
         case CSSPropertyWebkitFontSmoothing:
             return cssValuePool->createValue(style->fontDescription().fontSmoothing());
+        case CSSPropertyWebkitFontVariantLigatures: {
+            FontDescription::LigaturesState commonLigaturesState = style->fontDescription().commonLigaturesState();
+            FontDescription::LigaturesState discretionaryLigaturesState = style->fontDescription().discretionaryLigaturesState();
+            FontDescription::LigaturesState historicalLigaturesState = style->fontDescription().historicalLigaturesState();
+            if (commonLigaturesState == FontDescription::NormalLigaturesState && discretionaryLigaturesState == FontDescription::NormalLigaturesState
+                && historicalLigaturesState == FontDescription::NormalLigaturesState)
+                return cssValuePool->createIdentifierValue(CSSValueNormal);
+
+            RefPtr<CSSValueList> valueList = CSSValueList::createSpaceSeparated();
+            if (commonLigaturesState != FontDescription::NormalLigaturesState)
+                valueList->append(cssValuePool->createIdentifierValue(commonLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoCommonLigatures : CSSValueCommonLigatures));
+            if (discretionaryLigaturesState != FontDescription::NormalLigaturesState)
+                valueList->append(cssValuePool->createIdentifierValue(discretionaryLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoDiscretionaryLigatures : CSSValueDiscretionaryLigatures));
+            if (historicalLigaturesState != FontDescription::NormalLigaturesState)
+                valueList->append(cssValuePool->createIdentifierValue(historicalLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoHistoricalLigatures : CSSValueHistoricalLigatures));
+            return valueList;
+        }
         case CSSPropertyZIndex:
             if (style->hasAutoZIndex())
                 return cssValuePool->createIdentifierValue(CSSValueAuto);

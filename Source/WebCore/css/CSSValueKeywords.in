@@ -52,6 +52,17 @@ all
 //
 //normal
 small-caps
+
+// -webkit-font-variant-ligatures:
+//
+// normal
+common-ligatures
+no-common-ligatures
+discretionary-ligatures
+no-discretionary-ligatures
+historical-ligatures
+no-historical-ligatures
+
 //
 // CSS_PROP_FONT_WEIGHT:
 //
