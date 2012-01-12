@@ -1,5 +1,12 @@
 2012-01-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed, mac DumpRenderTree fix.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]):
+
+2012-01-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
         WebKitTestRunner should not print console message line number when it is equal to zero.
         https://bugs.webkit.org/show_bug.cgi?id=76167
 
