@@ -34,9 +34,7 @@
 
 #include "DenormalDisabler.h"
 
-#if !PLATFORM(MAC)
 #include "SincResampler.h"
-#endif
 #include "VectorMath.h"
 #include <algorithm>
 #include <assert.h>
@@ -452,7 +450,6 @@ void AudioBus::sumWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, d
     processWithGainFrom(sourceBus, lastMixGain, targetGain, true);
 }
 
-#if !PLATFORM(MAC)
 PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus, bool mixToMono, double newSampleRate)
 {
     // sourceBus's sample-rate must be known.
@@ -508,7 +505,6 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
     destinationBus->setSampleRate(newSampleRate);    
     return destinationBus.release();
 }
-#endif // !PLATFORM(MAC)
 
 PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
 {

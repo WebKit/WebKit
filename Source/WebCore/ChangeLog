@@ -1,5 +1,21 @@
 2011-12-12  Jer Noble  <jer.noble@apple.com>
 
+        WebAudio: Enable USE_CONCATENATED_IMPULSE_RESPONSES on Mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=74328
+
+        Reviewed by Eric Carlson.
+
+        No new tests; no net change in functionality.
+
+        * WebCore.xcodeproj/project.pbxproj: Added SincResampler class, Composite.wav to the project.
+            Removed IRC_*.wav resources from the project.
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::createBySampleRateConverting): Uncommented this function
+        * platform/audio/AudioBus.h:
+        * platform/audio/HRTFElevation.cpp:
+
+2011-12-12  Jer Noble  <jer.noble@apple.com>
+
         WebAudio: AudioBus::loadPlatformResource should mmap file on Mac port.
         https://bugs.webkit.org/show_bug.cgi?id=74326
 

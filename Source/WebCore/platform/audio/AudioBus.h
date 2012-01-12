@@ -90,12 +90,10 @@ public:
     static PassOwnPtr<AudioBus> createBufferFromRange(AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame);
 
 
-#if !PLATFORM(MAC)
     // Creates a new AudioBus by sample-rate converting sourceBus to the newSampleRate.
     // setSampleRate() must have been previously called on sourceBus.
     // Note: sample-rate conversion is already handled in the file-reading code for the mac port, so we don't need this.
     static PassOwnPtr<AudioBus> createBySampleRateConverting(AudioBus* sourceBus, bool mixToMono, double newSampleRate);
-#endif
 
     // Creates a new AudioBus by mixing all the channels down to mono.
     // If sourceBus is already mono, then the returned AudioBus will simply be a copy.
