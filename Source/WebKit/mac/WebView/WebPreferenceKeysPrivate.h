@@ -36,6 +36,7 @@
 #define WebKitSansSerifFontPreferenceKey @"WebKitSansSerifFont"
 #define WebKitCursiveFontPreferenceKey @"WebKitCursiveFont"
 #define WebKitFantasyFontPreferenceKey @"WebKitFantasyFont"
+#define WebKitPictographFontPreferenceKey @"WebKitPictographFont"
 #define WebKitMinimumFontSizePreferenceKey @"WebKitMinimumFontSize"
 #define WebKitMinimumLogicalFontSizePreferenceKey @"WebKitMinimumLogicalFontSize"
 #define WebKitDefaultFontSizePreferenceKey @"WebKitDefaultFontSize"

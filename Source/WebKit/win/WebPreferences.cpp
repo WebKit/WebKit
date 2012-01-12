@@ -189,6 +189,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitSansSerifFontPreferenceKey), CFSTR("Arial"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitCursiveFontPreferenceKey), CFSTR("Comic Sans MS"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitFantasyFontPreferenceKey), CFSTR("Comic Sans MS"));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitPictographFontPreferenceKey), CFSTR("Times New Roman"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumFontSizePreferenceKey), CFSTR("0"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
@@ -645,6 +646,20 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setFantasyFontFamily(
     /* [in] */ BSTR family)
 {
     setStringValue(CFSTR(WebKitFantasyFontPreferenceKey), family);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::pictographFontFamily( 
+    /* [retval][out] */ BSTR* family)
+{
+    *family = stringValueForKey(CFSTR(WebKitPictographFontPreferenceKey));
+    return (*family) ? S_OK : E_FAIL;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setPictographFontFamily( 
+    /* [in] */ BSTR family)
+{
+    setStringValue(CFSTR(WebKitPictographFontPreferenceKey), family);
     return S_OK;
 }
 

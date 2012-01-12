@@ -242,6 +242,15 @@ void Settings::setFantasyFontFamily(const AtomicString& fantasyFontFamily)
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
+void Settings::setPictographFontFamily(const AtomicString& pictographFontFamily)
+{
+    if (m_pictographFontFamily == pictographFontFamily)
+        return;
+
+    m_pictographFontFamily = pictographFontFamily;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
 void Settings::setMinimumFontSize(int minimumFontSize)
 {
     if (m_minimumFontSize == minimumFontSize)

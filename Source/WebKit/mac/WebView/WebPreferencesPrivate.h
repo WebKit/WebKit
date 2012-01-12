@@ -210,6 +210,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)hyperlinkAuditingEnabled;
 - (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
 
+- (NSString *)pictographFontFamily;
+- (void)setPictographFontFamily:(NSString *)family;
+
 // Other private methods
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;

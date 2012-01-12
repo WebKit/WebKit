@@ -309,6 +309,9 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 case CSSValueMonospace:
                     familyName = "-webkit-monospace";
                     break;
+                case CSSValueWebkitPictograph:
+                    familyName = "-webkit-pictograph";
+                    break;
                 default:
                     break;
             }
@@ -398,6 +401,8 @@ static FontData* fontDataForGenericFamily(Document* document, const FontDescript
         genericFamily = settings->fantasyFontFamily();
     else if (familyName == "-webkit-monospace")
         genericFamily = settings->fixedFontFamily();
+    else if (familyName == "-webkit-pictograph")
+        genericFamily = settings->pictographFontFamily();
     else if (familyName == "-webkit-standard")
         genericFamily = settings->standardFontFamily();
 

@@ -74,6 +74,9 @@ namespace WebCore {
         void setFantasyFontFamily(const AtomicString&);
         const AtomicString& fantasyFontFamily() const { return m_fantasyFontFamily; }
 
+        void setPictographFontFamily(const AtomicString&);
+        const AtomicString& pictographFontFamily() const { return m_pictographFontFamily; }
+
         void setMinimumFontSize(int);
         int minimumFontSize() const { return m_minimumFontSize; }
 
@@ -418,6 +421,7 @@ namespace WebCore {
         AtomicString m_sansSerifFontFamily;
         AtomicString m_cursiveFontFamily;
         AtomicString m_fantasyFontFamily;
+        AtomicString m_pictographFontFamily;
         EditableLinkBehavior m_editableLinkBehavior;
         TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
         int m_minimumFontSize;

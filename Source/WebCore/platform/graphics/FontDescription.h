@@ -64,7 +64,7 @@ enum FontSmallCaps {
 class FontDescription {
 public:
     enum GenericFamilyType { NoFamily, StandardFamily, SerifFamily, SansSerifFamily, 
-                             MonospaceFamily, CursiveFamily, FantasyFamily };
+                             MonospaceFamily, CursiveFamily, FantasyFamily, PictographFamily };
 
     FontDescription()
         : m_specifiedSize(0)

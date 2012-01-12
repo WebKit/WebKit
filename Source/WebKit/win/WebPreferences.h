@@ -91,6 +91,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setFantasyFontFamily( 
         /* [in] */ BSTR family);
     
+    virtual HRESULT STDMETHODCALLTYPE pictographFontFamily( 
+        /* [retval][out] */ BSTR* family);
+    
+    virtual HRESULT STDMETHODCALLTYPE setPictographFontFamily( 
+        /* [in] */ BSTR family);
+    
     virtual HRESULT STDMETHODCALLTYPE defaultFontSize( 
         /* [retval][out] */ int* fontSize);
     

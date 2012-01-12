@@ -284,7 +284,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "-webkit-control", "status-bar", "italic", "oblique", "small-caps", "normal", "bold", "bolder", "lighter",
         "100", "200", "300", "400", "500", "600", "700", "800", "900", "xx-small", "x-small", "small", "medium",
         "large", "x-large", "xx-large", "-webkit-xxx-large", "smaller", "larger", "serif", "sans-serif", "cursive",
-        "fantasy", "monospace", "-webkit-body"
+        "fantasy", "monospace", "-webkit-body", "-webkit-pictograph"
     ],
     "dominant-baseline": [
         "middle", "auto", "central", "text-before-edge", "text-after-edge", "ideographic", "alphabetic", "hanging",
@@ -348,7 +348,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "absolute", "fixed", "relative", "static"
     ],
     "font-family": [
-        "serif", "sans-serif", "cursive", "fantasy", "monospace", "-webkit-body"
+        "serif", "sans-serif", "cursive", "fantasy", "monospace", "-webkit-body", "-webkit-pictograph"
     ],
     "text-overflow-mode": [
         "clip", "ellipsis"
