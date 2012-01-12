@@ -992,9 +992,9 @@
 		4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4167EBF3102962BA003D252A /* DefaultSharedWorkerRepository.cpp */; };
 		4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 4167EBF4102962BA003D252A /* DefaultSharedWorkerRepository.h */; };
 		416E29A6102FA962007FC14E /* WorkerReportingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E29A5102FA962007FC14E /* WorkerReportingProxy.h */; };
-		416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */; };
+		416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E75BF0EDF8FD700360E1D /* ScriptCallStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */; };
-		416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75C90EDF90C700360E1D /* ScriptCallFrame.h */; };
+		416E75CB0EDF90C700360E1D /* ScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E75C90EDF90C700360E1D /* ScriptCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */; };
 		417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417253A81354BBBC00360F2A /* MediaControlElements.cpp */; };
 		417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 417253A91354BBBC00360F2A /* MediaControlElements.h */; };

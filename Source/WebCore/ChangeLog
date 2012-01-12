@@ -1,3 +1,9 @@
+2012-01-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix WebKit build after r104803, by setting ScriptCallStack.h role to private.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-01-12  Shinya Kawanaka  <shinyak@google.com>
 
         ShadowContentElement should be able to use query.
