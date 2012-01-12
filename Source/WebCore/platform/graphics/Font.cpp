@@ -403,13 +403,33 @@ Font::CodePath Font::codePath(const TextRun& run) const
         if (c <= 0xD7FF)
             return Complex;
 
+        if (c <= 0xDBFF) {
+            // High surrogate
+
+            if (i == run.length() - 1)
+                continue;
+
+            UChar next = run[++i];
+            if (!U16_IS_TRAIL(next))
+                continue;
+
+            UChar32 supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
+
+            if (supplementaryCharacter < 0x1F1E6) // U+1F1E6 through U+1F1FF Regional Indicator Symbols
+                continue;
+            if (supplementaryCharacter <= 0x1F1FF)
+                return Complex;
+
+            // FIXME: Check for Brahmi (U+11000 block), Kaithi (U+11080 block) and other complex scripts
+            // in plane 1 or higher.
+
+            continue;
+        }
+
         if (c < 0xFE20) // U+FE20 through U+FE2F Combining half marks
             continue;
         if (c <= 0xFE2F)
             return Complex;
-
-        // FIXME: Make this loop UTF-16-aware and check for Brahmi (U+11000 block)
-        // Kaithi (U+11080 block) and other complex scripts in plane 1 or higher.
     }
 
     if (typesettingFeatures())
