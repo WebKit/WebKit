@@ -26,10 +26,46 @@
 #include "config.h"
 #include "ScrollElasticityController.h"
 
+#include <sys/time.h>
+#include <sys/sysctl.h>
+
 #if ENABLE(RUBBER_BANDING)
+
+#ifdef BUILDING_ON_LEOPARD
+@interface NSProcessInfo (ScrollAnimatorMacExt)
+- (NSTimeInterval)systemUptime;
+@end
+#endif
+
+#if ENABLE(RUBBER_BANDING)
+static NSTimeInterval systemUptime()
+{
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(systemUptime)])
+        return [[NSProcessInfo processInfo] systemUptime];
+
+    // Get how long system has been up. Found by looking getting "boottime" from the kernel.
+    static struct timeval boottime = {0, 0};
+    if (!boottime.tv_sec) {
+        int mib[2] = {CTL_KERN, KERN_BOOTTIME};
+        size_t size = sizeof(boottime);
+        if (-1 == sysctl(mib, 2, &boottime, &size, 0, 0))
+            boottime.tv_sec = 0;
+    }
+    struct timeval now;
+    if (boottime.tv_sec && -1 != gettimeofday(&now, 0)) {
+        struct timeval uptime;
+        timersub(&now, &boottime, &uptime);
+        NSTimeInterval result = uptime.tv_sec + (uptime.tv_usec / 1E+6);
+        return result;
+    }
+    return 0;
+}
+#endif
+
 
 namespace WebCore {
 
+static const float scrollVelocityZeroingTimeout = 0.10f;
 static const float rubberbandStiffness = 20;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;
@@ -159,6 +195,26 @@ void ScrollElasticityController::stopSnapRubberbandTimer()
 {
     m_client->stopSnapRubberbandTimer();
     m_snapRubberbandTimerIsActive = false;
+}
+
+void ScrollElasticityController::snapRubberBand()
+{
+    CFTimeInterval timeDelta = systemUptime() - m_lastMomentumScrollTimestamp;
+    if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
+        m_momentumVelocity = FloatSize();
+
+    m_inScrollGesture = false;
+
+    if (m_snapRubberbandTimerIsActive)
+        return;
+
+    m_startTime = [NSDate timeIntervalSinceReferenceDate];
+    m_startStretch = FloatSize();
+    m_origOrigin = FloatPoint();
+    m_origVelocity = FloatSize();
+
+    m_client->startSnapRubberbandTimer();
+    m_snapRubberbandTimerIsActive = true;
 }
 
 } // namespace WebCore

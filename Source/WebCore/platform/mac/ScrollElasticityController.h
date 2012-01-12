@@ -66,9 +66,11 @@ public:
 private:
     void stopSnapRubberbandTimer();
 
-    // FIXME: These member variables should be private. They are currently public as a stop-gap measure, while
+    // FIXME: These members should be private. They are currently public as a stop-gap measure, while
     // the rubber-band related code from ScrollAnimatorMac is being moved over.
 public:
+    void snapRubberBand();
+
     ScrollElasticityControllerClient* m_client;
 
     bool m_inScrollGesture;

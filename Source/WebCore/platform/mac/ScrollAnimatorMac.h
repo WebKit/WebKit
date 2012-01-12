@@ -139,7 +139,6 @@ private:
     bool allowsVerticalStretching() const;
     bool allowsHorizontalStretching() const;
     bool pinnedInDirection(float deltaX, float deltaY);
-    void snapRubberBand();
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
     bool smoothScrollWithEvent(const PlatformWheelEvent&);
     void beginScrollGesture();

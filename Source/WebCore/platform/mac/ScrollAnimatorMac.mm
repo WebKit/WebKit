@@ -40,19 +40,11 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
 #include "WebCoreSystemInterface.h"
-#include <sys/time.h>
-#include <sys/sysctl.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
 using namespace WebCore;
 using namespace std;
-
-#ifdef BUILDING_ON_LEOPARD
-@interface NSProcessInfo (ScrollAnimatorMacExt)
-- (NSTimeInterval)systemUptime;
-@end
-#endif
 
 static bool supportsUIStateTransitionProgress()
 {
@@ -74,31 +66,6 @@ static ScrollbarPainter scrollbarPainterForScrollbar(Scrollbar* scrollbar)
 
     return nil;
 }
-
-#if ENABLE(RUBBER_BANDING)
-static NSTimeInterval systemUptime()
-{
-    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(systemUptime)])
-        return [[NSProcessInfo processInfo] systemUptime];
-
-    // Get how long system has been up. Found by looking getting "boottime" from the kernel.
-    static struct timeval boottime = {0, 0};
-    if (!boottime.tv_sec) {
-        int mib[2] = {CTL_KERN, KERN_BOOTTIME};
-        size_t size = sizeof(boottime);
-        if (-1 == sysctl(mib, 2, &boottime, &size, 0, 0))
-            boottime.tv_sec = 0;
-    }
-    struct timeval now;
-    if (boottime.tv_sec && -1 != gettimeofday(&now, 0)) {
-        struct timeval uptime;
-        timersub(&now, &boottime, &uptime);
-        NSTimeInterval result = uptime.tv_sec + (uptime.tv_usec / 1E+6);
-        return result;
-    }
-    return 0;
-}
-#endif
 
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
@@ -1256,7 +1223,7 @@ bool ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
                 if ((pinnedInDirection(eventCoalescedDeltaX, eventCoalescedDeltaY) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_scrollElasticityController.m_lastMomentumScrollTimestamp) {
                     m_scrollElasticityController.m_ignoreMomentumScrolls = true;
                     m_scrollElasticityController.m_momentumScrollInProgress = false;
-                    snapRubberBand();
+                    m_scrollElasticityController.snapRubberBand();
                 }
             }
 
@@ -1295,27 +1262,7 @@ void ScrollAnimatorMac::endScrollGesture()
 {
     didEndScrollGesture();
 
-    snapRubberBand();
-}
-
-void ScrollAnimatorMac::snapRubberBand()
-{
-    CFTimeInterval timeDelta = systemUptime() - m_scrollElasticityController.m_lastMomentumScrollTimestamp;
-    if (m_scrollElasticityController.m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
-        m_scrollElasticityController.m_momentumVelocity = FloatSize();
-
-    m_scrollElasticityController.m_inScrollGesture = false;
-
-    if (m_scrollElasticityController.m_snapRubberbandTimerIsActive)
-        return;
-
-    m_scrollElasticityController.m_startTime = [NSDate timeIntervalSinceReferenceDate];
-    m_scrollElasticityController.m_startStretch = FloatSize();
-    m_scrollElasticityController.m_origOrigin = FloatPoint();
-    m_scrollElasticityController.m_origVelocity = FloatSize();
-
-    m_scrollElasticityController.m_client->startSnapRubberbandTimer();
-    m_scrollElasticityController.m_snapRubberbandTimerIsActive = true;
+    m_scrollElasticityController.snapRubberBand();
 }
 
 void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
