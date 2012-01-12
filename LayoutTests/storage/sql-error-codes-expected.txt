@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 0: Exception thrown in transaction callback.
-CONSOLE MESSAGE: line 0: Cannot call toString() on this object.
+CONSOLE MESSAGE: Exception thrown in transaction callback.
+CONSOLE MESSAGE: Cannot call toString() on this object.
 This test tests the error codes reported in exceptional situations.
 PASS: expected and got error code UNKNOWN_ERR
 PASS: expected and got error code UNKNOWN_ERR

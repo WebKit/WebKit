@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: PLUGIN: NPP_Destroy
+CONSOLE MESSAGE: PLUGIN: NPP_Destroy
 This tests that accessing plug-in script objects from a destroyed plugin cause throws the right exceptions.
 SUCCESS
 

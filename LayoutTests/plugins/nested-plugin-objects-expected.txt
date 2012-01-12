@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: PLUGIN: NPP_Destroy
+CONSOLE MESSAGE: PLUGIN: NPP_Destroy
 This tests that objects from plugin objects are properly cleaned up.
 
 Example:

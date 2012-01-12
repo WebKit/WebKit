@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 0: PLUGIN: Success: NPP_SetWindow was called during plugin destruction
+CONSOLE MESSAGE: PLUGIN: Success: NPP_SetWindow was called during plugin destruction
 This tests whether a NPP_SetWindow is called during plugin destruction.

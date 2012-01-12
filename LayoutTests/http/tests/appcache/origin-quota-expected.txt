@@ -1,5 +1,5 @@
 UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{http, 127.0.0.1, 8000} totalSpaceNeeded:~30000
-CONSOLE MESSAGE: line 0: Application Cache update failed, because size quota was exceeded.
+CONSOLE MESSAGE: Application Cache update failed, because size quota was exceeded.
 This test checks that per-origin application cache quotas are enforced.
 
 This test sets the quota for the origin to 20kb, and attempts to fill it up with 2 iframes that are 13kb each. The application cache download process should fail on the 2nd iframe and the UI Delegate should be informed of the exceeded quota. Increasing the size to 40kb. A 3rd iframe is added, which should succeed.

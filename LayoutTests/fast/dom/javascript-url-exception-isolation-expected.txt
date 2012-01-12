@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: 42
+CONSOLE MESSAGE: 42
 CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
 Exceptions thrown in javascript URLs should not propagate to the main script.
 

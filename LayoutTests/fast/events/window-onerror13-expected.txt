@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: An Error
+CONSOLE MESSAGE: An Error
 Test that error is treated as not handled when window.onerror return value is not 'true'. Bug 67119.
 
 Uncaught error should be printed in console when window.onerror returns not true.

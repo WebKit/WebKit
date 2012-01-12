@@ -3,5 +3,5 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/loading/resources/foo.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/loading/resources/foo.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 The console message above should report failure to load foo.txt due to cross-origin access, not a network error.

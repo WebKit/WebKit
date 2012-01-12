@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: 
+CONSOLE MESSAGE: 
 This tests global code recursion when the JS stack is full.
 PASS: Entering global code with a full JS stack did not crash, and did not allow continued recursion.

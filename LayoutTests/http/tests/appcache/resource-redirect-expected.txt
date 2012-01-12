@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Application Cache update failed, because http://127.0.0.1:8000/appcache/resources/resource-redirect.php was redirected.
+CONSOLE MESSAGE: Application Cache update failed, because http://127.0.0.1:8000/appcache/resources/resource-redirect.php was redirected.
 Test that a redirect makes resource caching fail.
 
 Should say SUCCESS:

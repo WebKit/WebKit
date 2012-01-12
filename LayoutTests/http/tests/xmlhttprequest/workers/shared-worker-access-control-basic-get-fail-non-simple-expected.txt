@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 GET should not trigger a preflight request from a shared worker unless it has non-simple headers.
 
 PASS: Cross-domain access allowed for simple get.

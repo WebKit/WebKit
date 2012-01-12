@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 0: 
-CONSOLE MESSAGE: line 0: 
+CONSOLE MESSAGE: 
+CONSOLE MESSAGE: 
 This tests that having infinite recursion in XMLHttpRequest event handler does not crash. 
 PASS
 

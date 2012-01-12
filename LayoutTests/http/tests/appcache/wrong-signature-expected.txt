@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
+CONSOLE MESSAGE: Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?
 Test that a manifest served with a wrong signature isn't treated as such.
 
 Should say SUCCESS:
