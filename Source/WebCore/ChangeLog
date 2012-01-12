@@ -1,3 +1,25 @@
+2012-01-12  Eric Seidel  <eric@webkit.org>
+
+        Refactor DOMImplementation.hasFeature logic into helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=76212
+
+        Reviewed by Adam Barth.
+
+        This patch should not have any behavior change.  The goal was
+        to move our feature detection towards a more modular architecture
+        (as that seems to be the current trend in webkit).  In a future
+        patch we could easily move the SVG feature detection into the
+        SVG directory, for example.  I've also added a list of all the
+        Event3 features (currently commented out) which makes it obvious
+        how many we're missing.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSVG10Feature):
+        (WebCore::isSVG11Feature):
+        (WebCore::isEvents2Feature):
+        (WebCore::isEvents3Feature):
+        (WebCore::DOMImplementation::hasFeature):
+
 2012-01-12  Adam Barth  <abarth@webkit.org>
 
         NodeIterator loses track of the reference node when the reference node is removed from the document (IETC ni_removeReferenceNode)
