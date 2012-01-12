@@ -137,10 +137,13 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod2", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod2), (intptr_t)2, NoIntrinsic },
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalMethod3", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod3), (intptr_t)0, NoIntrinsic },
+#endif
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestInterfacePrototypeTable = { 5, 3, JSTestInterfacePrototypeTableValues, 0 };
+static const HashTable JSTestInterfacePrototypeTable = { 8, 7, JSTestInterfacePrototypeTableValues, 0 };
 const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &Base::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -313,6 +316,19 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(impl, scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestInterface::s_info))
+        return throwVMTypeError(exec);
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestInterface::s_info);
+    return JSValue::encode(castedThis->supplementalMethod3(exec));
 }
 
 #endif

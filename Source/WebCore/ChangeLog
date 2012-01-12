@@ -1,3 +1,30 @@
+2012-01-11  Kentaro Hara  <haraken@chromium.org>
+
+        Implement the [Supplemental] IDL for custom methods
+        https://bugs.webkit.org/show_bug.cgi?id=76036
+
+        Reviewed by Adam Barth.
+
+        We have implemented the [Supplemental] IDL for non-custom methods in bug 75944.
+        This patch implements it for custom methods. This patch modifies only CodeGeneratorV8.pm,
+        since CodeGeneratorJS.pm requires no change and other code generators
+        do not support custom methods.
+
+        Test: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+
+        * bindings/scripts/test/TestSupplemental.idl: Added a custom method with the [Supplemental] IDL.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Updated the test result.
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod3):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        (-[DOMTestInterface supplementalMethod3]):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+
 2011-12-21  Shaw Andy  <andy.shaw@digia.com>
 
         Fix build issue on Windows when Qt is configured with -ltcg

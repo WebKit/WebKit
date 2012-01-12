@@ -45,6 +45,7 @@
 #endif
 - (void)supplementalMethod1;
 - (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)supplementalMethod3;
 @end
 
 #endif

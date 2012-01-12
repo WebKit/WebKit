@@ -131,6 +131,16 @@
 
 #endif
 
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (void)supplementalMethod3
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::supplementalMethod3(IMPL);
+}
+
+#endif
+
 @end
 
 WebCore::TestInterface* core(DOMTestInterface *wrapper)

@@ -400,7 +400,7 @@ END
         my $name = $function->signature->name;
         my $attrExt = $function->signature->extendedAttributes;
 
-        if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && $function->{overloadIndex} == 1) {
+        if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && !$attrExt->{"ImplementedBy"} && $function->{overloadIndex} == 1) {
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END

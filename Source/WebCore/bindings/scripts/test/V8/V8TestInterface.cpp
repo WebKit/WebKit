@@ -141,6 +141,9 @@ static const BatchedCallback TestInterfaceCallbacks[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"supplementalMethod1", TestInterfaceInternal::supplementalMethod1Callback},
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    {"supplementalMethod3", V8TestInterface::supplementalMethod3Callback},
+#endif
 };
 
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)

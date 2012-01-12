@@ -58,6 +58,9 @@ public:
 
     // Custom attributes
     JSC::JSValue supplementalStr3(TestInterface*, JSC::ExecState*) const;
+
+    // Custom functions
+    JSC::JSValue supplementalMethod3(JSC::ExecState*);
     TestInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
@@ -146,6 +149,7 @@ protected:
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(JSC::ExecState*);
 // Attributes
 
 JSC::JSValue jsTestInterfaceSupplementalStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

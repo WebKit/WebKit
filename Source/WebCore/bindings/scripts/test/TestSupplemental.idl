@@ -39,5 +39,6 @@ module test {
 
         void supplementalMethod1();
         [CallWith=ScriptExecutionContext] TestObj supplementalMethod2(in DOMString strArg, in TestObj objArg) raises(DOMException);
+        [Custom] void supplementalMethod3();
     };
 }
