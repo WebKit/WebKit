@@ -1,3 +1,33 @@
+2012-01-12  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: clean up logging and provide a real --help message
+        https://bugs.webkit.org/show_bug.cgi?id=76142
+
+        Reviewed by Adam Barth.
+
+        This test is mostly more refactoring - it calls objects in
+        unittest directly instead of routing through unittest.main() --
+        in order to gain more control over the logging and to provide a
+        correct --help message. This will also give us a better
+        foundation for adding more feautures down the road.
+
+        This patch adds different levels of logging controlled by the
+        '-s', '-q', and '-v' options (see --help for details), and
+        removes the --verbose-logging option.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/test/main.py:
+        (Tester):
+        (Tester.clean_packages):
+        (Tester.__init__):
+        (Tester.parse_args):
+        (Tester.configure):
+        (Tester._configure_logging):
+        (Tester.find_modules):
+        (Tester._exclude):
+        (Tester._modules_from_paths):
+        (Tester.run_tests):
+
 2012-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Make the new WTF module build on Qt
