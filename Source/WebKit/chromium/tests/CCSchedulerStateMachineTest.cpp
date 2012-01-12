@@ -77,8 +77,11 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.setUpdateMoreResourcesPending(false);
         state.setVisible(true);
 
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
+
         state.didLeaveVSync();
         EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
         state.didEnterVSync();
         EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
     }
@@ -91,6 +94,7 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.setNeedsCommit(true);
         state.setUpdateMoreResourcesPending(false);
         state.setVisible(true);
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
     }
 
     // Begin the frame, make sure needsCommit and commitState update correctly.
@@ -100,6 +104,7 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_FRAME);
         EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
         EXPECT_FALSE(state.needsCommit());
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
     }
 }
 
@@ -108,6 +113,7 @@ TEST(CCSchedulerStateMachineTest, TestSetForcedRedrawDoesNotSetsNormalRedraw)
     CCSchedulerStateMachine state;
     state.setNeedsForcedRedraw();
     EXPECT_FALSE(state.redrawPending());
+    EXPECT_TRUE(state.vsyncCallbackNeeded());
 }
 
 TEST(CCSchedulerStateMachineTest, TestDoestDrawTwiceInSameFrame)
@@ -115,6 +121,7 @@ TEST(CCSchedulerStateMachineTest, TestDoestDrawTwiceInSameFrame)
     CCSchedulerStateMachine state;
     state.setVisible(true);
     state.setNeedsRedraw();
+    EXPECT_TRUE(state.vsyncCallbackNeeded());
     state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
@@ -126,10 +133,12 @@ TEST(CCSchedulerStateMachineTest, TestDoestDrawTwiceInSameFrame)
 
     // Move to another frame. This should now draw.
     state.didLeaveVSync();
+    EXPECT_TRUE(state.vsyncCallbackNeeded());
     state.didEnterVSync();
 
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.updateState(CCSchedulerStateMachine::ACTION_DRAW);
+    EXPECT_FALSE(state.vsyncCallbackNeeded());
 }
 
 TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
@@ -140,34 +149,42 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
         for (unsigned j = 0; j < 2; ++j) {
             StateMachine state;
             state.setCommitState(allCommitStates[i]);
-            if (!j) {
+            bool visible = j;
+            if (!visible) {
                 state.didEnterVSync();
                 state.setVisible(false);
-            }
+            } else
+                state.setVisible(true);
 
             // Case 1: needsCommit=false updateMoreResourcesPending=false.
             state.setNeedsCommit(false);
             state.setUpdateMoreResourcesPending(false);
+            EXPECT_FALSE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
 
             // Case 2: needsCommit=false updateMoreResourcesPending=true.
             state.setNeedsCommit(false);
             state.setUpdateMoreResourcesPending(true);
+            if (visible)
+                EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
 
             // Case 3: needsCommit=true updateMoreResourcesPending=false.
             state.setNeedsCommit(true);
             state.setUpdateMoreResourcesPending(false);
+            EXPECT_FALSE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
 
             // Case 4: needsCommit=true updateMoreResourcesPending=true.
             state.setNeedsCommit(true);
             state.setUpdateMoreResourcesPending(true);
+            if (visible)
+                EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
         }
     }
 
-    // When on vsync, or not on vsync but needsForcedRedraw set, should always draw expect if you're ready to commit, in which case commit.
+    // When on vsync, or not on vsync but needsForcedRedraw set, should always draw except if you're ready to commit, in which case commit.
     for (size_t i = 0; i < numCommitStates; ++i) {
         for (unsigned j = 0; j < 2; ++j) {
             StateMachine state;
@@ -188,21 +205,25 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
             // Case 1: needsCommit=false updateMoreResourcesPending=false.
             state.setNeedsCommit(false);
             state.setUpdateMoreResourcesPending(false);
+            EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_EQ(expectedAction, state.nextAction());
 
             // Case 2: needsCommit=false updateMoreResourcesPending=true.
             state.setNeedsCommit(false);
             state.setUpdateMoreResourcesPending(true);
+            EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_EQ(expectedAction, state.nextAction());
 
             // Case 3: needsCommit=true updateMoreResourcesPending=false.
             state.setNeedsCommit(true);
             state.setUpdateMoreResourcesPending(false);
+            EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_EQ(expectedAction, state.nextAction());
 
             // Case 4: needsCommit=true updateMoreResourcesPending=true.
             state.setNeedsCommit(true);
             state.setUpdateMoreResourcesPending(true);
+            EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_EQ(expectedAction, state.nextAction());
         }
     }

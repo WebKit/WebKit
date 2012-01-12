@@ -91,6 +91,7 @@ public:
 
     virtual void setClient(WebCore::CCTimeSourceClient* client) { m_client = client; }
     virtual void setActive(bool b) { m_active = b; }
+    virtual bool active() const { return m_active; }
 
     void tick()
     {

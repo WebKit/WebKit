@@ -68,6 +68,10 @@ public:
     Action nextAction() const;
     void updateState(Action);
 
+    // Indicates whether the scheduler needs a vsync callback in order to make
+    // progress.
+    bool vsyncCallbackNeeded() const;
+
     // Indicates that the system has entered and left a vsync callback.
     // The scheduler will not draw more than once in a given vsync callback.
     void didEnterVSync();

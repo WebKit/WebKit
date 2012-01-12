@@ -46,10 +46,12 @@ TEST(CCDelayBasedTimeSourceTest, TaskPostedAndTickCalled)
 
     timer->setMonotonicallyIncreasingTimeMs(0);
     timer->setActive(true);
+    EXPECT_TRUE(timer->active());
     EXPECT_TRUE(thread.hasPendingTask());
 
     timer->setMonotonicallyIncreasingTimeMs(16);
     thread.runPendingTask();
+    EXPECT_TRUE(timer->active());
     EXPECT_TRUE(client.tickCalled());
 }
 

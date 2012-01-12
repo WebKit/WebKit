@@ -118,6 +118,18 @@ void CCSchedulerStateMachine::updateState(Action action)
     }
 }
 
+bool CCSchedulerStateMachine::vsyncCallbackNeeded() const
+{
+    if (!m_visible) {
+        if (m_needsForcedRedraw)
+            return true;
+
+        return false;
+    }
+
+    return m_needsRedraw || m_needsForcedRedraw || m_updateMoreResourcesPending;
+}
+
 void CCSchedulerStateMachine::didEnterVSync()
 {
     m_insideVSync = true;

@@ -49,6 +49,7 @@ public:
     virtual ~CCTimeSource() { }
     virtual void setClient(CCTimeSourceClient*) = 0;
     virtual void setActive(bool) = 0;
+    virtual bool active() const = 0;
 };
 
 }

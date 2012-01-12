@@ -36,9 +36,7 @@ CCScheduler::CCScheduler(CCSchedulerClient* client, PassOwnPtr<CCFrameRateContro
 {
     ASSERT(m_client);
     m_frameRateController->setClient(this);
-
-    // FIXME: make the CCSchedulerStateMachine turn off FrameRateController it isn't needed.
-    m_frameRateController->setActive(true);
+    m_frameRateController->setActive(m_stateMachine.vsyncCallbackNeeded());
 }
 
 CCScheduler::~CCScheduler()
@@ -49,7 +47,9 @@ CCScheduler::~CCScheduler()
 void CCScheduler::setVisible(bool visible)
 {
     m_stateMachine.setVisible(visible);
+    processScheduledActions();
 }
+
 void CCScheduler::setNeedsCommit()
 {
     m_stateMachine.setNeedsCommit();
@@ -114,8 +114,10 @@ CCSchedulerStateMachine::Action CCScheduler::nextAction()
 void CCScheduler::processScheduledActions()
 {
     // Early out so we don't spam TRACE_EVENTS with useless processScheduledActions.
-    if (nextAction() == CCSchedulerStateMachine::ACTION_NONE)
+    if (nextAction() == CCSchedulerStateMachine::ACTION_NONE) {
+        m_frameRateController->setActive(m_stateMachine.vsyncCallbackNeeded());
         return;
+    }
 
     // This function can re-enter itself. For example, draw may call
     // setNeedsCommit. Proceeed with caution.
@@ -151,6 +153,9 @@ void CCScheduler::processScheduledActions()
             break;
         }
     } while (action != CCSchedulerStateMachine::ACTION_NONE);
+
+    // Activate or deactivate the frame rate controller.
+    m_frameRateController->setActive(m_stateMachine.vsyncCallbackNeeded());
 }
 
 }

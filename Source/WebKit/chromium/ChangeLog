@@ -1,3 +1,21 @@
+2012-01-12  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Turn off FrameRateController timesource when it is not needed
+        https://bugs.webkit.org/show_bug.cgi?id=76149
+
+        Reviewed by James Robinson.
+
+        * tests/CCDelayBasedTimeSourceTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::timeout):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCSchedulerTestCommon.h:
+        (WebKitTests::FakeCCTimeSource::active):
+
 2012-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

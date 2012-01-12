@@ -45,6 +45,7 @@ public:
     virtual void setClient(CCTimeSourceClient* client) { m_client = client; }
 
     virtual void setActive(bool);
+    virtual bool active() const { return m_state != STATE_INACTIVE; }
 
     // CCTimerClient implementation.
     virtual void onTimerFired();

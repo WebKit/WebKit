@@ -77,6 +77,7 @@ TEST(CCSchedulerTest, RequestCommit)
     scheduler->setNeedsCommit();
     EXPECT_EQ(1, client.numActions());
     EXPECT_STREQ("scheduledActionBeginFrame", client.action(0));
+    EXPECT_FALSE(timeSource->active());
     client.reset();
 
     // Since, hasMoreResourceUpdates is set to false,
@@ -86,17 +87,18 @@ TEST(CCSchedulerTest, RequestCommit)
     EXPECT_EQ(2, client.numActions());
     EXPECT_STREQ("scheduledActionUpdateMoreResources", client.action(0));
     EXPECT_STREQ("scheduledActionCommit", client.action(1));
+    EXPECT_TRUE(timeSource->active());
     client.reset();
 
     // Tick should draw.
     timeSource->tick();
     EXPECT_EQ(1, client.numActions());
     EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
+    EXPECT_FALSE(timeSource->active());
     client.reset();
 
-    // Tick should do nothing.
-    timeSource->tick();
-    EXPECT_EQ(0, client.numActions());
+    // Timer should be off.
+    EXPECT_FALSE(timeSource->active());
 }
 
 TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
@@ -126,6 +128,7 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
 
     // Tick should draw but then begin another frame.
     timeSource->tick();
+    EXPECT_FALSE(timeSource->active());
     EXPECT_EQ(2, client.numActions());
     EXPECT_STREQ("scheduledActionDrawAndSwap", client.action(0));
     EXPECT_STREQ("scheduledActionBeginFrame", client.action(1));
@@ -175,15 +178,18 @@ TEST(CCSchedulerTest, RequestRedrawInsideDraw)
 
     scheduler->setNeedsRedraw();
     EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
     EXPECT_EQ(0, client.numDraws());
 
     timeSource->tick();
     EXPECT_EQ(1, client.numDraws());
     EXPECT_TRUE(scheduler->redrawPending());
+    EXPECT_TRUE(timeSource->active());
 
     timeSource->tick();
     EXPECT_EQ(2, client.numDraws());
     EXPECT_FALSE(scheduler->redrawPending());
+    EXPECT_FALSE(timeSource->active());
 }
 
 class SchedulerClientThatSetNeedsCommitInsideDraw : public CCSchedulerClient {
@@ -228,14 +234,17 @@ TEST(CCSchedulerTest, RequestCommitInsideDraw)
     scheduler->setNeedsRedraw();
     EXPECT_TRUE(scheduler->redrawPending());
     EXPECT_EQ(0, client.numDraws());
+    EXPECT_TRUE(timeSource->active());
 
     timeSource->tick();
+    EXPECT_FALSE(timeSource->active());
     EXPECT_EQ(1, client.numDraws());
     EXPECT_TRUE(scheduler->commitPending());
     scheduler->beginFrameComplete();
 
     timeSource->tick();
     EXPECT_EQ(2, client.numDraws());
+    EXPECT_FALSE(timeSource->active());
     EXPECT_FALSE(scheduler->redrawPending());
 }
 

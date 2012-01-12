@@ -1,3 +1,25 @@
+2012-01-12  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Turn off FrameRateController timesource when it is not needed
+        https://bugs.webkit.org/show_bug.cgi?id=76149
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.h:
+        (WebCore::CCDelayBasedTimeSource::active):
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        (WebCore::CCFrameRateController::setActive):
+        (WebCore::CCFrameRateController::onTimerTick):
+        * platform/graphics/chromium/cc/CCFrameRateController.h:
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::CCScheduler):
+        (WebCore::CCScheduler::setVisible):
+        (WebCore::CCScheduler::processScheduledActions):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::vsyncCallbackNeeded):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        * platform/graphics/chromium/cc/CCTimeSource.h:
+
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
         Move snapRubberBandTimerFired to ScrollElasticityController
