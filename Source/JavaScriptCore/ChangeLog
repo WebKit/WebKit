@@ -1,3 +1,12 @@
+2012-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Make the new WTF module build on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=76163
+
+        Reviewed by Tor Arne Vestbø.
+
+        * JavaScriptCore.pro: Removed wtf from the subdirs to build.
+
 2012-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlock::m_executeCounter should be renamed to CodeBlock::m_jitExecuteCounter

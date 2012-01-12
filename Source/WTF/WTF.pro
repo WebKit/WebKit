@@ -3,19 +3,14 @@
 #
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
-
 TEMPLATE = lib
 TARGET = WTF
 
-include(wtf.pri)
+include(WTF.pri)
 
 CONFIG += staticlib
 
-QT += core
-QT -= gui
-
-*-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
-*-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
+VPATH += $$PWD/../JavaScriptCore/wtf
 
 HEADERS += \
     Alignment.h \
@@ -163,7 +158,6 @@ HEADERS += \
     VMTags.h \
     WTFThreadData.h
 
-
 unix: HEADERS += ThreadIdentifierDataPthreads.h
 
 SOURCES += \
@@ -227,6 +221,13 @@ win*|wince*: SOURCES += \
     ThreadSpecificWin.cpp \
     ThreadingWin.cpp
 
+
+QT += core
+QT -= gui
+
+*-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
+*-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
+
 *sh4* {
     QMAKE_CXXFLAGS += -mieee -w
     QMAKE_CFLAGS   += -mieee -w
@@ -250,3 +251,4 @@ lessThan(QT_GCC_MAJOR_VERSION, 5) {
         }
     }
 }
+

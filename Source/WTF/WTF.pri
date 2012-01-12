@@ -7,14 +7,15 @@
 
 load(features)
 
-SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf
+SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WTF
+OLD_SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf
 
 INCLUDEPATH += \
-    $$SOURCE_DIR/.. \
-    $$SOURCE_DIR \
-    $$SOURCE_DIR/gobject \
-    $$SOURCE_DIR/qt \
-    $$SOURCE_DIR/unicode
+    $$OLD_SOURCE_DIR/.. \
+    $$OLD_SOURCE_DIR \
+    $$OLD_SOURCE_DIR/gobject \
+    $$OLD_SOURCE_DIR/qt \
+    $$OLD_SOURCE_DIR/unicode
 
 contains(CONFIG, use_system_icu) {
     DEFINES += WTF_USE_ICU_UNICODE=1

@@ -28,24 +28,11 @@
 #endif
 
 #include <wtf/Platform.h>
-
-/* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
-#if USE(EXPORT_MACROS)
-
 #include <wtf/ExportMacros.h>
-
-#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
-#define WTF_EXPORT_PRIVATE WTF_EXPORT
-#else
-#define WTF_EXPORT_PRIVATE WTF_IMPORT
+// WTF cannot depend on JSC even if USE(JSC).
+#if USE(JSC) && !defined(BUILDING_WTF)
+#include "JSExportMacros.h"
 #endif
-
-#else /* !USE(EXPORT_MACROS) */
-
-#define WTF_EXPORT_PRIVATE
-#define JS_EXPORT_PRIVATE
-
-#endif /* USE(EXPORT_MACROS) */
 
 #if OS(WINDOWS)
 
