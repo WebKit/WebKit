@@ -1,3 +1,16 @@
+2012-01-12  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2][Mac] Conflict of MacTypes.h defining a Fixed type after r104560.
+        https://bugs.webkit.org/show_bug.cgi?id=76175
+
+        Defining ENABLE_CSS_FILTERS leads to ambiguous references
+        due to MacTypes.h being included.
+        Defining CF_OPEN_SOURCE works around this problem.
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/Platform.h:
+
 2012-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Make the new WTF module build on Qt
