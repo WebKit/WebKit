@@ -1,3 +1,27 @@
+2012-01-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Move macro checking to functions' definition in ewk_js.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=76037
+
+        Reviewed by Andreas Kling.
+
+        Moves macro checking to functions' definition instead of duplicate them in source depending on macro value.
+        It's known practice in WebKit and EFL port.
+        Duplicating functions in the same file whose return value is different may confuse user,
+        especially if macro isn't included in a patch.
+
+        * ewk/ewk_js.cpp:
+        (ewk_js_object_new):
+        (ewk_js_object_free):
+        (ewk_js_object_view_get):
+        (ewk_js_object_properties_get):
+        (ewk_js_object_name_get):
+        (ewk_js_object_invoke):
+        (ewk_js_object_type_get):
+        (ewk_js_object_type_set):
+        (ewk_js_variant_free):
+        (ewk_js_variant_array_free):
+
 2012-01-12  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Modify some API's implementation to let it directly pass Eina_Rectangle into IntRect.

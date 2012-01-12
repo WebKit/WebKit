@@ -525,9 +525,11 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
 
     return true;
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     Ewk_JS_Object* object;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsMetaClass, 0);
@@ -593,10 +595,14 @@ Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
 error:
     ewk_js_object_free(object);
     return 0;
+#else
+    return 0;
+#endif
 }
 
 void ewk_js_object_free(Ewk_JS_Object* jsObject)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN(jsObject);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject);
     Eina_Bool script_obj = !jsObject->cls->meta;
@@ -610,31 +616,45 @@ void ewk_js_object_free(Ewk_JS_Object* jsObject)
 
     if (script_obj)
         free(jsObject);
+#endif
 }
 
 Evas_Object* ewk_js_object_view_get(const Ewk_JS_Object* jsObject)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->view;
+#else
+    return 0;
+#endif
 }
 
 Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->properties;
+#else
+    return 0;
+#endif
 }
 
 const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, 0);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, 0);
     return jsObject->name;
+#else
+    return 0;
+#endif
 }
 
 Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, int argCount, Ewk_JS_Variant* result)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     NPVariant* np_args;
     NPVariant np_result;
     bool fail = false;
@@ -663,36 +683,48 @@ Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, in
 end:
     free(np_args);
     return fail;
+#else
+    return false;
+#endif
 }
 
 Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN_VAL(jsObject, EWK_JS_OBJECT_OBJECT);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject, EWK_JS_OBJECT_OBJECT);
 
     return jsObject->type;
+#else
+    return EWK_JS_OBJECT_INVALID;
+#endif
 }
 
 void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN(jsObject);
     EINA_MAGIC_CHECK_OR_RETURN(jsObject);
 
     jsObject->type = type;
+#endif
 }
 
 void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN(jsVariant);
     if (jsVariant->type == EWK_JS_VARIANT_STRING)
         free(jsVariant->value.s);
     else if (jsVariant->type == EWK_JS_VARIANT_OBJECT)
         ewk_js_object_free(jsVariant->value.o);
     free(jsVariant);
+#endif
 }
 
 void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN(jsVariant);
     for (int i = 0; i < count; i++) {
         if (jsVariant[i].type == EWK_JS_VARIANT_STRING)
@@ -701,54 +733,5 @@ void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
             ewk_js_object_free(jsVariant[i].value.o);
     }
     free(jsVariant);
+#endif
 }
-
-#else
-
-Eina_Hash* ewk_js_object_properties_get(const Ewk_JS_Object* jsObject)
-{
-    return 0;
-}
-
-const char* ewk_js_object_name_get(const Ewk_JS_Object* jsObject)
-{
-    return 0;
-}
-
-Evas_Object* ewk_js_object_view_get(const Ewk_JS_Object* jsObject)
-{
-    return 0;
-}
-
-void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
-{
-}
-
-void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
-{
-}
-
-Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
-{
-    return 0;
-}
-
-void ewk_js_object_free(Ewk_JS_Object* jsObject)
-{
-}
-
-Eina_Bool ewk_js_object_invoke(Ewk_JS_Object* jsObject, Ewk_JS_Variant* args, int argCount, Ewk_JS_Variant* result)
-{
-    return false;
-}
-
-Ewk_JS_Object_Type ewk_js_object_type_get(Ewk_JS_Object* jsObject)
-{
-    return EWK_JS_OBJECT_INVALID;
-}
-
-void ewk_js_object_type_set(Ewk_JS_Object* jsObject, Ewk_JS_Object_Type type)
-{
-}
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
