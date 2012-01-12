@@ -691,13 +691,13 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
             GetterSetter* accessor = GetterSetter::create(exec);
-            if (oldDescriptor.getter()) {
+            if (oldDescriptor.getterPresent()) {
                 attributes |= Accessor;
-                accessor->setGetter(exec->globalData(), asObject(oldDescriptor.getter()));
+                accessor->setGetter(exec->globalData(), oldDescriptor.getterObject());
             }
-            if (oldDescriptor.setter()) {
+            if (oldDescriptor.setterPresent()) {
                 attributes |= Accessor;
-                accessor->setSetter(exec->globalData(), asObject(oldDescriptor.setter()));
+                accessor->setSetter(exec->globalData(), oldDescriptor.setterObject());
             }
             target->methodTable()->putWithAttributes(target, exec, propertyName, accessor, attributes);
             return true;
@@ -711,12 +711,12 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
         return true;
     }
     attributes &= ~ReadOnly;
-    if (descriptor.getter() && descriptor.getter().isObject())
-        target->methodTable()->defineGetter(target, exec, propertyName, asObject(descriptor.getter()), attributes);
+    if (descriptor.getterPresent())
+        target->methodTable()->defineGetter(target, exec, propertyName, descriptor.getterObject(), attributes);
     if (exec->hadException())
         return false;
-    if (descriptor.setter() && descriptor.setter().isObject())
-        target->methodTable()->defineSetter(target, exec, propertyName, asObject(descriptor.setter()), attributes);
+    if (descriptor.setterPresent())
+        target->methodTable()->defineSetter(target, exec, propertyName, descriptor.setterObject(), attributes);
     return !exec->hadException();
 }
 
@@ -823,15 +823,15 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
         return false;
     GetterSetter* getterSetter = asGetterSetter(accessor);
     if (current.attributesEqual(descriptor)) {
-        if (descriptor.setter())
-            getterSetter->setSetter(exec->globalData(), asObject(descriptor.setter()));
-        if (descriptor.getter())
-            getterSetter->setGetter(exec->globalData(), asObject(descriptor.getter()));
+        if (descriptor.setterPresent())
+            getterSetter->setSetter(exec->globalData(), descriptor.setterObject());
+        if (descriptor.getterPresent())
+            getterSetter->setGetter(exec->globalData(), descriptor.getterObject());
         return true;
     }
     object->methodTable()->deleteProperty(object, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
-    if (descriptor.setter() || descriptor.getter())
+    if (descriptor.setterPresent() || descriptor.getterPresent())
         attrs |= Accessor;
     object->putDirect(exec->globalData(), propertyName, getterSetter, attrs);
     return true;

@@ -354,19 +354,15 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
 
     if (descriptor.isAccessorDescriptor()) {
         JSObject* getter = 0;
-        if (descriptor.getter() && descriptor.getter().isObject())
-            getter = asObject(descriptor.getter());
-        if (!getter && oldDescriptor.isAccessorDescriptor()) {
-            if (oldDescriptor.getter() && oldDescriptor.getter().isObject())
-                getter = asObject(oldDescriptor.getter());
-        }
+        if (descriptor.getterPresent())
+            getter = descriptor.getterObject();
+        else if (oldDescriptor.isAccessorDescriptor())
+            getter = oldDescriptor.getterObject();
         JSObject* setter = 0;
-        if (descriptor.setter() && descriptor.setter().isObject())
-            setter = asObject(descriptor.setter());
-        if (!setter && oldDescriptor.isAccessorDescriptor()) {
-            if (oldDescriptor.setter() && oldDescriptor.setter().isObject())
-                setter = asObject(oldDescriptor.setter());
-        }
+        if (descriptor.setterPresent())
+            setter = descriptor.setterObject();
+        else if (oldDescriptor.isAccessorDescriptor())
+            setter = oldDescriptor.setterObject();
 
         GetterSetter* accessor = GetterSetter::create(exec);
         if (getter)
@@ -491,6 +487,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
             }
             // 10.b. else, the [[Configurable]] field of current is true, so any change is acceptable.
         } else {
+            ASSERT(current.isAccessorDescriptor() && current.getterPresent() && current.setterPresent());
             // 11. Else, IsAccessorDescriptor(current) and IsAccessorDescriptor(Desc) are both true so, if the [[Configurable]] field of current is false, then
             if (!current.configurable()) {
                 // 11.i. Reject, if the [[Set]] field of Desc is present and SameValue(Desc.[[Set]], current.[[Set]]) is false.

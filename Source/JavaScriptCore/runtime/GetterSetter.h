@@ -56,9 +56,9 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         JSObject* getter() const { return m_getter.get(); }
-        void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
+        void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.setMayBeNull(globalData, this, getter); }
         JSObject* setter() const { return m_setter.get(); }
-        void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
+        void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.setMayBeNull(globalData, this, setter); }
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), &s_info);

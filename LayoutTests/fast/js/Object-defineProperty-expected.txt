@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
 PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {}), 'foo')) is JSON.stringify({writable: false, enumerable: false, configurable: false})
-PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {get:undefined}), 'foo')) is JSON.stringify({writable: true, enumerable: false, configurable: false})
+PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {get:undefined}), 'foo')) is JSON.stringify({enumerable: false, configurable: false})
 PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, writable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
 PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, writable: true}), 'foo')) is JSON.stringify({value: 1, writable: true, enumerable: false, configurable: false})
 PASS JSON.stringify(Object.getOwnPropertyDescriptor(Object.defineProperty({}, 'foo', {value:1, enumerable: false}), 'foo')) is JSON.stringify({value: 1, writable: false, enumerable: false, configurable: false})
@@ -22,7 +22,7 @@ PASS Object.defineProperty(null) threw exception TypeError: Properties can only 
 PASS Object.defineProperty('foo') threw exception TypeError: Properties can only be defined on Objects..
 PASS Object.defineProperty({}) threw exception TypeError: Property description must be an object..
 PASS Object.defineProperty({}, 'foo') threw exception TypeError: Property description must be an object..
-PASS Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo is true
+PASS Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
 PASS Object.defineProperty({get foo() { return true; } }, 'foo', {configurable:false}).foo is true
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {writable: true}) threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
@@ -58,6 +58,26 @@ PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', 
 PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {set: setter1}) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
 PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {get: getter1}).foo threw exception called getter1.
 PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1, configurable: true}), 'foo', {set: setter1}).foo='test' threw exception called setter1.
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo is 42
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo = 42; o.result; is 42
+PASS var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(x){this.result = x;}}); o.foo is undefined
+PASS var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(x){this.result = x;}}); o.foo = 42; o.result; is 42
+PASS var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo is undefined
+PASS var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo = 42; o.result; is 42
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo is 42
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo is 42
+PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo is undefined
+PASS var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo is 13
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo = 42; o.result; is 42
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:undefined}); o.foo is undefined
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:undefined}); o.foo = 42; o.result; is 42
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo is 42
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result; is 13
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo is 42
+PASS var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
 PASS successfullyParsed is true
 
 TEST COMPLETE

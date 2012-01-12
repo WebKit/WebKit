@@ -51,6 +51,8 @@ namespace JSC {
         JSValue value() const { return m_value; }
         JSValue getter() const;
         JSValue setter() const;
+        JSObject* getterObject() const;
+        JSObject* setterObject() const;
         void setUndefined();
         void setDescriptor(JSValue value, unsigned attributes);
         void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
