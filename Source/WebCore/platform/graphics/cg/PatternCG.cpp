@@ -32,6 +32,14 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
 namespace WebCore {
 
 static void patternCallback(void* info, CGContextRef context)
@@ -57,6 +65,11 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
     AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
     patternTransform.scaleNonUniform(1, -1);
     patternTransform.translate(0, -tileRect.height());
+
+    // If we're repeating in both directions, we can use image-backed patterns
+    // instead of custom patterns, and avoid tiling-edge pixel cracks.
+    if (m_repeatX && m_repeatY)
+        return wkCGPatternCreateWithImageAndTransform(tileImage()->getCGImageRef(), patternTransform, wkPatternTilingConstantSpacing);
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also
     // result in nothing being rendered.

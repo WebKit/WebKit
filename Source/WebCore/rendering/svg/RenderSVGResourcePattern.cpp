@@ -114,10 +114,12 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         if (!buildTileImageTransform(object, m_attributes, patternElement, tileBoundaries, tileImageTransform))
             return false;
 
-        AffineTransform absoluteTransform;
-        SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
+        AffineTransform absoluteTransformIgnoringRotation;
+        SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransformIgnoringRotation);
 
-        FloatRect absoluteTileBoundaries = absoluteTransform.mapRect(tileBoundaries);
+        // Ignore 2D rotation, as it doesn't affect the size of the tile.
+        SVGImageBufferTools::clear2DRotation(absoluteTransformIgnoringRotation);
+        FloatRect absoluteTileBoundaries = absoluteTransformIgnoringRotation.mapRect(tileBoundaries);
 
         // Build tile image.
         OwnPtr<ImageBuffer> tileImage = createTileImage(object, m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform);
