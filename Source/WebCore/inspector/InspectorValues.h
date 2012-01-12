@@ -244,10 +244,8 @@ public:
     const_iterator begin() const { return m_data.begin(); }
     const_iterator end() const { return m_data.end(); }
 
-protected:
-    InspectorArray();
-
 private:
+    InspectorArray();
     Vector<RefPtr<InspectorValue> > m_data;
 };
 

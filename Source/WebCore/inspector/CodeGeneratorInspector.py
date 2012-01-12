@@ -898,115 +898,60 @@ class TypeBindings:
 
                 return PlainObjectBinding
         elif json_typable["type"] == "array":
+            if "items" in json_typable:
 
-            class ArrayBinding:
-                @staticmethod
-                def get_code_generator():
+                class CodeGenerator:
+                    @staticmethod
+                    def generate_type_builder(writer, forward_listener):
 
-                    class CodeGenerator:
-                        @staticmethod
-                        def generate_type_builder(writer, forward_listener):
-                            helper.write_doc(writer)
-                            class_name = fixed_type_name.class_name
-                            fixed_type_name.output_comment(writer)
-                            writer.newline("class ")
-                            writer.append(class_name)
-                            writer.append(" : public InspectorArray {\n")
-                            writer.newline("private:\n")
-                            writer.newline("    %s() { }\n" % fixed_type_name.class_name)
-                            writer.append("\n")
-                            writer.newline("public:\n")
-                            ad_hoc_type_writer = writer.insert_writer("    ")
-
-                            if "items" in json_typable:
-
-                                class AdHocTypeContext:
-                                    @staticmethod
-                                    def get_type_name_fix():
-                                        class NameFix:
-                                            class_name = "Item"
-
-                                            @staticmethod
-                                            def output_comment(writer):
-                                                pass
-
-                                        return NameFix
+                        class AdHocTypeContext:
+                            @staticmethod
+                            def get_type_name_fix():
+                                class NameFix:
+                                    class_name = fixed_type_name.class_name + "Item"
 
                                     @staticmethod
-                                    def call_generate_type_builder(code_generator):
-                                        code_generator.generate_type_builder(ad_hoc_type_writer, forward_listener)
+                                    def output_comment(writer):
+                                        fixed_type_name.output_comment(writer)
+                                        writer.newline("// Named as an item of array.\n")
 
-                                item_type_binding = resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
-                            else:
-                                item_type_binding = RawTypeBinding(RawTypes.Any)
+                                return NameFix
 
-                            for item_type_opt in MethodGenerateModes.get_modes(item_type_binding):
-                                writer.newline("    void addItem")
-                                writer.append("(%s value)\n" % item_type_opt.get_c_param_type_text(item_type_binding))
-                                writer.newline("    {\n")
-                                writer.newline("        this->push%s(%s);\n"
-                                    % (item_type_binding.reduce_to_raw_type().get_setter_name(),
-                                       item_type_opt.get_setter_value_expression(item_type_binding, "value")))
-                                writer.newline("    }\n")
+                            @staticmethod
+                            def call_generate_type_builder(code_generator):
+                                code_generator.generate_type_builder(writer, forward_listener)
 
-                            writer.append("\n")
-                            writer.newline("    static PassRefPtr<%s> create() {\n" % fixed_type_name.class_name)
-                            writer.newline("        return adoptRef(new %s());\n" % fixed_type_name.class_name)
-                            writer.newline("    }\n")
+                        resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
 
-                            code_generator = item_type_binding.get_code_generator()
-                            if code_generator:
-                                code_generator.register_use(forward_listener)
+                    @staticmethod
+                    def register_use(forward_listener):
+                        pass
 
-                            writer.newline("};\n\n")
+                default_binding_code_generator = CodeGenerator
 
-                        @staticmethod
-                        def generate_forward_declaration(writer):
-                            class_name = fixed_type_name.class_name
-                            writer.newline("class ")
-                            writer.append(class_name)
-                            writer.append(";\n")
-
-                        @staticmethod
-                        def register_use(forward_listener):
-                            helper.add_to_forward_listener(forward_listener)
-
-                    return CodeGenerator
-
-                @classmethod
-                def get_in_c_type_text(cls, optional):
-                    return "PassRefPtr<%s%s>" % (helper.full_name_prefix, fixed_type_name.class_name)
-
-                @staticmethod
-                def get_setter_value_expression_pattern():
-                    return None
-
-                @staticmethod
-                def reduce_to_raw_type():
-                    return RawTypes.Array
-
-            return ArrayBinding
+        else:
+            default_binding_code_generator = None
 
         raw_type = RawTypes.get(json_typable["type"])
 
-        return RawTypeBinding(raw_type)
+        class RawTypesBinding:
+            @staticmethod
+            def get_code_generator():
+                return default_binding_code_generator
 
+            @classmethod
+            def get_in_c_type_text(cls, optional):
+                return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
 
-class RawTypeBinding:
-    def __init__(self, raw_type):
-        self.raw_type_ = raw_type
+            @staticmethod
+            def get_setter_value_expression_pattern():
+                return None
 
-    def get_code_generator(self):
-        return None
+            @staticmethod
+            def reduce_to_raw_type():
+                return raw_type
 
-    def get_in_c_type_text(self, optional):
-        return self.raw_type_.get_c_param_type(ParamType.EVENT, optional).get_text()
-
-    def get_setter_value_expression_pattern(self):
-        return None
-
-    def reduce_to_raw_type(self):
-        return self.raw_type_
+        return RawTypesBinding
 
 
 class TypeData(object):
@@ -1021,23 +966,12 @@ class TypeData(object):
         json_type_name = json_type["type"]
         raw_type = RawTypes.get(json_type_name)
         self.raw_type_ = raw_type
-        self.binding_being_resolved_ = False
-        self.binding_ = None
+        self.binding_ = TypeBindings.create_named_type_declaration(json_type, json_domain["domain"], self)
 
     def get_raw_type(self):
         return self.raw_type_
 
     def get_binding(self):
-        if not self.binding_:
-            if self.binding_being_resolved_:
-                raise Error("Type %s is already being resolved" % self.json_type_["type"])
-            # Resolve only lazily, because resolving one named type may require resolving some other named type.
-            self.binding_being_resolved_ = True
-            try:
-                self.binding_ = TypeBindings.create_named_type_declaration(self.json_type_, self.json_domain_["domain"], self)
-            finally:
-                self.binding_being_resolved_ = False
-
         return self.binding_
 
     def get_json_type(self):
