@@ -1,3 +1,20 @@
+2012-01-12  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Re-enable Skia feColorMatrix filter implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=76186
+
+        This code was landed in http://trac.webkit.org/changeset/104566 and
+        partially reverted in http://trac.webkit.org/changeset/104632 due
+        to problems with the Windows Shared builder.  Those problems have
+        been fixed in r3006, since rolled into Chrome.
+
+        Reviewed by Kenneth Russell.
+
+        Covered by SVG feColorMatrix tests.
+
+        * WebCore.gypi:
+        * platform/graphics/filters/FEColorMatrix.h:
+
 2012-01-12  Anders Carlsson  <andersca@apple.com>
 
         Add allowsHorizontalStretching and allowsVerticalStretching to ScrollElasticityControllerClient
