@@ -1,3 +1,14 @@
+2012-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web process should use the same locale than UI process
+        https://bugs.webkit.org/show_bug.cgi?id=76054
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::childSetupFunction): Make child process use the same
+        locale than its parent.
+
 2012-01-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [WK2] Share cairo specific codes with EFL port.
