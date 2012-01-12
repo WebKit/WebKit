@@ -401,17 +401,26 @@ Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Stru
     return transition;
 }
 
-Structure* Structure::getterSetterTransition(JSGlobalData& globalData, Structure* structure)
+Structure* Structure::attributeChangeTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, unsigned attributes)
 {
-    Structure* transition = create(globalData, structure);
+    if (!structure->isUncacheableDictionary()) {
+        Structure* transition = create(globalData, structure);
 
-    // Don't set m_offset, as one can not transition to this.
+        // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary(globalData);
-    transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
-    transition->pin();
+        structure->materializePropertyMapIfNecessary(globalData);
+        transition->m_propertyTable = structure->copyPropertyTableForPinning(globalData, transition);
+        transition->pin();
+        
+        structure = transition;
+    }
 
-    return transition;
+    ASSERT(structure->m_propertyTable);
+    PropertyMapEntry* entry = structure->m_propertyTable->find(propertyName.impl()).first;
+    ASSERT(entry);
+    entry->attributes = attributes;
+
+    return structure;
 }
 
 Structure* Structure::toDictionaryTransition(JSGlobalData& globalData, Structure* structure, DictionaryKind kind)

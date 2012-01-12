@@ -89,7 +89,7 @@ namespace JSC {
         static Structure* removePropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, size_t& offset);
         static Structure* changePrototypeTransition(JSGlobalData&, Structure*, JSValue prototype);
         static Structure* despecifyFunctionTransition(JSGlobalData&, Structure*, const Identifier&);
-        static Structure* getterSetterTransition(JSGlobalData&, Structure*);
+        static Structure* attributeChangeTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes);
         static Structure* toCacheableDictionaryTransition(JSGlobalData&, Structure*);
         static Structure* toUncacheableDictionaryTransition(JSGlobalData&, Structure*);
         static Structure* sealTransition(JSGlobalData&, Structure*);

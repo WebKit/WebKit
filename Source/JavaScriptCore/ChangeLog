@@ -1,3 +1,18 @@
+2012-01-12  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76141
+        defineSetter/defineGetter may fail to update Accessor attribute
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::initializeGetterSetterProperty):
+        (JSC::JSObject::defineSetter):
+        * runtime/Structure.cpp:
+        (JSC::Structure::attributeChangeTransition):
+        * runtime/Structure.h:
+
 2012-01-12  David Levin  <levin@chromium.org>
 
         [chromium] Fix DC leak in WebScreenInfoFactory.

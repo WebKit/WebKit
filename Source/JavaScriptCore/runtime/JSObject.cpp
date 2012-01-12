@@ -366,10 +366,8 @@ void JSObject::defineGetter(JSObject* thisObject, ExecState* exec, const Identif
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
-    if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!thisObject->structure()->isDictionary())
-            thisObject->setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, thisObject->structure()));
-    }
+    if (slot.type() != PutPropertySlot::NewProperty)
+        thisObject->setStructure(exec->globalData(), Structure::attributeChangeTransition(globalData, thisObject->structure(), propertyName, attributes | Accessor));
 
     thisObject->structure()->setHasGetterSetterProperties(true);
     getterSetter->setGetter(globalData, getterFunction);
@@ -388,10 +386,8 @@ void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier&
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
-    if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!structure()->isDictionary())
-            setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, structure()));
-    }
+    if (slot.type() != PutPropertySlot::NewProperty)
+        setStructure(exec->globalData(), Structure::attributeChangeTransition(globalData, structure(), propertyName, attributes));
 
     structure()->setHasGetterSetterProperties(true);
 }
@@ -417,10 +413,8 @@ void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identif
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
-    if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!thisObject->structure()->isDictionary())
-            thisObject->setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), thisObject->structure()));
-    }
+    if (slot.type() != PutPropertySlot::NewProperty)
+        thisObject->setStructure(exec->globalData(), Structure::attributeChangeTransition(exec->globalData(), thisObject->structure(), propertyName, attributes | Accessor));
 
     thisObject->structure()->setHasGetterSetterProperties(true);
     getterSetter->setSetter(exec->globalData(), setterFunction);
