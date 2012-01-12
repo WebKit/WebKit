@@ -1,3 +1,12 @@
+2012-01-12  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r104858.
+
+        NSDataReadingMappedIfSafe is not defined on <= 10.6.  Use NSDataReadingMapped on that platform instead.
+
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+
 2012-01-12  Dana Jansens  <danakj@chromium.org>
 
         [skia] Track a simple opaque area when painting via PlatformContextSkia and save in LayerTextureUpdater
