@@ -30,9 +30,9 @@
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
 
-QQuickWebPage::QQuickWebPage(QQuickItem* parent)
-    : QQuickItem(parent)
-    , d(new QQuickWebPagePrivate(this))
+QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
+    : QQuickItem(viewportItem)
+    , d(new QQuickWebPagePrivate(this, viewportItem))
 {
     setFlag(ItemHasContents);
 
@@ -62,8 +62,9 @@ void QQuickWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& old
         d->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
-QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q)
+QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem)
     : q(q)
+    , viewportItem(viewportItem)
     , webPageProxy(0)
     , sgUpdateQueue(q)
     , paintingIsInitialized(false)
@@ -76,7 +77,7 @@ QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q)
 void QQuickWebPagePrivate::initialize(WebKit::WebPageProxy* webPageProxy)
 {
     this->webPageProxy = webPageProxy;
-    eventHandler.reset(new QtWebPageEventHandler(toAPI(webPageProxy), q));
+    eventHandler.reset(new QtWebPageEventHandler(toAPI(webPageProxy), q, viewportItem));
 }
 
 static float computeEffectiveOpacity(const QQuickItem* item)

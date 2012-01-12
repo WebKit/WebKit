@@ -1,3 +1,22 @@
+2012-01-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Set the input method hints on the QtQuick item
+        https://bugs.webkit.org/show_bug.cgi?id=76169
+
+        Reviewed by Simon Hausmann.
+
+        Set the input method hints given the HTMLElement type and state.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::updateTextInputState):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+
 2012-01-12  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Update and show ewk_view with updated webpage.

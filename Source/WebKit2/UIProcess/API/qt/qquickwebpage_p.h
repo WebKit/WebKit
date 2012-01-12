@@ -27,6 +27,7 @@
 #include <QtQuick/QQuickItem>
 
 class QQuickWebPagePrivate;
+class QQuickWebView;
 class QtWebPageEventHandler;
 class QWebPreferences;
 
@@ -37,7 +38,7 @@ class QtSGUpdateQueue;
 class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
     Q_OBJECT
 public:
-    QQuickWebPage(QQuickItem* parent = 0);
+    QQuickWebPage(QQuickWebView* view = 0);
     virtual ~QQuickWebPage();
 
     void setContentSize(const QSizeF& size);

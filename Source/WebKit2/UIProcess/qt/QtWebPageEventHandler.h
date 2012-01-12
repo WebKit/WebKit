@@ -40,7 +40,7 @@ class QtWebPageEventHandler : public QObject {
     Q_OBJECT
 
 public:
-    QtWebPageEventHandler(WKPageRef, QQuickWebPage*);
+    QtWebPageEventHandler(WKPageRef, QQuickWebPage*, QQuickWebView*);
     ~QtWebPageEventHandler();
 
     bool handleEvent(QEvent*);
@@ -68,6 +68,7 @@ protected:
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
     QtTapGestureRecognizer m_tapGestureRecognizer;
     QQuickWebPage* m_webPage;
+    QQuickWebView* m_webView;
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);

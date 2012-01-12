@@ -45,6 +45,7 @@ struct EditorState {
 #if PLATFORM(QT)
         , cursorPosition(0)
         , anchorPosition(0)
+        , inputMethodHints(0)
 #endif
     {
     }
@@ -66,6 +67,9 @@ struct EditorState {
     WebCore::IntRect editorRect;
     WebCore::IntRect cursorRect;
     WebCore::IntRect compositionRect;
+
+    uint64_t inputMethodHints;
+
     WTF::String selectedText;
     WTF::String surroundingText;
 #endif

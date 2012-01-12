@@ -90,6 +90,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/HTMLInputElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MouseEvent.h>
@@ -397,6 +398,29 @@ EditorState WebPage::editorState() const
 
     if (!scope)
         return result;
+
+    if (scope->hasTagName(HTMLNames::inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(scope);
+        if (input->isTelephoneField())
+            result.inputMethodHints |= Qt::ImhDialableCharactersOnly;
+        else if (input->isNumberField())
+            result.inputMethodHints |= Qt::ImhDigitsOnly;
+        else if (input->isEmailField()) {
+            result.inputMethodHints |= Qt::ImhEmailCharactersOnly;
+            result.inputMethodHints |= Qt::ImhNoAutoUppercase;
+        } else if (input->isURLField()) {
+            result.inputMethodHints |= Qt::ImhUrlCharactersOnly;
+            result.inputMethodHints |= Qt::ImhNoAutoUppercase;
+        } else if (input->isPasswordField()) {
+            // Set ImhHiddenText flag for password fields. The Qt platform
+            // is responsible for determining which widget will receive input
+            // method events for password fields.
+            result.inputMethodHints |= Qt::ImhHiddenText;
+            result.inputMethodHints |= Qt::ImhNoAutoUppercase;
+            result.inputMethodHints |= Qt::ImhNoPredictiveText;
+            result.inputMethodHints |= Qt::ImhSensitiveData;
+        }
+    }
 
     if (selectionRoot)
         result.editorRect = frame->view()->contentsToWindow(selectionRoot->getRect());

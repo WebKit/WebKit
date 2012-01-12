@@ -34,7 +34,7 @@ class QtWebPageEventHandler;
 
 class QQuickWebPagePrivate {
 public:
-    QQuickWebPagePrivate(QQuickWebPage* q);
+    QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem);
     ~QQuickWebPagePrivate();
 
     void initialize(WebKit::WebPageProxy*);
@@ -47,6 +47,7 @@ public:
 
     QScopedPointer<QtWebPageEventHandler> eventHandler;
     QQuickWebPage* const q;
+    QQuickWebView* const viewportItem;
     WebKit::WebPageProxy* webPageProxy;
     WebKit::QtSGUpdateQueue sgUpdateQueue;
     bool paintingIsInitialized;

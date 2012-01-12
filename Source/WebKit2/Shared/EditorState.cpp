@@ -47,6 +47,7 @@ void EditorState::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(editorRect);
     encoder->encode(cursorRect);
     encoder->encode(compositionRect);
+    encoder->encode(inputMethodHints);
     encoder->encode(selectedText);
     encoder->encode(surroundingText);
 #endif
@@ -89,6 +90,9 @@ bool EditorState::decode(CoreIPC::ArgumentDecoder* decoder, EditorState& result)
         return false;
 
     if (!decoder->decode(result.compositionRect))
+        return false;
+
+    if (!decoder->decode(result.inputMethodHints))
         return false;
 
     if (!decoder->decode(result.selectedText))

@@ -26,6 +26,7 @@
 #include "NativeWebWheelEvent.h"
 #include "QtViewportInteractionEngine.h"
 #include "qquickwebpage_p.h"
+#include "qquickwebview_p.h"
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>
@@ -84,12 +85,13 @@ static inline WebCore::DragOperation dropActionToDragOperation(Qt::DropActions a
     return (DragOperation)result;
 }
 
-QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* qmlWebPage)
+QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView)
     : m_webPageProxy(toImpl(pageRef))
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)
     , m_webPage(qmlWebPage)
+    , m_webView(qmlWebView)
     , m_previousClickButton(Qt::NoButton)
     , m_clickCount(0)
     , m_postponeTextInputStateChanged(false)
@@ -435,6 +437,8 @@ void QtWebPageEventHandler::updateTextInputState()
         return;
 
     const EditorState& editor = m_webPageProxy->editorState();
+
+    m_webView->setInputMethodHints(Qt::InputMethodHints(editor.inputMethodHints));
 
     // Ignore input method requests not due to a tap gesture.
     if (!editor.isContentEditable)
