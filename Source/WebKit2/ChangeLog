@@ -1,3 +1,32 @@
+2012-01-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] WebProcesses crashes when composited reflections/masks are present
+        https://bugs.webkit.org/show_bug.cgi?id=75883
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure masks and replica layers can access layerTreeTileClient. Let masks
+        have the right contents/visible rect so that they can render content tiles.
+        Default the mask's size to be the layer's size.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::WebGraphicsLayer):
+        (WebCore::WebGraphicsLayer::setSize):
+        (WebCore::WebGraphicsLayer::setMaskLayer):
+        (WebCore::WebGraphicsLayer::setReplicatedByLayer):
+        (WebCore::WebGraphicsLayer::syncCompositingState):
+        (WebCore::WebGraphicsLayer::setContentsScale):
+        (WebCore::WebGraphicsLayer::setVisibleContentRect):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreContentsRect):
+        (WebCore::WebGraphicsLayer::updateTileBuffersRecursively):
+        (WebCore::WebGraphicsLayer::layerTreeTileClient):
+        (WebCore::WebGraphicsLayer::purgeBackingStores):
+        (WebCore::WebGraphicsLayer::recreateBackingStoreIfNeeded):
+        (WebCore::WebGraphicsLayer::setLayerTreeTileClient):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebCore::WebGraphicsLayer::maskTarget):
+        (WebCore::WebGraphicsLayer::setMaskTarget):
+
 2012-01-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Set the input method hints on the QtQuick item
@@ -11046,7 +11075,7 @@
 
         Reviewed by Adam Roben.
 
-        This avoids calling into the plug-in when only the plug-in position relative to the window changes.
+        This avoids calling into the plug-in when only the plug-in position relative to the window changes.
     
         * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
         (WebKit::NetscapePlugin::geometryDidChange):

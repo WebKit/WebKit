@@ -107,6 +107,9 @@ public:
     Image* image() { return m_image.get(); }
     void notifyAnimationStarted(double);
 
+    GraphicsLayer* maskTarget() const { return m_maskTarget; }
+    void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
+
     static void initFactory();
 
 #if USE(TILED_BACKING_STORE)
@@ -137,8 +140,8 @@ public:
 
 private:
     WebKit::WebLayerInfo m_layerInfo;
-    WebKit::WebLayerTreeTileClient* m_layerTileClient;
     RefPtr<Image> m_image;
+    GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
     IntRect m_visibleContentRect;
     bool m_needsDisplay : 1;
