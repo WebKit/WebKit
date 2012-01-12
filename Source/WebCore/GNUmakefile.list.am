@@ -1645,6 +1645,8 @@ webcore_sources += \
 	Source/WebCore/dom/SelectorQuery.h \
 	Source/WebCore/dom/ShadowContentElement.cpp \
 	Source/WebCore/dom/ShadowContentElement.h \
+	Source/WebCore/dom/ShadowContentSelectorQuery.cpp \
+	Source/WebCore/dom/ShadowContentSelectorQuery.h \
 	Source/WebCore/dom/ShadowInclusionSelector.cpp \
 	Source/WebCore/dom/ShadowInclusionSelector.h \
 	Source/WebCore/dom/ShadowRoot.cpp \

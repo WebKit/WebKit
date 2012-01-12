@@ -1,3 +1,63 @@
+2012-01-12  Shinya Kawanaka  <shinyak@google.com>
+
+        ShadowContentElement should be able to use query.
+        https://bugs.webkit.org/show_bug.cgi?id=75302
+
+        Reviewed by Hajime Morita.
+
+        This patch introduces a selector to query elements in ShadowContentElement.
+        This can be used instead of ShadowContentElement::shouldInclude in more sophisticated ways.
+
+        Tests: fast/dom/shadow/shadow-contents-select-expected.html
+               fast/dom/shadow/shadow-contents-select.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::SelectorDataList):
+          Extracted from SelectorQueryto share codes with ShadowContentSelectorQuery.
+        (WebCore::SelectorDataList::initialize):
+        (WebCore::SelectorDataList::matches):
+        (WebCore::SelectorDataList::queryAll):
+        (WebCore::SelectorDataList::queryFirst):
+        (WebCore::SelectorDataList::canUseIdLookup):
+        (WebCore::SelectorDataList::execute):
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore::SelectorQuery::queryAll):
+        (WebCore::SelectorQuery::queryFirst):
+        * dom/SelectorQuery.h:
+        (WebCore::SelectorDataList::size):
+        * dom/ShadowContentElement.cpp:
+        (WebCore::selectAttr):
+        (WebCore::ShadowContentElement::create):
+        (WebCore::ShadowContentElement::ShadowContentElement):
+        (WebCore::ShadowContentElement::select):
+        * dom/ShadowContentElement.h:
+        * dom/ShadowContentSelectorQuery.cpp: Added.
+        (WebCore::ShadowContentSelectorQuery::ShadowContentSelectorQuery):
+        (WebCore::ShadowContentSelectorQuery::matches):
+          Returns true if Node is matched by the query.
+        * dom/ShadowContentSelectorQuery.h: Copied from Source/WebCore/dom/ShadowContentElement.h.
+        * dom/ShadowInclusionSelector.cpp:
+        (WebCore::ShadowInclusionSelector::select):
+        * dom/ShadowInclusionSelector.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::summaryQuerySelector):
+        (WebCore::DetailsContentElement::DetailsContentElement): Re-implemented using query.
+        (WebCore::DetailsSummaryElement::DetailsSummaryElement): ditto.
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::SummaryContentElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createShadowContentElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Make default console messages line numbers consistent.

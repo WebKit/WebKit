@@ -43,7 +43,7 @@ public:
 
 private:
     SummaryContentElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : ShadowContentElement(HTMLNames::divTag, document, emptyAtom)
     {
     }
 };

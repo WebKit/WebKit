@@ -36,17 +36,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static const AtomicString& summaryQuerySelector()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, selector, ("summary:first-of-type"));
+    return selector;
+};
+
 class DetailsContentElement : public ShadowContentElement {
 public:
     static PassRefPtr<DetailsContentElement> create(Document*);
 
 private:
     DetailsContentElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : ShadowContentElement(HTMLNames::divTag, document, WTF::emptyAtom)
     {
     }
-
-    virtual bool shouldInclude(Node*);
 };
 
 PassRefPtr<DetailsContentElement> DetailsContentElement::create(Document* document)
@@ -54,37 +58,21 @@ PassRefPtr<DetailsContentElement> DetailsContentElement::create(Document* docume
     return adoptRef(new DetailsContentElement(document));
 }
 
-bool DetailsContentElement::shouldInclude(Node* node)
-{
-    HTMLDetailsElement* details = static_cast<HTMLDetailsElement*>(shadowAncestorNode());
-    return details->mainSummary() != node;
-}
-
-
 class DetailsSummaryElement : public ShadowContentElement {
 public:
     static PassRefPtr<DetailsSummaryElement> create(Document*);
 
 private:
     DetailsSummaryElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : ShadowContentElement(HTMLNames::divTag, document, summaryQuerySelector())
     {
     }
-
-    virtual bool shouldInclude(Node*);
 };
 
 PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document* document)
 {
     return adoptRef(new DetailsSummaryElement(document));
 }
-
-bool DetailsSummaryElement::shouldInclude(Node* node)
-{
-    HTMLDetailsElement* details = static_cast<HTMLDetailsElement*>(shadowAncestorNode());
-    return details->mainSummary() == node;
-}
-
 
 PassRefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document* document)
 {
