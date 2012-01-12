@@ -1,3 +1,19 @@
+2012-01-11  Shinya Kawanaka  <shinyak@google.com>
+
+        QuerySelector should not have side effect.
+        https://bugs.webkit.org/show_bug.cgi?id=75298
+
+        Reviewed by Antti Koivisto.
+
+        Since SelectorChecker is not collecting-rules-only mode, it may set some flags in render styles
+        if some pseudo types (e.g. first-of-type) are used.
+
+        No new tests. Covered by existing tests.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery):
+          Made collecting rules only.
+
 2012-01-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10679035> Implement font-variant-ligatures: {no-}common-ligatures

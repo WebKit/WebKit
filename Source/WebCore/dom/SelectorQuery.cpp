@@ -37,6 +37,8 @@ SelectorQuery::SelectorQuery(Node* rootNode, const CSSSelectorList& selectorList
     : m_rootNode(rootNode)
     , m_selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode())
 {
+    m_selectorChecker.setCollectingRulesOnly(true);
+
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
         m_selectors.append(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
 }
