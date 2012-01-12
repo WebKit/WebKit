@@ -1,3 +1,17 @@
+2012-01-12  Dan Bernstein  <mitz@apple.com>
+
+        When generating derived sources, use the same compiler that is used to compile WebCore.
+
+        Fixes <http://webkit.org/b/76189>
+        [mac] When compiling WebCore with clang, llvm-gcc is used to generate derived sources
+
+        Reviewed by Mark Rowe.
+
+        * DerivedSources.make: Changed to use the CC environment variable instead of hardcoded gcc.
+        * WebCore.xcodeproj/project.pbxproj: Set the CC environment variable, if not already set,
+        according to TARGET_GCC_VERSION. CC is used by DerivedSources.make and some of the perl
+        scripts it invokes.
+
 2012-01-12  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Unreviewed build fix after r104828.
