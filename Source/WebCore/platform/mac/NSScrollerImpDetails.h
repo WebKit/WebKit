@@ -61,6 +61,7 @@ typedef NSInteger NSScrollerKnobStyle;
 - (void)setDoubleValue:(double)doubleValue;
 - (void)setKnobProportion:(CGFloat)proportion;
 - (void)setKnobStyle:(NSScrollerKnobStyle)knobStyle;
+- (void)setExpanded:(BOOL)expanded;
 - (void)setDelegate:(id)delegate;
 - (void)setUiStateTransitionProgress:(CGFloat)uiStateTransitionProgress;
 - (BOOL)isHorizontal;

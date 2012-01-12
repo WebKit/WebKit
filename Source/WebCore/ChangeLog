@@ -1,3 +1,19 @@
+2012-01-12  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76209
+        Support expanded scrollbars
+        -and corresponding-
+        <rdar://problem/10527734>
+
+        Reviewed by Sam Weinig.
+
+        All this really requires is leaving the proper amount of space for the 
+        expanded width.
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::supportsExpandedScrollbars):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+
 2011-12-12  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: Enable USE_CONCATENATED_IMPULSE_RESPONSES on Mac port.

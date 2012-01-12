@@ -133,6 +133,13 @@ static bool gJumpOnTrackClick = false;
 
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
+static bool supportsExpandedScrollbars()
+{
+    // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
+    static bool globalSupportsExpandedScrollbars = [NSClassFromString(@"NSScrollerImp") instancesRespondToSelector:@selector(isExpanded)];
+    return globalSupportsExpandedScrollbars;
+}
+
 static void updateArrowPlacement()
 {
     if (isScrollbarOverlayAPIAvailable())
@@ -222,6 +229,8 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     if (isScrollbarOverlayAPIAvailable()) {
         ScrollbarPainter scrollbarPainter = [NSClassFromString(@"NSScrollerImp") scrollerImpWithStyle:recommendedScrollerStyle() controlSize:controlSize horizontal:NO replacingScrollerImp:nil];
+        if (supportsExpandedScrollbars())
+            [scrollbarPainter setExpanded:YES];
         return [scrollbarPainter trackBoxWidth];
     } else
         return cScrollbarThickness[controlSize];
