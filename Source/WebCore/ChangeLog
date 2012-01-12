@@ -1,3 +1,10 @@
+2012-01-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial buildfix after r104828.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::StylePainterMobile::findComboButton):
+
 2012-01-12  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: generate array types.
