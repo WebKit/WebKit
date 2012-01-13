@@ -1,3 +1,16 @@
+2012-01-13  Andreas Kling  <awesomekling@apple.com>
+
+        JSC/DOM bindings: Reduce HandleHeap churn in cacheWrapper().
+        <http://webkit.org/b/76271>
+
+        Reviewed by Darin Adler.
+
+        Use JSC::Weak::swap() to move JSDOMWrappers into the DOMWrapperWorld's wrapper map.
+        This avoids invoking the JSC::Weak copy constructor and associated HandleHeap churn.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::cacheWrapper):
+
 2012-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Add InspectorIndexedDBAgent and IndexedDBModel, pass database names to inspector.
