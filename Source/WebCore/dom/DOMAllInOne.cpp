@@ -113,6 +113,7 @@
 #include "SecurityContext.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowContentElement.cpp"
+#include "ShadowContentSelectorQuery.cpp"
 #include "ShadowInclusionSelector.cpp"
 #include "ShadowRoot.cpp"
 #include "SpaceSplitString.cpp"

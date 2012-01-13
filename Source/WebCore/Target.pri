@@ -560,6 +560,7 @@ SOURCES += \
     dom/SecurityContext.cpp \
     dom/SelectorQuery.cpp \
     dom/ShadowContentElement.cpp \
+    dom/ShadowContentSelectorQuery.cpp \
     dom/ShadowInclusionSelector.cpp \
     dom/ShadowRoot.cpp \
     dom/SpaceSplitString.cpp \
@@ -1660,6 +1661,7 @@ HEADERS += \
     dom/ScriptExecutionContext.h \
     dom/SelectorQuery.h \
     dom/ShadowContentElement.h \
+    dom/ShadowContentSelectorQuery.h \
     dom/ShadowInclusionSelector.h \
     dom/ShadowRoot.h \
     dom/SpaceSplitString.h \

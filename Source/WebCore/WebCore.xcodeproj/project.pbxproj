@@ -1562,6 +1562,8 @@
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		570DBA8114B5804900DAEFA0 /* ShadowContentSelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 570DB7A814B5696A00DAEFA0 /* ShadowContentSelectorQuery.cpp */; };
+		570DBA8214B5804B00DAEFA0 /* ShadowContentSelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DB7A914B5696A00DAEFA0 /* ShadowContentSelectorQuery.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8375,6 +8377,8 @@
 		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		570DB7A814B5696A00DAEFA0 /* ShadowContentSelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowContentSelectorQuery.cpp; sourceTree = "<group>"; };
+		570DB7A914B5696A00DAEFA0 /* ShadowContentSelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowContentSelectorQuery.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
@@ -20510,6 +20514,8 @@
 				E45322AA140CE267005A0F92 /* SelectorQuery.h */,
 				A766CF8B13810E0C0011A0B3 /* ShadowContentElement.cpp */,
 				A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */,
+				570DB7A814B5696A00DAEFA0 /* ShadowContentSelectorQuery.cpp */,
+				570DB7A914B5696A00DAEFA0 /* ShadowContentSelectorQuery.h */,
 				A71C30B61381265E00DBC351 /* ShadowInclusionSelector.cpp */,
 				A71C30B71381265E00DBC351 /* ShadowInclusionSelector.h */,
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
@@ -23366,6 +23372,7 @@
 				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */,
+				570DBA8214B5804B00DAEFA0 /* ShadowContentSelectorQuery.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A71C30B91381265E00DBC351 /* ShadowInclusionSelector.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
@@ -26400,6 +26407,7 @@
 				498770E81242C535002226BA /* Shader.cpp in Sources */,
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				A766CF8C13810E0C0011A0B3 /* ShadowContentElement.cpp in Sources */,
+				570DBA8114B5804900DAEFA0 /* ShadowContentSelectorQuery.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A71C30B81381265E00DBC351 /* ShadowInclusionSelector.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,

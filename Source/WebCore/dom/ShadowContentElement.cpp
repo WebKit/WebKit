@@ -28,10 +28,15 @@
 #include "ShadowContentElement.h"
 
 #include "HTMLNames.h"
+#include "QualifiedName.h"
+#include "ShadowContentSelectorQuery.h"
 #include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+using HTMLNames::selectAttr;
 
 PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
 {
@@ -76,10 +81,14 @@ void ShadowContentElement::detach()
     StyledElement::detach();
 }
 
-bool ShadowContentElement::shouldInclude(Node*)
+const AtomicString& ShadowContentElement::select() const
 {
-    return true;
+    return getAttribute(selectAttr);
 }
 
+void ShadowContentElement::setSelect(const AtomicString& selectValue)
+{
+    setAttribute(selectAttr, selectValue);
+}
 
 }

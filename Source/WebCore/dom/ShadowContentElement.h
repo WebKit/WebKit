@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class ShadowContentSelectorQuery;
 class ShadowInclusionList;
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
@@ -45,9 +46,17 @@ public:
     static PassRefPtr<ShadowContentElement> create(Document*);
 
     virtual ~ShadowContentElement();
-    virtual bool shouldInclude(Node*);
     virtual void attach();
     virtual void detach();
+
+    const AtomicString& select() const;
+
+    // FIXME: Currently this constructor accepts wider query than shadow dom spec.
+    // For example, a selector query should not include contextual selectors.
+    // See https://bugs.webkit.org/show_bug.cgi?id=75946
+    // FIXME: Currently we don't support setting select value dynamically.
+    // See https://bugs.webkit.org/show_bug.cgi?id=76261
+    void setSelect(const AtomicString&);
 
     const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
 

@@ -137,7 +137,6 @@ public:
     void didSelect();
     bool hasCandidates() const { return !m_candidates.isEmpty(); }
 
-
 private:
     void removeFromSet(ShadowInclusionList*);
     void addToSet(ShadowInclusionList*);

@@ -51106,6 +51106,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ShadowContentSelectorQuery.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ShadowContentSelectorQuery.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\ShadowInclusionSelector.cpp"
 				>
 				<FileConfiguration

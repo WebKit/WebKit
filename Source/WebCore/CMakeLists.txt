@@ -594,6 +594,7 @@ SET(WebCore_SOURCES
     dom/SecurityContext.cpp
     dom/SelectorQuery.cpp
     dom/ShadowContentElement.cpp
+    dom/ShadowContentSelectorQuery.cpp
     dom/ShadowInclusionSelector.cpp
     dom/ShadowRoot.cpp
     dom/SpaceSplitString.cpp
