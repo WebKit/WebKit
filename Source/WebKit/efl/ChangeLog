@@ -1,5 +1,27 @@
 2012-01-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
+        [EFL] Add visible field into ewk_tiled_backing_store's data.
+        https://bugs.webkit.org/show_bug.cgi?id=76165
+
+        Reviewed by Nikolas Zimmermann.
+
+        Using of evas_object_visible_get() API can't gurantee the correctness of
+        evas_object's visible status if it's called inside of evas_object's
+        smart_show() method.
+        So, a visible flag for the ewk_tiled_backing_store is added.
+        In addition, as tiles are not visible, ewk_tiled_backing_store will push
+        its own tiles into the cache when it disapear.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_ewk_tiled_backing_store_updates_process):
+        (_ewk_tiled_backing_store_item_process_idler_start):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_smart_member_add):
+        (_ewk_tiled_backing_store_smart_show):
+        (_ewk_tiled_backing_store_smart_hide):
+
+2012-01-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
         [EFL] Unused code cleanup on ewk_tiled_model.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=76031
 

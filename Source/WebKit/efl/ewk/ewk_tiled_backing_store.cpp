@@ -73,6 +73,7 @@ struct _Ewk_Tiled_Backing_Store_Data {
                 Evas_Coord x, y;
             } cur, old, base, zoomCenter;
         } offset;
+        bool visible : 1;
     } view;
     Evas_Colorspace colorSpace;
     struct {
@@ -133,7 +134,7 @@ static inline void _ewk_tiled_backing_store_updates_process(Ewk_Tiled_Backing_St
      * in the queue in order to not miss any updates after the render is
      * resumed.
      */
-    if (priv->render.suspend || !evas_object_visible_get(priv->self))
+    if (priv->render.suspend || !priv->view.visible)
         return;
 
     if (priv->process.preCallback)
@@ -382,7 +383,7 @@ static inline void _ewk_tiled_backing_store_item_process_idler_stop(Ewk_Tiled_Ba
 
 static inline void _ewk_tiled_backing_store_item_process_idler_start(Ewk_Tiled_Backing_Store_Data* priv)
 {
-    if (priv->render.idler || !evas_object_visible_get(priv->self))
+    if (priv->render.idler || !priv->view.visible)
         return;
     priv->render.idler = ecore_idler_add(
         _ewk_tiled_backing_store_item_process_idler_cb, priv);
@@ -413,7 +414,7 @@ static Eina_Bool _ewk_tiled_backing_store_enable_render(Ewk_Tiled_Backing_Store_
 
 static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Store_Data* priv, Ewk_Tiled_Backing_Store_Item* item, unsigned long column, unsigned long row)
 {
-    if (!evas_object_visible_get(priv->self))
+    if (!priv->view.visible)
         return false;
 
     unsigned long currentColumn = priv->model.base.column + column;
@@ -644,7 +645,7 @@ static void _ewk_tiled_backing_store_smart_member_add(Evas_Object* ewkBackingSto
     if (!priv->contentsClipper)
         return;
     evas_object_clip_set(member, priv->contentsClipper);
-    if (evas_object_visible_get(ewkBackingStore))
+    if (priv->view.visible)
         evas_object_show(priv->contentsClipper);
 }
 
@@ -805,13 +806,18 @@ static void _ewk_tiled_backing_store_smart_resize(Evas_Object* ewkBackingStore, 
 
 static void _ewk_tiled_backing_store_smart_show(Evas_Object* ewkBackingStore)
 {
+    PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv);
+    priv->view.visible = true;
     ewk_tiled_backing_store_enable_render(ewkBackingStore);
     _parent_sc.show(ewkBackingStore);
 }
 
 static void _ewk_tiled_backing_store_smart_hide(Evas_Object* ewkBackingStore)
 {
+    PRIV_DATA_GET_OR_RETURN(ewkBackingStore, priv);
+    priv->view.visible = false;
     ewk_tiled_backing_store_disable_render(ewkBackingStore);
+    _ewk_tiled_backing_store_tile_dissociate_all(priv);
     _parent_sc.hide(ewkBackingStore);
 }
 
