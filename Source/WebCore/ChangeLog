@@ -1,3 +1,29 @@
+2011-01-13  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio: Use float instead of double values for gain operations.
+        https://bugs.webkit.org/show_bug.cgi?id=74345
+
+        Reviewed by Sam Weinig.
+
+        No new tests; optimization of existing code, so covered by existing test cases.
+
+        The following functions now take or operate on floats instead of doubles:
+        (WebCore::AudioBus::scale):
+        (WebCore::AudioBus::processWithGainFrom):
+        (WebCore::AudioBus::copyWithGainFrom):
+        (WebCore::AudioBus::sumWithGainFrom):
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::setGain):
+        (WebCore::AudioBus::gain):
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::scale):
+        * platform/audio/AudioChannel.h:
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        * webaudio/AudioBufferSourceNode.h:
+        * webaudio/AudioGainNode.h:
+        * webaudio/AudioPannerNode.h:
+
 2012-01-13  Greg Billock  <gbillock@google.com>
 
         Don't use pending activity notification in IntentRequest

@@ -57,7 +57,7 @@ public:
 private:
     AudioGainNode(AudioContext*, float sampleRate);
 
-    double m_lastGain; // for de-zippering
+    float m_lastGain; // for de-zippering
     RefPtr<AudioGain> m_gain;
 
     AudioFloatArray m_sampleAccurateGainValues;

@@ -128,7 +128,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess);
 
         // Apply the gain (in-place) to the output bus.
-        double totalGain = gain()->value() * m_buffer->gain();
+        float totalGain = gain()->value() * m_buffer->gain();
         outputBus->copyWithGainFrom(*outputBus, &m_lastGain, totalGain);
 
         // If the end time is somewhere in the middle of this time quantum, then simply zero out the

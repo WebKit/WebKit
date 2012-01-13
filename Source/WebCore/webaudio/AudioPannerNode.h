@@ -138,7 +138,7 @@ private:
     RefPtr<AudioGain> m_coneGain;
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
-    double m_lastGain;
+    float m_lastGain;
 
     unsigned m_connectionCount;
 };

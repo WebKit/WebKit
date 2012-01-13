@@ -86,7 +86,7 @@ public:
     }
 
     // Scales all samples by the same amount.
-    void scale(double scale);
+    void scale(float scale);
 
     // A simple memcpy() from the source channel
     void copyFrom(const AudioChannel* sourceChannel);

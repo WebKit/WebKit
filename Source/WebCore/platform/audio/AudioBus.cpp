@@ -183,7 +183,7 @@ void AudioBus::normalize()
         scale(1.0f / max);
 }
 
-void AudioBus::scale(double scale)
+void AudioBus::scale(float scale)
 {
     for (unsigned i = 0; i < numberOfChannels(); ++i)
         channel(i)->scale(scale);
@@ -326,12 +326,10 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
         vsmul(sourceL, 1, &gain, destinationL, 1, framesToProcess - k); \
     } 
 
-void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* lastMixGain, double targetGain, bool sumToBus)
+void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, float* lastMixGain, float targetGain, bool sumToBus)
 {
     // We don't want to suddenly change the gain from mixing one time slice to the next,
     // so we "de-zipper" by slowly changing the gain each sample-frame until we've achieved the target gain.
-
-    // FIXME: targetGain and lastMixGain should be changed to floats instead of doubles.
     
     // Take master bus gain into account as well as the targetGain.
     float totalDesiredGain = static_cast<float>(m_busGain * targetGain);
@@ -394,10 +392,10 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
     }
 
     // Save the target gain as the starting point for next time around.
-    *lastMixGain = static_cast<double>(gain);
+    *lastMixGain = gain;
 }
 
-void AudioBus::processWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, double targetGain, bool sumToBus)
+void AudioBus::processWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain, bool sumToBus)
 {
     // Make sure we're summing from same type of bus.
     // We *are* able to sum from mono -> stereo
@@ -444,12 +442,12 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
     }
 }
 
-void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, double targetGain)
+void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain)
 {
     processWithGainFrom(sourceBus, lastMixGain, targetGain, false);
 }
 
-void AudioBus::sumWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, double targetGain)
+void AudioBus::sumWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain)
 {
     processWithGainFrom(sourceBus, lastMixGain, targetGain, true);
 }

@@ -41,10 +41,9 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-void AudioChannel::scale(double scale)
+void AudioChannel::scale(float scale)
 {
-    float s = static_cast<float>(scale);
-    vsmul(data(), 1, &s, data(), 1, length());
+    vsmul(data(), 1, &scale, data(), 1, length());
 }
 
 void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
