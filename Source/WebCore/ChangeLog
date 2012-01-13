@@ -1,3 +1,10 @@
+2012-01-13  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed build fix; added project.pbxproj changes lost in r104954.
+        https://bugs.webkit.org/show_bug.cgi?id=75906
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         TextureMapper: Extract layer transform logic to a LayerTransform class.
