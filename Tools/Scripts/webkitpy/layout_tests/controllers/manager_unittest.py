@@ -69,13 +69,13 @@ class ShardingTests(unittest.TestCase):
         "dom/html/level2/html/HTMLAnchorElement06.html",
     ]
 
-    def get_shards(self, num_workers, fully_parallel, test_list=None):
+    def get_shards(self, num_workers, fully_parallel, test_list=None, max_locked_shards=None):
         test_list = test_list or self.test_list
         host = MockHost()
         port = host.port_factory.get(port_name='test')
         port._filesystem = MockFileSystem()
-        # FIXME: This should use MockOptions() instead of Mock()
-        self.manager = ManagerWrapper(port=port, options=Mock(), printer=Mock())
+        options = MockOptions(max_locked_shards=max_locked_shards)
+        self.manager = ManagerWrapper(port=port, options=options, printer=Mock())
         return self.manager._shard_tests(test_list, num_workers, fully_parallel)
 
     def test_shard_by_dir(self):
@@ -142,6 +142,24 @@ class ShardingTests(unittest.TestCase):
              test_list=['http/tests/webcoket/tests/unicode.htm'])
         self.assertEquals(len(locked), 1)
         self.assertEquals(len(unlocked), 0)
+
+    def test_multiple_locked_shards(self):
+        locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False, max_locked_shards=2)
+        self.assertEqual(locked,
+            [TestShard('locked_shard_1',
+                       ['http/tests/security/view-source-no-refresh.html',
+                        'http/tests/websocket/tests/unicode.htm',
+                        'http/tests/websocket/tests/websocket-protocol-ignored.html']),
+             TestShard('locked_shard_2',
+                        ['http/tests/xmlhttprequest/supported-xml-content-types.html'])])
+
+        locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False)
+        self.assertEquals(locked,
+            [TestShard('locked_shard_1',
+                       ['http/tests/security/view-source-no-refresh.html',
+                        'http/tests/websocket/tests/unicode.htm',
+                        'http/tests/websocket/tests/websocket-protocol-ignored.html',
+                        'http/tests/xmlhttprequest/supported-xml-content-types.html'])])
 
 
 class ManagerTest(unittest.TestCase):

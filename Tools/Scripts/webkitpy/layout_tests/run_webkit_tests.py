@@ -379,6 +379,8 @@ def parse_args(args=None):
         optparse.make_option("--no-retry-failures", action="store_false",
             dest="retry_failures",
             help="Don't re-try any tests that produce unexpected results."),
+        optparse.make_option("--max-locked-shards", type="int",
+            help="Set the maximum number of locked shards"),
     ]
 
     misc_options = [

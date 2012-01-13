@@ -1,3 +1,21 @@
+2012-01-13  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        nrwt should use multiple http shards
+        https://bugs.webkit.org/show_bug.cgi?id=75958
+
+        Add --max-locked-shards option to the nrwt for manual set
+        the maximum number of the locked shards
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._max_locked_shards):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ShardingTests.get_shards):
+        (ShardingTests.test_multiple_locked_shards):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-01-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         prepare-ChangeLog: Look for a text editor in a few more variables.

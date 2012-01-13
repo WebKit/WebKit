@@ -668,11 +668,17 @@ class Manager(object):
         # Put a ceiling on the number of locked shards, so that we
         # don't hammer the servers too badly.
 
-        # FIXME: For now, limit to one shard. After testing to make sure we
+        # FIXME: For now, limit to one shard or set it
+        # with the --max-locked-shards. After testing to make sure we
         # can handle multiple shards, we should probably do something like
         # limit this to no more than a quarter of all workers, e.g.:
         # return max(math.ceil(num_workers / 4.0), 1)
-        return 1
+        if self._options.max_locked_shards:
+            num_of_locked_shards = self._options.max_locked_shards
+        else:
+            num_of_locked_shards = 1
+
+        return num_of_locked_shards
 
     def _resize_shards(self, old_shards, max_new_shards, shard_name_prefix):
         """Takes a list of shards and redistributes the tests into no more
