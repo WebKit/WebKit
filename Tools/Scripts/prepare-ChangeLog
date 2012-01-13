@@ -532,7 +532,7 @@ sub openChangeLogs($)
     my ($changeLogs) = @_;
 
     print STDERR "  Opening the edited ChangeLog files.\n";
-    my $editor = $ENV{CHANGE_LOG_EDITOR};
+    my $editor = $ENV{CHANGE_LOG_EDITOR} || $ENV{VISUAL} || $ENV{EDITOR};
     if ($editor) {
         system ((split ' ', $editor), @$changeLogs);
     } else {

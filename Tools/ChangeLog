@@ -1,3 +1,22 @@
+2012-01-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        prepare-ChangeLog: Look for a text editor in a few more variables.
+        https://bugs.webkit.org/show_bug.cgi?id=76289
+
+        Reviewed by Ryosuke Niwa.
+
+        A text editor was looked for only in the CHANGE_LOG_EDITOR and
+        CHANGE_LOG_EDIT_APPLICATION environment variables before falling back
+        to the OS X-specific open(1) command.
+
+        As there does not seem to be a common way of looking for a text editor
+        among the scripts in Tools/Scripts right now, just look at $VISUAL and
+        $EDITOR (set much more often than the other variables in Unix systems)
+        before falling back to open(1).
+
+        * Scripts/prepare-ChangeLog:
+        (openChangeLogs):
+
 2012-01-13  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [GTK] gtkdoc.py ignoring LDFLAGS and CFLAGS environment variables
