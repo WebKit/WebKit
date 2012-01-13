@@ -1,3 +1,15 @@
+2012-01-13  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION: svg/custom/use-instanceRoot-event-listeners.xhtml & svg/custom/pointer-events-invalid-fill.svg broken on the Bots
+        https://bugs.webkit.org/show_bug.cgi?id=76254
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired): Added a call to
+        CachedResourceLoader::loadDone() after decrementing the request count. This allows the
+        frame loader to see that the request count is zero and dispatch didFinishLoad. 
+
 2012-01-13  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: Optimize calculateNormalizationScale().

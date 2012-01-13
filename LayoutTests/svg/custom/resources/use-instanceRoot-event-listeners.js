@@ -171,6 +171,7 @@ function driveTests()
 
 // Start tests
 if (window.eventSender) {
+    document.documentElement.offsetLeft;
     eventSender.mouseMoveTo(115, 55);
     driveTests();
 } else

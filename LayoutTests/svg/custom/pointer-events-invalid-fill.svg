@@ -64,6 +64,7 @@
       }
       function runTest() {
         if (window.eventSender) {
+          document.documentElement.offsetLeft;
           eventSender.mouseMoveTo(30, 100);
         }
       }

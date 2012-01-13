@@ -615,6 +615,8 @@ void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
         // Balances incrementRequestCount() in beginLoadingFontSoon().
         cachedResourceLoader->decrementRequestCount(fontsToBeginLoading[i].get());
     }
+    // Ensure that if the request count reaches zero, the frame loader will know about it.
+    cachedResourceLoader->loadDone();
 }
 
 }
