@@ -1,3 +1,13 @@
+2012-01-13  David Levin  <levin@chromium.org>
+
+        HWndDC is a better name than HwndDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76281
+
+        Reviewed by Darin Adler.
+
+        * src/win/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2012-01-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

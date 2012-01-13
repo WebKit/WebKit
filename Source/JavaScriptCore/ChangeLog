@@ -1,3 +1,17 @@
+2012-01-13  David Levin  <levin@chromium.org>
+
+        HWndDC is a better name than HwndDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76281
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+        * wtf/win/HWndDCWin.h: Renamed from Source/JavaScriptCore/wtf/win/HwndDCWin.h.
+        (WTF::HWndDC::HWndDC):
+        (WTF::HWndDC::~HWndDC):
+        (WTF::HWndDC::operator HDC):
+
 2012-01-13  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [EFL] Add OwnPtr specialization for Eina_Module.
