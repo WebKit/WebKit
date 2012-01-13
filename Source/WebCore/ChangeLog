@@ -1,3 +1,20 @@
+2012-01-13  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio: Optimize calculateNormalizationScale().
+        https://bugs.webkit.org/show_bug.cgi?id=74372
+
+        Reviewed by Eric Carlson.
+
+        No new tests; optimization of existing code, so covered by existing test cases.
+
+        * platform/audio/Reverb.cpp:
+        (WebCore::calculateNormalizationScale): Replace implementation with optimized vector
+            math operation.
+        (WebCore::Reverb::Reverb):
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vsvesq): Vector math operation for squared sum of elements.
+        * platform/audio/VectorMath.h:
+
 2012-01-13  Nico Weber  <thakis@chromium.org>
 
         Remove a unused variable.

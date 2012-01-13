@@ -35,6 +35,7 @@
 #include "AudioBus.h"
 #include "AudioFileReader.h"
 #include "ReverbConvolver.h"
+#include "VectorMath.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
@@ -46,28 +47,26 @@ using namespace std;
 
 namespace WebCore {
 
+using namespace VectorMath;
+
 // Empirical gain calibration tested across many impulse responses to ensure perceived volume is same as dry (unprocessed) signal
-const double GainCalibration = -58.0;
+const float GainCalibration = -58;
 
 // A minimum power value to when normalizing a silent (or very quiet) impulse response
-const double MinPower = 0.000125;
+const float MinPower = 0.000125f;
     
-static double calculateNormalizationScale(AudioBus* response)
+static float calculateNormalizationScale(AudioBus* response)
 {
     // Normalize by RMS power
     size_t numberOfChannels = response->numberOfChannels();
     size_t length = response->length();
 
-    double power = 0.0;
+    float power = 0;
 
     for (size_t i = 0; i < numberOfChannels; ++i) {
-        int n = length;
-        float* p = response->channel(i)->data();
-
-        while (n--) {
-            float sample = *p++;
-            power += sample * sample;
-        }
+        float channelPower = 0;
+        vsvesq(response->channel(i)->data(), 1, &channelPower, length);
+        power += channelPower;
     }
 
     power = sqrt(power / (numberOfChannels * length));
@@ -76,20 +75,20 @@ static double calculateNormalizationScale(AudioBus* response)
     if (isinf(power) || isnan(power) || power < MinPower)
         power = MinPower;
 
-    double scale = 1.0 / power;
+    float scale = 1 / power;
 
-    scale *= pow(10.0, GainCalibration * 0.05); // calibrate to make perceived volume same as unprocessed
+    scale *= powf(10, GainCalibration * 0.05f); // calibrate to make perceived volume same as unprocessed
 
     // True-stereo compensation
     if (response->numberOfChannels() == 4)
-        scale *= 0.5;
+        scale *= 0.5f;
 
     return scale;
 }
 
 Reverb::Reverb(AudioBus* impulseResponse, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads, bool normalize)
 {
-    double scale = 1;
+    float scale = 1;
 
     if (normalize) {
         scale = calculateNormalizationScale(impulseResponse);
@@ -104,7 +103,7 @@ Reverb::Reverb(AudioBus* impulseResponse, size_t renderSliceSize, size_t maxFFTS
     // FIXME: What about roundoff? Perhaps consider making a temporary scaled copy
     // instead of scaling and unscaling in place.
     if (normalize && scale)
-        impulseResponse->scale(1.0 / scale);
+        impulseResponse->scale(1 / scale);
 }
 
 void Reverb::initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads)

@@ -95,6 +95,10 @@ void vsma(const float* sourceP, int sourceStride, const float* scale, float* des
     vDSP_vsma(sourceP, sourceStride, scale, destP, destStride, destP, destStride, framesToProcess);
 }
 
+void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesToProcess)
+{
+    vDSP_svesq(const_cast<float*>(sourceP), sourceStride, sumP, framesToProcess);
+}
 #else
 
 void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
@@ -151,7 +155,6 @@ void vsma(const float* sourceP, int sourceStride, const float* scale, float* des
         n--;
     }
 }
-
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {
@@ -412,6 +415,20 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
     }
 }
 
+void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesToProcess)
+{
+    // FIXME: optimize for SSE
+    int n = framesToProcess;
+    float sum = 0;
+    while (n--) {
+        float sample = *sourceP;
+        sum += sample * sample;
+        sourceP += sourceStride;
+    }
+
+    ASSERT(sumP);
+    *sumP = sum;
+}
 #endif // OS(DARWIN)
 
 } // namespace VectorMath
