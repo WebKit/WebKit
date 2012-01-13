@@ -411,7 +411,6 @@ WebInspector.ResourceTreeFrame = function(model, parentFrame, payload)
     this._loaderId = payload.loaderId;
     this._name = payload.name;
     this._url = payload.url;
-    this._securityOrigin = payload.securityOrigin;
     this._mimeType = payload.mimeType;
 
     /**
@@ -430,7 +429,7 @@ WebInspector.ResourceTreeFrame = function(model, parentFrame, payload)
 
 WebInspector.ResourceTreeFrame.prototype = {
     /**
-     * @type {string}
+     * @return {string}
      */
     get id()
     {
@@ -438,7 +437,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get name()
     {
@@ -446,7 +445,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get url()
     {
@@ -454,15 +453,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {string}
-     */
-    get securityOrigin()
-    {
-        return this._securityOrigin;
-    },
-
-    /**
-     * @type {string}
+     * @return {string}
      */
     get loaderId()
     {
@@ -470,7 +461,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {WebInspector.ResourceTreeFrame}
+     * @return {WebInspector.ResourceTreeFrame}
      */
     get parentFrame()
     {
@@ -478,7 +469,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {Array.<WebInspector.ResourceTreeFrame>}
+     * @return {Array.<WebInspector.ResourceTreeFrame>}
      */
     get childFrames()
     {
@@ -501,7 +492,6 @@ WebInspector.ResourceTreeFrame.prototype = {
         this._loaderId = framePayload.loaderId;
         this._name = framePayload.name;
         this._url = framePayload.url;
-        this._securityOrigin = framePayload.securityOrigin;
         this._mimeType = framePayload.mimeType;
 
         var mainResource = this._resourcesMap[this._url];
@@ -512,7 +502,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @type {WebInspector.Resource}
+     * @return {WebInspector.Resource}
      */
     get mainResource()
     {

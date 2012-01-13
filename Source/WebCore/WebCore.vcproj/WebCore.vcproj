@@ -71406,14 +71406,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorIndexedDBAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorIndexedDBAgent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorInstrumentation.cpp"
 				>
 			</File>
@@ -71910,10 +71902,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ImageView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\IndexedDBModel.js"
 					>
 				</File>
 				<File

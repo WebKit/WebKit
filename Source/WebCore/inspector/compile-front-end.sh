@@ -45,7 +45,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
         --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_sdk:30:jsmodule_common \
+    --module jsmodule_sdk:29:jsmodule_common \
         --js Source/WebCore/inspector/front-end/InspectorBackend.js \
         --js Source/WebCore/inspector/front-end/ApplicationCacheModel.js \
         --js Source/WebCore/inspector/front-end/Color.js \
@@ -63,7 +63,6 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/DebuggerModel.js \
         --js Source/WebCore/inspector/front-end/DebuggerPresentationModel.js \
         --js Source/WebCore/inspector/front-end/HAREntry.js \
-        --js Source/WebCore/inspector/front-end/IndexedDBModel.js \
         --js Source/WebCore/inspector/front-end/NetworkLog.js \
         --js Source/WebCore/inspector/front-end/Placard.js \
         --js Source/WebCore/inspector/front-end/Script.js \
