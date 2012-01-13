@@ -27,15 +27,15 @@
 
 namespace WTF {
 
-class OwnGetDC {
+class HwndDC {
 public:
-    explicit OwnGetDC(HWND hwnd)
+    explicit HwndDC(HWND hwnd)
         : m_hwnd(hwnd)
         , m_hdc(::GetDC(hwnd))
     {
     }
 
-    ~OwnGetDC()
+    ~HwndDC()
     {
         if (m_hdc)
             ::ReleaseDC(m_hwnd, m_hdc);
@@ -53,4 +53,4 @@ private:
 
 }
 
-using WTF::OwnGetDC;
+using WTF::HwndDC;

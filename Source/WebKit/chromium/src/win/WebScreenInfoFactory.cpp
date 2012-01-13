@@ -33,7 +33,7 @@
 
 #include "WebScreenInfo.h"
 
-#include <wtf/win/OwnGetDCWin.h>
+#include <wtf/win/HwndDCWin.h>
 
 #include <windows.h>
 
@@ -62,7 +62,7 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(HWND window)
     devMode.dmDriverExtra = 0;
     EnumDisplaySettings(monitorInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
 
-    OwnGetDC hdc(0);
+    HwndDC hdc(0);
     ASSERT(hdc);
 
     WebScreenInfo results;

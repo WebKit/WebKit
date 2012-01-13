@@ -1,3 +1,24 @@
+2012-01-12  David Levin  <levin@chromium.org>
+
+        HwndDC is a better name than OwnGetDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76235
+
+        Reviewed by Dmitry Titov.
+
+        This is a better name for two reasons:
+        1. "Own" implies "delete". In this case, the final call is a release (ReleaseDC).
+        2. "Ref" would be a better name due to the release but the RefPtr (and OwnPtr)
+           classes always take something to hold on to. In this case, the object (the DC)
+           is created by the class once it is given a Window to ensure that the HDC
+           was actually created using GetDC.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+        * wtf/win/HwndDCWin.h: Renamed from Source/JavaScriptCore/wtf/win/OwnGetDCWin.h.
+        (WTF::HwndDC::HwndDC):
+        (WTF::HwndDC::~HwndDC):
+        (WTF::HwndDC::operator HDC):
+
 2012-01-12  Gavin Barraclough  <barraclough@apple.com>
 
         Clean up putDirect (part 1)

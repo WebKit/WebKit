@@ -1,5 +1,15 @@
 2012-01-12  David Levin  <levin@chromium.org>
 
+        HwndDC is a better name than OwnGetDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76235
+
+        Reviewed by Dmitry Titov.
+
+        * src/win/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
+2012-01-12  David Levin  <levin@chromium.org>
+
         [chromium] Fix DC leak in WebScreenInfoFactory.
         https://bugs.webkit.org/show_bug.cgi?id=76203
 
