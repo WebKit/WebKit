@@ -1,3 +1,13 @@
+2012-01-13  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [GTK] gtkdoc.py ignoring LDFLAGS and CFLAGS environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=76269
+
+        Reviewed by Martin Robinson.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_gtkdoc_scangobj):
+
 2012-01-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2]REGRESSION(r104881):It broke hundreds of tests
