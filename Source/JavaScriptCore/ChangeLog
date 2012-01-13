@@ -30,6 +30,57 @@
 
 2012-01-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Clean up putDirect (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=76232
+
+        Reviewed by Sam Weinig.
+
+        Rename putWithAttributes to putDirectVirtual, to identify that this
+        has the same unchecked-DefineOwnProperty behaviour, change putDirectInternal
+        to be templated on an enum indicating which behaviour it is supposed to be
+        implementing, and change clients that are defining properties to call
+        putDirectInternal correctly.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::putDirectVirtual):
+        * debugger/DebuggerActivation.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/ClassInfo.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::putDirectVirtual):
+        * runtime/JSActivation.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::putDirectVirtual):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::putDirectVirtual):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putDirectVirtual):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::initializeGetterSetterProperty):
+        (JSC::JSObject::defineSetter):
+        (JSC::putDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::putDirect):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::putDirectVirtual):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::putDirectVirtual):
+        * runtime/JSVariableObject.h:
+
+2012-01-12  Gavin Barraclough  <barraclough@apple.com>
+
         Clean up putDirect (part 1)
         https://bugs.webkit.org/show_bug.cgi?id=76232
 

@@ -162,7 +162,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
     for (JSObject* obj = thisObject; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
+            if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
@@ -205,7 +205,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
             break;
     }
     
-    if (!thisObject->putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
+    if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
@@ -217,16 +217,10 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
-    object->putDirectInternal(exec->globalData(), propertyName, value, attributes, true, slot, getJSFunction(value));
-}
-
-void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
-{
-    PutPropertySlot slot;
-    putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
+    object->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, value, attributes, slot, getJSFunction(value));
 }
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
@@ -361,7 +355,7 @@ void JSObject::defineGetter(JSObject* thisObject, ExecState* exec, const Identif
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    thisObject->putDirectInternal(globalData, propertyName, getterSetter, attributes | Accessor, true, slot, 0);
+    thisObject->putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, getterSetter, attributes | Accessor, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -381,7 +375,7 @@ void JSObject::initializeGetterSetterProperty(ExecState* exec, const Identifier&
 
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
-    putDirectInternal(globalData, propertyName, getterSetter, attributes, true, slot, 0);
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, getterSetter, attributes, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -408,7 +402,7 @@ void JSObject::defineSetter(JSObject* thisObject, ExecState* exec, const Identif
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    thisObject->putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Accessor, true, slot, 0);
+    thisObject->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, getterSetter, attributes | Accessor, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -693,7 +687,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
                 attributes |= Accessor;
                 accessor->setSetter(exec->globalData(), oldDescriptor.setterObject());
             }
-            target->methodTable()->putWithAttributes(target, exec, propertyName, accessor, attributes);
+            target->methodTable()->putDirectVirtual(target, exec, propertyName, accessor, attributes);
             return true;
         }
         JSValue newValue = jsUndefined();
@@ -701,7 +695,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->methodTable()->putWithAttributes(target, exec, propertyName, newValue, attributes & ~Accessor);
+        target->methodTable()->putDirectVirtual(target, exec, propertyName, newValue, attributes & ~Accessor);
         return true;
     }
     attributes &= ~ReadOnly;

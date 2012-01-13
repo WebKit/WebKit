@@ -274,7 +274,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     JSValue jsValue = toJS(exec, value);
 
     if (attributes && !jsObject->hasProperty(exec, name))
-        jsObject->methodTable()->putWithAttributes(jsObject, exec, name, jsValue, attributes);
+        jsObject->methodTable()->putDirectVirtual(jsObject, exec, name, jsValue, attributes);
     else {
         PutPropertySlot slot;
         jsObject->methodTable()->put(jsObject, exec, name, jsValue, slot);

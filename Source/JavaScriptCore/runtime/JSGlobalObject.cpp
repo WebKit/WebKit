@@ -153,7 +153,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& proper
     JSVariableObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSGlobalObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
@@ -167,7 +167,7 @@ void JSGlobalObject::putWithAttributes(JSObject* object, ExecState* exec, const 
     if (!valueBefore) {
         JSValue valueAfter = thisObject->getDirect(exec->globalData(), propertyName);
         if (valueAfter)
-            JSObject::putWithAttributes(thisObject, exec, propertyName, valueAfter, attributes);
+            JSObject::putDirectVirtual(thisObject, exec, propertyName, valueAfter, attributes);
     }
 }
 

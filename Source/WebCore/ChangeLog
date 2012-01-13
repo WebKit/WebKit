@@ -1,3 +1,16 @@
+2012-01-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Clean up putDirect (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=76232
+
+        Reviewed by Sam Weinig.
+
+        Rename putWithAttributes to putDirectVirtual.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::putDirectVirtual):
+        * bindings/js/JSDOMWindowShell.h:
+
 2012-01-12  MORITA Hajime  <morrita@google.com>
 
         [Chromium] JSExportMacros.h should be visible.

@@ -109,10 +109,10 @@ void JSDOMWindowShell::put(JSCell* cell, ExecState* exec, const Identifier& prop
     thisObject->window()->methodTable()->put(thisObject->window(), exec, propertyName, value, slot);
 }
 
-void JSDOMWindowShell::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSDOMWindowShell::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(object);
-    thisObject->window()->putWithAttributes(thisObject->window(), exec, propertyName, value, attributes);
+    thisObject->window()->putDirectVirtual(thisObject->window(), exec, propertyName, value, attributes);
 }
 
 bool JSDOMWindowShell::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)

@@ -78,7 +78,7 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& p
     ASSERT_NOT_REACHED();
 }
 
-void JSStaticScopeObject::putWithAttributes(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(object);
     if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
