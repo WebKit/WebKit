@@ -1,3 +1,22 @@
+2012-01-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Detailed heap snapshot. _calculateFlags is too slow on a large heap snapshot.
+        https://bugs.webkit.org/show_bug.cgi?id=76252
+
+        _calculateFlags speed is about 10k edges per second.
+        It requires 150sec for the snapshot with 1.5m edges.
+        The root of problem is var node = list.shift();
+        shift() is not effective in term of memory and cpu.
+        In our case it can be replaced with pop().
+        Now the function works 40 times faster.
+
+        Drive by change: if statement was reformatted a bit for better readability.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._calculateFlags):
+
 2012-01-13  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Chromium] JavaScriptOutlineDialog fails to open

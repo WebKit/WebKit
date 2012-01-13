@@ -1045,16 +1045,25 @@ WebInspector.HeapSnapshot.prototype = {
             if (iter.edge.node.isDOMWindow)
                 list.push(iter.edge.node);
         }
+
         while (list.length) {
-            var node = list.shift();
-            if (node.canBeQueried) continue;
+            var node = list.pop();
+            if (this._flags[node.nodeIndex])
+                continue;
             this._flags[node.nodeIndex] = flag;
             for (var iter = node.edges; iter.hasNext(); iter.next()) {
                 var edge = iter.edge;
-                if (!edge.isHidden && !edge.isInvisible &&
-                    edge.name && (!edge.isInternal || edge.name === "native") &&
-                    !edge.node.canBeQueried)
-                    list.push(edge.node);
+                var node = edge.node;
+                if (this._flags[node.nodeIndex])
+                    continue;
+                if (edge.isHidden || edge.isInvisible)
+                    continue;
+                var name = edge.name;
+                if (!name)
+                    continue;
+                if (edge.isInternal && name !== "native")
+                    continue;
+                list.push(node);
             }
         }
     },
