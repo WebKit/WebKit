@@ -1,3 +1,13 @@
+2012-01-13  Anders Carlsson  <andersca@apple.com>
+
+        Disable implicit animations when setting the root compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=76304
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
 2012-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         TextureMapper: Extract layer transform logic to a LayerTransform class.

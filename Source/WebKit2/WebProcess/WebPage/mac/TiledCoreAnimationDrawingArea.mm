@@ -103,12 +103,15 @@ void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntS
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    if (!graphicsLayer) {
-        m_rootLayer.get().sublayers = nil;
-        return;
-    }
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
 
-    m_rootLayer.get().sublayers = [NSArray arrayWithObject:graphicsLayer->platformLayer()];
+    if (!graphicsLayer)
+        m_rootLayer.get().sublayers = nil;
+    else
+        m_rootLayer.get().sublayers = [NSArray arrayWithObject:graphicsLayer->platformLayer()];
+
+    [CATransaction commit];
 }
 
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
