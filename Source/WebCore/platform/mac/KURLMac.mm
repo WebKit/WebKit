@@ -42,22 +42,11 @@ KURL::KURL(NSURL *url)
     }
 
     CFIndex bytesLength = CFURLGetBytes(reinterpret_cast<CFURLRef>(url), 0, 0);
-    Vector<char, 512> buffer(bytesLength + 6); // 5 for "file:", 1 for null character to end C string
-    char* bytes = &buffer[5];
+    Vector<char, 512> buffer(bytesLength + 1);
+    char* bytes = &buffer[0];
     CFURLGetBytes(reinterpret_cast<CFURLRef>(url), reinterpret_cast<UInt8*>(bytes), bytesLength);
     bytes[bytesLength] = '\0';
-    if (bytes[0] != '/') {
-        parse(bytes);
-        return;
-    }
-
-    buffer[0] = 'f';
-    buffer[1] = 'i';
-    buffer[2] = 'l';
-    buffer[3] = 'e';
-    buffer[4] = ':';
-
-    parse(buffer.data());
+    parse(bytes);
 }
 
 KURL::operator NSURL *() const
