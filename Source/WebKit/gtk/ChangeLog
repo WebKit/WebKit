@@ -1,3 +1,16 @@
+2012-01-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Removed duplicated unit test.
+
+        The unit test testWebkitAtkGetTextAtOffsetForms is exactly the
+        same test case than testWebkitAtkGetTextAtOffset, so it makes no
+        sense to have it duplicated.
+
+        Rubber-stamped by Martin Robinson.
+
+        * tests/testatk.c:
+        (main): Removed testWebkitAtkGetTextAtOffsetForms.
+
 2012-01-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         AX: support helpText() in DumpRenderTree

@@ -642,28 +642,6 @@ static void testWebkitAtkEmbeddedObjects()
     g_object_unref(webView);
 }
 
-static void testWebkitAtkGetTextAtOffsetForms()
-{
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    g_object_ref_sink(webView);
-    GtkAllocation allocation = { 0, 0, 800, 600 };
-    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
-    webkit_web_view_load_string(webView, contents, 0, 0, 0);
-
-    /* Get to the inner AtkText object. */
-    AtkObject* object = getWebAreaObject(webView);
-    g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
-
-    AtkText* textObject = ATK_TEXT(object);
-    g_assert(ATK_IS_TEXT(textObject));
-
-    runGetTextTests(textObject);
-
-    g_object_unref(webView);
-}
-
 static void testWebkitAtkGetTextAtOffset()
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -1794,7 +1772,6 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/documentLoadingEvents", testWebkitAtkDocumentLoadingEvents);
     g_test_add_func("/webkit/atk/embeddedObjects", testWebkitAtkEmbeddedObjects);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
-    g_test_add_func("/webkit/atk/getTextAtOffsetForms", testWebkitAtkGetTextAtOffsetForms);
     g_test_add_func("/webkit/atk/getTextAtOffsetNewlines", testWebkitAtkGetTextAtOffsetNewlines);
     g_test_add_func("/webkit/atk/getTextAtOffsetTextarea", testWebkitAtkGetTextAtOffsetTextarea);
     g_test_add_func("/webkit/atk/getTextAtOffsetTextInput", testWebkitAtkGetTextAtOffsetTextInput);
