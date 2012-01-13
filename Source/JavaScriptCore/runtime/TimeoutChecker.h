@@ -57,9 +57,9 @@ namespace JSC {
             --m_startCount;
         }
 
-        void reset();
+        JS_EXPORT_PRIVATE void reset();
 
-        bool didTimeOut(ExecState*);
+        JS_EXPORT_PRIVATE bool didTimeOut(ExecState*);
 
     private:
         unsigned m_timeoutInterval;

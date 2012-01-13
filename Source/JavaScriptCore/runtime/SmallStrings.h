@@ -60,7 +60,7 @@ namespace JSC {
             return m_singleCharacterStrings[character];
         }
 
-        StringImpl* singleCharacterStringRep(unsigned char character);
+        JS_EXPORT_PRIVATE StringImpl* singleCharacterStringRep(unsigned char character);
 
         void finalizeSmallStrings();
         void clear();
@@ -72,8 +72,8 @@ namespace JSC {
     private:
         static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
-        void createEmptyString(JSGlobalData*);
-        void createSingleCharacterString(JSGlobalData*, unsigned char);
+        JS_EXPORT_PRIVATE void createEmptyString(JSGlobalData*);
+        JS_EXPORT_PRIVATE void createSingleCharacterString(JSGlobalData*, unsigned char);
 
         JSString* m_emptyString;
         JSString* m_singleCharacterStrings[singleCharacterStringCount];

@@ -81,8 +81,8 @@ public:
     }
 #else
     // These are necessary to work around not having conditional exports.
-    static char usesWithBarrierFromCpp;
-    static char usesWithoutBarrierFromCpp;
+    JS_EXPORTDATA static char usesWithBarrierFromCpp;
+    JS_EXPORTDATA static char usesWithoutBarrierFromCpp;
 #endif // ENABLE(WRITE_BARRIER_PROFILING)
 
     static void countWriteBarrier()

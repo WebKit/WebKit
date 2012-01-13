@@ -35,13 +35,13 @@ namespace JSC {
     struct RegExpRepresentation;
     class JSGlobalData;
 
-    RegExpFlags regExpFlags(const UString&);
+    JS_EXPORT_PRIVATE RegExpFlags regExpFlags(const UString&);
 
     class RegExp : public JSCell {
     public:
         typedef JSCell Base;
 
-        static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
+        JS_EXPORT_PRIVATE static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
         static void destroy(JSCell*);
 
         bool global() const { return m_flags & FlagGlobal; }
@@ -53,7 +53,7 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
+        JS_EXPORT_PRIVATE int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
         bool hasCode()

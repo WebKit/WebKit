@@ -46,7 +46,7 @@ public:
         m_counter += count;
     }
 
-    static void dump();
+    JS_EXPORT_PRIVATE static void dump();
 
     int64_t* addressOfCounter() { return &m_counter; }
 
@@ -74,7 +74,7 @@ protected:
     AbstractSamplingCounter** m_referer;
     // Null object used to detect end of static chain.
     static AbstractSamplingCounter s_abstractSamplingCounterChainEnd;
-    static AbstractSamplingCounter* s_abstractSamplingCounterChain;
+    JS_EXPORTDATA static AbstractSamplingCounter* s_abstractSamplingCounterChain;
     static bool s_completed;
 };
 

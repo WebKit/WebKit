@@ -56,7 +56,7 @@ namespace JSC {
     class JSLock {
         WTF_MAKE_NONCOPYABLE(JSLock);
     public:
-        JSLock(ExecState*);
+        JS_EXPORT_PRIVATE JSLock(ExecState*);
         JSLock(JSGlobalData*);
 
         JSLock(JSLockBehavior lockBehavior)
@@ -80,22 +80,22 @@ namespace JSC {
             unlock(m_lockBehavior); 
         }
         
-        static void lock(JSLockBehavior);
-        static void unlock(JSLockBehavior);
+        JS_EXPORT_PRIVATE static void lock(JSLockBehavior);
+        JS_EXPORT_PRIVATE static void unlock(JSLockBehavior);
         static void lock(ExecState*);
         static void unlock(ExecState*);
 
-        static intptr_t lockCount();
-        static bool currentThreadIsHoldingLock();
+        JS_EXPORT_PRIVATE static intptr_t lockCount();
+        JS_EXPORT_PRIVATE static bool currentThreadIsHoldingLock();
 
         JSLockBehavior m_lockBehavior;
 
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
-            DropAllLocks(ExecState* exec);
-            DropAllLocks(JSLockBehavior);
-            ~DropAllLocks();
+            JS_EXPORT_PRIVATE DropAllLocks(ExecState* exec);
+            JS_EXPORT_PRIVATE DropAllLocks(JSLockBehavior);
+            JS_EXPORT_PRIVATE ~DropAllLocks();
             
         private:
             intptr_t m_lockCount;

@@ -78,8 +78,8 @@ typedef void (*AtomicStringTableDestructor)(AtomicStringTable*);
 class WTFThreadData {
     WTF_MAKE_NONCOPYABLE(WTFThreadData);
 public:
-    WTFThreadData();
-    ~WTFThreadData();
+    WTF_EXPORT_PRIVATE WTFThreadData();
+    WTF_EXPORT_PRIVATE ~WTFThreadData();
 
     AtomicStringTable* atomicStringTable()
     {

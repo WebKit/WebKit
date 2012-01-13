@@ -56,7 +56,7 @@ namespace JSC {
         } js;
     };
 
-    JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
+    JS_EXPORT_PRIVATE JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
 
 } // namespace JSC
 

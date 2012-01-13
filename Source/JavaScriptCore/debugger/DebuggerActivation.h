@@ -52,7 +52,7 @@ namespace JSC {
         static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes);
         static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes);
 
-        static const ClassInfo s_info;
+        JS_EXPORTDATA static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
         {
@@ -62,10 +62,10 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
 
-        void finishCreation(JSGlobalData&, JSObject* activation);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, JSObject* activation);
 
     private:
-        DebuggerActivation(JSGlobalData&);
+        JS_EXPORT_PRIVATE DebuggerActivation(JSGlobalData&);
         WriteBarrier<JSActivation> m_activation;
     };
 

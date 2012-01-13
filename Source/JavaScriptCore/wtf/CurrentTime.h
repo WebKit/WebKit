@@ -39,7 +39,7 @@ namespace WTF {
 // Returns the current UTC time in seconds, counted from January 1, 1970.
 // Precision varies depending on platform but is usually as good or better
 // than a millisecond.
-double currentTime();
+WTF_EXPORT_PRIVATE double currentTime();
 
 // Same thing, in milliseconds.
 inline double currentTimeMS()
@@ -60,7 +60,7 @@ inline void getLocalTime(const time_t* localTime, struct tm* localTM)
 
 // Provides a monotonically increasing time in seconds since an arbitrary point in the past.
 // On unsupported platforms, this function only guarantees the result will be non-decreasing.
-double monotonicallyIncreasingTime();
+WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
 } // namespace WTF
 

@@ -30,7 +30,7 @@ namespace WTF {
 
     // Returns a pseudo-random number in the range [0, 1), attempts to be
     // cryptographically secure if possible on the target platform
-    double randomNumber();
+    WTF_EXPORT_PRIVATE double randomNumber();
 
 }
 

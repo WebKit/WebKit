@@ -39,7 +39,7 @@ public:
     ~VTableSpectrum();
     
     void countVPtr(void*);
-    void count(JSCell*);
+    JS_EXPORT_PRIVATE void count(JSCell*);
     
     void dump(FILE* output, const char* comment);
 };

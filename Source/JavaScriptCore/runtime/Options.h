@@ -73,8 +73,8 @@ extern unsigned gcMarkStackSegmentSize;
 extern unsigned minimumNumberOfCellsToKeep;
 extern unsigned maximumNumberOfSharedSegments;
 extern unsigned sharedStackWakeupThreshold;
-extern unsigned numberOfGCMarkers;
-extern unsigned opaqueRootMergeThreshold;
+JS_EXPORTDATA extern unsigned numberOfGCMarkers;
+JS_EXPORTDATA extern unsigned opaqueRootMergeThreshold;
 
 void initializeOptions();
 

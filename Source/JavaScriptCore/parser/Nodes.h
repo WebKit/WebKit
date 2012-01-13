@@ -181,7 +181,7 @@ namespace JSC {
         StatementNode(int);
 
     public:
-        void setLoc(int firstLine, int lastLine);
+        JS_EXPORT_PRIVATE void setLoc(int firstLine, int lastLine);
         int firstLine() const { return lineNo(); }
         int lastLine() const { return m_lastLine; }
 

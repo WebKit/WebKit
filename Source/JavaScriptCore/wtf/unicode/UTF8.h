@@ -62,7 +62,7 @@ namespace Unicode {
     // to the replacement character; otherwise (when the flag is set to strict)
     // they constitute an error.
 
-    ConversionResult convertUTF8ToUTF16(
+    WTF_EXPORT_PRIVATE ConversionResult convertUTF8ToUTF16(
                     const char** sourceStart, const char* sourceEnd, 
                     UChar** targetStart, UChar* targetEnd, bool strict = true);
 
@@ -70,7 +70,7 @@ namespace Unicode {
                     const LChar** sourceStart, const LChar* sourceEnd, 
                     char** targetStart, char* targetEnd);
 
-    ConversionResult convertUTF16ToUTF8(
+    WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(
                     const UChar** sourceStart, const UChar* sourceEnd, 
                     char** targetStart, char* targetEnd, bool strict = true);
 

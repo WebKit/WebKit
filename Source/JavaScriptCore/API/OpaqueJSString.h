@@ -46,7 +46,7 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(new OpaqueJSString(characters, length));
     }
 
-    static PassRefPtr<OpaqueJSString> create(const JSC::UString&);
+    JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const JSC::UString&);
 
     UChar* characters() { return this ? m_characters : 0; }
     unsigned length() { return this ? m_length : 0; }

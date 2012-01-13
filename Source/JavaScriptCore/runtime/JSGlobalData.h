@@ -134,18 +134,18 @@ namespace JSC {
         enum GlobalDataType { Default, APIContextGroup, APIShared };
         
         struct ClientData {
-            virtual ~ClientData() = 0;
+            JS_EXPORT_PRIVATE virtual ~ClientData() = 0;
         };
 
         bool isSharedInstance() { return globalDataType == APIShared; }
         bool usingAPI() { return globalDataType != Default; }
         static bool sharedInstanceExists();
-        static JSGlobalData& sharedInstance();
+        JS_EXPORT_PRIVATE static JSGlobalData& sharedInstance();
 
-        static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapSize = SmallHeap);
-        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapSize = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapSize = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapSize = SmallHeap);
         static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
-        ~JSGlobalData();
+        JS_EXPORT_PRIVATE ~JSGlobalData();
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
 
@@ -308,21 +308,21 @@ namespace JSC {
 
         CachedTranscendentalFunction<sin> cachedSin;
 
-        void resetDateCache();
+        JS_EXPORT_PRIVATE void resetDateCache();
 
-        void startSampling();
-        void stopSampling();
-        void dumpSampleData(ExecState* exec);
+        JS_EXPORT_PRIVATE void startSampling();
+        JS_EXPORT_PRIVATE void stopSampling();
+        JS_EXPORT_PRIVATE void dumpSampleData(ExecState* exec);
         void recompileAllJSFunctions();
         RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);
 #endif
-        void dumpRegExpTrace();
-        void clearBuiltinStructures();
+        JS_EXPORT_PRIVATE void dumpRegExpTrace();
+        JS_EXPORT_PRIVATE void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
-        void releaseExecutableMemory();
+        JS_EXPORT_PRIVATE void releaseExecutableMemory();
 
 #if ENABLE(GC_VALIDATION)
         bool isInitializingObject() const; 

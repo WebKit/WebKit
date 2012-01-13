@@ -57,7 +57,7 @@ namespace JSC {
         } js;
     };
 
-    JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
+    JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
 
 } // namespace JSC
 

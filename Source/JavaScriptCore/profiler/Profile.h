@@ -44,11 +44,11 @@ namespace JSC {
         double totalTime() const { return m_head->totalTime(); }
         unsigned int uid() const { return m_uid; }
 
-        void forEach(void (ProfileNode::*)());
+        JS_EXPORT_PRIVATE void forEach(void (ProfileNode::*)());
 
-        void focus(const ProfileNode*);
-        void exclude(const ProfileNode*);
-        void restoreAll();
+        JS_EXPORT_PRIVATE void focus(const ProfileNode*);
+        JS_EXPORT_PRIVATE void exclude(const ProfileNode*);
+        JS_EXPORT_PRIVATE void restoreAll();
 
 #ifndef NDEBUG
         void debugPrintData() const;

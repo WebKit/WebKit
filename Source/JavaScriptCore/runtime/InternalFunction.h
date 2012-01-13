@@ -37,7 +37,7 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        const UString& name(ExecState*);
+        JS_EXPORT_PRIVATE const UString& name(ExecState*);
         const UString displayName(ExecState*);
         const UString calculatedDisplayName(ExecState*);
 
@@ -49,9 +49,9 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
-        InternalFunction(JSGlobalObject*, Structure*);
+        JS_EXPORT_PRIVATE InternalFunction(JSGlobalObject*, Structure*);
 
-        void finishCreation(JSGlobalData&, const Identifier& name);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, const Identifier& name);
 
         static CallType getCallData(JSCell*, CallData&);
     };

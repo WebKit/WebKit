@@ -63,7 +63,7 @@ protected:
 
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
-    static void visitChildren(JSCell*, SlotVisitor&);
+    JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSGlobalObject> m_unwrappedObject;
 };

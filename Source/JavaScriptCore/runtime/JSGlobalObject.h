@@ -192,20 +192,20 @@ namespace JSC {
         }
 
     public:
-        ~JSGlobalObject();
-        static void destroy(JSCell*);
+        JS_EXPORT_PRIVATE ~JSGlobalObject();
+        JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
-        static void visitChildren(JSCell*, SlotVisitor&);
+        JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
         bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
-        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
-        static void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        JS_EXPORT_PRIVATE static void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
 
-        static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes);
-        static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes);
+        JS_EXPORT_PRIVATE static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunc, unsigned attributes);
+        JS_EXPORT_PRIVATE static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunc, unsigned attributes);
 
         // We use this in the code generator as we perform symbol table
         // lookups prior to initializing the properties
@@ -283,7 +283,7 @@ namespace JSC {
 
         ScopeChainNode* globalScopeChain() { return m_globalScopeChain.get(); }
 
-        ExecState* globalExec();
+        JS_EXPORT_PRIVATE ExecState* globalExec();
 
         static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
 
@@ -332,17 +332,17 @@ namespace JSC {
             JSValue value;
             unsigned attributes;
         };
-        void addStaticGlobals(GlobalPropertyInfo*, int count);
+        JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
         // FIXME: Fold reset into init.
-        void init(JSObject* thisValue);
+        JS_EXPORT_PRIVATE void init(JSObject* thisValue);
         void reset(JSValue prototype);
 
         void createThrowTypeError(ExecState*);
 
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
-        static void clearRareData(JSCell*);
+        JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
     };
 
     JSGlobalObject* asGlobalObject(JSValue);
@@ -488,7 +488,7 @@ namespace JSC {
     class DynamicGlobalObjectScope {
         WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
     public:
-        DynamicGlobalObjectScope(JSGlobalData&, JSGlobalObject*);
+        JS_EXPORT_PRIVATE DynamicGlobalObjectScope(JSGlobalData&, JSGlobalObject*);
 
         ~DynamicGlobalObjectScope()
         {

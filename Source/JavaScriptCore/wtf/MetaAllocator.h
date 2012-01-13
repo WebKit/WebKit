@@ -47,11 +47,11 @@ class MetaAllocator {
     WTF_MAKE_NONCOPYABLE(MetaAllocator);
 public:
     
-    MetaAllocator(size_t allocationGranule);
+    WTF_EXPORT_PRIVATE MetaAllocator(size_t allocationGranule);
     
     virtual ~MetaAllocator();
     
-    PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes);
+    WTF_EXPORT_PRIVATE PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes);
     
     // Non-atomic methods for getting allocator statistics.
     size_t bytesAllocated() { return m_bytesAllocated; }
@@ -69,11 +69,11 @@ public:
     // Add more free space to the allocator. Call this directly from
     // the constructor if you wish to operate the allocator within a
     // fixed pool.
-    void addFreshFreeSpace(void* start, size_t sizeInBytes);
+    WTF_EXPORT_PRIVATE void addFreshFreeSpace(void* start, size_t sizeInBytes);
 
     // This is meant only for implementing tests. Never call this in release
     // builds.
-    size_t debugFreeSpaceSize();
+    WTF_EXPORT_PRIVATE size_t debugFreeSpaceSize();
     
 #if ENABLE(META_ALLOCATOR_PROFILE)
     void dumpProfile();
@@ -127,7 +127,7 @@ private:
     size_t roundUp(size_t sizeInBytes);
     
     FreeSpaceNode* allocFreeSpaceNode();
-    void freeFreeSpaceNode(FreeSpaceNode*);
+    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(FreeSpaceNode*);
     
     size_t m_allocationGranule;
     unsigned m_logAllocationGranule;

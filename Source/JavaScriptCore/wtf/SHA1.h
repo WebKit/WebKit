@@ -37,16 +37,16 @@ namespace WTF {
 
 class SHA1 {
 public:
-    SHA1();
+    WTF_EXPORT_PRIVATE SHA1();
 
     void addBytes(const Vector<uint8_t>& input)
     {
         addBytes(input.data(), input.size());
     }
-    void addBytes(const uint8_t* input, size_t length);
+    WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
 
     // computeHash has a side effect of resetting the state of the object.
-    void computeHash(Vector<uint8_t, 20>&);
+    WTF_EXPORT_PRIVATE void computeHash(Vector<uint8_t, 20>&);
 
 private:
     void finalize();

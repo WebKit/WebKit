@@ -75,8 +75,8 @@ namespace JSC {
         }
 
     protected:
-        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
-        void finishCreation(JSGlobalObject*);
+        JS_EXPORT_PRIVATE RegExpObject(JSGlobalObject*, Structure*, RegExp*);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*);
         static void destroy(JSCell*);
 
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;

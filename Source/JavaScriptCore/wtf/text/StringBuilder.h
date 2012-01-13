@@ -41,8 +41,8 @@ public:
     {
     }
 
-    void append(const UChar*, unsigned);
-    void append(const LChar*, unsigned);
+    WTF_EXPORT_PRIVATE void append(const UChar*, unsigned);
+    WTF_EXPORT_PRIVATE void append(const LChar*, unsigned);
 
     ALWAYS_INLINE void append(const char* characters, unsigned length) { append(reinterpret_cast<const LChar*>(characters), length); }
 
@@ -127,11 +127,11 @@ public:
 
     bool isEmpty() const { return !length(); }
 
-    void reserveCapacity(unsigned newCapacity);
+    WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
 
-    void resize(unsigned newSize);
+    WTF_EXPORT_PRIVATE void resize(unsigned newSize);
 
-    void shrinkToFit();
+    WTF_EXPORT_PRIVATE void shrinkToFit();
 
     UChar operator[](unsigned i) const
     {
@@ -200,7 +200,7 @@ private:
     CharType* appendUninitializedSlow(unsigned length);
     template <typename CharType>
     ALWAYS_INLINE CharType * getBufferCharacters();
-    void reifyString();
+    WTF_EXPORT_PRIVATE void reifyString();
 
     unsigned m_length;
     String m_string;

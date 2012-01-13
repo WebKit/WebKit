@@ -65,10 +65,10 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
 
     virtual unsigned byteLength() const = 0;
 
-    virtual ~ArrayBufferView();
+    WTF_EXPORT_PRIVATE virtual ~ArrayBufferView();
 
   protected:
-    ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
+    WTF_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
@@ -118,7 +118,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    virtual void neuter();
+    WTF_EXPORT_PRIVATE virtual void neuter();
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;

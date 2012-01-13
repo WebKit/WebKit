@@ -94,7 +94,7 @@ namespace JSC {
         Heap* m_heap;
 
     public:
-        virtual ~CodeBlock();
+        JS_EXPORT_PRIVATE virtual ~CodeBlock();
         
         int numParameters() const { return m_numParameters; }
         void setNumParameters(int newValue);

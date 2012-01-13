@@ -74,7 +74,7 @@ intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = 0, int base =
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 
 int charactersToInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
-int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+WTF_EXPORT_PRIVATE int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 int64_t charactersToInt64(const LChar*, size_t, bool* ok = 0); // ignores trailing garbage
@@ -87,7 +87,7 @@ intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trai
 WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 float charactersToFloat(const LChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
-float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 
 enum FloatConversionFlags {
     ShouldRoundSignificantFigures = 1 << 0,

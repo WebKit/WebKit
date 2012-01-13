@@ -33,15 +33,15 @@
 
 namespace JSC {
 
-JSObject* createInterruptedExecutionException(JSGlobalData*);
+JS_EXPORT_PRIVATE JSObject* createInterruptedExecutionException(JSGlobalData*);
 bool isInterruptedExecutionException(JSObject*);
 bool isInterruptedExecutionException(JSValue);
 
 JSObject* createTerminatedExecutionException(JSGlobalData*);
 bool isTerminatedExecutionException(JSObject*);
-bool isTerminatedExecutionException(JSValue);
+JS_EXPORT_PRIVATE bool isTerminatedExecutionException(JSValue);
 
-JSObject* createStackOverflowError(ExecState*);
+JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
 JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createOutOfMemoryError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);

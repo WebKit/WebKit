@@ -31,8 +31,8 @@
 namespace WTF {
 
 #if USE(OS_RANDOMNESS)
-uint32_t cryptographicallyRandomNumber();
-void cryptographicallyRandomValues(void* buffer, size_t length);
+WTF_EXPORT_PRIVATE uint32_t cryptographicallyRandomNumber();
+WTF_EXPORT_PRIVATE void cryptographicallyRandomValues(void* buffer, size_t length);
 #endif
 
 }

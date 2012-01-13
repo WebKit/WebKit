@@ -31,8 +31,8 @@ namespace JSC {
     class ScopeChainNode;
     class SourceCode;
 
-    bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
-    JSValue evaluate(ExecState*, ScopeChainNode*, const SourceCode&, JSValue thisValue = JSValue(), JSValue* exception = 0);
+    JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
+    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*, ScopeChainNode*, const SourceCode&, JSValue thisValue = JSValue(), JSValue* exception = 0);
 
 } // namespace JSC
 

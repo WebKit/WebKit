@@ -52,16 +52,16 @@ private:
 class CString {
 public:
     CString() { }
-    CString(const char*);
-    CString(const char*, size_t length);
+    WTF_EXPORT_PRIVATE CString(const char*);
+    WTF_EXPORT_PRIVATE CString(const char*, size_t length);
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
-    static CString newUninitialized(size_t length, char*& characterBuffer);
+    WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
 
     const char* data() const
     {
         return m_buffer ? m_buffer->data() : 0;
     }
-    char* mutableData();
+    WTF_EXPORT_PRIVATE char* mutableData();
     size_t length() const
     {
         return m_buffer ? m_buffer->length() - 1 : 0;
@@ -77,7 +77,7 @@ private:
     RefPtr<CStringBuffer> m_buffer;
 };
 
-bool operator==(const CString& a, const CString& b);
+WTF_EXPORT_PRIVATE bool operator==(const CString& a, const CString& b);
 inline bool operator!=(const CString& a, const CString& b) { return !(a == b); }
 
 } // namespace WTF

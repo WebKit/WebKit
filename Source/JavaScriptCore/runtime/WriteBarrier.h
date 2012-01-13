@@ -40,8 +40,8 @@ class JSGlobalObject;
 template<class T> class WriteBarrierBase;
 template<> class WriteBarrierBase<JSValue>;
 
-void slowValidateCell(JSCell*);
-void slowValidateCell(JSGlobalObject*);
+JS_EXPORT_PRIVATE void slowValidateCell(JSCell*);
+JS_EXPORT_PRIVATE void slowValidateCell(JSGlobalObject*);
     
 #if ENABLE(GC_VALIDATION)
 template<class T> inline void validateCell(T cell)

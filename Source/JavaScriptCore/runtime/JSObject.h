@@ -55,7 +55,7 @@ namespace JSC {
     class Structure;
     struct HashTable;
 
-    JSObject* throwTypeError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const UString&);
     extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
 
     // ECMA 262-3 8.6.1
@@ -74,7 +74,7 @@ namespace JSC {
         friend class JIT;
         friend class JSCell;
         friend class MarkedBlock;
-        friend bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
+        JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
         enum PutMode {
             PutModePut,
@@ -84,11 +84,11 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        static void destroy(JSCell*);
+        JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
-        static void visitChildren(JSCell*, SlotVisitor&);
+        JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-        static UString className(const JSObject*);
+        JS_EXPORT_PRIVATE static UString className(const JSObject*);
 
         static void finalize(JSCell*);
 
@@ -103,49 +103,49 @@ namespace JSC {
 
         bool getPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-        bool getPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
+        JS_EXPORT_PRIVATE bool getPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
-        static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
-        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
 
         // putDirect is effectively an unchecked vesion of 'defineOwnProperty':
         //  - the prototype chain is not consulted
         //  - accessors are not called.
         //  - attributes will be respected (after the call the property will exist with the given attributes)
-        static void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        JS_EXPORT_PRIVATE static void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
         void putDirect(JSGlobalData&, const Identifier& propertyName, JSValue, unsigned attributes = 0);
         void putDirect(JSGlobalData&, const Identifier& propertyName, JSValue, PutPropertySlot&);
         void putDirectWithoutTransition(JSGlobalData&, const Identifier& propertyName, JSValue, unsigned attributes = 0);
 
         bool propertyIsEnumerable(ExecState*, const Identifier& propertyName) const;
 
-        bool hasProperty(ExecState*, const Identifier& propertyName) const;
-        bool hasProperty(ExecState*, unsigned propertyName) const;
+        JS_EXPORT_PRIVATE bool hasProperty(ExecState*, const Identifier& propertyName) const;
+        JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;
         bool hasOwnProperty(ExecState*, const Identifier& propertyName) const;
 
-        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
-        static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
+        JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        JS_EXPORT_PRIVATE static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
-        static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+        JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-        static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
+        JS_EXPORT_PRIVATE static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
 
-        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-        bool toBoolean(ExecState*) const;
+        JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
-        double toNumber(ExecState*) const;
-        UString toString(ExecState*) const;
+        JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
+        JS_EXPORT_PRIVATE UString toString(ExecState*) const;
 
         // NOTE: JSObject and its subclasses must be able to gracefully handle ExecState* = 0,
         // because this call may come from inside the compiler.
-        static JSObject* toThisObject(JSCell*, ExecState*);
+        JS_EXPORT_PRIVATE static JSObject* toThisObject(JSCell*, ExecState*);
         JSObject* unwrappedObject();
 
         bool getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificFunction) const;
@@ -193,14 +193,14 @@ namespace JSC {
         void putDirectOffset(JSGlobalData& globalData, size_t offset, JSValue value) { propertyStorage()[offset].set(globalData, this, value); }
         void putUndefinedAtDirectOffset(size_t offset) { propertyStorage()[offset].setUndefined(); }
 
-        void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
+        JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, WriteBarrierBase<Unknown>* location);
         void initializeGetterSetterProperty(ExecState*, const Identifier&, GetterSetter*, unsigned attributes);
 
-        static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
-        static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
-        JSValue lookupGetter(ExecState*, const Identifier& propertyName);
-        JSValue lookupSetter(ExecState*, const Identifier& propertyName);
-        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
+        JS_EXPORT_PRIVATE static void defineGetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes = 0);
+        JS_EXPORT_PRIVATE static void defineSetter(JSObject*, ExecState*, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes = 0);
+        JS_EXPORT_PRIVATE JSValue lookupGetter(ExecState*, const Identifier& propertyName);
+        JS_EXPORT_PRIVATE JSValue lookupSetter(ExecState*, const Identifier& propertyName);
+        JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         bool isGlobalObject() const;
         bool isVariableObject() const;
@@ -210,7 +210,7 @@ namespace JSC {
 
         void seal(JSGlobalData&);
         void freeze(JSGlobalData&);
-        void preventExtensions(JSGlobalData&);
+        JS_EXPORT_PRIVATE void preventExtensions(JSGlobalData&);
         bool isSealed(JSGlobalData& globalData) { return structure()->isSealed(globalData); }
         bool isFrozen(JSGlobalData& globalData) { return structure()->isFrozen(globalData); }
         bool isExtensible() { return structure()->isExtensible(); }
@@ -218,7 +218,7 @@ namespace JSC {
         bool staticFunctionsReified() { return structure()->staticFunctionsReified(); }
         void reifyStaticFunctionsForDelete(ExecState* exec);
 
-        void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
+        JS_EXPORT_PRIVATE void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage.get()) == static_cast<const void*>(this + 1); }
 
         void* addressOfPropertyStorage()
@@ -329,7 +329,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
-        static void destroy(JSCell*);
+        JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
     protected:
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)

@@ -59,7 +59,7 @@ namespace JSC {
         bool m_hasNoPropertiesWithUInt32Names;
     };
 
-    EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
+    JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
 
 } // namespace JSC
 

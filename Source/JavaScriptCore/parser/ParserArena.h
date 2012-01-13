@@ -159,7 +159,7 @@ namespace JSC {
         void removeLast();
 
         bool isEmpty() const;
-        void reset();
+        JS_EXPORT_PRIVATE void reset();
 
         IdentifierArena& identifierArena() { return *m_identifierArena; }
 

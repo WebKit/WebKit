@@ -83,7 +83,7 @@ namespace WTF {
             }
         }
 
-        static PassRefPtr<ByteArray> create(size_t size);
+        WTF_EXPORT_PRIVATE static PassRefPtr<ByteArray> create(size_t size);
 
         static size_t offsetOfSize() { return OBJECT_OFFSETOF(ByteArray, m_size); }
         static size_t offsetOfData() { return OBJECT_OFFSETOF(ByteArray, m_data); }

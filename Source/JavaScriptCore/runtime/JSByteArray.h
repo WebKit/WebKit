@@ -76,7 +76,7 @@ namespace JSC {
         }
 
     private:
-        JSByteArray(ExecState*, Structure*, ByteArray* storage);
+        JS_EXPORT_PRIVATE JSByteArray(ExecState*, Structure*, ByteArray* storage);
         
     public:
         static JSByteArray* create(ExecState* exec, Structure* structure, ByteArray* storage)
@@ -86,15 +86,15 @@ namespace JSC {
             return array;
         }
 
-        static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const JSC::ClassInfo* = &s_info);
+        JS_EXPORT_PRIVATE static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const JSC::ClassInfo* = &s_info);
 
-        static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
-        static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
-        static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
-        static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);
+        JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
+        JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        JS_EXPORT_PRIVATE static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
+        JS_EXPORT_PRIVATE static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue);
 
-        static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, EnumerationMode);
 
         static JS_EXPORTDATA const ClassInfo s_info;
         
@@ -103,7 +103,7 @@ namespace JSC {
         WTF::ByteArray* storage() const { return m_storage.get(); }
 
         ~JSByteArray();
-        static void destroy(JSCell*);
+        JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
         static size_t offsetOfStorage() { return OBJECT_OFFSETOF(JSByteArray, m_storage); }
 

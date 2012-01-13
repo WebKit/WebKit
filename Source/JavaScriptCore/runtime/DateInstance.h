@@ -31,9 +31,9 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     protected:
-        DateInstance(ExecState*, Structure*);
+        JS_EXPORT_PRIVATE DateInstance(ExecState*, Structure*);
         void finishCreation(JSGlobalData&);
-        void finishCreation(JSGlobalData&, double);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, double);
 
         static void destroy(JSCell*);
  

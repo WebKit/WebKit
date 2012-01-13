@@ -40,7 +40,7 @@ class JSGlobalData;
 class JSValue;
 class SlotVisitor;
 
-class WeakHandleOwner {
+class JS_EXPORT_PRIVATE WeakHandleOwner {
 public:
     virtual ~WeakHandleOwner();
     virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&);
@@ -65,7 +65,7 @@ public:
     void visitWeakHandles(HeapRootVisitor&);
     void finalizeWeakHandles();
 
-    void writeBarrier(HandleSlot, const JSValue&);
+    JS_EXPORT_PRIVATE void writeBarrier(HandleSlot, const JSValue&);
 
 #if !ASSERT_DISABLED
     bool hasWeakOwner(HandleSlot, WeakHandleOwner*);
@@ -111,7 +111,7 @@ private:
     static HandleSlot toHandle(Node*);
     static Node* toNode(HandleSlot);
 
-    void grow();
+    JS_EXPORT_PRIVATE void grow();
     
 #if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
     bool isValidWeakNode(Node*);

@@ -72,7 +72,7 @@ private:
     
     void* allocate(MarkedSpace::SizeClass&);
     void* tryAllocate(MarkedSpace::SizeClass&);
-    void* allocateSlowCase(MarkedSpace::SizeClass&);
+    JS_EXPORT_PRIVATE void* allocateSlowCase(MarkedSpace::SizeClass&);
     MarkedBlock* allocateBlock(size_t cellSize, AllocationEffort);
     
     Heap* m_heap;

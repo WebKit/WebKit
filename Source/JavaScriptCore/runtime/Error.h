@@ -46,12 +46,12 @@ namespace JSC {
     JSObject* createTypeError(JSGlobalObject*, const UString&);
     JSObject* createURIError(JSGlobalObject*, const UString&);
     // ExecState wrappers.
-    JSObject* createError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const UString&);
     JSObject* createEvalError(ExecState*, const UString&);
-    JSObject* createRangeError(ExecState*, const UString&);
-    JSObject* createReferenceError(ExecState*, const UString&);
-    JSObject* createSyntaxError(ExecState*, const UString&);
-    JSObject* createTypeError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createRangeError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createReferenceError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createSyntaxError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const UString&);
     JSObject* createURIError(ExecState*, const UString&);
 
     // Methods to add 
@@ -61,12 +61,12 @@ namespace JSC {
     JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
     // Methods to throw Errors.
-    JSValue throwError(ExecState*, JSValue);
-    JSObject* throwError(ExecState*, JSObject*);
+    JS_EXPORT_PRIVATE JSValue throwError(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE JSObject* throwError(ExecState*, JSObject*);
 
     // Convenience wrappers, create an throw an exception with a default message.
-    JSObject* throwTypeError(ExecState*);
-    JSObject* throwSyntaxError(ExecState*);
+    JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
+    JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 
     // Convenience wrappers, wrap result as an EncodedJSValue.
     inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(throwError(exec, error)); }

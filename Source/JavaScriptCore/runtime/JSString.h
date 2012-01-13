@@ -214,7 +214,7 @@ namespace JSC {
         unsigned length() { return m_length; }
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-        bool toBoolean(ExecState*) const;
+        JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
         UString toString(ExecState*) const;
@@ -241,7 +241,7 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
-        void resolveRope(ExecState*) const;
+        JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
         void resolveRopeSlowCase8(LChar*) const;
         void resolveRopeSlowCase(UChar*) const;
         void outOfMemory(ExecState*) const;

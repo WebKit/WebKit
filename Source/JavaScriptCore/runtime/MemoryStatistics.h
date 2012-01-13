@@ -37,7 +37,7 @@ struct GlobalMemoryStatistics {
     size_t JITBytes;
 };
 
-GlobalMemoryStatistics globalMemoryStatistics();
+JS_EXPORT_PRIVATE GlobalMemoryStatistics globalMemoryStatistics();
 
 }
 

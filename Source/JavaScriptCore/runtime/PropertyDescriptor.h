@@ -41,27 +41,27 @@ namespace JSC {
             , m_seenAttributes(0)
         {
         }
-        bool writable() const;
-        bool enumerable() const;
-        bool configurable() const;
-        bool isDataDescriptor() const;
+        JS_EXPORT_PRIVATE bool writable() const;
+        JS_EXPORT_PRIVATE bool enumerable() const;
+        JS_EXPORT_PRIVATE bool configurable() const;
+        JS_EXPORT_PRIVATE bool isDataDescriptor() const;
         bool isGenericDescriptor() const;
-        bool isAccessorDescriptor() const;
+        JS_EXPORT_PRIVATE bool isAccessorDescriptor() const;
         unsigned attributes() const { return m_attributes; }
         JSValue value() const { return m_value; }
-        JSValue getter() const;
-        JSValue setter() const;
+        JS_EXPORT_PRIVATE JSValue getter() const;
+        JS_EXPORT_PRIVATE JSValue setter() const;
         JSObject* getterObject() const;
         JSObject* setterObject() const;
-        void setUndefined();
-        void setDescriptor(JSValue value, unsigned attributes);
+        JS_EXPORT_PRIVATE void setUndefined();
+        JS_EXPORT_PRIVATE void setDescriptor(JSValue value, unsigned attributes);
         void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
-        void setWritable(bool);
-        void setEnumerable(bool);
-        void setConfigurable(bool);
+        JS_EXPORT_PRIVATE void setWritable(bool);
+        JS_EXPORT_PRIVATE void setEnumerable(bool);
+        JS_EXPORT_PRIVATE void setConfigurable(bool);
         void setValue(JSValue value) { m_value = value; }
-        void setSetter(JSValue);
-        void setGetter(JSValue);
+        JS_EXPORT_PRIVATE void setSetter(JSValue);
+        JS_EXPORT_PRIVATE void setGetter(JSValue);
         bool isEmpty() const { return !(m_value || m_getter || m_setter || m_seenAttributes); }
         bool writablePresent() const { return m_seenAttributes & WritablePresent; }
         bool enumerablePresent() const { return m_seenAttributes & EnumerablePresent; }
@@ -74,7 +74,7 @@ namespace JSC {
         unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;
 
     private:
-        static unsigned defaultAttributes;
+        JS_EXPORTDATA static unsigned defaultAttributes;
         bool operator==(const PropertyDescriptor&){ return false; }
         enum { WritablePresent = 1, EnumerablePresent = 2, ConfigurablePresent = 4};
         // May be a getter/setter

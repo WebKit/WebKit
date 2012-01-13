@@ -27,14 +27,14 @@
 namespace WTF {
     
     struct RefCountedLeakCounter {
-        static void suppressMessages(const char*);
-        static void cancelMessageSuppression(const char*);
+        WTF_EXPORT_PRIVATE static void suppressMessages(const char*);
+        WTF_EXPORT_PRIVATE static void cancelMessageSuppression(const char*);
         
-        explicit RefCountedLeakCounter(const char* description);
-        ~RefCountedLeakCounter();
+        WTF_EXPORT_PRIVATE explicit RefCountedLeakCounter(const char* description);
+        WTF_EXPORT_PRIVATE ~RefCountedLeakCounter();
 
-        void increment();
-        void decrement();
+        WTF_EXPORT_PRIVATE void increment();
+        WTF_EXPORT_PRIVATE void decrement();
 
 #ifndef NDEBUG
     private:

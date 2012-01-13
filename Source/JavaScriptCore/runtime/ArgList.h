@@ -102,7 +102,7 @@ namespace JSC {
         static void markLists(HeapRootVisitor&, ListSet&);
 
     private:
-        void slowAppend(JSValue);
+        JS_EXPORT_PRIVATE void slowAppend(JSValue);
         
         EncodedJSValue& slotFor(int item) const
         {
@@ -171,7 +171,7 @@ namespace JSC {
         bool isEmpty() const { return !m_argCount; }
         size_t size() const { return m_argCount; }
         
-        void getSlice(int startIndex, ArgList& result) const;
+        JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
     private:
         JSValue* m_args;

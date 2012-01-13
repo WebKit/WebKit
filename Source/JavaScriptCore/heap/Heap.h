@@ -78,14 +78,14 @@ namespace JSC {
 
         Heap(JSGlobalData*, HeapSize);
         ~Heap();
-        void destroy(); // JSGlobalData must call destroy() before ~Heap().
+        JS_EXPORT_PRIVATE void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
         JSGlobalData* globalData() const { return m_globalData; }
         AllocationSpace& objectSpace() { return m_objectSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
-        GCActivityCallback* activityCallback();
-        void setActivityCallback(PassOwnPtr<GCActivityCallback>);
+        JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
+        JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
 
         // true if an allocation or collection is in progress
         inline bool isBusy();
@@ -94,26 +94,26 @@ namespace JSC {
         void* allocate(size_t);
 
         typedef void (*Finalizer)(JSCell*);
-        void addFinalizer(JSCell*, Finalizer);
+        JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
 
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
-        void collectAllGarbage();
+        JS_EXPORT_PRIVATE void collectAllGarbage();
 
         void reportExtraMemoryCost(size_t cost);
 
-        void protect(JSValue);
-        bool unprotect(JSValue); // True when the protect count drops to 0.
+        JS_EXPORT_PRIVATE void protect(JSValue);
+        JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.
         
         void jettisonDFGCodeBlock(PassOwnPtr<CodeBlock>);
 
-        size_t size();
-        size_t capacity();
-        size_t objectCount();
-        size_t globalObjectCount();
-        size_t protectedObjectCount();
-        size_t protectedGlobalObjectCount();
-        PassOwnPtr<TypeCountSet> protectedObjectTypeCounts();
-        PassOwnPtr<TypeCountSet> objectTypeCounts();
+        JS_EXPORT_PRIVATE size_t size();
+        JS_EXPORT_PRIVATE size_t capacity();
+        JS_EXPORT_PRIVATE size_t objectCount();
+        JS_EXPORT_PRIVATE size_t globalObjectCount();
+        JS_EXPORT_PRIVATE size_t protectedObjectCount();
+        JS_EXPORT_PRIVATE size_t protectedGlobalObjectCount();
+        JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> protectedObjectTypeCounts();
+        JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> objectTypeCounts();
 
         void pushTempSortVector(Vector<ValueStringPair>*);
         void popTempSortVector(Vector<ValueStringPair>*);
@@ -141,8 +141,8 @@ namespace JSC {
             virtual void finalize(Handle<Unknown>, void* context);
         };
 
-        bool isValidAllocation(size_t);
-        void reportExtraMemoryCostSlowCase(size_t);
+        JS_EXPORT_PRIVATE bool isValidAllocation(size_t);
+        JS_EXPORT_PRIVATE void reportExtraMemoryCostSlowCase(size_t);
 
         // Call this function before any operation that needs to know which cells
         // in the heap are live. (For example, call this function before

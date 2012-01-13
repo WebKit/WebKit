@@ -64,9 +64,9 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(JSGlobalData&, JSString*);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
-        StringObject(JSGlobalData&, Structure*);
+        JS_EXPORT_PRIVATE StringObject(JSGlobalData&, Structure*);
     };
 
     StringObject* asStringObject(JSValue);

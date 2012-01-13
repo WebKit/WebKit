@@ -38,7 +38,7 @@ struct AtomicStringHash;
 
 class AtomicString {
 public:
-    static void init();
+    WTF_EXPORT_PRIVATE static void init();
 
     AtomicString() { }
     AtomicString(const LChar* s) : m_string(add(s)) { }
@@ -54,7 +54,7 @@ public:
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
-    static AtomicStringImpl* find(const UChar* s, unsigned length, unsigned existingHash);
+    WTF_EXPORT_PRIVATE static AtomicStringImpl* find(const UChar* s, unsigned length, unsigned existingHash);
 
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
@@ -83,7 +83,7 @@ public:
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_string.endsWith(s, caseSensitive); }
     
-    AtomicString lower() const;
+    WTF_EXPORT_PRIVATE AtomicString lower() const;
     AtomicString upper() const { return AtomicString(impl()->upper()); }
     
     int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
@@ -120,20 +120,20 @@ public:
 private:
     String m_string;
     
-    static PassRefPtr<StringImpl> add(const LChar*);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const LChar*);
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
-    static PassRefPtr<StringImpl> add(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const UChar*, unsigned length);
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const char*>(s), length); };
-    static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
-    static PassRefPtr<StringImpl> add(const UChar*);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(const UChar*);
     ALWAYS_INLINE PassRefPtr<StringImpl> add(StringImpl* r)
     {
         if (!r || r->isAtomic())
             return r;
         return addSlowCase(r);
     }
-    static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
-    static AtomicString fromUTF8Internal(const char*, const char*);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
+    WTF_EXPORT_PRIVATE static AtomicString fromUTF8Internal(const char*, const char*);
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

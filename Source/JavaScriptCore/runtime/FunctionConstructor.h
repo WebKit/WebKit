@@ -59,7 +59,7 @@ namespace JSC {
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const UString& sourceURL, const WTF::TextPosition&);
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
-    JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const UString&, const WTF::TextPosition&);
+    JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, const UString&, const WTF::TextPosition&);
 
 } // namespace JSC
 

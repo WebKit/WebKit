@@ -50,7 +50,7 @@ private:
     }
     
 public:
-    ~MetaAllocatorHandle();
+    WTF_EXPORT_PRIVATE ~MetaAllocatorHandle();
     
     static PassRefPtr<MetaAllocatorHandle> createSelfManagedHandle(void* start, size_t sizeInBytes)
     {
@@ -72,7 +72,7 @@ public:
         return m_sizeInBytes;
     }
         
-    void shrink(size_t newSizeInBytes);
+    WTF_EXPORT_PRIVATE void shrink(size_t newSizeInBytes);
     
     bool isManaged()
     {

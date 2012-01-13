@@ -62,8 +62,8 @@ enum YarrCharSize {
     Char16
 };
 
-PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
-int interpret(BytecodePattern*, const UString& input, unsigned start, unsigned length, int* output);
+JS_EXPORT_PRIVATE PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
+JS_EXPORT_PRIVATE int interpret(BytecodePattern*, const UString& input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

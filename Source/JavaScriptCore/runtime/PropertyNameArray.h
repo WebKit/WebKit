@@ -69,7 +69,7 @@ namespace JSC {
         JSGlobalData* globalData() { return m_globalData; }
 
         void add(const Identifier& identifier) { add(identifier.impl()); }
-        void add(StringImpl*);
+        JS_EXPORT_PRIVATE void add(StringImpl*);
         void addKnownUnique(StringImpl* identifier) { m_data->propertyNameVector().append(Identifier(m_globalData, identifier)); }
 
         Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
