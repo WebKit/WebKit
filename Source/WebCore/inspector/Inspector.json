@@ -108,6 +108,7 @@
                     { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Identifier of the loader associated with this frame." },
                     { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
                     { "name": "url", "type": "string", "description": "Frame document's URL." },
+                    { "name": "securityOrigin", "type": "string", "optional": true, "description": "Frame document's security origin." },
                     { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
                 ],
                 "hidden": true
@@ -896,6 +897,47 @@
                 "parameters": [
                     { "name": "transactionId", "type": "integer" },
                     { "name": "sqlError", "$ref": "Error" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "IndexedDB",
+        "hidden": true,
+        "types": [
+            {
+                "id": "FrameWithDatabaseNames",
+                "type": "object",
+                "description": "Origin with database names and frame ids.",
+                "properties": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." },
+                    { "name": "securityOrigin", "type": "string", "description": "Security origin." },
+                    { "name": "databaseNames", "type": "array", "items": { "type": "string" }, "description": "Database names for this origin." }
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "name": "enable",
+                "description": "Enables events from backend."
+            },
+            {
+                "name": "disable",
+                "description": "Disables events from backend."
+            },
+            {
+                "name": "requestDatabaseNamesForFrame",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId" }
+                ],
+                "description": "Requests database names for given frame's security origin."
+            }
+        ],
+        "events": [
+            {
+                "name": "databaseNamesLoaded",
+                "parameters": [
+                    { "name": "frameWithDatabaseNames", "$ref": "FrameWithDatabaseNames", "description": "Frame with database names." }
                 ]
             }
         ]

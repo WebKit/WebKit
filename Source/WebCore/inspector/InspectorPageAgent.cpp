@@ -691,6 +691,7 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame
     }
     frameObject->setString("url", frame->document()->url().string());
     frameObject->setString("loaderId", loaderId(frame->loader()->documentLoader()));
+    frameObject->setString("securityOrigin", frame->document()->securityOrigin()->toString());
     frameObject->setString("mimeType", frame->loader()->documentLoader()->responseMIMEType());
 
     return frameObject;
