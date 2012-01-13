@@ -1,3 +1,28 @@
+2012-01-13  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make HTML editing preserve node identity when node nesting level changes.
+        https://bugs.webkit.org/show_bug.cgi?id=76183
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/elements/set-outer-html-2.html
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::patchDocument):
+        (WebCore::DOMEditor::patchNode):
+        (WebCore::DOMEditor::innerPatchHTMLElement):
+        (WebCore::DOMEditor::innerPatchNode):
+        (WebCore::DOMEditor::diff):
+        (WebCore::DOMEditor::innerPatchChildren):
+        (WebCore::DOMEditor::createDigest):
+        (WebCore::DOMEditor::insertBefore):
+        (WebCore::DOMEditor::removeChild):
+        (WebCore::DOMEditor::markNodeAsUsed):
+        (WebCore::DOMEditor::dumpMap):
+        * inspector/DOMEditor.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+
 2012-01-13  Shinya Kawanaka  <shinyak@google.com>
 
         ShadowContentElement should be able to use query.

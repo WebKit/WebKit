@@ -3,119 +3,53 @@
 
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/elements-test.js"></script>
+<script src="set-outer-html-test.js"></script>
 <script>
+
+function onload()
+{
+    document.getElementById("identity").wrapperIdentity = "identity";
+    runTest();
+}
 
 function test()
 {
-    var containerId;
-    var containerText;
-
     InspectorTest.runTestSuite([
         function testSetUp(next)
         {
-            InspectorTest.expandElementsTree(step1);
-
-            function step1()
-            {
-                InspectorTest.selectNodeWithId("container", step2);
-            }
-
-            function step2(node)
-            {
-                containerId = node.id;
-                DOMAgent.getOuterHTML(containerId, step3);
-            }
-
-            function step3(error, text)
-            {
-                containerText = text;
-
-                for (var key in WebInspector.DOMAgent.Events) {
-                    var eventName = WebInspector.DOMAgent.Events[key];
-                    WebInspector.domAgent.addEventListener(eventName, dumpEvent.bind(null, eventName));
-                }
-
-                next();
-            }
+            InspectorTest.setUpTestSuite(next);
         },
 
         function testChangeCharacterData(next)
         {
-            patchOuterHTML("Getting involved", "Getting not involved", next);
+            InspectorTest.patchOuterHTML("Getting involved", "Getting not involved", next);
         },
 
         function testChangeAttributes(next)
         {
-            patchOuterHTML("<a href", "<a foo=\"bar\" href", next);
+            InspectorTest.patchOuterHTML("<a href", "<a foo=\"bar\" href", next);
         },
 
         function testRemoveLastChild(next)
         {
-            patchOuterHTML("Getting involved", "", next);
+            InspectorTest.patchOuterHTML("Getting involved", "", next);
         },
 
         function testSplitNode(next)
         {
-            patchOuterHTML("Getting involved", "Getting</h2><h2>involved", next);
+            InspectorTest.patchOuterHTML("Getting involved", "Getting</h2><h2>involved", next);
         },
 
         function testChangeNodeName(next)
         {
-            patchOuterHTML("<h2>Getting involved</h2>", "<h3>Getting involved</h3>", next);
-        },
-
-        function testChangeMultipleThings(next)
-        {
-            text = containerText.replace(/<li>.*<\/li>/, "");
-            text = text.replace("<h2>", "<h2 foo=\"bar\" bar=\"baz\">");
-            setOuterHTML(text, next);
+            InspectorTest.patchOuterHTML("<h2>Getting involved</h2>", "<h3>Getting involved</h3>", next);
         }
     ]);
-
-    function dumpEvent(eventName, event)
-    {
-        var node = event.data.node || event.data;
-        InspectorTest.addResult("Event " + eventName + ": " + node.nodeName());
-    }
-
-    function patchOuterHTML(pattern, replacement, next)
-    {
-       InspectorTest.addResult("Replacing '" + pattern + "' with '" + replacement + "' and back'");
-       setOuterHTML(containerText.replace(pattern, replacement), next);
-    }
-
-    function setOuterHTML(newText, next)
-    {
-        innerSetOuterHTML(newText, bringBack);
-
-        function bringBack()
-        {
-            innerSetOuterHTML(containerText, next);
-        }
-    }
-
-    function innerSetOuterHTML(newText, next)
-    {
-        DOMAgent.setOuterHTML(containerId, newText, dumpOuterHTML);
-
-        function dumpOuterHTML()
-        {
-            DOMAgent.getOuterHTML(containerId, callback);
-
-            function callback(error, text)
-            {
-                InspectorTest.addResult("==========8<==========");
-                InspectorTest.addResult(text);
-                InspectorTest.addResult("==========>8==========");
-                next();
-            }
-        }
-    }
 }
 </script>
 </head>
 
-<body onload="runTest()">
+<body onload="onload()">
 <p>
 Tests DOMAgent.setOuterHTML protocol method.
 </p>
@@ -126,9 +60,12 @@ Tests DOMAgent.setOuterHTML protocol method.
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 

@@ -31,6 +31,9 @@
 #ifndef DOMEditor_h
 #define DOMEditor_h
 
+#include "ExceptionCode.h"
+
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -45,8 +48,6 @@ class HTMLElement;
 class NamedNodeMap;
 class Node;
 
-typedef String ErrorString;
-
 #if ENABLE(INSPECTOR)
 
 class DOMEditor {
@@ -55,18 +56,26 @@ public:
     virtual ~DOMEditor();
 
     void patchDocument(const String& markup);
-    Node* patchNode(ErrorString*, Node*, const String& markup);
+    Node* patchNode(Node*, const String& markup, ExceptionCode&);
 
 private:
     struct Digest;
     typedef Vector<pair<Digest*, size_t> > ResultMap;
+    typedef HashMap<String, Digest*> UnusedNodesMap;
 
-    void innerPatchHTMLElement(ErrorString*, HTMLElement* oldElement, HTMLElement* newElement);
-    void innerPatchNode(ErrorString*, Digest* oldNode, Digest* newNode);
-    std::pair<ResultMap, ResultMap> diff(Vector<OwnPtr<Digest> >& oldChildren, Vector<OwnPtr<Digest> >& newChildren);
-    void innerPatchChildren(ErrorString*, Element*, Vector<OwnPtr<Digest> >& oldChildren, Vector<OwnPtr<Digest> >& newChildren);
-    PassOwnPtr<Digest> createDigest(Node*);
+    void innerPatchHTMLElement(HTMLElement* oldElement, HTMLElement* newElement, ExceptionCode&);
+    void innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
+    std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren);
+    void innerPatchChildren(Element*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
+    PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
+    void insertBefore(Element* parentElement, Digest*, Node* anchor, ExceptionCode&);
+    void removeChild(Digest*, ExceptionCode&);
+    void markNodeAsUsed(Digest*);
+    void dumpMap(const String& name, const ResultMap&, const Vector<OwnPtr<Digest> >& list);
+
     Document* m_document;
+
+    UnusedNodesMap m_unusedNodesMap;
 };
 
 #endif // ENABLE(INSPECTOR)

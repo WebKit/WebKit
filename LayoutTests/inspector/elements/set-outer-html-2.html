@@ -1,0 +1,75 @@
+<html>
+<head>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script src="set-outer-html-test.js"></script>
+<script>
+
+function onload()
+{
+    document.getElementById("identity").wrapperIdentity = "identity";
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.setUpTestSuite(next);
+        },
+
+        function testChangeMultipleThings(next)
+        {
+            var text = InspectorTest.containerText.replace(/<li>.*<\/li>/, "");
+            text = text.replace("<h2>", "<h2 foo=\"bar\" bar=\"baz\">");
+            InspectorTest.setOuterHTML(text, next);
+        },
+
+        function testChangeNestingLevel(next)
+        {
+            var text = InspectorTest.containerText.replace("<ul>", "<div><ul>");
+            var text = text.replace("</ul>", "</ul></div>");
+            InspectorTest.setOuterHTML(text, next);
+        },
+
+        function testSwapNodes(next)
+        {
+            var text = InspectorTest.containerText.replace("<h2>Getting involved</h2>", "");
+            var text = text.replace("</div>", "<h2>Getting involved</h2></div>");
+            InspectorTest.setOuterHTML(text, next);
+        },
+
+        function testEditTwoRoots(next)
+        {
+            var text = InspectorTest.containerText + "<div>Additional node</div>";
+            InspectorTest.setOuterHTML(text, next);
+        }
+    ]);
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests DOMAgent.setOuterHTML protocol method (part 2).
+</p>
+
+<div id="container" style="display:none">
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</a>.</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"></a>
+<p id="identity">There are many ways to get involved. You can:</p>
+<ul>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
+</ul>
+</div>
+
+</body>
+</html>

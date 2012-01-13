@@ -4,7 +4,9 @@ Tests DOMAgent.setOuterHTML protocol method.
 Running: testSetUp
 
 Running: testChangeCharacterData
-Replacing 'Getting involved' with 'Getting not involved' and back'
+Replacing 'Getting involved' with 'Getting not involved'
+
+Wrapper identity: identity
 Event CharacterDataModified: 
 ==========8<==========
 <div id="container" style="display:none">
@@ -13,12 +15,19 @@ Event CharacterDataModified:
 
 <h2>Getting not involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
+
+Bringing things back
+
+Wrapper identity: identity
 Event CharacterDataModified: 
 ==========8<==========
 <div id="container" style="display:none">
@@ -27,18 +36,27 @@ Event CharacterDataModified:
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
 
+
+
+
+
 Running: testChangeAttributes
-Replacing '<a href' with '<a foo="bar" href' and back'
+Replacing '<a href' with '<a foo="bar" href'
+
+Wrapper identity: identity
+Event AttrModified: A
+Event AttrModified: A
 Event AttrRemoved: A
-Event AttrModified: A
-Event AttrModified: A
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -46,15 +64,22 @@ Event AttrModified: A
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
-Event AttrRemoved: A
-Event AttrRemoved: A
+
+Bringing things back
+
+Wrapper identity: identity
 Event AttrModified: A
+Event AttrRemoved: A
+Event AttrRemoved: A
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -62,15 +87,24 @@ Event AttrModified: A
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
 
+
+
+
+
 Running: testRemoveLastChild
-Replacing 'Getting involved' with '' and back'
+Replacing 'Getting involved' with ''
+
+Wrapper identity: identity
 Event NodeRemoved: 
 ==========8<==========
 <div id="container" style="display:none">
@@ -79,12 +113,19 @@ Event NodeRemoved:
 
 <h2></h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
+
+Bringing things back
+
+Wrapper identity: identity
 Event NodeInserted: 
 ==========8<==========
 <div id="container" style="display:none">
@@ -93,17 +134,27 @@ Event NodeInserted:
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
 
+
+
+
+
 Running: testSplitNode
-Replacing 'Getting involved' with 'Getting</h2><h2>involved' and back'
-Event CharacterDataModified: 
+Replacing 'Getting involved' with 'Getting</h2><h2>involved'
+
+Wrapper identity: identity
 Event NodeInserted: H2
+Event NodeInserted: H2
+Event NodeRemoved: H2
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -111,15 +162,22 @@ Event NodeInserted: H2
 
 <h2>Getting</h2><h2>involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
-Event NodeRemoved: H2
-Event NodeRemoved: H2
+
+Bringing things back
+
+Wrapper identity: identity
 Event NodeInserted: H2
+Event NodeRemoved: H2
+Event NodeRemoved: H2
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -127,17 +185,26 @@ Event NodeInserted: H2
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
 
+
+
+
+
 Running: testChangeNodeName
-Replacing '<h2>Getting involved</h2>' with '<h3>Getting involved</h3>' and back'
-Event NodeRemoved: H2
+Replacing '<h2>Getting involved</h2>' with '<h3>Getting involved</h3>'
+
+Wrapper identity: identity
 Event NodeInserted: H3
+Event NodeRemoved: H2
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -145,14 +212,21 @@ Event NodeInserted: H3
 
 <h3>Getting involved</h3>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
-Event NodeRemoved: H3
+
+Bringing things back
+
+Wrapper identity: identity
 Event NodeInserted: H2
+Event NodeRemoved: H3
 ==========8<==========
 <div id="container" style="display:none">
 <h2>Welcome to the website for the WebKit Open Source Project!</h2>
@@ -160,44 +234,17 @@ Event NodeInserted: H2
 
 <h2>Getting involved</h2>
 <a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
+<p id="identity">There are many ways to get involved. You can:</p>
 <ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+   <li></li>
+</ul>
+<ul>
+   <li></li>
 </ul>
 </div>
 ==========>8==========
 
-Running: testChangeMultipleThings
-Event AttrModified: H2
-Event AttrModified: H2
-Event NodeRemoved: LI
-==========8<==========
-<div id="container" style="display:none">
-<h2 foo="bar" bar="baz">Welcome to the website for the WebKit Open Source Project!</h2>
-<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
 
-<h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
-<ul>
-   
-</ul>
-</div>
-==========>8==========
-Event AttrRemoved: H2
-Event AttrRemoved: H2
-Event NodeInserted: LI
-==========8<==========
-<div id="container" style="display:none">
-<h2>Welcome to the website for the WebKit Open Source Project!</h2>
-<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>
 
-<h2>Getting involved</h2>
-<a href="http://nightly.webkit.org/"></a>
-<p>There are many ways to get involved. You can:</p>
-<ul>
-   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
-</ul>
-</div>
-==========>8==========
+
 

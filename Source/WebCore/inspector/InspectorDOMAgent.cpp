@@ -643,22 +643,27 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     if (!node)
         return;
 
-    Node* parentNode = node->parentNode();
-    if (!parentNode) {
-        *errorString = "Editing of the detached nodes is not supported";
-        return;
-    }
-
     Document* document = node->ownerDocument();
     if (!document->isHTMLDocument()) {
         *errorString = "Not an HTML document";
         return;
     }
 
-    DOMEditor domEditor(document);
-    Node* newNode = domEditor.patchNode(errorString, node, outerHTML);
-    if (!errorString->isEmpty())
+    Element* parentElement = node->parentElement();
+    if (!parentElement) {
+        *errorString = "Can only set outer HTML to nodes within Element";
         return;
+    }
+
+    DOMEditor domEditor(document);
+
+    ExceptionCode ec = 0;
+    Node* newNode = domEditor.patchNode(node, outerHTML, ec);
+    if (ec) {
+        ExceptionCodeDescription description(ec);
+        *errorString = description.name;
+        return;
+    }
 
     bool requiresTotalUpdate = node->isHTMLElement() && (node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD");
     if (requiresTotalUpdate) {
