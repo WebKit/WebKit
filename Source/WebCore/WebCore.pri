@@ -188,6 +188,7 @@ contains(CONFIG, texmap) {
     !win32-*:contains(QT_CONFIG, opengl) {
         DEFINES += WTF_USE_TEXTURE_MAPPER_GL
         QT *= opengl
+        contains(QT_CONFIG, opengles2): LIBS += -lEGL
     }
 }
 

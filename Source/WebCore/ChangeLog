@@ -1,3 +1,14 @@
+2012-01-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build when using TextureMapper with OpenGL/ES
+        https://bugs.webkit.org/show_bug.cgi?id=76268
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebCore.pri: When the texture mapper uses OpenGL/ES, then it also relies on the
+        availability of libEGL by using eglGetCurrentContext(). In that case we need to link against
+        libEGL.
+
 2012-01-13  Jochen Eisinger  <jochen@chromium.org>
 
         Don't artifically keep IDBDatabase objects alive if there are no references to it.
