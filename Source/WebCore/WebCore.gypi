@@ -3842,6 +3842,7 @@
             'platform/graphics/opengl/Extensions3DOpenGL.cpp',
             'platform/graphics/opengl/Extensions3DOpenGL.h',
             'platform/graphics/opengl/GraphicsContext3DOpenGL.cpp',
+            'platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp',
             'platform/graphics/opengl/TextureMapperGL.cpp',
             'platform/graphics/opengl/TextureMapperGL.h',
             'platform/graphics/opentype/OpenTypeSanitizer.cpp',

@@ -5616,7 +5616,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/gtk/GraphicsContext3DPrivate.h \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
-	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
 endif  # END ENABLE_WEBGL
 
 # ---

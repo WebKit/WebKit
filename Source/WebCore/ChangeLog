@@ -1,3 +1,181 @@
+2012-01-12  ChangSeok Oh  <shivamidow@gmail.com>
+
+        Split GraphicsContext3DOpenGL into several files
+        https://bugs.webkit.org/show_bug.cgi?id=75462
+
+        Reviewed by Kenneth Russell.
+
+        Split GraphicsContext3DOpenGL.cpp into three files, GraphicsContext3DOpenGLCommon.cpp,
+        GraphicsContext3DOpenGL.cpp & GraphicsContext3DOpenGLES.cpp so that makes gles support possible
+        for WebGL etc. Most of common APIs between gl and gles are in GraphicsContext3DOpenGLCommon.cpp.
+        The other gl and gles specific APIs are placed apart in GraphicsContext3DOpenGL.cpp &
+        GraphicsContext3DOpenGLES.cpp
+
+        No new tests required.
+
+        * GNUmakefile.list.am: Added GraphicsContext3DOpenGLCommon.cpp
+        * Target.pri: Added GraphicsContext3DOpenGLCommon.cpp
+        * WebCore.gypi: Added GraphicsContext3DOpenGLCommon.cpp
+        * WebCore.xcodeproj/project.pbxproj: Added GraphicsContext3DOpenGLCommon.cpp
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp: Copied from Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp.
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore::GraphicsContext3D::isResourceSafe):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        (WebCore::GraphicsContext3D::activeTexture):
+        (WebCore::GraphicsContext3D::attachShader):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindRenderbuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::blendColor):
+        (WebCore::GraphicsContext3D::blendEquation):
+        (WebCore::GraphicsContext3D::blendEquationSeparate):
+        (WebCore::GraphicsContext3D::blendFunc):
+        (WebCore::GraphicsContext3D::blendFuncSeparate):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        (WebCore::GraphicsContext3D::checkFramebufferStatus):
+        (WebCore::GraphicsContext3D::clearColor):
+        (WebCore::GraphicsContext3D::clear):
+        (WebCore::GraphicsContext3D::clearDepth):
+        (WebCore::GraphicsContext3D::clearStencil):
+        (WebCore::GraphicsContext3D::colorMask):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::cullFace):
+        (WebCore::GraphicsContext3D::depthFunc):
+        (WebCore::GraphicsContext3D::depthMask):
+        (WebCore::GraphicsContext3D::depthRange):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::disable):
+        (WebCore::GraphicsContext3D::disableVertexAttribArray):
+        (WebCore::GraphicsContext3D::drawArrays):
+        (WebCore::GraphicsContext3D::drawElements):
+        (WebCore::GraphicsContext3D::enable):
+        (WebCore::GraphicsContext3D::enableVertexAttribArray):
+        (WebCore::GraphicsContext3D::finish):
+        (WebCore::GraphicsContext3D::flush):
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::framebufferTexture2D):
+        (WebCore::GraphicsContext3D::frontFace):
+        (WebCore::GraphicsContext3D::generateMipmap):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getAttachedShaders):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getContextAttributes):
+        (WebCore::GraphicsContext3D::getError):
+        (WebCore::GraphicsContext3D::getString):
+        (WebCore::GraphicsContext3D::hint):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isEnabled):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::lineWidth):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::pixelStorei):
+        (WebCore::GraphicsContext3D::polygonOffset):
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore::GraphicsContext3D::sampleCoverage):
+        (WebCore::GraphicsContext3D::scissor):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::stencilFunc):
+        (WebCore::GraphicsContext3D::stencilFuncSeparate):
+        (WebCore::GraphicsContext3D::stencilMask):
+        (WebCore::GraphicsContext3D::stencilMaskSeparate):
+        (WebCore::GraphicsContext3D::stencilOp):
+        (WebCore::GraphicsContext3D::stencilOpSeparate):
+        (WebCore::GraphicsContext3D::texParameterf):
+        (WebCore::GraphicsContext3D::texParameteri):
+        (WebCore::GraphicsContext3D::uniform1f):
+        (WebCore::GraphicsContext3D::uniform1fv):
+        (WebCore::GraphicsContext3D::uniform2f):
+        (WebCore::GraphicsContext3D::uniform2fv):
+        (WebCore::GraphicsContext3D::uniform3f):
+        (WebCore::GraphicsContext3D::uniform3fv):
+        (WebCore::GraphicsContext3D::uniform4f):
+        (WebCore::GraphicsContext3D::uniform4fv):
+        (WebCore::GraphicsContext3D::uniform1i):
+        (WebCore::GraphicsContext3D::uniform1iv):
+        (WebCore::GraphicsContext3D::uniform2i):
+        (WebCore::GraphicsContext3D::uniform2iv):
+        (WebCore::GraphicsContext3D::uniform3i):
+        (WebCore::GraphicsContext3D::uniform3iv):
+        (WebCore::GraphicsContext3D::uniform4i):
+        (WebCore::GraphicsContext3D::uniform4iv):
+        (WebCore::GraphicsContext3D::uniformMatrix2fv):
+        (WebCore::GraphicsContext3D::uniformMatrix3fv):
+        (WebCore::GraphicsContext3D::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::useProgram):
+        (WebCore::GraphicsContext3D::validateProgram):
+        (WebCore::GraphicsContext3D::vertexAttrib1f):
+        (WebCore::GraphicsContext3D::vertexAttrib1fv):
+        (WebCore::GraphicsContext3D::vertexAttrib2f):
+        (WebCore::GraphicsContext3D::vertexAttrib2fv):
+        (WebCore::GraphicsContext3D::vertexAttrib3f):
+        (WebCore::GraphicsContext3D::vertexAttrib3fv):
+        (WebCore::GraphicsContext3D::vertexAttrib4f):
+        (WebCore::GraphicsContext3D::vertexAttrib4fv):
+        (WebCore::GraphicsContext3D::vertexAttribPointer):
+        (WebCore::GraphicsContext3D::viewport):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+        (WebCore::GraphicsContext3D::getVertexAttribOffset):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        (WebCore::GraphicsContext3D::compressedTexImage2D):
+        (WebCore::GraphicsContext3D::compressedTexSubImage2D):
+        (WebCore::GraphicsContext3D::createBuffer):
+        (WebCore::GraphicsContext3D::createFramebuffer):
+        (WebCore::GraphicsContext3D::createProgram):
+        (WebCore::GraphicsContext3D::createRenderbuffer):
+        (WebCore::GraphicsContext3D::createShader):
+        (WebCore::GraphicsContext3D::createTexture):
+        (WebCore::GraphicsContext3D::deleteBuffer):
+        (WebCore::GraphicsContext3D::deleteFramebuffer):
+        (WebCore::GraphicsContext3D::deleteProgram):
+        (WebCore::GraphicsContext3D::deleteRenderbuffer):
+        (WebCore::GraphicsContext3D::deleteShader):
+        (WebCore::GraphicsContext3D::deleteTexture):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+        (WebCore::GraphicsContext3D::markContextChanged):
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::layerComposited):
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp: Added.
+        (WebCore::GraphicsContext3D::readRenderingResults):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::copyTexImage2D):
+        (WebCore::GraphicsContext3D::copyTexSubImage2D):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::texImage2D):
+
 2012-01-12  Wei James  <james.wei@intel.com>
 
         Add vsma in VectorMath to handle vector scale multiply and add and use it in AudioBus
