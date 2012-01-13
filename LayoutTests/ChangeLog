@@ -1,5 +1,62 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103637
+
+    2011-12-23  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG loads from signed 8-bit and 16-bit typed arrays are broken
+            https://bugs.webkit.org/show_bug.cgi?id=75163
+
+            Reviewed by Geoffrey Garen.
+
+            Fixed some minor goofs in the previously comitted typed array tests, and added
+            new ones to cover this bug.
+
+            * fast/js/dfg-int16array-expected.txt: Added.
+            * fast/js/dfg-int16array.html: Added.
+            * fast/js/dfg-int8array-expected.txt: Added.
+            * fast/js/dfg-int8array.html: Added.
+            * fast/js/script-tests/dfg-float32array.js:
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            * fast/js/script-tests/dfg-int16array.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+            * fast/js/script-tests/dfg-int32array.js:
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            * fast/js/script-tests/dfg-int8array.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103636
 
     2011-12-23  Filip Pizlo  <fpizlo@apple.com>

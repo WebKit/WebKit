@@ -186,7 +186,9 @@ private:
         OP_SETCC            = 0x90,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
+        OP2_MOVSX_GvEb      = 0xBE,
         OP2_MOVZX_GvEw      = 0xB7,
+        OP2_MOVSX_GvEw      = 0xBF,
         OP2_PEXTRW_GdUdIb   = 0xC5,
         OP2_PSLLQ_UdqIb     = 0x73,
         OP2_PSRLQ_UdqIb     = 0x73,
@@ -1224,6 +1226,16 @@ public:
         m_formatter.twoByteOp(OP2_MOVZX_GvEw, dst, base, index, scale, offset);
     }
 
+    void movswl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVSX_GvEw, dst, base, offset);
+    }
+
+    void movswl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVSX_GvEw, dst, base, index, scale, offset);
+    }
+
     void movzbl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, offset);
@@ -1232,6 +1244,16 @@ public:
     void movzbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, index, scale, offset);
+    }
+
+    void movsbl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, offset);
+    }
+    
+    void movsbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, index, scale, offset);
     }
 
     void movzbl_rr(RegisterID src, RegisterID dst)

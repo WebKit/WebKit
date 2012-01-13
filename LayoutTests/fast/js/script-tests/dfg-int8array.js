@@ -79,8 +79,8 @@ function safeSetter(a, b, c) {
 }
 
 for (var si = 0; si < setters.length; ++si) {
-    var array = new Int32Array(101);
-    var checkArray = new Int32Array(101);
+    var array = new Int8Array(101);
+    var checkArray = new Int8Array(101);
     var indexOffset = 0;
     var valueOffset = 0;
     
@@ -101,6 +101,8 @@ for (var si = 0; si < setters.length; ++si) {
         var checkA = checkArray;
         var b = (i % 100) + indexOffset;
         var c = i + valueOffset;
+        if (i % 2)
+            c = -c;
         
         setter(a, b, c);
         safeSetter(checkA, b, c);
@@ -109,7 +111,7 @@ for (var si = 0; si < setters.length; ++si) {
 }
 
 for (var gi = 0; gi < getters.length; ++gi) {
-    var array = new Int32Array(101);
+    var array = new Int8Array(101);
     var indexOffset = 0;
     var valueOffset = 0;
     
@@ -127,8 +129,10 @@ for (var gi = 0; gi < getters.length; ++gi) {
         var a = array;
         var b = (i % 100) + indexOffset;
         var c = i + valueOffset;
+        if (i % 2)
+            c = -c;
         
         safeSetter(a, b, c);
-        shouldBe("getter(a, b, c)", "" + safeGetter(a, b, c));
+        shouldBe("getter(a, b, c)", "" + safeGetter(a, b));
     }
 }
