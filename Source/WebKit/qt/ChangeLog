@@ -1,3 +1,15 @@
+2012-01-13  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt] Fix missing signal in qwebframe API test for Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=76195
+
+        Reviewed by Noam Rosenthal.
+
+        In Qt5 QObject has a new signal with this signature: "objectNameChanged(QString)".
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::enumerate_data):
+
 2012-01-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Make default console messages line numbers consistent.

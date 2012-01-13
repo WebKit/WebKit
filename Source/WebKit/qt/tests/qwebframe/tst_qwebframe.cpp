@@ -2031,8 +2031,11 @@ void tst_QWebFrame::enumerate_data()
         << "p1" << "p2" << "p4" << "p6"
         // dynamic properties
         << "dp1" << "dp2" << "dp3"
-        // inherited slots
+        // inherited signals and slots
         << "destroyed(QObject*)" << "destroyed()"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        << "objectNameChanged(QString)"
+#endif
         << "deleteLater()"
         // not included because it's private:
         // << "_q_reregisterTimers(void*)"
