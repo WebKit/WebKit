@@ -1,3 +1,28 @@
+2012-01-13  Alexandru Chiculita  <achicu@adobe.com>
+
+        Refactor RenderLayerBacking::paintIntoLayer and RenderLayer::paintLayer()/paintLayerContents() to avoid duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=75983
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just merging two duplicate methods.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+            This method is used only in non-composited mode, so I've moved the check for composited mode much earlier.
+
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+            Also used just in non-composited mode, it will draw the reflection and then just call paintLayerContents.
+
+        (WebCore::RenderLayer::paintLayerContents):
+            Old method, that is now used by both composited and non-composited mode. I've added 3 more flags used to render the
+            Graphics layers: Background, Foreground and Mask.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+            Removed all the code and delegated the work to RenderLayer::paintLayerContents.
+
 2012-01-12  Gavin Barraclough  <barraclough@apple.com>
 
         Clean up putDirect (part 2)

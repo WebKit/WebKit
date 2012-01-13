@@ -1093,7 +1093,6 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r)
     }
 }
 
-// Share this with RenderLayer::paintLayer, which would have to be educated about GraphicsLayerPaintingPhase?
 void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext* context,
                     const LayoutRect& paintDirtyRect, // In the coords of rootLayer.
                     PaintBehavior paintBehavior, GraphicsLayerPaintingPhase paintingPhase,
@@ -1106,104 +1105,16 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
     FontCachePurgePreventer fontCachePurgePreventer;
     
-    m_owningLayer->updateLayerListsIfNeeded();
-
-    bool shouldPaintContent = (m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant()) && m_owningLayer->isSelfPaintingLayer();
-    if (!shouldPaintContent)
-        return;
-
-    // Calculate the clip rects we should use.
-    LayoutRect layerBounds;
-    ClipRect damageRect, clipRectToApply, outlineRect;
-    m_owningLayer->calculateRects(rootLayer, 0, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect); // FIXME: Incorrect for CSS regions.
-    LayoutPoint paintOffset = toPoint(layerBounds.location() - m_owningLayer->renderBoxLocation());
-
-    // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
-    // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
-    // Else, our renderer tree may or may not contain the painting root, so we pass that root along
-    // so it will be tested against as we decend through the renderers.
-    RenderObject *paintingRootForRenderer = 0;
-    if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
-        paintingRootForRenderer = paintingRoot;
-
-#if ENABLE(CSS_FILTERS)
-    FilterEffectRendererHelper filterPainter(m_owningLayer->paintsWithFilters());
-    if (filterPainter.haveFilterEffect())
-        context = filterPainter.beginFilterEffect(m_owningLayer, context, layerBounds);
-#endif
-
-    if (paintingPhase & GraphicsLayerPaintBackground) {
-        // Paint our background first, before painting any child layers.
-        // Establish the clip used to paint our background.
-        m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
+    RenderLayer::PaintLayerFlags paintFlags = 0;
+    if (paintingPhase & GraphicsLayerPaintBackground)
+        paintFlags |= RenderLayer::PaintLayerPaintingCompositingBackgroundPhase;
+    if (paintingPhase & GraphicsLayerPaintForeground)
+        paintFlags |= RenderLayer::PaintLayerPaintingCompositingForegroundPhase;
+    if (paintingPhase & GraphicsLayerPaintMask)
+        paintFlags |= RenderLayer::PaintLayerPaintingCompositingMaskPhase;
         
-        PaintInfo info(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, 0, 0);
-        renderer()->paint(info, paintOffset);
-
-        // Restore the clip.
-        m_owningLayer->restoreClip(context, paintDirtyRect, damageRect);
-
-        // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
-        m_owningLayer->paintList(m_owningLayer->negZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
-    }
-                
-    bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
-    bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
-
-    if (paintingPhase & GraphicsLayerPaintForeground) {
-        // Set up the clip used when painting our children.
-        m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);
-        PaintInfo paintInfo(context, clipRectToApply.rect(), 
-                            selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                            forceBlackText, paintingRootForRenderer, 0, 0);
-        renderer()->paint(paintInfo, paintOffset);
-
-        if (!selectionOnly) {
-            paintInfo.phase = PaintPhaseFloat;
-            renderer()->paint(paintInfo, paintOffset);
-
-            paintInfo.phase = PaintPhaseForeground;
-            renderer()->paint(paintInfo, paintOffset);
-
-            paintInfo.phase = PaintPhaseChildOutlines;
-            renderer()->paint(paintInfo, paintOffset);
-        }
-
-        // Now restore our clip.
-        m_owningLayer->restoreClip(context, paintDirtyRect, clipRectToApply);
-
-        if (!outlineRect.isEmpty()) {
-            // Paint our own outline
-            PaintInfo paintInfo(context, outlineRect.rect(), PaintPhaseSelfOutline, false, paintingRootForRenderer, 0, 0);
-            m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
-            renderer()->paint(paintInfo, paintOffset);
-            m_owningLayer->restoreClip(context, paintDirtyRect, outlineRect);
-        }
-
-        // Paint any child layers that have overflow.
-        m_owningLayer->paintList(m_owningLayer->normalFlowList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
-
-        // Now walk the sorted list of children with positive z-indices.
-        m_owningLayer->paintList(m_owningLayer->posZOrderList(), rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, 0);
-    }
-
-    if (paintingPhase & GraphicsLayerPaintMask) {
-        if (renderer()->hasMask() && !selectionOnly && !damageRect.isEmpty()) {
-            m_owningLayer->clipToRect(rootLayer, context, paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius);
-
-            // Paint the mask.
-            PaintInfo paintInfo(context, damageRect.rect(), PaintPhaseMask, false, paintingRootForRenderer, 0, 0);
-            renderer()->paint(paintInfo, paintOffset);
-            
-            // Restore the clip.
-            m_owningLayer->restoreClip(context, paintDirtyRect, damageRect);
-        }
-    }
-    
-#if ENABLE(CSS_FILTERS)
-    if (filterPainter.hasStartedFilterEffect())
-        context = filterPainter.applyFilterEffect();
-#endif
+    // FIXME: GraphicsLayers need a way to split for RenderRegions.
+    m_owningLayer->paintLayerContents(rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, 0, 0, paintFlags);
 
     ASSERT(!m_owningLayer->m_usedTransparency);
 }
