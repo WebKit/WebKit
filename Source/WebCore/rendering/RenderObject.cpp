@@ -2487,6 +2487,8 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
                 linethrough = decorationColor(curr);
             }
         }
+        if (curr->isFloating() || curr->isPositioned())
+            return;
         curr = curr->parent();
         if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
             curr = toRenderBlock(curr)->continuation();

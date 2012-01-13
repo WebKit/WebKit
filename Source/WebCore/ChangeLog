@@ -1,3 +1,23 @@
+2012-01-13  Kentaro Hara  <haraken@chromium.org>
+
+        text-decorations should not be propagated to floating, absolutely or fixed
+        positioned decendants
+        https://bugs.webkit.org/show_bug.cgi?id=18611
+
+        Reviewed by Darin Adler.
+
+        Previously text-decorations were propagated to all child elements,
+        but they should not be propagated to out-of-flow descendants,
+        i.e. floating, absolutely or fixed positioned elements.
+
+        The spec says "text decorations are not propagated to any out-of-flow descendants":
+        http://www.w3.org/TR/2011/WD-css3-text-20110901/#decoration
+
+        Test: fast/css/text-decoration-in-descendants.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+
 2012-01-13  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (r104668): Crash in HTMLFormElement destructor if the
