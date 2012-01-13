@@ -50,6 +50,8 @@ private:
     virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
 
+    virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
+    virtual bool layerTreeStateIsFrozen() const OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 
@@ -59,9 +61,10 @@ private:
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
 
+    bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
 
+    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CALayer> m_rootLayer;
 };
 

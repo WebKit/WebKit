@@ -1,5 +1,22 @@
 2012-01-13  Anders Carlsson  <andersca@apple.com>
 
+        Implement TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen
+        https://bugs.webkit.org/show_bug.cgi?id=76308
+
+        Reviewed by Sam Weinig.
+
+        Keep track of whether the layer tree state is frozen and suspend/resume the layer flush scheduler accordingly.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen):
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+2012-01-13  Anders Carlsson  <andersca@apple.com>
+
         Disable implicit animations when setting the root compositing layer
         https://bugs.webkit.org/show_bug.cgi?id=76304
 

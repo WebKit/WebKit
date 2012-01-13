@@ -55,6 +55,7 @@ PassOwnPtr<TiledCoreAnimationDrawingArea> TiledCoreAnimationDrawingArea::create(
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
+    , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
 {
     Page* page = webPage->corePage();
@@ -114,14 +115,32 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graph
     [CATransaction commit];
 }
 
+void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStateIsFrozen)
+{
+    if (m_layerTreeStateIsFrozen == layerTreeStateIsFrozen)
+        return;
+
+    m_layerTreeStateIsFrozen = layerTreeStateIsFrozen;
+    if (m_layerTreeStateIsFrozen)
+        m_layerFlushScheduler.suspend();
+    else
+        m_layerFlushScheduler.resume();
+}
+
+bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
+{
+    return m_layerTreeStateIsFrozen;
+}
+
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
 {
     m_layerFlushScheduler.schedule();
-    // FIXME: Implement
 }
 
 bool TiledCoreAnimationDrawingArea::flushLayers()
 {
+    ASSERT(!m_layerTreeStateIsFrozen);
+
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
