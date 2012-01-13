@@ -1,3 +1,12 @@
+2012-01-13  Alexey Proskuryakov  <ap@apple.com>
+
+        CFURLRef to KURL conversion shouldn't turn raw paths into file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=76251
+
+        Reviewed by Dan Bernstein.
+
+        * platform/cf/KURLCFNet.cpp: (WebCore::KURL::KURL): Removed the offending code.
+
 2012-01-13  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Disconnecting the front-end does not disable profiling.
