@@ -646,14 +646,15 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     }    
 }
 
-#if ENABLE(FULLSCREEN_API) && USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING)
+
+#if ENABLE(FULLSCREEN_API)
 static bool isDocumentRunningFullScreenAnimation(Document* document)
 {
     return document->webkitIsFullScreen() && document->fullScreenRenderer() && document->isAnimatingFullScreen();
 }
 #endif
-    
-#if USE(ACCELERATED_COMPOSITING)
+
 void FrameView::updateCompositingLayers()
 {
     RenderView* root = rootRenderer(this);
@@ -718,7 +719,7 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
     return root->compositor()->layerForScrollCorner();
 }
 
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {
     RenderView* root = rootRenderer(this);

@@ -967,7 +967,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
         updateOverflowControlsLayers();
 
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
         if (m_layerForOverhangAreas)
             m_layerForOverhangAreas->setSize(frameView->frameRect().size());
 #endif
@@ -1685,17 +1685,31 @@ bool RenderLayerCompositor::requiresScrollCornerLayer() const
     return shouldCompositeOverflowControls(view) && view->isScrollCornerVisible();
 }
 
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
 bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 {
-    // Only if this is a top level frame (not iframe).
-    return !m_renderView->document()->ownerElement();
+    // We don't want a layer if this is a subframe.
+    if (m_renderView->document()->ownerElement())
+        return false;
+
+    // We do want a layer if we have a scrolling coordinator.
+#if ENABLE(THREADED_SCROLLING)
+    if (scrollingCoordinator())
+        return true;
+#endif
+
+    // Chromium always wants a layer.
+#if PLATFORM(CHROMIUM)
+    return true;
+#endif
+
+    return false;
 }
 #endif
 
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
             m_layerForOverhangAreas = GraphicsLayer::create(this);
@@ -1704,7 +1718,10 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
             m_layerForOverhangAreas->setSize(m_renderView->frameView()->frameRect().size());
-            m_overflowControlsHostLayer->addChild(m_layerForOverhangAreas.get());
+
+            // We want the overhang areas layer to be positioned below the frame contents,
+            // so insert it below the clip layer.
+            m_overflowControlsHostLayer->addChildBelow(m_layerForOverhangAreas.get(), m_clipLayer.get());
         }
     } else if (m_layerForOverhangAreas) {
         m_layerForOverhangAreas->removeFromParent();
@@ -1850,7 +1867,7 @@ void RenderLayerCompositor::destroyRootLayer()
 
     detachRootLayer();
 
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+#if ENABLE(RUBBER_BANDING)
     if (m_layerForOverhangAreas) {
         m_layerForOverhangAreas->removeFromParent();
         m_layerForOverhangAreas = nullptr;

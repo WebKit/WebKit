@@ -363,11 +363,11 @@ private:
     virtual ScrollableArea* enclosingScrollableArea() const;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual GraphicsLayer* layerForHorizontalScrollbar() const;
-    virtual GraphicsLayer* layerForVerticalScrollbar() const;
-    virtual GraphicsLayer* layerForScrollCorner() const;
-#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
-    virtual GraphicsLayer* layerForOverhangAreas() const;
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const OVERRIDE;
+    virtual GraphicsLayer* layerForVerticalScrollbar() const OVERRIDE;
+    virtual GraphicsLayer* layerForScrollCorner() const OVERRIDE;
+#if ENABLE(RUBBER_BANDING)
+    virtual GraphicsLayer* layerForOverhangAreas() const OVERRIDE;
 #endif
 #endif
 
