@@ -1,3 +1,12 @@
+2012-01-12  MORITA Hajime  <morrita@google.com>
+
+        [Chromium] JSExportMacros.h should be visible.
+        https://bugs.webkit.org/show_bug.cgi?id=76147
+
+        Reviewed by Tony Chang.
+
+        * config.h:
+
 2012-01-12  David Levin  <levin@chromium.org>
 
         HwndDC is a better name than OwnGetDC.

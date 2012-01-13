@@ -34,9 +34,7 @@
 #endif
 
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
 #include <runtime/JSExportMacros.h>
-#endif
 #include "PlatformExportMacros.h"
 
 #ifdef __APPLE__

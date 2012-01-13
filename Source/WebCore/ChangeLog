@@ -1,3 +1,14 @@
+2012-01-12  MORITA Hajime  <morrita@google.com>
+
+        [Chromium] JSExportMacros.h should be visible.
+        https://bugs.webkit.org/show_bug.cgi?id=76147
+
+        Reviewed by Tony Chang.
+
+        No new tests. No behavior change.
+
+        * config.h:
+
 2012-01-12  ChangSeok Oh  <shivamidow@gmail.com>
 
         Split GraphicsContext3DOpenGL into several files
