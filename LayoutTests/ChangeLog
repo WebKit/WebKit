@@ -1,5 +1,50 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103636
+
+    2011-12-23  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG does double-to-int conversion incorrectly when storing into int typed arrays
+            https://bugs.webkit.org/show_bug.cgi?id=75164
+            <rdar://problem/10557547>
+
+            Reviewed by Geoffrey Garen.
+
+            * fast/js/dfg-int32array-overflow-values-expected.txt: Added.
+            * fast/js/dfg-int32array-overflow-values.html: Added.
+            * fast/js/dfg-uint32array-overflow-values-expected.txt: Added.
+            * fast/js/dfg-uint32array-overflow-values.html: Added.
+            * fast/js/script-tests/dfg-int32array-overflow-values.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+            * fast/js/script-tests/dfg-uint32array-overflow-values.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103594
 
     2011-12-22  Filip Pizlo  <fpizlo@apple.com>

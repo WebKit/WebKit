@@ -936,6 +936,14 @@ public:
         return failure;
     }
 
+    Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
+    {
+        m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vmov(dest, fpTempRegisterAsSingle());
+
+        return branch32(branchType ? GreaterThanOrEqual : LessThan, dest, TrustedImm32(0));
+    }
+
     // Result is undefined if the value is outside of the integer range.
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
