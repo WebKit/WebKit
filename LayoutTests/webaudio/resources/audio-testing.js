@@ -105,3 +105,17 @@ function finishAudioTest(event) {
     layoutTestController.setAudioData(audioData);
     layoutTestController.notifyDone();
 }
+
+// Create an impulse in a buffer of length sampleFrameLength
+function createImpulseBuffer(context, sampleFrameLength) {
+    var audioBuffer = context.createBuffer(1, 1000, context.sampleRate);
+    var n = audioBuffer.length;
+    var dataL = audioBuffer.getChannelData(0);
+
+    for (var k = 0; k < n; ++k) {
+        dataL[k] = 0;
+    }
+    dataL[0] = 1;
+
+    return audioBuffer;
+}

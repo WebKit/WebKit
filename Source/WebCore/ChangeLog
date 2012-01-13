@@ -1,3 +1,15 @@
+2012-01-13  Raymond Toy  <rtoy@google.com>
+
+        EQUALPOWER panner incorrectly computes gain
+        https://bugs.webkit.org/show_bug.cgi?id=75767
+
+        Reviewed by Kenneth Russell.
+
+        Layout test added.
+
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):  Correct the formula.
+
 2012-01-13  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed, rolling out r104972.

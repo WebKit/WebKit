@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/panner-model-testing.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test equal-power panner model of AudioPannerNode.");
+
+      // To test the panner, we create a number of panner nodes
+      // equally spaced on a semicircle at unit distance.  The
+      // semicircle covers the azimuth range from -90 to 90 deg,
+      // covering full left to full right.  Each source is an impulse
+      // turning at a different time and we check that the rendered
+      // impulse has the expected gain.
+      function runTest() {
+          if (window.layoutTestController) {
+              layoutTestController.dumpAsText();
+              layoutTestController.waitUntilDone();
+          }
+
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+
+          createTestAndRun(context, nodesToCreate);
+      }
+
+      runTest();
+      successfullyParsed = true;
+
+    </script>
+
+    <script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

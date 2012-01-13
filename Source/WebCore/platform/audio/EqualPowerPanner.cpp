@@ -84,8 +84,8 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, AudioBus* input
     // Pan smoothly from left to right with azimuth going from -90 -> +90 degrees.
     double desiredPanPosition = (azimuth + 90) / 180;
 
-    double desiredGainL = 0.5 * cos(piDouble * desiredPanPosition) + 0.5;
-    double desiredGainR = sqrt(1.0 - desiredGainL*desiredGainL);
+    double desiredGainL = cos(0.5 * piDouble * desiredPanPosition);
+    double desiredGainR = sin(0.5 * piDouble * desiredPanPosition);
 
     // Don't de-zipper on first render call.
     if (m_isFirstRender) {
