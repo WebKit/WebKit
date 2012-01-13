@@ -83,6 +83,10 @@
 #include "Widget.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "DisplaySleepDisabler.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1965,6 +1969,14 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     // using (eg. it can't handle the rate we set)
     m_playbackRate = m_player->rate();
     invalidateCachedTime();
+
+#if PLATFORM(MAC)
+    if (m_player->paused() && m_sleepDisabler)
+        m_sleepDisabler = nullptr;
+    else if (!m_player->paused() && !m_sleepDisabler)
+        m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+#endif
+
     endProcessingMediaPlayerCallback();
 }
 
