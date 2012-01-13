@@ -1793,13 +1793,8 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     // Flexible box items should shrink wrap, so we lay them out at their intrinsic widths.
     // In the case of columns that have a stretch alignment, we go ahead and layout at the
     // stretched size to avoid an extra layout when applying alignment.
-    if (parent()->isFlexibleBox()) {
-        if (!parent()->style()->isColumnFlexDirection())
-            return true;
-        EFlexAlign itemAlign = style()->flexItemAlign();
-        if (itemAlign != AlignStretch && (itemAlign != AlignAuto || parent()->style()->flexAlign() != AlignStretch))
-            return true;
-    }
+    if (parent()->isFlexibleBox() && (!parent()->style()->isColumnFlexDirection() || style()->flexItemAlign() != AlignStretch))
+        return true;
 
     // Flexible horizontal boxes lay out children at their intrinsic widths.  Also vertical boxes
     // that don't stretch their kids lay out their children at their intrinsic widths.

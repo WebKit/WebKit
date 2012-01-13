@@ -618,14 +618,6 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, Layout
     }
 }
 
-static EFlexAlign flexAlignForChild(RenderBox* child)
-{
-    EFlexAlign align = child->style()->flexItemAlign();
-    if (align == AlignAuto)
-        return child->parent()->style()->flexAlign();
-    return align;
-}
-
 void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
@@ -647,7 +639,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
-        if (flexAlignForChild(child) == AlignBaseline) {
+        if (child->style()->flexItemAlign() == AlignBaseline) {
             LayoutUnit ascent = marginBoxAscent(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
@@ -740,9 +732,9 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, LayoutUnit ma
         }
 
         // FIXME: Make sure this does the right thing with column flows.
-        switch (flexAlignForChild(child)) {
+        switch (child->style()->flexItemAlign()) {
         case AlignAuto:
-            ASSERT_NOT_REACHED();
+            // FIXME: Handle this once we add flex-align.
             break;
         case AlignStretch: {
             if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {

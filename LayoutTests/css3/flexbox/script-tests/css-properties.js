@@ -76,10 +76,6 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlig
 flexbox.style.webkitFlexItemAlign = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
 
-flexbox.style.webkitFlexItemAlign = 'auto';
-shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'auto');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
-
 flexbox.style.webkitFlexItemAlign = 'start';
 shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', 'start');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'start');
@@ -103,64 +99,6 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlig
 flexbox.style.webkitFlexItemAlign = '';
 shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
-
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-// The initial value is 'stretch'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'stretch');
-
-flexbox.style.webkitFlexAlign = 'foo';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-
-flexbox.style.webkitFlexAlign = 'auto';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'stretch');
-
-flexbox.style.webkitFlexAlign = 'start';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'start');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'start');
-
-flexbox.style.webkitFlexAlign = 'end';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'end');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'end');
-
-flexbox.style.webkitFlexAlign = 'center';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'center');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'center');
-
-flexbox.style.webkitFlexAlign = 'stretch';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'stretch');
-
-flexbox.style.webkitFlexAlign = 'baseline';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'baseline');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'baseline');
-
-flexbox.style.webkitFlexAlign = '';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'stretch');
-
-flexbox.style.display = 'none';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
-shouldBeEqualToString('window.getComputedStyle(flexitem, null).webkitFlexItemAlign', 'stretch');
-flexbox.style.display = '';
-
-
-// FIXME: This should probably return stretch. See https://bugs.webkit.org/show_bug.cgi?id=14563.
-var detachedFlexbox = document.createElement('div');
-var detachedFlexItem = document.createElement('div');
-detachedFlexbox.appendChild(detachedFlexItem);
-shouldBeEqualToString('window.getComputedStyle(detachedFlexbox, null).webkitFlexItemAlign', '');
-shouldBeEqualToString('window.getComputedStyle(detachedFlexItem, null).webkitFlexItemAlign', '');
-
 
 shouldBeEqualToString('flexbox.style.webkitFlexDirection', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexDirection', 'row');

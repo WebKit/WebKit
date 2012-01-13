@@ -560,7 +560,6 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
 #endif
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
-    case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexItemAlign:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
