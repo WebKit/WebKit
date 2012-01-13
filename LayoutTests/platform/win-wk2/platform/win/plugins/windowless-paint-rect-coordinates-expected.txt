@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: PLUGIN: Success
+CONSOLE MESSAGE: PLUGIN: Success
 
 This tests that the paint rect passed in WM_PAINT has the expected coordinates.

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: Test exception.
+CONSOLE MESSAGE: Test exception.
 This page throws an exception from within eval(). 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. The profiler should not crash and still show the stack under insertnewText().

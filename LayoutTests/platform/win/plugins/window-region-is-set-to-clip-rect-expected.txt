@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: PLUGIN: PASS: Plugin's window's window region has been set as expected
-CONSOLE MESSAGE: line 0: PLUGIN: PASS: Plugin's window's class does not have the CS_PARENTDC style
+CONSOLE MESSAGE: PLUGIN: PASS: Plugin's window's window region has been set as expected
+CONSOLE MESSAGE: PLUGIN: PASS: Plugin's window's class does not have the CS_PARENTDC style
 
 This tests that a plugin's window's window region is set to its clip rect.

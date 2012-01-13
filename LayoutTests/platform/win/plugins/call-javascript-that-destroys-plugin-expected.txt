@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 0: PLUGIN: Success: executed script, and plug-in is not yet destroyed.
-CONSOLE MESSAGE: line 0: PLUGIN: Plug-in destroyed.
+CONSOLE MESSAGE: PLUGIN: Success: executed script, and plug-in is not yet destroyed.
+CONSOLE MESSAGE: PLUGIN: Plug-in destroyed.
 This tests that, if a plug-in directs the browser to evaluate JavaScript that removes the plug-in from the page, the plug-in is destroyed asynchronously.

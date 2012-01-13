@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (90, 90)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (90, 90)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (100, 100)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (110, 100)
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: mouseDown at (90, 90)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (90, 90)
+CONSOLE MESSAGE: PLUGIN: mouseDown at (100, 100)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (110, 100)
 
 Tests for widget positions being correctly updated after scrolling. rdar://problem/7559069

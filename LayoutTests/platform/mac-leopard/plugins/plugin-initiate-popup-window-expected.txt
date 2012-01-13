@@ -1,18 +1,18 @@
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
 CONSOLE MESSAGE: line 17: window count: 1
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (12, 12)
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: mouseDown at (12, 12)
 CONSOLE MESSAGE: line 30: window count: 2
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (12, 12)
-CONSOLE MESSAGE: line 0: PLUGIN: loseFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (52, 12)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (52, 12)
-CONSOLE MESSAGE: line 0: PLUGIN: keyDown 'p'
+CONSOLE MESSAGE: PLUGIN: mouseUp at (12, 12)
+CONSOLE MESSAGE: PLUGIN: loseFocusEvent
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: mouseDown at (52, 12)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (52, 12)
+CONSOLE MESSAGE: PLUGIN: keyDown 'p'
 CONSOLE MESSAGE: line 52: window count: 3
-CONSOLE MESSAGE: line 0: PLUGIN: keyUp 'p'
-CONSOLE MESSAGE: line 0: PLUGIN: loseFocusEvent
+CONSOLE MESSAGE: PLUGIN: keyUp 'p'
+CONSOLE MESSAGE: PLUGIN: loseFocusEvent
 
 
 Specify a script and a mouse/keyboard event to the plugin. The specified script will be evaluated in the browser when the specified event is received by the plugin. The test is for bug https://bugs.webkit.org/show_bug.cgi?id=41292.

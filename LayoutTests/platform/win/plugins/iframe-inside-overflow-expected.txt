@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 0: PLUGIN: Plugin window rect: {left=-227, top=-189, right=73, bottom=111}
+CONSOLE MESSAGE: PLUGIN: Plugin window rect: {left=-227, top=-189, right=73, bottom=111}
 This tests that windowed plugins inside iframes inside overflow areas obey the overflow area's scroll offset.
 
 

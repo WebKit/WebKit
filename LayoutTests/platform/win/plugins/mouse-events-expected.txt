@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 0: PLUGIN: getFocusEvent
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (20, 20)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (20, 20)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (30, 30)
-CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (40, 30)
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: mouseDown at (20, 20)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (20, 20)
+CONSOLE MESSAGE: PLUGIN: mouseDown at (30, 30)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (40, 30)
 
 Test for bug 11517: Flash clicks/interactivity not working properly.

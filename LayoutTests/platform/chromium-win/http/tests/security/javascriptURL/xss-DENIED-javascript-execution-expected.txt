@@ -1,22 +1,22 @@
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/javascriptURL/resources/foreign-domain-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/xss-DENIED-javascript-execution.html. Domains, protocols and ports must match.
 
 If you see alert windows, the test failed. 
 
