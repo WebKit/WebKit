@@ -90,7 +90,68 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
 #endif
 }
 
+void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
+{
+    vDSP_vsma(sourceP, sourceStride, scale, destP, destStride, destP, destStride, framesToProcess);
+}
+
 #else
+
+void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
+{
+    int n = framesToProcess;
+
+#ifdef __SSE2__
+    if ((sourceStride == 1) && (destStride == 1)) {
+        float k = *scale;
+
+        // If the sourceP address is not 16-byte aligned, the first several frames (at most three) should be processed seperately.
+        while ((reinterpret_cast<uintptr_t>(sourceP) & 0x0F) && n) {
+            *destP += k * *sourceP;
+            sourceP++;
+            destP++;
+            n--;
+        }
+
+        // Now the sourceP address aligned and start to apply SSE.
+        int tailFrames = n % 4;
+        float* endP = destP + n - tailFrames;
+
+        __m128 pSource;
+        __m128 dest;
+        __m128 temp;
+        __m128 mScale = _mm_set_ps1(k);
+
+        bool destAligned = !(reinterpret_cast<uintptr_t>(destP) & 0x0F);
+
+#define SSE2_MULT_ADD(loadInstr, storeInstr)        \
+            while (destP < endP)                    \
+            {                                       \
+                pSource = _mm_load_ps(sourceP);     \
+                temp = _mm_mul_ps(pSource, mScale); \
+                dest = _mm_##loadInstr##_ps(destP); \
+                dest = _mm_add_ps(dest, temp);      \
+                _mm_##storeInstr##_ps(destP, dest); \
+                sourceP += 4;                       \
+                destP += 4;                         \
+            }
+
+        if (destAligned) 
+            SSE2_MULT_ADD(load, store)
+        else 
+            SSE2_MULT_ADD(loadu, storeu)
+
+        n = tailFrames;
+    }
+#endif
+    while (n) {
+        *destP += *sourceP * *scale;
+        sourceP += sourceStride;
+        destP += destStride;
+        n--;
+    }
+}
+
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {

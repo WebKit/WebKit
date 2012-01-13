@@ -252,10 +252,11 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
         *destinationR++ = sumR; \
     }
 
-// FIXME: this can be optimized with additional VectorMath functions. 
 #define STEREO_SUM_V \
-    for (; k < framesToProcess; ++k) \
-        STEREO_SUM
+    { \
+        vsma(sourceL, 1, &gain, destinationL, 1, framesToProcess - k); \
+        vsma(sourceR, 1, &gain, destinationR, 1, framesToProcess - k); \
+    }
 
 // Mono -> stereo (mix equally into L and R)
 // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
@@ -269,8 +270,10 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
     }
 
 #define MONO2STEREO_SUM_V \
-    for (; k < framesToProcess; ++k) \
-        MONO2STEREO_SUM 
+    { \
+        vsma(sourceL, 1, &gain, destinationL, 1, framesToProcess - k); \
+        vsma(sourceL, 1, &gain, destinationR, 1, framesToProcess - k); \
+    }
     
 #define MONO_SUM \
     { \
@@ -279,8 +282,9 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
     }
 
 #define MONO_SUM_V \
-    for (; k < framesToProcess; ++k) \
-        MONO_SUM
+    { \
+        vsma(sourceL, 1, &gain, destinationL, 1, framesToProcess - k); \
+    } 
 
 #define STEREO_NO_SUM \
     { \
