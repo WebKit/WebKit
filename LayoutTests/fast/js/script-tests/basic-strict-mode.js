@@ -20,12 +20,23 @@ function shouldBeSyntaxError(str) {
     shouldThrow(str);
     shouldThrow("(function(){" + str + "})");
 }
+function testLineContinuation() {
+    "use stric\
+t";
+    return this;
+}
+function testEscapeSequence() {
+    "use\u0020strict";
+    return this;
+}
 
 shouldBe("testThis.call(null)", "null");
 shouldBe("testThis.call(1)", "1");
 shouldBe("testThis.call(true)", "true");
 shouldBe("testThis.call(false)", "false");
 shouldBe("testThis.call(undefined)", "undefined");
+shouldBeFalse("testLineContinuation.call(undefined) === undefined");
+shouldBeFalse("testEscapeSequence.call(undefined) === undefined");
 shouldBe("testThis.call('a string')", "'a string'");
 shouldBe("testThisDotAccess.call('a string')", "'a string'.length");
 shouldThrow("testThisDotAccess.call(null)");
@@ -74,6 +85,13 @@ shouldThrow("(function f(arg){'use strict'; f.arguments; })()");
 shouldThrow("(function f(arg){'use strict'; f.caller; })()");
 shouldThrow("(function f(arg){'use strict'; f.arguments=5; })()");
 shouldThrow("(function f(arg){'use strict'; f.caller=5; })()");
+
+// arguments/caller poisoning should be visible but not throw with 'in' & 'hasOwnProperty'.
+shouldBeTrue('"caller" in function(){"use strict"}');
+shouldBeTrue('(function(){"use strict";}).hasOwnProperty("caller")');
+shouldBeTrue('"arguments" in function(){"use strict"}');
+shouldBeTrue('(function(){"use strict";}).hasOwnProperty("arguments")');
+ 
 shouldBeSyntaxError("'use strict'; (function (){with(1){};})");
 shouldBeSyntaxError("'use strict'; (function (){var a; delete a;})");
 shouldBeSyntaxError("'use strict'; var a; (function (){ delete a;})");
@@ -186,4 +204,5 @@ shouldBeTrue("(function () { try { throw 1; } catch (e) { aGlobal = true; }})();
 aGlobal = false;
 shouldBeTrue("(function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
 
-var successfullyParsed = true;
+// Make sure this doesn't crash!
+shouldBe('String(Object.getOwnPropertyDescriptor(function() { "use strict"; }, "caller").get)', "'function () {\\n    [native code]\\n}'");

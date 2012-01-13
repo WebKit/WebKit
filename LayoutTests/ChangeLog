@@ -1,5 +1,22 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103728
+
+    2011-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=75260
+            Null name for host function can result in dereference of uninitialize memory
+
+            Reviewed by Filip Pizlo.
+
+            Added a test for String applies to the ThrowTypeError function object -
+            if this does not crash, it passes!
+
+            * fast/js/basic-strict-mode-expected.txt:
+            * fast/js/script-tests/basic-strict-mode.js:
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103637
 
     2011-12-23  Filip Pizlo  <fpizlo@apple.com>
