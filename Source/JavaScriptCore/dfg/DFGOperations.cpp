@@ -431,13 +431,15 @@ void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue enc
 void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
-    JSValue(base).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
-    JSValue(base).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdStrictOptimize);
@@ -476,14 +478,14 @@ V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictOptimize
 void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
 {
     JSValue value = JSValue::decode(encodedValue);
-    JSValue baseValue(base);
     PutPropertySlot slot(true);
     
-    baseValue.putDirect(exec, *propertyName, value, slot);
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, value, slot);
     
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, *propertyName, slot, stubInfo, Direct);
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }
@@ -492,14 +494,14 @@ V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictOptim
 void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
 {
     JSValue value = JSValue::decode(encodedValue);
-    JSValue baseValue(base);
     PutPropertySlot slot(false);
     
-    baseValue.putDirect(exec, *propertyName, value, slot);
+    ASSERT(base->isObject());
+    asObject(base)->putDirect(exec->globalData(), *propertyName, value, slot);
     
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, *propertyName, slot, stubInfo, Direct);
+        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }

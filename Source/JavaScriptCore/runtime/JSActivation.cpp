@@ -184,7 +184,7 @@ void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& property
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
     ASSERT(!thisObject->hasGetterSetterProperties());
-    thisObject->putDirect(exec->globalData(), propertyName, value, 0, true, slot);
+    thisObject->putOwnDataProperty(exec->globalData(), propertyName, value, slot);
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum

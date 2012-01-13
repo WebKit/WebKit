@@ -1382,7 +1382,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_generic)
     STUB_INIT_STACK_FRAME(stackFrame);
     
     PutPropertySlot slot(stackFrame.callFrame->codeBlock()->isStrictMode());
-    stackFrame.args[0].jsValue().putDirect(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    ASSERT(baseValue.isObject());
+    asObject(baseValue)->putDirect(stackFrame.callFrame->globalData(), stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
@@ -1427,7 +1429,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
     Identifier& ident = stackFrame.args[1].identifier();
     
     PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
-    stackFrame.args[0].jsValue().putDirect(callFrame, ident, stackFrame.args[2].jsValue(), slot);
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    ASSERT(baseValue.isObject());
+    asObject(baseValue)->putDirect(callFrame->globalData(), ident, stackFrame.args[2].jsValue(), slot);
     
     CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
@@ -1460,7 +1464,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_fail)
     Identifier& ident = stackFrame.args[1].identifier();
     
     PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
-    stackFrame.args[0].jsValue().putDirect(callFrame, ident, stackFrame.args[2].jsValue(), slot);
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    ASSERT(baseValue.isObject());
+    asObject(baseValue)->putDirect(callFrame->globalData(), ident, stackFrame.args[2].jsValue(), slot);
     
     CHECK_FOR_EXCEPTION_AT_END();
 }

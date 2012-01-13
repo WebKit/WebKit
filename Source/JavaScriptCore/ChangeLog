@@ -1,5 +1,39 @@
 2012-01-12  Gavin Barraclough  <barraclough@apple.com>
 
+        Clean up putDirect (part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=76232
+
+        Reviewed by Sam Weinig.
+
+        putDirect has ambiguous semantics, clean these up a bit.
+
+        putDirect generally behaves a bit like a fast defineOwnProperty, but one that
+        always creates the property, with no checking to validate the put it permitted.
+
+        It also encompasses two slightly different behaviors.
+        (1) a fast form of put for JSActivation, which doesn't have to handle searching
+            the prototype chain, getter/setter properties, or the magic __proto__ value.
+            Break this out as a new method, 'putOwnDataProperty'.
+        (2) the version of putDirect on JSValue will also check for overwriting ReadOnly
+            values, in strict mode. This is, however, not so smart on a few level, since
+            it is only called from op_put_by_id with direct set, which is only used with
+            an object as the base, and is only used to put new properties onto objects.
+
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::put):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putOwnDataProperty):
+        * runtime/JSValue.h:
+
+2012-01-12  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=76141
         defineSetter/defineGetter may fail to update Accessor attribute
 

@@ -3308,10 +3308,12 @@ skip_id_custom_self:
         int direct = vPC[8].u.operand;
 
         JSValue baseValue = callFrame->r(base).jsValue();
+        ASSERT(baseValue.isObject());
+        JSObject* baseObject = asObject(baseValue);
         Identifier& ident = codeBlock->identifier(property);
         PutPropertySlot slot(codeBlock->isStrictMode());
         if (direct)
-            baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
+            baseObject->putDirect(*globalData, ident, callFrame->r(value).jsValue(), slot);
         else
             baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
         CHECK_FOR_EXCEPTION();
@@ -3426,10 +3428,12 @@ skip_id_custom_self:
         int direct = vPC[8].u.operand;
 
         JSValue baseValue = callFrame->r(base).jsValue();
+        ASSERT(baseValue.isObject());
+        JSObject* baseObject = asObject(baseValue);
         Identifier& ident = codeBlock->identifier(property);
         PutPropertySlot slot(codeBlock->isStrictMode());
         if (direct)
-            baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
+            baseObject->putDirect(*globalData, ident, callFrame->r(value).jsValue(), slot);
         else
             baseValue.put(callFrame, ident, callFrame->r(value).jsValue(), slot);
         CHECK_FOR_EXCEPTION();

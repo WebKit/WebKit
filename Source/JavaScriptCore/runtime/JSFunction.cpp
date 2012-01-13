@@ -204,8 +204,7 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
         if (!location) {
             JSObject* prototype = constructEmptyObject(exec, thisObject->globalObject()->emptyObjectStructure());
             prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, thisObject, DontEnum);
-            PutPropertySlot slot;
-            thisObject->putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum, false, slot);
+            thisObject->putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
             location = thisObject->getDirectLocation(exec->globalData(), exec->propertyNames().prototype);
         }
 
