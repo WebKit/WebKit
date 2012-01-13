@@ -1,5 +1,50 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103594
+
+    2011-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG CFA sometimes generates an incorrect proof that a node is known to be a typed array
+            https://bugs.webkit.org/show_bug.cgi?id=75150
+            <rdar://problem/10621900>
+
+            Reviewed by Gavin Barraclough.
+
+            * fast/js/dfg-float32array-expected.txt: Added.
+            * fast/js/dfg-float32array.html: Added.
+            * fast/js/dfg-int32array-expected.txt: Added.
+            * fast/js/dfg-int32array.html: Added.
+            * fast/js/script-tests/dfg-float32array.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+            * fast/js/script-tests/dfg-int32array.js: Added.
+            (getter1):
+            (setter1):
+            (getter2):
+            (setter2):
+            (getter3):
+            (setter3):
+            (getter4):
+            (setter4):
+            (getters.getter1.a):
+            (.a):
+            (setters.setter1.a):
+            (safeGetter):
+            (safeSetter):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103587
 
     2011-12-22  Filip Pizlo  <fpizlo@apple.com>
