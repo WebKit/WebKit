@@ -427,7 +427,12 @@ bool TestController::resetStateToConsistentValues()
 #if ENABLE(FULLSCREEN_API)
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
+
+// [Qt][WK2]REGRESSION(r104881):It broke hundreds of tests
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=76247
+#if !PLATFORM(QT)
     WKPreferencesSetMockScrollbarsEnabled(preferences, true);
+#endif
 
 #if !PLATFORM(QT)
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
