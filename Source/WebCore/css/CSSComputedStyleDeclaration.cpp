@@ -218,6 +218,7 @@ static const int computedProperties[] = {
 #endif
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
+    CSSPropertyWebkitFlexAlign,
     CSSPropertyWebkitFlexItemAlign,
     CSSPropertyWebkitFlexDirection,
     CSSPropertyWebkitFlexFlow,
@@ -1526,7 +1527,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitFlexPack:
             return cssValuePool->createValue(style->flexPack());
+        case CSSPropertyWebkitFlexAlign:
+            return cssValuePool->createValue(style->flexAlign());
         case CSSPropertyWebkitFlexItemAlign:
+            if (m_node && m_node->parentNode() && style->flexItemAlign() == AlignAuto)
+                return cssValuePool->createValue(m_node->parentNode()->computedStyle()->flexAlign());
             return cssValuePool->createValue(style->flexItemAlign());
         case CSSPropertyWebkitFlexDirection:
             return cssValuePool->createValue(style->flexDirection());

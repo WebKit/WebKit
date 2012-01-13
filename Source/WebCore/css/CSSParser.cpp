@@ -1637,6 +1637,9 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitFlexPack:
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify;
         break;
+    case CSSPropertyWebkitFlexAlign:
+        validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
+        break;
     case CSSPropertyWebkitFlexItemAlign:
         validPrimitive = id == CSSValueAuto || id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
         break;

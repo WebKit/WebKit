@@ -1,3 +1,40 @@
+2012-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Implement flex-align
+        https://bugs.webkit.org/show_bug.cgi?id=75782
+
+        Reviewed by Tony Chang.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Not 100% sure about this, but I think the computed value of
+        flex-item-align needs to take the parent's flex-align into
+        account for computed auto values.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::flexAlign):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::flexAlign):
+        (WebCore::RenderStyleBitfields::setFlexAlign):
+        (WebCore::RenderStyleBitfields::initialFlexAlign):
+        (WebCore::RenderStyleBitfields::initialFlexItemAlign):
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2012-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Rename GraphicsContext* argument in various RenderLayer methods

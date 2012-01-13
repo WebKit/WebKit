@@ -255,6 +255,7 @@ z-index
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter
 #endif
+-webkit-flex-align
 -webkit-flex-direction
 -webkit-flex-flow
 -webkit-flex-item-align

@@ -3786,6 +3786,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWordSpacing:
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
+    case CSSPropertyWebkitFlexAlign:
     case CSSPropertyWebkitFlexItemAlign:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
