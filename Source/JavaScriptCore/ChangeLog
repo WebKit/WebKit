@@ -1,5 +1,17 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104269
+
+    2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10633760> Update copyright strings
+
+            Reviewed by Mark Rowe.
+
+            * Info.plist:
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104119
 
     2012-01-04  Mark Rowe  <mrowe@apple.com>
