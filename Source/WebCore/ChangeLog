@@ -1,5 +1,29 @@
 2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        TextureMapper: Do the node transform computation when painting.
+        https://bugs.webkit.org/show_bug.cgi?id=74721
+
+        Reviewed by Noam Rosenthal.
+
+        The transform of the node tree was built during the syncCompositingState
+        step. This would cause an ASSERT with QWebView, trying to use a dirty transform
+        state since the rootTextureMapperNode in QWebFramePrivate::renderCompositedLayers
+        doesn't run the sync step after getting the world transform set.
+
+        This moves the transform computation from the sync to the paint step to
+        prevent making sure that the sync step has been run on all nodes before painting.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::computeTransformsRecursive):
+        (WebCore::TextureMapperNode::computeTiles):
+        Remove an unused variable.
+        (WebCore::TextureMapperNode::paint):
+        (WebCore::TextureMapperNode::syncAnimationsRecursively):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
+2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         TextureMapper: Simplify transform manipulations.
         https://bugs.webkit.org/show_bug.cgi?id=74719
 

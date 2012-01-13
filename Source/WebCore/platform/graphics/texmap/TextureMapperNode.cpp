@@ -95,11 +95,12 @@ void TextureMapperNode::computeTransformsSelf()
     m_transforms.forDescendants.translate3d(-originX, -originY, -m_state.anchorPoint.z());
 }
 
-void TextureMapperNode::computeAllTransforms()
+void TextureMapperNode::computeTransformsRecursive()
 {
     if (m_size.isEmpty() && m_state.masksToBounds)
         return;
 
+    // Compute transforms recursively on the way down to leafs.
     computeTransformsSelf();
 
     m_state.visible = m_state.backfaceVisibility || m_transforms.target.inverse().m33() >= 0;
@@ -108,9 +109,15 @@ void TextureMapperNode::computeAllTransforms()
         m_transforms.centerZ = m_transforms.target.mapPoint(FloatPoint3D(m_size.width() / 2, m_size.height() / 2, 0)).z();
 
     if (m_state.maskLayer)
-        m_state.maskLayer->computeAllTransforms();
+        m_state.maskLayer->computeTransformsRecursive();
     if (m_state.replicaLayer)
-        m_state.replicaLayer->computeAllTransforms();
+        m_state.replicaLayer->computeTransformsRecursive();
+    for (int i = 0; i < m_children.size(); ++i)
+        m_children[i]->computeTransformsRecursive();
+
+    // Reorder children if needed on the way back up.
+    if (m_state.preserves3D)
+        sortByZOrder(m_children, 0, m_children.size());
 }
 
 void TextureMapperNode::computeTiles()
@@ -133,9 +140,6 @@ void TextureMapperNode::computeTiles()
         for (float x = 0; x < contentRect.width(); x += gTileDimension) {
             FloatRect tileRect(x, y, gTileDimension, gTileDimension);
             tileRect.intersect(contentRect);
-            FloatRect tileRectInRootCoordinates = tileRect;
-            tileRectInRootCoordinates.scale(1.0);
-            tileRectInRootCoordinates = m_transforms.target.mapRect(tileRectInRootCoordinates);
             tilesToAdd.append(tileRect);
         }
     }
@@ -315,6 +319,8 @@ void TextureMapperNode::paint()
 {
     if (m_size.isEmpty())
         return;
+
+    computeTransformsRecursive();
 
     TextureMapperPaintOptions opt;
     opt.textureMapper = m_textureMapper;
@@ -970,8 +976,6 @@ void TextureMapperNode::syncAnimationsRecursively()
 {
     syncAnimations(0);
 
-    computeAllTransforms();
-
     for (int i = m_children.size() - 1; i >= 0; --i)
         m_children[i]->syncAnimationsRecursively();
 }
@@ -996,7 +1000,6 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
 
     syncAnimations(graphicsLayer);
 
-    computeAllTransforms();
     computeTiles();
     computeOverlapsIfNeeded();
 
@@ -1018,9 +1021,6 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
         for (int i = m_children.size() - 1; i >= 0; --i)
             m_children[i]->syncCompositingState(0, textureMapper, options);
     }
-
-    if (m_state.preserves3D)
-        sortByZOrder(m_children, 0, m_children.size());
 }
 
 TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& values)

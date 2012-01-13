@@ -174,7 +174,7 @@ public:
 
 private:
     TextureMapperNode* rootLayer();
-    void computeAllTransforms();
+    void computeTransformsRecursive();
     void computeTransformsSelf();
     void computeVisibleRect(const FloatRect& rootVisibleRect);
     void computeOverlapsIfNeeded();
