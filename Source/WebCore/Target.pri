@@ -3921,12 +3921,14 @@ contains(CONFIG, texmap) {
     HEADERS += \
         platform/graphics/qt/TextureMapperQt.h \
         platform/graphics/texmap/GraphicsLayerTextureMapper.h \
+        platform/graphics/texmap/LayerTransform.h \
         platform/graphics/texmap/TextureMapper.h \
         platform/graphics/texmap/TextureMapperNode.h \
         platform/graphics/texmap/TextureMapperPlatformLayer.h
 
     SOURCES += \
         platform/graphics/qt/TextureMapperQt.cpp \
+        platform/graphics/texmap/LayerTransform.cpp \
         platform/graphics/texmap/TextureMapper.cpp \
         platform/graphics/texmap/TextureMapperNode.cpp \
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp

@@ -5677,6 +5677,8 @@ if USE_TEXTURE_MAPPER_CAIRO
 webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/LayerTransform.cpp \
+	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
@@ -5693,6 +5695,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/opengl/TextureMapperGL.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/LayerTransform.cpp \
+	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \

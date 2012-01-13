@@ -25,6 +25,7 @@
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "IntPointHash.h"
+#include "LayerTransform.h"
 #include "TextureMapper.h"
 #include "Timer.h"
 #include "TransformOperations.h"
@@ -141,6 +142,7 @@ public:
         : m_parent(0)
         , m_effectTarget(0)
         , m_opacity(1)
+        , m_centerZ(0)
         , m_textureMapper(0)
     { }
 
@@ -175,8 +177,6 @@ public:
 private:
     TextureMapperNode* rootLayer();
     void computeTransformsRecursive();
-    void computeTransformsSelf();
-    void computeVisibleRect(const FloatRect& rootVisibleRect);
     void computeOverlapsIfNeeded();
     void computeTiles();
     void swapContentsBuffers();
@@ -205,15 +205,8 @@ private:
     bool hasOpacityAnimation() const;
     bool hasTransformAnimation() const;
     bool hasMoreThanOneTile() const;
-    struct TransformData {
-        TransformationMatrix target;
-        TransformationMatrix forDescendants;
-        TransformationMatrix base;
-        float centerZ;
-        TransformData() { }
-    };
 
-    TransformData m_transforms;
+    LayerTransform m_transform;
 
     inline FloatRect targetRect() const
     {
@@ -269,6 +262,7 @@ private:
     TextureMapperNode* m_effectTarget;
     FloatSize m_size;
     float m_opacity;
+    float m_centerZ;
     String m_name;
     int m_id;
 

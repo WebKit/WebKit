@@ -1,3 +1,18 @@
+2012-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TextureMapper: Extract layer transform logic to a LayerTransform class.
+        https://bugs.webkit.org/show_bug.cgi?id=76291
+
+        Reviewed by Noam Rosenthal.
+
+        Move the paint call before the visible rect collection to make sure that
+        transforms are computed. This will increase the delay for the visible rects
+        to get to the WebProcess until we move this calculation out of the UI Process.
+        This fixes an assert triggering in LayerTransform::combineTransforms.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+
 2012-01-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build correction.

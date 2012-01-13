@@ -1,3 +1,38 @@
+2012-01-13  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TextureMapper: Extract layer transform logic to a LayerTransform class.
+        https://bugs.webkit.org/show_bug.cgi?id=76291
+
+        Reviewed by Noam Rosenthal.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/texmap/LayerTransform.cpp: Added.
+        (WebCore::LayerTransform::LayerTransform):
+        (WebCore::LayerTransform::setPosition):
+        (WebCore::LayerTransform::setSize):
+        (WebCore::LayerTransform::setAnchorPoint):
+        (WebCore::LayerTransform::setFlattening):
+        (WebCore::LayerTransform::setLocalTransform):
+        (WebCore::LayerTransform::setChildrenTransform):
+        (WebCore::LayerTransform::combined):
+        (WebCore::LayerTransform::combinedForChildren):
+        (WebCore::LayerTransform::combineTransforms):
+        (WebCore::LayerTransform::combineTransformsForChildren):
+        * platform/graphics/texmap/LayerTransform.h: Added.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::setTransform):
+        (WebCore::TextureMapperNode::computeTransformsRecursive):
+        (WebCore::TextureMapperNode::collectVisibleContentsRects):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::compareGraphicsLayersZValue):
+        (WebCore::TextureMapperNode::paintSelfAndChildren):
+        (WebCore::TextureMapperNode::paintReflection):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperNode::TextureMapperNode):
+
 2012-01-13  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, build fix for unused argument warning after r104954.

@@ -194,6 +194,8 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
         currentRootLayer->syncCompositingStateForThisLayerOnly();
     }
 
+    node->paint();
+
     TextureMapperNode::NodeRectMap nodeVisualContentsRectMap;
     if (node->collectVisibleContentsRects(nodeVisualContentsRectMap, viewportRect)) {
         TextureMapperNode::NodeRectMap::iterator endIterator = nodeVisualContentsRectMap.end();
@@ -206,7 +208,6 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
             setVisibleContentsRectForLayer(layerID, visibleRect);
         }
     }
-    node->paint();
 
     m_textureMapper->endPainting();
 
