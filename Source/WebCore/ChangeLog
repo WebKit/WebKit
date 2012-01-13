@@ -1,3 +1,15 @@
+2012-01-13  Greg Billock  <gbillock@google.com>
+
+        Don't use pending activity notification in IntentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=76302
+
+        Reviewed by Adam Barth.
+
+        * Modules/intents/IntentRequest.cpp:
+        (WebCore::IntentRequest::IntentRequest):
+        (WebCore::IntentRequest::postResult):
+        (WebCore::IntentRequest::postFailure):
+
 2012-01-13  Raymond Toy  <rtoy@google.com>
 
         EQUALPOWER panner incorrectly computes gain
