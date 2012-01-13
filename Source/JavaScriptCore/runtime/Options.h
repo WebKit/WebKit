@@ -30,65 +30,51 @@
 
 namespace JSC { namespace Options {
 
-// maximumInliningDepth is the maximum depth of inline stack, so 1 = no
-// inlining, 2 = one level, etc
+extern unsigned maximumOptimizationCandidateInstructionCount;
 
-// couldTakeSlowCaseThreshold shouldn't be zero because some ops will spuriously
-// take slow case, for example for linking or caching.
+extern unsigned maximumFunctionForCallInlineCandidateInstructionCount;
+extern unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
-#define FOR_EACH_HEURISTIC(m) \
-    m(unsigned, maximumOptimizationCandidateInstructionCount, 1000) \
-    \
-    m(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 150) \
-    m(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 80) \
-    \
-    m(unsigned, maximumInliningDepth, 5)                              \
-    \
-    m(int32_t, executionCounterValueForOptimizeAfterWarmUp,      -1000) \
-    m(int32_t, executionCounterValueForOptimizeAfterLongWarmUp,  -5000) \
-    m(int32_t, executionCounterValueForDontOptimizeAnytimeSoon,  std::numeric_limits<int32_t>::min()) \
-    m(int32_t, executionCounterValueForOptimizeSoon,             -1000) \
-    m(int32_t, executionCounterValueForOptimizeNextInvocation,   0) \
-    \
-    m(int32_t, executionCounterIncrementForLoop,       1) \
-    m(int32_t, executionCounterIncrementForReturn,     15) \
-    \
-    m(unsigned, desiredSpeculativeSuccessFailRatio,    6) \
-    \
-    m(double,   likelyToTakeSlowCaseThreshold,         0.15) \
-    m(double,   couldTakeSlowCaseThreshold,            0.05) \
-    m(unsigned, likelyToTakeSlowCaseMinimumCount,      100) \
-    m(unsigned, couldTakeSlowCaseMinimumCount,         10) \
-    \
-    m(double,   osrExitProminenceForFrequentExitSite,  0.3) \
-    \
-    m(unsigned, largeFailCountThresholdBase,           20) \
-    m(unsigned, largeFailCountThresholdBaseForLoop,    1) \
-    \
-    m(unsigned, reoptimizationRetryCounterMax,         0) \
-    m(unsigned, reoptimizationRetryCounterStep,        1) \
-    \
-    m(unsigned, minimumOptimizationDelay,              1) \
-    m(unsigned, maximumOptimizationDelay,              5) \
-    m(double, desiredProfileLivenessRate,              0.75) \
-    m(double, desiredProfileFullnessRate,              0.35) \
-    \
-    m(double,   doubleVoteRatioForDoubleFormat,        2) \
-    \
-    m(unsigned, minimumNumberOfScansBetweenRebalance,  10000) \
-    m(unsigned, gcMarkStackSegmentSize,                0) \
-    m(unsigned, minimumNumberOfCellsToKeep,            10) \
-    m(unsigned, maximumNumberOfSharedSegments,         3) \
-    m(unsigned, sharedStackWakeupThreshold,            1) \
-    m(unsigned, numberOfGCMarkers,                     0) \
-    m(unsigned, opaqueRootMergeThreshold,              1000)
+extern unsigned maximumInliningDepth; // Depth of inline stack, so 1 = no inlining, 2 = one level, etc.
 
-#define FOR_EACH_OPTION(m) \
-    FOR_EACH_HEURISTIC(m)
+extern int32_t executionCounterValueForOptimizeAfterWarmUp;
+extern int32_t executionCounterValueForOptimizeAfterLongWarmUp;
+extern int32_t executionCounterValueForDontOptimizeAnytimeSoon;
+extern int32_t executionCounterValueForOptimizeSoon;
+extern int32_t executionCounterValueForOptimizeNextInvocation;
 
-#define DECLARE(type, cname, default_val) extern type cname;
-FOR_EACH_OPTION(DECLARE)
-#undef DECLARE
+extern int32_t executionCounterIncrementForLoop;
+extern int32_t executionCounterIncrementForReturn;
+
+extern unsigned desiredSpeculativeSuccessFailRatio;
+
+extern double likelyToTakeSlowCaseThreshold;
+extern double couldTakeSlowCaseThreshold;
+extern unsigned likelyToTakeSlowCaseMinimumCount;
+extern unsigned couldTakeSlowCaseMinimumCount;
+
+extern double osrExitProminenceForFrequentExitSite;
+
+extern unsigned largeFailCountThresholdBase;
+extern unsigned largeFailCountThresholdBaseForLoop;
+
+extern unsigned reoptimizationRetryCounterMax;
+extern unsigned reoptimizationRetryCounterStep;
+
+extern unsigned minimumOptimizationDelay;
+extern unsigned maximumOptimizationDelay;
+extern double desiredProfileLivenessRate;
+extern double desiredProfileFullnessRate;
+
+extern double doubleVoteRatioForDoubleFormat;
+
+extern unsigned minimumNumberOfScansBetweenRebalance;
+extern unsigned gcMarkStackSegmentSize;
+extern unsigned minimumNumberOfCellsToKeep;
+extern unsigned maximumNumberOfSharedSegments;
+extern unsigned sharedStackWakeupThreshold;
+extern unsigned numberOfGCMarkers;
+extern unsigned opaqueRootMergeThreshold;
 
 void initializeOptions();
 

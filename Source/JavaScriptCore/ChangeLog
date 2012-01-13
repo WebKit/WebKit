@@ -1,3 +1,18 @@
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 103286
+
+    2011-12-18  Filip Pizlo  <fpizlo@apple.com>
+
+            It should be possible to change the value of an Options variable without recompiling the world
+            https://bugs.webkit.org/show_bug.cgi?id=74807
+
+            Reviewed by Gavin Barraclough.
+
+            * runtime/Options.cpp:
+            (JSC::Options::initializeOptions):
+            * runtime/Options.h:
+
 2011-1-9  Lucas Forschler  <lforschler@apple.com>
 
     Merge 102509
