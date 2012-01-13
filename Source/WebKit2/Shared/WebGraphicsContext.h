@@ -33,7 +33,7 @@
 #if USE(CG)
 #include <wtf/RetainPtr.h>
 #elif USE(CAIRO)
-#include "RefPtrCairo.h"
+#include <WebCore/RefPtrCairo.h>
 #endif
 
 namespace WebKit {

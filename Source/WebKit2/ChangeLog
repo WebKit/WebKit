@@ -1,3 +1,9 @@
+2012-01-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build correction.
+
+        * Shared/WebGraphicsContext.h: Use proper include path for RefPtrCairo.h.
+
 2012-01-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] WebKitURIRequest and WebKitURIResponse should wrap the corresponding WebCore classes
