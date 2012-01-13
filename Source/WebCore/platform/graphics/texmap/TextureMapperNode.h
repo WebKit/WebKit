@@ -175,11 +175,9 @@ public:
 private:
     TextureMapperNode* rootLayer();
     void computeAllTransforms();
+    void computeTransformsSelf();
     void computeVisibleRect(const FloatRect& rootVisibleRect);
-    void computePerspectiveTransformIfNeeded();
-    void computeReplicaTransformIfNeeded();
     void computeOverlapsIfNeeded();
-    void computeLocalTransformIfNeeded();
     void computeTiles();
     void swapContentsBuffers();
     int countDescendantsWithContent() const;
@@ -209,11 +207,8 @@ private:
     bool hasMoreThanOneTile() const;
     struct TransformData {
         TransformationMatrix target;
-        TransformationMatrix replica;
         TransformationMatrix forDescendants;
-        TransformationMatrix local;
         TransformationMatrix base;
-        TransformationMatrix perspective;
         float centerZ;
         TransformData() { }
     };

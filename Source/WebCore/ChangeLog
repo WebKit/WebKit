@@ -1,5 +1,32 @@
 2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        TextureMapper: Simplify transform manipulations.
+        https://bugs.webkit.org/show_bug.cgi?id=74719
+
+        Reviewed by Noam Rosenthal.
+
+        - Make sure that the replica node has a complete transform and
+          use it directly instead of keeping a copy in the source.
+        - Apply the origin and position translation only once, on the
+          target and descendants transforms.
+        - Use to2dTransform() on !preserves3D layers instead of doing
+          the flattening manually.
+        - Remove mentions of perspective as this is handled by WebCore
+          through the children transform.
+        - Apply the inverse target transform on the replica only where it
+          is needed in paintReflection since it uses the full transform in paintSelf.
+        - Merge the base and local transforms.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::setTransform):
+        (WebCore::TextureMapperNode::computeTransformsSelf):
+        (WebCore::TextureMapperNode::computeAllTransforms):
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::paintReflection):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
+2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         TextureMapper: Fix the fillsForward transform adjustment in syncAnimations.
         https://bugs.webkit.org/show_bug.cgi?id=76184
 
