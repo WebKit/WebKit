@@ -1,5 +1,23 @@
 2012-01-13  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: add basic code coverage support
+        https://bugs.webkit.org/show_bug.cgi?id=76201
+
+        Reviewed by Adam Barth.
+
+        This test adds basic code coverage support to test-webkitpy; if
+        you pass the -c flag, we will generate a new coverage file. We
+        can start simply with this and add more features as necessary.
+
+        This patch requires coverage to be already installed on the
+        machine. I am not auto-installing this for now.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.parse_args):
+        (Tester.run_tests):
+
+2012-01-13  Dirk Pranke  <dpranke@chromium.org>
+
         StatusBubbleTest.test_build_bubble is failing
         https://bugs.webkit.org/show_bug.cgi?id=76222
 
