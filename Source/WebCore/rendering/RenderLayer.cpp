@@ -2552,7 +2552,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const LayoutPoi
 
     int resizeControlSize = max(resizeControlRect.height(), 0);
 
-    if (m_vBar) {
+    if (m_vBar && m_vBar->shouldParticipateInHitTesting()) {
         LayoutRect vBarRect(box->width() - box->borderRight() - m_vBar->width(), 
                             box->borderTop(),
                             m_vBar->width(),
@@ -2564,7 +2564,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const LayoutPoi
     }
 
     resizeControlSize = max(resizeControlRect.width(), 0);
-    if (m_hBar) {
+    if (m_hBar && m_hBar->shouldParticipateInHitTesting()) {
         LayoutRect hBarRect(box->borderLeft(),
                             box->height() - box->borderBottom() - m_hBar->height(),
                             box->width() - (box->borderLeft() + box->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),

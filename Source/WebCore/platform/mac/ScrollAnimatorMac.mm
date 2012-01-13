@@ -863,6 +863,22 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
     }
 }
 
+bool ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting(Scrollbar* scrollbar)
+{
+    // Non-overlay scrollbars should always participate in hit testing.
+    if (recommendedScrollerStyle() != NSScrollerStyleOverlay)
+        return true;
+
+    if (!isScrollbarOverlayAPIAvailable())
+        return true;
+
+    // Overlay scrollbars should participate in hit testing whenever they are at all visible.
+    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+    if (!painter)
+        return false;
+    return [painter knobAlpha] > 0;
+}
+
 void ScrollAnimatorMac::cancelAnimations()
 {
     m_haveScrolledSincePageLoad = false;

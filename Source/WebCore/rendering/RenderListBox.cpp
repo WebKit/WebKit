@@ -448,7 +448,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 
 bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    if (!m_vBar)
+    if (!m_vBar || !m_vBar->shouldParticipateInHitTesting())
         return false;
 
     LayoutRect vertRect(accumulatedOffset.x() + width() - borderRight() - m_vBar->width(),

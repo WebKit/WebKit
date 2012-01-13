@@ -487,6 +487,14 @@ bool Scrollbar::isOverlayScrollbar() const
     return m_theme->usesOverlayScrollbars();
 }
 
+bool Scrollbar::shouldParticipateInHitTesting()
+{
+    // Non-overlay scrollbars should always participate in hit testing.
+    if (!isOverlayScrollbar())
+        return true;
+    return m_scrollableArea->scrollAnimator()->shouldScrollbarParticipateInHitTesting(this);
+}
+
 bool Scrollbar::isWindowActive() const
 {
     return m_scrollableArea && m_scrollableArea->isActive();

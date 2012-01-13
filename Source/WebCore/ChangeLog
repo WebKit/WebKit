@@ -1,3 +1,35 @@
+2012-01-13  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=71230
+        Clicking where the overlay scroll track would be should not scroll the page
+        -and corresponding-
+        <rdar://problem/9585424>
+
+        Reviewed by Alexey Proskuryakov.
+
+        These new functions indicate whether the scrollbar should participate in hit 
+        testing. Non-overlay scrollbars always should, so they return true. Overlay 
+        scrollbars consult the animator, which checks the current alpha. 
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::shouldScrollbarParticipateInHitTesting):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar:: shouldParticipateInHitTesting):
+        * platform/Scrollbar.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac:: shouldScrollbarParticipateInHitTesting):
+
+        In these hit-testing functions, only hit-test when the scrollbar should 
+        participate.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarAtPoint):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+
 2012-01-13  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION: svg/custom/use-instanceRoot-event-listeners.xhtml & svg/custom/pointer-events-invalid-fill.svg broken on the Bots

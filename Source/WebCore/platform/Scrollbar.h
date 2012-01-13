@@ -87,6 +87,7 @@ public:
     virtual void setEnabled(bool e);
 
     virtual bool isOverlayScrollbar() const;
+    bool shouldParticipateInHitTesting();
 
     bool isWindowActive() const;
 

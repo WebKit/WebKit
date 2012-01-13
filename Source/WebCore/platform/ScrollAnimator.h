@@ -96,6 +96,8 @@ public:
     virtual void resetZoom();
     virtual void setZoomParametersForTest(float, float, float);
 
+    virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
+
 protected:
     ScrollAnimator(ScrollableArea*);
 

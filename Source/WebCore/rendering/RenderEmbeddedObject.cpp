@@ -262,14 +262,14 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
     PluginViewBase* view = static_cast<PluginViewBase*>(widget());
 
     if (Scrollbar* horizontalScrollbar = view->horizontalScrollbar()) {
-        if (horizontalScrollbar->frameRect().contains(pointInContainer)) {
+        if (horizontalScrollbar->shouldParticipateInHitTesting() && horizontalScrollbar->frameRect().contains(pointInContainer)) {
             result.setScrollbar(horizontalScrollbar);
             return true;
         }
     }
 
     if (Scrollbar* verticalScrollbar = view->verticalScrollbar()) {
-        if (verticalScrollbar->frameRect().contains(pointInContainer)) {
+        if (verticalScrollbar->shouldParticipateInHitTesting() && verticalScrollbar->frameRect().contains(pointInContainer)) {
             result.setScrollbar(verticalScrollbar);
             return true;
         }

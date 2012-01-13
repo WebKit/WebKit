@@ -118,6 +118,8 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
+
     float adjustScrollXPositionIfNecessary(float) const;
     float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
