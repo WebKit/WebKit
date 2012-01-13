@@ -561,8 +561,10 @@
 #if PLATFORM(QT) && OS(DARWIN)
 #define WTF_USE_CF 1
 #define HAVE_DISPATCH_H 1
+#if QT_VERSION >= 0x050000
 /* FIXME: This is a hack to work around a conflict of MacTypes.h defining a Fixed type. */
 #define CF_OPEN_SOURCE 1
+#endif
 #endif
 
 #if OS(DARWIN) && !PLATFORM(GTK) && !PLATFORM(QT)

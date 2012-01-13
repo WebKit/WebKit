@@ -1,3 +1,11 @@
+2012-01-13  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt SnowLeopard build bot.
+
+        This is a workaround for the moment.
+
+        * wtf/Platform.h:
+
 2012-01-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Make the new WTF module build on Qt
