@@ -129,7 +129,7 @@ WebFrame *topLoadingFrame = nil;     // !nil iff a load is in progress
 
 
 CFMutableSetRef disallowedURLs = 0;
-CFRunLoopTimerRef waitToDumpWatchdog = 0;
+static CFRunLoopTimerRef waitToDumpWatchdog = 0;
 
 // Delegates
 static FrameLoadDelegate *frameLoadDelegate;
@@ -143,6 +143,7 @@ StorageTrackerDelegate *storageDelegate;
 static int dumpPixels;
 static int threaded;
 static int dumpTree = YES;
+static int useTimeoutWatchdog = YES;
 static int forceComplexText;
 static int gcBetweenTests;
 static BOOL printSeparators;
@@ -765,6 +766,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"threaded", no_argument, &threaded, YES},
         {"complex-text", no_argument, &forceComplexText, YES},
         {"gc-between-tests", no_argument, &gcBetweenTests, YES},
+        {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
         {NULL, 0, NULL, 0}
     };
     
@@ -1099,6 +1101,19 @@ static void invalidateAnyPreviousWaitToDumpWatchdog()
         CFRelease(waitToDumpWatchdog);
         waitToDumpWatchdog = 0;
     }
+}
+
+void setWaitToDumpWatchdog(CFRunLoopTimerRef timer)
+{
+    ASSERT(timer);
+    ASSERT(shouldSetWaitToDumpWatchdog());
+    waitToDumpWatchdog = timer;
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog, kCFRunLoopCommonModes);
+}
+
+bool shouldSetWaitToDumpWatchdog()
+{
+    return !waitToDumpWatchdog && useTimeoutWatchdog;
 }
 
 void dump()

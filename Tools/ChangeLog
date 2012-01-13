@@ -1,3 +1,18 @@
+2012-01-13  Hajime Morrita  <morrita@chromium.org>
+
+        [Mac][DRT] Should support --no-timeout
+        https://bugs.webkit.org/show_bug.cgi?id=76242
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions): Added "--no-timeout" to the options list.
+        (setWaitToDumpWatchdog): Added to encapsulate the waitToDumpWatchdog global variable.
+        (shouldSetWaitToDumpWatchdog): Added to check the useTimeoutWatchdog flag set by the option.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setWaitToDump): Now calls shouldSetWaitToDumpWatchdog() to check the flag.
+
 2012-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Mitigate scrollbar differences when running pixel tests

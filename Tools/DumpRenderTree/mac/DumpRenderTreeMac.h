@@ -61,7 +61,8 @@ extern StorageTrackerDelegate* storageDelegate;
 extern const unsigned maxViewHeight;
 extern const unsigned maxViewWidth;
 
-extern CFRunLoopTimerRef waitToDumpWatchdog;
+void setWaitToDumpWatchdog(CFRunLoopTimerRef);
+bool shouldSetWaitToDumpWatchdog();
 
 WebView* createWebViewAndOffscreenWindow();
 void setPersistentUserStyleSheetLocation(CFStringRef);
