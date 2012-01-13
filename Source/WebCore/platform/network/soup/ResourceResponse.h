@@ -42,6 +42,7 @@ public:
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
+        , m_soupFlags(static_cast<SoupMessageFlags>(0))
     {
     }
 

@@ -1,3 +1,18 @@
+2012-01-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [soup] Initialize m_soupFlags in all ResourceResponse constructors.
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        m_soupFlags was being initialized in two of the three ResourceResponse
+        constructors, causing some trouble in
+        FrameLoaderClient::dispatchDidReceiveResponse (ports which use
+        ResourceRequest::setSoupMessageFlags with the response's unitialized
+        flags).
+
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2012-01-13  Alexey Proskuryakov  <ap@apple.com>
 
         CFURLRef to KURL conversion shouldn't turn raw paths into file URLs
