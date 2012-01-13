@@ -34,6 +34,68 @@
 
 2012-01-13  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: clean up handling of test directories, QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=76238
+
+        Reviewed by Adam Barth.
+
+        This patch cleans up a bunch of hacks related to how we find all
+        of the python unit tests and set up the sys.path variable in
+        test-webkitpy.
+
+        This patch changes how test-webkitpy works slightly in that we
+        will now look for test files under Tools/Scripts and Source/WebKit2/Scripts
+        rather than just Tools/Scripts/webkitpy and Source/WebKit2/Scripts/webkit.
+        This greatly simplifies the mapping of paths to module names and
+        appears to have no significant performance impact or other drawbacks.
+
+        There are other ways that we could remove all of the hacks and
+        still have a more flexible mapping of paths to module names, but
+        the ones I've thought of so far add a decent amount of complexity to
+        the implementation and don't seem to buy us much.
+        
+        * QueueStatusServer/__init__.py:
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/test/main.py:
+        (Tester._modules_from_paths):
+        (Tester._is_module):
+
+2012-01-13  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: should support classes and individual test names as well as modules
+        https://bugs.webkit.org/show_bug.cgi?id=76233
+
+        Reviewed by Adam Barth.
+
+        The default unittest.main() supports a list of individual
+        TestCase classes or individual tests as well as modules. This
+        change adds support for the same to test-webkitpy, so now you
+        can say
+
+          % test-wekbitpy webkitpy.test.cat_unittest.CatTest
+
+        and
+
+          % test-wekbitpy webkitpy.test.cat_unittest.CatTest.test_basic
+
+        in addition to
+
+          % test-wekbitpy webkitpy.test.cat_unittest
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/test/cat_unittest.py:
+        * Scripts/webkitpy/test/main.py:
+        (Tester.parse_args):
+        (Tester.run):
+        (Tester):
+        (Tester._find_modules):
+        (Tester._exclude):
+        (Tester._run_tests):
+        (Tester._is_module):
+        (Tester._log_exception):
+
+2012-01-13  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: add basic code coverage support
         https://bugs.webkit.org/show_bug.cgi?id=76201
 

@@ -144,6 +144,7 @@ class Tester(object):
         handler.addFilter(testing_filter)
 
     def run(self, dirs, args):
+<<<<<<< HEAD
         return not self._run_tests(dirs, self._find_modules(dirs, args))
 
     def _find_modules(self, dirs, modules):
@@ -153,17 +154,23 @@ class Tester(object):
         sys.path.extend(set(os.path.dirname(path) for path in dirs))
         if modules:
             return modules
+=======
+        args = args or self._find_modules(dirs)
+        return self._run_tests(dirs, args)
+>>>>>>> test-webkitpy: clean up handling of test directories, QueueStatusServer
 
+    def _find_modules(self, dirs):
         modules = []
         for dir_to_search in dirs:
-            modules.extend(self._modules_from_paths(dir_to_search, self._find_under(dir_to_search, "_unittest.py")))
+            modules.extend(self._find_modules_under(dir_to_search, '_unittest.py'))
             if not self._options.skip_integrationtests:
-                modules.extend(self._modules_from_paths(dir_to_search, self._find_under(dir_to_search, "_integrationtest.py")))
+                modules.extend(self._find_modules_under(dir_to_search, '_integrationtest.py'))
         modules.sort()
 
         for module in modules:
             _log.debug("Found: %s" % module)
 
+        # FIXME: Figure out how to move this to test-webkitpy in order to to make this file more generic.
         if not self._options.all:
             slow_tests = ('webkitpy.common.checkout.scm.scm_unittest',)
             self._exclude(modules, slow_tests, 'are really, really slow', 31818)
@@ -188,41 +195,18 @@ class Tester(object):
         _log.info('    (https://bugs.webkit.org/show_bug.cgi?id=%d; use --all to include)' % bugid)
         _log.info('')
 
-    def _find_under(self, dir_to_search, suffix):
-        paths = []
-        for dir_path, dir_names, file_names in os.walk(dir_to_search):
-            for file_name in file_names:
-                if file_name.endswith(suffix):
-                    paths.append(os.path.join(dir_path, file_name))
-        return paths
+    def _find_modules_under(self, dir_to_search, suffix):
 
-    def _modules_from_paths(self, package_root, paths):
-        """Return a list of fully-qualified module names given paths to test files."""
-        package_path = os.path.abspath(package_root)
-        root_package_name = os.path.split(package_path)[1]  # Equals "webkitpy".
+        def to_package(dir_path):
+            return dir_path.replace(dir_to_search + os.sep, '').replace(os.sep, '.')
 
-        prefix_length = len(package_path)
+        def to_module(filename, package):
+            return package + '.' + filename.replace('.py', '')
 
         modules = []
-        for path in paths:
-            path = os.path.abspath(path)
-            # This gives us, for example: /common/config/ports_unittest.py
-            rel_path = path[prefix_length:]
-            # This gives us, for example: /common/config/ports_unittest
-            rel_path = os.path.splitext(rel_path)[0]
-
-            parts = []
-            while True:
-                (rel_path, tail) = os.path.split(rel_path)
-                if not tail:
-                    break
-                parts.insert(0, tail)
-            # We now have, for example: common.config.ports_unittest
-            # FIXME: This is all a hack around the fact that we always prefix webkitpy includes with "webkitpy."
-            parts.insert(0, root_package_name)  # Put "webkitpy" at the beginning.
-            module = ".".join(parts)
-            modules.append(module)
-
+        for dir_path, _, filenames in os.walk(dir_to_search):
+            package = to_package(dir_path)
+            modules.extend(to_module(f, package) for f in filenames if f.endswith(suffix))
         return modules
 
     def _run_tests(self, dirs, args):
@@ -271,16 +255,10 @@ class Tester(object):
 
     def _is_module(self, dirs, name):
         relpath = name.replace('.', os.sep) + '.py'
-        for d in dirs:
-            # FIXME: we need to take the parent directory of the each dir in the list
-            # in order to work around the 'webkitpy' issue mentioned above.
-            if os.path.exists(os.path.join(os.path.dirname(d), relpath)):
-                return True
-        return False
+        return any(os.path.exists(os.path.join(d, relpath)) for d in dirs)
 
     def _log_exception(self):
         s = StringIO.StringIO()
         traceback.print_exc(file=s)
         for l in s.buflist:
             _log.error('  ' + l.rstrip())
->>>>>>> test-webkitpy: should support classes and individual test names as well as modules
