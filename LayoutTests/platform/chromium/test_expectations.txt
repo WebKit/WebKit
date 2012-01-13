@@ -1140,18 +1140,6 @@ BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = T
 
 BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
 
-// ----------------------------------------------------------------------------
-// NEW FOR THE MERGE
-//
-// These tests need to have their output inspected to make sure it's reasonable
-// and then baselined if necessary.
-// ----------------------------------------------------------------------------
-
-// These four expectations can be removed after verifying the correctness / rebaselining on all platforms.
-BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-webgl-layer.html = IMAGE
-BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-canvas2d-layer.html = IMAGE
-BUGWK71209 LINUX WIN : compositing/visibility/visibility-simple-video-layer.html = IMAGE
-
 // This test isn't hanging, it just takes 12-13 seconds to run.
 BUGCR30536 SLOW LINUX WIN : http/tests/misc/acid3.html = FAIL // See "SVG Tests" section too
 BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = IMAGE+TEXT PASS
@@ -3694,12 +3682,6 @@ BUGWK66953 DEBUG : animations/play-state.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-paused.html = TEXT PASS
 BUGWK66953 DEBUG : animations/play-state-suspend.html = TEXT PASS
 BUGWK66953 DEBUG : animations/suspend-resume-animation.html = TEXT PASS
-
-BUGWK72598 : css3/images/cross-fade-tiled.html = IMAGE
-BUGWK72598 : css3/images/cross-fade-invalidation.html = IMAGE
-BUGWK72598 : css3/images/cross-fade-simple.html = IMAGE
-BUGWK72598 : css3/images/cross-fade-sizing.html = IMAGE
-BUGWK72598 : css3/images/cross-fade-blending.html = IMAGE
 
 BUGWK72631 LINUX WIN : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
