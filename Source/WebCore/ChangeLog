@@ -1,5 +1,24 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104352
+
+    2012-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+            Avoid falling into tiled layers more often when the device scale factor is > 1
+            <rdar://problem/10588725>
+
+            Reviewed by John Sullivan.
+
+            Stop taking the device scale factor into account when deciding to make
+            tiled layers.
+
+            Test: compositing/tiled-layers-hidpi.html
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::requiresTiledLayer):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104269
 
     2012-01-05  Dan Bernstein  <mitz@apple.com>

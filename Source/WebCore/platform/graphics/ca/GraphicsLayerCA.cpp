@@ -2038,10 +2038,8 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor, const FloatSize&
     if (!m_drawsContent || !m_allowTiledLayer)
         return false;
 
-    float contentsScale = pageScaleFactor * deviceScaleFactor();
-
     // FIXME: catch zero-size height or width here (or earlier)?
-    return size.width() * contentsScale > cMaxPixelDimension || size.height() * contentsScale > cMaxPixelDimension;
+    return size.width() * pageScaleFactor > cMaxPixelDimension || m_size.height() * pageScaleFactor > cMaxPixelDimension;
 }
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase)

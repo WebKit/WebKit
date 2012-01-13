@@ -1,5 +1,21 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104352
+
+    2012-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+            Avoid falling into tiled layers more often when the device scale factor is > 1
+            <rdar://problem/10588725>
+
+            Reviewed by John Sullivan.
+
+            Tests that a large layer with a device scale factor of 2 is not tiled.
+
+            * compositing/tiled-layers-hidpi-expected.txt: Added.
+            * compositing/tiled-layers-hidpi.html: Added.
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104239
 
     2012-01-05  Anders Carlsson  <andersca@apple.com>
