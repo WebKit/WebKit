@@ -1,3 +1,18 @@
+2012-01-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] SecurityPolicy whitelist interface should be exposed to EWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=76082
+
+        Reviewed by Andreas Kling.
+
+        * CMakeListsEfl.txt: Added reference to ewk_security_policy.{cpp,h}.
+        * ewk/EWebKit.h: Include ewk_security_policy.h.
+        * ewk/ewk_security_policy.cpp: Added.
+        (ewk_security_policy_whitelist_origin_add): Implemented thin layer around SecurityPolicy::addOriginAccessWhitelistEntry().
+        (ewk_security_policy_whitelist_origin_del): Implemented thin layer around SecurityPolicy::removeOriginAccessWhitelistEntry().
+        (ewk_security_policy_whitelist_origin_reset): Implemented thin layer around SecurityPolicy::resetOriginAccessWhitelists().
+        * ewk/ewk_security_policy.h: Added.
+
 2012-01-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove extern "C" from ewk_private.h

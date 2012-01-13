@@ -37,6 +37,7 @@
 #include "ewk_js.h"
 #include "ewk_main.h"
 #include "ewk_network.h"
+#include "ewk_security_policy.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
 #include "ewk_window_features.h"
