@@ -1,5 +1,25 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103981
+
+    2012-01-03  Filip Pizlo  <fpizlo@apple.com>
+
+            REGRESSION (r98196-98236): Incorrect layout of iGoogle with RSS feeds
+            https://bugs.webkit.org/show_bug.cgi?id=75303
+            <rdar://problem/10633533>
+
+            Reviewed by Gavin Barraclough.
+
+            The this argument was not being kept alive in some cases during inlining and intrinsic
+            optimizations.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::handleCall):
+            (JSC::DFG::ByteCodeParser::emitFunctionCheck):
+            (JSC::DFG::ByteCodeParser::handleInlining):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103728
 
     2011-12-27  Gavin Barraclough  <barraclough@apple.com>

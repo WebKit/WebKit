@@ -1,5 +1,40 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 103981
+
+    2012-01-03  Filip Pizlo  <fpizlo@apple.com>
+
+            REGRESSION (r98196-98236): Incorrect layout of iGoogle with RSS feeds
+            https://bugs.webkit.org/show_bug.cgi?id=75303
+            <rdar://problem/10633533>
+
+            Reviewed by Gavin Barraclough.
+
+            * fast/js/dfg-inline-unused-this-expected.txt: Added.
+            * fast/js/dfg-inline-unused-this-method-check-expected.txt: Added.
+            * fast/js/dfg-inline-unused-this-method-check.html: Added.
+            * fast/js/dfg-inline-unused-this.html: Added.
+            * fast/js/dfg-intrinsic-unused-this-expected.txt: Added.
+            * fast/js/dfg-intrinsic-unused-this-method-check-expected.txt: Added.
+            * fast/js/dfg-intrinsic-unused-this-method-check.html: Added.
+            * fast/js/dfg-intrinsic-unused-this.html: Added.
+            * fast/js/script-tests/dfg-inline-unused-this-method-check.js: Added.
+            (foo):
+            (bar):
+            (baz):
+            * fast/js/script-tests/dfg-inline-unused-this.js: Added.
+            (foo):
+            (bar):
+            (baz):
+            * fast/js/script-tests/dfg-intrinsic-unused-this-method-check.js: Added.
+            (bar):
+            (baz):
+            * fast/js/script-tests/dfg-intrinsic-unused-this.js: Added.
+            (bar):
+            (baz):
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 103728
 
     2011-12-27  Gavin Barraclough  <barraclough@apple.com>
