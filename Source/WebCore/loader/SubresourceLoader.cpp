@@ -179,10 +179,10 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             memoryCache()->revalidationSucceeded(m_resource, response);
             if (!reachedTerminalState()) {
                 ResourceLoader::didReceiveResponse(response);
-                didFinishLoading(currentTime());
+                didFinishLoading(monotonicallyIncreasingTime());
             }
             return;
-        } 
+        }
         // Did not get 304 response, continue as a regular resource load.
         memoryCache()->revalidationFailed(m_resource);
     }

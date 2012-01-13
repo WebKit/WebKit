@@ -1,3 +1,15 @@
+2012-01-12  James Simonsen  <simonjam@chromium.org>
+
+        Web Inspector: [Chomium] Resources loaded with 304 status code have receiving time of 15000 days in network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=76176
+
+        Reviewed by Nate Chapin.
+
+        No new tests. Can't trigger this with inspector tests. Will add one when the Resource Timing API is in.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Use monotonic time.
+
 2012-01-12  Alexey Proskuryakov  <ap@apple.com>
 
         NSURL to KURL conversion shouldn't turn raw paths into file URLs
