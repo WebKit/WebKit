@@ -65,5 +65,4 @@ if __name__ == "__main__":
     tester = main.Tester()
     options, args = tester.parse_args(sys.argv)
     tester.configure(options)
-    modules = tester.find_modules(dirs, args)
-    sys.exit(not tester.run_tests(modules))
+    sys.exit(not tester.run(dirs, args))

@@ -25,7 +25,9 @@
 import logging
 import optparse
 import os
+import StringIO
 import sys
+import traceback
 import unittest
 
 # NOTE: We intentionally do not depend on anything else in webkitpy here to avoid breaking test-webkitpy.
@@ -50,7 +52,7 @@ class Tester(object):
         self._verbosity = 1
 
     def parse_args(self, argv):
-        parser = optparse.OptionParser(usage='usage: %prog [options] [modules...]')
+        parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
         parser.add_option('-a', '--all', action='store_true', default=False,
                           help='run all the tests'),
         parser.add_option('-c', '--coverage', action='store_true', default=False,
@@ -67,6 +69,9 @@ class Tester(object):
                           help='verbose output (specify once for individual test results, twice for debug messages)')
         parser.add_option('--skip-integrationtests', action='store_true', default=False,
                           help='do not run the integration tests')
+
+        parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
+                         'If no args are given, all the tests will be run.')
 
         self.progName = os.path.basename(argv[0])
         return parser.parse_args(argv[1:])
@@ -138,7 +143,10 @@ class Tester(object):
         _log.info("Suppressing most webkitpy logging while running unit tests.")
         handler.addFilter(testing_filter)
 
-    def find_modules(self, dirs, modules):
+    def run(self, dirs, args):
+        return not self._run_tests(dirs, self._find_modules(dirs, args))
+
+    def _find_modules(self, dirs, modules):
         # FIXME: We should consider moving webkitpy off of using "webkitpy." to prefix
         # all includes.  If we did that, then this would use path instead of dirname(path).
         # QueueStatusServer.__init__ has a sys.path import hack due to this code.
@@ -180,7 +188,6 @@ class Tester(object):
         _log.info('    (https://bugs.webkit.org/show_bug.cgi?id=%d; use --all to include)' % bugid)
         _log.info('')
 
-
     def _find_under(self, dir_to_search, suffix):
         paths = []
         for dir_path, dir_names, file_names in os.walk(dir_to_search):
@@ -218,7 +225,7 @@ class Tester(object):
 
         return modules
 
-    def run_tests(self, modules):
+    def _run_tests(self, dirs, args):
         # FIXME: implement a more useful dryrun that recurses into the test suite.
         if self._options.dryrun:
             return True
@@ -232,14 +239,23 @@ class Tester(object):
             cov = coverage.coverage()
             cov.start()
 
-        # unittest has horrible error reporting when module imports are bad
-        # so we imports them first to make debugging bad imports much easier.
-        _log.debug("Importing all the modules to check for errors.")
-        for module in modules:
-            __import__(module)
+        _log.debug("Loading the tests...")
 
-        _log.debug("Loading the tests in the modules.")
-        test_suite = unittest.defaultTestLoader.loadTestsFromNames(modules, None)
+        loader = unittest.defaultTestLoader
+        suites = []
+        for name in args:
+            if self._is_module(dirs, name):
+                # import modules explicitly before loading their tests because
+                # loadTestsFromName() produces lousy error messages for bad modules.
+                try:
+                    __import__(name)
+                except ImportError, e:
+                    _log.fatal('Failed to import %s:' % name)
+                    self._log_exception()
+                    return False
+            suites.append(loader.loadTestsFromName(name, None))
+
+        test_suite = unittest.TestSuite(suites)
         if self._options.xml:
             from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
             test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
@@ -252,3 +268,19 @@ class Tester(object):
             cov.stop()
             cov.save()
         return result.wasSuccessful()
+
+    def _is_module(self, dirs, name):
+        relpath = name.replace('.', os.sep) + '.py'
+        for d in dirs:
+            # FIXME: we need to take the parent directory of the each dir in the list
+            # in order to work around the 'webkitpy' issue mentioned above.
+            if os.path.exists(os.path.join(os.path.dirname(d), relpath)):
+                return True
+        return False
+
+    def _log_exception(self):
+        s = StringIO.StringIO()
+        traceback.print_exc(file=s)
+        for l in s.buflist:
+            _log.error('  ' + l.rstrip())
+>>>>>>> test-webkitpy: should support classes and individual test names as well as modules
