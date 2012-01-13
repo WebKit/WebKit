@@ -333,12 +333,6 @@ class SVN(SCM, SVNRepository):
         if changed_files:
             svn_commit_args.extend(changed_files)
 
-        if self.dryrun:
-            _log.debug('Would run SVN command: "' + " ".join(svn_commit_args) + '"')
-
-            # Return a string which looks like a commit so that things which parse this output will succeed.
-            return "Dry run, no commit.\nCommitted revision 0."
-
         return self._run_svn(svn_commit_args, cwd=self.checkout_root, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):

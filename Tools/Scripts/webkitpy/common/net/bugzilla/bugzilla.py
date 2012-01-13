@@ -259,16 +259,13 @@ class BugzillaQueries(object):
 
 
 class Bugzilla(object):
-    def __init__(self, dryrun=False, committers=committers.CommitterList()):
-        self.dryrun = dryrun
+    def __init__(self, committers=committers.CommitterList()):
         self.authenticated = False
         self.queries = BugzillaQueries(self)
         self.committers = committers
         self.cached_quips = []
         self.edit_user_parser = EditUsersParser()
 
-        # FIXME: We should use some sort of Browser mock object when in dryrun
-        # mode (to prevent any mistakes).
         from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
@@ -291,7 +288,7 @@ class Bugzilla(object):
     def quips(self):
         # We only fetch and parse the list of quips once per instantiation
         # so that we do not burden bugs.webkit.org.
-        if not self.cached_quips and not self.dryrun:
+        if not self.cached_quips:
             self.cached_quips = self.queries.fetch_quips()
         return self.cached_quips
 
@@ -475,11 +472,6 @@ class Bugzilla(object):
         if self.authenticated:
             return
 
-        if self.dryrun:
-            log("Skipping log in for dry run...")
-            self.authenticated = True
-            return
-
         credentials = Credentials(config_urls.bug_server_host, git_prefix="bugzilla")
 
         attempts = 0
@@ -563,10 +555,6 @@ class Bugzilla(object):
                               comment_text=None):
         self.authenticate()
         log('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
-        if self.dryrun:
-            log(comment_text)
-            return
-
         self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
         file_object = self._file_object_for_upload(file_or_string)
@@ -589,10 +577,6 @@ class Bugzilla(object):
                          mark_for_landing=False):
         self.authenticate()
         log('Adding patch "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
-
-        if self.dryrun:
-            log(comment_text)
-            return
 
         self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
@@ -644,11 +628,6 @@ class Bugzilla(object):
         self.authenticate()
 
         log('Creating bug with title "%s"' % bug_title)
-        if self.dryrun:
-            log(bug_description)
-            # FIXME: This will make some paths fail, as they assume this returns an id.
-            return
-
         self.browser.open(config_urls.bug_server_url + "enter_bug.cgi?product=WebKit")
         self.browser.select_form(name="Create")
         component_items = self.browser.find_control('component').items
@@ -706,9 +685,6 @@ class Bugzilla(object):
             comment_text += "\n\n%s" % additional_comment_text
         log(comment_text)
 
-        if self.dryrun:
-            return
-
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
         self.browser.set_value(comment_text, name='comment', nr=0)
@@ -732,9 +708,6 @@ class Bugzilla(object):
             comment_text += "\n\n%s" % additional_comment_text
         log(comment_text)
 
-        if self.dryrun:
-            return
-
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
 
@@ -751,10 +724,6 @@ class Bugzilla(object):
         self.authenticate()
 
         log("Obsoleting attachment: %s" % attachment_id)
-        if self.dryrun:
-            log(comment_text)
-            return
-
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
         self.browser.find_control('isobsolete').items[0].selected = True
@@ -772,9 +741,6 @@ class Bugzilla(object):
         self.authenticate()
 
         log("Adding %s to the CC list for bug %s" % (email_address_list, bug_id))
-        if self.dryrun:
-            return
-
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         self.browser["newcc"] = ", ".join(email_address_list)
@@ -784,10 +750,6 @@ class Bugzilla(object):
         self.authenticate()
 
         log("Adding comment to bug %s" % bug_id)
-        if self.dryrun:
-            log(comment_text)
-            return
-
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         self.browser["comment"] = comment_text
@@ -799,10 +761,6 @@ class Bugzilla(object):
         self.authenticate()
 
         log("Closing bug %s as fixed" % bug_id)
-        if self.dryrun:
-            log(comment_text)
-            return
-
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         if comment_text:
@@ -821,10 +779,6 @@ class Bugzilla(object):
             assignee = self.username
 
         log("Assigning bug %s to %s" % (bug_id, assignee))
-        if self.dryrun:
-            log(comment_text)
-            return
-
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
 
@@ -850,9 +804,6 @@ for someone to add EditBugs to your bugs.webkit.org account.""")
         # Bugzilla requires a comment when re-opening a bug, so we know it will
         # never be None.
         log(comment_text)
-        if self.dryrun:
-            return
-
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         bug_status = self.browser.find_control("bug_status", type="select")

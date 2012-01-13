@@ -61,7 +61,6 @@ class SCM:
     def __init__(self, cwd, executive=None, filesystem=None):
         self.cwd = cwd
         self.checkout_root = self.find_checkout_root(self.cwd)
-        self.dryrun = False
         self._executive = executive or Executive()
         self._filesystem = filesystem or FileSystem()
 

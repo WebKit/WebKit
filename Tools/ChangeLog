@@ -1,3 +1,42 @@
+2012-01-13  Adam Barth  <abarth@webkit.org>
+
+        Remove --dry-run support from webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=76300
+
+        Reviewed by Dirk Pranke.
+
+        We don't use this functionality for anything, and it doesn't really
+        work.  Someone in #webkit tried using it and and got sad/confused.  We
+        should just remove it.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.push_local_commits_to_server):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.__init__):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (_shared_test_commit_with_message):
+        (GitSVNTest.test_commit_text_parsing):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.commit_with_message):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.__init__):
+        (Bugzilla.quips):
+        (Bugzilla.authenticate):
+        (Bugzilla.add_attachment_to_bug):
+        (Bugzilla.add_patch_to_bug):
+        (Bugzilla.create_bug):
+        (Bugzilla.clear_attachment_flags):
+        (Bugzilla.set_flag_on_attachment):
+        (Bugzilla.obsolete_attachment):
+        (Bugzilla.add_cc_to_bug):
+        (Bugzilla.post_comment_to_bug):
+        (Bugzilla.close_bug_as_fixed):
+        (Bugzilla.reassign_bug):
+        (reopen_bug):
+        * Scripts/webkitpy/test/main.py:
+        (Tester.parse_args):
+        (Tester.run_tests):
+
 2012-01-13  David Levin  <levin@chromium.org>
 
         check-webkit-style: should encourage the use of Own* classes for Windows DC.
