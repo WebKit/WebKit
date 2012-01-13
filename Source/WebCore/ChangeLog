@@ -1,3 +1,17 @@
+2012-01-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] ATK text-caret-moved and text-selection-changed events not being emitted
+        https://bugs.webkit.org/show_bug.cgi?id=76069
+
+        Reviewed by Martin Robinson.
+
+        Fix bug introduced with patch for Bug 72830.
+
+        * editing/gtk/FrameSelectionGtk.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        Pass the right accessibility object associated with the current
+        selection to objectFocusedAndCaretOffsetUnignored.
+
 2012-01-13  Alexandru Chiculita  <achicu@adobe.com>
 
         Refactor RenderLayerBacking::paintIntoLayer and RenderLayer::paintLayer()/paintLayerContents() to avoid duplicate code

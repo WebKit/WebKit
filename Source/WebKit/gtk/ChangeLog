@@ -1,3 +1,19 @@
+2012-01-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] ATK text-caret-moved and text-selection-changed events not being emitted
+        https://bugs.webkit.org/show_bug.cgi?id=76069
+
+        Reviewed by Martin Robinson.
+
+        Update caret browsing related unit tests to check emissions of
+        'text-caret-moved' and 'text-selection-changed' signals.
+
+        * tests/testatk.c:
+        (textCaretMovedCallback): New callback for 'text-caret-moved'.
+        (testWebkitAtkCaretOffsets): Check emissions of 'text-caret-moved'.
+        (textSelectionChangedCallback): New callback for 'text-selection-changed'.
+        (testWebkitAtkTextSelections): Check emissions of 'text-selection-changed'.
+
 2012-01-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Removed duplicated unit test.
