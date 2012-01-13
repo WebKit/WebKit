@@ -57,8 +57,6 @@ class Tester(object):
                           help='run all the tests'),
         parser.add_option('-c', '--coverage', action='store_true', default=False,
                           help='generate code coverage info (requires http://pypi.python.org/pypi/coverage)'),
-        parser.add_option('-n', '--dryrun', action='store_true', default=False,
-                          help='do not actually run the tests'),
         parser.add_option('-q', '--quiet', action='store_true', default=False,
                           help='run quietly (errors, warnings, and progress only)'),
         parser.add_option('-s', '--silent', action='store_true', default=False,
@@ -198,10 +196,6 @@ class Tester(object):
         return modules
 
     def _run_tests(self, dirs, args):
-        # FIXME: implement a more useful dryrun that recurses into the test suite.
-        if self._options.dryrun:
-            return True
-
         if self._options.coverage:
             try:
                 import coverage

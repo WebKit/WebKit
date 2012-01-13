@@ -1,5 +1,20 @@
 2012-01-13  Adam Barth  <abarth@webkit.org>
 
+        Remove --dry-run support from webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=76300
+
+        Reviewed by Dirk Pranke.
+
+        This is the rest of the patch from Bug 76300.  I landed it separtely
+        because main.py had some stray conflict markers that I needed to clean
+        up first.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.parse_args):
+        (Tester._run_tests):
+
+2012-01-13  Adam Barth  <abarth@webkit.org>
+
         test-webkitpy does not run
         https://bugs.webkit.org/show_bug.cgi?id=76318
 
