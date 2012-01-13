@@ -1,3 +1,44 @@
+2012-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Add InspectorIndexedDBAgent and IndexedDBModel, pass database names to inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=76264
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorIndexedDBAgent.cpp: Added.
+        (WebCore::InspectorIndexedDBAgent::FrontendProvider::create):
+        (WebCore::InspectorIndexedDBAgent::FrontendProvider::~FrontendProvider):
+        (WebCore::InspectorIndexedDBAgent::FrontendProvider::frontend):
+        (WebCore::InspectorIndexedDBAgent::FrontendProvider::clearFrontend):
+        (WebCore::InspectorIndexedDBAgent::FrontendProvider::FrontendProvider):
+        (WebCore::InspectorIndexedDBAgent::InspectorIndexedDBAgent):
+        (WebCore::InspectorIndexedDBAgent::~InspectorIndexedDBAgent):
+        (WebCore::InspectorIndexedDBAgent::setFrontend):
+        (WebCore::InspectorIndexedDBAgent::clearFrontend):
+        (WebCore::InspectorIndexedDBAgent::restore):
+        (WebCore::InspectorIndexedDBAgent::enable):
+        (WebCore::InspectorIndexedDBAgent::disable):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        * inspector/InspectorIndexedDBAgent.h: Added.
+        (WebCore::InspectorIndexedDBAgent::create):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/IndexedDBModel.js: Added.
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeFrame):
+        (WebInspector.ResourceTreeFrame.prototype.get securityOrigin):
+        (WebInspector.ResourceTreeFrame.prototype._navigate):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-01-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build when using TextureMapper with OpenGL/ES

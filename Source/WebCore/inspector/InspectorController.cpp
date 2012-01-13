@@ -52,6 +52,7 @@
 #include "InspectorFileSystemAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
+#include "InspectorIndexedDBAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
@@ -96,6 +97,10 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     OwnPtr<InspectorDatabaseAgent> databaseAgentPtr(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()));
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(databaseAgentPtr.release());
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    m_agents.append(InspectorIndexedDBAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent));
 #endif
 
 #if ENABLE(FILE_SYSTEM)

@@ -65,6 +65,7 @@
     <file>HeapSnapshotWorkerDispatcher.js</file>
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
+    <file>IndexedDBModel.js</file>
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
     <file>InspectorBackend.js</file>

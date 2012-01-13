@@ -43,6 +43,7 @@ DOMAIN_DEFINE_NAME_MAP = {
     "Debugger": "JAVASCRIPT_DEBUGGER",
     "DOMDebugger": "JAVASCRIPT_DEBUGGER",
     "FileSystem": "FILE_SYSTEM",
+    "IndexedDB": "INDEXED_DATABASE",
     "Profiler": "JAVASCRIPT_DEBUGGER",
     "Worker": "WORKERS",
 }
