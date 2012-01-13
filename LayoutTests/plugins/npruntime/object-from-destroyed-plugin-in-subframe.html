@@ -1,0 +1,35 @@
+
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<script>
+var subframe;
+var testObject;
+
+function runTest() {
+    subframe = document.getElementById('subframe');
+    subframe.contentWindow.document.documentElement.innerHTML = '<embed id="plugin" type="application/x-webkit-test-netscape" test="npruntime-object-from-destroyed-plugin"></embed>';
+
+    var plugin = subframe.contentWindow.document.getElementById('plugin');
+
+    // Get a reference to the plug-in test object.
+    testObject = plugin.testObject;
+
+    plugin.evaluate('window.top.subframe.parentNode.removeChild(window.top.subframe)')
+
+    // testObject is now a dangling object and every operation on it should throw.
+    shouldThrow('testObject.gettingProperty');
+    shouldThrow('testObject.settingProperty = 10');
+    shouldThrow('testObject()');
+    shouldThrow('new testObject();')
+}
+
+</script>
+<body onLoad="runTest()">
+<p id="description"></p>
+<iframe id="subframe"></iframe>
+<div id="console"></div>
+
+<script>
+description("Test various operation on an NPObject whose plug-in (that lives in a subframe) has been destroyed");
+
+</script>

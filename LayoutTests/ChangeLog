@@ -1,5 +1,20 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104239
+
+    2012-01-05  Anders Carlsson  <andersca@apple.com>
+
+            Crash when trying to invalidate the NPRuntimeObjectMap for a plug-in in a subframe
+            https://bugs.webkit.org/show_bug.cgi?id=75667
+            <rdar://problem/10389454>
+
+            Reviewed by Kevin Decker.
+
+            * plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Added.
+            * plugins/npruntime/object-from-destroyed-plugin-in-subframe.html: Added.
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104086
 
     2012-01-04  Filip Pizlo  <fpizlo@apple.com>
