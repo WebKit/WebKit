@@ -144,20 +144,8 @@ class Tester(object):
         handler.addFilter(testing_filter)
 
     def run(self, dirs, args):
-<<<<<<< HEAD
-        return not self._run_tests(dirs, self._find_modules(dirs, args))
-
-    def _find_modules(self, dirs, modules):
-        # FIXME: We should consider moving webkitpy off of using "webkitpy." to prefix
-        # all includes.  If we did that, then this would use path instead of dirname(path).
-        # QueueStatusServer.__init__ has a sys.path import hack due to this code.
-        sys.path.extend(set(os.path.dirname(path) for path in dirs))
-        if modules:
-            return modules
-=======
         args = args or self._find_modules(dirs)
         return self._run_tests(dirs, args)
->>>>>>> test-webkitpy: clean up handling of test directories, QueueStatusServer
 
     def _find_modules(self, dirs):
         modules = []

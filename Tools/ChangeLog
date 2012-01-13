@@ -1,5 +1,17 @@
 2012-01-13  Adam Barth  <abarth@webkit.org>
 
+        test-webkitpy does not run
+        https://bugs.webkit.org/show_bug.cgi?id=76318
+
+        Unreviewed.
+
+        Looks like some conflict markers got left in the file.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run):
+
+2012-01-13  Adam Barth  <abarth@webkit.org>
+
         Remove --dry-run support from webkit-patch
         https://bugs.webkit.org/show_bug.cgi?id=76300
 
