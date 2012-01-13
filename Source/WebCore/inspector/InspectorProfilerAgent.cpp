@@ -279,6 +279,8 @@ void InspectorProfilerAgent::clearFrontend()
 {
     m_frontend = 0;
     stop();
+    ErrorString error;
+    disable(&error);
 }
 
 void InspectorProfilerAgent::restore()

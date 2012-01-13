@@ -1,3 +1,15 @@
+2012-01-13  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Disconnecting the front-end does not disable profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=76213
+
+        Reviewed by Pavel Feldman.
+
+        Not testable.
+
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::clearFrontend):
+
 2012-01-13  Andreas Kling  <awesomekling@apple.com>
 
         JSC/DOM bindings: Reduce HandleHeap churn in cacheWrapper().
