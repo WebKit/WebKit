@@ -3849,3 +3849,6 @@ BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
 
 // Started flaking presumably at http://trac.webkit.org/changeset/104368
 BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
+
+// Started failing between http://trac.webkit.org/changeset/104901 and http://trac.webkit.org/changeset/104910
+BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT
