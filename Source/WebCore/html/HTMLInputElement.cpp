@@ -119,6 +119,9 @@ HTMLInputElement::~HTMLInputElement()
     // Need to remove form association while this is still an HTMLInputElement
     // so that virtual functions are called correctly.
     setForm(0);
+    // setForm(0) may register this to a document-level radio button group.
+    // We should unregister it to avoid accessing a deleted object.
+    document()->checkedRadioButtons().removeButton(this);
 }
 
 const AtomicString& HTMLInputElement::formControlName() const
