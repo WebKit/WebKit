@@ -1,3 +1,26 @@
+2012-01-13  Jochen Eisinger  <jochen@chromium.org>
+
+        Once we prepared a script element for execution, execute it, even if the script element was meanwhile removed from the dom tree.
+        https://bugs.webkit.org/show_bug.cgi?id=76083
+
+        Reviewed by Adam Barth.
+
+        This bug was caught by the following IE Test Center test:
+
+        http://samples.msdn.microsoft.com/ietestcenter/HTML5/show_async_test.htm?11_RemovingAsyncScript
+
+        Test: http/tests/misc/async-script-removed.html
+              http/tests/misc/async-script.html
+
+        * dom/ScriptElement.cpp:
+        * dom/ScriptElement.h:
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::queueScriptForExecution):
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.cpp:
+        * svg/SVGScriptElement.h:
+
 2012-01-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Large SVG text layout performance regression in r81168

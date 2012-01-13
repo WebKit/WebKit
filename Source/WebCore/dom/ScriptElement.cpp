@@ -80,12 +80,6 @@ void ScriptElement::insertedIntoDocument()
         prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
-void ScriptElement::removedFromDocument()
-{
-    // Eventually stop loading any not-yet-finished content
-    stopLoadRequest();
-}
-
 void ScriptElement::childrenChanged()
 {
     if (!m_parserInserted && m_element->inDocument())

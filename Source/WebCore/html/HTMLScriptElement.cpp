@@ -85,12 +85,6 @@ void HTMLScriptElement::insertedIntoDocument()
     ScriptElement::insertedIntoDocument();
 }
 
-void HTMLScriptElement::removedFromDocument()
-{
-    HTMLElement::removedFromDocument();
-    ScriptElement::removedFromDocument();
-}
-
 void HTMLScriptElement::setText(const String &value)
 {
     ExceptionCode ec = 0;

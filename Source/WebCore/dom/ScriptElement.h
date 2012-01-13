@@ -67,7 +67,6 @@ protected:
 
     // Helper functions used by our parent classes.
     void insertedIntoDocument();
-    void removedFromDocument();
     void childrenChanged();
     void handleSourceAttribute(const String& sourceUrl);
     void handleAsyncAttribute();

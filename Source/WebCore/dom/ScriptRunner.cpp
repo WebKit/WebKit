@@ -56,7 +56,6 @@ void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, CachedR
 
     Element* element = scriptElement->element();
     ASSERT(element);
-    ASSERT(element->inDocument());
 
     m_document->incrementLoadEventDelayCount();
 

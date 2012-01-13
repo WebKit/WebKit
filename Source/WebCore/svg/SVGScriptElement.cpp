@@ -142,12 +142,6 @@ void SVGScriptElement::insertedIntoDocument()
     }
 }
 
-void SVGScriptElement::removedFromDocument()
-{
-    SVGElement::removedFromDocument();
-    ScriptElement::removedFromDocument();
-}
-
 void SVGScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     ScriptElement::childrenChanged();
