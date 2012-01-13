@@ -1,39 +1,5 @@
 2012-01-13  Dirk Pranke  <dpranke@chromium.org>
 
-        test-webkitpy: should support classes and individual test names as well as modules
-        https://bugs.webkit.org/show_bug.cgi?id=76233
-
-        Reviewed by Adam Barth.
-
-        The default unittest.main() supports a list of individual
-        TestCase classes or individual tests as well as modules. This
-        change adds support for the same to test-webkitpy, so now you
-        can say
-
-          % test-wekbitpy webkitpy.test.cat_unittest.CatTest
-
-        and
-
-          % test-wekbitpy webkitpy.test.cat_unittest.CatTest.test_basic
-
-        in addition to
-
-          % test-wekbitpy webkitpy.test.cat_unittest
-
-        * Scripts/test-webkitpy:
-        * Scripts/webkitpy/test/cat_unittest.py:
-        * Scripts/webkitpy/test/main.py:
-        (Tester.parse_args):
-        (Tester.run):
-        (Tester):
-        (Tester._find_modules):
-        (Tester._exclude):
-        (Tester._run_tests):
-        (Tester._is_module):
-        (Tester._log_exception):
-
-2012-01-13  Dirk Pranke  <dpranke@chromium.org>
-
         test-webkitpy: clean up handling of test directories, QueueStatusServer
         https://bugs.webkit.org/show_bug.cgi?id=76238
 
