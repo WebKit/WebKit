@@ -29,6 +29,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Eina.h>
 #include <Evas.h>
 
 namespace WTF {
@@ -48,6 +49,12 @@ void deleteOwnedPtr(Ecore_Pipe* ptr)
 {
     if (ptr)
         ecore_pipe_del(ptr);
+}
+
+void deleteOwnedPtr(Eina_Module* ptr)
+{
+    if (ptr)
+        eina_module_free(ptr); // If module wasn't unloaded, eina_module_free() calls eina_module_unload().
 }
 
 }

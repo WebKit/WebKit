@@ -41,6 +41,7 @@ typedef struct HRGN__* HRGN;
 #if PLATFORM(EFL)
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef struct _Ecore_Pipe Ecore_Pipe;
+typedef struct _Eina_Module Eina_Module;
 typedef struct _Evas_Object Evas_Object;
 #endif
 
@@ -66,6 +67,7 @@ namespace WTF {
 #if PLATFORM(EFL)
     void deleteOwnedPtr(Ecore_Evas*);
     void deleteOwnedPtr(Ecore_Pipe*);
+    void deleteOwnedPtr(Eina_Module*);
     void deleteOwnedPtr(Evas_Object*);
 #endif
 

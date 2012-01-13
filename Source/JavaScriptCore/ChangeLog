@@ -1,3 +1,16 @@
+2012-01-13  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [EFL] Add OwnPtr specialization for Eina_Module.
+        https://bugs.webkit.org/show_bug.cgi?id=76255
+
+        Reviewed by Andreas Kling.
+
+        Add an overload for deleteOwnedPtr(Eina_Module*) on EFL port.
+
+        * wtf/OwnPtrCommon.h:
+        * wtf/efl/OwnPtrEfl.cpp:
+        (WTF::deleteOwnedPtr):
+
 2012-01-13  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Unreviewed build fix after r104787 if JIT_VERBOSE_OSR is defined
