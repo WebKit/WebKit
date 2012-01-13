@@ -45,7 +45,7 @@ JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExe
     : Base(callFrame->globalData(), callFrame->globalData().activationStructure.get(), functionExecutable->symbolTable(), callFrame->registers())
     , m_numCapturedArgs(max(callFrame->argumentCount(), functionExecutable->parameterCount()))
     , m_numCapturedVars(functionExecutable->capturedVariableCount())
-    , m_requiresDynamicChecks(functionExecutable->usesEval())
+    , m_requiresDynamicChecks(functionExecutable->usesEval() && !functionExecutable->isStrictMode())
     , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
 {
 }

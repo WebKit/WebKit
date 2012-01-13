@@ -1,3 +1,14 @@
+2012-01-13  Andy Wingo  <wingo@igalia.com>
+
+        Eval in strict mode does not need dynamic checks
+        https://bugs.webkit.org/show_bug.cgi?id=76286
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSActivation.cpp (JSC::JSActivation::JSActivation):
+        Eval in strict mode cannot introduce variables, so it not impose
+        the need for dynamic checks.
+
 2012-01-13  David Levin  <levin@chromium.org>
 
         HWndDC is a better name than HwndDC.
