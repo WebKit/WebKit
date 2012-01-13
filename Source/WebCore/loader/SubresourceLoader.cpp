@@ -197,11 +197,20 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
         // We don't count multiParts in a CachedResourceLoader's request count
         m_requestCountTracker.clear();
-        setShouldBufferData(DoNotBufferData);
         if (!m_resource->isImage()) {
             cancel();
             return;
         }
+    }
+
+    RefPtr<SharedBuffer> buffer = resourceData();
+    if (m_loadingMultipartContent && buffer && buffer->size()) {
+        sendDataToResource(buffer->data(), buffer->size());
+        clearResourceData();
+        // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.        
+        // After the first multipart section is complete, signal to delegates that this load is "finished" 
+        m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
+        didFinishLoadingOnePart(0);
     }
 }
 
@@ -215,17 +224,10 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
     RefPtr<SubresourceLoader> protect(this);
     ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
 
-    if (errorLoadingResource())
+    if (errorLoadingResource() || m_loadingMultipartContent)
         return;
 
     sendDataToResource(data, length);
-    
-    if (m_loadingMultipartContent) {
-        // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.        
-        // After the first multipart section is complete, signal to delegates that this load is "finished" 
-        m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
-        didFinishLoadingOnePart(0);
-    }
 }
 
 bool SubresourceLoader::errorLoadingResource()
@@ -241,8 +243,17 @@ bool SubresourceLoader::errorLoadingResource()
 
 void SubresourceLoader::sendDataToResource(const char* data, int length)
 {
-    RefPtr<SharedBuffer> buffer = resourceData() ? resourceData() : SharedBuffer::create(data, length);
-    m_resource->data(buffer.release(), m_loadingMultipartContent);
+    // There are two cases where we might need to create our own SharedBuffer instead of copying the one in ResourceLoader. 
+    // (1) Multipart content: The loader delivers the data in a multipart section all at once, then sends eof. 
+    //     The resource data will change as the next part is loaded, so we need to make a copy. 
+    // (2) Our client requested that the data not be buffered at the ResourceLoader level via ResourceLoaderOptions. In this case, 
+    //     ResourceLoader::resourceData() will be null. However, unlike the multipart case, we don't want to tell the CachedResource 
+    //     that all data has been received yet. 
+    if (m_loadingMultipartContent || !resourceData()) { 
+        RefPtr<SharedBuffer> copiedData = SharedBuffer::create(data, length); 
+        m_resource->data(copiedData.release(), m_loadingMultipartContent); 
+    } else 
+        m_resource->data(resourceData(), false);
 }
 
 void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)

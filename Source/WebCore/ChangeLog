@@ -1,3 +1,19 @@
+2012-01-13  Nate Chapin  <japhet@chromium.org>
+
+        Revert most of the multipart changes in
+        http://trac.webkit.org/changeset/104756.
+        https://bugs.webkit.org/show_bug.cgi?id=76297
+
+        Reviewed by Alexey Proskuryakov.
+
+        http/tests/multipart/invalid-image-data.html
+        should stop asserting on chromium win dbg.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didReceiveData):
+        (WebCore::SubresourceLoader::sendDataToResource):
+
 2011-01-13  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: Use float instead of double values for gain operations.
