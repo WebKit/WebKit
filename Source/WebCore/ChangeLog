@@ -1,3 +1,15 @@
+2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TextureMapper: Fix the fillsForward transform adjustment in syncAnimations.
+        https://bugs.webkit.org/show_bug.cgi?id=76184
+
+        Reviewed by Noam Rosenthal.
+
+        Also make the intention clearer by using setTransform and setOpacity.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncAnimations):
+
 2012-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector scripts navigator style fixes.

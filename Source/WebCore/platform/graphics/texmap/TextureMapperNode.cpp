@@ -974,9 +974,9 @@ void TextureMapperNode::syncAnimations(GraphicsLayerTextureMapper* layer)
             // We apply an animation that very close to the edge, so that the final frame is applied, oterwise we might get, for example, an opacity of 0.01 which is still visible.
             if (anim->fillsForwards()) {
                 if (animation->keyframes.property() == AnimatedPropertyWebkitTransform)
-                    m_state.transform = m_transforms.base;
+                    setTransform(m_state.transform);
                 else if (animation->keyframes.property() == AnimatedPropertyOpacity)
-                    m_opacity = m_state.opacity;
+                    setOpacity(m_state.opacity);
             }
 
             m_animations.remove(i);
