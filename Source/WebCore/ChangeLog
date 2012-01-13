@@ -1,3 +1,10 @@
+2012-01-13  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: Fixing Win builders.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::diff):
+
 2012-01-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Add 'Copy Image Address' to context menu.

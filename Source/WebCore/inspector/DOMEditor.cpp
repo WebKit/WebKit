@@ -186,12 +186,12 @@ DOMEditor::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Dige
 
     for (size_t i = 0; i < oldMap.size(); ++i) {
         oldMap[i].first = 0;
-        oldMap[i].second = -1;
+        oldMap[i].second = 0;
     }
 
     for (size_t i = 0; i < newMap.size(); ++i) {
         newMap[i].first = 0;
-        newMap[i].second = -1;
+        newMap[i].second = 0;
     }
 
     // Trim head and tail.
