@@ -427,6 +427,7 @@ bool TestController::resetStateToConsistentValues()
 #if ENABLE(FULLSCREEN_API)
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
+    WKPreferencesSetMockScrollbarsEnabled(preferences, true);
 
 #if !PLATFORM(QT)
     static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
