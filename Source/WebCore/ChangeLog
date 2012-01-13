@@ -1,3 +1,52 @@
+2012-01-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Large SVG text layout performance regression in r81168
+        https://bugs.webkit.org/show_bug.cgi?id=65711
+
+        Reviewed by Antti Koivisto.
+
+        Finish SVGTextMetricsBuilder introduction, tested in my local svg-text-performance branch.
+        SVGTextMetricsBuilder has two public methods:
+        a) SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText*)
+           It will be used exclusively for non-initial, incremental layout changes. Once the inital
+           text layout ran, any mutation of eg. a child text node of a <tspan>, will only trigger
+           a rebuild of the layout attributes associated with the passed in renderer.
+
+        b) SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText*, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)
+           stopAtLeaf=0:
+           This carries out the initial layout phase. It measures all characters of the whole <text> subtree, and stores the SVGTextMetrics for each character
+           in the SVGTextLayoutAttributes, stored in the RenderSVGInlineText object. It requires a SVGCharacterDataMap allCharactersMap as input argument,
+           which contains a HashMap<unsigned, {float x, y, dx, dy, rotate}>, which maps each character position to a set of x/y/dx/dy/rotate values.
+           The SVGCharacterDataMap living in SVGTextLayoutAttributes will be filled, from the global "allCharactersMap", so that each RenderSVGInlineText only
+           stores the positioning information for its children, if any.
+
+           Note: SVGTextMetricsBuilder is not yet deployed, so this talks about the design, once everything is landed.
+
+           stopAtLeaf!=0:
+           This is never used for the initial layout phase. If the initial layout is done, and eg. a <tspan> is added to the <text> subtree, we no longer
+           need to rebuild the metrics map & layout attributes for the whole tree, but only for the desired <tspan>, and its previous/next sibling, if present
+           (which may be affected by the inclusion of another node inbetween them).
+
+        SVGTextMetricsBuilder is now finished, and will be used in the next patch chunk.
+        Doesn't affect any tests yet.
+
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        (WebCore::SVGTextLayoutAttributes::clear):
+        (WebCore::SVGCharacterData::SVGCharacterData):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::SVGTextMetricsBuilder):
+        (WebCore::SVGTextMetricsBuilder::currentCharacterStartsSurrogatePair):
+        (WebCore::SVGTextMetricsBuilder::advance):
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText):
+        (WebCore::SVGTextMetricsBuilder::advanceComplexText):
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer):
+        (WebCore::MeasureTextData::MeasureTextData):
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        (WebCore::SVGTextMetricsBuilder::walkTree):
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        (WebCore::SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes):
+        * rendering/svg/SVGTextMetricsBuilder.h:
+
 2012-01-13  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: Fixing Win builders.

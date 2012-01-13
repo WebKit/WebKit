@@ -29,8 +29,21 @@ namespace WebCore {
 
 class RenderSVGInlineText;
 
+struct SVGCharacterData {
+    SVGCharacterData();
+
+    float x;
+    float y;
+    float dx;
+    float dy;
+    float rotate;
+};
+
+typedef HashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
+
 class SVGTextLayoutAttributes {
 public:
+    // FIXME: This struct will be replaced by SVGCharacterData in a follow up patch.
     struct PositioningLists {
         void fillWithEmptyValues(unsigned length);
         void appendEmptyValues();
@@ -45,6 +58,8 @@ public:
 
     SVGTextLayoutAttributes(RenderSVGInlineText* context = 0);
 
+    // FIXME: Still a no-op, we'll need this once we switch to SVGCharacterDataMap.
+    void clear() { }
     void reserveCapacity(unsigned length);
     void dump() const;
 
@@ -78,6 +93,15 @@ private:
     PositioningLists m_positioningLists;
     Vector<SVGTextMetrics> m_textMetricsValues;
 };
+
+inline SVGCharacterData::SVGCharacterData()
+    : x(SVGTextLayoutAttributes::emptyValue())
+    , y(SVGTextLayoutAttributes::emptyValue())
+    , dx(SVGTextLayoutAttributes::emptyValue())
+    , dy(SVGTextLayoutAttributes::emptyValue())
+    , rotate(SVGTextLayoutAttributes::emptyValue())
+{
+}
 
 } // namespace WebCore
 

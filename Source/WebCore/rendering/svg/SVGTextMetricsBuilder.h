@@ -21,35 +21,40 @@
 #define SVGTextMetricsBuilder_h
 
 #if ENABLE(SVG)
+#include "SVGTextLayoutAttributes.h"
 #include "SVGTextMetrics.h"
+#include "TextRun.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class RenderObject;
 class RenderSVGInlineText;
+class RenderSVGText;
+struct MeasureTextData;
 struct WidthIterator;
 
 class SVGTextMetricsBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextMetricsBuilder);
 public:
     SVGTextMetricsBuilder();
-    void measureAllCharactersOfRenderer(RenderSVGInlineText*, Vector<SVGTextMetrics>&);
+    void measureTextRenderer(RenderSVGInlineText*);
+    void buildMetricsAndLayoutAttributes(RenderSVGText*, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap);
 
 private:
-    void advance();
-    void advanceSimpleText(bool startsSurrogatePair);
-    void advanceComplexText(bool startsSurrogatePair);
-    void measureTextRenderer(RenderSVGInlineText*, const UChar*& lastCharacter, Vector<SVGTextMetrics>*);
-    void walkTreeUntilSpecificLeafIsReached(RenderObject*, RenderSVGInlineText* stopAtElement, const UChar*& lastCharacter, Vector<SVGTextMetrics>&);
+    bool advance();
+    void advanceSimpleText();
+    void advanceComplexText();
+    bool currentCharacterStartsSurrogatePair() const;
+
+    void initializeMeasurementWithTextRenderer(RenderSVGInlineText*);
+    void walkTree(RenderObject*, RenderSVGInlineText* stopAtLeaf, MeasureTextData*);
+    void measureTextRenderer(RenderSVGInlineText*, MeasureTextData*);
 
     RenderSVGInlineText* m_text;
-    const UChar* m_characters;
-    unsigned m_textLength;
+    TextRun m_run;
     unsigned m_textPosition;
-    bool m_finished;
     bool m_isComplexText;
-    bool m_preserveWhiteSpace;
     SVGTextMetrics m_currentMetrics;
     float m_totalWidth;
 
