@@ -1,5 +1,17 @@
 2012-01-13  David Levin  <levin@chromium.org>
 
+        check-webkit-style: should encourage the use of Own* classes for Windows DC.
+        https://bugs.webkit.org/show_bug.cgi?id=76227
+
+        Reviewed by Dirk Pranke.
+
+        * wtf/win/HWndDCWin.h:
+        (WTF::HwndDC::HwndDC): Add a way to do GetDCEx.
+        There are no users, but I want to catch this in check-webkit-style
+        and tell any users to use HwndDC to avoid leaks.
+
+2012-01-13  David Levin  <levin@chromium.org>
+
         Header file is missing header guard.
 
         Reviewed by Dirk Pranke.

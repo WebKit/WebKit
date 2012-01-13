@@ -1662,6 +1662,31 @@ def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
                   'http://webkit.org/coding/RefPtr.html).' % type_name)
 
 
+def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
+    """Check for constructs known to be leak prone.
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      function_state: Current function name and lines in body so far.
+      error: The function to call with any errors found.
+    """
+    lines = clean_lines.lines
+    line = lines[line_number]
+
+    matched_get_dc = search(r'\b(?P<function_name>GetDC(Ex)?)\s*\(', line)
+    if matched_get_dc:
+        error(line_number, 'runtime/leaky_pattern', 5,
+              'Use the class HWndDC instead of calling %s to avoid potential '
+              'memory leaks.' % matched_get_dc.group('function_name'))
+
+    matched_create_dc = search(r'\b(?P<function_name>Create(Compatible)?DC)\s*\(', line)
+    matched_own_dc = search(r'\bOwnPtr\<HDC\>\s+', line)
+    if matched_create_dc and not matched_own_dc:
+        error(line_number, 'runtime/leaky_pattern', 5,
+              'Use OwnPtr<HDC> when calling %s to avoid potential '
+              'memory leaks.' % matched_create_dc.group('function_name'))
+
+
 def check_spacing(file_extension, clean_lines, line_number, error):
     """Checks for the correctness of various spacing issues in the code.
 
@@ -3400,6 +3425,7 @@ def process_line(filename, file_extension,
         return
     check_function_definition(filename, file_extension, clean_lines, line, function_state, error)
     check_pass_ptr_usage(clean_lines, line, function_state, error)
+    check_for_leaky_patterns(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
@@ -3497,6 +3523,7 @@ class CppChecker(object):
         'runtime/init',
         'runtime/int',
         'runtime/invalid_increment',
+        'runtime/leaky_pattern',
         'runtime/max_min_macros',
         'runtime/memset',
         'runtime/printf',

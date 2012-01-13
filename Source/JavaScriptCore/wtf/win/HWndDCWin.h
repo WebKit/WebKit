@@ -38,6 +38,12 @@ public:
     {
     }
 
+    HWndDC(HWND hwnd, HRGN hrgnClip, DWORD flags)
+        : m_hwnd(hwnd)
+        , m_hdc(::GetDCEx(hwnd, hrgnClip, flags))
+    {
+    }
+
     ~HWndDC()
     {
         if (m_hdc)
