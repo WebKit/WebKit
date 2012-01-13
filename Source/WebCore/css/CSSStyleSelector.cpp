@@ -81,6 +81,7 @@
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
 #include "Rect.h"
+#include "RenderRegion.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderStyleConstants.h"
@@ -169,7 +170,7 @@ if (primitiveValue) \
 
 class RuleData {
 public:
-    RuleData(CSSStyleRule*, CSSSelector*, unsigned position);
+    RuleData(CSSStyleRule*, CSSSelector*, unsigned position, ERegionStyleEnabled useInRegionStyle = DoNotUseInRegionStyle);
 
     unsigned position() const { return m_position; }
     CSSStyleRule* rule() const { return m_rule; }
@@ -181,6 +182,7 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
     unsigned linkMatchType() const { return m_linkMatchType; }
+    ERegionStyleEnabled useInRegionStyle() const { return static_cast<ERegionStyleEnabled>(m_useInRegionStyle); }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -192,12 +194,13 @@ private:
     unsigned m_specificity;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 26;
+    unsigned m_position : 25;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_hasMultipartSelector : 1;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
+    unsigned m_useInRegionStyle : 1; // ERegionStyleEnabled
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -215,7 +218,7 @@ COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_s
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
-    RuleSet();
+    RuleSet(ERegionStyleEnabled useInRegionStyle = DoNotUseInRegionStyle);
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
@@ -250,6 +253,7 @@ public:
     Vector<RuleData> m_pageRules;
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;
+    ERegionStyleEnabled m_useInRegionStyle;
 };
 
 static RuleSet* defaultStyle;
@@ -337,6 +341,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_rootElementStyle(0)
     , m_element(0)
     , m_styledElement(0)
+    , m_regionForStyling(0)
     , m_elementLinkState(NotInsideLink)
     , m_parentNode(0)
     , m_lineHeightValue(0)
@@ -346,6 +351,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
+    , m_applyPropertyToRegionStyle(false)
     , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
 #if ENABLE(CSS_SHADERS)
     , m_hasPendingShaders(false)
@@ -649,12 +655,13 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
 #endif
 }
 
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType)
+void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType, ERegionStyleEnabled useInRegionStyle)
 {
     m_matchedDecls.grow(m_matchedDecls.size() + 1);
     MatchedStyleDeclaration& newDeclaration = m_matchedDecls.last();
     newDeclaration.styleDeclaration = styleDeclaration;
     newDeclaration.linkMatchType = linkMatchType;
+    newDeclaration.useInRegionStyle = useInRegionStyle;
 }
 
 void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
@@ -709,7 +716,7 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
         unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
         if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType);
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType, m_matchedRules[i]->useInRegionStyle());
     }
 }
 
@@ -869,6 +876,9 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
     if (m_matchAuthorAndUserStyles)
         matchRules(m_authorStyle.get(), result.firstAuthorRule, result.lastAuthorRule, false);
 
+    if (m_regionForStyling)
+        matchRules(m_regionRules.get(), result.firstAuthorRule, result.lastAuthorRule, false);
+
     // Now check our inline style attribute.
     if (m_matchAuthorAndUserStyles && m_styledElement) {
         CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
@@ -919,6 +929,37 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
     m_ruleList = 0;
 
     m_fontDirty = false;
+}
+
+inline void CSSStyleSelector::initForRegionStyling(RenderRegion* region)
+{
+    setRegionForStyling(region);
+
+    if (region)
+        initRegionRules(region);
+}
+
+void CSSStyleSelector::initRegionRules(RenderRegion* region)
+{
+    ASSERT(region);
+    // Mark that the set of rules comes from region styling since we need to filter
+    // the properties that can be applied.
+    m_regionRules = adoptPtr(new RuleSet(UseInRegionStyle));
+
+    // From all the region style rules, select those that apply to the specified region.
+    for (Vector<RefPtr<WebKitCSSRegionRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
+        const CSSSelectorList& regionSelectorList = (*it)->selectorList();
+        for (CSSSelector* s = regionSelectorList.first(); s; s = regionSelectorList.next(s)) {
+            if (!m_checker.checkSelector(s, static_cast<Element*>(region->node())))
+                continue;
+            CSSRuleList* regionStylingRules = (*it)->cssRules();
+            for (unsigned index = 0; index < regionStylingRules->length(); ++index) {
+                CSSRule* regionStylingRule = regionStylingRules->item(index);
+                if (regionStylingRule->isStyleRule())
+                    m_regionRules->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule));
+            }
+        }
+    }
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -1271,7 +1312,7 @@ static inline bool isAtShadowBoundary(Element* element)
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, RenderRegion* regionForStyling)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
@@ -1287,6 +1328,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 
     initElement(element);
     initForStyleResolve(element, defaultParent);
+    initForRegionStyling(regionForStyling);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1443,7 +1485,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     }
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
 {
     if (!e)
         return 0;
@@ -1451,6 +1493,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     initElement(e);
 
     initForStyleResolve(e, parentStyle, pseudo);
+    initForRegionStyling(regionForStyling);
     m_style = RenderStyle::create();
 
     if (m_parentStyle)
@@ -1934,7 +1977,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
+RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position, ERegionStyleEnabled useInRegionStyle)
     : m_rule(rule)
     , m_selector(selector)
     , m_specificity(selector->specificity())
@@ -1944,13 +1987,15 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector))
+    , m_useInRegionStyle(useInRegionStyle)
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
-RuleSet::RuleSet()
+RuleSet::RuleSet(ERegionStyleEnabled useInRegionStyle)
     : m_ruleCount(0)
     , m_autoShrinkToFitEnabled(true)
+    , m_useInRegionStyle(useInRegionStyle)
 {
 }
 
@@ -1961,7 +2006,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, CSSStyleRule
     OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).first->second;
     if (!rules)
         rules = adoptPtr(new Vector<RuleData>);
-    rules->append(RuleData(rule, selector, m_ruleCount++));
+    rules->append(RuleData(rule, selector, m_ruleCount++, m_useInRegionStyle));
 }
 
 void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
@@ -2267,8 +2312,11 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
         m_applyPropertyToVisitedLinkStyle = false;
         return;
     }
-    for (int i = startIndex; i <= endIndex; ++i)
+    for (int i = startIndex; i <= endIndex; ++i) {
+        m_applyPropertyToRegionStyle = m_matchedDecls[i].useInRegionStyle;
         applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration.get(), isImportant, inheritedOnly);
+        m_applyPropertyToRegionStyle = false;
+    }
 }
 
 unsigned CSSStyleSelector::computeDeclarationHash(MatchedStyleDeclaration* declarations, unsigned size)
@@ -2554,6 +2602,20 @@ inline bool isValidVisitedLinkProperty(int id)
     return false;
 }
 
+// http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
+// FIXME: add incremental support for other region styling properties.
+inline bool isValidRegionStyleProperty(int id)
+{
+    switch (static_cast<CSSPropertyID>(id)) {
+    case CSSPropertyBackgroundColor:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
 // of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
@@ -2633,6 +2695,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
+
+    // Filter region style property
+    if (applyPropertyToRegionStyle() && !isValidRegionStyleProperty(id))
+        return;
 
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 

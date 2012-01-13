@@ -734,6 +734,32 @@ RenderRegion* RenderFlowThread::lastRegion() const
     return 0;
 }
 
+void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object,
+    const RenderRegion* oldStartRegion, const RenderRegion* oldEndRegion,
+    const RenderRegion* newStartRegion, const RenderRegion* newEndRegion)
+{
+    // Clear the styles for the object in the regions.
+    // The styles are not cleared for the regions that are contained in both ranges.
+    bool insideOldRegionRange = false;
+    bool insideNewRegionRange = false;
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+
+        if (oldStartRegion == region)
+            insideOldRegionRange = true;
+        if (newStartRegion == region)
+            insideNewRegionRange = true;
+
+        if (!(insideOldRegionRange && insideNewRegionRange))
+            region->clearObjectStyleInRegion(object);
+
+        if (oldEndRegion == region)
+            insideOldRegionRange = false;
+        if (newEndRegion == region)
+            insideNewRegionRange = false;
+    }
+}
+
 void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
     // FIXME: Not right for differing writing-modes.
@@ -764,6 +790,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
             break;
     }
 
+    clearRenderObjectCustomStyle(box, range.startRegion(), range.endRegion(), startRegion, endRegion);
     range.setRange(startRegion, endRegion);
 }
 

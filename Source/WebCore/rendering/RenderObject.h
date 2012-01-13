@@ -343,6 +343,7 @@ public:
 #endif
 
     virtual bool isRenderFlowThread() const { return false; }
+    bool canHaveRegionStyle() const { return isRenderBlock() && !isAnonymous() && !isRenderFlowThread(); }
 
     bool isRoot() const { return document()->documentElement() == m_node; }
     bool isBody() const;
@@ -878,6 +879,7 @@ protected:
     virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, LayoutPoint* /*cachedOffsetToRepaintContainer*/ = 0) const { return LayoutRect(); }
 
 private:
+    RenderStyle* styleInRegion() const;
     RenderStyle* firstLineStyleSlowCase() const;
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 

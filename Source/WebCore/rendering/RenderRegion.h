@@ -80,6 +80,9 @@ public:
     bool isFirstRegion() const;
     bool isLastRegion() const;
 
+    RenderStyle* renderObjectRegionStyle(const RenderObject*) const;
+    void computeStyleInRegion(const RenderObject*);
+    void clearObjectStyleInRegion(const RenderObject*);
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
@@ -96,6 +99,11 @@ private:
     // is unique to the region. For now it just holds logical width information for RenderBlocks, but eventually
     // it will also hold a custom style for any box (for region styling).
     HashMap<const RenderBox*, OwnPtr<RenderBoxRegionInfo> > m_renderBoxRegionInfo;
+
+    // This map holds information about the region style associated with the render objects that
+    // are displayed into this region.
+    typedef HashMap<const RenderObject*, RefPtr<RenderStyle> > RenderObjectRegionStyleMap;
+    RenderObjectRegionStyleMap m_renderObjectRegionStyle;
 
     bool m_isValid;
     bool m_hasCustomRegionStyle;

@@ -1,3 +1,60 @@
+2012-01-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add back region style code removed in r104036
+        https://bugs.webkit.org/show_bug.cgi?id=76064
+
+        Reviewed by David Hyatt.
+
+        No new tests. The region style tests are still skipped. A follow up patch will enable
+        both region style for background-color and region style tests.
+
+        * WebCore.exp.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::useInRegionStyle):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::initForRegionStyling):
+        (WebCore::CSSStyleSelector::initRegionRules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::isValidRegionStyleProperty):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::setRegionForStyling):
+        (WebCore::CSSStyleSelector::regionForStyling):
+        (WebCore::CSSStyleSelector::applyPropertyToRegionStyle):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer):
+        (WebCore::CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer):
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleInRegion):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::canHaveRegionStyle):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::renderObjectRegionStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        (WebCore::RenderRegion::clearObjectStyleInRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::currentRenderRegion):
+        (WebCore::RenderView::setCurrentRenderRegion):
+
 2012-01-13  Kenneth Russell  <kbr@google.com>
 
         Unreviewed build fix; added project.pbxproj changes lost in r104954.
