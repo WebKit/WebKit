@@ -1,0 +1,8 @@
+layer at (0,0) size 1018x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1018x585
+  RenderBlock {HTML} at (0,0) size 1018x585
+    RenderBody {BODY} at (8,8) size 1002x569
+      RenderBlock {DIV} at (0,-3433) size 1002x4002 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,2509) size 18x1492
+          text run at (1,2509) width 1492: "BEGINddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddEND"
