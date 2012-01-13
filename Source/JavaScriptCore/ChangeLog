@@ -1,3 +1,11 @@
+2012-01-13  David Levin  <levin@chromium.org>
+
+        Header file is missing header guard.
+
+        Reviewed by Dirk Pranke.
+
+        * wtf/win/HWndDCWin.h: Added the guards.
+
 2012-01-13  Andy Wingo  <wingo@igalia.com>
 
         Eval in strict mode does not need dynamic checks

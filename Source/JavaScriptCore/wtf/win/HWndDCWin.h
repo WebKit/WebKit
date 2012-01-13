@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WTF_HWndDCWin_h
+#define WTF_HWndDCWin_h
+
 #include <windows.h>
 
 namespace WTF {
@@ -54,3 +57,5 @@ private:
 }
 
 using WTF::HWndDC;
+
+#endif // WTF_HWndDCWin_h
