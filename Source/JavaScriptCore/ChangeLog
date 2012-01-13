@@ -1,3 +1,10 @@
+2012-01-13  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Unreviewed build fix after r104787 if JIT_VERBOSE_OSR is defined
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2012-01-12  Hajime Morrita  <morrita@chromium.org>
 
         JavaScriptCore: Mark all exported symbols in the header file automatically.
