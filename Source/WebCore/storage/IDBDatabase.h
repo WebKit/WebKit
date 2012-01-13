@@ -78,7 +78,6 @@ public:
     virtual void onVersionChange(const String& requestedVersion);
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // EventTarget

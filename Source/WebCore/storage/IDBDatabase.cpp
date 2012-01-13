@@ -202,16 +202,6 @@ void IDBDatabase::onVersionChange(const String& version)
     enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
 }
 
-bool IDBDatabase::hasPendingActivity() const
-{
-    // FIXME: Try to find some way not to just leak this object until page navigation.
-    // FIXME: In an ideal world, we should return true as long as anyone has or can
-    //        get a handle to us or any derivative transaction/request object and any
-    //        of those have event listeners. This is in order to handle user generated
-    //        events properly.
-    return !m_contextStopped || ActiveDOMObject::hasPendingActivity();
-}
-
 void IDBDatabase::open()
 {
     m_backend->open(m_databaseCallbacks);

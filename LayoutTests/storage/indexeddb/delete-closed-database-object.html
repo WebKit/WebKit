@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Ensure that IDBDatabase objects are deleted when there are no retaining paths left");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+
+function test() {
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    openDBConnection();
+}
+
+function openDBConnection()
+{
+    evalAndLog("window.state = 'starting'");
+    request = evalAndLog("indexedDB.open('delete-closed-database-object')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    window.db = evalAndLog("db = event.target.result");
+
+    // Open a second connection to the same database.
+    var request2 = evalAndLog("indexedDB.open('delete-closed-database-object')");
+    request2.onsuccess = openSuccess2;
+    request2.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess2()
+{
+    debug("Second connection successfully established.");
+    // After leaving this function, there are no remaining references to the
+    // second connection, so it should get deleted.
+    setTimeout(setVersion, 2);
+}
+
+function setVersion()
+{
+    gc();
+    debug("calling setVersion() - callback should run immediately");
+    var versionChangeRequest = evalAndLog("db.setVersion('version 1')");
+    versionChangeRequest.onerror = unexpectedErrorCallback;
+    versionChangeRequest.onblocked = unexpectedBlockedCallback;
+    versionChangeRequest.onsuccess = done;
+}
+
+
+test();
+
+</script>
+</body>
+</html>

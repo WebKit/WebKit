@@ -1,3 +1,22 @@
+2012-01-13  Jochen Eisinger  <jochen@chromium.org>
+
+        Don't artifically keep IDBDatabase objects alive if there are no references to it.
+        https://bugs.webkit.org/show_bug.cgi?id=75859
+
+        Originally, this code was added to keep the IDBDatabase object alive
+        even if no reference from JavaScript to the object existed, because
+        running transactions could still send events for this database
+        connection. Meanwhile, transactions are marked as active DOM objects
+        during their lifetime, and they keep a RefPtr to the IDBDatabase
+        object, so this hack is no longer required.
+
+        Reviewed by Tony Gentilcore.
+
+        Test: storage/indexeddb/delete-closed-database-object.html
+
+        * storage/IDBDatabase.cpp:
+        * storage/IDBDatabase.h:
+
 2012-01-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         TextureMapper: Do the node transform computation when painting.

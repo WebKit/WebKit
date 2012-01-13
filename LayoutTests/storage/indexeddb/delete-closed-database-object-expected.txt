@@ -1,0 +1,18 @@
+Ensure that IDBDatabase objects are deleted when there are no retaining paths left
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+window.state = 'starting'
+indexedDB.open('delete-closed-database-object')
+db = event.target.result
+indexedDB.open('delete-closed-database-object')
+Second connection successfully established.
+calling setVersion() - callback should run immediately
+db.setVersion('version 1')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
