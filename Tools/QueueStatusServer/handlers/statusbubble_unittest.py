@@ -49,7 +49,7 @@ class StatusBubbleTest(unittest.TestCase):
         bubble = StatusBubble()
         queue = Queue("mac-ews")
         attachment = MockAttachment()
-        bubble_dict = bubble._build_bubble(queue, attachment)
+        bubble_dict = bubble._build_bubble(queue, attachment, 1)
         # FIXME: assertDictEqual (in Python 2.7) would be better to use here.
         self.assertEqual(bubble_dict["name"], "mac")
         self.assertEqual(bubble_dict["attachment_id"], 1)
