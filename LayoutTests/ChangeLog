@@ -1,3 +1,23 @@
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 103482
+
+    2011-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG ConvertThis optimizations do not honor the distinction between the global object and the global this object
+            https://bugs.webkit.org/show_bug.cgi?id=75058
+            <rdar://problem/10616612>
+
+            Reviewed by Oliver Hunt.
+
+            * fast/js/dfg-convert-this-dom-window-expected.txt: Added.
+            * fast/js/dfg-convert-this-dom-window.html: Added.
+            * fast/js/script-tests/dfg-convert-this-dom-window.js: Added.
+            (myObject.call):
+            (myFunction):
+            (myFunctionWithCall):
+            (myFunctionWithCall.call):
+
 2011-1-12  Lucas Forschler  <lforschler@apple.com>
 
     Merge 94338
