@@ -2171,6 +2171,8 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLCompressedTextures.cpp
         html/canvas/WebGLContextAttributes.cpp
         html/canvas/WebGLContextEvent.cpp
+        html/canvas/WebGLContextGroup.cpp
+        html/canvas/WebGLContextObject.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
         html/canvas/WebGLDebugShaders.cpp
         html/canvas/WebGLFramebuffer.cpp
@@ -2181,6 +2183,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLRenderbuffer.cpp
         html/canvas/WebGLRenderingContext.cpp
         html/canvas/WebGLShader.cpp
+        html/canvas/WebGLSharedObject.cpp
         html/canvas/WebGLTexture.cpp
         html/canvas/WebGLUniformLocation.cpp
         html/canvas/WebGLVertexArrayObjectOES.cpp

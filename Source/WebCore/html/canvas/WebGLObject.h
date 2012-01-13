@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class GraphicsContext3D;
+class WebGLContextGroup;
 class WebGLRenderingContext;
 
 class WebGLObject : public RefCounted<WebGLObject> {
@@ -44,32 +46,18 @@ public:
     // deleteObject may not always delete the OpenGL resource.  For programs and
     // shaders, deletion is delayed until they are no longer attached.
     // FIXME: revisit this when resource sharing between contexts are implemented.
-    void deleteObject();
-
-    void detachContext();
-
-    WebGLRenderingContext* context() const { return m_context; }
-
-    virtual bool isBuffer() const { return false; }
-    virtual bool isFramebuffer() const { return false; }
-    virtual bool isProgram() const { return false; }
-    virtual bool isRenderbuffer() const { return false; }
-    virtual bool isShader() const { return false; }
-    virtual bool isTexture() const { return false; }
+    void deleteObject(GraphicsContext3D*);
 
     void onAttached() { ++m_attachmentCount; }
-    void onDetached()
-    {
-        if (m_attachmentCount)
-            --m_attachmentCount;
-        if (m_deleted)
-            deleteObject();
-    }
+    void onDetached(GraphicsContext3D*);
 
     // This indicates whether the client side issue a delete call already, not
     // whether the OpenGL resource is deleted.
     // object()==0 indicates the OpenGL resource is deleted.
     bool isDeleted() { return m_deleted; }
+
+    // True if this object belongs to the group or context.
+    virtual bool validate(const WebGLContextGroup*, const WebGLRenderingContext*) const = 0;
 
 protected:
     WebGLObject(WebGLRenderingContext*);
@@ -78,11 +66,16 @@ protected:
     void setObject(Platform3DObject);
 
     // deleteObjectImpl should be only called once to delete the OpenGL resource.
-    virtual void deleteObjectImpl(Platform3DObject) = 0;
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) = 0;
+
+    virtual bool hasGroupOrContext() const = 0;
+
+    virtual void detach();
+
+    virtual GraphicsContext3D* getAGraphicsContext3D() const = 0;
 
 private:
     Platform3DObject m_object;
-    WebGLRenderingContext* m_context;
     unsigned m_attachmentCount;
     bool m_deleted;
 };

@@ -26,16 +26,16 @@
 #ifndef WebGLRenderbuffer_h
 #define WebGLRenderbuffer_h
 
-#include "WebGLObject.h"
+#include "WebGLSharedObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLRenderbuffer : public WebGLObject {
+class WebGLRenderbuffer : public WebGLSharedObject {
 public:
-    virtual ~WebGLRenderbuffer() { deleteObject(); }
+    virtual ~WebGLRenderbuffer();
 
     static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*);
 
@@ -67,7 +67,7 @@ public:
 protected:
     WebGLRenderbuffer(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
 
 private:
     virtual bool isRenderbuffer() const { return true; }

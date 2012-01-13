@@ -26,7 +26,7 @@
 #ifndef WebGLTexture_h
 #define WebGLTexture_h
 
-#include "WebGLObject.h"
+#include "WebGLSharedObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-class WebGLTexture : public WebGLObject {
+class WebGLTexture : public WebGLSharedObject {
 public:
-    virtual ~WebGLTexture() { deleteObject(); }
+    virtual ~WebGLTexture();
 
     static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
 
@@ -73,7 +73,7 @@ public:
 protected:
     WebGLTexture(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
 
 private:
     class LevelInfo {

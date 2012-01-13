@@ -26,7 +26,7 @@
 #ifndef WebGLProgram_h
 #define WebGLProgram_h
 
-#include "WebGLObject.h"
+#include "WebGLSharedObject.h"
 
 #include "WebGLShader.h"
 
@@ -36,15 +36,15 @@
 
 namespace WebCore {
 
-class WebGLProgram : public WebGLObject {
+class WebGLProgram : public WebGLSharedObject {
 public:
-    virtual ~WebGLProgram() { deleteObject(); }
+    virtual ~WebGLProgram();
 
     static PassRefPtr<WebGLProgram> create(WebGLRenderingContext*);
 
     // cacheActiveAttribLocation() is only called once after linkProgram()
     // succeeds.
-    bool cacheActiveAttribLocations();
+    bool cacheActiveAttribLocations(GraphicsContext3D*);
     unsigned numActiveAttribLocations() const;
     GC3Dint getActiveAttribLocation(GC3Duint index) const;
 
@@ -67,7 +67,7 @@ public:
 protected:
     WebGLProgram(WebGLRenderingContext*);
 
-    virtual void deleteObjectImpl(Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
 
 private:
     virtual bool isProgram() const { return true; }

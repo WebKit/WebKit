@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,52 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebGLContextGroup_h
+#define WebGLContextGroup_h
 
-#if ENABLE(WEBGL)
-
-#include "WebGLShader.h"
-
-#include "WebGLContextGroup.h"
-#include "WebGLRenderingContext.h"
+#include <WebGLRenderingContext.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
-{
-    return adoptRef(new WebGLShader(ctx, type));
-}
+class GraphicsContext3D;
+class WebGLExtension;
+class WebGLSharedObject;
+class WebGLRenderingContext;
 
-WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
-    : WebGLSharedObject(ctx)
-    , m_type(type)
-    , m_source("")
-{
-    setObject(ctx->graphicsContext3D()->createShader(type));
-}
+typedef int ExceptionCode;
 
-WebGLShader::~WebGLShader()
-{
-    deleteObject(0);
-}
+class WebGLContextGroup : public RefCounted<WebGLContextGroup> {
+public:
+    static PassRefPtr<WebGLContextGroup> create();
+    virtual ~WebGLContextGroup();
 
-void WebGLShader::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
-{
-    context3d->deleteShader(object);
-}
+    void addContext(WebGLRenderingContext*);
+    void removeContext(WebGLRenderingContext*);
 
-}
+    void addObject(WebGLSharedObject*);
+    void removeObject(WebGLSharedObject*);
 
-#endif // ENABLE(WEBGL)
+    GraphicsContext3D* getAGraphicsContext3D();
+
+    void loseContextGroup(WebGLRenderingContext::LostContextMode);
+
+  private:
+    friend class WebGLObject;
+
+    WebGLContextGroup();
+
+    void detachAndRemoveAllObjects();
+
+    HashSet<WebGLRenderingContext*> m_contexts;
+    HashSet<WebGLSharedObject*> m_groupObjects;
+};
+
+} // namespace WebCore
+
+#endif // WebGLContextGroup_h

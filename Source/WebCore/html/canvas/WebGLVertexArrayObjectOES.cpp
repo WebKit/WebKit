@@ -40,7 +40,7 @@ PassRefPtr<WebGLVertexArrayObjectOES> WebGLVertexArrayObjectOES::create(WebGLRen
 }
 
 WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContext* ctx, VaoType type)
-    : WebGLObject(ctx)
+    : WebGLContextObject(ctx)
     , m_type(type)
     , m_hasEverBeenBound(false)
     , m_boundElementArrayBuffer(0)
@@ -57,9 +57,14 @@ WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContext* ctx,
     }
 }
 
-void WebGLVertexArrayObjectOES::deleteObjectImpl(Platform3DObject object)
+WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES()
 {
-    Extensions3D* extensions = context()->graphicsContext3D()->getExtensions();
+    deleteObject(0);
+}
+
+void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+{
+    Extensions3D* extensions = context3d->getExtensions();
     switch (m_type) {
     case VaoTypeDefault:
         break;

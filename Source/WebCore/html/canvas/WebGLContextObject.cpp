@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,41 +20,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 
 #if ENABLE(WEBGL)
 
-#include "WebGLShader.h"
+#include "WebGLContextObject.h"
 
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
+WebGLContextObject::WebGLContextObject(WebGLRenderingContext* context)
+    : WebGLObject(context)
+    , m_context(context)
 {
-    return adoptRef(new WebGLShader(ctx, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
-    : WebGLSharedObject(ctx)
-    , m_type(type)
-    , m_source("")
+WebGLContextObject::~WebGLContextObject()
 {
-    setObject(ctx->graphicsContext3D()->createShader(type));
+    if (m_context)
+        m_context->removeContextObject(this);
 }
 
-WebGLShader::~WebGLShader()
+void WebGLContextObject::detachContext()
 {
-    deleteObject(0);
+    detach();
+    if (m_context) {
+        deleteObject(m_context->graphicsContext3D());
+        m_context->removeContextObject(this);
+        m_context = 0;
+    }
 }
 
-void WebGLShader::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+GraphicsContext3D* WebGLContextObject::getAGraphicsContext3D() const
 {
-    context3d->deleteShader(object);
+    return m_context ? m_context->graphicsContext3D() : 0;
 }
 
 }

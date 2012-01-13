@@ -26,16 +26,16 @@
 #ifndef WebGLShader_h
 #define WebGLShader_h
 
-#include "WebGLObject.h"
+#include "WebGLSharedObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLShader : public WebGLObject {
+class WebGLShader : public WebGLSharedObject {
 public:
-    virtual ~WebGLShader() { deleteObject(); }
+    virtual ~WebGLShader();
 
     static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GC3Denum);
 
@@ -47,7 +47,7 @@ public:
 private:
     WebGLShader(WebGLRenderingContext*, GC3Denum);
 
-    virtual void deleteObjectImpl(Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
 
     virtual bool isShader() const { return true; }
 

@@ -29,6 +29,7 @@
 
 #include "WebGLProgram.h"
 
+#include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -39,32 +40,36 @@ PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContext* ctx)
 }
 
 WebGLProgram::WebGLProgram(WebGLRenderingContext* ctx)
-    : WebGLObject(ctx)
+    : WebGLSharedObject(ctx)
     , m_linkStatus(false)
     , m_linkCount(0)
 {
-    setObject(context()->graphicsContext3D()->createProgram());
+    setObject(ctx->graphicsContext3D()->createProgram());
 }
 
-void WebGLProgram::deleteObjectImpl(Platform3DObject obj)
+WebGLProgram::~WebGLProgram()
 {
-    context()->graphicsContext3D()->deleteProgram(obj);
+    deleteObject(0);
+}
+
+void WebGLProgram::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject obj)
+{
+    context3d->deleteProgram(obj);
     if (m_vertexShader) {
-        m_vertexShader->onDetached();
+        m_vertexShader->onDetached(context3d);
         m_vertexShader = 0;
     }
     if (m_fragmentShader) {
-        m_fragmentShader->onDetached();
+        m_fragmentShader->onDetached(context3d);
         m_fragmentShader = 0;
     }
 }
 
-bool WebGLProgram::cacheActiveAttribLocations()
+bool WebGLProgram::cacheActiveAttribLocations(GraphicsContext3D* context3d)
 {
     m_activeAttribLocations.clear();
     if (!object())
         return false;
-    GraphicsContext3D* context3d = context()->graphicsContext3D();
 
     // Assume link status has already been cached.
     if (!m_linkStatus)

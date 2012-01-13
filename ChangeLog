@@ -1,3 +1,153 @@
+2012-01-13  Gregg Tavares  <gman@google.com>
+
+        Add WebGLContextGroup as step toward sharing WebGL resources
+        https://bugs.webkit.org/show_bug.cgi?id=75906
+
+        The WebGL Working Group will soon add the ability to share
+        WebGL resources among WebGL contexts. This is the necessary
+        prep work. NO API changes.
+
+        Added WebGLSharedObject for objects that are shared vs
+        WebGLContextObject for objects that are not.
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. No change in behavior.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::createVertexArrayOES):
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::isVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::WebGLBuffer):
+        (WebCore::WebGLBuffer::~WebGLBuffer):
+        (WebCore::WebGLBuffer::deleteObjectImpl):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLContextGroup.cpp: Added.
+        (WebCore::WebGLContextGroup::create):
+        (WebCore::WebGLContextGroup::WebGLContextGroup):
+        (WebCore::WebGLContextGroup::~WebGLContextGroup):
+        (WebCore::WebGLContextGroup::getAGraphicsContext3D):
+        (WebCore::WebGLContextGroup::addContext):
+        (WebCore::WebGLContextGroup::removeContext):
+        (WebCore::WebGLContextGroup::removeObject):
+        (WebCore::WebGLContextGroup::addObject):
+        (WebCore::WebGLContextGroup::detachAndRemoveAllObjects):
+        (WebCore::WebGLContextGroup::loseContextGroup):
+        * html/canvas/WebGLContextGroup.h: Copied from Source/WebCore/html/canvas/WebGLShader.h.
+        * html/canvas/WebGLContextObject.cpp: Copied from Source/WebCore/html/canvas/WebGLShader.cpp.
+        (WebCore::WebGLContextObject::WebGLContextObject):
+        (WebCore::WebGLContextObject::~WebGLContextObject):
+        (WebCore::WebGLContextObject::detachContext):
+        (WebCore::WebGLContextObject::getAGraphicsContext3D):
+        * html/canvas/WebGLContextObject.h: Copied from Source/WebCore/html/canvas/WebGLShader.h.
+        (WebCore::WebGLContextObject::context):
+        (WebCore::WebGLContextObject::validate):
+        (WebCore::WebGLContextObject::hasGroupOrContext):
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::~WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::getAttachment):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::checkStatus):
+        (WebCore::WebGLFramebuffer::onAccess):
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        (WebCore::WebGLFramebuffer::initializeRenderbuffers):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::WebGLObject):
+        (WebCore::WebGLObject::~WebGLObject):
+        (WebCore::WebGLObject::deleteObject):
+        (WebCore::WebGLObject::detach):
+        (WebCore::WebGLObject::onDetached):
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::WebGLProgram):
+        (WebCore::WebGLProgram::~WebGLProgram):
+        (WebCore::WebGLProgram::deleteObjectImpl):
+        (WebCore::WebGLProgram::cacheActiveAttribLocations):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::~WebGLRenderbuffer):
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        (WebCore::WebGLRenderbuffer::deleteObjectImpl):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+        (WebCore::WebGLRenderingContext::checkObjectToBeBound):
+        (WebCore::WebGLRenderingContext::clear):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::createBuffer):
+        (WebCore::WebGLRenderingContext::createFramebuffer):
+        (WebCore::WebGLRenderingContext::createTexture):
+        (WebCore::WebGLRenderingContext::createProgram):
+        (WebCore::WebGLRenderingContext::createRenderbuffer):
+        (WebCore::WebGLRenderingContext::createShader):
+        (WebCore::WebGLRenderingContext::deleteObject):
+        (WebCore::WebGLRenderingContext::deleteRenderbuffer):
+        (WebCore::WebGLRenderingContext::deleteTexture):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::validateElementArraySize):
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::validateWebGLObject):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::useProgram):
+        (WebCore::WebGLRenderingContext::removeSharedObject):
+        (WebCore::WebGLRenderingContext::addSharedObject):
+        (WebCore::WebGLRenderingContext::removeContextObject):
+        (WebCore::WebGLRenderingContext::addContextObject):
+        (WebCore::WebGLRenderingContext::detachAndRemoveAllObjects):
+        (WebCore::WebGLRenderingContext::initVertexAttrib0):
+        (WebCore::WebGLRenderingContext::loseContext):
+        (WebCore::WebGLRenderingContext::loseContextImpl):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore::WebGLRenderingContext::contextGroup):
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::WebGLShader):
+        (WebCore::WebGLShader::~WebGLShader):
+        (WebCore::WebGLShader::deleteObjectImpl):
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLSharedObject.cpp: Copied from Source/WebCore/html/canvas/WebGLRenderbuffer.cpp.
+        (WebCore::WebGLSharedObject::WebGLSharedObject):
+        (WebCore::WebGLSharedObject::~WebGLSharedObject):
+        (WebCore::WebGLSharedObject::detachContextGroup):
+        (WebCore::WebGLSharedObject::getAGraphicsContext3D):
+        * html/canvas/WebGLSharedObject.h: Copied from Source/WebCore/html/canvas/WebGLShader.h.
+        (WebCore::WebGLSharedObject::contextGroup):
+        (WebCore::WebGLSharedObject::isBuffer):
+        (WebCore::WebGLSharedObject::isFramebuffer):
+        (WebCore::WebGLSharedObject::isProgram):
+        (WebCore::WebGLSharedObject::isRenderbuffer):
+        (WebCore::WebGLSharedObject::isShader):
+        (WebCore::WebGLSharedObject::isTexture):
+        (WebCore::WebGLSharedObject::validate):
+        (WebCore::WebGLSharedObject::hasGroupOrContext):
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture):
+        (WebCore::WebGLTexture::~WebGLTexture):
+        (WebCore::WebGLTexture::deleteObjectImpl):
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+
 2012-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r104805.

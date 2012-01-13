@@ -5569,6 +5569,10 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLContextAttributes.h \
 	Source/WebCore/html/canvas/WebGLContextEvent.cpp \
 	Source/WebCore/html/canvas/WebGLContextEvent.h \
+	Source/WebCore/html/canvas/WebGLContextGroup.cpp \
+	Source/WebCore/html/canvas/WebGLContextGroup.h \
+	Source/WebCore/html/canvas/WebGLContextObject.cpp \
+	Source/WebCore/html/canvas/WebGLContextObject.h \
 	Source/WebCore/html/canvas/WebGLDebugRendererInfo.cpp \
 	Source/WebCore/html/canvas/WebGLDebugRendererInfo.h \
 	Source/WebCore/html/canvas/WebGLDebugShaders.cpp \
@@ -5589,6 +5593,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLRenderingContext.h \
 	Source/WebCore/html/canvas/WebGLShader.cpp \
 	Source/WebCore/html/canvas/WebGLShader.h \
+	Source/WebCore/html/canvas/WebGLSharedObject.cpp \
+	Source/WebCore/html/canvas/WebGLSharedObject.h \
 	Source/WebCore/html/canvas/WebGLTexture.cpp \
 	Source/WebCore/html/canvas/WebGLTexture.h \
 	Source/WebCore/html/canvas/WebGLUniformLocation.cpp \

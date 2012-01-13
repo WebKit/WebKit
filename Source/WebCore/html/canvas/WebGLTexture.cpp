@@ -29,6 +29,7 @@
 
 #include "WebGLTexture.h"
 
+#include "WebGLContextGroup.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 
@@ -40,7 +41,7 @@ PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContext* ctx)
 }
 
 WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
-    : WebGLObject(ctx)
+    : WebGLSharedObject(ctx)
     , m_target(0)
     , m_minFilter(GraphicsContext3D::NEAREST_MIPMAP_LINEAR)
     , m_magFilter(GraphicsContext3D::LINEAR)
@@ -50,7 +51,12 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     , m_isComplete(false)
     , m_needToUseBlackTexture(false)
 {
-    setObject(context()->graphicsContext3D()->createTexture());
+    setObject(ctx->graphicsContext3D()->createTexture());
+}
+
+WebGLTexture::~WebGLTexture()
+{
+    deleteObject(0);
 }
 
 void WebGLTexture::setTarget(GC3Denum target, GC3Dint maxLevel)
@@ -225,9 +231,9 @@ bool WebGLTexture::needToUseBlackTexture() const
     return m_needToUseBlackTexture;
 }
 
-void WebGLTexture::deleteObjectImpl(Platform3DObject object)
+void WebGLTexture::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
-    context()->graphicsContext3D()->deleteTexture(object);
+    context3d->deleteTexture(object);
 }
 
 int WebGLTexture::mapTargetToIndex(GC3Denum target) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebGLContextObject_h
+#define WebGLContextObject_h
 
-#if ENABLE(WEBGL)
-
-#include "WebGLShader.h"
-
-#include "WebGLContextGroup.h"
-#include "WebGLRenderingContext.h"
+#include "GraphicsContext3D.h"
+#include "WebGLObject.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
-{
-    return adoptRef(new WebGLShader(ctx, type));
-}
+class GraphicsContext3D;
+class WebGLRenderingContext;
 
-WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
-    : WebGLSharedObject(ctx)
-    , m_type(type)
-    , m_source("")
-{
-    setObject(ctx->graphicsContext3D()->createShader(type));
-}
+// WebGLContextObject the base class for objects that are owned by a specific
+// WebGLRenderingContext.
+class WebGLContextObject : public WebGLObject {
+public:
+    virtual ~WebGLContextObject();
 
-WebGLShader::~WebGLShader()
-{
-    deleteObject(0);
-}
+    WebGLRenderingContext* context() const { return m_context; }
 
-void WebGLShader::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
-{
-    context3d->deleteShader(object);
-}
+    virtual bool validate(const WebGLContextGroup*, const WebGLRenderingContext* context) const
+    {
+        return context == m_context;
+    }
 
-}
+    void detachContext();
 
-#endif // ENABLE(WEBGL)
+protected:
+    WebGLContextObject(WebGLRenderingContext*);
+
+    virtual bool hasGroupOrContext() const
+    {
+        return m_context;
+    }
+
+    virtual GraphicsContext3D* getAGraphicsContext3D() const;
+
+private:
+    Platform3DObject m_object;
+    WebGLRenderingContext* m_context;
+};
+
+} // namespace WebCore
+
+#endif // WebGLContextObject_h

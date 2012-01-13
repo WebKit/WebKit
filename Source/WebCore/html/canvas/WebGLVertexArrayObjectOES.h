@@ -27,21 +27,21 @@
 #define WebGLVertexArrayObjectOES_h
 
 #include "WebGLBuffer.h"
-#include "WebGLObject.h"
+#include "WebGLContextObject.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLVertexArrayObjectOES : public WebGLObject {
+class WebGLVertexArrayObjectOES : public WebGLContextObject {
 public:
     enum VaoType {
         VaoTypeDefault,
         VaoTypeUser,
     };
     
-    virtual ~WebGLVertexArrayObjectOES() { deleteObject(); }
+    virtual ~WebGLVertexArrayObjectOES();
 
     static PassRefPtr<WebGLVertexArrayObjectOES> create(WebGLRenderingContext*, VaoType);
     
@@ -83,7 +83,7 @@ public:
 private:
     WebGLVertexArrayObjectOES(WebGLRenderingContext*, VaoType);
 
-    virtual void deleteObjectImpl(Platform3DObject);
+    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject);
 
     virtual bool isVertexArray() const { return true; }
     

@@ -30,6 +30,7 @@
 #include "WebGLBuffer.h"
 
 #include "CheckedInt.h"
+#include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 #include <wtf/ArrayBufferView.h>
 
@@ -41,18 +42,23 @@ PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 }
 
 WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
-    : WebGLObject(ctx)
+    : WebGLSharedObject(ctx)
     , m_target(0)
     , m_byteLength(0)
     , m_nextAvailableCacheEntry(0)
 {
-    setObject(context()->graphicsContext3D()->createBuffer());
+    setObject(ctx->graphicsContext3D()->createBuffer());
     clearCachedMaxIndices();
 }
 
-void WebGLBuffer::deleteObjectImpl(Platform3DObject object)
+WebGLBuffer::~WebGLBuffer()
 {
-    context()->graphicsContext3D()->deleteBuffer(object);
+    deleteObject(0);
+}
+
+void WebGLBuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
+{
+      context3d->deleteBuffer(object);
 }
 
 bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOffset, GC3Dsizeiptr byteLength)

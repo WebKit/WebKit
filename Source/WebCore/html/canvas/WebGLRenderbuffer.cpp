@@ -29,6 +29,7 @@
 
 #include "WebGLRenderbuffer.h"
 
+#include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
@@ -38,8 +39,13 @@ PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContext* c
     return adoptRef(new WebGLRenderbuffer(ctx));
 }
 
+WebGLRenderbuffer::~WebGLRenderbuffer()
+{
+    deleteObject(0);
+}
+
 WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContext* ctx)
-    : WebGLObject(ctx)
+    : WebGLSharedObject(ctx)
     , m_internalFormat(GraphicsContext3D::RGBA4)
     , m_initialized(false)
     , m_width(0)
@@ -47,12 +53,12 @@ WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContext* ctx)
     , m_isValid(true)
     , m_hasEverBeenBound(false)
 {
-    setObject(context()->graphicsContext3D()->createRenderbuffer());
+    setObject(ctx->graphicsContext3D()->createRenderbuffer());
 }
 
-void WebGLRenderbuffer::deleteObjectImpl(Platform3DObject object)
+void WebGLRenderbuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
-    context()->graphicsContext3D()->deleteRenderbuffer(object);
+    context3d->deleteRenderbuffer(object);
 }
 
 }

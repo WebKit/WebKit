@@ -60,7 +60,7 @@ PassRefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES
         return 0;
     
     RefPtr<WebGLVertexArrayObjectOES> o = WebGLVertexArrayObjectOES::create(m_context, WebGLVertexArrayObjectOES::VaoTypeUser);
-    m_context->addObject(o.get());
+    m_context->addContextObject(o.get());
     return o.release();
 }
 
@@ -69,7 +69,7 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!arrayObject || m_context->isContextLost())
         return;
     
-    arrayObject->deleteObject();
+    arrayObject->deleteObject(m_context->graphicsContext3D());
 }
 
 GC3Dboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -90,7 +90,7 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     if (m_context->isContextLost())
         return;
     
-    if (arrayObject && arrayObject->context() != m_context) {
+    if (arrayObject && !arrayObject->validate(0, context())) {
         m_context->graphicsContext3D()->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }

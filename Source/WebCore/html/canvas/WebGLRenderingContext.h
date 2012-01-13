@@ -50,6 +50,8 @@ class OESTextureFloat;
 class OESVertexArrayObject;
 class WebGLActiveInfo;
 class WebGLBuffer;
+class WebGLContextGroup;
+class WebGLContextObject;
 class WebGLCompressedTextures;
 class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
@@ -61,6 +63,7 @@ class WebGLObject;
 class WebGLProgram;
 class WebGLRenderbuffer;
 class WebGLShader;
+class WebGLSharedObject;
 class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
@@ -292,8 +295,10 @@ public:
     };
     void forceLostContext(LostContextMode);
     void forceRestoreContext();
+    void loseContextImpl(LostContextMode);
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+    WebGLContextGroup* contextGroup() const { return m_contextGroup.get(); }
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const;
 #endif
@@ -304,7 +309,8 @@ public:
     virtual void paintRenderingResultsToCanvas();
     virtual PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
-    void removeObject(WebGLObject*);
+    void removeSharedObject(WebGLSharedObject*);
+    void removeContextObject(WebGLContextObject*);
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
@@ -319,7 +325,8 @@ public:
     void initializeNewContext();
     void setupFlags();
 
-    void addObject(WebGLObject*);
+    void addSharedObject(WebGLSharedObject*);
+    void addContextObject(WebGLContextObject*);
     void detachAndRemoveAllObjects();
 
     void markContextChanged();
@@ -362,6 +369,7 @@ public:
 #endif
 
     RefPtr<GraphicsContext3D> m_context;
+    RefPtr<WebGLContextGroup> m_contextGroup;
 
     // Optional structure for rendering to a DrawingBuffer, instead of directly
     // to the back-buffer of m_context.
@@ -378,7 +386,7 @@ public:
 
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
-    HashSet<WebGLObject*> m_canvasObjects;
+    HashSet<WebGLContextObject*> m_contextObjects;
 
     // List of bound VBO's. Used to maintain info about sizes for ARRAY_BUFFER and stored values for ELEMENT_ARRAY_BUFFER
     RefPtr<WebGLBuffer> m_boundArrayBuffer;

@@ -3674,6 +3674,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLCompressedTextures.h \
         html/canvas/WebGLContextAttributes.h \
         html/canvas/WebGLContextEvent.h \
+        html/canvas/WebGLContextGroup.h \
+        html/canvas/WebGLContextObject.h \
         html/canvas/WebGLDebugRendererInfo.h \
         html/canvas/WebGLDebugShaders.h \
         html/canvas/WebGLExtension.h \
@@ -3684,6 +3686,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLRenderbuffer.h \
         html/canvas/WebGLRenderingContext.h \
         html/canvas/WebGLShader.h \
+        html/canvas/WebGLSharedObject.h \
         html/canvas/OESStandardDerivatives.h \
         html/canvas/OESTextureFloat.h \
         html/canvas/OESVertexArrayObject.h \
@@ -3711,6 +3714,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLCompressedTextures.cpp \
         html/canvas/WebGLContextAttributes.cpp \
         html/canvas/WebGLContextEvent.cpp \
+        html/canvas/WebGLContextGroup.cpp \
+        html/canvas/WebGLContextObject.cpp \
         html/canvas/WebGLDebugRendererInfo.cpp \
         html/canvas/WebGLDebugShaders.cpp \
         html/canvas/WebGLExtension.cpp \
@@ -3721,6 +3726,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLRenderbuffer.cpp \
         html/canvas/WebGLRenderingContext.cpp \
         html/canvas/WebGLShader.cpp \
+        html/canvas/WebGLSharedObject.cpp \
         html/canvas/OESStandardDerivatives.cpp \
         html/canvas/OESTextureFloat.cpp \
         html/canvas/OESVertexArrayObject.cpp \
