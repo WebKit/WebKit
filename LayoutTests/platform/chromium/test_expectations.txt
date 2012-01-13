@@ -1983,8 +1983,6 @@ BUGCR42875 SKIP WONTFIX : sputnik = TEXT
 // Need rebaseline
 BUGWK70765 WIN : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
-BUGWK38705 : http/tests/security/sandbox-inherit-to-initial-document-2.html = TEXT
-
 // WebKit roll 58791:58807
 BUGCR43319 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEOUT
 
@@ -3394,8 +3392,6 @@ BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PAS
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
-BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
-
 BUGCR102677 MAC DEBUG : fast/reflections/reflection-masks-outset.html = CRASH PASS
 
 // Failing after r94946
@@ -3767,7 +3763,6 @@ BUGWK75111 RELEASE : fast/workers/storage/use-same-database-in-page-and-workers.
 
 BUGWK75896 MAC DEBUG : css3/calc/block-mask-overlay-image-outset.html = PASS CRASH
 
-BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
 BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
