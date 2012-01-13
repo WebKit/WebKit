@@ -1,5 +1,21 @@
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104094
+
+    2012-01-04  Michael Saboff  <msaboff@apple.com>
+
+            StructureStubInfo not reset when corresponding MethodCallLinkInfo is reset
+            https://bugs.webkit.org/show_bug.cgi?id=75583
+
+            Reviewed by Filip Pizlo.
+
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::finalizeUnconditionally): Find the corresponding
+            StructureStubInfo and reset the appropriate JIT and
+            the StructureStubInfo itself when reseting a MethodCallLinkInfo.
+
+2011-1-13  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104086
 
     2012-01-04  Filip Pizlo  <fpizlo@apple.com>

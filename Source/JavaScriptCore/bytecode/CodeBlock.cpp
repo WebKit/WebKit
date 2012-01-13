@@ -1788,6 +1788,19 @@ void CodeBlock::finalizeUnconditionally()
                 if (verboseUnlinking)
                     printf("Clearing method call in %p.\n", this);
                 m_methodCallLinkInfos[i].reset(repatchBuffer, getJITType());
+
+                StructureStubInfo& stubInfo = getStubInfo(m_methodCallLinkInfos[i].bytecodeIndex);
+
+                AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
+
+                if (accessType != access_unset) {
+                    ASSERT(isGetByIdAccess(accessType));
+                    if (getJITCode().jitType() == JITCode::DFGJIT)
+                        DFG::dfgResetGetByID(repatchBuffer, stubInfo);
+                    else
+                        JIT::resetPatchGetById(repatchBuffer, &stubInfo);
+                    stubInfo.reset();
+                }
             }
         }
     }
