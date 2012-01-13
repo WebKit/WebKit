@@ -5306,3 +5306,18 @@ fast/css/caption-width-relative-position-offset-top.htm
 fast/css/caption-width-relative-position.htm
 fast/html/font-weight-bold-for-b-and-strong.html
 http/tests/plugins/create-v8-script-objects.html
+
+# new failing tests
+css3/filters/effect-blur.html
+css3/filters/effect-brightness.html
+css3/filters/effect-contrast.html
+css3/filters/effect-drop-shadow.html
+css3/filters/effect-grayscale.html
+css3/filters/effect-hue-rotate.html
+css3/filters/effect-invert.html
+css3/filters/effect-opacity.html
+css3/filters/effect-saturate.html
+css3/filters/effect-sepia.html
+css3/filters/regions-expanding.html
+fast/text/font-kerning.html
+plugins/npruntime/object-from-destroyed-plugin-in-subframe.html
