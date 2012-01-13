@@ -46,9 +46,9 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/harfbuzz/FontHarfBuzz.cpp
     platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp
     platform/graphics/harfbuzz/HarfBuzzSkia.cpp
-    platform/graphics/harfbuzz/SimpleFontDataHarfBuzz.cpp
     platform/graphics/skia/FontCacheSkia.cpp
     platform/graphics/skia/GlyphPageTreeNodeSkia.cpp
+    platform/graphics/skia/SimpleFontDataSkia.cpp
 )
 
 # Other sources

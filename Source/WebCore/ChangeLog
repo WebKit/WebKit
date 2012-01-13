@@ -1,3 +1,27 @@
+2012-01-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Move SimpleFontDataSkia.cpp to Source/WebCore/platform/graphics/skia
+        https://bugs.webkit.org/show_bug.cgi?id=76155
+
+        Reviewed by Tony Chang.
+
+        No new tests. No behavior change.
+
+        * PlatformBlackBerry.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/skia/SimpleFontDataSkia.cpp: Renamed from Source/WebCore/platform/graphics/harfbuzz/SimpleFontDataSkia.cpp.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::createScaledFontData):
+        (WebCore::SimpleFontData::smallCapsFontData):
+        (WebCore::SimpleFontData::emphasisMarkFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2012-01-12  Benjamin Poulain  <bpoulain@apple.com>
 
         A Frame with frame flattening can be stuck in a state in which performPostLayoutTasks() is never executed
