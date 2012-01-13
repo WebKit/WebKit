@@ -425,7 +425,6 @@ private:
 #if ENABLE(SVG)
     bool m_inLayoutParentView;
 #endif
-    bool m_hasPendingPostLayoutTasks;
     bool m_inSynchronousPostLayout;
     int m_layoutCount;
     unsigned m_nestedLayoutCount;
