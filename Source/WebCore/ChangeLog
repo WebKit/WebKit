@@ -1,3 +1,13 @@
+2012-01-13  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, build fix for unused argument warning after r104954.
+        https://bugs.webkit.org/show_bug.cgi?id=75906
+
+        Also fixed up somebody's bad merge in Source/WebCore/ChangeLog.
+
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::WebGLObject):
+
 2012-01-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [soup] Initialize m_soupFlags in all ResourceResponse constructors.
@@ -2084,7 +2094,6 @@
         * rendering/RenderThemeChromiumMac.mm:
         (WebCore::RenderThemeChromiumMac::paintTextField):
 
-<<<<<<< .mine
 2012-01-11  Adam Barth  <abarth@webkit.org>
 
         iframe sandbox doesn't block videos from autoplaying (IETC automatic-feature-block-autoplay-video)
@@ -2101,7 +2110,6 @@
             - Implement requirement in the HTML5 spec to not autoplay media
               when automatic features are sandboxed.
 
-=======
 2012-01-11  Nate Chapin  <japhet@chromium.org>
 
         SubresourceLoader cleanup post r100311.
@@ -2144,7 +2152,6 @@
         (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
         * storage/IDBObjectStoreBackendImpl.cpp:
 
->>>>>>> .r104756
 2012-01-11  Greg Billock  <gbillock@google.com>
 
         Switch web intents to use supplemental IDL for DOMWindow
