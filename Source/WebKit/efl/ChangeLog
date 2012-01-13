@@ -1,3 +1,14 @@
+2012-01-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Unused code cleanup on ewk_tiled_model.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=76031
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove unused code from ewk_tiled_model.cpp.
+
+        * ewk/ewk_tiled_model.cpp:
+
 2012-01-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Move macro checking to functions' definition in ewk_js.cpp.
