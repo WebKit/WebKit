@@ -191,7 +191,6 @@ BUGWK74449 SKIP : fast/workers/dedicated-worker-lifecycle.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-close-more.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-lifecycle.html = TIMEOUT
 
-BUGWK74466 : fast/workers/worker-script-error.html = PASS TIMEOUT FAIL
 
 // Tests timing out because layoutTestController.workerThreadCount is not implemented in DRT
 BUGWK74653 SKIP : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TIMEOUT
