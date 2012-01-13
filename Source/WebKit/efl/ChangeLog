@@ -1,3 +1,15 @@
+2012-01-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove extern "C" from ewk_private.h
+        https://bugs.webkit.org/show_bug.cgi?id=76250
+
+        Reviewed by Andreas Kling.
+
+        ewk_private.h defines internal functions used by WebKit itself. There is no chance to be used by C application.
+        So, extern "C" keyword is unneeded in ewk_private.h.
+
+        * ewk/ewk_private.h:
+
 2012-01-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Add 'Copy Image Address' to context menu.
