@@ -340,8 +340,6 @@ void ScrollElasticityController::snapRubberBandTimerFired()
                          roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), (float)timeDelta)));
 
         if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
-            FloatPoint newOrigin = m_origOrigin + delta;
-
             m_client->immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_client->stretchAmount());
 
             FloatSize newStretch = m_client->stretchAmount();

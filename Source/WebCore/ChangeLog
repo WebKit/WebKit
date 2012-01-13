@@ -1,3 +1,13 @@
+2012-01-13  Nico Weber  <thakis@chromium.org>
+
+        Remove a unused variable.
+        https://bugs.webkit.org/show_bug.cgi?id=76307
+
+        Reviewed by James Robinson.
+
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired):
+
 2012-01-13  Nate Chapin  <japhet@chromium.org>
 
         Revert most of the multipart changes in
