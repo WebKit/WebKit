@@ -1,3 +1,20 @@
+2012-01-13  Anders Carlsson  <andersca@apple.com>
+
+        -[WebTileCacheLayer setNeedsDisplay] doesn't trigger invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=76299
+
+        Reviewed by Simon Fraser.
+
+        Override -[WebTileCacheLayer setNeedsDisplay] and call TileCache::setNeedsDisplay from there,
+        instead of ending up with a huge rectangle in TileCache::setNeedsDisplayInRect which causes our
+        tile computation logic to fail due to integer overflow when converting from CGFloats to ints.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setNeedsDisplay):
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setNeedsDisplay]):
+
 2012-01-12  Ojan Vafai  <ojan@chromium.org>
 
         Implement flex-align

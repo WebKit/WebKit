@@ -52,6 +52,11 @@ using namespace WebCore;
     _tileCache->tileCacheLayerBoundsChanged();
 }
 
+- (void)setNeedsDisplay
+{
+    _tileCache->setNeedsDisplay();
+}
+
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
     _tileCache->setNeedsDisplayInRect(enclosingIntRect(rect));

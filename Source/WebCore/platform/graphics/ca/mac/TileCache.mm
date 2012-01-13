@@ -62,6 +62,11 @@ void TileCache::tileCacheLayerBoundsChanged()
     resizeTileGrid(numTilesInGrid);
 }
 
+void TileCache::setNeedsDisplay()
+{
+    setNeedsDisplayInRect(IntRect(0, 0, std::numeric_limits<int>::max(), std::numeric_limits<int>::max()));
+}
+
 void TileCache::setNeedsDisplayInRect(const IntRect& rect)
 {
     if (m_numTilesInGrid.isZero())

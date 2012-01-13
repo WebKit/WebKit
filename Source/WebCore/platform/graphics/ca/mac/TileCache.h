@@ -53,6 +53,8 @@ public:
     static PassOwnPtr<TileCache> create(WebTileCacheLayer*, const IntSize& tileSize);
 
     void tileCacheLayerBoundsChanged();
+
+    void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
     void drawLayer(WebTileLayer*, CGContextRef);
 
