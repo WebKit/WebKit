@@ -1,3 +1,14 @@
+2012-01-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add 'Copy Image Address' to context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=76153
+
+        Reviewed by Andreas Kling.
+
+        Adds EWK_CONTEXT_MENU_ITEM_TAG_COPY_IMAGE_URL_TO_CLIPBOARD to Ewk_Context_Menu_Action to synchronize it with ContextMenuItem.h
+
+        * ewk/ewk_contextmenu.h:
+
 2012-01-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Add visible field into ewk_tiled_backing_store's data.

@@ -1,3 +1,23 @@
+2012-01-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add 'Copy Image Address' to context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=76153
+
+        Reviewed by Andreas Kling.
+
+        Enables 'Copy Image Address' option to context menu in WebKit-EFL as it is enabled in GTK and QT ports.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::contextMenuItemTagCopyImageUrlToClipboard):
+
 2012-01-13  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: 32bit build fix.

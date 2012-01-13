@@ -222,7 +222,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         // For now, call into the client. This is temporary!
         frame->editor()->copyImage(m_hitTestResult);
         break;
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     case ContextMenuItemTagCopyImageUrlToClipboard:
         frame->editor()->copyURL(m_hitTestResult.absoluteImageURL(), m_hitTestResult.textContent());
         break;
@@ -641,7 +641,7 @@ void ContextMenuController::populate()
         contextMenuItemTagDownloadImageToDisk());
     ContextMenuItem CopyImageItem(ActionType, ContextMenuItemTagCopyImageToClipboard, 
         contextMenuItemTagCopyImageToClipboard());
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     ContextMenuItem CopyImageUrlItem(ActionType, ContextMenuItemTagCopyImageUrlToClipboard, 
         contextMenuItemTagCopyImageUrlToClipboard());
 #endif
@@ -725,7 +725,7 @@ void ContextMenuController::populate()
             appendItem(DownloadImageItem, m_contextMenu.get());
             if (imageURL.isLocalFile() || m_hitTestResult.image())
                 appendItem(CopyImageItem, m_contextMenu.get());
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
 #endif
         }
@@ -1189,7 +1189,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagOpenImageInNewWindow:
         case ContextMenuItemTagDownloadImageToDisk:
         case ContextMenuItemTagCopyImageToClipboard:
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
         case ContextMenuItemTagCopyImageUrlToClipboard:
 #endif
             break;
