@@ -1,3 +1,15 @@
+2012-01-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, rolling out r104905.
+        http://trac.webkit.org/changeset/104905
+        https://bugs.webkit.org/show_bug.cgi?id=76267
+
+        This patch broke tests in the GTK 64bit Debug bot (Requested
+        by msanchez on #webkit).
+
+        * editing/gtk/FrameSelectionGtk.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+
 2012-01-13  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make HTML editing preserve node identity when node nesting level changes.
