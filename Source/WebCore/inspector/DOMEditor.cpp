@@ -424,12 +424,6 @@ void DOMEditor::markNodeAsUsed(Digest* digest)
     }
 }
 
-void DOMEditor::dumpMap(const String& name, const DOMEditor::ResultMap& map, const Vector<OwnPtr<Digest> >& list)
-{
-    for (size_t i = 0; i < map.size(); ++i)
-        fprintf(stderr, "%s[%ld] %s - %ld\n", name.utf8().data(), i, map[i].first ? map[i].first->m_sha1.utf8().data() : list[i]->m_sha1.utf8().data(), map[i].second);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

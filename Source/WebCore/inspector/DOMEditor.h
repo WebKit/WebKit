@@ -71,7 +71,6 @@ private:
     void insertBefore(Element* parentElement, Digest*, Node* anchor, ExceptionCode&);
     void removeChild(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);
-    void dumpMap(const String& name, const ResultMap&, const Vector<OwnPtr<Digest> >& list);
 
     Document* m_document;
 
