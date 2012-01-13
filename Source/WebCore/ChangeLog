@@ -1,3 +1,24 @@
+2012-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename GraphicsContext* argument in various RenderLayer methods
+        https://bugs.webkit.org/show_bug.cgi?id=76283
+
+        Reviewed by James Robinson/Anders Carlsson.
+
+        Rename the GraphicsContext* parameter "p" in various RenderLayer
+        methods to "context". "p" was a historical name from when it was
+        called Painter.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::RenderLayer::restoreClip):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+
 2012-01-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add back region style code removed in r104036
