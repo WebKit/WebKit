@@ -1,3 +1,10 @@
+2012-01-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector scripts navigator style fixes.
+
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-editor-container-tabbed-pane .tabbed-pane-header-tab):
+
 2012-01-13  Jochen Eisinger  <jochen@chromium.org>
 
         Once we prepared a script element for execution, execute it, even if the script element was meanwhile removed from the dom tree.
