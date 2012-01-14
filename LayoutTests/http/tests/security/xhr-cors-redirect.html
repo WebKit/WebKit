@@ -1,0 +1,59 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("log").innerHTML += msg + "<br>";
+}
+
+function test() {
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:8000/security/resources/cors-redirect.php?no-cache";
+    xhr.open("GET", url, false);
+    try {
+        xhr.send(null);
+
+        if (xhr.status == 200)
+            log("PASS: sync XHR successful");
+        else
+            log("FAIL: sync XHR failed");
+    } catch (e) {
+        log("FAIL: sync XHR failed");
+    }
+
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechanged = function(e) {
+        if (xhr.readystate == 4) {
+            if (xhr.status == 200)
+                log("PASS: async XHR successful");
+            else
+                log("FAIL: async XHR failed");
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    };
+    xhr.onerror = function() {
+        log("FAIL: async XHR failed");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    };
+    xhr.send(null);
+}
+</script>
+</head>
+<body onload="test()">
+<p>
+Test that a cross-origin XHR involving redirects works correctly. If this test
+passes, you will see a series of PASS messages.
+</p>
+<p>
+Currently not working, see http://webkit.org/b/57600
+</p>
+<div id="log"></div>
+</body>
+</html>
