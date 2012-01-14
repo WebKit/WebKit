@@ -36,4 +36,5 @@ use webkitdirs;
 push(@ARGV, "--chromium");
 setConfiguration();
 my $pathToBinary = productDir() . "/webkit_unit_tests";
-exit system ($pathToBinary, @ARGV);
+# perl's "system" function's return value has to be right shifted by 8 to get the program's exit code.
+exit system ($pathToBinary, @ARGV) >> 8;

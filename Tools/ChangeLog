@@ -1,3 +1,14 @@
+2012-01-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Failing webkit_unit_tests does not make the cr-linux EWS bubble red
+        https://bugs.webkit.org/show_bug.cgi?id=76313
+
+        Reviewed by Adam Barth.
+
+        The exit code of this script should be the exit code of webkit_unit_tests. Tested manually.
+
+        * Scripts/run-chromium-webkit-unit-tests:
+
 2012-01-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105017.
