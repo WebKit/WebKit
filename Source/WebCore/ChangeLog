@@ -1,3 +1,10 @@
+2012-01-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Build correction after r104919.
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude ShadowContentSelectorQuery.cpp
+          from the build, since it is built as part of DOMAllInOne.cpp.
+
 2012-01-13  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Change isLocked() from operator to attribute isLocked
