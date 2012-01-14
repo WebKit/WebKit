@@ -1,3 +1,13 @@
+2012-01-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105017.
+        http://trac.webkit.org/changeset/105017
+        https://bugs.webkit.org/show_bug.cgi?id=76333
+
+        broke the build (Requested by philn-tp on #webkit).
+
+        * gtk/jhbuild.modules:
+
 2012-01-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Include gtk+3 in the jhbuild modules
