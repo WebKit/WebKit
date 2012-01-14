@@ -30,7 +30,7 @@ module core {
     ] PointerLock {
         void lock(in Element target, in [Callback, Optional] VoidCallback successCallback, in [Callback, Optional] VoidCallback failureCallback);
         void unlock();
-        boolean isLocked();
+        readonly attribute boolean isLocked;
     };
 
 }

@@ -6,7 +6,7 @@
 <body>
 <script>
     shouldBeDefined("navigator.webkitPointer");
-    shouldEvaluateTo("navigator.webkitPointer.isLocked()", false);
+    shouldEvaluateTo("navigator.webkitPointer.isLocked", false);
     shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
     shouldEvaluateTo("navigator.webkitPointer.lock(document)", "undefined");
     shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");

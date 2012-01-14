@@ -1,3 +1,17 @@
+2012-01-13  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Change isLocked() from operator to attribute isLocked
+        https://bugs.webkit.org/show_bug.cgi?id=76311
+
+        Reviewed by Adam Barth.
+
+        This patch implements the recent Mouse Lock Specification update
+        changing navigator.pointer.isLocked() to .isLocked.
+
+        Test pointer-lock/pointer-lock-api.html updated to new spec.
+
+        * page/PointerLock.idl:
+
 2012-01-13  Raymond Toy  <rtoy@google.com>
 
         noteOn, noteGrainOn and noteOff idl should take doubles
