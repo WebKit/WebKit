@@ -62,7 +62,6 @@
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "WebViewImpl.h"
-#include "WebWorker.h"
 
 using namespace WebCore;
 

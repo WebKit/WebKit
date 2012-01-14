@@ -1,3 +1,13 @@
+2012-01-14  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] Remove WebKit::WebWorker class.
+        https://bugs.webkit.org/show_bug.cgi?id=76327
+
+        Reviewed by Darin Fisher.
+
+        * public/WebWorker.h: Removed.
+        * src/WebWorkerClientImpl.cpp:
+
 2012-01-13  David Levin  <levin@chromium.org>
 
         HWndDC is a better name than HwndDC.
