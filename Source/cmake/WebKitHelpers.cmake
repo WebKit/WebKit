@@ -7,9 +7,16 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
         SET(OLD_COMPILE_FLAGS "")
     ENDIF ()
 
+    INCLUDE(TestCXXAcceptsFlag)
+    CHECK_CXX_ACCEPTS_FLAG("-dumpversion" CMAKE_CXX_ACCEPTS_DUMPVERSION)
+    IF (CMAKE_CXX_ACCEPTS_DUMPVERSION)
+        EXEC_PROGRAM(${CMAKE_CXX_COMPILER} ARGS -dumpversion OUTPUT_VARIABLE COMPILER_VERSION)
+    ELSE ()
+        EXEC_PROGRAM("${CMAKE_CXX_COMPILER} -E -Wp,-dM - < /dev/null | grep '#define __VERSION__' | grep -E -o '[0-9]+\\.[0-9]+\\.?[0-9]+?'" OUTPUT_VARIABLE COMPILER_VERSION)
+    ENDIF ()
+
     # Disable some optimizations on buggy compiler versions
     # GCC 4.5.1 does not implement -ftree-sra correctly
-    EXEC_PROGRAM(${CMAKE_CXX_COMPILER} ARGS -dumpversion OUTPUT_VARIABLE COMPILER_VERSION)
     IF (${COMPILER_VERSION} STREQUAL "4.5.1")
         SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -fno-tree-sra")
     ENDIF ()

@@ -1,3 +1,15 @@
+2012-01-13  Eli Fidler  <efidler@rim.com>
+
+        GCC compiler version is not detected properly for QNX qcc variant
+        https://bugs.webkit.org/show_bug.cgi?id=76288
+
+        Reviewed by Rob Buis.
+
+        Provide an alternative way of getting the compiler version for GCC variants
+        that don't support -dumpversion (such as qcc).
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-01-13  Gregg Tavares  <gman@google.com>
 
         Add WebGLContextGroup as step toward sharing WebGL resources
