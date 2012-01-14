@@ -2863,7 +2863,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
                 beginTransparencyLayers(context, rootLayer, paintBehavior);
         
 #if ENABLE(CSS_FILTERS)
-            if (filterPainter.haveFilterEffect())
+            if (filterPainter.haveFilterEffect() && !context->paintingDisabled())
                 context = filterPainter.beginFilterEffect(this, context, transparencyClipBox(this, rootLayer, paintBehavior));
 #endif
         
@@ -2892,7 +2892,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
 
 #if ENABLE(CSS_FILTERS)
             // If the filter was not started yet, start it now, after the transparency layer was lazily created.
-            if (filterPainter.haveFilterEffect() && !filterPainter.hasStartedFilterEffect())
+            if (filterPainter.haveFilterEffect() && !filterPainter.hasStartedFilterEffect() && !context->paintingDisabled())
                 context = filterPainter.beginFilterEffect(this, context, transparencyClipBox(this, rootLayer, paintBehavior));
 #endif
             // Set up the clip used when painting our children.

@@ -1,3 +1,15 @@
+2012-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Unmatched transparency layer begin/end on a filtered element with an opacity ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=76329
+
+        Reviewed by Dan Bernstein.
+        
+        Manual test with a filtered element as a descendant of an element with
+        opacity. Doing a Find is necessary to exercise the test.
+
+        * ManualTests/filters/opacity-above-filter.html: Added.
+
 2012-01-13  Eli Fidler  <efidler@rim.com>
 
         GCC compiler version is not detected properly for QNX qcc variant
