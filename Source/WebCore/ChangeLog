@@ -1,3 +1,16 @@
+2012-01-13  Raymond Toy  <rtoy@google.com>
+
+        noteOn, noteGrainOn and noteOff idl should take doubles
+        https://bugs.webkit.org/show_bug.cgi?id=76073
+
+        Reviewed by Adam Barth.
+
+        Existing audiobuffersource-playbackrate and gain tests cover the
+        noteOn and noteOff changes.
+
+        * webaudio/AudioBufferSourceNode.idl: noteOn, noteGrainOn, and
+        noteOff take doubles.
+
 2012-01-13  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=71230

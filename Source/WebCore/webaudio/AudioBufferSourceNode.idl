@@ -37,8 +37,8 @@ module audio {
         attribute boolean loop; // This is the proper attribute name from the specification.
         attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
 
-        void noteOn(in float when);
-        void noteGrainOn(in float when, in float grainOffset, in float grainDuration);
-        void noteOff(in float when);
+        void noteOn(in double when);
+        void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
+        void noteOff(in double when);
     };
 }
