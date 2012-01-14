@@ -955,6 +955,9 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     paintObject(paintInfo, adjustedPaintOffset);
     if (pushedClip)
         popContentsClip(paintInfo, phase, adjustedPaintOffset);
+
+    if ((phase == PaintPhaseOutline || phase == PaintPhaseSelfOutline) && style()->visibility() == VISIBLE)
+        paintOutline(paintInfo.context, LayoutRect(adjustedPaintOffset, size()));
 }
 
 static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell* elem2)
@@ -1085,6 +1088,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             } else {
                 // Draw the dirty cells in the order that they appear.
                 for (unsigned r = startrow; r < endrow; r++) {
+                    RenderTableRow* row = m_grid[r].rowRenderer;
+                    if (row && !row->hasSelfPaintingLayer())
+                        row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
                     for (unsigned c = startcol; c < endcol; c++) {
                         CellStruct& current = cellAt(r, c);
                         RenderTableCell* cell = current.primaryCell();
@@ -1105,6 +1111,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             HashSet<RenderTableCell*> spanningCells;
 
             for (unsigned r = startrow; r < endrow; r++) {
+                RenderTableRow* row = m_grid[r].rowRenderer;
+                if (row && !row->hasSelfPaintingLayer())
+                    row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
                 for (unsigned c = startcol; c < endcol; c++) {
                     CellStruct& current = cellAt(r, c);
                     if (!current.hasCells())

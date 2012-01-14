@@ -218,11 +218,18 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
+void RenderTableRow::paintOutlineForRowIfNeeded(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    PaintPhase paintPhase = paintInfo.phase;
+    if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && style()->visibility() == VISIBLE)
+        paintOutline(paintInfo.context, LayoutRect(paintOffset, size()));
+}
+
 void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(hasSelfPaintingLayer());
-    if (!layer())
-        return;
+
+    paintOutlineForRowIfNeeded(paintInfo, paintOffset);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCell()) {
             // Paint the row background behind the cell.

@@ -40,6 +40,7 @@ public:
     RenderTable* table() const { return toRenderTable(parent()->parent()); }
 
     void updateBeforeAndAfterContent();
+    void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
