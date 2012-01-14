@@ -104,15 +104,14 @@ void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntS
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+    CALayer *rootCompositingLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
 
-    if (!graphicsLayer)
-        m_rootLayer.get().sublayers = nil;
-    else
-        m_rootLayer.get().sublayers = [NSArray arrayWithObject:graphicsLayer->platformLayer()];
+    if (m_layerTreeStateIsFrozen) {
+        m_pendingRootCompositingLayer = rootCompositingLayer;
+        return;
+    }
 
-    [CATransaction commit];
+    setRootCompositingLayer(rootCompositingLayer);
 }
 
 void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStateIsFrozen)
@@ -146,12 +145,16 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
     m_webPage->layoutIfNeeded();
 
+    if (m_pendingRootCompositingLayer) {
+        setRootCompositingLayer(m_pendingRootCompositingLayer.get());
+        m_pendingRootCompositingLayer = nullptr;
+    }
+
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 
     [pool drain];
     return returnValue;
 }
-
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 {
@@ -169,6 +172,21 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     [CATransaction synchronize];
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+}
+
+void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
+{
+    ASSERT(!m_layerTreeStateIsFrozen);
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    if (!layer)
+        m_rootLayer.get().sublayers = nil;
+    else
+        m_rootLayer.get().sublayers = [NSArray arrayWithObject:layer];
+
+    [CATransaction commit];
 }
 
 } // namespace WebKit

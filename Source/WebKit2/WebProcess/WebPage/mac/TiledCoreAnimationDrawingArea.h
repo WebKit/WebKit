@@ -61,11 +61,14 @@ private:
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
 
+    void setRootCompositingLayer(CALayer *);
+
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CALayer> m_rootLayer;
+    RetainPtr<CALayer> m_pendingRootCompositingLayer;
 };
 
 } // namespace WebKit

@@ -1,5 +1,19 @@
 2012-01-13  Anders Carlsson  <andersca@apple.com>
 
+        Delay updating the root compositing layer if the layer tree state is frozen
+        https://bugs.webkit.org/show_bug.cgi?id=76316
+
+        Reviewed by Dan Bernstein.
+
+        When the layer tree is frozen, stash the root layer in m_pendingRootCompositingLayer and set it in flushLayers.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+2012-01-13  Anders Carlsson  <andersca@apple.com>
+
         Implement TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen
         https://bugs.webkit.org/show_bug.cgi?id=76308
 
