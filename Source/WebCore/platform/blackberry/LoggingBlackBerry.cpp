@@ -19,6 +19,8 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 static inline void initializeWithUserDefault(WTFLogChannel& channel, bool enabled)
@@ -36,30 +38,18 @@ void initializeLoggingChannelsIfNecessary()
         return;
     haveInitializedLoggingChannels = true;
 
-    initializeWithUserDefault(LogNotYetImplemented, true);
-    initializeWithUserDefault(LogFrames, true);
-    initializeWithUserDefault(LogLoading, true);
-    initializeWithUserDefault(LogPopupBlocking, true);
-    initializeWithUserDefault(LogEvents, true);
-    initializeWithUserDefault(LogEditing, true);
-    initializeWithUserDefault(LogLiveConnect, true);
-    initializeWithUserDefault(LogIconDatabase, false);
-    initializeWithUserDefault(LogSQLDatabase, false);
-    initializeWithUserDefault(LogSpellingAndGrammar, true);
-    initializeWithUserDefault(LogBackForward, true);
-    initializeWithUserDefault(LogHistory, true);
-    initializeWithUserDefault(LogPageCache, true);
-    initializeWithUserDefault(LogPlatformLeaks, true);
-    initializeWithUserDefault(LogNetwork, true);
-    initializeWithUserDefault(LogFTP, true);
-    initializeWithUserDefault(LogThreading, true);
-    initializeWithUserDefault(LogStorageAPI, true);
-    initializeWithUserDefault(LogMedia, true);
-    initializeWithUserDefault(LogPlugins, true);
-    initializeWithUserDefault(LogArchives, true);
-    initializeWithUserDefault(LogProgress, false);
-    initializeWithUserDefault(LogResourceLoading, false);
-    initializeWithUserDefault(LogFileAPI, true);
+    String logEnv = getenv("WEBKIT_DEBUG");
+    if (logEnv.isEmpty())
+        return;
+
+    Vector<String> logv;
+    logEnv.split(" ", logv);
+
+    Vector<String>::const_iterator it = logv.begin();
+    for (; it != logv.end(); ++it) {
+        if (WTFLogChannel* channel = getChannelFromName(*it))
+            channel->state = WTFLogChannelOn;
+    }
 }
 
 } // namespace WebCore

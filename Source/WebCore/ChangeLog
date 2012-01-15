@@ -1,3 +1,15 @@
+2012-01-14  Adam Treat  <atreat@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76339
+
+        Take a page from the Gtk and Qt ports and quiet these logs unless they
+        are explicitly enabled via environment variable.
+
+        Reviewed by George Staikos.
+
+        * platform/blackberry/LoggingBlackBerry.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+
 2011-11-09  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: outline-color-applies-to* tests fail
