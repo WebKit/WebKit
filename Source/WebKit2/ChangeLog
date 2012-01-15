@@ -1,3 +1,12 @@
+2012-01-14  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10696295> Crash in WebProcess at com.apple.CFNetwork: URLCredentialStorage::CreateCurrentPersistentCredentials + 298
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::initializeSecItemShim): Removed an early return that was accidentally added in r105008.
+
 2012-01-13  Anders Carlsson  <andersca@apple.com>
 
         Delay updating the root compositing layer if the layer tree state is frozen

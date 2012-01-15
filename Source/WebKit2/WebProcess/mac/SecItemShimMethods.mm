@@ -105,7 +105,6 @@ static OSStatus webSecItemDelete(CFDictionaryRef query)
 
 void initializeSecItemShim()
 {
-    return;
     const WebProcessSecItemShimCallbacks callbacks = {
         webSecItemCopyMatching,
         webSecItemAdd,
