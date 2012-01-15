@@ -5549,16 +5549,16 @@ public:
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
         if (!m_right) {
-            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_right = m_top;
+            m_bottom = m_top;
+            m_left = m_top;
         }
         if (!m_bottom) {
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
+            m_bottom = m_top;
+            m_left = m_right;
         }
         if (!m_left)
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
+            m_left = m_right;
 
         // Now build a rect value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();
@@ -5665,16 +5665,16 @@ public:
         // We need to clone and repeat values for any omissions.
         ASSERT(m_top);
         if (!m_right) {
-            m_right = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_left = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
+            m_right = m_top;
+            m_bottom = m_top;
+            m_left = m_top;
         }
         if (!m_bottom) {
-            m_bottom = m_cssValuePool->createValue(m_top->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_top->primitiveType()));
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
+            m_bottom = m_top;
+            m_left = m_right;
         }
         if (!m_left)
-            m_left = m_cssValuePool->createValue(m_right->getDoubleValue(), static_cast<CSSPrimitiveValue::UnitTypes>(m_right->primitiveType()));
+            m_left = m_right;
 
         // Now build a quad value to hold all four of our primitive values.
         RefPtr<Quad> quad = Quad::create();

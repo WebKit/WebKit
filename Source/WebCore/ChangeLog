@@ -1,3 +1,20 @@
+2012-01-15  Andreas Kling  <awesomekling@apple.com>
+
+        CSSParser: Fix failing assertion below BorderImageQuadParseContext.
+        <http://webkit.org/b/76343> and <rdar://problem/10584969>
+
+        Reviewed by Antti Koivisto.
+
+        No longer asserts: fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
+
+        * css/CSSParser.cpp:
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+
+            Clone CSSValues by copying the RefPtrs instead of going through
+            the CSSValuePool's create-from-double factory. This prevents an
+            assertion when the incoming value is CSSValueAuto.
+
 2011-08-30  Robert Hogan  <robert@webkit.org>
 
         <embed> width and height properties propagate to parent object node
