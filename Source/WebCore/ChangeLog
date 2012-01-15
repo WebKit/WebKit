@@ -1,3 +1,58 @@
+2011-12-30  Robert Hogan  <robert@webkit.org>
+
+        compareBorders() is called too often during painting
+        https://bugs.webkit.org/show_bug.cgi?id=73349
+
+        Reviewed by Julien Chaffraix.
+
+        Collapsed borders are re-calculated every time they are painted.
+        This is unnecessary, they only change with the layout or style so calculate and
+        cache them whenever the layout or style changes and use the cached values when
+        painting. The cache is stored in the table section so that the memory footprint
+        of a table is only increased when it has collapsing borders.
+
+        The gain in performance here consists of skipping collapsed border computation
+        during painting. The only path that incurs a small performance penalty is the 
+        additional get/set on the cache when a collapsed border is computed. This penalty only applies
+        during style change, layout, or when the width of the table is calculated. The computed
+        border value is not stored in the cache when it has been calculated without its color
+        for borderHalfStart and co., so that code path is unaffected by this change.
+
+        No new tests, covered by existing collapsed border tests.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::willBeDestroyed): remove entries from collapsed border cache
+        (WebCore::RenderTableCell::collapsedStartBorder):
+         Compute, and also cache if the full border including color was computed. 
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::collapsedEndBorder): ditto
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        (WebCore::RenderTableCell::collapsedBeforeBorder): ditto
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder):
+        (WebCore::RenderTableCell::collapsedAfterBorder): ditto
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder):
+        (WebCore::RenderTableCell::cachedCollapsedLeftBorder):
+         Inline the function since it is only called in paintCollapsedBorders and remove
+         includeColor as a parameter. Move the call to the table's style to the caller rather
+         than call it 4 times in a row. Use the cached border values directly.
+        (WebCore::RenderTableCell::cachedCollapsedRightBorder): ditto
+        (WebCore::RenderTableCell::cachedCollapsedTopBorder): ditto
+        (WebCore::RenderTableCell::cachedCollapsedBottomBorder): ditto
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+         This function always uses the collapsed border cache now.
+        * rendering/RenderTableCell.h:
+         Make the collapsed border functions private.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::removeCachedCollapsedBorders): The cache is deleted by the HashMap
+         since it is the only owner of the cached item.
+        (WebCore::RenderTableSection::setCachedCollapsedBorder):
+        (WebCore::RenderTableSection::cachedCollapsedBorder):
+         This will assert if there is no cached collapsed border for the side of the 
+         cell requested by the caller.
+        * rendering/RenderTableSection.h:
+         HashMap wouldn't let me use CollapsedBorderSide in the key value for the cache
+         so use int instead.
+
 2012-01-14  David Levin  <levin@chromium.org>
 
         HWndDC should be in platform/win instead of wtf.

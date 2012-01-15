@@ -98,26 +98,6 @@ public:
     virtual LayoutUnit borderBefore() const;
     virtual LayoutUnit borderAfter() const;
 
-    LayoutUnit borderHalfLeft(bool outer) const;
-    LayoutUnit borderHalfRight(bool outer) const;
-    LayoutUnit borderHalfTop(bool outer) const;
-    LayoutUnit borderHalfBottom(bool outer) const;
-
-    LayoutUnit borderHalfStart(bool outer) const;
-    LayoutUnit borderHalfEnd(bool outer) const;
-    LayoutUnit borderHalfBefore(bool outer) const;
-    LayoutUnit borderHalfAfter(bool outer) const;
-
-    CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-
-    CollapsedBorderValue collapsedLeftBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedRightBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedTopBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-    CollapsedBorderValue collapsedBottomBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
-
     void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
     static void sortBorderValues(RenderTable::CollapsedBorderValues&);
 
@@ -174,6 +154,31 @@ private:
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
+
+    LayoutUnit borderHalfLeft(bool outer) const;
+    LayoutUnit borderHalfRight(bool outer) const;
+    LayoutUnit borderHalfTop(bool outer) const;
+    LayoutUnit borderHalfBottom(bool outer) const;
+
+    LayoutUnit borderHalfStart(bool outer) const;
+    LayoutUnit borderHalfEnd(bool outer) const;
+    LayoutUnit borderHalfBefore(bool outer) const;
+    LayoutUnit borderHalfAfter(bool outer) const;
+
+    CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue collapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+
+    CollapsedBorderValue cachedCollapsedLeftBorder(RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedRightBorder(RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedTopBorder(RenderStyle*) const;
+    CollapsedBorderValue cachedCollapsedBottomBorder(RenderStyle*) const;
+
+    CollapsedBorderValue computeCollapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
     unsigned m_row : 31;
     bool m_cellWidthChanged : 1;

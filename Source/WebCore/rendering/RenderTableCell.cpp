@@ -58,8 +58,10 @@ void RenderTableCell::willBeDestroyed()
 
     RenderBlock::willBeDestroyed();
 
-    if (recalcSection)
+    if (recalcSection) {
         recalcSection->setNeedsCellRecalc();
+        recalcSection->removeCachedCollapsedBorders(this);
+    }
 }
 
 unsigned RenderTableCell::colSpan() const
@@ -392,6 +394,14 @@ static CollapsedBorderValue chooseBorder(const CollapsedBorderValue& border1, co
 
 CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrNot includeColor) const
 {
+    CollapsedBorderValue result = computeCollapsedStartBorder(includeColor);
+    if (includeColor)
+        section()->setCachedCollapsedBorder(this, CBSStart, result);
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderColorOrNot includeColor) const
+{
     RenderTable* table = this->table();
     bool isStartColumn = col() == 0;
 
@@ -454,6 +464,14 @@ CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrN
 }
 
 CollapsedBorderValue RenderTableCell::collapsedEndBorder(IncludeBorderColorOrNot includeColor) const
+{
+    CollapsedBorderValue result = computeCollapsedEndBorder(includeColor);
+    if (includeColor)
+        section()->setCachedCollapsedBorder(this, CBSEnd, result);
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderColorOrNot includeColor) const
 {
     RenderTable* table = this->table();
     bool isEndColumn = table->colToEffCol(col() + colSpan() - 1) == table->numEffCols() - 1;
@@ -520,6 +538,14 @@ CollapsedBorderValue RenderTableCell::collapsedEndBorder(IncludeBorderColorOrNot
 }
 
 CollapsedBorderValue RenderTableCell::collapsedBeforeBorder(IncludeBorderColorOrNot includeColor) const
+{
+    CollapsedBorderValue result = computeCollapsedBeforeBorder(includeColor);
+    if (includeColor)
+        section()->setCachedCollapsedBorder(this, CBSBefore, result);
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorderColorOrNot includeColor) const
 {
     RenderTable* table = this->table();
 
@@ -599,6 +625,14 @@ CollapsedBorderValue RenderTableCell::collapsedBeforeBorder(IncludeBorderColorOr
 
 CollapsedBorderValue RenderTableCell::collapsedAfterBorder(IncludeBorderColorOrNot includeColor) const
 {
+    CollapsedBorderValue result = computeCollapsedAfterBorder(includeColor);
+    if (includeColor)
+        section()->setCachedCollapsedBorder(this, CBSAfter, result);
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderColorOrNot includeColor) const
+{
     RenderTable* table = this->table();
 
     // For after border, we need to check, in order of precedence:
@@ -666,36 +700,32 @@ CollapsedBorderValue RenderTableCell::collapsedAfterBorder(IncludeBorderColorOrN
     return result;    
 }
 
-CollapsedBorderValue RenderTableCell::collapsedLeftBorder(IncludeBorderColorOrNot includeColor) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(RenderStyle* tableStyle) const
 {
-    RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
-        return tableStyle->isLeftToRightDirection() ? collapsedStartBorder(includeColor) : collapsedEndBorder(includeColor);
-    return tableStyle->isFlippedBlocksWritingMode() ? collapsedAfterBorder(includeColor) : collapsedBeforeBorder(includeColor);
+        return tableStyle->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSStart) : section()->cachedCollapsedBorder(this, CBSEnd);
+    return tableStyle->isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(this, CBSAfter) : section()->cachedCollapsedBorder(this, CBSBefore);
 }
 
-CollapsedBorderValue RenderTableCell::collapsedRightBorder(IncludeBorderColorOrNot includeColor) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(RenderStyle* tableStyle) const
 {
-    RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
-        return tableStyle->isLeftToRightDirection() ? collapsedEndBorder(includeColor) : collapsedStartBorder(includeColor);
-    return tableStyle->isFlippedBlocksWritingMode() ? collapsedBeforeBorder(includeColor) : collapsedAfterBorder(includeColor);
+        return tableStyle->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSEnd) : section()->cachedCollapsedBorder(this, CBSStart);
+    return tableStyle->isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(this, CBSBefore) : section()->cachedCollapsedBorder(this, CBSAfter);
 }
 
-CollapsedBorderValue RenderTableCell::collapsedTopBorder(IncludeBorderColorOrNot includeColor) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(RenderStyle* tableStyle) const
 {
-    RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
-        return tableStyle->isFlippedBlocksWritingMode() ? collapsedAfterBorder(includeColor) : collapsedBeforeBorder(includeColor);
-    return tableStyle->isLeftToRightDirection() ? collapsedStartBorder(includeColor) : collapsedEndBorder(includeColor);
+        return tableStyle->isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(this, CBSAfter) : section()->cachedCollapsedBorder(this, CBSBefore);
+    return tableStyle->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSStart) : section()->cachedCollapsedBorder(this, CBSEnd);
 }
 
-CollapsedBorderValue RenderTableCell::collapsedBottomBorder(IncludeBorderColorOrNot includeColor) const
+inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(RenderStyle* tableStyle) const
 {
-    RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
-        return tableStyle->isFlippedBlocksWritingMode() ? collapsedBeforeBorder(includeColor) : collapsedAfterBorder(includeColor);
-    return tableStyle->isLeftToRightDirection() ? collapsedEndBorder(includeColor) : collapsedStartBorder(includeColor);
+        return tableStyle->isFlippedBlocksWritingMode() ? section()->cachedCollapsedBorder(this, CBSBefore) : section()->cachedCollapsedBorder(this, CBSAfter);
+    return tableStyle->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSEnd) : section()->cachedCollapsedBorder(this, CBSStart);
 }
 
 LayoutUnit RenderTableCell::borderLeft() const
@@ -923,10 +953,11 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
 
-    CollapsedBorderValue leftVal = collapsedLeftBorder();
-    CollapsedBorderValue rightVal = collapsedRightBorder();
-    CollapsedBorderValue topVal = collapsedTopBorder();
-    CollapsedBorderValue bottomVal = collapsedBottomBorder();
+    RenderStyle* tableStyle = table()->style();
+    CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(tableStyle);
+    CollapsedBorderValue rightVal = cachedCollapsedRightBorder(tableStyle);
+    CollapsedBorderValue topVal = cachedCollapsedTopBorder(tableStyle);
+    CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(tableStyle);
      
     // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
     LayoutUnit topWidth = topVal.width();

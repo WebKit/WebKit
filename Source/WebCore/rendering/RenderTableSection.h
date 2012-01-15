@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+enum CollapsedBorderSide {
+    CBSBefore,
+    CBSAfter,
+    CBSStart,
+    CBSEnd
+};
+
 class RenderTableCell;
 class RenderTableRow;
 
@@ -130,6 +137,10 @@ public:
 
     unsigned rowIndexForRenderer(const RenderTableRow*) const;
 
+    void removeCachedCollapsedBorders(const RenderTableCell*);
+    void setCachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide, CollapsedBorderValue);
+    CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -182,6 +193,10 @@ private:
     bool m_forceSlowPaintPathWithOverflowingCell;
 
     bool m_hasMultipleCellLevels;
+
+    // This map holds the collapsed border values for cells with collapsed borders.
+    // It is held at RenderTableSection level to spare memory consumption by table cells.
+    HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 };
 
 inline RenderTableSection* toRenderTableSection(RenderObject* object)

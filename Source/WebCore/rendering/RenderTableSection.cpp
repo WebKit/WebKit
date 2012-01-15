@@ -1349,4 +1349,27 @@ unsigned RenderTableSection::rowIndexForRenderer(const RenderTableRow* row) cons
     return 0;
 }
 
+void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell* cell)
+{
+    if (!table()->collapseBorders())
+        return;
+    
+    for (int side = CBSBefore; side <= CBSEnd; ++side)
+        m_cellsCollapsedBorders.remove(make_pair(cell, side));
+}
+
+void RenderTableSection::setCachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side, CollapsedBorderValue border)
+{
+    ASSERT(table()->collapseBorders());
+    m_cellsCollapsedBorders.set(make_pair(cell, side), border);
+}
+
+CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side)
+{
+    ASSERT(table()->collapseBorders());
+    HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(make_pair(cell, side));
+    ASSERT(it != m_cellsCollapsedBorders.end());
+    return it->second;
+}
+
 } // namespace WebCore
