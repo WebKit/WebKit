@@ -1,3 +1,37 @@
+2012-01-15  Luke Macpherson   <macpherson@chromium.org>
+
+        Remove external references to CSSPrimitiveValue::UnitTypes enum.
+        https://bugs.webkit.org/show_bug.cgi?id=76229
+
+        Reviewed by Darin Adler.
+
+        No new tests / refactoring only.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::isCacheable):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isUnitTypeLength):
+        (WebCore::CSSPrimitiveValue::isFontRelativeLength):
+        (WebCore::CSSPrimitiveValue::isIdent):
+        (WebCore::CSSPrimitiveValue::isNumber):
+        (WebCore::CSSPrimitiveValue::isPercentage):
+        (WebCore::CSSPrimitiveValue::isString):
+        (WebCore::CSSPrimitiveValue::isURI):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyCursor::applyValue):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::ApplyPropertyZoom::applyValue):
+
 2012-01-15  Pablo Flouret  <pablof@motorola.com>
 
         Fix compilation errors on build-webkit --debug --no-video on mac.

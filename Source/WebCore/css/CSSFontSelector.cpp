@@ -285,9 +285,9 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     for (int i = 0; i < familyLength; i++) {
         CSSPrimitiveValue* item = static_cast<CSSPrimitiveValue*>(familyList->itemWithoutBoundsCheck(i));
         String familyName;
-        if (item->primitiveType() == CSSPrimitiveValue::CSS_STRING)
+        if (item->isString())
             familyName = static_cast<FontFamilyValue*>(item)->familyName();
-        else if (item->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
+        else if (item->isIdent()) {
             // We need to use the raw text for all the generic family types, since @font-face is a way of actually
             // defining what font to use for those types.
             String familyName;

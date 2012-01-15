@@ -329,12 +329,11 @@ public:
         else if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
             setValue(selector->style(), Length());
         else {
-            int type = primitiveValue->primitiveType();
-            if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+            if (primitiveValue->isLength()) {
                 Length length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
                 length.setQuirk(primitiveValue->isQuirkValue());
                 setValue(selector->style(), length);
-            } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            } else if (primitiveValue->isPercentage())
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
         }
     }
@@ -385,11 +384,11 @@ public:
 
         Length radiusWidth;
         Length radiusHeight;
-        if (pair->first()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else
             radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
-        if (pair->second()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else
             radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
@@ -669,12 +668,8 @@ public:
 
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller));
         } else {
-            int type = primitiveValue->primitiveType();
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
-                                              || (type != CSSPrimitiveValue::CSS_PERCENTAGE
-                                                  && type != CSSPrimitiveValue::CSS_EMS
-                                                  && type != CSSPrimitiveValue::CSS_EXS
-                                                  && type != CSSPrimitiveValue::CSS_REMS));
+                                              || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
             if (primitiveValue->isLength())
                 size = primitiveValue->computeLength<float>(selector->parentStyle(), selector->rootElementStyle(), 1.0, true);
             else if (primitiveValue->isPercentage())
@@ -1023,21 +1018,19 @@ public:
                 if (!item->isPrimitiveValue())
                     continue;
                 CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                int type = primitiveValue->primitiveType();
-                if (type == CSSPrimitiveValue::CSS_URI) {
+                if (primitiveValue->isURI()) {
                     if (primitiveValue->isCursorImageValue()) {
                         CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
                         if (image->updateIfSVGCursorIsUsed(selector->element())) // Elements with SVG cursors are not allowed to share style.
                             selector->style()->setUnique();
                         selector->style()->addCursor(selector->cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
                     }
-                } else if (type == CSSPrimitiveValue::CSS_IDENT)
+                } else if (primitiveValue->isIdent())
                     selector->style()->setCursor(*primitiveValue);
             }
         } else if (value->isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_IDENT && selector->style()->cursor() != ECursor(*primitiveValue))
+            if (primitiveValue->isIdent() && selector->style()->cursor() != ECursor(*primitiveValue))
                 selector->style()->setCursor(*primitiveValue);
         }
     }
@@ -1236,9 +1229,9 @@ public:
                 pageSizeType = PAGE_SIZE_RESOLVED;
                 width = height = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle());
             } else {
-                if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
-                    return;
                 switch (primitiveValue->getIdent()) {
+                case 0:
+                    return;
                 case CSSValueAuto:
                     pageSizeType = PAGE_SIZE_AUTO;
                     break;
@@ -1308,7 +1301,7 @@ public:
             return;
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
-        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING) {
+        if (primitiveValue->isString()) {
             selector->style()->setTextEmphasisFill(TextEmphasisFillFilled);
             selector->style()->setTextEmphasisMark(TextEmphasisMarkCustom);
             selector->style()->setTextEmphasisCustomMark(primitiveValue->getStringValue());
@@ -1555,11 +1548,11 @@ public:
             float docZoom = selector->document()->renderer()->style()->zoom();
             selector->setEffectiveZoom(docZoom);
             selector->setZoom(docZoom);
-        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
+        } else if (primitiveValue->isPercentage()) {
             resetEffectiveZoom(selector);
             if (float percent = primitiveValue->getFloatValue())
                 selector->setZoom(percent / 100.0f);
-        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+        } else if (primitiveValue->isNumber()) {
             resetEffectiveZoom(selector);
             if (float number = primitiveValue->getFloatValue())
                 selector->setZoom(number);
