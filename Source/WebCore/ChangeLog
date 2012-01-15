@@ -1,3 +1,21 @@
+2012-01-15  Pablo Flouret  <pablof@motorola.com>
+
+        Fix compilation errors on build-webkit --debug --no-video on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75867
+
+        Reviewed by Philippe Normand.
+
+        - Some exported HTMLMediaElement symbols were guarded by FULLSCREEN_API
+          feature instead of VIDEO.
+        - Unused parameter warning in CanvasRenderingContext::wouldTaintOrigin().
+        - RenderThemeMac::shouldShowPlaceholderWhenFocused() implementation
+          wrongly guarded by VIDEO feature.
+
+        * WebCore.exp.in:
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * rendering/RenderThemeMac.mm:
+
 2012-01-15  Andreas Kling  <awesomekling@apple.com>
 
         CSSParser: Fix failing assertion below BorderImageQuadParseContext.

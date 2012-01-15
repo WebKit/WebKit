@@ -1,3 +1,15 @@
+2012-01-15  Pablo Flouret  <pablof@motorola.com>
+
+        Fix compilation errors on build-webkit --debug --no-video on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75867
+
+        Reviewed by Philippe Normand.
+
+        Add --[no-]video-track to build-webkit, since video track feature
+        depends on video.
+
+        * Scripts/build-webkit:
+
 2012-01-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Failing webkit_unit_tests does not make the cr-linux EWS bubble red

@@ -1,3 +1,15 @@
+2012-01-15  Pablo Flouret  <pablof@motorola.com>
+
+        Fix compilation errors on build-webkit --debug --no-video on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75867
+
+        Reviewed by Philippe Normand.
+
+        Make ENABLE_VIDEO_TRACK conditional on ENABLE_VIDEO, video track feature
+        doesn't build without video.
+
+        * wtf/Platform.h:
+
 2012-01-14  David Levin  <levin@chromium.org>
 
         HWndDC should be in platform/win instead of wtf.

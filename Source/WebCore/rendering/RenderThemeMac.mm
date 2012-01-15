@@ -2029,6 +2029,8 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }
 
+#endif // ENABLE(VIDEO)
+
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -2037,8 +2039,6 @@ bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
     return false;
 #endif
 }
-
-#endif // ENABLE(VIDEO)
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const
 {

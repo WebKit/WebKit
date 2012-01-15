@@ -164,13 +164,13 @@ public:
     virtual bool supportsFullscreenForNode(const WebCore::Node*) OVERRIDE;
     virtual void enterFullscreenForNode(WebCore::Node*) OVERRIDE;
     virtual void exitFullscreenForNode(WebCore::Node*) OVERRIDE;
-    virtual void fullScreenRendererChanged(WebCore::RenderBox*) OVERRIDE;
 #endif
     
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) OVERRIDE;
     virtual void enterFullScreenForElement(WebCore::Element*) OVERRIDE;
     virtual void exitFullScreenForElement(WebCore::Element*) OVERRIDE;
+    virtual void fullScreenRendererChanged(WebCore::RenderBox*) OVERRIDE;
 #endif
 
     // FIXME: Remove once all ports are using client-based geolocation. https://bugs.webkit.org/show_bug.cgi?id=40373

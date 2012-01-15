@@ -82,6 +82,8 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)
 
     if (!video->hasSingleSecurityOrigin())
         return true;
+#else
+    UNUSED_PARAM(video);
 #endif
 
     return false;

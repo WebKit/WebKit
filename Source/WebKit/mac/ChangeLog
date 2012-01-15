@@ -1,3 +1,18 @@
+2012-01-15  Pablo Flouret  <pablof@motorola.com>
+
+        Fix compilation errors on build-webkit --debug --no-video on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75867
+
+        Reviewed by Philippe Normand.
+
+        - WebChromeClient::fullScreenRendererChanged() declaration wrongly guarded
+          by VIDEO feature instead of FULLSCREEN_API.
+        - _isAnyMoviePlaying implementation depends on VIDEO.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _isAnyMoviePlaying]):
+
 2012-01-11  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75904

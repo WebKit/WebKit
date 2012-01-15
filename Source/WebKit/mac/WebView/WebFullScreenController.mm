@@ -669,6 +669,7 @@ private:
 
 - (BOOL)_isAnyMoviePlaying
 {
+#if ENABLE(VIDEO)
     if (!_element)
         return NO;
     
@@ -683,6 +684,7 @@ private:
         
         nextNode = nextNode->traverseNextNode(_element.get());
     }
+#endif
     
     return NO;
 }
