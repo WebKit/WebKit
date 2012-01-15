@@ -211,33 +211,6 @@ void HTMLEmbedElement::insertedIntoDocument()
     HTMLPlugInImageElement::insertedIntoDocument();
     if (!inDocument())
         return;
-
-    String width = getAttribute(widthAttr);
-    String height = getAttribute(heightAttr);
-    if (!width.isEmpty() || !height.isEmpty()) {
-        Node* n = parentNode();
-        while (n && !n->hasTagName(objectTag))
-            n = n->parentNode();
-        if (n) {
-            if (!width.isEmpty())
-                static_cast<HTMLObjectElement*>(n)->setAttribute(widthAttr, width);
-            if (!height.isEmpty())
-                static_cast<HTMLObjectElement*>(n)->setAttribute(heightAttr, height);
-        }
-    }
-}
-
-void HTMLEmbedElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    HTMLPlugInImageElement::attributeChanged(attr, preserveDecls);
-
-    if ((attr->name() == widthAttr || attr->name() == heightAttr) && !attr->isEmpty()) {
-        ContainerNode* n = parentNode();
-        while (n && !n->hasTagName(objectTag))
-            n = n->parentNode();
-        if (n)
-            static_cast<HTMLObjectElement*>(n)->setAttribute(attr->name(), attr->value());
-    }
 }
 
 bool HTMLEmbedElement::isURLAttribute(Attribute* attr) const

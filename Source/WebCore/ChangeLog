@@ -1,3 +1,23 @@
+2011-08-30  Robert Hogan  <robert@webkit.org>
+
+        <embed> width and height properties propagate to parent object node
+        https://bugs.webkit.org/show_bug.cgi?id=17688
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html
+
+        WebKit seems to have inherited this behaviour from KHTML. When the width/height
+        of an <embed> element is set, it propagates the values up to any parent <object>
+        element. There doesn't seem to be any good reason for this and it is not consistent
+        with the behaviour of Firefox and Opera.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::attributeChanged): Removed
+        * html/HTMLEmbedElement.h:
+        (WebCore::HTMLEmbedElement::attributeChanged): Removed
+
 2011-12-30  Robert Hogan  <robert@webkit.org>
 
         compareBorders() is called too often during painting
