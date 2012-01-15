@@ -4509,6 +4509,7 @@
             'platform/win/FileSystemWin.cpp',
             'platform/win/GDIObjectCounter.cpp',
             'platform/win/GDIObjectCounter.h',
+            'platform/win/HWndDC.h',
             'platform/win/KeyEventWin.cpp',
             'platform/win/LanguageWin.cpp',
             'platform/win/LoggingWin.cpp',

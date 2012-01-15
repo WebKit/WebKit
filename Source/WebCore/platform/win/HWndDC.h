@@ -23,14 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_HWndDCWin_h
-#define WTF_HWndDCWin_h
+#ifndef HWndDC_h
+#define HWndDC_h
 
 #include <windows.h>
+#include <wtf/NonCopyable.h>
 
-namespace WTF {
+namespace WebCore {
 
 class HWndDC {
+    WTF_MAKE_NONCOPYABLE(HWndDC);
 public:
     explicit HWndDC(HWND hwnd)
         : m_hwnd(hwnd)
@@ -60,8 +62,6 @@ private:
     HDC m_hdc;
 };
 
-}
+} // namespace WebCore
 
-using WTF::HWndDC;
-
-#endif // WTF_HWndDCWin_h
+#endif // HWndDC_h

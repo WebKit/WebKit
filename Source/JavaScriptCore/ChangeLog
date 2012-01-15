@@ -1,3 +1,13 @@
+2012-01-14  David Levin  <levin@chromium.org>
+
+        HWndDC should be in platform/win instead of wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=76314
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+
 2012-01-13  David Levin  <levin@chromium.org>
 
         check-webkit-style: should encourage the use of Own* classes for Windows DC.

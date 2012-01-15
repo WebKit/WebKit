@@ -1,3 +1,20 @@
+2012-01-14  David Levin  <levin@chromium.org>
+
+        HWndDC should be in platform/win instead of wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=76314
+
+        Reviewed by Sam Weinig.
+
+        No new functionality, so no new tests.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/HWndDC.h: Renamed from Source/JavaScriptCore/wtf/win/HWndDCWin.h.
+        I also made the class non-copyable.
+        (WebCore::HWndDC::HWndDC):
+        (WebCore::HWndDC::~HWndDC):
+        (WebCore::HWndDC::operator HDC):
+
 2012-01-14  Adam Treat  <atreat@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76339

@@ -1,3 +1,13 @@
+2012-01-14  David Levin  <levin@chromium.org>
+
+        HWndDC should be in platform/win instead of wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=76314
+
+        Reviewed by Sam Weinig.
+
+        * src/win/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2012-01-14  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] Remove WebKit::WebWorker class.

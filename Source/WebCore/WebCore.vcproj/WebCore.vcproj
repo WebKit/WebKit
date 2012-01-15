@@ -26981,6 +26981,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\win\HWndDC.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\win\ImportedFunctionsEnumerator.cpp"
 					>
 				</File>
