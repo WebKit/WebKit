@@ -1,3 +1,13 @@
+2012-01-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: timeline record bars may overlap with the records column
+        https://bugs.webkit.org/show_bug.cgi?id=76387
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/timelinePanel.css:
+        (#timeline-container .split-view-sidebar-left):
+
 2012-01-13  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: styles sidebar rendering is broken

@@ -151,6 +151,10 @@
     overflow-x: hidden;
 }
 
+#timeline-container .split-view-sidebar-left {
+    z-index: 1;
+}
+
 .timeline-category-statusbar-item {
     height: 24px;
     line-height: 24px;
