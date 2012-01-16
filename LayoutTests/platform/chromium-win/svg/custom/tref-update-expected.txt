@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,-15) size 47x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 47x19
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 46.20: "Failure"
-      RenderSVGText {text} at (0,-15) size 51x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 51x19
+      RenderSVGText {text} at (0,-15) size 52x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 52x19
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 51.00: "Success"
     RenderSVGText {text} at (20,5) size 51x19 contains 1 chunk(s)
-      RenderSVGInline {tref} at (0,0) size 51x19
-        RenderSVGInlineText {#text} at (0,0) size 51x19
+      RenderSVGInline {tref} at (0,0) size 52x19
+        RenderSVGInlineText {#text} at (0,0) size 52x19
           chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 7 width 51.00: "Success"
       RenderSVGInlineText {#text} at (0,0) size 0x0

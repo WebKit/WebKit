@@ -11,11 +11,11 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 30 width 124.33: "and 'lengthAdjust' attributes."
       RenderSVGContainer {g} at (4,69) size 473x69
         RenderSVGContainer {g} at (9,69) size 468x27
-          RenderSVGText {text} at (3,23) size 52x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 52x9
+          RenderSVGText {text} at (3,23) size 53x9 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 53x9
               chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 52.00: "Line to Stretch"
           RenderSVGText {text} at (75,23) size 84x9 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 84x9
+            RenderSVGInlineText {#text} at (0,0) size 85x9
               chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 84.00: "this is a line to squeeze"
         RenderSVGContainer {g} at (4,94) size 472x14
           RenderSVGPath {line} at (6,94) size 162x4 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=56.00] [y2=32.00]

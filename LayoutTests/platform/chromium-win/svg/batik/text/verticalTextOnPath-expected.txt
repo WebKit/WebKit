@@ -384,7 +384,7 @@ layer at (0,0) size 450x500
                 chunk 1 (vertical) text run 5 at (60.70,14.24) startOffset 4 endOffset 5 height 22.67: "a"
                 chunk 1 (vertical) text run 6 at (67.91,12.92) startOffset 5 endOffset 6 height 22.67: "t"
                 chunk 1 (vertical) text run 7 at (75.22,12.50) startOffset 6 endOffset 7 height 22.67: "h"
-            RenderSVGInlineText {#text} at (65,41) size 23x76
+            RenderSVGInlineText {#text} at (65,41) size 23x77
               chunk 1 (vertical) text run 1 at (69.22,21.83) startOffset 0 endOffset 1 height 22.67: "a"
               chunk 1 (vertical) text run 2 at (69.22,31.17) startOffset 1 endOffset 2 height 22.67: "f"
               chunk 1 (vertical) text run 3 at (69.22,37.83) startOffset 2 endOffset 3 height 22.67: "t"

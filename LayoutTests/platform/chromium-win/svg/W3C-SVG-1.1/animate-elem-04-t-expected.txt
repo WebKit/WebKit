@@ -6,8 +6,8 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (8,0) size 66x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x10
           chunk 1 text run 1 at (8.00,8.00) startOffset 0 endOffset 18 width 66.00: "Test a motion path"
-      RenderSVGText {text} at (9,10) size 64x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 64x10
+      RenderSVGText {text} at (9,10) size 65x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 65x10
           chunk 1 text run 1 at (9.00,18.00) startOffset 0 endOffset 22 width 64.00: "'from'/'to' attribute."
       RenderSVGContainer {g} at (42,117) size 426x195
         RenderSVGPath {path} at (89,177) size 302x84 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 L 65 30"]

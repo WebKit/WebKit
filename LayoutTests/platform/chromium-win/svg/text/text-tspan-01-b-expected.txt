@@ -37,10 +37,10 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (369.90,168.50) startOffset 0 endOffset 9 width 67.80: " a peach!"
         RenderSVGRect {rect} at (374,297) size 411x92 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
         RenderSVGText {text} at (238,179) size 204x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 204x20
+          RenderSVGInlineText {#text} at (0,0) size 205x20
             chunk 1 text run 1 at (238.00,195.00) startOffset 0 endOffset 28 width 204.00: "Text: \"But you are a peach!\""
         RenderSVGText {text} at (238,196) size 234x20 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 234x20
+          RenderSVGInlineText {#text} at (0,0) size 235x20
             chunk 1 text run 1 at (238.00,212.25) startOffset 0 endOffset 34 width 234.00: "Using dx,dy, 'tspan' raises \"are\","
         RenderSVGText {text} at (238,213) size 178x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 178x20

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 109x12
           chunk 1 text run 1 at (14.00,10.00) startOffset 0 endOffset 26 width 108.40: "Basic test of 'textLength'"
       RenderSVGText {text} at (10,10) size 126x12 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 126x12
+        RenderSVGInlineText {#text} at (0,0) size 127x12
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 30 width 126.00: "and 'lengthAdjust' attributes."
       RenderSVGContainer {g} at (7,110) size 786x120
         RenderSVGContainer {g} at (15,110) size 765x50
@@ -98,7 +98,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 54x7
               chunk 1 text run 1 at (6.00,44.00) startOffset 0 endOffset 21 width 54.00: "lengthAdjust: default"
           RenderSVGText {text} at (76,32) size 63x7 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 63x7
+            RenderSVGInlineText {#text} at (0,0) size 64x7
               chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.00: "textLength: 15% shorter"
           RenderSVGText {text} at (76,38) size 54x7 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 54x7
@@ -164,7 +164,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 57x7
               chunk 1 text run 1 at (3.00,44.00) startOffset 0 endOffset 21 width 57.00: "lengthAdjust: spacing"
           RenderSVGText {text} at (76,32) size 63x7 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 63x7
+            RenderSVGInlineText {#text} at (0,0) size 64x7
               chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.00: "textLength: 15% shorter"
           RenderSVGText {text} at (76,38) size 57x7 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 57x7
@@ -192,7 +192,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 48x7
               chunk 1 text run 1 at (6.00,44.00) startOffset 0 endOffset 17 width 47.60: "lengthAdjust: sAG"
           RenderSVGText {text} at (76,32) size 63x7 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 63x7
+            RenderSVGInlineText {#text} at (0,0) size 64x7
               chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.00: "textLength: 20% shorter"
           RenderSVGText {text} at (76,38) size 48x7 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 48x7

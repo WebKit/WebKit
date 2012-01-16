@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="strokePattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
-      RenderSVGText {text} at (-150,9) size 372x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 372x77
+      RenderSVGText {text} at (-150,9) size 373x77 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 373x77
           chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 372.00: "Pattern on fill"
       RenderSVGText {text} at (-150,79) size 461x77 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 461x77
