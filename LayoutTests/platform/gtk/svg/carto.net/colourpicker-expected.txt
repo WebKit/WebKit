@@ -248,7 +248,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (518,446) size 93x13 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 93x13
             RenderSVGInlineText {#text} at (0,0) size 93x13
-              chunk 1 (middle anchor) text run 1 at (518.58,457.40) startOffset 0 endOffset 17 width 92.83: "Hide ColourPicker"
+              chunk 1 (middle anchor) text run 1 at (518.58,457.40) startOffset 0 endOffset 17 width 92.84: "Hide ColourPicker"
       RenderSVGContainer {g} at (397,366) size 89x18
         RenderSVGRect {rect} at (397,366) size 87x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=509.00] [y=469.00] [width=110.00] [height=20.00]
         RenderSVGRect {rect} at (399,367) size 87x17 [fill={[type=SOLID] [color=#696969]}] [x=511.00] [y=471.00] [width=110.00] [height=20.00]

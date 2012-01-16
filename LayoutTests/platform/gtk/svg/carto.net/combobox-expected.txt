@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (303,236) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=296.00] [width=131.00] [height=16.00]
           RenderSVGText {text} at (53,298) size 60x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 60x13
-              chunk 1 text run 1 at (53.00,308.50) startOffset 0 endOffset 10 width 59.53: "Buchs (AG)"
+              chunk 1 text run 1 at (53.00,308.50) startOffset 0 endOffset 10 width 59.54: "Buchs (AG)"
           RenderSVGRect {rect} at (297,246) size 96x63 [fill={[type=SOLID] [color=#FFFFFF]}] [x=51.50] [y=312.00] [width=131.00] [height=16.00]
           RenderSVGText {text} at (53,314) size 52x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 52x13

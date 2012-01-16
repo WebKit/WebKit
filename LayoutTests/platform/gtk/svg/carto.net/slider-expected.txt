@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-2000.00] [y=-2000.00] [width=6000.00] [height=6000.00]
     RenderSVGText {text} at (254,21) size 516x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 516x23
-        chunk 1 (middle anchor) text run 1 at (254.26,40.00) startOffset 0 endOffset 52 width 515.49: "Demonstration of the carto.net SVG GUI slider object"
+        chunk 1 (middle anchor) text run 1 at (254.25,40.00) startOffset 0 endOffset 52 width 515.49: "Demonstration of the carto.net SVG GUI slider object"
     RenderSVGContainer {g} at (546,44) size 17x91
       RenderSVGPath {line} at (548,44) size 13x91 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x1=710.00] [y1=65.00] [x2=710.00] [y2=165.00]
       RenderSVGPath {line} at (553,50) size 3x79 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=710.00] [y1=65.00] [x2=710.00] [y2=165.00]
