@@ -41,6 +41,7 @@
 #include "HTMLDocumentParser.h"
 #include "HTMLElement.h"
 #include "HTMLHeadElement.h"
+#include "HTMLNames.h"
 #include "Node.h"
 
 #include <wtf/Deque.h>
@@ -51,6 +52,10 @@
 using namespace std;
 
 namespace WebCore {
+
+using HTMLNames::bodyTag;
+using HTMLNames::headTag;
+using HTMLNames::htmlTag;
 
 struct DOMEditor::Digest {
     explicit Digest(Node* node) : m_node(node) { }
@@ -74,9 +79,9 @@ void DOMEditor::patchDocument(const String& markup)
     parser->detach();
 
     ExceptionCode ec = 0;
-    innerPatchHTMLElement(m_document->head(), newDocument->head(), ec);
-    if (!ec)
-        innerPatchHTMLElement(m_document->body(), newDocument->body(), ec);
+    OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), 0);
+    OwnPtr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
+    innerPatchNode(oldInfo.get(), newInfo.get(), ec);
 
     if (ec) {
         // Fall back to rewrite.
@@ -87,51 +92,47 @@ void DOMEditor::patchDocument(const String& markup)
 
 Node* DOMEditor::patchNode(Node* node, const String& markup, ExceptionCode& ec)
 {
-    Element* parentElement = node->parentElement();
+    // Don't parse <html> as a fragment.
+    if (node == node->ownerDocument()->documentElement()) {
+        patchDocument(markup);
+        return 0;
+    }
+
     Node* previousSibling = node->previousSibling();
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(m_document);
-    fragment->parseHTML(markup, parentElement);
+    fragment->parseHTML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
 
     // Compose the old list.
+    ContainerNode* parentNode = node->parentNode();
     Vector<OwnPtr<Digest> > oldList;
-    for (Node* child = parentElement->firstChild(); child; child = child->nextSibling())
+    for (Node* child = parentNode->firstChild(); child; child = child->nextSibling())
         oldList.append(createDigest(child, 0));
 
     // Compose the new list.
+    String markupCopy = markup;
+    markupCopy.makeLower();
     Vector<OwnPtr<Digest> > newList;
-    for (Node* child = parentElement->firstChild(); child != node; child = child->nextSibling())
+    for (Node* child = parentNode->firstChild(); child != node; child = child->nextSibling())
         newList.append(createDigest(child, 0));
-    for (Node* child = fragment->firstChild(); child; child = child->nextSibling())
+    for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(headTag) && !child->firstChild() && markupCopy.find("</head>") == notFound)
+            continue; // HTML5 parser inserts empty <head> tag whenever it parses <body>
+        if (child->hasTagName(bodyTag) && !child->firstChild() && markupCopy.find("</body>") == notFound)
+            continue; // HTML5 parser inserts empty <body> tag whenever it parses </head>
         newList.append(createDigest(child, &m_unusedNodesMap));
+    }
     for (Node* child = node->nextSibling(); child; child = child->nextSibling())
         newList.append(createDigest(child, 0));
 
-    innerPatchChildren(parentElement, oldList, newList, ec);
+    innerPatchChildren(parentNode, oldList, newList, ec);
     if (ec) {
         // Fall back to total replace.
         ec = 0;
-        parentElement->replaceChild(fragment.release(), node, ec);
+        parentNode->replaceChild(fragment.release(), node, ec);
         if (ec)
             return 0;
     }
-    return previousSibling ? previousSibling->nextSibling() : parentElement->firstChild();
-}
-
-void DOMEditor::innerPatchHTMLElement(HTMLElement* oldElement, HTMLElement* newElement, ExceptionCode& ec)
-{
-    if (oldElement)  {
-        if (newElement) {
-            OwnPtr<Digest> oldInfo = createDigest(oldElement, 0);
-            OwnPtr<Digest> newInfo = createDigest(newElement, &m_unusedNodesMap);
-            innerPatchNode(oldInfo.get(), newInfo.get(), ec);
-            if (ec)
-                return;
-        }
-        oldElement->removeAllChildren();
-        return;
-    }
-    if (newElement)
-        m_document->documentElement()->appendChild(newElement, ec);
+    return previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
 }
 
 void DOMEditor::innerPatchNode(Digest* oldDigest, Digest* newDigest, ExceptionCode& ec)
@@ -261,17 +262,31 @@ DOMEditor::diff(const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Dige
     return make_pair(oldMap, newMap);
 }
 
-void DOMEditor::innerPatchChildren(Element* element, const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Digest> >& newList, ExceptionCode& ec)
+void DOMEditor::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPtr<Digest> >& oldList, const Vector<OwnPtr<Digest> >& newList, ExceptionCode& ec)
 {
     pair<ResultMap, ResultMap> resultMaps = diff(oldList, newList);
     ResultMap& oldMap = resultMaps.first;
     ResultMap& newMap = resultMaps.second;
+
+    Digest* oldHead = 0;
+    Digest* oldBody = 0;
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
     HashMap<Digest*, Digest*> merges;
     for (size_t i = 0; i < oldList.size(); ++i) {
         if (oldMap[i].first)
             continue;
+
+        // Always match <head> and <body> tags with each other - we can't remove them from the DOM
+        // upon patching.
+        if (oldList[i]->m_node->hasTagName(headTag)) {
+            oldHead = oldList[i].get();
+            continue;
+        }
+        if (oldList[i]->m_node->hasTagName(bodyTag)) {
+            oldBody = oldList[i].get();
+            continue;
+        }
 
         // Check if this change is between stable nodes. If it is, consider it as "modified".
         if (!m_unusedNodesMap.contains(oldList[i]->m_sha1) && (!i || oldMap[i - 1].first) && (i == oldMap.size() - 1 || oldMap[i + 1].first)) {
@@ -297,6 +312,16 @@ void DOMEditor::innerPatchChildren(Element* element, const Vector<OwnPtr<Digest>
             markNodeAsUsed(newMap[i].first);
     }
 
+    // Mark <head> and <body> nodes for merge.
+    if (oldHead || oldBody) {
+        for (size_t i = 0; i < newList.size(); ++i) {
+            if (oldHead && newList[i]->m_node->hasTagName(headTag))
+                merges.set(newList[i].get(), oldHead);
+            if (oldBody && newList[i]->m_node->hasTagName(bodyTag))
+                merges.set(newList[i].get(), oldBody);
+        }
+    }
+
     // 2. Patch nodes marked for merge.
     for (HashMap<Digest*, Digest*>::iterator it = merges.begin(); it != merges.end(); ++it) {
         innerPatchNode(it->second, it->first, ec);
@@ -310,7 +335,7 @@ void DOMEditor::innerPatchChildren(Element* element, const Vector<OwnPtr<Digest>
             continue;
 
         ExceptionCode ec = 0;
-        insertBefore(element, newList[i].get(), element->childNode(i), ec);
+        insertBefore(parentNode, newList[i].get(), parentNode->childNode(i), ec);
         if (ec)
             return;
     }
@@ -320,11 +345,13 @@ void DOMEditor::innerPatchChildren(Element* element, const Vector<OwnPtr<Digest>
         if (!oldMap[i].first)
             continue;
         RefPtr<Node> node = oldMap[i].first->m_node;
-        Node* anchorNode = element->childNode(oldMap[i].second);
+        Node* anchorNode = parentNode->childNode(oldMap[i].second);
         if (node.get() == anchorNode)
             continue;
+        if (node->hasTagName(bodyTag) || node->hasTagName(headTag))
+            continue; // Never move head or body, move the rest of the nodes around them.
 
-        element->insertBefore(node, anchorNode, ec);
+        parentNode->insertBefore(node, anchorNode, ec);
         if (ec)
             return;
     }
@@ -381,9 +408,9 @@ PassOwnPtr<DOMEditor::Digest> DOMEditor::createDigest(Node* node, UnusedNodesMap
     return adoptPtr(digest);
 }
 
-void DOMEditor::insertBefore(Element* parentElement, Digest* digest, Node* anchor, ExceptionCode& ec)
+void DOMEditor::insertBefore(ContainerNode* parentNode, Digest* digest, Node* anchor, ExceptionCode& ec)
 {
-    parentElement->insertBefore(digest->m_node, anchor, ec);
+    parentNode->insertBefore(digest->m_node, anchor, ec);
     markNodeAsUsed(digest);
 }
 

@@ -1,0 +1,72 @@
+<html>
+<head>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var htmlNode;
+    var bodyNode;
+    var headNode;
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.expandElementsTree(step1);
+            function step1()
+            {
+                htmlNode = InspectorTest.expandedNodeWithId("html");
+                headNode = InspectorTest.expandedNodeWithId("head");
+                bodyNode = InspectorTest.expandedNodeWithId("body");
+                next();
+            }
+        },
+
+        function testSetBody(next)
+        {
+            DOMAgent.setOuterHTML(bodyNode.id, "<body>New body content</body>", dumpHTML(next));
+        },
+
+        function testInsertComments(next)
+        {
+            DOMAgent.setOuterHTML(bodyNode.id, "<!-- new comment between head and body --><body>New body content</body>", dumpHTML(next));
+        },
+
+        function testSetHead(next)
+        {
+            DOMAgent.setOuterHTML(headNode.id, "<head><!-- new head content --></head>", dumpHTML(next));
+        },
+
+         function testSetHTML(next)
+        {
+            DOMAgent.setOuterHTML(htmlNode.id, "<html><head><!-- new head content --></head><body>Setting body as a part of HTML.</body></html>", dumpHTML(next));
+        }
+    ]);
+
+    function dumpHTML(next)
+    {
+        function dump()
+        {
+            // User console.log for output since body has been overwritten.
+            DOMAgent.getOuterHTML(htmlNode.id, callback);
+            function callback(error, text)
+            {
+                InspectorTest.addResult(error ? error : text);
+                next();
+            }
+        }
+        return dump;
+    }
+}
+</script>
+</head>
+
+<body>
+<p>
+Tests DOMAgent.setOuterHTML invoked on body tag. See https://bugs.webkit.org/show_bug.cgi?id=62272.
+<iframe src="resources/set-outer-html-body-iframe.html" onload="runTest()"></iframe>
+</p>
+</body>
+</html>

@@ -43,7 +43,6 @@ namespace WebCore {
 
 class ContainerNode;
 class Document;
-class Element;
 class HTMLElement;
 class NamedNodeMap;
 class Node;
@@ -63,12 +62,11 @@ private:
     typedef Vector<pair<Digest*, size_t> > ResultMap;
     typedef HashMap<String, Digest*> UnusedNodesMap;
 
-    void innerPatchHTMLElement(HTMLElement* oldElement, HTMLElement* newElement, ExceptionCode&);
     void innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
     std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren);
-    void innerPatchChildren(Element*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
+    void innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
     PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
-    void insertBefore(Element* parentElement, Digest*, Node* anchor, ExceptionCode&);
+    void insertBefore(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
     void removeChild(Digest*, ExceptionCode&);
     void markNodeAsUsed(Digest*);
 

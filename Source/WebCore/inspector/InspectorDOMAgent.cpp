@@ -649,12 +649,6 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    Element* parentElement = node->parentElement();
-    if (!parentElement) {
-        *errorString = "Can only set outer HTML to nodes within Element";
-        return;
-    }
-
     DOMEditor domEditor(document);
 
     ExceptionCode ec = 0;
@@ -662,14 +656,6 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     if (ec) {
         ExceptionCodeDescription description(ec);
         *errorString = description.name;
-        return;
-    }
-
-    bool requiresTotalUpdate = node->isHTMLElement() && (node->nodeName() == "HTML" || node->nodeName() == "BODY" || node->nodeName() == "HEAD");
-    if (requiresTotalUpdate) {
-        RefPtr<Document> document = m_document;
-        reset();
-        setDocument(document.get());
         return;
     }
 

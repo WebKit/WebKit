@@ -1,3 +1,21 @@
+2012-01-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: editing body multiplies head
+        https://bugs.webkit.org/show_bug.cgi?id=62272
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/elements/set-outer-html-body.html
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::patchDocument):
+        (WebCore::DOMEditor::patchNode):
+        (WebCore::DOMEditor::innerPatchChildren):
+        (WebCore::DOMEditor::insertBefore):
+        * inspector/DOMEditor.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+
 2012-01-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Large SVG text layout performance regression in r81168
