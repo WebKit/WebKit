@@ -44,3 +44,6 @@ addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
 
 addpath('XDG_DATA_DIRS', '/usr/share')
 addpath('XDG_CONFIG_DIRS', '/etc/xdg')
+
+# GTK+ 3.0.12 misses the -lm flag when linking the tests.
+module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs

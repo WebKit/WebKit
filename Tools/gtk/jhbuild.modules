@@ -9,6 +9,7 @@
       <dep package="fonts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="gtk+"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="gnome-icon-theme"/>
@@ -90,6 +91,17 @@
              md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
   </autotools>
 
+  <autotools id="gtk+">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="cairo"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gtk+/3.0/gtk+-3.0.12.tar.xz" version="3.0.12"
+            repo="ftp.gnome.org"
+            hash="sha256:219fdea120897981840e909fac40d4d433fe061a37b12b9402e215c819ebeae9"
+            md5sum="b9869b671b0fe5905dce2fee57c965cf"/>
+  </autotools>
+
   <autotools id="glib">
     <dependencies>
       <dep package="libffi"/>
@@ -140,6 +152,9 @@
   </autotools>
 
   <autotools id="gnome-icon-theme" autogen-sh="configure">
+    <dependencies>
+      <dep package="gtk+"/>
+    </dependencies>
     <branch module="pub/GNOME/sources/gnome-icon-theme/3.2/gnome-icon-theme-3.2.1.tar.xz" version="3.2.1"
             repo="ftp.gnome.org"
             hash="sha256:a7f0a8b17e91ac338fdbc01ac59a8738e9c1e201de492c070d43aacf291a8959"
