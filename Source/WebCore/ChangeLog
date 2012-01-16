@@ -1,3 +1,16 @@
+2012-01-13  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: styles sidebar rendering is broken
+        https://bugs.webkit.org/show_bug.cgi?id=76065
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        * inspector/front-end/elementsPanel.css:
+        (.styles-section .header .subtitle):
+        (.styles-section .properties):
+
 2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Inremental build problem revealed by https://bugs.webkit.org/show_bug.cgi?id=74455

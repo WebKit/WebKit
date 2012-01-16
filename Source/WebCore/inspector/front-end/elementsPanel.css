@@ -275,7 +275,7 @@
     color: rgb(85, 85, 85);
     float: right;
     margin-left: 5px;
-    max-width: 65%;
+    max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -299,6 +299,7 @@
     margin: 0;
     padding: 2px 4px 0 8px;
     list-style: none;
+    clear: both;
 }
 
 .styles-section.no-affect .properties li {

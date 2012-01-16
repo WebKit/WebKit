@@ -873,16 +873,16 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
                 break;
             }
 
-            var mediaTextElement = mediaDataElement.createChild("span");
-            mediaTextElement.textContent = mediaText;
-            mediaTextElement.title = media.text;
-
             if (media.sourceURL) {
                 var refElement = mediaDataElement.createChild("div", "subtitle");
                 var anchor = WebInspector.linkifyResourceAsNode(media.sourceURL, media.sourceLine < 0 ? undefined : media.sourceLine, "subtitle");
                 anchor.style.float = "right";
                 refElement.appendChild(anchor);
             }
+
+            var mediaTextElement = mediaDataElement.createChild("span");
+            mediaTextElement.textContent = mediaText;
+            mediaTextElement.title = media.text;
         }
     }
 
@@ -920,7 +920,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this._selectorRefElement = document.createElement("div");
     this._selectorRefElement.className = "subtitle";
     this._selectorRefElement.appendChild(this._createRuleOriginNode());
-    selectorContainer.appendChild(this._selectorRefElement);
+    selectorContainer.insertBefore(this._selectorRefElement, selectorContainer.firstChild);
     this.titleElement.appendChild(selectorContainer);
 
     if (isInherited)

@@ -132,11 +132,10 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
             var chainEntries = section.titleElement.children;
             for (var j = 0; j < chainEntries.length; ++j) {
                 var chainEntry = chainEntries[j];
-                var entryLine = chainEntry.children[0].textContent;
+                var entryLine = chainEntry.children[1].textContent;
                 if (chainEntry.children[2])
-                    entryLine += " " + chainEntry.children[1].textContent;
-                if (chainEntry.children.length > 1)
-                    entryLine += " (" + extractText(chainEntry.lastChild) + ")";
+                    entryLine += " " + chainEntry.children[2].textContent;
+                entryLine += " (" + extractText(chainEntry.children[0]) + ")";
                 InspectorTest.addResult(entryLine);
             }
             section.expand();
