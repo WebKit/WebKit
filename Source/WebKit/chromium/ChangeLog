@@ -1,3 +1,24 @@
+2012-01-16  Dave Michael  <dmichael@chromium.org>
+
+        Reland chromium event dispatch test from https://bugs.webkit.org/show_bug.cgi?id=72988
+        https://bugs.webkit.org/show_bug.cgi?id=73837
+
+        The original patch had a mistake that caused it to fail (not sure how I
+        missed that or why the bots didn't catch it).
+
+        Reviewed by Hajime Morita.
+
+        * WebKit.gypi:
+        * tests/DispatchEventTest.cpp: Added.
+        (WebKit::MockListener::MockListener):
+        (WebKit::MockListener::~MockListener):
+        (WebKit::MockListener::events):
+        (WebKit::DispatchEventTest::DispatchEventTest):
+        (WebKit::DispatchEventTest::TearDown):
+        (WebKit::DispatchEventTest::createMessageEvent):
+        (WebKit::TEST_F):
+        * tests/data/event_target.html: Added.
+
 2012-01-15  Xinchao He  <xinchao.he@intel.com>
 
         Add DeviceOrientationEvent.absolute
