@@ -151,14 +151,14 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     if (mergeMode != DontMerge || !ASSERT_DISABLED) {
         for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("        Merging state for argument %lu.\n", argument);
+            printf("        Merging state for argument %zu.\n", argument);
 #endif
             changed |= mergeStateAtTail(block->valuesAtTail.argument(argument), m_variables.argument(argument), block->variablesAtTail.argument(argument));
         }
         
         for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            printf("        Merging state for local %lu.\n", local);
+            printf("        Merging state for local %zu.\n", local);
 #endif
             changed |= mergeStateAtTail(block->valuesAtTail.local(local), m_variables.local(local), block->variablesAtTail.local(local));
         }

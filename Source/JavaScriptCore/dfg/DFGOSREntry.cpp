@@ -80,7 +80,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
         if (argument >= exec->argumentCountIncludingThis()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %lu was not passed, expected ", argument);
+            printf("    OSR failed because argument %zu was not passed, expected ", argument);
             entry->m_expectedValues.argument(argument).dump(stdout);
             printf(".\n");
 #endif
@@ -95,7 +95,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         if (!entry->m_expectedValues.argument(argument).validate(value)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because argument %lu is %s, expected ", argument, value.description());
+            printf("    OSR failed because argument %zu is %s, expected ", argument, value.description());
             entry->m_expectedValues.argument(argument).dump(stdout);
             printf(".\n");
 #endif
@@ -107,7 +107,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         if (entry->m_localsForcedDouble.get(local)) {
             if (!exec->registers()[local].jsValue().isNumber()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-                printf("    OSR failed because variable %lu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
+                printf("    OSR failed because variable %zu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
 #endif
                 return 0;
             }
@@ -115,7 +115,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         }
         if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            printf("    OSR failed because variable %lu is %s, expected ", local, exec->registers()[local].jsValue().description());
+            printf("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
             entry->m_expectedValues.local(local).dump(stdout);
             printf(".\n");
 #endif

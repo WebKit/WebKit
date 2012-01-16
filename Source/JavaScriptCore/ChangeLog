@@ -1,3 +1,26 @@
+2012-01-16  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Build fix on 32bit if verbose debug is enabled in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=76351
+
+        Reviewed by Hajime Morita.
+
+        Mostly change "%lu" to "%zu" to print a "size_t" variable.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::endBasicBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+
 2012-01-15  Filip Pizlo  <fpizlo@apple.com>
 
         The C calling convention logic in DFG::SpeculativeJIT should be available even

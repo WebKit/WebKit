@@ -898,7 +898,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Slow case count for call at @%lu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+    printf("Slow case count for call at @%zu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
     if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
@@ -1129,7 +1129,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Need to create a new basic block for the continuation at the caller.
     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_graph.size(), m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Creating inline epilogue basic block %p, #%lu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+    printf("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
     m_currentBlock = block.get();
     ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_caller->m_blockLinkingTargets.last()]->bytecodeBegin < nextOffset);
@@ -1740,7 +1740,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for GetById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            printf("Slow case count for GetById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
             size_t offset = notFound;
@@ -1836,7 +1836,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyGenerated = false;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for PutById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            printf("Slow case count for PutById @%zu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif            
 
             if (stubInfo.seen
@@ -2570,7 +2570,7 @@ void ByteCodeParser::parseCodeBlock()
                 } else {
                     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    printf("Creating basic block %p, #%lu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+                    printf("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
                     m_currentBlock = block.get();
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex]->bytecodeBegin < m_currentIndex);
