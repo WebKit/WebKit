@@ -4934,6 +4934,8 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
+#else
+    UNUSED_PARAM(displayID);
 #endif
 }
 

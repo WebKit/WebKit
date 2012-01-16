@@ -1,3 +1,13 @@
+2012-01-16  Pablo Flouret  <pablof@motorola.com>
+
+        Compilation error on build-webkit --debug --no-request-animation-frame on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75875
+
+        Reviewed by Hajime Morita.
+
+        * dom/Document.cpp:
+        (WebCore::Document::windowScreenDidChange):
+
 2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Web Inspector: Fix GoToLineDialog and extract common dialog functionality.
