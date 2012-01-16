@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-11. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,46 +32,10 @@ SVGTextLayoutAttributes::SVGTextLayoutAttributes(RenderSVGInlineText* context)
 {
 }
 
-void SVGTextLayoutAttributes::reserveCapacity(unsigned length)
+void SVGTextLayoutAttributes::clear()
 {
-    m_positioningLists.xValues.reserveCapacity(length);
-    m_positioningLists.yValues.reserveCapacity(length);
-    m_positioningLists.dxValues.reserveCapacity(length);
-    m_positioningLists.dyValues.reserveCapacity(length);
-    m_positioningLists.rotateValues.reserveCapacity(length);
-    m_textMetricsValues.reserveCapacity(length);
-}
-
-void SVGTextLayoutAttributes::PositioningLists::fillWithEmptyValues(unsigned length)
-{
-    xValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
-    yValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
-    dxValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
-    dyValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
-    rotateValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
-}
-
-void SVGTextLayoutAttributes::PositioningLists::appendEmptyValues()
-{
-    xValues.append(SVGTextLayoutAttributes::emptyValue());
-    yValues.append(SVGTextLayoutAttributes::emptyValue());
-    dxValues.append(SVGTextLayoutAttributes::emptyValue());
-    dyValues.append(SVGTextLayoutAttributes::emptyValue());
-    rotateValues.append(SVGTextLayoutAttributes::emptyValue());
-}
-
-static inline float safeValueAtPosition(const Vector<float>& values, unsigned position)
-{
-    return position < values.size() ? values[position] : SVGTextLayoutAttributes::emptyValue();
-}
-
-void SVGTextLayoutAttributes::PositioningLists::appendValuesFromPosition(const PositioningLists& source, unsigned position)
-{
-    xValues.append(safeValueAtPosition(source.xValues, position));
-    yValues.append(safeValueAtPosition(source.yValues, position));
-    dxValues.append(safeValueAtPosition(source.dxValues, position));
-    dyValues.append(safeValueAtPosition(source.dyValues, position));
-    rotateValues.append(safeValueAtPosition(source.rotateValues, position));
+    m_characterDataMap.clear();
+    m_textMetricsValues.clear();
 }
 
 float SVGTextLayoutAttributes::emptyValue()
@@ -80,55 +44,33 @@ float SVGTextLayoutAttributes::emptyValue()
     return s_emptyValue;
 }
 
-static inline void dumpLayoutVector(const Vector<float>& values)
+static inline void dumpSVGCharacterDataMapValue(const char* identifier, float value, bool appendSpace = true)
 {
-    if (values.isEmpty()) {
-        fprintf(stderr, "empty");
+    if (value == SVGTextLayoutAttributes::emptyValue()) {
+        fprintf(stderr, "%s=x", identifier);
+        if (appendSpace)
+            fprintf(stderr, " ");
         return;
     }
-
-    unsigned size = values.size();
-    for (unsigned i = 0; i < size; ++i) {
-        float value = values.at(i);
-        if (value == SVGTextLayoutAttributes::emptyValue())
-            fprintf(stderr, "x ");
-        else
-            fprintf(stderr, "%lf ", value);
-    }
+    fprintf(stderr, "%s=%lf", identifier, value);
+    if (appendSpace)
+        fprintf(stderr, " ");
 }
 
 void SVGTextLayoutAttributes::dump() const
 {
     fprintf(stderr, "context: %p\n", m_context);
-
-    fprintf(stderr, "x values: ");
-    dumpLayoutVector(m_positioningLists.xValues);
-    fprintf(stderr, "\n");
-
-    fprintf(stderr, "y values: ");
-    dumpLayoutVector(m_positioningLists.yValues);
-    fprintf(stderr, "\n");
-
-    fprintf(stderr, "dx values: ");
-    dumpLayoutVector(m_positioningLists.dxValues);
-    fprintf(stderr, "\n");
-
-    fprintf(stderr, "dy values: ");
-    dumpLayoutVector(m_positioningLists.dyValues);
-    fprintf(stderr, "\n");
-
-    fprintf(stderr, "rotate values: ");
-    dumpLayoutVector(m_positioningLists.rotateValues);
-    fprintf(stderr, "\n");
-
-    fprintf(stderr, "character data values:\n");
-    unsigned textMetricsSize = m_textMetricsValues.size();
-    for (unsigned i = 0; i < textMetricsSize; ++i) {
-        const SVGTextMetrics& metrics = m_textMetricsValues.at(i);
-        fprintf(stderr, "| {length=%i, glyphName='%s', unicodeString='%s', width=%lf, height=%lf}\n",
-                metrics.length(), metrics.glyph().name.utf8().data(), metrics.glyph().unicodeString.utf8().data(), metrics.width(), metrics.height());
+    const SVGCharacterDataMap::const_iterator end = m_characterDataMap.end();
+    for (SVGCharacterDataMap::const_iterator it = m_characterDataMap.begin(); it != end; ++it) {
+        const SVGCharacterData& data = it->second;
+        fprintf(stderr, " ---> pos=%i, data={", it->first);
+        dumpSVGCharacterDataMapValue("x", data.x);
+        dumpSVGCharacterDataMapValue("y", data.y);
+        dumpSVGCharacterDataMapValue("dx", data.dx);
+        dumpSVGCharacterDataMapValue("dy", data.dy);
+        dumpSVGCharacterDataMapValue("rotate", data.rotate, false);
+        fprintf(stderr, "}\n");
     }
-    fprintf(stderr, "\n");
 }
 
 }

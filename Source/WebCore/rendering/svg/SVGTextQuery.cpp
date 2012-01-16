@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -158,10 +158,8 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
 
 void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, int& startPosition, int& endPosition) const
 {
-    const SVGTextLayoutAttributes& layoutAttributes = queryData->textRenderer->layoutAttributes();
-    const Vector<float>& xValues = layoutAttributes.xValues();
-    const Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes.textMetricsValues();
-
+    SVGTextLayoutAttributes& layoutAttributes = queryData->textRenderer->layoutAttributes();
+    Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes.textMetricsValues();
     unsigned boxStart = queryData->textBox->start();
     unsigned boxLength = queryData->textBox->len();
 
@@ -169,14 +167,14 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, i
     unsigned textMetricsSize = textMetricsValues.size();
 
     unsigned positionOffset = 0;
-    unsigned positionSize = xValues.size();
+    unsigned positionSize = layoutAttributes.context()->textLength();
 
     bool alterStartPosition = true;
     bool alterEndPosition = true;
 
     int lastPositionOffset = -1;
     for (; textMetricsOffset < textMetricsSize && positionOffset < positionSize; ++textMetricsOffset) {
-        const SVGTextMetrics& metrics = textMetricsValues.at(textMetricsOffset);
+        SVGTextMetrics& metrics = textMetricsValues[textMetricsOffset];
 
         // Advance to text box start location.
         if (positionOffset < boxStart) {

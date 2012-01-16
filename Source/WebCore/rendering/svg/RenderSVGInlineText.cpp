@@ -68,6 +68,7 @@ static PassRefPtr<StringImpl> applySVGWhitespaceRules(PassRefPtr<StringImpl> str
 RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
     : RenderText(n, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
+    , m_layoutAttributes(this)
 {
 }
 
@@ -140,8 +141,6 @@ LayoutRect RenderSVGInlineText::linesBoundingBox() const
 
 bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
 {
-    ASSERT(m_attributes.xValues().size() == textLength());
-    ASSERT(m_attributes.yValues().size() == textLength());
     ASSERT(position >= 0);
     ASSERT(position < static_cast<int>(textLength()));
 
@@ -149,27 +148,11 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
     if (!position && parent()->isSVGTextPath() && !previousSibling())
         return true;
 
-    int currentPosition = 0;
-    unsigned size = m_attributes.textMetricsValues().size();
-    for (unsigned i = 0; i < size; ++i) {
-        const SVGTextMetrics& metrics = m_attributes.textMetricsValues().at(i);
+    const SVGCharacterDataMap::const_iterator it = m_layoutAttributes.characterDataMap().find(static_cast<unsigned>(position + 1));
+    if (it == m_layoutAttributes.characterDataMap().end())
+        return false;
 
-        // We found the desired character.
-        if (currentPosition == position) {
-            return m_attributes.xValues().at(position) != SVGTextLayoutAttributes::emptyValue()
-                || m_attributes.yValues().at(position) != SVGTextLayoutAttributes::emptyValue();
-        }
-
-        currentPosition += metrics.length();
-        if (currentPosition > position)
-            break;
-    }
-
-    // The desired position is available in the x/y list, but not in the character data values list.
-    // That means the previous character data described a single glyph, consisting of multiple unicode characters.
-    // The consequence is that the desired character does not define a new absolute x/y position, even if present in the x/y test.
-    // This code is tested by svg/W3C-SVG-1.1/text-text-06-t.svg (and described in detail, why this influences chunk detection).
-    return false;
+    return it->second.x != SVGTextLayoutAttributes::emptyValue() || it->second.y != SVGTextLayoutAttributes::emptyValue();
 }
 
 VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point)

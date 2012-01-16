@@ -25,7 +25,6 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGTextRunRenderingContext.h"
-#include "WidthIterator.h"
 
 namespace WebCore {
 
@@ -52,6 +51,8 @@ bool SVGTextMetricsBuilder::advance()
 #if PLATFORM(QT)
     advanceComplexText();
 #else
+    // FIXME: Enabling the simple code path, affects some layout test results, so this will be landed seperated.
+    m_isComplexText = true;
     if (m_isComplexText)
         advanceComplexText();
     else
@@ -91,7 +92,9 @@ void SVGTextMetricsBuilder::advanceComplexText()
     unsigned metricsLength = currentCharacterStartsSurrogatePair() ? 2 : 1;
     m_currentMetrics = SVGTextMetrics::measureCharacterRange(m_text, m_textPosition, metricsLength);
     m_complexStartToCurrentMetrics = SVGTextMetrics::measureCharacterRange(m_text, 0, m_textPosition + metricsLength);
-    ASSERT(m_currentMetrics.length() == metricsLength);
+
+    // FIXME: Re-enable this assertion, once SVG Fonts stop using this code path.
+    // ASSERT(m_currentMetrics.length() == metricsLength);
 
     // Frequent case for Arabic text: when measuring a single character the arabic isolated form is taken
     // when rendering the glyph "in context" (with it's surrounding characters) it changes due to shaping.
@@ -170,11 +173,8 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
         if (data->processRenderer) {
             if (data->allCharactersMap) {
                 const SVGCharacterDataMap::const_iterator it = data->allCharactersMap->find(data->valueListPosition + m_textPosition - data->skippedCharacters + 1);
-                if (it != data->allCharactersMap->end()) {
-                    // FIXME: Yes this is nonsense for now. This will use attributes->characterDataMap(), as soon as its available, in a follow-up commit.
-                    SVGCharacterDataMap map;
-                    map.set(m_textPosition + 1, it->second);
-                }
+                if (it != data->allCharactersMap->end())
+                    attributes->characterDataMap().set(m_textPosition + 1, it->second);
             }
             textMetricsValues->append(m_currentMetrics);
         }

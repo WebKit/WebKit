@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,10 +57,12 @@ public:
     void layoutInlineTextBox(SVGInlineTextBox*);
     void finishLayout();
 
+    Vector<SVGTextLayoutAttributes>& layoutAttributes() { return m_layoutAttributes; }
+
 private:
     void updateCharacerPositionIfNeeded(float& x, float& y);
     void updateCurrentTextPosition(float x, float y, float glyphAdvance);
-    void updateRelativePositionAdjustmentsIfNeeded(Vector<float>& dxValues, Vector<float>& dyValues);
+    void updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
     void recordTextFragment(SVGInlineTextBox*, Vector<SVGTextMetrics>& textMetricValues);
     bool parentDefinesTextLength(RenderObject*) const;

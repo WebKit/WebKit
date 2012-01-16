@@ -35,10 +35,7 @@ public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
 
     bool characterStartsNewTextChunk(int position) const;
-
-    SVGTextLayoutAttributes& layoutAttributes() { return m_attributes; }
-    const SVGTextLayoutAttributes& layoutAttributes() const { return m_attributes; }
-    void storeLayoutAttributes(const SVGTextLayoutAttributes& attributes) { m_attributes = attributes; }
+    SVGTextLayoutAttributes& layoutAttributes() { return m_layoutAttributes; }
 
     float scalingFactor() const { return m_scalingFactor; }
     const Font& scaledFont() const { return m_scaledFont; }
@@ -68,7 +65,7 @@ private:
 
     float m_scalingFactor;
     Font m_scaledFont;
-    SVGTextLayoutAttributes m_attributes;
+    SVGTextLayoutAttributes m_layoutAttributes;
 };
 
 inline RenderSVGInlineText* toRenderSVGInlineText(RenderObject* object)

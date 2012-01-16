@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,19 +21,19 @@
 #define SVGTextLayoutAttributesBuilder_h
 
 #if ENABLE(SVG)
-#include "SVGTextLayoutAttributes.h"
+#include "SVGTextMetricsBuilder.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class RenderObject;
+class RenderSVGInlineText;
 class RenderSVGText;
 class SVGTextPositioningElement;
 
 // SVGTextLayoutAttributesBuilder performs the first layout phase for SVG text.
 //
-// It extracts the x/y/dx/dy/rotate values from the SVGTextPositioningElements in the DOM,
-// measures all characters in the RenderSVGText subtree and extracts kerning/ligature information.
+// It extracts the x/y/dx/dy/rotate values from the SVGTextPositioningElements in the DOM.
 // These values are propagated to the corresponding RenderSVGInlineText renderers.
 // The first layout phase only extracts the relevant information needed in RenderBlockLineLayout
 // to create the InlineBox tree based on text chunk boundaries & BiDi information.
@@ -43,7 +43,14 @@ class SVGTextLayoutAttributesBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributesBuilder);
 public:
     SVGTextLayoutAttributesBuilder();
-    void buildLayoutAttributesForTextSubtree(RenderSVGText*);
+    void buildLayoutAttributesForWholeTree(RenderSVGText*);
+    void buildLayoutAttributesForTextRenderer(RenderSVGInlineText*);
+
+    void rebuildMetricsForWholeTree(RenderSVGText*);
+    void rebuildMetricsForTextRenderer(RenderSVGInlineText*);
+
+    // Invoked whenever the underlying DOM tree changes, so that m_textPositions is rebuild.
+    void clearTextPositioningElements() { m_textPositions.clear(); }
 
 private:
     struct TextPosition {
@@ -59,14 +66,16 @@ private:
         unsigned length;
     };
 
-    void collectTextPositioningElements(RenderObject*, unsigned& atCharacter, UChar& lastCharacter);
-    void buildLayoutAttributesForAllCharacters(RenderSVGText*, unsigned textLength);
-    void propagateLayoutAttributes(RenderObject*, Vector<SVGTextLayoutAttributes>& allAttributes, unsigned& atCharacter, UChar& lastCharacter) const;
-    void fillAttributesAtPosition(const TextPosition&);
+    bool buildLayoutAttributesIfNeeded(RenderSVGText*);
+    void collectTextPositioningElements(RenderObject*, const UChar*& lastCharacter);
+    void buildLayoutAttributes(RenderSVGText*);
+    void fillCharacterDataMap(const TextPosition&);
 
 private:
+    unsigned m_textLength;
     Vector<TextPosition> m_textPositions;
-    SVGTextLayoutAttributes::PositioningLists m_positioningLists;
+    SVGCharacterDataMap m_characterDataMap;
+    SVGTextMetricsBuilder m_metricsBuilder;
 };
 
 } // namespace WebCore

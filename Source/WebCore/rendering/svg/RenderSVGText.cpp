@@ -141,8 +141,7 @@ void RenderSVGText::layout()
 
     if (m_needsPositioningValuesUpdate) {
         // Perform SVG text layout phase one (see SVGTextLayoutAttributesBuilder for details).
-        SVGTextLayoutAttributesBuilder layoutAttributesBuilder;
-        layoutAttributesBuilder.buildLayoutAttributesForTextSubtree(this);
+        m_layoutAttributesBuilder.buildLayoutAttributesForWholeTree(this);
         m_needsReordering = true;
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
@@ -291,6 +290,40 @@ RenderBlock* RenderSVGText::firstLineBlock() const
 // in a SVG text element context.
 void RenderSVGText::updateFirstLetter()
 {
+}
+
+static inline void recursiveCollectLayoutAttributes(RenderObject* start, Vector<SVGTextLayoutAttributes>& attributes)
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+        if (child->isSVGInlineText()) {
+            attributes.append(toRenderSVGInlineText(child)->layoutAttributes());
+            continue;
+        }
+
+        recursiveCollectLayoutAttributes(child, attributes);
+    }
+}
+
+void RenderSVGText::rebuildLayoutAttributes(bool performFullRebuild)
+{
+    // FIXME: For now we always rebuild the whole tree, as it used to be.
+    performFullRebuild = true;
+    if (performFullRebuild)
+        m_layoutAttributes.clear();
+
+    if (m_layoutAttributes.isEmpty()) {
+        recursiveCollectLayoutAttributes(this, m_layoutAttributes);
+        if (m_layoutAttributes.isEmpty() || !performFullRebuild)
+            return;
+
+        m_layoutAttributesBuilder.rebuildMetricsForWholeTree(this);
+        return;
+    }
+
+    /* FIXME: Enable this once we rebuild subtrees, instead of the full tree
+    Vector<SVGTextLayoutAttributes*> affectedAttributes;
+    rebuildLayoutAttributes(affectedAttributes);
+    */
 }
 
 }

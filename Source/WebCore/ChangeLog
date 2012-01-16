@@ -1,3 +1,79 @@
+2012-01-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Large SVG text layout performance regression in r81168
+        https://bugs.webkit.org/show_bug.cgi?id=65711
+
+        Reviewed by Zoltan Herczeg.
+
+        Change the way we store x/y/dx/dy/rotate values for a <text> element and its ancestors.
+
+        SVGTextLayoutAttributesBuilder used to hold a Vector<float> for x/y/dx/dy/rotate, each as big
+        as the whole text subtree length. For each character, that has an absolute position, or rotation
+        the value was stored in this list. For all other characters a special empty value marker was stored.
+
+        This is highly inefficient, and is now replaced with a HashMap<unsigned, SVGCharacterData> where
+        SVGCharacterData is a struct, holding float x/y/dx/dy/rotate. The code is now optimized for the
+        common case, where only a few characters actually specify such values, eg:
+        <text x="50" y="90">looooong text<tspan x="50" y="30">abc</tspan></text>.
+
+        NOTE: There are still some inefficiencies in this patch (especially the copying of SVGTextLayoutAttributes).
+        To keep the patch size smaller, I decided to fix this in another patch, and only fix the memory issue with this patch.
+
+        This reduces the memory consumption from 35MB to 10MB on the attached testcase in bug 65711.
+
+        Doesn't affect any test, yet. A follow-up commit will enable the usage of the simple code path, using WidthIterator,
+        in SVGTextMetricsBuilder, which will result in several layout test changes, because of geometry changes.
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::RenderSVGInlineText):
+        (WebCore::RenderSVGInlineText::characterStartsNewTextChunk):
+        * rendering/svg/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::layoutAttributes):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        (WebCore::recursiveCollectLayoutAttributes):
+        (WebCore::RenderSVGText::rebuildLayoutAttributes):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+        (WebCore::swapItemsInLayoutAttributes):
+        (WebCore::findFirstAndLastAttributesInVector):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        * rendering/svg/SVGTextLayoutAttributes.cpp:
+        (WebCore::SVGTextLayoutAttributes::clear):
+        (WebCore::dumpSVGCharacterDataMapValue):
+        (WebCore::SVGTextLayoutAttributes::dump):
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        (WebCore::SVGTextLayoutAttributes::characterDataMap):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::SVGTextLayoutAttributesBuilder):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForWholeTree):
+        (WebCore::SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer):
+        (WebCore::SVGTextLayoutAttributesBuilder::rebuildMetricsForWholeTree):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesIfNeeded):
+        (WebCore::processRenderSVGInlineText):
+        (WebCore::SVGTextLayoutAttributesBuilder::collectTextPositioningElements):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributes):
+        (WebCore::updateCharacterData):
+        (WebCore::SVGTextLayoutAttributesBuilder::fillCharacterDataMap):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        (WebCore::SVGTextLayoutAttributesBuilder::clearTextPositioningElements):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterAttributes):
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextLayoutEngine.h:
+        (WebCore::SVGTextLayoutEngine::layoutAttributes):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advance):
+        (WebCore::SVGTextMetricsBuilder::advanceComplexText):
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::modifyStartEndPositionsRespectingLigatures):
+
 2012-01-15  Andreas Kling  <awesomekling@apple.com>
 
         CSSCanvasValue can't be renamed, enforce this at compile-time.

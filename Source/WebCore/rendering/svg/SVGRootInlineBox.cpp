@@ -73,18 +73,19 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
 
 void SVGRootInlineBox::computePerCharacterLayoutInformation()
 {
-    RenderSVGText* parentBlock = toRenderSVGText(block());
-    ASSERT(parentBlock);
+    RenderSVGText* textRoot = toRenderSVGText(block());
+    ASSERT(textRoot);
 
-    Vector<SVGTextLayoutAttributes>& attributes = parentBlock->layoutAttributes();
-    if (attributes.isEmpty())
+    textRoot->rebuildLayoutAttributes();
+    Vector<SVGTextLayoutAttributes>& layoutAttributes = textRoot->layoutAttributes();
+    if (layoutAttributes.isEmpty())
         return;
 
-    if (parentBlock->needsReordering())
-        reorderValueLists(attributes);
+    if (textRoot->needsReordering())
+        reorderValueLists(layoutAttributes);
 
     // Perform SVG text layout phase two (see SVGTextLayoutEngine for details).
-    SVGTextLayoutEngine characterLayout(attributes);
+    SVGTextLayoutEngine characterLayout(layoutAttributes);
     layoutCharactersInTextBoxes(this, characterLayout);
 
     // Perform SVG text layout phase three (see SVGTextChunkBuilder for details).
@@ -119,10 +120,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
             if (isTextPath) {
                 // Build text chunks for all <textPath> children, using the line layout algorithm.
                 // This is needeed as text-anchor is just an additional startOffset for text paths.
-                RenderSVGText* parentBlock = toRenderSVGText(block());
-                ASSERT(parentBlock);
-
-                SVGTextLayoutEngine lineLayout(parentBlock->layoutAttributes());
+                SVGTextLayoutEngine lineLayout(characterLayout.layoutAttributes());
                 layoutCharactersInTextBoxes(flowBox, lineLayout);
 
                 characterLayout.beginTextPathLayout(child->renderer(), lineLayout);
@@ -221,21 +219,28 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& poin
 
     return closestLeaf ? closestLeaf : lastLeaf;
 }
- 
-static inline void swapItemsInVector(Vector<float>& firstVector, Vector<float>& lastVector, unsigned first, unsigned last)
-{
-    float temp = firstVector.at(first);
-    firstVector.at(first) = lastVector.at(last);
-    lastVector.at(last) = temp;
-}
 
-static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes& firstAttributes, SVGTextLayoutAttributes& lastAttributes, unsigned firstPosition, unsigned lastPosition)
+static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAttributes, SVGTextLayoutAttributes* lastAttributes, unsigned firstPosition, unsigned lastPosition)
 {
-    swapItemsInVector(firstAttributes.xValues(), lastAttributes.xValues(), firstPosition, lastPosition);
-    swapItemsInVector(firstAttributes.yValues(), lastAttributes.yValues(), firstPosition, lastPosition);
-    swapItemsInVector(firstAttributes.dxValues(), lastAttributes.dxValues(), firstPosition, lastPosition);
-    swapItemsInVector(firstAttributes.dyValues(), lastAttributes.dyValues(), firstPosition, lastPosition);
-    swapItemsInVector(firstAttributes.rotateValues(), lastAttributes.rotateValues(), firstPosition, lastPosition);
+    SVGCharacterDataMap::iterator itFirst = firstAttributes->characterDataMap().find(firstPosition + 1);
+    SVGCharacterDataMap::iterator itLast = lastAttributes->characterDataMap().find(lastPosition + 1);
+    bool firstPresent = itFirst != firstAttributes->characterDataMap().end();
+    bool lastPresent = itLast != lastAttributes->characterDataMap().end();
+    if (!firstPresent && !lastPresent)
+        return;
+
+    if (firstPresent && lastPresent) {
+        std::swap(itFirst->second, itLast->second);
+        return;
+    }
+
+    if (firstPresent && !lastPresent) {
+        lastAttributes->characterDataMap().set(lastPosition + 1, itFirst->second);
+        return;
+    }
+
+    // !firstPresent && lastPresent
+    firstAttributes->characterDataMap().set(firstPosition + 1, itLast->second);
 }
 
 static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
@@ -246,7 +251,7 @@ static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttrib
 
     unsigned attributesSize = attributes.size();
     for (unsigned i = 0; i < attributesSize; ++i) {
-        SVGTextLayoutAttributes& current = attributes.at(i);
+        SVGTextLayoutAttributes& current = attributes[i];
         if (!first && firstContext == current.context())
             first = &current;
         if (!last && lastContext == current.context())
@@ -264,7 +269,7 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
     ASSERT(userData);
     Vector<SVGTextLayoutAttributes>& attributes = *reinterpret_cast<Vector<SVGTextLayoutAttributes>*>(userData);
 
-    // This is a copy of std::reverse(first, last). It additionally assure that the value lists within the InlineBoxes are reordered as well.
+    // This is a copy of std::reverse(first, last). It additionally assures that the metrics map within the renderers belonging to the InlineBoxes are reordered as well.
     while (true)  {
         if (first == last || first == --last)
             return;
@@ -288,14 +293,7 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
             SVGTextLayoutAttributes* firstAttributes = 0;
             SVGTextLayoutAttributes* lastAttributes = 0;
             findFirstAndLastAttributesInVector(attributes, firstContext, lastContext, firstAttributes, lastAttributes);
-
-            unsigned firstBoxPosition = firstTextBox->start();
-            unsigned firstBoxEnd = firstTextBox->end();
-
-            unsigned lastBoxPosition = lastTextBox->start();
-            unsigned lastBoxEnd = lastTextBox->end();
-            for (; firstBoxPosition <= firstBoxEnd && lastBoxPosition <= lastBoxEnd; ++lastBoxPosition, ++firstBoxPosition)
-                swapItemsInLayoutAttributes(*firstAttributes, *lastAttributes, firstBoxPosition, lastBoxPosition);
+            swapItemsInLayoutAttributes(firstAttributes, lastAttributes, firstTextBox->start(), lastTextBox->start());
         }
 
         InlineBox* temp = *first;

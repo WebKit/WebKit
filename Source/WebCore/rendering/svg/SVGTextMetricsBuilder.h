@@ -24,6 +24,7 @@
 #include "SVGTextLayoutAttributes.h"
 #include "SVGTextMetrics.h"
 #include "TextRun.h"
+#include "WidthIterator.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -32,7 +33,6 @@ class RenderObject;
 class RenderSVGInlineText;
 class RenderSVGText;
 struct MeasureTextData;
-struct WidthIterator;
 
 class SVGTextMetricsBuilder {
     WTF_MAKE_NONCOPYABLE(SVGTextMetricsBuilder);
