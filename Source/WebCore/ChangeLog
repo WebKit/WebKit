@@ -1,3 +1,9 @@
+2012-01-16  Renata Hodovan  <reni@webkit.org>
+
+        Unreviewed build fix; added WebCore.exp.in changes lost in r105036.
+
+        * WebCore.exp.in:
+
 2012-01-15  Xinchao He  <xinchao.he@intel.com>
 
         Add DeviceOrientationEvent.absolute
