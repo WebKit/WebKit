@@ -27,6 +27,7 @@
 #import <wtf/RetainPtr.h>
 
 @class WKPrintingViewData;
+@class PDFDocument;
 
 namespace WebKit {
     class WebFrameProxy;
@@ -43,7 +44,7 @@ namespace WebKit {
     HashMap<WebCore::IntRect, Vector<uint8_t> > _pagePreviews;
 
     Vector<uint8_t> _printedPagesData;
-    RetainPtr<CGPDFDocumentRef> _printedPagesPDFDocument;
+    RetainPtr<PDFDocument> _printedPagesPDFDocument;
 
     uint64_t _expectedComputedPagesCallback;
     HashMap<uint64_t, WebCore::IntRect> _expectedPreviewCallbacks;
