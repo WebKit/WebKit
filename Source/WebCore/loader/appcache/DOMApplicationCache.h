@@ -52,6 +52,7 @@ public:
     unsigned short status() const;
     void update(ExceptionCode&);
     void swapCache(ExceptionCode&);
+    void abort();
 
     // EventTarget impl
 

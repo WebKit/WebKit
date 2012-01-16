@@ -141,6 +141,7 @@ namespace WebCore {
         Status status() const;  
         bool update();
         bool swapCache();
+        void abort();
 
         void setDOMApplicationCache(DOMApplicationCache*);
         void notifyDOMApplicationCache(EventID, int progressTotal, int progressDone);

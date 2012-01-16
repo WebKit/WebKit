@@ -460,6 +460,19 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
     m_manifestHandle = createResourceHandle(m_manifestURL, m_newestCache ? m_newestCache->manifestResource() : 0);
 }
 
+void ApplicationCacheGroup::abort(Frame* frame)
+{
+    if (m_updateStatus == Idle)
+        return;
+    ASSERT(m_updateStatus == Checking || (m_updateStatus == Downloading && m_cacheBeingUpdated));
+
+    if (m_completionType != None)
+        return;
+
+    frame->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, TipMessageLevel, "Application Cache download process was aborted.");
+    cacheUpdateFailed();
+}
+
 PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KURL& url, ApplicationCacheResource* newestCachedResource)
 {
     ResourceRequest request(url);

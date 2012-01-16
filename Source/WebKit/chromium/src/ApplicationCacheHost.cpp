@@ -295,6 +295,11 @@ bool ApplicationCacheHost::swapCache()
     return success;
 }
 
+void ApplicationCacheHost::abort()
+{
+    // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=76270
+}
+
 bool ApplicationCacheHost::isApplicationCacheEnabled()
 {
     ASSERT(m_documentLoader->frame());

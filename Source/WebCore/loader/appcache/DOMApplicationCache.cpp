@@ -84,6 +84,13 @@ void DOMApplicationCache::swapCache(ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
 }
 
+void DOMApplicationCache::abort()
+{
+    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    if (cacheHost)
+        cacheHost->abort();
+}
+
 const AtomicString& DOMApplicationCache::interfaceName() const
 {
     return eventNames().interfaceForDOMApplicationCache;

@@ -459,6 +459,18 @@ bool ApplicationCacheHost::swapCache()
     return true;
 }
 
+void ApplicationCacheHost::abort()
+{
+    ApplicationCacheGroup* cacheGroup = candidateApplicationCacheGroup();
+    if (cacheGroup)
+        cacheGroup->abort(m_documentLoader->frame());
+    else {
+        ApplicationCache* cache = applicationCache();
+        if (cache)
+            cache->group()->abort(m_documentLoader->frame());
+    }
+}
+
 bool ApplicationCacheHost::isApplicationCacheEnabled()
 {
     return m_documentLoader->frame()->settings()

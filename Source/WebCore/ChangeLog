@@ -1,3 +1,30 @@
+2012-01-16  xueqing huang  <huangxueqing@baidu.com>
+
+        Add offline web applications API applicationCache.abort.
+        https://bugs.webkit.org/show_bug.cgi?id=76270
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests:
+        http/tests/appcache/abort-cache-onchecking.html
+        http/tests/appcache/abort-cache-onchecking-manifest-404.html
+        http/tests/appcache/abort-cache-onchecking-resource-404.html
+        http/tests/appcache/abort-cache-ondownloading.html
+        http/tests/appcache/abort-cache-ondownloading-manifest-404.html
+        http/tests/appcache/abort-cache-ondownloading-resource-404.html
+        http/tests/appcache/abort-cache-onprogress.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::abort):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::abort):
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::abort):
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/appcache/DOMApplicationCache.idl:
+
 2012-01-16  Andreas Kling  <awesomekling@apple.com>
 
         Remove caching of mapped attribute count on NamedNodeMap.

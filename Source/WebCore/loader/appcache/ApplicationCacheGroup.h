@@ -76,6 +76,8 @@ public:
     
     void update(Frame*, ApplicationCacheUpdateOption); // FIXME: Frame should not be needed when updating without browsing context.
     void cacheDestroyed(ApplicationCache*);
+    
+    void abort(Frame*);
 
     bool cacheIsBeingUpdated(const ApplicationCache* cache) const { return cache == m_cacheBeingUpdated; }
 

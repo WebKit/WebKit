@@ -43,7 +43,13 @@ BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
-
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-manifest-404.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-resource-404.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = FAIL
+BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = FAIL
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------

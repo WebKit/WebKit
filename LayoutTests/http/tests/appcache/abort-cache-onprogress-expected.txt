@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Application Cache download process was aborted.
+This tests that download process was aborted after progress event.
+loading resource: 0 / 4 loading resource: 1 / 4 loading resource: 2 / 4 loading resource: 3 / 4 SUCCESS

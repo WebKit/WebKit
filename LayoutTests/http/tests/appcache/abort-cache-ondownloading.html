@@ -1,0 +1,54 @@
+<html manifest="resources/abort-cache-ondownloading.manifest">
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function log(message) {
+    document.getElementById("result").innerHTML += message + "\n";
+}
+
+function ondownloading() {
+    applicationCache.abort(); 
+}
+
+function onnoupdate() {
+    log("FAILURE");
+    log("noupdate");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function oncached() {
+    log("FAILURE");
+    log("CACHED");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function onupdateready() {
+    log("FAILURE");
+    log("UPDATEREADY");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function onerror() {
+    log("SUCCESS");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.addEventListener('downloading', ondownloading, false);
+applicationCache.addEventListener('noupdate', onnoupdate, false);
+applicationCache.addEventListener('cached', oncached, false);
+applicationCache.addEventListener('error', onerror, false);
+applicationCache.addEventListener('updateready', onupdateready, false);
+
+</script>
+
+<div>This tests that download process was aborted after downloading event.</div>
+<div id="result"></div>
+</html>
+
