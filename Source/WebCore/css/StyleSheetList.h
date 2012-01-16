@@ -46,6 +46,11 @@ public:
 
     HTMLStyleElement* getNamedItem(const String&) const;
 
+    const StyleSheetVector& vector() const
+    {
+        return m_sheets;
+    }
+
     void swap(StyleSheetVector& sheets)
     {
         m_sheets.swap(sheets);

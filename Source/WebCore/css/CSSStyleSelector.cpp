@@ -420,18 +420,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
 
     // add stylesheets from document
-    unsigned length = styleSheets->length();
-    for (unsigned i = 0; i < length; i++) {
-        StyleSheet* sheet = styleSheets->item(i);
-        if (sheet->isCSSStyleSheet() && !sheet->disabled())
-            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
-    }
-    m_authorStyle->shrinkToFit();
-
-    collectFeatures();
-    
-    if (document->renderer() && document->renderer()->style())
-        document->renderer()->style()->font().update(fontSelector());
+    appendAuthorStylesheets(0, styleSheets->vector());
 }
 
 void CSSStyleSelector::collectFeatures()

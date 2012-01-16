@@ -1,3 +1,19 @@
+2012-01-16  Roland Steiner  <rolandsteiner@chromium.org>
+
+        CSSStyleSelector constructor and appendAuthorStylesheets() contain duplicated code
+        https://bugs.webkit.org/show_bug.cgi?id=76043
+
+        Re-use appendAuthorStylesheets() from within CSSStyleSelector constructor.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. (refactoring)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        * css/StyleSheetList.h:
+        (WebCore::StyleSheetList::vector):
+
 2012-01-16  Shinya Kawanaka  <shinyak@google.com>
 
         [crash] Renderer crashes when spell checking a disabled input field.
