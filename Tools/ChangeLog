@@ -1,3 +1,11 @@
+2012-01-16  Dan Winship  <danw@gnome.org>
+
+        Add myself as a committer
+
+        Unreviewed
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-16  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed; fix the build when --as-needed and --no-copy-dt-needed-entries are passed to the linker.
