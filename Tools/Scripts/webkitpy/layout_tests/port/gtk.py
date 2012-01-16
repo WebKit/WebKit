@@ -94,6 +94,9 @@ class GtkPort(WebKitPort):
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
         environment['WEBKIT_TOP_LEVEL'] = self._config.webkit_base_dir()
+        environment['AUDIO_RESOURCES_PATH'] = self._filesystem.join(self._config.webkit_base_dir(),
+                                                                    'Source', 'WebCore', 'platform',
+                                                                    'audio', 'resources')
         if self.get_option('webkit_test_runner'):
             # FIXME: This is a workaround to ensure that testing with WebKitTestRunner is started with
             # a non-existing cache. This should be removed when (and if) it will be possible to properly

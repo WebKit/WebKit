@@ -1,3 +1,14 @@
+2012-01-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] set audio resources path in NRTW
+        https://bugs.webkit.org/show_bug.cgi?id=76380
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Set $AUDIO_RESOURCES_PATH so
+        the uninstalled audio resources are used during webaudio tests.
+
 2012-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ldflags and cflags should take precedence over the existing flags in gtkdoc.py
