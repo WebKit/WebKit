@@ -46,7 +46,7 @@ public:
     virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&) = 0;
     virtual void removeTile(WebLayerID, int tileID) = 0;
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
-    virtual int64_t adoptImageBackingStore(Image*) = 0;
+    virtual int64_t adoptImageBackingStore(WebCore::Image*) = 0;
     virtual void releaseImageBackingStore(int64_t) = 0;
     virtual void didSyncCompositingStateForLayer(const WebLayerInfo&) = 0;
     virtual void didDeleteLayer(WebLayerID) = 0;

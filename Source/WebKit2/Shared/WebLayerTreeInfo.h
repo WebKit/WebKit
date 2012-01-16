@@ -29,8 +29,6 @@
 #include "GraphicsLayer.h"
 #include "ShareableBitmap.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 typedef uint32_t WebLayerID;
@@ -38,12 +36,12 @@ enum { InvalidWebLayerID = 0 };
 
 struct WebLayerUpdateInfo {
     WebLayerUpdateInfo() { }
-    WebLayerUpdateInfo(const IntRect& r)
+    WebLayerUpdateInfo(const WebCore::IntRect& r)
         : layerID(InvalidWebLayerID)
         , rect(r) { }
 
     WebLayerID layerID;
-    IntRect rect;
+    WebCore::IntRect rect;
     ShareableBitmap::Handle bitmapHandle;
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -53,9 +51,9 @@ struct WebLayerUpdateInfo {
 struct WebLayerAnimation {
     WebLayerAnimation()
         : operation(InvalidAnimation)
-        , keyframeList(AnimatedPropertyInvalid)
+        , keyframeList(WebCore::AnimatedPropertyInvalid)
         , startTime(0) { }
-    WebLayerAnimation(const KeyframeValueList& valueList) 
+    WebLayerAnimation(const WebCore::KeyframeValueList& valueList)
         : operation(InvalidAnimation)
         , keyframeList(valueList)
         , startTime(0) { }
@@ -67,9 +65,9 @@ struct WebLayerAnimation {
         PauseAnimation,
         InvalidAnimation
     } operation;
-    IntSize boxSize;
-    RefPtr<Animation> animation;
-    KeyframeValueList keyframeList;
+    WebCore::IntSize boxSize;
+    RefPtr<WebCore::Animation> animation;
+    WebCore::KeyframeValueList keyframeList;
     double startTime;
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -93,12 +91,12 @@ struct WebLayerInfo {
     WebLayerID mask;
     int64_t imageBackingStoreID;
 
-    FloatPoint pos;
-    FloatPoint3D anchorPoint;
-    FloatSize size;
-    TransformationMatrix transform;
-    TransformationMatrix childrenTransform;
-    IntRect contentsRect;
+    WebCore::FloatPoint pos;
+    WebCore::FloatPoint3D anchorPoint;
+    WebCore::FloatSize size;
+    WebCore::TransformationMatrix transform;
+    WebCore::TransformationMatrix childrenTransform;
+    WebCore::IntRect contentsRect;
     float opacity;
 
     union {

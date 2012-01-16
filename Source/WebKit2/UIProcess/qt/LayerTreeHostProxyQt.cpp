@@ -57,6 +57,8 @@ public:
     virtual Type type() const = 0;
 };
 
+using namespace WebCore;
+
 template<class MessageData, LayerTreeMessageToRenderer::Type messageType>
 class LayerTreeMessageToRendererWithData : public LayerTreeMessageToRenderer {
 public:

@@ -62,7 +62,7 @@ public:
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceScaleFactorDidChange() { }
-    virtual int64_t adoptImageBackingStore(Image*);
+    virtual int64_t adoptImageBackingStore(WebCore::Image*);
     virtual void releaseImageBackingStore(int64_t);
 
 #if USE(TILED_BACKING_STORE)
@@ -73,8 +73,8 @@ public:
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
-    virtual void setVisibleContentRectAndScale(const IntRect&, float scale);
-    virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&);
+    virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float scale);
+    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&);
     virtual void didSyncCompositingStateForLayer(const WebLayerInfo&);
     virtual void didDeleteLayer(WebLayerID);
 #endif
