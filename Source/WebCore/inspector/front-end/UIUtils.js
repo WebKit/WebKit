@@ -587,6 +587,18 @@ WebInspector._focusChanged = function(event)
     WebInspector.setCurrentFocusElement(event.target);
 }
 
+WebInspector._textInputTypes = ["text", "search", "tel", "url", "email", "password"].keySet(); 
+WebInspector._isTextEditingElement = function(element)
+{
+    if (element instanceof HTMLInputElement)
+        return element.type in WebInspector._textInputTypes;
+
+    if (element instanceof HTMLTextAreaElement)
+        return true;
+
+    return false;
+}
+
 WebInspector.setCurrentFocusElement = function(x)
 {
     if (WebInspector._currentFocusElement !== x)
@@ -596,10 +608,11 @@ WebInspector.setCurrentFocusElement = function(x)
     if (WebInspector._currentFocusElement) {
         WebInspector._currentFocusElement.focus();
 
-        // Make a caret selection inside the new element if there isn't a range selection and
-        // there isn't already a caret selection inside.
+        // Make a caret selection inside the new element if there isn't a range selection and there isn't already a caret selection inside.
+        // This is needed (at least) to remove caret from console when focus is moved to some element in the panel.
+        // The code below should not be applied to text fields and text areas, hence _isTextEditingElement check.
         var selection = window.getSelection();
-        if (selection.isCollapsed && !WebInspector._currentFocusElement.isInsertionCaretInside()) {
+        if (!WebInspector._isTextEditingElement(WebInspector._currentFocusElement) && selection.isCollapsed && !WebInspector._currentFocusElement.isInsertionCaretInside()) {
             var selectionRange = WebInspector._currentFocusElement.ownerDocument.createRange();
             selectionRange.setStart(WebInspector._currentFocusElement, 0);
             selectionRange.setEnd(WebInspector._currentFocusElement, 0);

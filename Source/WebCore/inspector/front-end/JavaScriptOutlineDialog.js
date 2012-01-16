@@ -91,7 +91,6 @@ WebInspector.JavaScriptOutlineDialog = function(panel, view)
 
     this._previousFocusElement = WebInspector.currentFocusElement();
     WebInspector.setCurrentFocusElement(this._promptElement);
-    this._promptElement.select();
 
     this._highlighter = new WebInspector.JavaScriptOutlineDialog.MatchHighlighter(this);
 }

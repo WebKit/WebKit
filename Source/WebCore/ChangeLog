@@ -1,3 +1,16 @@
+2012-01-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: setCurrentFocusElement should not update selection when focus is moved to text field or text area.
+        https://bugs.webkit.org/show_bug.cgi?id=76384
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/JavaScriptOutlineDialog.js:
+        (WebInspector.JavaScriptOutlineDialog):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector._isTextEditingElement):
+        (WebInspector.setCurrentFocusElement):
+
 2012-01-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Large SVG text layout performance regression in r81168
