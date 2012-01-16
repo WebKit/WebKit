@@ -1,3 +1,19 @@
+2012-01-16  Shinya Kawanaka  <shinyak@google.com>
+
+        [crash] Renderer crashes when spell checking a disabled input field.
+        https://bugs.webkit.org/show_bug.cgi?id=75941
+
+        Reviewed by Hajime Morita.
+
+        We confirm the selection is editable before replacing text.
+
+        Tests: ManualTests/editing-disabled-node-replace-crash.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2012-01-16  Pablo Flouret  <pablof@motorola.com>
 
         Fix compilation errors on build-webkit --debug --no-svg --no-svg-fonts --no-svg-dom-objc-bindings on mac.

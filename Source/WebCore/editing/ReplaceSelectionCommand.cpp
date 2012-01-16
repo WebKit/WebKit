@@ -817,6 +817,9 @@ void ReplaceSelectionCommand::doApply()
     if (!selection.isNonOrphanedCaretOrRange() || !selection.start().deprecatedNode())
         return;
 
+    if (!selection.rootEditableElement())
+        return;
+
     ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection);
     if (performTrivialReplace(fragment))
         return;

@@ -1,3 +1,12 @@
+2012-01-16  Shinya Kawanaka  <shinyak@google.com>
+
+        [crash] Renderer crashes when spell checking a disabled input field.
+        https://bugs.webkit.org/show_bug.cgi?id=75941
+
+        Reviewed by Hajime Morita.
+
+        * ManualTests/editing-disabled-node-replace-crash.html: Added.
+
 2012-01-13  Simon Fraser  <simon.fraser@apple.com>
 
         Unmatched transparency layer begin/end on a filtered element with an opacity ancestor
