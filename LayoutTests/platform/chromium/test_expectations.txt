@@ -3834,3 +3834,6 @@ BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-ove
 
 // Started failing between http://trac.webkit.org/changeset/104901 and http://trac.webkit.org/changeset/104910
 BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMAGE+TEXT
+
+// Started failing at http://trac.webkit.org/changeset/105007
+BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
