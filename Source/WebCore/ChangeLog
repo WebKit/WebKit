@@ -1,3 +1,11 @@
+2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Inremental build problem revealed by https://bugs.webkit.org/show_bug.cgi?id=74455
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DerivedSources.pri: supplemental_dependency.tmp must depends on idl files too.
+
 2012-01-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not merge iframes into a single DOM hierarchy.
