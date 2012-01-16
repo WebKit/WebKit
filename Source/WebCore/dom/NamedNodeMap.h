@@ -87,9 +87,7 @@ public:
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
     void setIdForStyleResolution(const AtomicString& newId) { m_idForStyleResolution = newId; }
 
-    // FIXME: These two functions should be merged if possible.
     bool mapsEquivalent(const NamedNodeMap* otherMap) const;
-    bool mappedMapsEquivalent(const NamedNodeMap* otherMap) const;
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute>);
@@ -102,14 +100,11 @@ public:
     void setClass(const String&);
     const SpaceSplitString& classNames() const { return m_classNames; }
 
-    bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
-    void declRemoved() { m_mappedAttributeCount--; }
-    void declAdded() { m_mappedAttributeCount++; }
+    size_t mappedAttributeCount() const;
 
 private:
-    NamedNodeMap(Element* element) 
-        : m_mappedAttributeCount(0)
-        , m_element(element)
+    NamedNodeMap(Element* element)
+        : m_element(element)
     {
     }
 
@@ -122,7 +117,6 @@ private:
     void clearAttributes();
     void replaceAttribute(size_t index, PassRefPtr<Attribute>);
 
-    int m_mappedAttributeCount;
     SpaceSplitString m_classNames;
     Element* m_element;
     Vector<RefPtr<Attribute>, 4> m_attributes;
@@ -184,6 +178,16 @@ inline void NamedNodeMap::removeAttribute(const QualifiedName& name)
         return;
 
     removeAttribute(index);
+}
+
+inline size_t NamedNodeMap::mappedAttributeCount() const
+{
+    size_t count = 0;
+    for (size_t i = 0; i < m_attributes.size(); ++i) {
+        if (m_attributes[i]->decl())
+            ++count;
+    }
+    return count;
 }
 
 } // namespace WebCore

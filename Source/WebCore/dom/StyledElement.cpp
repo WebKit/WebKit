@@ -155,8 +155,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (attr->decl() && !preserveDecls) {
         attr->setDecl(0);
         setNeedsStyleRecalc();
-        if (attributeMap())
-            attributeMap()->declRemoved();
     }
 
     bool checkDecl = true;
@@ -165,8 +163,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (preserveDecls) {
         if (attr->decl()) {
             setNeedsStyleRecalc();
-            if (attributeMap())
-                attributeMap()->declAdded();
             checkDecl = false;
         }
     } else if (!attr->isNull() && entry != eNone) {
@@ -174,8 +170,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         if (decl) {
             attr->setDecl(decl);
             setNeedsStyleRecalc();
-            if (attributeMap())
-                attributeMap()->declAdded();
             checkDecl = false;
         } else
             needToParse = true;
@@ -196,8 +190,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         // Add the decl to the table in the appropriate spot.
         setMappedAttributeDecl(entry, attr, attr->decl());
         attr->decl()->setMappedState(entry, attr->name(), attr->value());
-        if (attributeMap())
-            attributeMap()->declAdded();
     }
 
     updateAfterAttributeChanged(attr);

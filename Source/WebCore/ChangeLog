@@ -1,3 +1,52 @@
+2012-01-16  Andreas Kling  <awesomekling@apple.com>
+
+        Remove caching of mapped attribute count on NamedNodeMap.
+        <http://webkit.org/b/76393>
+
+        Reviewed by Antti Koivisto.
+
+        Stop caching the mapped attribute count on Element's attribute map, effectively
+        shrinking NamedNodeMap by one CPU word. The price we pay is always walking over
+        the map in matchAllRules(), even if it has no mapped attribute styles.
+
+        This reduces memory consumption by 605 kB (on 64-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::mappedAttributesEquivalent):
+
+            Moved here from NamedNodeMap::mappedMapsEquivalent() to accomodate the only
+            user under the added assumption that the two attribute maps have the same
+            number of mapped attributes.
+
+        (WebCore::CSSStyleSelector::matchAllRules):
+
+            We don't have NamedNodeMap::hasMappedAttributes() at our convenience any
+            more so walk the attribute map (if there is one) looking for styles to add.
+
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+
+            Compare the elements' mapped attribute counts at an earlier time. This is
+            slightly more expensive but we used to do it near the end anyway and this
+            ends up rejecting elements that can't share style before doing a lot of
+            semi-expensive checks.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::mappedAttributeCount):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::mappedAttributeCount):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::clearAttributes):
+
+            Remove NamedNodeMap::m_mappedAttributeCount and add a function that walks
+            the attribute map counting the attributes that have a decl().
+
+        * dom/NamedNodeMap.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
+            Remove declAdded()/declRemoved() callbacks.
+
 2012-01-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.

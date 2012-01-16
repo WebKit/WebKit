@@ -201,8 +201,6 @@ size_t NamedNodeMap::getAttributeItemIndexSlowCase(const String& name, bool shou
 void NamedNodeMap::clearAttributes()
 {
     m_classNames.clear();
-    m_mappedAttributeCount = 0;
-
     detachAttributesFromElement();
     m_attributes.clear();
 }
@@ -329,25 +327,6 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
             return false;
     }
     
-    return true;
-}
-
-bool NamedNodeMap::mappedMapsEquivalent(const NamedNodeMap* otherMap) const
-{
-    if (m_mappedAttributeCount != otherMap->m_mappedAttributeCount)
-        return false;
-
-    // The values for each decl must match.
-    for (unsigned i = 0; i < length(); i++) {
-        Attribute* attr = attributeItem(i);
-        if (attr->decl()) {
-            ASSERT(attr->isMappedAttribute());
-
-            Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
-            if (!otherAttr || attr->decl() != otherAttr->decl() || attr->value() != otherAttr->value())
-                return false;
-        }
-    }
     return true;
 }
 
