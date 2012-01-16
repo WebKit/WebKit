@@ -31,12 +31,14 @@ module core {
         readonly attribute [Custom] double alpha;
         readonly attribute [Custom] double beta;
         readonly attribute [Custom] double gamma;
+        readonly attribute [Custom] boolean absolute;
         [Custom] void initDeviceOrientationEvent(in [Optional=CallWithDefaultValue] DOMString type, 
                                                  in [Optional=CallWithDefaultValue] boolean bubbles, 
                                                  in [Optional=CallWithDefaultValue] boolean cancelable, 
                                                  in [Optional=CallWithDefaultValue] double alpha, 
                                                  in [Optional=CallWithDefaultValue] double beta, 
-                                                 in [Optional=CallWithDefaultValue] double gamma);
+                                                 in [Optional=CallWithDefaultValue] double gamma,
+                                                 in [Optional=CallWithDefaultValue] boolean absolute);
     };
 
 }

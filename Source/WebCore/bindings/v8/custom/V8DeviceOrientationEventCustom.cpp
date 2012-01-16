@@ -67,13 +67,23 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::gammaAccessorGetter(v8::Local<v8
     return v8::Number::New(imp->orientation()->gamma());
 }
 
+v8::Handle<v8::Value> V8DeviceOrientationEvent::absoluteAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.DeviceOrientationEvent.absolute._get");
+    v8::Handle<v8::Object> holder = info.Holder();
+    DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(holder);
+    if (!imp->orientation()->canProvideAbsolute())
+        return v8::Null();
+    return v8::Boolean::New(imp->orientation()->absolute());
+}
+
 v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallback(const v8::Arguments& args)
 {
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(args.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     bool bubbles = args[1]->BooleanValue();
     bool cancelable = args[2]->BooleanValue();
-    // If alpha, beta or gamma are null or undefined, mark them as not provided.
+    // If alpha, beta, gamma or absolute are null or undefined, mark them as not provided.
     // Otherwise, use the standard JavaScript conversion.
     bool alphaProvided = !isUndefinedOrNull(args[3]);
     double alpha = args[3]->NumberValue();
@@ -81,7 +91,9 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallba
     double beta = args[4]->NumberValue();
     bool gammaProvided = !isUndefinedOrNull(args[5]);
     double gamma = args[5]->NumberValue();
-    RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma);
+    bool absoluteProvided = !isUndefinedOrNull(args[6]);
+    bool absolute = args[6]->BooleanValue();
+    RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return v8::Handle<v8::Value>();
 }

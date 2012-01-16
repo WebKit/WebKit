@@ -41,6 +41,8 @@ WebDeviceOrientation::WebDeviceOrientation(const PassRefPtr<WebCore::DeviceOrien
         m_beta = 0;
         m_canProvideGamma = false;
         m_gamma = 0;
+        m_canProvideAbsolute = false;
+        m_absolute = false;
         return;
     }
 
@@ -51,6 +53,8 @@ WebDeviceOrientation::WebDeviceOrientation(const PassRefPtr<WebCore::DeviceOrien
     m_beta = orientation->beta();
     m_canProvideGamma = orientation->canProvideGamma();
     m_gamma = orientation->gamma();
+    m_canProvideAbsolute = orientation->canProvideAbsolute();
+    m_absolute = orientation->absolute();
 }
 
 WebDeviceOrientation& WebDeviceOrientation::operator=(const PassRefPtr<WebCore::DeviceOrientation>& orientation)
@@ -63,6 +67,8 @@ WebDeviceOrientation& WebDeviceOrientation::operator=(const PassRefPtr<WebCore::
         m_beta = 0;
         m_canProvideGamma = false;
         m_gamma = 0;
+        m_canProvideAbsolute = false;
+        m_absolute = false;
         return *this;
     }
 
@@ -73,6 +79,8 @@ WebDeviceOrientation& WebDeviceOrientation::operator=(const PassRefPtr<WebCore::
     m_beta = orientation->beta();
     m_canProvideGamma = orientation->canProvideGamma();
     m_gamma = orientation->gamma();
+    m_canProvideAbsolute = orientation->canProvideAbsolute();
+    m_absolute = orientation->absolute();
     return *this;
 }
 
@@ -80,7 +88,7 @@ WebDeviceOrientation::operator PassRefPtr<WebCore::DeviceOrientation>() const
 {
     if (m_isNull)
         return 0;
-    return WebCore::DeviceOrientation::create(m_canProvideAlpha, m_alpha, m_canProvideBeta, m_beta, m_canProvideGamma, m_gamma);
+    return WebCore::DeviceOrientation::create(m_canProvideAlpha, m_alpha, m_canProvideBeta, m_beta, m_canProvideGamma, m_gamma, m_canProvideAbsolute, m_absolute);
 }
 
 } // namespace WebKit

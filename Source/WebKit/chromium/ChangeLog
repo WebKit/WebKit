@@ -1,3 +1,23 @@
+2012-01-15  Xinchao He  <xinchao.he@intel.com>
+
+        Add DeviceOrientationEvent.absolute
+        https://bugs.webkit.org/show_bug.cgi?id=51742
+
+        Reviewed by Darin Fisher.
+
+        This patch add the DeviceOrientationEvent.absolute to follow the
+        latest w3c device orientation event spec.
+        http://www.w3.org/TR/orientation-event/
+
+        * public/WebDeviceOrientation.h:
+        (WebKit::WebDeviceOrientation::WebDeviceOrientation):
+        (WebKit::WebDeviceOrientation::canProvideAbsolute):
+        (WebKit::WebDeviceOrientation::absolute):
+        * src/WebDeviceOrientation.cpp:
+        (WebKit::WebDeviceOrientation::WebDeviceOrientation):
+        (WebKit::WebDeviceOrientation::operator=):
+        (WebKit::WebDeviceOrientation::operator PassRefPtr<WebCore::DeviceOrientation>):
+
 2012-01-14  David Levin  <levin@chromium.org>
 
         HWndDC should be in platform/win instead of wtf.

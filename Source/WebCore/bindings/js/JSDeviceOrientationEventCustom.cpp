@@ -60,6 +60,14 @@ JSValue JSDeviceOrientationEvent::gamma(ExecState*) const
     return jsNumber(imp->orientation()->gamma());
 }
 
+JSValue JSDeviceOrientationEvent::absolute(ExecState*) const
+{
+    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    if (!imp->orientation()->canProvideAbsolute())
+        return jsNull();
+    return jsBoolean(imp->orientation()->absolute());
+}
+
 JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
 {
     const String& type = ustringToString(exec->argument(0).toString(exec));
@@ -73,7 +81,9 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
     double beta = exec->argument(4).toNumber(exec);
     bool gammaProvided = !exec->argument(5).isUndefinedOrNull();
     double gamma = exec->argument(5).toNumber(exec);
-    RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma);
+    bool absoluteProvided = !exec->argument(5).isUndefinedOrNull();
+    bool absolute = exec->argument(6).toBoolean(exec);
+    RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return jsUndefined();

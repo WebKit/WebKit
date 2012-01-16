@@ -1,3 +1,29 @@
+2012-01-15  Xinchao He  <xinchao.he@intel.com>
+
+        Add DeviceOrientationEvent.absolute
+        https://bugs.webkit.org/show_bug.cgi?id=51742
+
+        Reviewed by Darin Fisher.
+
+        This patch add the DeviceOrientationEvent.absolute to follow the
+        latest w3c device orientation event spec.
+        http://www.w3.org/TR/orientation-event/
+
+
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::absolute):
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::absoluteAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * dom/DeviceOrientation.cpp:
+        (WebCore::DeviceOrientation::create):
+        (WebCore::DeviceOrientation::DeviceOrientation):
+        (WebCore::DeviceOrientation::absolute):
+        (WebCore::DeviceOrientation::canProvideAbsolute):
+        * dom/DeviceOrientation.h:
+        * dom/DeviceOrientationEvent.idl:
+
 2012-01-15  Luke Macpherson   <macpherson@chromium.org>
 
         Remove external references to CSSPrimitiveValue::UnitTypes enum.

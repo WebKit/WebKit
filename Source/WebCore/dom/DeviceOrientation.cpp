@@ -33,9 +33,9 @@ PassRefPtr<DeviceOrientation> DeviceOrientation::create()
     return adoptRef(new DeviceOrientation);
 }
 
-PassRefPtr<DeviceOrientation> DeviceOrientation::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+PassRefPtr<DeviceOrientation> DeviceOrientation::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
 {
-    return adoptRef(new DeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
+    return adoptRef(new DeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
 }
 
 
@@ -43,19 +43,23 @@ DeviceOrientation::DeviceOrientation()
     : m_canProvideAlpha(false)
     , m_canProvideBeta(false)
     , m_canProvideGamma(false)
+    , m_canProvideAbsolute(false)
     , m_alpha(0)
     , m_beta(0)
     , m_gamma(0)
+    , m_absolute(false)
 {
 }
 
-DeviceOrientation::DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+DeviceOrientation::DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
     : m_canProvideAlpha(canProvideAlpha)
     , m_canProvideBeta(canProvideBeta)
     , m_canProvideGamma(canProvideGamma)
+    , m_canProvideAbsolute(canProvideAbsolute)
     , m_alpha(alpha)
     , m_beta(beta)
     , m_gamma(gamma)
+    , m_absolute(absolute)
 {
 }
 
@@ -74,6 +78,11 @@ double DeviceOrientation::gamma() const
     return m_gamma;
 }
 
+bool DeviceOrientation::absolute() const
+{
+    return m_absolute;
+}
+
 bool DeviceOrientation::canProvideAlpha() const
 {
     return m_canProvideAlpha;
@@ -87,6 +96,11 @@ bool DeviceOrientation::canProvideBeta() const
 bool DeviceOrientation::canProvideGamma() const
 {
     return m_canProvideGamma;
+}
+
+bool DeviceOrientation::canProvideAbsolute() const
+{
+    return m_canProvideAbsolute;
 }
 
 } // namespace WebCore

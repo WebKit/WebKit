@@ -35,14 +35,16 @@ namespace WebKit {
 
 class WebDeviceOrientation {
 public:
-    WebDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+    WebDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false)
         : m_isNull(false),
           m_canProvideAlpha(canProvideAlpha),
           m_alpha(alpha),
           m_canProvideBeta(canProvideBeta),
           m_beta(beta),
           m_canProvideGamma(canProvideGamma),
-          m_gamma(gamma)
+          m_gamma(gamma),
+          m_canProvideAbsolute(canProvideAbsolute),
+          m_absolute(absolute)
     {
     }
 
@@ -55,6 +57,8 @@ public:
     double beta() { return m_beta; }
     bool canProvideGamma() { return m_canProvideGamma; }
     double gamma() { return m_gamma; }
+    bool canProvideAbsolute() {return m_canProvideAbsolute; }
+    bool absolute() { return m_absolute; }
 
 #if WEBKIT_IMPLEMENTATION
     WebDeviceOrientation(const WTF::PassRefPtr<WebCore::DeviceOrientation>&);
@@ -70,7 +74,9 @@ private:
           m_canProvideBeta(false),
           m_beta(0),
           m_canProvideGamma(false),
-          m_gamma(0)
+          m_gamma(0),
+          m_canProvideAbsolute(false),
+          m_absolute(false)
     {
     }
 
@@ -81,6 +87,8 @@ private:
     double m_beta;
     bool m_canProvideGamma;
     double m_gamma;
+    bool m_canProvideAbsolute;
+    bool m_absolute;
 };
 
 } // namespace WebKit

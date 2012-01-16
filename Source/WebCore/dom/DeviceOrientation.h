@@ -34,25 +34,29 @@ namespace WebCore {
 class DeviceOrientation : public RefCounted<DeviceOrientation> {
 public:
     static PassRefPtr<DeviceOrientation> create();
-    static PassRefPtr<DeviceOrientation> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
+    static PassRefPtr<DeviceOrientation> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
 
     double alpha() const;
     double beta() const;
     double gamma() const;
+    bool absolute() const;
     bool canProvideAlpha() const;
     bool canProvideBeta() const;
     bool canProvideGamma() const;
+    bool canProvideAbsolute() const;
 
 private:
     DeviceOrientation();
-    DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
+    DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute);
 
     bool m_canProvideAlpha;
     bool m_canProvideBeta;
     bool m_canProvideGamma;
+    bool m_canProvideAbsolute;
     double m_alpha;
     double m_beta;
     double m_gamma;
+    bool m_absolute;
 };
 
 } // namespace WebCore
