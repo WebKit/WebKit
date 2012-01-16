@@ -1045,23 +1045,28 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
     return clipRect;
 }
 
-void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const RenderLayer* rootLayer, PaintBehavior paintBehavior)
+LayoutRect RenderLayer::paintingExtent(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior)
+{
+    return intersection(transparencyClipBox(this, rootLayer, paintBehavior), paintDirtyRect);
+}
+
+void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior)
 {
     if (context->paintingDisabled() || (paintsWithTransparency(paintBehavior) && m_usedTransparency))
         return;
     
     RenderLayer* ancestor = transparentPaintingAncestor();
     if (ancestor)
-        ancestor->beginTransparencyLayers(context, rootLayer, paintBehavior);
+        ancestor->beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
     
     if (paintsWithTransparency(paintBehavior)) {
         m_usedTransparency = true;
         context->save();
-        LayoutRect clipRect = transparencyClipBox(this, rootLayer, paintBehavior);
+        LayoutRect clipRect = paintingExtent(rootLayer, paintDirtyRect, paintBehavior);
         context->clip(clipRect);
         context->beginTransparencyLayer(renderer()->opacity());
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        context->setFillColor(Color(0, 0, 0.5f, 0.2f), ColorSpaceDeviceRGB);
+        context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), ColorSpaceDeviceRGB);
         context->fillRect(clipRect);
 #endif
     }
@@ -2750,9 +2755,9 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
         // layer from the parent now, assuming there is a parent
         if (paintFlags & PaintLayerHaveTransparency) {
             if (parent())
-                parent()->beginTransparencyLayers(context, rootLayer, paintBehavior);
+                parent()->beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
             else
-                beginTransparencyLayers(context, rootLayer, paintBehavior);
+                beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
         }
 
         // Make sure the parent's clip rects have been calculated.
@@ -2860,11 +2865,11 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         if (shouldPaintContent && !selectionOnly) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(context, rootLayer, paintBehavior);
+                beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
         
 #if ENABLE(CSS_FILTERS)
             if (filterPainter.haveFilterEffect() && !context->paintingDisabled())
-                context = filterPainter.beginFilterEffect(this, context, transparencyClipBox(this, rootLayer, paintBehavior));
+                context = filterPainter.beginFilterEffect(this, context, paintingExtent(rootLayer, paintDirtyRect, paintBehavior));
 #endif
         
             // Paint our background first, before painting any child layers.
@@ -2888,12 +2893,12 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         if (shouldPaintContent && !clipRectToApply.isEmpty()) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(context, rootLayer, paintBehavior);
+                beginTransparencyLayers(context, rootLayer, paintDirtyRect, paintBehavior);
 
 #if ENABLE(CSS_FILTERS)
             // If the filter was not started yet, start it now, after the transparency layer was lazily created.
             if (filterPainter.haveFilterEffect() && !filterPainter.hasStartedFilterEffect() && !context->paintingDisabled())
-                context = filterPainter.beginFilterEffect(this, context, transparencyClipBox(this, rootLayer, paintBehavior));
+                context = filterPainter.beginFilterEffect(this, context, paintingExtent(rootLayer, paintDirtyRect, paintBehavior));
 #endif
             // Set up the clip used when painting our children.
             clipToRect(rootLayer, context, paintDirtyRect, clipRectToApply);

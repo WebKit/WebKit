@@ -1,5 +1,29 @@
 2012-01-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Huge filter area cause hangs and malloc failures
+        https://bugs.webkit.org/show_bug.cgi?id=75711
+
+        Reviewed by Dean Jackson.
+        
+        Filtering an element with a child that had a huge negative text-indent
+        was extremely slow, because transparencyClipBox() returned a huge rect.
+        
+        Add a method, paintingExtent(), that wraps transparencyClipBox()
+        and intersects it with the paintDirtyRect to constrain the size
+        of the rect used for filters and transparency layers.
+
+        Transparency layer extent is not testable in layout tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintingExtent):
+        (WebCore::RenderLayer::beginTransparencyLayers): Floating point literals are required
+        to avoid ambiguous constructor call.
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayer.h:
+
+2012-01-16  Simon Fraser  <simon.fraser@apple.com>
+
         Borders and box masks behave incorrectly with overlapping offsets
         https://bugs.webkit.org/show_bug.cgi?id=76137
 

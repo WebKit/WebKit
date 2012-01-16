@@ -257,7 +257,7 @@ public:
 
     bool isTransparent() const;
     RenderLayer* transparentPaintingAncestor();
-    void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, PaintBehavior);
+    void beginTransparencyLayers(GraphicsContext*, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
 
     bool hasReflection() const { return renderer()->hasReflection(); }
     bool isReflection() const { return renderer()->isReplica(); }
@@ -704,6 +704,7 @@ private:
 
     void parentClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     ClipRect backgroundClipRect(const RenderLayer* rootLayer, RenderRegion*, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    LayoutRect paintingExtent(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
 
     RenderLayer* enclosingTransformedAncestor() const;
 
