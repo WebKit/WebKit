@@ -205,6 +205,7 @@ void CachedImage::setContainerSizeForRenderer(const RenderObject* renderer, cons
     m_svgImageCache->setRequestedSizeAndZoom(renderer, SVGImageCache::SizeAndZoom(containerSize, containerZoom));
 #else
     UNUSED_PARAM(renderer);
+    UNUSED_PARAM(containerZoom);
     m_image->setContainerSize(containerSize);
 #endif
 }
@@ -255,6 +256,8 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
         }
         return sizeAndZoom.size;
     }
+#else
+    UNUSED_PARAM(renderer);
 #endif
 
     if (multiplier == 1.0f)

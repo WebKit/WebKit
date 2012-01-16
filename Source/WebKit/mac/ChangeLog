@@ -1,3 +1,13 @@
+2012-01-16  Pablo Flouret  <pablof@motorola.com>
+
+        Fix compilation errors on build-webkit --debug --no-svg --no-svg-fonts --no-svg-dom-objc-bindings on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=75865
+
+        Reviewed by Hajime Morita.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _pauseSVGAnimation:onSMILNode:atTime:]):
+
 2012-01-15  Pablo Flouret  <pablof@motorola.com>
 
         Fix compilation errors on build-webkit --debug --no-video on mac.

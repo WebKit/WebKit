@@ -1572,6 +1572,9 @@ private:
 #if ENABLE(SVG)
         if (selector->element() && selector->element()->isSVGElement() && selector->style()->styleType() == NOPSEUDO)
             return (displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE);
+#else
+        UNUSED_PARAM(selector);
+        UNUSED_PARAM(displayPropertyValue);
 #endif
         return true;
     }

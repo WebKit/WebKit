@@ -995,6 +995,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 // This method is only intended to be used for testing the SVG animation system.
 - (BOOL)_pauseSVGAnimation:(NSString*)elementId onSMILNode:(DOMNode *)node atTime:(NSTimeInterval)time
 {
+#if ENABLE(SVG)
     Frame* frame = core(self);
     if (!frame)
         return false;
@@ -1007,7 +1008,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!coreNode || !SVGSMILElement::isSMILElement(coreNode))
         return false;
 
-#if ENABLE(SVG)
     return document->accessSVGExtensions()->sampleAnimationAtTime(elementId, static_cast<SVGSMILElement*>(coreNode), time);
 #else
     return false;

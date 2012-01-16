@@ -379,6 +379,10 @@ void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRu
 
 void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
 {   
+#if !ENABLE(SVG_FONTS)
+    UNUSED_PARAM(run);
+#endif
+
     // Draw each contiguous run of glyphs that use the same font data.
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
     FloatSize offset = glyphBuffer.offsetAt(0);

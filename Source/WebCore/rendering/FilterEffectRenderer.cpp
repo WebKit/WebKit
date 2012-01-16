@@ -29,6 +29,7 @@
 
 #include "FilterEffectRenderer.h"
 
+#include "Document.h"
 #include "FEColorMatrix.h"
 #include "FEComponentTransfer.h"
 #include "FEDropShadow.h"
