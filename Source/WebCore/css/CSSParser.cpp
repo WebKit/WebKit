@@ -6444,19 +6444,17 @@ bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& 
 
 bool CSSParser::parseCanvas(CSSParserValueList* valueList, RefPtr<CSSValue>& canvas)
 {
-    RefPtr<CSSCanvasValue> result = CSSCanvasValue::create();
-
     // Walk the arguments.
     CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args || args->size() != 1)
         return false;
 
     // The first argument is the canvas name.  It is an identifier.
-    CSSParserValue* a = args->current();
-    if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
+    CSSParserValue* value = args->current();
+    if (!value || value->unit != CSSPrimitiveValue::CSS_IDENT)
         return false;
-    result->setName(a->string);
-    canvas = result;
+
+    canvas = CSSCanvasValue::create(value->string);
     return true;
 }
 

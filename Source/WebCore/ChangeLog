@@ -1,3 +1,19 @@
+2012-01-15  Andreas Kling  <awesomekling@apple.com>
+
+        CSSCanvasValue can't be renamed, enforce this at compile-time.
+        <http://webkit.org/b/76352>
+
+        Reviewed by Antti Koivisto.
+
+        Have the CSSCanvasValue constructor take the name as an argument instead of
+        having a setName() that's only called from one place in CSSParser.
+
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::create):
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCanvas):
+
 2012-01-16  Andreas Kling  <awesomekling@apple.com>
 
         CSSStyleSelector: Dodge parser when creating default LTR/RTL declarations.
