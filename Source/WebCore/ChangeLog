@@ -1,3 +1,20 @@
+2012-01-16  Mark Rowe  <mrowe@apple.com>
+
+        Merge r104378.
+
+    2012-01-06  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r83075): Save as PDF does not generate any links for webkit.org and others
+        <http://webkit.org/b/75768> <rdar://problem/10659258>
+
+        Use RenderObject::hasOutline when determining whether to always create line boxes so that
+        we take in to consideration whether we'll be creating PDF link rects.
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+
 2011-1-16  Lucas Forschler  <lforschler@apple.com>
 
     Merge 91324
