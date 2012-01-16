@@ -1,3 +1,16 @@
+2012-01-16  Andreas Kling  <awesomekling@apple.com>
+
+        Fix assertion failure in mappedAttributesEquivalent().
+        <http://webkit.org/b/76393>
+
+        Rubber-stamped by Antti Koivisto.
+
+        The assertion that two mapped attributes with matching name/value will always
+        have the exact same decl() was wrong, so make it a proper check once again.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::mappedAttributesEquivalent):
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Remove HTML notifications support on Mac

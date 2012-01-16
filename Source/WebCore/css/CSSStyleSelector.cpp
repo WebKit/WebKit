@@ -1064,9 +1064,8 @@ static inline bool mappedAttributesEquivalent(NamedNodeMap* a, NamedNodeMap* b)
             continue;
         ASSERT(attribute->isMappedAttribute());
         Attribute* otherAttribute = b->getAttributeItem(attribute->name());
-        if (!otherAttribute || attribute->value() != otherAttribute->value())
+        if (!otherAttribute || attribute->value() != otherAttribute->value() || attribute->decl() != otherAttribute->decl())
             return false;
-        ASSERT(attribute->decl() == otherAttribute->decl());
     }
     return true;
 }
