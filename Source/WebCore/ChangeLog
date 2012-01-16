@@ -1,3 +1,20 @@
+2011-12-12  Jer Noble  <jer.noble@apple.com>
+
+        WebAudio: Optimize AudioChannel::maxAbsValue().
+        https://bugs.webkit.org/show_bug.cgi?id=74359
+
+        Reviewed by Eric Carlson.
+
+        No new tests; optimization of existing code, so covered by existing test cases.
+
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::maxAbsValue): Replace implementation with optimized vector math 
+            operation.
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vmaxmgv): Vector math operation for determining maximum
+            magnitude in a vector.
+        * platform/audio/VectorMath.h:
+
 2012-01-16  Joe Thomas  <joethomas@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=41210

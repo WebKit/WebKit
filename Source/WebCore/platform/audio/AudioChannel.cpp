@@ -88,12 +88,9 @@ void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
 
 float AudioChannel::maxAbsValue() const
 {
-    const float* p = data();
-    int n = length();
-
     float max = 0.0f;
-    while (n--)
-        max = std::max(max, fabsf(*p++));
+
+    vmaxmgv(data(), 1, &max, length());
 
     return max;
 }

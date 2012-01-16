@@ -95,6 +95,11 @@ void vsma(const float* sourceP, int sourceStride, const float* scale, float* des
     vDSP_vsma(sourceP, sourceStride, scale, destP, destStride, destP, destStride, framesToProcess);
 }
 
+void vmaxmgv(const float* sourceP, int sourceStride, float* maxP, size_t framesToProcess)
+{
+    vDSP_maxmgv(sourceP, sourceStride, maxP, framesToProcess);
+}
+
 void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesToProcess)
 {
     vDSP_svesq(const_cast<float*>(sourceP), sourceStride, sumP, framesToProcess);
@@ -428,6 +433,20 @@ void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesTo
 
     ASSERT(sumP);
     *sumP = sum;
+}
+
+void vmaxmgv(const float* sourceP, int sourceStride, float* maxP, size_t framesToProcess)
+{
+    // FIXME: optimize for SSE
+    int n = framesToProcess;
+    float max = 0;
+    while (n--) {
+        max = std::max(max, fabsf(*sourceP));
+        sourceP += sourceStride;
+    }
+
+    ASSERT(maxP);
+    *maxP = max;
 }
 #endif // OS(DARWIN)
 
