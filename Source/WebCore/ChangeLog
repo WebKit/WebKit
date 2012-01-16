@@ -53,7 +53,7 @@
 2012-01-15  Andreas Kling  <awesomekling@apple.com>
 
         CSSParser: Fix failing assertion below BorderImageQuadParseContext.
-        <http://webkit.org/b/76343> and <rdar://problem/10584969>
+        <http://webkit.org/b/76346> and <rdar://problem/10584969>
 
         Reviewed by Antti Koivisto.
 
