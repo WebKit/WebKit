@@ -1,3 +1,12 @@
+2012-01-16  Pavel Heimlich  <tropikhajma@gmail.com>
+
+        Solaris Studio supports alignment macros too
+        https://bugs.webkit.org/show_bug.cgi?id=75453
+
+        Reviewed by Hajime Morita.
+
+        * wtf/Alignment.h:
+
 2012-01-16  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Build fix on 32bit if verbose debug is enabled in DFG
