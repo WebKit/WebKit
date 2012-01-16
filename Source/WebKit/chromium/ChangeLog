@@ -1,3 +1,20 @@
+2012-01-16  Bill Budge  <bbudge@chromium.org>
+
+        Changes AssociatedURLLoader to remove non-whitelisted HTTP response headers for CORS requests,
+        and Set-Cookie and Set-Cookie2 response headers for all requests.
+        https://bugs.webkit.org/show_bug.cgi?id=76228
+
+        Reviewed by Adam Barth.
+
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::create):
+        (WebKit::AssociatedURLLoader::ClientAdapter::ClientAdapter):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveResponse):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        * tests/AssociatedURLLoaderTest.cpp:
+        (WebKit::AssociatedURLLoaderTest::didReceiveResponse):
+        (WebKit::TEST_F):
+
 2012-01-16  xueqing huang  <huangxueqing@baidu.com>
 
         Add offline web applications API applicationCache.abort.

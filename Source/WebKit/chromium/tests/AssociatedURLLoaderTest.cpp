@@ -137,6 +137,7 @@ public:
     void didReceiveResponse(WebURLLoader* loader, const WebURLResponse& response)
     {
         m_didReceiveResponse = true;
+        m_actualResponse = WebURLResponse(response);
         EXPECT_EQ(m_expectedLoader, loader);
         EXPECT_EQ(m_expectedResponse.url(), response.url());
         EXPECT_EQ(m_expectedResponse.httpStatusCode(), response.httpStatusCode());
@@ -226,6 +227,7 @@ protected:
     WebView* m_webView;
 
     WebURLLoader* m_expectedLoader;
+    WebURLResponse m_actualResponse;
     WebURLResponse m_expectedResponse;
     WebURLRequest m_expectedNewRequest;
     WebURLResponse m_expectedRedirectResponse;
@@ -485,6 +487,52 @@ TEST_F(AssociatedURLLoaderTest, UntrustedCheckHeaders)
 
     // Check invalid header values.
     CheckHeaderFails("foo", "bar\x0d\x0ax-csrf-token:\x20test1234");
+}
+
+// Test that a CORS load only returns whitelisted headers.
+TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderWhitelisting)
+{
+    // This is cross-origin since the frame was loaded from www.test.com.
+    GURL url = GURL("http://www.other.com/CrossOriginHeaderWhitelisting.html");
+    WebURLRequest request;
+    request.initialize();
+    request.setURL(url);
+
+    m_expectedResponse = WebURLResponse();
+    m_expectedResponse.initialize();
+    m_expectedResponse.setMIMEType("text/html");
+    m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
+    // These headers are whitelisted and should be in the response.
+    m_expectedResponse.addHTTPHeaderField("cache-control", "foo");
+    m_expectedResponse.addHTTPHeaderField("content-language", "foo");
+    m_expectedResponse.addHTTPHeaderField("content-type", "foo");
+    m_expectedResponse.addHTTPHeaderField("expires", "foo");
+    m_expectedResponse.addHTTPHeaderField("last-modified", "foo");
+    m_expectedResponse.addHTTPHeaderField("pragma", "foo");
+    // These should never be in the response.
+    m_expectedResponse.addHTTPHeaderField("Set-Cookie", "foo");
+    m_expectedResponse.addHTTPHeaderField("Set-Cookie2", "foo");
+    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+
+    WebURLLoaderOptions options;
+    options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
+    m_expectedLoader = createAssociatedURLLoader(options);
+    EXPECT_TRUE(m_expectedLoader);
+    m_expectedLoader->loadAsynchronously(request, this);
+    serveRequests();
+    EXPECT_TRUE(m_didReceiveResponse);
+    EXPECT_TRUE(m_didReceiveData);
+    EXPECT_TRUE(m_didFinishLoading);
+
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("cache-control").isEmpty());
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("content-language").isEmpty());
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("content-type").isEmpty());
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("expires").isEmpty());
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("last-modified").isEmpty());
+    EXPECT_FALSE(m_actualResponse.httpHeaderField("pragma").isEmpty());
+
+    EXPECT_TRUE(m_actualResponse.httpHeaderField("Set-Cookie").isEmpty());
+    EXPECT_TRUE(m_actualResponse.httpHeaderField("Set-Cookie2").isEmpty());
 }
 
 }

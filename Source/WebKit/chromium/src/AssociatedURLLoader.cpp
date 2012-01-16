@@ -31,6 +31,7 @@
 #include "config.h"
 #include "AssociatedURLLoader.h"
 
+#include "CrossOriginAccessControl.h"
 #include "DocumentThreadableLoader.h"
 #include "DocumentThreadableLoaderClient.h"
 #include "HTTPValidation.h"
@@ -45,9 +46,12 @@
 #include "XMLHttpRequest.h"
 #include "platform/WebHTTPHeaderVisitor.h"
 #include "platform/WebKitPlatformSupport.h"
+#include "platform/WebString.h"
 #include "platform/WebURLError.h"
 #include "platform/WebURLLoaderClient.h"
 #include "platform/WebURLRequest.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace WTF;
@@ -56,10 +60,10 @@ namespace WebKit {
 
 namespace {
 
-class SafeHTTPHeaderValidator : public WebHTTPHeaderVisitor {
-    WTF_MAKE_NONCOPYABLE(SafeHTTPHeaderValidator);
+class HTTPRequestHeaderValidator : public WebHTTPHeaderVisitor {
+    WTF_MAKE_NONCOPYABLE(HTTPRequestHeaderValidator);
 public:
-    SafeHTTPHeaderValidator() : m_isSafe(true) { }
+    HTTPRequestHeaderValidator() : m_isSafe(true) { }
 
     void visitHeader(const WebString& name, const WebString& value);
     bool isSafe() const { return m_isSafe; }
@@ -68,9 +72,32 @@ private:
     bool m_isSafe;
 };
 
-void SafeHTTPHeaderValidator::visitHeader(const WebString& name, const WebString& value)
+void HTTPRequestHeaderValidator::visitHeader(const WebString& name, const WebString& value)
 {
     m_isSafe = m_isSafe && isValidHTTPToken(name) && XMLHttpRequest::isAllowedHTTPHeader(name) && isValidHTTPHeaderValue(value);
+}
+
+class HTTPResponseHeaderValidator : public WebHTTPHeaderVisitor {
+    WTF_MAKE_NONCOPYABLE(HTTPResponseHeaderValidator);
+public:
+    HTTPResponseHeaderValidator(bool usingAccessControl) : m_usingAccessControl(usingAccessControl) { }
+
+    void visitHeader(const WebString& name, const WebString& value);
+    const Vector<WebString>& disallowedHeaders() const { return m_disallowedHeaders; }
+
+private:
+    Vector<WebString> m_disallowedHeaders;
+    bool m_usingAccessControl;
+};
+
+void HTTPResponseHeaderValidator::visitHeader(const WebString& name, const WebString& value)
+{
+    String headerName(name);
+    // Hide non-whitelisted headers for CORS requests.
+    // Hide Set-Cookie headers for all requests.
+    if ((m_usingAccessControl && !isOnAccessControlResponseHeaderWhitelist(headerName))
+         || (equalIgnoringCase(headerName, "set-cookie") || equalIgnoringCase(headerName, "set-cookie2")))
+        m_disallowedHeaders.append(name);
 }
 
 }
@@ -80,7 +107,7 @@ void SafeHTTPHeaderValidator::visitHeader(const WebString& name, const WebString
 class AssociatedURLLoader::ClientAdapter : public DocumentThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(ClientAdapter);
 public:
-    static PassOwnPtr<ClientAdapter> create(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
+    static PassOwnPtr<ClientAdapter> create(AssociatedURLLoader*, WebURLLoaderClient*, const WebURLLoaderOptions&);
 
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/);
     virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/);
@@ -105,30 +132,30 @@ public:
     void clearClient() { m_client = 0; } 
 
 private:
-    ClientAdapter(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
+    ClientAdapter(AssociatedURLLoader*, WebURLLoaderClient*, const WebURLLoaderOptions&);
 
     void notifyError(Timer<ClientAdapter>*);
 
     AssociatedURLLoader* m_loader;
     WebURLLoaderClient* m_client;
+    WebURLLoaderOptions m_options;
     WebURLError m_error;
 
     Timer<ClientAdapter> m_errorTimer;
-    bool m_downloadToFile;
     bool m_enableErrorNotifications;
     bool m_didFail;
 };
 
-PassOwnPtr<AssociatedURLLoader::ClientAdapter> AssociatedURLLoader::ClientAdapter::create(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
+PassOwnPtr<AssociatedURLLoader::ClientAdapter> AssociatedURLLoader::ClientAdapter::create(AssociatedURLLoader* loader, WebURLLoaderClient* client, const WebURLLoaderOptions& options)
 {
-    return adoptPtr(new ClientAdapter(loader, client, downloadToFile));
+    return adoptPtr(new ClientAdapter(loader, client, options));
 }
 
-AssociatedURLLoader::ClientAdapter::ClientAdapter(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
+AssociatedURLLoader::ClientAdapter::ClientAdapter(AssociatedURLLoader* loader, WebURLLoaderClient* client, const WebURLLoaderOptions& options)
     : m_loader(loader)
     , m_client(client)
+    , m_options(options)
     , m_errorTimer(this, &ClientAdapter::notifyError)
-    , m_downloadToFile(downloadToFile)
     , m_enableErrorNotifications(false)
     , m_didFail(false)
 {
@@ -156,8 +183,18 @@ void AssociatedURLLoader::ClientAdapter::didSendData(unsigned long long bytesSen
 
 void AssociatedURLLoader::ClientAdapter::didReceiveResponse(unsigned long, const ResourceResponse& response)
 {
-    WrappedResourceResponse wrappedResponse(response);
-    m_client->didReceiveResponse(m_loader, wrappedResponse);
+    // Try to use the original ResourceResponse if possible.
+    WebURLResponse validatedResponse = WrappedResourceResponse(response);
+    HTTPResponseHeaderValidator validator(m_options.crossOriginRequestPolicy == WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl);
+    validatedResponse.visitHTTPHeaderFields(&validator);
+    // If there are disallowed headers, copy the response so we can remove them.
+    const Vector<WebString>& disallowedHeaders = validator.disallowedHeaders();
+    if (!disallowedHeaders.isEmpty()) {
+        validatedResponse = WebURLResponse(validatedResponse);
+        for (size_t i = 0; i < disallowedHeaders.size(); ++i)
+            validatedResponse.clearHTTPHeaderField(disallowedHeaders[i]);
+    }
+    m_client->didReceiveResponse(m_loader, validatedResponse);
 }
 
 void AssociatedURLLoader::ClientAdapter::didDownloadData(int dataLength)
@@ -263,13 +300,13 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
         allowLoad = isValidHTTPToken(method) && XMLHttpRequest::isAllowedHTTPMethod(method);
         if (allowLoad) {
             newRequest.setHTTPMethod(XMLHttpRequest::uppercaseKnownHTTPMethod(method));
-            SafeHTTPHeaderValidator validator;
+            HTTPRequestHeaderValidator validator;
             newRequest.visitHTTPHeaderFields(&validator);
             allowLoad = validator.isSafe();
         }
     }
 
-    m_clientAdapter = ClientAdapter::create(this, m_client, request.downloadToFile());
+    m_clientAdapter = ClientAdapter::create(this, m_client, m_options);
 
     if (allowLoad) {
         ThreadableLoaderOptions options;
