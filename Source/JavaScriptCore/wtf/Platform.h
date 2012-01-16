@@ -1161,5 +1161,8 @@
 /* Using V8 implies not using JSC and vice versa */
 #define WTF_USE_JSC !WTF_USE_V8
 
+#if ENABLE(NOTIFICATIONS) && !PLATFORM(MAC)
+#define ENABLE_HTML_NOTIFICATIONS 1
+#endif
 
 #endif /* WTF_Platform_h */

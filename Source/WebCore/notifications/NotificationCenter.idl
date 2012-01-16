@@ -36,7 +36,9 @@ module threads {
         ActiveDOMObject,
         OmitConstructor
     ] NotificationCenter {
+#if ENABLE(HTML_NOTIFICATIONS)
        [V8Custom] Notification createHTMLNotification(in DOMString url) raises(Exception);
+#endif
        [V8Custom] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(Exception);
 
        int checkPermission();
