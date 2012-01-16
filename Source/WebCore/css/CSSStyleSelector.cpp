@@ -313,20 +313,16 @@ static const MediaQueryEvaluator& printEval()
 static CSSMutableStyleDeclaration* leftToRightDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, leftToRightDecl, (CSSMutableStyleDeclaration::create()));
-    if (!leftToRightDecl->length()) {
-        leftToRightDecl->setProperty(CSSPropertyDirection, "ltr", false);
-        leftToRightDecl->setStrictParsing(false);
-    }
+    if (!leftToRightDecl->length())
+        leftToRightDecl->setProperty(CSSPropertyDirection, CSSValueLtr);
     return leftToRightDecl.get();
 }
 
 static CSSMutableStyleDeclaration* rightToLeftDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, rightToLeftDecl, (CSSMutableStyleDeclaration::create()));
-    if (!rightToLeftDecl->length()) {
-        rightToLeftDecl->setProperty(CSSPropertyDirection, "rtl", false);
-        rightToLeftDecl->setStrictParsing(false);
-    }
+    if (!rightToLeftDecl->length())
+        rightToLeftDecl->setProperty(CSSPropertyDirection, CSSValueRtl);
     return rightToLeftDecl.get();
 }
 

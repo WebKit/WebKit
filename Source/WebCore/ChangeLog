@@ -1,3 +1,16 @@
+2012-01-16  Andreas Kling  <awesomekling@apple.com>
+
+        CSSStyleSelector: Dodge parser when creating default LTR/RTL declarations.
+        <http://webkit.org/b/76374>
+
+        Reviewed by Antti Koivisto.
+
+        Pass CSSValueLtr/CSSValueRtl directly to setProperty() instead of parsing "ltr"/"rtl".
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::leftToRightDeclaration):
+        (WebCore::rightToLeftDeclaration):
+
 2012-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
