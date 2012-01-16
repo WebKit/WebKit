@@ -1,3 +1,9 @@
+2012-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Fix typo.
+
 2012-01-16  Pavel Heimlich  <tropikhajma@gmail.com>
 
         Solaris Studio supports alignment macros too

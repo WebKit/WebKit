@@ -1,3 +1,9 @@
+2012-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files.
+
 2012-01-16  Roland Steiner  <rolandsteiner@chromium.org>
 
         CSSStyleSelector constructor and appendAuthorStylesheets() contain duplicated code
