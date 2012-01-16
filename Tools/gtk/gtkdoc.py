@@ -290,9 +290,9 @@ class GTKDoc(object):
                 env['RUN'] = 'LD_LIBRARY_PATH="%s" ' % self.library_path
 
         if ldflags:
-            env['LDFLAGS'] = '%s %s' % (env.get('LDFLAGS', ''), ldflags)
+            env['LDFLAGS'] = '%s %s' % (ldflags, env.get('LDFLAGS', ''))
         if self.cflags:
-            env['CFLAGS'] = '%s %s' % (env.get('CFLAGS', ''), self.cflags)
+            env['CFLAGS'] = '%s %s' % (self.cflags, env.get('CFLAGS', ''))
 
         if 'CFLAGS' in env:
             self.logger.debug('CFLAGS=%s', env['CFLAGS'])
