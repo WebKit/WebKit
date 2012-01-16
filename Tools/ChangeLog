@@ -1,3 +1,16 @@
+2012-01-16  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed; fix the build when --as-needed and --no-copy-dt-needed-entries are passed to the linker.
+
+        Some recent versions of a few Linux distributions have started passing
+        --as-needed and --no-copy-dt-needed-entries by default to the linker,
+        which broke the build when SHARED_CORE was turned on, as libwtf_efl.so
+        needed a few symbols from libjavascriptcore_efl.so.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Explicitly pass WTF_LIBRARY_NAME
+        before JavaScriptCore_LIBRARY_NAME in DumpRenderTree_LIBRARIES so the
+        libraries are searched in the right order by the linker.
+
 2012-01-16  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] set audio resources path in NRTW

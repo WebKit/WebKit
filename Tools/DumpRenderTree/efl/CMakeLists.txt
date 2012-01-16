@@ -23,6 +23,7 @@ SET(ImageDiff_SOURCES
 )
 
 SET(DumpRenderTree_LIBRARIES
+    ${WTF_LIBRARY_NAME}
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit_LIBRARY_NAME}
