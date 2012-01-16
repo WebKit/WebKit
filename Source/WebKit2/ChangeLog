@@ -1,3 +1,9 @@
+2012-01-16  Jon Lee  <jonlee@apple.com>
+
+        Build fix for r105086.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-01-16  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Fix QT_VERSION related warnings when building on Mac OS X

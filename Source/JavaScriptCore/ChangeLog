@@ -1,5 +1,12 @@
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
+        Build fix for r105086.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * wtf/Platform.h:
+
+2012-01-16  Jon Lee  <jonlee@apple.com>
+
         Remove HTML notifications support on Mac
         https://bugs.webkit.org/show_bug.cgi?id=76401
         <rdar://problem/10589881>
