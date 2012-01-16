@@ -208,7 +208,7 @@ public:
 
     bool checkRegionStyle(Element*);
 
-    bool usesSiblingRules() const { return m_features.siblingRules; }
+    bool usesSiblingRules() const { return !m_features.siblingRules.isEmpty(); }
     bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
     bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
     bool usesLinkRules() const { return m_features.usesLinkRules; }
@@ -227,14 +227,20 @@ public:
 #endif
 #endif // ENABLE(CSS_FILTERS)
 
+    struct RuleSelectorPair {
+        RuleSelectorPair(CSSStyleRule* rule, CSSSelector* selector) : rule(rule), selector(selector) { }
+        CSSStyleRule* rule;
+        CSSSelector* selector;
+    };
     struct Features {
         Features();
         ~Features();
+        void add(const CSSStyleSelector::Features&);
         void clear();
         HashSet<AtomicStringImpl*> idsInRules;
         HashSet<AtomicStringImpl*> attrsInRules;
-        OwnPtr<RuleSet> siblingRules;
-        OwnPtr<RuleSet> uncommonAttributeRules;
+        Vector<RuleSelectorPair> siblingRules;
+        Vector<RuleSelectorPair> uncommonAttributeRules;
         bool usesFirstLineRules;
         bool usesBeforeAfterRules;
         bool usesLinkRules;
@@ -288,6 +294,8 @@ private:
     OwnPtr<RuleSet> m_regionRules;
 
     Features m_features;
+    OwnPtr<RuleSet> m_siblingRuleSet;
+    OwnPtr<RuleSet> m_uncommonAttributeRuleSet;
 
     bool m_hasUAAppearance;
     BorderData m_borderData;

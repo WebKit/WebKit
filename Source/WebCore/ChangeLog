@@ -1,3 +1,53 @@
+2012-01-16  Antti Koivisto  <antti@apple.com>
+
+        Cache CSSStyleSelector::Features in RuleSets
+        https://bugs.webkit.org/show_bug.cgi?id=76337
+
+        Reviewed by Andreas Kling.
+
+        Currently whenever the style selector is updated we go through all the applicable rules and
+        collect the used features again. We should keep the features around as part of the RuleSets
+        and update them incrementally. Collecting the features will then be just a matter of taking
+        the union of all features used by the RuleSets.
+        
+        This is 1-2% CPU time reduction (engadget, nytimes) due less time spent in feature collection.
+        
+        This also simplifies the code by removing the need to cache the default style sheet features
+        separately. 
+
+        * css/CSSStyleSelector.cpp:
+        
+            Remove the global siblingRulesInDefaultStyle and uncommonAttributeRulesInDefaultStyle RuleSets.
+            These are now part of the cached features of the defaultStyle.
+        
+        (WebCore::RuleSet::features):
+        
+            Add a field for caching the features.
+        
+        (WebCore::makeRuleSet):
+        (WebCore::CSSStyleSelector::collectFeatures):
+        
+            Unify the features of all RuleSets.
+            Create RuleSets for sibling and uncommon attribute lookups at the end.
+        
+        (WebCore::CSSStyleSelector::appendAuthorStylesheets):
+        (WebCore::CSSStyleSelector::Features::add):
+        (WebCore::ensureDefaultStyleSheetsForElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::collectFeaturesFromRuleData):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRule):
+        
+            Collect the features when adding the rules rather than as a separate pass through all the rules.
+        
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::usesSiblingRules):
+        (WebCore::CSSStyleSelector::RuleSelectorPair::RuleSelectorPair):
+        
+            Use Vector instead of a RuleSet for sibling and uncommon attribute selectors so unifying
+            Features is simpler.
+
 2012-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Huge filter area cause hangs and malloc failures
