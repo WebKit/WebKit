@@ -1,3 +1,46 @@
+2011-10-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Fix GoToLineDialog and extract common dialog functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=69341
+
+        Fixed dialog: in old implementation dialog never hides if you press mouse button
+        on Go button and release it somewhere else.
+        Dialog functionality extracted to be used for search dialog.
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Dialog.js: Added.
+        (WebInspector.Dialog):
+        (WebInspector.Dialog.show):
+        (WebInspector.Dialog.prototype._hide):
+        (WebInspector.Dialog.prototype._onFocus):
+        (WebInspector.Dialog.prototype._doFocus):
+        (WebInspector.Dialog.prototype._position):
+        (WebInspector.Dialog.prototype._onKeyDown):
+        (WebInspector.Dialog.prototype._onClick):
+        (WebInspector.DialogDelegate):
+        (WebInspector.DialogDelegate.prototype.get defaultFocusedElement):
+        (WebInspector.DialogDelegate.prototype.get okButton):
+        (WebInspector.DialogDelegate.prototype.onAction):
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog):
+        (WebInspector.GoToLineDialog._show):
+        (WebInspector.GoToLineDialog.prototype.get defaultFocusedElement):
+        (WebInspector.GoToLineDialog.prototype.get okButton):
+        (WebInspector.GoToLineDialog.prototype.onAction):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/dialog.css: Renamed from Source/WebCore/inspector/front-end/goToLineDialog.css.
+        (.dialog-glass-pane):
+        (.dialog):
+        (.dialog-contents):
+        (.go-to-line-dialog input):
+        (.go-to-line-dialog button):
+        (.go-to-line-dialog button:active):
+        * inspector/front-end/inspector.html:
+
 2012-01-16  Jochen Eisinger  <jochen@chromium.org>
 
         ScriptRunner should also keep references to pending async scripts

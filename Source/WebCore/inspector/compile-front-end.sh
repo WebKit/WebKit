@@ -76,13 +76,14 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/ResourceUtils.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \
         --js Source/WebCore/inspector/front-end/UISourceCode.js \
-    --module jsmodule_ui:33:jsmodule_common \
+    --module jsmodule_ui:34:jsmodule_common \
         --js Source/WebCore/inspector/front-end/AdvancedSearchController.js \
         --js Source/WebCore/inspector/front-end/Checkbox.js \
         --js Source/WebCore/inspector/front-end/ContextMenu.js \
         --js Source/WebCore/inspector/front-end/CookiesTable.js \
         --js Source/WebCore/inspector/front-end/DOMSyntaxHighlighter.js \
         --js Source/WebCore/inspector/front-end/DataGrid.js \
+        --js Source/WebCore/inspector/front-end/Dialog.js \
         --js Source/WebCore/inspector/front-end/Drawer.js \
         --js Source/WebCore/inspector/front-end/EmptyView.js \
         --js Source/WebCore/inspector/front-end/HelpScreen.js \

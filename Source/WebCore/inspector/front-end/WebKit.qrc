@@ -39,6 +39,7 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerPresentationModel.js</file>
+    <file>Dialog.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
     <file>DOMPresentationUtils.js</file>
@@ -162,7 +163,7 @@
     <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
     <file>elementsPanel.css</file>
-    <file>goToLineDialog.css</file>
+    <file>dialogs.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>

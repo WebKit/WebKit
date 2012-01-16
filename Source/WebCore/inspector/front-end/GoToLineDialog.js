@@ -30,43 +30,25 @@
 
 /**
  * @constructor
+ * @implements {WebInspector.DialogDelegate}
  */
 WebInspector.GoToLineDialog = function(view)
 {
-    this._element = document.createElement("div");
-    this._element.className = "go-to-line-dialog";
-    this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
-    this._closeKeys = [
-        WebInspector.KeyboardShortcut.Keys.Enter.code,
-        WebInspector.KeyboardShortcut.Keys.Esc.code,
-    ];
+    WebInspector.DialogDelegate.call(this);
+    
+    this.element = document.createElement("div");
+    this.element.className = "go-to-line-dialog";
 
-    var dialogWindow = this._element;
+    this.element.createChild("label").textContent = WebInspector.UIString("Go to line: ");
 
-    dialogWindow.createChild("label").textContent = WebInspector.UIString("Go to line: ");
-
-    this._input = dialogWindow.createChild("input");
+    this._input = this.element.createChild("input");
     this._input.setAttribute("type", "text");
     this._input.setAttribute("size", 6);
-    var blurHandler = this._onBlur.bind(this);
-    this._input.addEventListener("blur", blurHandler, false);
 
-
-    var go = dialogWindow.createChild("button");
-    go.textContent = WebInspector.UIString("Go");
-    go.addEventListener("click", this._onClick.bind(this), false);
-    go.addEventListener("mousedown", function(e) {
-        // Ok button click will close the dialog, removing onBlur listener
-        // to let click event be handled.
-        this._input.removeEventListener("blur", blurHandler, false);
-    }.bind(this), false);
+    this._goButton = this.element.createChild("button");
+    this._goButton.textContent = WebInspector.UIString("Go");
 
     this._view = view;
-    view.element.appendChild(this._element);
-
-    this._previousFocusElement = WebInspector.currentFocusElement();
-    WebInspector.setCurrentFocusElement(this._input);
-    this._input.select();
 }
 
 WebInspector.GoToLineDialog.install = function(panel, viewGetter)
@@ -86,9 +68,7 @@ WebInspector.GoToLineDialog._show = function(sourceView)
 {
     if (!sourceView || !sourceView.canHighlightLine())
         return;
-    if (WebInspector.GoToLineDialog._instance)
-        return;
-    WebInspector.GoToLineDialog._instance = new WebInspector.GoToLineDialog(sourceView);
+    WebInspector.Dialog.show(sourceView.element, new WebInspector.GoToLineDialog(sourceView));
 }
 
 WebInspector.GoToLineDialog.createShortcut = function()
@@ -101,46 +81,17 @@ WebInspector.GoToLineDialog.createShortcut = function()
 }
 
 WebInspector.GoToLineDialog.prototype = {
-    _hide: function()
+    get defaultFocusedElement()
     {
-        if (this._isHiding)
-            return;
-        this._isHiding = true;
-
-        WebInspector.setCurrentFocusElement(this._previousFocusElement);
-        WebInspector.GoToLineDialog._instance = null;
-        this._element.parentElement.removeChild(this._element);
+        return this._input;
     },
 
-    _onBlur: function(event)
+    get okButton()
     {
-        this._hide();
+        return this._goButton;
     },
-
-    _onKeyDown: function(event)
-    {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Tab.code) {
-            event.preventDefault();
-            return;
-        }
-
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Enter.code)
-            this._highlightSelectedLine();
-
-        if (this._closeKeys.indexOf(event.keyCode) >= 0) {
-            this._hide();
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    },
-
-    _onClick: function(event)
-    {
-        this._highlightSelectedLine();
-        this._hide();
-    },
-
-    _highlightSelectedLine: function()
+    
+    onAction: function()
     {
         var value = this._input.value;
         var lineNumber = parseInt(value, 10) - 1;
@@ -148,3 +99,5 @@ WebInspector.GoToLineDialog.prototype = {
             this._view.highlightLine(lineNumber);
     }
 }
+
+WebInspector.GoToLineDialog.prototype.__proto__ = WebInspector.DialogDelegate.prototype;

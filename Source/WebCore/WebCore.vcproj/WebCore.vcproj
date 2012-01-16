@@ -71845,6 +71845,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\dialog.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\Dialog.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DOMAgent.js"
 					>
 				</File>
@@ -71914,10 +71922,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\FontView.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\goToLineDialog.css"
 					>
 				</File>
 				<File
