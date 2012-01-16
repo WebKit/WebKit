@@ -1,4 +1,29 @@
 =================
+WebKitGTK+ 1.7.4
+=================
+
+What's new in WebKitGTK+ 1.7.4?
+
+  - Fix a11y regression: text-inserted events lack text inserted and
+    current line.
+  - Fix scrollbars in WebKit2 that were drawn behind the window resize
+    grip.
+  - Fix a memory leak in WebKitWebSourceGStreamer.
+  - Slider thumb is not centered on the track with the unico theme.
+  - Fix context menu in WebKit2 to not dissapear right after it's shown.
+  - Use GtkOrientable style class in GTK+ 3 theming code.
+  - Change default WebSocket protocol to the latest one (hybi-17).
+  - Fix scrollbars size with GTK+ 3.x to follow the current theme.
+  - Use gdk_screen_get_monitor_workarea() when available for
+    screenAvailableRect().
+  - Rename webkit_web_view_load_alternate_html as
+    webkit_web_view_replace_content in WebKit2 GTK+.
+  - Fix emission of ATK text-caret-moved and text-selection-changed events.
+  - Add methods to get/set the WebView zoom level to WebKit2 GTK+ API.
+  - Make WebProcess and PluginProcess use the same locale as the UI process.
+  - Simplify WebKit2 loader client API.
+
+=================
 WebKitGTK+ 1.7.3
 =================
 
