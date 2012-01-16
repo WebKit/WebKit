@@ -1505,7 +1505,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
 
 bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(RenderObject* renderer) const
 {
-    return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection();
+    return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection() || renderer->hasFilter();
 }
     
 bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* renderer) const

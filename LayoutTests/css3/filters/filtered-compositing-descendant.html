@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    body {
+      overflow: hidden;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+    }
+    .filtered {
+      -webkit-filter: saturate(0);
+      padding: 20px;
+      border: 2px solid black;
+    }
+    .compositing {
+      -webkit-transform: translateZ(1px);
+      background-color: red;
+    }
+    
+    pre {
+      opacity: 0; /* hide in pixel result */
+    }
+  </style>
+  <script>
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText(true);
+
+    window.addEventListener('load', function () {
+      if (window.layoutTestController)
+        document.getElementById('layer-tree').innerText = layoutTestController.layerTreeAsText();
+    }, false);
+  </script>
+</head>
+<body>
+  <!-- You should see no red below -->
+  <div class="filtered box">
+    <div class="compositing box"></div>
+  </div>
+<pre id="layer-tree">Layer tree goes here in DRT</pre>
+</body>
+</html>

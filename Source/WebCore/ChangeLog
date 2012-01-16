@@ -1,3 +1,20 @@
+2012-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Filtered element with composited content beneath it must be composited
+        https://bugs.webkit.org/show_bug.cgi?id=76322
+
+        Reviewed by Dean Jackson.
+        
+        If a RenderLayer has a filter effect, and a composited descendant, then
+        that layer must also be composited so that the filter is applied via
+        the compositing system, rather than via painting (otherwise the filter
+        will not affect the descendant).
+
+        Test: css3/filters/filtered-compositing-descendant.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing):
+
 2012-01-16  Andreas Kling  <awesomekling@apple.com>
 
         Fix assertion failure in mappedAttributesEquivalent().
