@@ -1,3 +1,12 @@
+2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Web Inspector: Fix GoToLineDialog and extract common dialog functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=69341
+
+        Unreviewed trivial buildfix/typo fix after r105043.
+
+        * inspector/front-end/WebKit.qrc:
+
 2011-10-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Fix GoToLineDialog and extract common dialog functionality.

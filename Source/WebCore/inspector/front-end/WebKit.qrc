@@ -163,7 +163,7 @@
     <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
     <file>elementsPanel.css</file>
-    <file>dialogs.css</file>
+    <file>dialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>
