@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (5,9) size 477x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 477x39
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 34 width 476.40: "Test 'baseline-shift' (horizontal)"
-      RenderSVGContainer {g} at (25,141) size 672x333 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,120.00)}]
+      RenderSVGContainer {g} at (25,141) size 670x333 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,120.00)}]
         RenderSVGText {text} at (0,-35) size 349x41 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,7) size 98x34
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 97.20: "Normal"
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (97.20,-7.00) startOffset 0 endOffset 16 width 202.80: "baseline-shift:7"
           RenderSVGInlineText {#text} at (300,7) size 49x34
             chunk 1 text run 1 at (300.00,0.00) startOffset 0 endOffset 4 width 48.60: "text"
-        RenderSVGText {text} at (0,42) size 403x55 contains 1 chunk(s)
+        RenderSVGText {text} at (0,42) size 402x55 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 98x34
             chunk 1 text run 1 at (0.00,70.00) startOffset 0 endOffset 6 width 97.20: "Normal"
           RenderSVGTSpan {tspan} at (0,0) size 257x34

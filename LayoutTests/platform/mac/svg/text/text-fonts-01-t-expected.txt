@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 293x28
             chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 19 width 292.80: "A mono (iW) face \x{753B}\x{50CF}"
         RenderSVGContainer {g} at (66,46) size 489x314
-          RenderSVGText {text} at (40,28) size 189x28 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 189x28
+          RenderSVGText {text} at (40,28) size 190x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 190x28
               chunk 1 text run 1 at (40.00,50.00) startOffset 0 endOffset 17 width 189.00: "A serifed face \x{753B}\x{50CF}"
           RenderSVGText {text} at (40,107) size 233x28 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 233x28

@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (5,9) size 446x39 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 446x39
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 445.20: "Test 'text-anchor' (horizontal)"
-      RenderSVGContainer {g} at (33,170) size 729x309
+      RenderSVGContainer {g} at (31,170) size 731x309
         RenderSVGContainer {g} at (378,170) size 384x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
           RenderSVGPath {line} at (383,215) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
           RenderSVGPath {circle} at (378,211) size 11x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
@@ -25,11 +25,11 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-125,-28) size 249x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 249x34
               chunk 1 (middle anchor) text run 1 at (-124.20,0.00) startOffset 0 endOffset 18 width 248.40: "text-anchor:middle"
-        RenderSVGContainer {g} at (33,420) size 356x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]
+        RenderSVGContainer {g} at (31,420) size 358x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,280.00)}]
           RenderSVGPath {line} at (300,465) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=-50.00] [y1=0.00] [x2=0.00] [y2=0.00]
           RenderSVGPath {circle} at (378,461) size 11x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-          RenderSVGText {text} at (-210,-28) size 210x34 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 210x34
+          RenderSVGText {text} at (-211,-28) size 211x34 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 211x34
               chunk 1 (end anchor) text run 1 at (-210.00,0.00) startOffset 0 endOffset 15 width 210.00: "text-anchor:end"
     RenderSVGText {text} at (10,303) size 269x47 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 269x47

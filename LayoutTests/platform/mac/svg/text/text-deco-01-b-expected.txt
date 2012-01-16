@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (16,8) size 634x462
-      RenderSVGText {text} at (10,5) size 156x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 156x19
+      RenderSVGText {text} at (10,5) size 157x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 157x19
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 156.00: "Test 'text-decoration'."
       RenderSVGContainer {g} at (40,70) size 610x400
         RenderSVGText {text} at (25,43) size 122x27 contains 1 chunk(s)

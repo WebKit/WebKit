@@ -113,8 +113,8 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (38,143) size 549x392 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=700.00] [height=500.00]
           RenderSVGContainer {g} at (0,0) size 0x0
           RenderSVGRect {rect} at (38,523) size 549x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=487.00] [width=700.00] [height=13.00]
-          RenderSVGText {text} at (3,487) size 128x12 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 128x12
+          RenderSVGText {text} at (3,487) size 129x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 129x12
               chunk 1 text run 1 at (3.00,497.00) startOffset 0 endOffset 28 width 128.00: "This is a big movable window"
           RenderSVGContainer {g} at (77,182) size 315x236 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
             RenderSVGContainer {g} at (77,182) size 315x236
