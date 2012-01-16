@@ -1,3 +1,12 @@
+2012-01-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build fix when using pango as font backends.
+        https://bugs.webkit.org/show_bug.cgi?id=76368
+
+        Unreviewed build fix.
+
+        * ewk/ewk_view.cpp: include RefPtrCairo.h
+
 2012-01-13  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] SecurityPolicy whitelist interface should be exposed to EWebKit

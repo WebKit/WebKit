@@ -48,6 +48,7 @@
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
+#include "RefPtrCairo.h"
 #include "RenderTheme.h"
 #include "Settings.h"
 #include "c_instance.h"
