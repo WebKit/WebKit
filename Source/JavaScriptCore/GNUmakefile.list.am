@@ -129,6 +129,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGByteCodeCache.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
+	Source/JavaScriptCore/dfg/DFGCCallHelpers.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
 	Source/JavaScriptCore/dfg/DFGCapabilities.h \
 	Source/JavaScriptCore/dfg/DFGCommon.h \

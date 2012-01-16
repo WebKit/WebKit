@@ -80,6 +80,10 @@
 		0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */; };
 		0F636DA0142D27D700B2E66A /* PackedIntVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F636D9F142D27D200B2E66A /* PackedIntVector.h */; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
+		0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7B294C14C3CD43007C3DB1 /* DFGByteCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5F08CC146BE602000472A9 /* DFGByteCodeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0977E1469EBC400CF2442 /* DFGCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B2713F753BB0002D9B2 /* RedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2613F753990002D9B2 /* RedBlackTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B2C13F853EC0002D9B2 /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		0F963B2D13F854020002D9B2 /* MetaAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -850,6 +854,7 @@
 		0F636D9F142D27D200B2E66A /* PackedIntVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackedIntVector.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
+		0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCCallHelpers.h; path = dfg/DFGCCallHelpers.h; sourceTree = "<group>"; };
 		0F963B2613F753990002D9B2 /* RedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedBlackTree.h; sourceTree = "<group>"; };
 		0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocator.h; sourceTree = "<group>"; };
 		0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaAllocator.cpp; sourceTree = "<group>"; };
@@ -2372,6 +2377,7 @@
 				0F5F08CC146BE602000472A9 /* DFGByteCodeCache.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
+				0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */,
 				0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */,
 				0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
@@ -3025,6 +3031,10 @@
 				0F0B83B714BCF8E100885B4F /* GlobalResolveInfo.h in Headers */,
 				0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */,
 				0F21C26814BE5F6800ADC64B /* JITDriver.h in Headers */,
+				0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */,
+				0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */,
+				0F7B294C14C3CD43007C3DB1 /* DFGByteCodeCache.h in Headers */,
+				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

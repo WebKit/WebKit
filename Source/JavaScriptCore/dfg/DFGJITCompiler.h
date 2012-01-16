@@ -31,7 +31,7 @@
 #include <assembler/LinkBuffer.h>
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
-#include <dfg/DFGAssemblyHelpers.h>
+#include <dfg/DFGCCallHelpers.h>
 #include <dfg/DFGFPRInfo.h>
 #include <dfg/DFGGPRInfo.h>
 #include <dfg/DFGGraph.h>
@@ -147,10 +147,10 @@ struct PropertyAccessRecord {
 // relationship). The JITCompiler holds references to information required during
 // compilation, and also records information used in linking (e.g. a list of all
 // call to be linked).
-class JITCompiler : public AssemblyHelpers {
+class JITCompiler : public CCallHelpers {
 public:
     JITCompiler(JSGlobalData* globalData, Graph& dfg, CodeBlock* codeBlock)
-        : AssemblyHelpers(globalData, codeBlock)
+        : CCallHelpers(globalData, codeBlock)
         , m_graph(dfg)
     {
     }

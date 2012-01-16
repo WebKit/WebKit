@@ -1060,457 +1060,6 @@ private:
         m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }
     
-    // These methods used to sort arguments into the correct registers.
-    // On X86 we use cdecl calling conventions, which pass all arguments on the
-    // stack. On other architectures we may need to sort values into the
-    // correct registers.
-#if !NUMBER_OF_ARGUMENT_REGISTERS
-    unsigned m_callArgumentOffset;
-    void resetCallArguments() { m_callArgumentOffset = 0; }
-
-    // These methods are using internally to implement the callOperation methods.
-    void addCallArgument(GPRReg value)
-    {
-        m_jit.poke(value, m_callArgumentOffset++);
-    }
-    void addCallArgument(TrustedImm32 imm)
-    {
-        m_jit.poke(imm, m_callArgumentOffset++);
-    }
-    void addCallArgument(TrustedImmPtr pointer)
-    {
-        m_jit.poke(pointer, m_callArgumentOffset++);
-    }
-    void addCallArgument(FPRReg value)
-    {
-        m_jit.storeDouble(value, JITCompiler::Address(JITCompiler::stackPointerRegister, m_callArgumentOffset * sizeof(void*)));
-        m_callArgumentOffset += sizeof(double) / sizeof(void*);
-    }
-
-    ALWAYS_INLINE void setupArguments(FPRReg arg1)
-    {
-        resetCallArguments();
-        addCallArgument(arg1);
-    }
-
-    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
-    {
-        resetCallArguments();
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-    }
-
-    ALWAYS_INLINE void setupArgumentsExecState()
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, TrustedImmPtr arg2)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImmPtr arg3)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, TrustedImmPtr arg3)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-        addCallArgument(arg4);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, TrustedImmPtr arg4)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-        addCallArgument(arg4);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-        addCallArgument(arg4);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3, GPRReg arg4)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-        addCallArgument(arg4);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5)
-    {
-        resetCallArguments();
-        addCallArgument(GPRInfo::callFrameRegister);
-        addCallArgument(arg1);
-        addCallArgument(arg2);
-        addCallArgument(arg3);
-        addCallArgument(arg4);
-        addCallArgument(arg5);
-    }
-#endif // !NUMBER_OF_ARGUMENT_REGISTERS
-    // These methods are suitable for any calling convention that provides for
-    // at least 4 argument registers, e.g. X86_64, ARMv7.
-#if NUMBER_OF_ARGUMENT_REGISTERS >= 4
-    template<GPRReg destA, GPRReg destB>
-    void setupTwoStubArgs(GPRReg srcA, GPRReg srcB)
-    {
-        // Assuming that srcA != srcB, there are 7 interesting states the registers may be in:
-        // (1) both are already in arg regs, the right way around.
-        // (2) both are already in arg regs, the wrong way around.
-        // (3) neither are currently in arg registers.
-        // (4) srcA in in its correct reg.
-        // (5) srcA in in the incorrect reg.
-        // (6) srcB in in its correct reg.
-        // (7) srcB in in the incorrect reg.
-        //
-        // The trivial approach is to simply emit two moves, to put srcA in place then srcB in
-        // place (the MacroAssembler will omit redundant moves). This apporach will be safe in
-        // cases 1, 3, 4, 5, 6, and in cases where srcA==srcB. The two problem cases are 2
-        // (requires a swap) and 7 (must move srcB first, to avoid trampling.)
-
-        if (srcB != destA) {
-            // Handle the easy cases - two simple moves.
-            m_jit.move(srcA, destA);
-            m_jit.move(srcB, destB);
-        } else if (srcA != destB) {
-            // Handle the non-swap case - just put srcB in place first.
-            m_jit.move(srcB, destB);
-            m_jit.move(srcA, destA);
-        } else
-            m_jit.swap(destA, destB);
-    }
-#if CPU(X86_64)
-    template<FPRReg destA, FPRReg destB>
-    void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
-    {
-        // Assuming that srcA != srcB, there are 7 interesting states the registers may be in:
-        // (1) both are already in arg regs, the right way around.
-        // (2) both are already in arg regs, the wrong way around.
-        // (3) neither are currently in arg registers.
-        // (4) srcA in in its correct reg.
-        // (5) srcA in in the incorrect reg.
-        // (6) srcB in in its correct reg.
-        // (7) srcB in in the incorrect reg.
-        //
-        // The trivial approach is to simply emit two moves, to put srcA in place then srcB in
-        // place (the MacroAssembler will omit redundant moves). This apporach will be safe in
-        // cases 1, 3, 4, 5, 6, and in cases where srcA==srcB. The two problem cases are 2
-        // (requires a swap) and 7 (must move srcB first, to avoid trampling.)
-
-        if (srcB != destA) {
-            // Handle the easy cases - two simple moves.
-            m_jit.moveDouble(srcA, destA);
-            m_jit.moveDouble(srcB, destB);
-            return;
-        }
-        
-        if (srcA != destB) {
-            // Handle the non-swap case - just put srcB in place first.
-            m_jit.moveDouble(srcB, destB);
-            m_jit.moveDouble(srcA, destA);
-            return;
-        }
-
-        ASSERT(srcB == destA && srcA == destB);
-        // Need to swap; pick a temporary register.
-        FPRReg temp;
-        if (destA != FPRInfo::argumentFPR3 && destA != FPRInfo::argumentFPR3)
-            temp = FPRInfo::argumentFPR3;
-        else if (destA != FPRInfo::argumentFPR2 && destA != FPRInfo::argumentFPR2)
-            temp = FPRInfo::argumentFPR2;
-        else {
-            ASSERT(destA != FPRInfo::argumentFPR1 && destA != FPRInfo::argumentFPR1);
-            temp = FPRInfo::argumentFPR1;
-        }
-        m_jit.moveDouble(destA, temp);
-        m_jit.moveDouble(destB, destA);
-        m_jit.moveDouble(temp, destB);
-    }
-#endif
-    void setupStubArguments(GPRReg arg1, GPRReg arg2)
-    {
-        setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
-    }
-    void setupStubArguments(GPRReg arg1, GPRReg arg2, GPRReg arg3)
-    {
-        // If neither of arg2/arg3 are in our way, then we can move arg1 into place.
-        // Then we can use setupTwoStubArgs to fix arg2/arg3.
-        if (arg2 != GPRInfo::argumentGPR1 && arg3 != GPRInfo::argumentGPR1) {
-            m_jit.move(arg1, GPRInfo::argumentGPR1);
-            setupTwoStubArgs<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
-            return;
-        }
-
-        // If neither of arg1/arg3 are in our way, then we can move arg2 into place.
-        // Then we can use setupTwoStubArgs to fix arg1/arg3.
-        if (arg1 != GPRInfo::argumentGPR2 && arg3 != GPRInfo::argumentGPR2) {
-            m_jit.move(arg2, GPRInfo::argumentGPR2);
-            setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3>(arg1, arg3);
-            return;
-        }
-
-        // If neither of arg1/arg2 are in our way, then we can move arg3 into place.
-        // Then we can use setupTwoStubArgs to fix arg1/arg2.
-        if (arg1 != GPRInfo::argumentGPR3 && arg2 != GPRInfo::argumentGPR3) {
-            m_jit.move(arg3, GPRInfo::argumentGPR3);
-            setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
-            return;
-        }
-
-        // If we get here, we haven't been able to move any of arg1/arg2/arg3.
-        // Since all three are blocked, then all three must already be in the argument register.
-        // But are they in the right ones?
-
-        // First, ensure arg1 is in place.
-        if (arg1 != GPRInfo::argumentGPR1) {
-            m_jit.swap(arg1, GPRInfo::argumentGPR1);
-
-            // If arg1 wasn't in argumentGPR1, one of arg2/arg3 must be.
-            ASSERT(arg2 == GPRInfo::argumentGPR1 || arg3 == GPRInfo::argumentGPR1);
-            // If arg2 was in argumentGPR1 it no longer is (due to the swap).
-            // Otherwise arg3 must have been. Mark him as moved.
-            if (arg2 == GPRInfo::argumentGPR1)
-                arg2 = arg1;
-            else
-                arg3 = arg1;
-        }
-
-        // Either arg2 & arg3 need swapping, or we're all done.
-        ASSERT((arg2 == GPRInfo::argumentGPR2 || arg3 == GPRInfo::argumentGPR3)
-            || (arg2 == GPRInfo::argumentGPR3 || arg3 == GPRInfo::argumentGPR2));
-
-        if (arg2 != GPRInfo::argumentGPR2)
-            m_jit.swap(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
-    }
-
-#if CPU(X86_64)
-    ALWAYS_INLINE void setupArguments(FPRReg arg1)
-    {
-        m_jit.moveDouble(arg1, FPRInfo::argumentFPR0);
-    }
-
-    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
-    {
-        setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
-    }
-#else
-    ALWAYS_INLINE void setupArguments(FPRReg arg1)
-    {
-        m_jit.assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
-    }
-
-    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
-    {
-        m_jit.assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
-        m_jit.assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
-    }
-#endif
-
-    ALWAYS_INLINE void setupArgumentsExecState()
-    {
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2)
-    {
-        setupStubArguments(arg1, arg2);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(arg2, GPRInfo::argumentGPR2);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2)
-    {
-        m_jit.move(arg2, GPRInfo::argumentGPR2); // Move this first, so setting arg1 does not trample!
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(arg2, GPRInfo::argumentGPR2);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, TrustedImmPtr arg2)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(arg2, GPRInfo::argumentGPR2);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3)
-    {
-        setupStubArguments(arg1, arg2, arg3);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3)
-    {
-        setupStubArguments(arg1, arg2);
-        m_jit.move(arg3, GPRInfo::argumentGPR3);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, TrustedImmPtr arg3)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(arg2, GPRInfo::argumentGPR2);
-        m_jit.move(arg3, GPRInfo::argumentGPR3);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImmPtr arg3)
-    {
-        setupStubArguments(arg1, arg2);
-        m_jit.move(arg3, GPRInfo::argumentGPR3);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3)
-    {
-        m_jit.move(arg1, GPRInfo::argumentGPR1);
-        m_jit.move(arg2, GPRInfo::argumentGPR2);
-        m_jit.move(arg3, GPRInfo::argumentGPR3);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-#endif // NUMBER_OF_ARGUMENT_REGISTERS >= 4
-    // These methods are suitable for any calling convention that provides for
-    // exactly 4 argument registers, e.g. ARMv7.
-#if NUMBER_OF_ARGUMENT_REGISTERS == 4
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
-    {
-        m_jit.poke(arg4);
-        setupArgumentsWithExecState(arg1, arg2, arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
-    {
-        m_jit.poke(arg4);
-        setupArgumentsWithExecState(arg1, arg2, arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3, GPRReg arg4)
-    {
-        m_jit.poke(arg4);
-        setupArgumentsWithExecState(arg1, arg2, arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, TrustedImmPtr arg4)
-    {
-        m_jit.poke(arg4);
-        setupArgumentsWithExecState(arg1, arg2, arg3);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5)
-    {
-        m_jit.poke(arg5, 1);
-        m_jit.poke(arg4);
-        setupArgumentsWithExecState(arg1, arg2, arg3);
-    }
-#endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
-
     // These methods add calls to C++ helper functions.
     // These methods are broadly value representation specific (i.e.
     // deal with the fact that a JSValue may be passed in one or two
@@ -1519,314 +1068,314 @@ private:
 #if USE(JSVALUE64)
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg result, void* pointer)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
     {
-        setupArguments(arg1);
+        m_jit.setupArguments(arg1);
         JITCompiler::Call call = m_jit.appendCall(operation);
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
     JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg result, Identifier* identifier)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EA operation, GPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPS operation, GPRReg result, void* pointer, size_t size)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(pointer), TrustedImmPtr(size));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer), TrustedImmPtr(size));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ESS operation, GPRReg result, int startConstant, int numConstants)
     {
-        setupArgumentsWithExecState(Imm32(startConstant), Imm32(numConstants));
+        m_jit.setupArgumentsWithExecState(Imm32(startConstant), Imm32(numConstants));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg result, GPRReg arg1, void* pointer)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJA operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_E operation, GPRReg result)
     {
-        setupArgumentsExecState();
+        m_jit.setupArgumentsExecState();
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_EC operation, GPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, JSCell* cell)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(cell));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(cell));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::Imm32 imm)
     {
-        setupArgumentsWithExecState(arg1, MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
+        m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::Imm32 imm, GPRReg arg2)
     {
-        setupArgumentsWithExecState(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
+        m_jit.setupArgumentsWithExecState(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJPP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
-        setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1, GPRReg arg2, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EAZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
-        setupArguments(arg1, arg2);
+        m_jit.setupArguments(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
 #else
     JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
     {
-        setupArguments(arg1);
+        m_jit.setupArguments(arg1);
         JITCompiler::Call call = m_jit.appendCall(operation);
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, void* pointer)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, void* pointer)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg resultTag, GPRReg resultPayload, Identifier* identifier)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPS operation, GPRReg resultTag, GPRReg resultPayload, void* pointer, size_t size)
     {
-        setupArgumentsWithExecState(TrustedImmPtr(pointer), TrustedImmPtr(size));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer), TrustedImmPtr(size));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ESS operation, GPRReg resultTag, GPRReg resultPayload, int startConstant, int numConstants)
     {
-        setupArgumentsWithExecState(TrustedImm32(startConstant), TrustedImm32(numConstants));
+        m_jit.setupArgumentsWithExecState(TrustedImm32(startConstant), TrustedImm32(numConstants));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, void* pointer)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, ImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, ImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1Tag, GPRReg arg1Payload, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1Payload, TrustedImm32(arg1Tag), TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1Payload, TrustedImm32(arg1Tag), TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(C_DFGOperation_E operation, GPRReg result)
     {
-        setupArgumentsExecState();
+        m_jit.setupArgumentsExecState();
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_EC operation, GPRReg result, GPRReg arg1)
     {
-        setupArgumentsWithExecState(arg1);
+        m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, JSCell* cell)
     {
-        setupArgumentsWithExecState(arg1, TrustedImmPtr(cell));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(cell));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, MacroAssembler::Imm32 imm)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, imm, TrustedImm32(JSValue::Int32Tag));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, imm, TrustedImm32(JSValue::Int32Tag));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, MacroAssembler::Imm32 imm, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        setupArgumentsWithExecState(imm, TrustedImm32(JSValue::Int32Tag), arg2Payload, arg2Tag);
+        m_jit.setupArgumentsWithExecState(imm, TrustedImm32(JSValue::Int32Tag), arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJPP operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, void* pointer)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2, TrustedImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, Identifier* identifier)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
     {
-        setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, arg3Payload, arg3Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3Payload, arg3Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EAZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
     {
-        setupArgumentsWithExecState(arg1, arg2, arg3Payload, arg3Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3Payload, arg3Tag);
         return appendCallWithExceptionCheck(operation);
     }
 
     JITCompiler::Call callOperation(D_DFGOperation_EJ operation, FPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
-        setupArgumentsWithExecState(arg1Payload, arg1Tag);
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
 
     JITCompiler::Call callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
-        setupArguments(arg1, arg2);
+        m_jit.setupArguments(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
 #endif

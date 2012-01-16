@@ -1,3 +1,37 @@
+2012-01-15  Filip Pizlo  <fpizlo@apple.com>
+
+        The C calling convention logic in DFG::SpeculativeJIT should be available even
+        when not generating code for the DFG speculative path
+        https://bugs.webkit.org/show_bug.cgi?id=76355
+
+        Reviewed by Dan Bernstein.
+        
+        Moved all of the logic for placing C call arguments into the right place (stack
+        or registers) into a new class, DFG::CCallHelpers.  This class inherits from
+        AssemblyHelpers, another DFG grab-bag of helper functions.  I could have moved
+        this code into AssemblyHelpers, but decided against it, because I wanted to
+        limit the number of methods each class in the JIT has.  Hence now we have a
+        slightly odd organization of JIT classes in DFG: MacroAssembler (basic instruction
+        emission) <= AssemblyHelpers (some additional JS smarts) <= CCallHelpers
+        (understands calls to C functions) <= JITCompiler (can compile a graph to machine
+        code).  Each of these except for JITCompiler can be reused for stub compilation.
+        
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCCallHelpers.h: Added.
+        (JSC::DFG::CCallHelpers::CCallHelpers):
+        (JSC::DFG::CCallHelpers::resetCallArguments):
+        (JSC::DFG::CCallHelpers::addCallArgument):
+        (JSC::DFG::CCallHelpers::setupArguments):
+        (JSC::DFG::CCallHelpers::setupArgumentsExecState):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::DFG::CCallHelpers::setupTwoStubArgs):
+        (JSC::DFG::CCallHelpers::setupStubArguments):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2012-01-15  Pablo Flouret  <pablof@motorola.com>
 
         Fix compilation errors on build-webkit --debug --no-video on mac.
