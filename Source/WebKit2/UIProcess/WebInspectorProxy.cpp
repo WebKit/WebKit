@@ -206,6 +206,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPageID = inspectorPage->pageID();
     inspectorPageParameters = inspectorPage->creationParameters();
 
+    m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
     inspectorPage->loadURL(inspectorPageURL());
 }
 

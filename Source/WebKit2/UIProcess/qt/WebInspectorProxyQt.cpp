@@ -74,7 +74,7 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
     notImplemented();
 }
 
-String WebInspectorProxy::inspectorPageURL() const
+String WebInspectorProxy::inspectorBaseURL() const
 {
     notImplemented();
     return String();

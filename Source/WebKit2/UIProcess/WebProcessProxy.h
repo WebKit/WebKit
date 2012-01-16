@@ -105,7 +105,7 @@ public:
     void registerNewWebBackForwardListItem(WebBackForwardListItem*);
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
-    void willLoadHTMLStringWithBaseURL(const String&);
+    void assumeReadAccessToBaseURL(const String&);
 
     bool checkURLReceivedFromWebProcess(const String&);
     bool checkURLReceivedFromWebProcess(const WebCore::KURL&);
