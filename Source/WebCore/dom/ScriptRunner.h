@@ -28,6 +28,7 @@
 
 #include "CachedResourceHandle.h"
 #include "Timer.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -48,10 +49,10 @@ public:
 
     enum ExecutionType { ASYNC_EXECUTION, IN_ORDER_EXECUTION };
     void queueScriptForExecution(ScriptElement*, CachedResourceHandle<CachedScript>, ExecutionType);
-    bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty() || !m_scriptsToExecuteInOrder.isEmpty(); }
+    bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty() || !m_scriptsToExecuteInOrder.isEmpty() || !m_pendingAsyncScripts.isEmpty(); }
     void suspend();
     void resume();
-    void notifyInOrderScriptReady();
+    void notifyScriptReady(ScriptElement*, ExecutionType);
 
 private:
     ScriptRunner(Document*);
@@ -61,6 +62,7 @@ private:
     Document* m_document;
     Vector<PendingScript> m_scriptsToExecuteInOrder;
     Vector<PendingScript> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
+    HashMap<ScriptElement*, PendingScript> m_pendingAsyncScripts;
     Timer<ScriptRunner> m_timer;
 };
 

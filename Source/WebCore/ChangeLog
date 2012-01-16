@@ -1,3 +1,31 @@
+2012-01-16  Jochen Eisinger  <jochen@chromium.org>
+
+        ScriptRunner should also keep references to pending async scripts
+        https://bugs.webkit.org/show_bug.cgi?id=76350
+
+        Reviewed by Adam Barth.
+
+        The CachedResourceLoader only keeps a raw pointer to a ScriptElement.
+        If an async ScriptElement is removed from the document before it is
+        executed, it might be garbage collected before the script is loaded, so
+        it's never run.
+
+        By making the ScriptRunner keep an explicit reference to the
+        ScriptElement while it's loading (as is done for sync ScriptElements),
+        we can guarantee that the ScriptElement lives until it is executed.
+
+        No more flaky timeouts: http/tests/misc/async-script.html:
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::~ScriptRunner):
+        (WebCore::ScriptRunner::queueScriptForExecution):
+        (WebCore::ScriptRunner::notifyScriptReady):
+        * dom/ScriptRunner.h:
+        (WebCore::ScriptRunner::hasPendingScripts):
+
 2012-01-16  Renata Hodovan  <reni@webkit.org>
 
         Unreviewed build fix; added WebCore.exp.in changes lost in r105036.

@@ -10,6 +10,15 @@ function log(msg) {
     document.getElementById("log").innerHTML += msg;
 }
 
+function gc() {
+    if (window.GCController)
+        GCController.collect();
+    else {
+        // Allocate a sufficient number of objects to force a GC.
+        for (var i = 0; i < 10000; i++)
+            new Object;
+    }
+}
 function test() {
     var s = document.createElement("script");
     s.src = "resources/delayed-log.php?delay=1&msg=PASS&done=1";
@@ -18,6 +27,7 @@ function test() {
 
     // s should still execute.
     document.body.removeChild(s);
+    setTimeout(gc, 1);
 }
 </script>
 </head>

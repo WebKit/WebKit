@@ -232,9 +232,10 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         m_willExecuteInOrder = true;
         document->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::IN_ORDER_EXECUTION);
         m_cachedScript->addClient(this);
-    } else if (hasSourceAttribute())
+    } else if (hasSourceAttribute()) {
+        m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::ASYNC_EXECUTION);
         m_cachedScript->addClient(this);
-    else {
+    } else {
         // Reset line numbering for nested writes.
         TextPosition position = document->isInDocumentWrite() ? TextPosition() : scriptStartPosition;
         executeScript(ScriptSourceCode(scriptContent(), document->url(), position));
@@ -318,9 +319,9 @@ void ScriptElement::notifyFinished(CachedResource* o)
     ASSERT(!m_willBeParserExecuted);
     ASSERT_UNUSED(o, o == m_cachedScript);
     if (m_willExecuteInOrder)
-        m_element->document()->scriptRunner()->notifyInOrderScriptReady();
+        m_element->document()->scriptRunner()->notifyScriptReady(this, ScriptRunner::IN_ORDER_EXECUTION);
     else
-        m_element->document()->scriptRunner()->queueScriptForExecution(this, m_cachedScript, ScriptRunner::ASYNC_EXECUTION);
+        m_element->document()->scriptRunner()->notifyScriptReady(this, ScriptRunner::ASYNC_EXECUTION);
 
     m_cachedScript = 0;
 }
