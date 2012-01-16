@@ -1,3 +1,13 @@
+2012-01-16  Andreas Kling  <awesomekling@apple.com>
+
+        Fix typo in StyledElement::mappedAttributeCount().
+        <http://webkit.org/b/76393>
+
+        Rubber-stamped by Antti Koivisto.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::mappedAttributeCount): Less &&, more ?:
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Build fix for r105086.

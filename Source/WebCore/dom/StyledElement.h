@@ -38,7 +38,7 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
-    size_t mappedAttributeCount() const { return attributeMap() && attributeMap()->mappedAttributeCount(); }
+    size_t mappedAttributeCount() const { return attributeMap() ? attributeMap()->mappedAttributeCount() : 0; }
     bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }
 
     void addCSSLength(Attribute*, int id, const String& value);
