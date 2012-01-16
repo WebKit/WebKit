@@ -38,15 +38,15 @@ class WebProcess;
 class QtNetworkAccessManager : public QNetworkAccessManager {
     Q_OBJECT
 public:
-    QtNetworkAccessManager(QObject* parent);
     QtNetworkAccessManager(WebProcess*);
     void registerApplicationScheme(const WebPage*, const QString& scheme);
 
 protected:
     virtual QNetworkReply* createRequest(Operation, const QNetworkRequest&, QIODevice* outgoingData = 0) OVERRIDE;
-    static WebPage* obtainOriginatingWebPage(const QNetworkRequest&);
 
 private:
+    WebPage* obtainOriginatingWebPage(const QNetworkRequest&);
+
     QMultiHash<const WebPage*, QString> m_applicationSchemes;
     WebProcess* m_webProcess;
 

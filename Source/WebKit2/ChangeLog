@@ -1,3 +1,16 @@
+2012-01-16  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Remove references to PagePointer in the FrameNetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=76342
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createNetworkingContext):
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::obtainOriginatingWebPage):
+        * WebProcess/qt/QtNetworkAccessManager.h:
+
 2012-01-14  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10696295> Crash in WebProcess at com.apple.CFNetwork: URLCredentialStorage::CreateCurrentPersistentCredentials + 298

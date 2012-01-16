@@ -41,25 +41,14 @@ QtNetworkAccessManager::QtNetworkAccessManager(WebProcess* webProcess)
 {
 }
 
-QtNetworkAccessManager::QtNetworkAccessManager(QObject* parent)
-    : QNetworkAccessManager(parent)
-    , m_webProcess(0)
-{
-}
-
 WebPage* QtNetworkAccessManager::obtainOriginatingWebPage(const QNetworkRequest& request)
 {
     QObject* originatingObject = request.originatingObject();
     if (!originatingObject)
         return 0;
 
-    QVariant pagePtr = originatingObject->property("PagePointer");
-    if (!pagePtr.isValid() || !pagePtr.canConvert<void*>())
-        return 0;
-
-    WebPage* webPage = static_cast<WebPage*>(pagePtr.value<void*>());
-    Q_ASSERT(webPage);
-    return webPage;
+    qulonglong pageID = originatingObject->property("pageID").toULongLong();
+    return m_webProcess->webPage(pageID);
 }
 
 QNetworkReply* QtNetworkAccessManager::createRequest(Operation operation, const QNetworkRequest& request, QIODevice* outData)
