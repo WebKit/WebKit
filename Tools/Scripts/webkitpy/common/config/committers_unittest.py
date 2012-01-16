@@ -104,7 +104,10 @@ class CommittersTest(unittest.TestCase):
     def _assert_fuzz_match(self, text, name_of_expected_contributor, expected_distance):
         committers = CommitterList()
         contributors, distance = committers.contributors_by_fuzzy_match(text)
-        expected_names = [name_of_expected_contributor] if name_of_expected_contributor else []
+        if type(name_of_expected_contributor) is list:
+            expected_names = name_of_expected_contributor
+        else:
+            expected_names = [name_of_expected_contributor] if name_of_expected_contributor else []
         self.assertEqual(([contributor.full_name for contributor in contributors], distance), (expected_names, expected_distance))
 
     def test_contributors_by_fuzzy_match(self):
@@ -167,7 +170,7 @@ class CommittersTest(unittest.TestCase):
 #        self._assert_fuzz_match('Chris', 'Chris Blumenberg', 0)
         self._assert_fuzz_match('cblu', 'Chris Blumenberg', 0)
 
-        self._assert_fuzz_match('Dan', 'Dan Bernstein', 0)
+        self._assert_fuzz_match('Dan', ['Dan Winship', 'Dan Bernstein'], 0)
         self._assert_fuzz_match('Dan B', 'Dan Bernstein', 0)
 #        self._assert_fuzz_match('mitz', 'Dan Bernstein', 0)
         self._assert_fuzz_match('Mitz Pettel', 'Dan Bernstein', 1)

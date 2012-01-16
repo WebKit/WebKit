@@ -1,3 +1,14 @@
+2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r105072): It broke committers_unittest.py
+        https://bugs.webkit.org/show_bug.cgi?id=76396
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest._assert_fuzz_match): It should handle more names.
+        (CommittersTest.test_contributors_by_fuzzy_match_with_legacy_names): Fix the testcase.
+
 2012-01-16  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Include gtk+3 in the jhbuild modules
