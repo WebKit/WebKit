@@ -1,3 +1,9 @@
+2012-01-16  Jon Lee  <jonlee@apple.com>
+
+        Build fix for r105086.
+
+        * notifications/NotificationCenter.idl: expand ENABLE macro for .idl.
+
 2012-01-16  Antti Koivisto  <antti@apple.com>
 
         Cache CSSStyleSelector::Features in RuleSets
