@@ -1,5 +1,23 @@
 2012-01-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Borders and box masks behave incorrectly with overlapping offsets
+        https://bugs.webkit.org/show_bug.cgi?id=76137
+
+        Reviewed by Dean Jackson.
+        
+        There are some correct behaviors for -webkit-mask-box-image where
+        parts of the mask are missing (when the sum of the slice sizes is
+        greater than one dimension of the image). To render correctly
+        in these cases, always use a transparency layer when rendering
+        the mask.
+
+        Test: fast/backgrounds/mask-box-image.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages):
+
+2012-01-16  Simon Fraser  <simon.fraser@apple.com>
+
         Filtered element with composited content beneath it must be composited
         https://bugs.webkit.org/show_bug.cgi?id=76322
 

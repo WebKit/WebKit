@@ -973,11 +973,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     bool allMaskImagesLoaded = true;
     
     if (!compositedMask) {
-        // If the context has a rotation, scale or skew, then use a transparency layer to avoid
-        // pixel cruft around the edge of the mask.
-        const AffineTransform& currentCTM = paintInfo.context->getCTM();
-        pushTransparencyLayer = !currentCTM.isIdentityOrTranslationOrFlipped();
-
+        pushTransparencyLayer = true;
         StyleImage* maskBoxImage = style()->maskBoxImage().image();
         const FillLayer* maskLayers = style()->maskLayers();
 
@@ -988,37 +984,9 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         if (maskLayers)
             allMaskImagesLoaded &= maskLayers->imagesAreLoaded();
 
-        // Before all images have loaded, just use an empty transparency layer as the mask.
-        if (!allMaskImagesLoaded)
-            pushTransparencyLayer = true;
-
-        bool hasMaskLayerWithImage = maskLayers->hasImage();
-        if (maskBoxImage && hasMaskLayerWithImage) {
-            // We have a mask-box-image and mask-image, so need to composite them together before using the result as a mask.
-            pushTransparencyLayer = true;
-        } else if (hasMaskLayerWithImage) {
-            // We have to use an extra image buffer to hold the mask. Multiple mask images need
-            // to composite together using source-over so that they can then combine into a single unified mask that
-            // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
-            // as they draw images contained inside their sub-document, so we paint all our images into a separate buffer
-            // and composite that buffer as the mask.
-            // We have to check that the mask images to be rendered contain at least one image that can be actually used in rendering
-            // before pushing the transparency layer.
-            for (const FillLayer* fillLayer = maskLayers->next(); fillLayer; fillLayer = fillLayer->next()) {
-                if (fillLayer->image() && fillLayer->image()->canRender(this, style()->effectiveZoom())) {
-                    pushTransparencyLayer = true;
-                    // We found one image that can be used in rendering, exit the loop
-                    break;
-                }
-            }
-        }
-        
-        compositeOp = CompositeDestinationIn;
-        if (pushTransparencyLayer) {
-            paintInfo.context->setCompositeOperation(CompositeDestinationIn);
-            paintInfo.context->beginTransparencyLayer(1.0f);
-            compositeOp = CompositeSourceOver;
-        }
+        paintInfo.context->setCompositeOperation(CompositeDestinationIn);
+        paintInfo.context->beginTransparencyLayer(1);
+        compositeOp = CompositeSourceOver;
     }
 
     if (allMaskImagesLoaded) {
