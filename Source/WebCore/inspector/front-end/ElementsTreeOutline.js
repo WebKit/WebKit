@@ -1518,10 +1518,6 @@ WebInspector.ElementsTreeElement.prototype = {
         var info = {titleDOM: document.createDocumentFragment(), hasChildren: this.hasChildren};
 
         switch (node.nodeType()) {
-            case Node.DOCUMENT_NODE:
-                info.titleDOM.appendChild(document.createTextNode("Document"));
-                break;
-
             case Node.DOCUMENT_FRAGMENT_NODE:
                 info.titleDOM.appendChild(document.createTextNode("Document Fragment"));
                 break;

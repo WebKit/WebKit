@@ -19,11 +19,6 @@ InspectorTest.findNode = function(matchFunction, callback)
                 callback(result);
                 return;
             }
-            if (childNode.shadowRoot && matchFunction(childNode.shadowRoot)) {
-                result = childNode.shadowRoot;
-                callback(result);
-                return;
-            }
             pendingRequests++;
             childNode.getChildNodes(processChildren.bind(null, false));
         }

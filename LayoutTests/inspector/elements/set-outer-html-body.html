@@ -49,7 +49,6 @@ function test()
     {
         function dump()
         {
-            // User console.log for output since body has been overwritten.
             DOMAgent.getOuterHTML(htmlNode.id, callback);
             function callback(error, text)
             {

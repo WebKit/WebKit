@@ -31,10 +31,12 @@
 
 /**
  * @constructor
- * @param {WebInspector.DOMDocument} doc
+ * @param {WebInspector.DOMAgent} domAgent
+ * @param {?WebInspector.DOMDocument} doc
  * @param {DOMAgent.Node} payload
  */
-WebInspector.DOMNode = function(doc, payload) {
+WebInspector.DOMNode = function(domAgent, doc, payload) {
+    this._domAgent = domAgent;
     this.ownerDocument = doc;
 
     this.id = payload.nodeId;
@@ -60,15 +62,18 @@ WebInspector.DOMNode = function(doc, payload) {
     if (payload.children)
         this._setChildrenPayload(payload.children);
 
-    this._computedStyle = null;
-    this.style = null;
-    this._matchedCSSRules = [];
+    if (payload.contentDocument) {
+        this._contentDocument = new WebInspector.DOMDocument(domAgent, payload.contentDocument);
+        this.children = [this._contentDocument];
+        this._renumber();
+        this._domAgent._idToDOMNode[this._contentDocument.id] = this._contentDocument;
+    }
 
     if (this._nodeType === Node.ELEMENT_NODE) {
         // HTML and BODY from internal iframes should not overwrite top-level ones.
-        if (!this.ownerDocument.documentElement && this._nodeName === "HTML")
+        if (this.ownerDocument && !this.ownerDocument.documentElement && this._nodeName === "HTML")
             this.ownerDocument.documentElement = this;
-        if (!this.ownerDocument.body && this._nodeName === "BODY")
+        if (this.ownerDocument && !this.ownerDocument.body && this._nodeName === "BODY")
             this.ownerDocument.body = this;
         if (payload.documentURL)
             this.documentURL = payload.documentURL;
@@ -241,6 +246,7 @@ WebInspector.DOMNode.prototype = {
             if (!error && callback)
                 callback(this.children);
         }
+
         DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
     },
 
@@ -371,7 +377,7 @@ WebInspector.DOMNode.prototype = {
      */
     _insertChild: function(prev, payload)
     {
-        var node = new WebInspector.DOMNode(this.ownerDocument, payload);
+        var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, payload);
         if (!prev) {
             if (!this.children) {
                 // First node
@@ -402,7 +408,7 @@ WebInspector.DOMNode.prototype = {
         this.children = [];
         for (var i = 0; i < payloads.length; ++i) {
             var payload = payloads[i];
-            var node = new WebInspector.DOMNode(this.ownerDocument, payload);
+            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, payload);
             this.children.push(node);
         }
         this._renumber();
@@ -468,19 +474,6 @@ WebInspector.DOMNode.prototype = {
     },
 
     /**
-     * @return {WebInspector.DOMNode}
-     */
-    ownerDocumentElement: function()
-    {
-        // document element is the child of the document / frame owner node that has documentURL property.
-        // FIXME: return document nodes as a part of the DOM tree structure.
-        var node = this;
-        while (node.parentNode && !node.parentNode.documentURL)
-            node = node.parentNode;
-        return node;
-    },
-
-    /**
      * @param {WebInspector.DOMNode} targetNode
      * @param {?WebInspector.DOMNode} anchorNode
      * @param {function(?Protocol.Error)=} callback
@@ -507,14 +500,13 @@ WebInspector.DOMNode.prototype = {
  */
 WebInspector.DOMDocument = function(domAgent, payload)
 {
-    WebInspector.DOMNode.call(this, this, payload);
+    WebInspector.DOMNode.call(this, domAgent, this, payload);
 
     /**
      * @type {string} Document nodes always have documentURL
      */
     this.documentURL;
     this._listeners = {};
-    this._domAgent = domAgent;
 }
 
 WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
@@ -756,7 +748,7 @@ WebInspector.DOMAgent.prototype = {
      */
     _setDetachedRoot: function(payload)
     {
-        var root = new WebInspector.DOMNode(this._document, payload);
+        var root = new WebInspector.DOMNode(this, null, payload);
         this._idToDOMNode[payload.nodeId] = root;
     },
 

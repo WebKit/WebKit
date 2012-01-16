@@ -1,3 +1,32 @@
+2012-01-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not merge iframes into a single DOM hierarchy.
+        https://bugs.webkit.org/show_bug.cgi?id=76383
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/DOMEditor.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::innerFirstChild):
+        (WebCore::InspectorDOMAgent::innerParentNode):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype._ownerDocumentId):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.getChildNodes):
+        (WebInspector.DOMNode.prototype._insertChild):
+        (WebInspector.DOMNode.prototype._setChildrenPayload):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        * inspector/front-end/ElementsTreeOutline.js:
+
 2012-01-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: setCurrentFocusElement should not update selection when focus is moved to text field or text area.

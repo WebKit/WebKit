@@ -43,7 +43,6 @@ namespace WebCore {
 
 class ContainerNode;
 class Document;
-class HTMLElement;
 class NamedNodeMap;
 class Node;
 

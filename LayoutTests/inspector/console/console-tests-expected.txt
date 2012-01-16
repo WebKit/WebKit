@@ -38,7 +38,7 @@ console-tests.html:2342 console-message console-log-level
 console-tests.html:24true console-message console-log-level
 console-tests.html:25null console-message console-log-level
 console-tests.html:26undefined console-message console-log-level
-console-tests.html:27Document console-message console-log-level
+console-tests.html:27#document console-message console-log-level
 console-tests.html:28function () { } console-message console-log-level
 console-tests.html:29function f() { } console-message console-log-level
 console-tests.html:30[1, 2, 3] console-message console-log-level

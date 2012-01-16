@@ -197,9 +197,9 @@ WebInspector.CSSStyleModel.prototype = {
             if (error)
                 failureCallback();
             else {
-                var documentElementId = this._documentElementId(nodeId);
-                if (documentElementId)
-                    WebInspector.domAgent.querySelectorAll(documentElementId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                var ownerDocumentId = this._ownerDocumentId(nodeId);
+                if (ownerDocumentId)
+                    WebInspector.domAgent.querySelectorAll(ownerDocumentId, newSelector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
                 else
                     failureCallback();
             }
@@ -240,9 +240,9 @@ WebInspector.CSSStyleModel.prototype = {
                 // Invalid syntax for a selector
                 failureCallback();
             } else {
-                var documentElementId = this._documentElementId(nodeId);
-                if (documentElementId)
-                    WebInspector.domAgent.querySelectorAll(documentElementId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
+                var ownerDocumentId = this._ownerDocumentId(nodeId);
+                if (ownerDocumentId)
+                    WebInspector.domAgent.querySelectorAll(ownerDocumentId, selector, checkAffectsCallback.bind(this, nodeId, successCallback, rulePayload));
                 else
                     failureCallback();
             }
@@ -256,12 +256,12 @@ WebInspector.CSSStyleModel.prototype = {
         this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged);
     },
 
-    _documentElementId: function(nodeId)
+    _ownerDocumentId: function(nodeId)
     {
         var node = WebInspector.domAgent.nodeForId(nodeId);
         if (!node)
             return null;
-        return node.ownerDocumentElement().id;
+        return node.ownerDocument ? node.ownerDocument.id : null;
     },
 
     /**

@@ -292,16 +292,19 @@ int InspectorDOMAgent::bind(Node* node, NodeToIdMap* nodesMap)
 
 void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
 {
+    int id = nodesMap->get(node);
+    if (!id)
+        return;
+
+    m_idToNode.remove(id);
+
     if (node->isFrameOwnerElement()) {
         const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
         if (m_domListener)
             m_domListener->didRemoveDocument(frameOwner->contentDocument());
+        unbind(frameOwner->contentDocument(), nodesMap);
     }
 
-    int id = nodesMap->get(node);
-    if (!id)
-        return;
-    m_idToNode.remove(id);
     nodesMap->remove(node);
     bool childrenRequested = m_childrenRequested.contains(id);
     if (childrenRequested) {
@@ -1145,7 +1148,9 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
             value->setArray("attributes", buildArrayForElementAttributes(element));
             if (node->isFrameOwnerElement()) {
                 HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
-                value->setDocumentURL(documentURLString(frameOwner->contentDocument()));
+                Document* doc = frameOwner->contentDocument();
+                if (doc)
+                    value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
             }
         } else if (node->nodeType() == Node::DOCUMENT_NODE) {
             Document* document = static_cast<Document*>(node);
@@ -1226,12 +1231,6 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForEventListener(const
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
 {
-    if (node->isFrameOwnerElement()) {
-        HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
-        Document* doc = frameOwner->contentDocument();
-        if (doc)
-            return doc->firstChild();
-    }
     node = node->firstChild();
     while (isWhitespace(node))
         node = node->nextSibling();
@@ -1267,10 +1266,7 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
-    ContainerNode* parent = node->parentNode();
-    if (parent && parent->isDocumentNode())
-        return static_cast<Document*>(parent)->ownerElement();
-    return parent;
+    return node->parentNode();
 }
 
 bool InspectorDOMAgent::isWhitespace(Node* node)
