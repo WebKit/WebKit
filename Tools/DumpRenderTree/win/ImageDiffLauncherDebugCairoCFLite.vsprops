@@ -3,6 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="ImageDiffDebugCairoCFLite"
-	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\ImageDiffLauncherCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

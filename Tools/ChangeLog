@@ -1,3 +1,14 @@
+2012-01-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build fix after r104155. Several debug targets were not
+        properly including the '*Common' property sheets.
+
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebugCairoCFLite.vsprops:
+        * DumpRenderTree/win/ImageDiffLauncherDebugCairoCFLite.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebugCairoCFLite.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugCairoCFLite.vsprops:
+        * WinLauncher/WinLauncherLauncherDebugCairoCFLite.vsprops:
+
 2012-01-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r105072): It broke committers_unittest.py
