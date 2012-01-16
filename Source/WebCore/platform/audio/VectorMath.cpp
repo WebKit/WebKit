@@ -36,6 +36,9 @@
 #include <emmintrin.h>
 #endif
 
+#include <algorithm>
+#include <math.h>
+
 namespace WebCore {
 
 namespace VectorMath {

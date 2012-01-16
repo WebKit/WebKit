@@ -1,3 +1,11 @@
+2012-01-16  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+
+        Added necessary header files to VectorMath.cpp to fix Chromium compile error.
+
+        * platform/audio/VectorMath.cpp:
+
 2011-12-12  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: Optimize AudioChannel::maxAbsValue().
