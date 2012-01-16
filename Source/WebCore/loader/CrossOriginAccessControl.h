@@ -30,8 +30,11 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
+
+typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
 
 class HTTPHeaderMap;
 class ResourceResponse;
@@ -46,6 +49,7 @@ void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin*, StoredCred
 ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin*, StoredCredentials);
 
 bool passesAccessControlCheck(const ResourceResponse&, StoredCredentials, SecurityOrigin*, String& errorDescription);
+void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet&);
 
 } // namespace WebCore
 

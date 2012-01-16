@@ -30,7 +30,6 @@
 #include "HTTPParsers.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
-#include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
@@ -76,7 +75,6 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
 static PassOwnPtr<HTTPHeaderSet> createAllowedCrossOriginResponseHeadersSet()
 {
     OwnPtr<HTTPHeaderSet> headerSet = adoptPtr(new HashSet<String, CaseFoldingHash>);
@@ -169,6 +167,17 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     }
 
     return true;
+}
+
+void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet& headerSet)
+{
+    Vector<String> headers;
+    headerValue.split(',', false, headers);
+    for (unsigned headerCount = 0; headerCount < headers.size(); headerCount++) {
+        String strippedHeader = headers[headerCount].stripWhiteSpace();
+        if (!strippedHeader.isEmpty())
+            headerSet.add(strippedHeader);
+    }
 }
 
 } // namespace WebCore

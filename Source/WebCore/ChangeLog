@@ -1,3 +1,22 @@
+2012-01-16  Joe Thomas  <joethomas@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=41210
+        Cross Origin XMLHttpRequest can not expose headers indicated in Access-Control-Expose-Headers HTTP Response Header
+
+        Parsing the "Access-Control-Expose-Headers" in the XMLHTTPRequest response header.
+        If the custom response-header is part of Access-Control-Expose-Headers, then consider that custom response-header as a valid one.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/xmlhttprequest/access-control-response-with-expose-headers.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::parseAccessControlExposeHeadersAllowList):  parsing logic of Access-Control-Expose-Headers
+        * loader/CrossOriginAccessControl.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders): checking whether the custom response-header is part of "Access-Control-Expose-Headers"
+        (WebCore::XMLHttpRequest::getResponseHeader):  checking whether the custom response-header is part of "Access-Control-Expose-Headers"
+
 2012-01-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: timeline record bars may overlap with the records column

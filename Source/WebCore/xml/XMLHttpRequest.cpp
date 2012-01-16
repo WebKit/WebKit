@@ -892,6 +892,8 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
 
     StringBuilder stringBuilder;
 
+    HTTPHeaderSet accessControlExposeHeaderSet;
+    parseAccessControlExposeHeadersAllowList(m_response.httpHeaderField("Access-Control-Expose-Headers"), accessControlExposeHeaderSet);
     HTTPHeaderMap::const_iterator end = m_response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = m_response.httpHeaderFields().begin(); it!= end; ++it) {
         // Hide Set-Cookie header fields from the XMLHttpRequest client for these reasons:
@@ -903,7 +905,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         if (isSetCookieHeader(it->first) && !securityOrigin()->canLoadLocalResources())
             continue;
 
-        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first))
+        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first) && !accessControlExposeHeaderSet.contains(it->first))
             continue;
 
         stringBuilder.append(it->first);
@@ -929,8 +931,11 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
         logConsoleError(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }
+    
+    HTTPHeaderSet accessControlExposeHeaderSet;
+    parseAccessControlExposeHeadersAllowList(m_response.httpHeaderField("Access-Control-Expose-Headers"), accessControlExposeHeaderSet);
 
-    if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name)) {
+    if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name) && !accessControlExposeHeaderSet.contains(name)) {
         logConsoleError(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }
