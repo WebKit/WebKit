@@ -20,7 +20,7 @@
 	/>
 	<UserMacro
 		Name="WebKitConfigSuffix"
-		Value="_debug"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
@@ -30,6 +30,6 @@
 	/>
 	<UserMacro
 		Name="WebKitDLLConfigSuffix"
-		Value="_debug"
+		Value=""
 	/>
 </VisualStudioPropertySheet>
