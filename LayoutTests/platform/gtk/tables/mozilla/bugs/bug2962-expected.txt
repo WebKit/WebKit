@@ -9,14 +9,14 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 296x42 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {CENTER} at (3,3) size 290x36
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
-                  RenderImage {IMG} at (0,0) size 20x20
+                  RenderImage {IMG} at (0,0) size 4x4
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 189x35 [color=#0000EE]
                   RenderInline {FONT} at (0,0) size 189x35 [color=#000000]
-                    RenderText {#text} at (62,0) size 189x17
-                      text run at (62,0) width 113: "Free Homepage! "
-                      text run at (174,0) width 77: "Free Email!"
-                    RenderBR {BR} at (250,14) size 1x0
-                    RenderText {#text} at (69,18) size 175x17
-                      text run at (69,18) width 44: "It's all "
-                      text run at (112,18) width 132: "yours at ACMEcity!"
+                    RenderText {#text} at (54,0) size 189x17
+                      text run at (54,0) width 113: "Free Homepage! "
+                      text run at (166,0) width 77: "Free Email!"
+                    RenderBR {BR} at (242,14) size 1x0
+                    RenderText {#text} at (58,18) size 174x17
+                      text run at (58,18) width 44: "It's all "
+                      text run at (101,18) width 131: "yours at ACMEcity!"

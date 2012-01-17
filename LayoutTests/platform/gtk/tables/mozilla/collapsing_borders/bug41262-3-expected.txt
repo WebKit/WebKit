@@ -1,8 +1,8 @@
-layer at (0,0) size 784x662
+layer at (0,0) size 784x659
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x662
-  RenderBlock {HTML} at (0,0) size 784x662
-    RenderBody {BODY} at (8,16) size 768x630
+layer at (0,0) size 784x659
+  RenderBlock {HTML} at (0,0) size 784x659
+    RenderBody {BODY} at (8,16) size 768x627
       RenderBlock {P} at (0,0) size 768x54
         RenderText {#text} at (0,0) size 766x53
           text run at (0,0) width 471: "Following table should have 6px solid blue border around cell 3, red 5px "
@@ -89,7 +89,7 @@ layer at (0,0) size 784x662
             RenderTableCell {TD} at (102,214) size 51x53 [border: (1px solid #FF0000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (17,17) size 16x17
                 text run at (17,17) width 16: "15"
-      RenderBlock {P} at (0,440) size 768x56
+      RenderBlock {P} at (0,440) size 768x53
         RenderText {#text} at (0,0) size 366x17
           text run at (0,0) width 366: "This is an example rendering for the previous table from "
         RenderInline {A} at (0,0) size 713x35 [color=#0000EE]
@@ -99,9 +99,9 @@ layer at (0,0) size 784x662
         RenderText {#text} at (70,18) size 10x17
           text run at (70,18) width 10: ": "
         RenderBR {BR} at (0,0) size 0x0
-        RenderImage {IMG} at (0,36) size 216x20
+        RenderImage {IMG} at (0,36) size 216x17
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,512) size 768x36
+      RenderBlock {P} at (0,509) size 768x36
         RenderText {#text} at (0,0) size 768x35
           text run at (0,0) width 500: "Following table should have 2px solid black line between rows. There should "
           text run at (499,0) width 269: "be a total of two lines. There will be three"
@@ -111,7 +111,7 @@ layer at (0,0) size 784x662
             text run at (217,21) width 111: "tr:first-child"
         RenderText {#text} at (327,18) size 5x17
           text run at (327,18) width 5: "."
-      RenderTable {TABLE} at (0,564) size 150x66 [border: (1px none #808080)]
+      RenderTable {TABLE} at (0,561) size 150x66 [border: (1px none #808080)]
         RenderTableSection {TBODY} at (0,1) size 150x65
           RenderTableRow {TR} at (0,0) size 150x22 [border: (2px solid #000000) none]
             RenderTableCell {TD} at (0,0) size 50x22 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]

@@ -1,5 +1,3 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -19,6 +17,6 @@ layer at (0,0) size 800x600
           text run at (0,18) width 375: "passes execCommand a path where no image should exist."
       RenderBlock {DIV} at (0,52) size 784x103
         RenderImage {IMG} at (0,0) size 76x103
-        RenderImage {IMG} at (76,83) size 20x20
+        RenderImage {IMG} at (76,99) size 4x4
       RenderBlock {UL} at (0,171) size 784x0
 caret: position 1 of child 1 {IMG} of child 3 {DIV} of body
