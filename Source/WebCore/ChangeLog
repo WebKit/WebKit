@@ -1,3 +1,57 @@
+2012-01-17  Andreas Kling  <awesomekling@apple.com>
+
+        SpaceSplitString: Share equivalent string piece vectors.
+        <http://webkit.org/b/76458>
+
+        Reviewed by Antti Koivisto.
+
+        Make SpaceSplitStringData ref-counted and cache them in a hashmap to reduce memory
+        usage and avoid redundant string splitting work.  This reduces memory consumption
+        by 618 kB (on 64-bit) when viewing the full HTML5 spec at <http://whatwg.org/c>
+
+        * dom/SpaceSplitString.h:
+
+            Add the source string to SpaceSplitStringData so we have a key for uncaching
+            in the destructor. Also bumped the vector's inline size from 2 to 4.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::sharedDataMap):
+        (WebCore::SpaceSplitStringData::create):
+        (WebCore::SpaceSplitStringData::createUnique):
+        (WebCore::SpaceSplitStringData::SpaceSplitStringData):
+        (WebCore::SpaceSplitString::SpaceSplitString):
+        (WebCore::SpaceSplitString::set):
+        (WebCore::SpaceSplitStringData::createVector):
+
+            Added create helpers for SpaceSplitStringData. Moved case folding from
+            createVector() to create(AtomicString). Added a hash map for caching
+            AtomicString -> SpaceSplitStringData.
+
+        (WebCore::SpaceSplitStringData::~SpaceSplitStringData):
+
+            Remove the SpaceSplitStringData from the sharedDataMap().
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitString::ensureUnique):
+
+            Added, detaches from the shared SpaceSplitStringData if necessary.
+
+        (WebCore::SpaceSplitStringData::add):
+        (WebCore::SpaceSplitStringData::remove):
+
+            Assert that add() and remove() are only used on unique SpaceSplitStringData.
+
+        (WebCore::SpaceSplitString::add):
+        (WebCore::SpaceSplitString::remove):
+
+            Call ensureUnique() to potentially detach from a shared SpaceSplitStringData
+            before making modifications.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::containsAll):
+
+            Added gratuitous fast path for containsAll(*this).
+
 2012-01-12  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76197

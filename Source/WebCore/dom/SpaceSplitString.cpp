@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,8 @@
 
 #include "HTMLParserIdioms.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
@@ -43,13 +45,8 @@ static bool hasNonASCIIOrUpper(const String& string)
     return hasUpper || (ored & ~0x7F);
 }
 
-void SpaceSplitStringData::createVector(const String& inputString, bool shouldFoldCase)
+void SpaceSplitStringData::createVector(const String& string)
 {
-    String string(inputString);
-
-    if (shouldFoldCase && hasNonASCIIOrUpper(inputString))
-        string = inputString.foldCase();
-
     const UChar* characters = string.characters();
     unsigned length = string.length();
     unsigned start = 0;
@@ -70,6 +67,9 @@ void SpaceSplitStringData::createVector(const String& inputString, bool shouldFo
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
 {
+    if (this == &other)
+        return true;
+
     size_t thisSize = m_vector.size();
     size_t otherSize = other.m_vector.size();
     for (size_t i = 0; i < otherSize; ++i) {
@@ -87,6 +87,7 @@ bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
 
 void SpaceSplitStringData::add(const AtomicString& string)
 {
+    ASSERT(hasOneRef());
     if (contains(string))
         return;
 
@@ -95,6 +96,7 @@ void SpaceSplitStringData::add(const AtomicString& string)
 
 void SpaceSplitStringData::remove(const AtomicString& string)
 {
+    ASSERT(hasOneRef());
     size_t position = 0;
     while (position < m_vector.size()) {
         if (m_vector[position] == string)
@@ -106,14 +108,74 @@ void SpaceSplitStringData::remove(const AtomicString& string)
 
 void SpaceSplitString::add(const AtomicString& string)
 {
+    ensureUnique();
     if (m_data)
         m_data->add(string);
 }
 
 void SpaceSplitString::remove(const AtomicString& string)
 {
+    ensureUnique();
     if (m_data)
         m_data->remove(string);
+}
+
+typedef HashMap<AtomicString, SpaceSplitStringData*> SpaceSplitStringDataMap;
+
+static SpaceSplitStringDataMap& sharedDataMap()
+{
+    DEFINE_STATIC_LOCAL(SpaceSplitStringDataMap, map, ());
+    return map;
+}
+
+void SpaceSplitString::set(const AtomicString& inputString, bool shouldFoldCase)
+{
+    if (inputString.isNull()) {
+        clear();
+        return;
+    }
+
+    String string(inputString.string());
+    if (shouldFoldCase && hasNonASCIIOrUpper(string))
+        string = string.foldCase();
+
+    m_data = SpaceSplitStringData::create(string);
+}
+
+SpaceSplitStringData::~SpaceSplitStringData()
+{
+    if (!m_keyString.isNull())
+        sharedDataMap().remove(m_keyString);
+}
+
+PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& string)
+{
+    SpaceSplitStringData*& data = sharedDataMap().add(string, 0).first->second;
+    if (!data) {
+        data = new SpaceSplitStringData(string);
+        return adoptRef(data);
+    }
+    return data;
+}
+
+PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::createUnique(const SpaceSplitStringData& other)
+{
+    return adoptRef(new SpaceSplitStringData(other));
+}
+
+SpaceSplitStringData::SpaceSplitStringData(const AtomicString& string)
+    : m_keyString(string)
+{
+    ASSERT(!string.isNull());
+    createVector(string);
+}
+
+SpaceSplitStringData::SpaceSplitStringData(const SpaceSplitStringData& other)
+    : RefCounted<SpaceSplitStringData>()
+    , m_vector(other.m_vector)
+{
+    // Note that we don't copy m_keyString to indicate to the destructor that there's nothing
+    // to be removed from the sharedDataMap().
 }
 
 } // namespace WebCore
