@@ -36,6 +36,7 @@ class Node;
 class DOMWrapperVisitor {
 public:
     virtual void visitNode(Node*) = 0;
+    virtual void visitJSExternalString(StringImpl*) = 0;
 protected:
     virtual ~DOMWrapperVisitor() { }
 };

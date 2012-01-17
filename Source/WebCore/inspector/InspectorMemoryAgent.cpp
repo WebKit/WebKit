@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "CharacterData.h"
 #include "DOMWrapperVisitor.h"
 #include "Document.h"
 #include "EventListenerMap.h"
@@ -51,6 +52,7 @@
 using WebCore::TypeBuilder::Memory::DOMGroup;
 using WebCore::TypeBuilder::Memory::ListenerCount;
 using WebCore::TypeBuilder::Memory::NodeCount;
+using WebCore::TypeBuilder::Memory::StringStatistics;
 
 namespace WebCore {
 
@@ -63,11 +65,50 @@ String nodeName(Node* node)
     return node->nodeName().lower();
 }
 
+int stringSize(StringImpl* string)
+{
+    int size = string->length();
+    if (!string->is8Bit())
+        size *= 2;
+    return size + sizeof(*string);
+}
+
 typedef HashSet<StringImpl*, PtrHash<StringImpl*> > StringImplIdentitySet;
 
-class DOMTreeStatistics {
+class CharacterDataStatistics {
+    WTF_MAKE_NONCOPYABLE(CharacterDataStatistics);
 public:
-    DOMTreeStatistics(Node* rootNode) : m_totalNodeCount(0)
+    CharacterDataStatistics() : m_characterDataSize(0) { }
+
+    void collectCharacterData(Node* node)
+    {
+        if (!node->isCharacterDataNode())
+            return;
+
+        CharacterData* characterData = static_cast<CharacterData*>(node);
+        StringImpl* dataImpl = characterData->dataImpl();
+        if (m_domStringImplSet.contains(dataImpl))
+            return;
+        m_domStringImplSet.add(dataImpl);
+
+        m_characterDataSize += stringSize(dataImpl);
+    }
+
+    bool contains(StringImpl* s) { return m_domStringImplSet.contains(s); }
+
+    int characterDataSize() { return m_characterDataSize; }
+
+private:
+    StringImplIdentitySet m_domStringImplSet;
+    int m_characterDataSize;
+};
+
+class DOMTreeStatistics {
+    WTF_MAKE_NONCOPYABLE(DOMTreeStatistics);
+public:
+    DOMTreeStatistics(Node* rootNode, CharacterDataStatistics& characterDataStatistics)
+        : m_totalNodeCount(0)
+        , m_characterDataStatistics(characterDataStatistics)
     {
         collectTreeStatistics(rootNode);
     }
@@ -108,7 +149,7 @@ private:
     }
     void collectNodeStatistics(Node* node)
     {
-        collectCharacterData(node);
+        m_characterDataStatistics.collectCharacterData(node);
         collectNodeNameInfo(node);
         collectListenersInfo(node);
     }
@@ -149,14 +190,27 @@ private:
     int m_totalNodeCount;
     HashMap<AtomicString, int> m_eventTypeToCount;
     HashMap<String, int> m_nodeNameToCount;
-    StringImplIdentitySet m_domStringImplSet;
+    CharacterDataStatistics& m_characterDataStatistics;
 };
 
 class CounterVisitor : public DOMWrapperVisitor {
 public:
-    CounterVisitor(Page* page) : m_page(page), m_counters(InspectorArray::create()) { }
+    CounterVisitor(Page* page)
+        : m_page(page)
+        , m_domGroups(InspectorArray::create())
+        , m_jsExternalStringSize(0)
+        , m_sharedStringSize(0) { }
 
-    InspectorArray* counters() { return m_counters.get(); }
+    InspectorArray* domGroups() { return m_domGroups.get(); }
+
+    PassRefPtr<InspectorObject> strings()
+    {
+        RefPtr<StringStatistics> stringStatistics = StringStatistics::create()
+            .setDom(m_characterDataStatistics.characterDataSize())
+            .setJs(m_jsExternalStringSize)
+            .setShared(m_sharedStringSize);
+        return stringStatistics.release();
+    }
 
     virtual void visitNode(Node* node)
     {
@@ -171,7 +225,7 @@ public:
             return;
         m_roots.add(rootNode);
 
-        DOMTreeStatistics domTreeStats(rootNode);
+        DOMTreeStatistics domTreeStats(rootNode, m_characterDataStatistics);
 
         RefPtr<DOMGroup> domGroup = DOMGroup::create()
             .setSize(domTreeStats.totalNodeCount())
@@ -181,7 +235,15 @@ public:
         if (rootNode->nodeType() == Node::DOCUMENT_NODE)
             domGroup->setDocumentURI(static_cast<Document*>(rootNode)->documentURI());
 
-        m_counters->pushObject(domGroup);
+        m_domGroups->pushObject(domGroup);
+    }
+
+    virtual void visitJSExternalString(StringImpl* string)
+    {
+        int size = stringSize(string);
+        m_jsExternalStringSize += size;
+        if (m_characterDataStatistics.contains(string))
+            m_sharedStringSize += size;
     }
 
 private:
@@ -215,7 +277,10 @@ private:
 
     HashSet<Node*> m_roots;
     Page* m_page;
-    RefPtr<InspectorArray> m_counters;
+    RefPtr<InspectorArray> m_domGroups;
+    CharacterDataStatistics m_characterDataStatistics;
+    int m_jsExternalStringSize;
+    int m_sharedStringSize;
 };
 
 } // namespace
@@ -224,7 +289,7 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 {
 }
 
-void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>& result)
+void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>& domGroups, RefPtr<InspectorObject>& strings)
 {
     CounterVisitor counterVisitor(m_page);
     ScriptProfiler::visitJSDOMWrappers(&counterVisitor);
@@ -235,7 +300,10 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>&
             counterVisitor.visitNode(doc);
     }
 
-    result = counterVisitor.counters();
+    ScriptProfiler::visitExternalJSStrings(&counterVisitor);
+
+    domGroups = counterVisitor.domGroups();
+    strings = counterVisitor.strings();
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)

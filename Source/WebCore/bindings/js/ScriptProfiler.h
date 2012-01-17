@@ -62,6 +62,7 @@ public:
     static bool hasHeapProfiler() { return false; }
     // FIXME: Implement this counter for JSC. See bug 73936 for more details.
     static void visitJSDOMWrappers(DOMWrapperVisitor*) { }
+    static void visitExternalJSStrings(DOMWrapperVisitor*) { }
 };
 
 } // namespace WebCore

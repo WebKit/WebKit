@@ -68,6 +68,16 @@
                 "description": "Number of JS event listeners by event type."
             },
             {
+                "id": "StringStatistics",
+                "type": "object",
+                "properties": [
+                    { "name": "dom", "type": "integer" },
+                    { "name": "js", "type": "integer" },
+                    { "name": "shared", "type": "integer" }
+                ],
+                "description": "Character data statistics for the page."
+            },
+            {
                 "id": "DOMGroup",
                 "type": "object",
                 "properties": [
@@ -83,7 +93,8 @@
             {
                 "name": "getDOMNodeCount",
                 "returns": [
-                    { "name": "count", "type": "array", "items": { "$ref": "DOMGroup" }}
+                    { "name": "domGroups", "type": "array", "items": { "$ref": "DOMGroup" }},
+                    { "name": "strings", "$ref": "StringStatistics" }
                 ]
             }
         ]

@@ -32,6 +32,7 @@
 #include "V8Binding.h"
 
 #include "DOMStringList.h"
+#include "DOMWrapperVisitor.h"
 #include "Element.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
@@ -145,6 +146,13 @@ public:
         return m_atomicString;
     }
 
+    void visitStrings(DOMWrapperVisitor* visitor)
+    {
+        visitor->visitJSExternalString(m_plainString.impl());
+        if (m_plainString.impl() != m_atomicString.impl() && !m_atomicString.isNull())
+            visitor->visitJSExternalString(m_atomicString.impl());
+    }
+
     static WebCoreStringResource* toStringResource(v8::Handle<v8::String> v8String)
     {
         return static_cast<WebCoreStringResource*>(v8String->GetExternalStringResource());
@@ -164,6 +172,25 @@ private:
     WTF::ThreadIdentifier m_threadId;
 #endif
 };
+
+void V8BindingPerIsolateData::visitJSExternalStrings(DOMWrapperVisitor* visitor)
+{
+    v8::HandleScope handleScope;
+    class VisitorImpl : public v8::ExternalResourceVisitor {
+    public:
+        VisitorImpl(DOMWrapperVisitor* visitor) : m_visitor(visitor) { }
+        virtual ~VisitorImpl() { }
+        virtual void VisitExternalString(v8::Handle<v8::String> string)
+        {
+            WebCoreStringResource* resource = static_cast<WebCoreStringResource*>(string->GetExternalStringResource());
+            if (resource)
+                resource->visitStrings(m_visitor);
+        }
+    private:
+        DOMWrapperVisitor* m_visitor;
+    } v8Visitor(visitor);
+    v8::V8::VisitExternalResources(&v8Visitor);
+}
 
 String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
 {
@@ -501,7 +528,6 @@ void StringCache::remove(StringImpl* stringImpl)
     ASSERT(m_stringCache.contains(stringImpl));
     m_stringCache.remove(stringImpl);
 }
-
 
 v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl)
 {

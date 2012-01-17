@@ -66,6 +66,7 @@ public:
     static bool hasHeapProfiler() { return true; }
     static void initialize();
     static void visitJSDOMWrappers(DOMWrapperVisitor*);
+    static void visitExternalJSStrings(DOMWrapperVisitor*);
 };
 
 } // namespace WebCore

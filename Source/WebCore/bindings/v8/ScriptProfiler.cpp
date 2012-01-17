@@ -159,4 +159,9 @@ void ScriptProfiler::visitJSDOMWrappers(DOMWrapperVisitor* visitor)
     visitDOMNodes(&adapter);
 }
 
+void ScriptProfiler::visitExternalJSStrings(DOMWrapperVisitor* visitor)
+{
+    V8BindingPerIsolateData::current()->visitJSExternalStrings(visitor);
+}
+
 } // namespace WebCore

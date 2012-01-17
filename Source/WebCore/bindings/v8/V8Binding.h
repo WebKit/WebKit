@@ -46,6 +46,7 @@
 namespace WebCore {
 
     class DOMStringList;
+    class DOMWrapperVisitor;
     class EventListener;
     class EventTarget;
 
@@ -123,6 +124,7 @@ namespace WebCore {
         }
 
         StringCache* stringCache() { return &m_stringCache; }
+        void visitJSExternalStrings(DOMWrapperVisitor*);
 
         DOMDataList& allStores() { return m_domDataList; }
 
