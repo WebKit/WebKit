@@ -1,3 +1,19 @@
+2012-01-16  Hajime Morrita  <morrita@chromium.org>
+
+        [Internals] member varaibles should follow naming convention.
+        https://bugs.webkit.org/show_bug.cgi?id=76426
+
+        Reviewed by Kent Tamura.
+
+        No new tests. Just a rename.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setPasswordEchoEnabled):
+        (WebCore::Internals::setPasswordEchoDurationInSeconds):
+        (WebCore::Internals::reset):
+        * testing/Internals.h:
+
 2012-01-16  Hayato Ito  <hayato@chromium.org>
 
         Implement multiple AT_TARGET event dispatching in regard to shadow tree.

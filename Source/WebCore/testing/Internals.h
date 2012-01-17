@@ -122,10 +122,10 @@ public:
 private:
     Internals();
 
-    double passwordEchoDurationInSecondsBackup;
-    bool passwordEchoEnabledBackup : 1;
-    bool passwordEchoDurationInSecondsBackedUp : 1;
-    bool passwordEchoEnabledBackedUp : 1;
+    double m_passwordEchoDurationInSecondsBackup;
+    bool m_passwordEchoEnabledBackup : 1;
+    bool m_passwordEchoDurationInSecondsBackedUp : 1;
+    bool m_passwordEchoEnabledBackedUp : 1;
 };
 
 } // namespace WebCore

@@ -113,8 +113,9 @@ Internals::~Internals()
 }
 
 Internals::Internals()
-    : passwordEchoDurationInSecondsBackedUp(false)
-    , passwordEchoEnabledBackedUp(false)
+    : m_passwordEchoDurationInSecondsBackup(0)
+    , m_passwordEchoDurationInSecondsBackedUp(false)
+    , m_passwordEchoEnabledBackedUp(false)
 {
 }
 
@@ -397,9 +398,9 @@ void Internals::setPasswordEchoEnabled(Document* document, bool enabled, Excepti
         return;
     }
 
-    if (!passwordEchoEnabledBackedUp) {
-        passwordEchoEnabledBackup = document->settings()->passwordEchoEnabled();
-        passwordEchoEnabledBackedUp = true;
+    if (!m_passwordEchoEnabledBackedUp) {
+        m_passwordEchoEnabledBackup = document->settings()->passwordEchoEnabled();
+        m_passwordEchoEnabledBackedUp = true;
     }
     document->settings()->setPasswordEchoEnabled(enabled);
 }
@@ -411,9 +412,9 @@ void Internals::setPasswordEchoDurationInSeconds(Document* document, double dura
         return;
     }
 
-    if (!passwordEchoDurationInSecondsBackedUp) {
-        passwordEchoDurationInSecondsBackup = document->settings()->passwordEchoDurationInSeconds();
-        passwordEchoDurationInSecondsBackedUp = true;
+    if (!m_passwordEchoDurationInSecondsBackedUp) {
+        m_passwordEchoDurationInSecondsBackup = document->settings()->passwordEchoDurationInSeconds();
+        m_passwordEchoDurationInSecondsBackedUp = true;
     }
     document->settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
 }
@@ -465,14 +466,14 @@ void Internals::reset(Document* document)
     if (!document || !document->settings())
         return;
 
-    if (passwordEchoDurationInSecondsBackedUp) {
-        document->settings()->setPasswordEchoDurationInSeconds(passwordEchoDurationInSecondsBackup);
-        passwordEchoDurationInSecondsBackedUp = false;
+    if (m_passwordEchoDurationInSecondsBackedUp) {
+        document->settings()->setPasswordEchoDurationInSeconds(m_passwordEchoDurationInSecondsBackup);
+        m_passwordEchoDurationInSecondsBackedUp = false;
     }
 
-    if (passwordEchoEnabledBackedUp) {
-        document->settings()->setPasswordEchoEnabled(passwordEchoEnabledBackup);
-        passwordEchoEnabledBackedUp = false;
+    if (m_passwordEchoEnabledBackedUp) {
+        document->settings()->setPasswordEchoEnabled(m_passwordEchoEnabledBackup);
+        m_passwordEchoEnabledBackedUp = false;
     }
 
     if (Page* page = document->page())
