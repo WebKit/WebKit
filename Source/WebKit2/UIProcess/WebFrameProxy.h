@@ -106,6 +106,7 @@ public:
 
     bool isDisplayingStandaloneImageDocument() const;
     bool isDisplayingMarkupDocument() const;
+    bool isDisplayingPDFDocument() const;
 
     void getWebArchive(PassRefPtr<DataCallback>);
     void getMainResourceData(PassRefPtr<DataCallback>);

@@ -118,6 +118,8 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
 
+    virtual RetainPtr<CGPDFDocumentRef> pdfDocumentForPrinting() const { return m_pdfDocument; }
+
     // ScrollableArea methods.
     virtual WebCore::IntRect scrollCornerRect() const;
     virtual WebCore::ScrollableArea* enclosingScrollableArea() const;
