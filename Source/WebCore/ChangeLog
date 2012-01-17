@@ -1,3 +1,16 @@
+2012-01-16  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        platformRequest(QNX) need to get the conditional information from ResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=75216
+
+        Reviewed by George Staikos.
+
+        Pass the isConditional() flag in ResourceRequest to the QNX platform's network request.
+        QNX platform's network needs this flag to determine whether to use disk-cache.
+
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp:
+        (ResourceRequest::initializePlatformRequest):
+
 2012-01-16  Robert Hogan  <robert@webkit.org>
 
         Heap-use-after-free in WebCore::RenderBlock::selectionGaps

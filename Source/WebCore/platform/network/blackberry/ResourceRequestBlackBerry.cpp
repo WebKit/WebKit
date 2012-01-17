@@ -96,6 +96,8 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                 platformTargetTypeForRequest(*this),
                 timeoutInterval());
 
+        platformRequest.setConditional(isConditional());
+
         if (httpBody() && !httpBody()->isEmpty()) {
             const Vector<FormDataElement>& elements = httpBody()->elements();
             // Use setData for simple forms because it is slightly more efficient.
