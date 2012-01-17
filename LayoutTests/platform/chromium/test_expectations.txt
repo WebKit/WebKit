@@ -2644,8 +2644,6 @@ BUGBSALOMON GPU : fast/canvas/canvas-composite-fill-repaint.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 
 // Will need windows and linux baselines
 
