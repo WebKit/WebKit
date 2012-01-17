@@ -172,6 +172,7 @@ class GtkPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--gtk")
+        command.append("--update-gtk")
         command.append(WebKitPort.makeArgs())
         return command
 

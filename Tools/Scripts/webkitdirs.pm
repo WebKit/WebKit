@@ -1838,6 +1838,25 @@ sub buildAutotoolsProject($@)
     my $config = passedConfiguration() || configuration();
     my $prefix;
 
+    # Use rm to clean the build directory since distclean may miss files
+    if ($clean && -d $dir) {
+        system "rm", "-rf", "$dir";
+    }
+
+    if (! -d $dir) {
+        File::Path::mkpath($dir) or die "Failed to create build directory " . $dir
+    }
+    chdir $dir or die "Failed to cd into " . $dir . "\n";
+
+    if ($clean) {
+        return 0;
+    }
+
+    # We might need to update jhbuild dependencies.
+    if (checkForArgumentAndRemoveFromArrayRef("--update-gtk", \@buildParams)) {
+        system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
+    }
+
     my @buildArgs = ();
     my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
     for my $i (0 .. $#buildParams) {
@@ -1871,20 +1890,6 @@ sub buildAutotoolsProject($@)
         push @buildArgs, "--enable-debug";
     } else {
         push @buildArgs, "--disable-debug";
-    }
-
-    # Use rm to clean the build directory since distclean may miss files
-    if ($clean && -d $dir) {
-        system "rm", "-rf", "$dir";
-    }
-
-    if (! -d $dir) {
-        File::Path::mkpath($dir) or die "Failed to create build directory " . $dir
-    }
-    chdir $dir or die "Failed to cd into " . $dir . "\n";
-
-    if ($clean) {
-        return 0;
     }
 
     # If GNUmakefile exists, don't run autogen.sh unless its arguments

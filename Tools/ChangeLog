@@ -1,3 +1,17 @@
+2012-01-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        GTK+ EWS needs to run update-webkitgtk-libs after applying a patch
+        https://bugs.webkit.org/show_bug.cgi?id=75857
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): move cleaning the build to happen early,
+        and handle --update-gtk right after that
+        * Scripts/webkitpy/common/config/ports.py:
+        (GtkPort.build_webkit_command): pass --update-gtk as an option to
+        build-webkit, so that it is used in the EWS
+
 2012-01-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't add _debug postfix to targets when building debug only
