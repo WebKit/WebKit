@@ -2481,7 +2481,7 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property
         if (style && style->fontDescription().keywordSize()) {
             int sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(property->value());
-            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_IDENT && primitiveValue->getIdent() == sizeValue)
+            if (primitiveValue->isIdent() && primitiveValue->getIdent() == sizeValue)
                 return true;
         }
     }

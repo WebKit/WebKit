@@ -178,9 +178,9 @@ static bool parseAspectRatio(CSSValue* value, int& h, int& v)
             CSSValue* i0 = valueList->itemWithoutBoundsCheck(0);
             CSSValue* i1 = valueList->itemWithoutBoundsCheck(1);
             CSSValue* i2 = valueList->itemWithoutBoundsCheck(2);
-            if (i0->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i0)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER
-                && i1->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i1)->primitiveType() == CSSPrimitiveValue::CSS_STRING
-                && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+            if (i0->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i0)->isNumber()
+                && i1->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i1)->isString()
+                && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->isNumber()) {
                 String str = static_cast<CSSPrimitiveValue*>(i1)->getStringValue();
                 if (!str.isNull() && str.length() == 1 && str[0] == '/') {
                     h = static_cast<CSSPrimitiveValue*>(i0)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
@@ -210,7 +210,7 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
 static bool numberValue(CSSValue* value, float& result)
 {
     if (value->isPrimitiveValue()
-        && static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+        && static_cast<CSSPrimitiveValue*>(value)->isNumber()) {
         result = static_cast<CSSPrimitiveValue*>(value)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
         return true;
     }
@@ -313,7 +313,7 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
-    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+    if (primitiveValue->isNumber()) {
         result = primitiveValue->getIntValue();
         return !strict || !result;
     }

@@ -1,3 +1,59 @@
+2012-01-17  Luke Macpherson   <macpherson@chromium.org>
+
+        Remove references to CSSPrimitiveValue::primitiveType().
+        https://bugs.webkit.org/show_bug.cgi?id=76363
+
+        Reviewed by Hajime Morita.
+
+        No new tests / refactoring only.
+
+        Goal is to remove primitiveType() completely. Only code left using it after this patch is in SVG.
+        I've introduced some abstractions in CSSPrimitiveValue for time and angles to reduce duplicated code elsewhere.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::cssPropertyMatches):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeDegrees):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isAngle):
+        (WebCore::CSSPrimitiveValue::isAttr):
+        (WebCore::CSSPrimitiveValue::isCounter):
+        (WebCore::CSSPrimitiveValue::isFontIndependentLength):
+        (WebCore::CSSPrimitiveValue::isLength):
+        (WebCore::CSSPrimitiveValue::isPx):
+        (WebCore::CSSPrimitiveValue::isRect):
+        (WebCore::CSSPrimitiveValue::isRGBColor):
+        (WebCore::CSSPrimitiveValue::isShape):
+        (WebCore::CSSPrimitiveValue::isTime):
+        (WebCore::CSSPrimitiveValue::computeTime):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::convertToLength):
+        (WebCore::createGridTrackBreadth):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        (WebCore::CSSStyleSelector::mapAnimationDelay):
+        (WebCore::CSSStyleSelector::mapAnimationDuration):
+        (WebCore::CSSStyleSelector::mapNinePieceImageSlice):
+        (WebCore::CSSStyleSelector::mapNinePieceImageQuad):
+        (WebCore::CSSStyleSelector::colorFromPrimitiveValue):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::parseAspectRatio):
+        (WebCore::numberValue):
+        (WebCore::computeLength):
+        * editing/EditingStyle.cpp:
+        (WebCore::cssValueToRGBA):
+        (WebCore::EditingStyle::extractFontSizeDelta):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        (WebCore::isCSSValueLength):
+        (WebCore::hasTransparentBackgroundColor):
+
 2012-01-16  Hajime Morrita  <morrita@chromium.org>
 
         [Internals] member varaibles should follow naming convention.

@@ -337,7 +337,7 @@ static RGBA32 cssValueToRGBA(CSSValue* colorValue)
         return Color::transparent;
     
     CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue);
-    if (primitiveColor->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+    if (primitiveColor->isRGBColor())
         return primitiveColor->getRGBA32Value();
     
     RGBA32 rgba = 0;
@@ -431,7 +431,7 @@ void EditingStyle::extractFontSizeDelta()
 
     // Only PX handled now. If we handle more types in the future, perhaps
     // a switch statement here would be more appropriate.
-    if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_PX)
+    if (!primitiveValue->isPx())
         return;
 
     m_fontSizeDelta = primitiveValue->getFloatValue();
@@ -1057,7 +1057,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
             CSSValue* value = property.value();
             if (!value->isPrimitiveValue())
                 continue;
-            if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
+            if (static_cast<CSSPrimitiveValue*>(value)->isPercentage()) {
                 if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
                     fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
             }
@@ -1398,7 +1398,7 @@ int getIdentifierValue(CSSStyleDeclaration* style, int propertyID)
 
 static bool isCSSValueLength(CSSPrimitiveValue* value)
 {
-    return value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC;
+    return value->isFontIndependentLength();
 }
 
 int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
@@ -1430,7 +1430,7 @@ bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
         return false;
     CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(cssValue.get());
     
-    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+    if (value->isRGBColor())
         return !alphaChannel(value->getRGBA32Value());
     
     return value->getIdent() == CSSValueTransparent;

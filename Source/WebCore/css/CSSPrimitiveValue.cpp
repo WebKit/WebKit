@@ -338,6 +338,23 @@ void CSSPrimitiveValue::cleanup()
     }
 }
 
+double CSSPrimitiveValue::computeDegrees()
+{
+    switch (m_primitiveUnitType) {
+    case CSS_DEG:
+        return getDoubleValue();
+    case CSS_RAD:
+        return rad2deg(getDoubleValue());
+    case CSS_GRAD:
+        return grad2deg(getDoubleValue());
+    case CSS_TURN:
+        return turn2deg(getDoubleValue());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 template<> int CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
     return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));

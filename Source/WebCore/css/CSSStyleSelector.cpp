@@ -2187,20 +2187,17 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
         if (ok)
             *ok = false;
     } else {
-        int type = primitiveValue->primitiveType();
-
-        if (!style && (type == CSSPrimitiveValue::CSS_EMS || type == CSSPrimitiveValue::CSS_EXS || type == CSSPrimitiveValue::CSS_REMS)) {
+        if (!style && primitiveValue->isFontRelativeLength()) {
             if (ok)
                 *ok = false;
-        } else if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+        } else if (primitiveValue->isLength()) {
             if (toFloat)
                 l = Length(primitiveValue->computeLength<double>(style, rootStyle, multiplier), Fixed);
             else
                 l = primitiveValue->computeLength<Length>(style, rootStyle, multiplier);
-        }
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+        } else if (primitiveValue->isPercentage())
             l = Length(primitiveValue->getDoubleValue(), Percent);
-        else if (type == CSSPrimitiveValue::CSS_NUMBER)
+        else if (primitiveValue->isNumber())
             l = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
         else if (ok)
             *ok = false;
@@ -2602,14 +2599,13 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, CSSStyleSe
         return true;
     }
 
-    int type = primitiveValue->primitiveType();
-    if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+    if (primitiveValue->isLength()) {
         length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
         length.setQuirk(primitiveValue->isQuirkValue());
         return true;
     }
 
-    if (type == CSSPrimitiveValue::CSS_PERCENTAGE) {
+    if (primitiveValue->isPercentage()) {
         length = Length(primitiveValue->getDoubleValue(), Percent);
         return true;
     }
@@ -2777,7 +2773,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             top = right = bottom = left = Length();
         } else if (!primitiveValue) {
             return;
-        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RECT) {
+        } else if (primitiveValue->isRect()) {
             Rect* rect = primitiveValue->getRectValue();
             if (!rect)
                 return;
@@ -2822,12 +2818,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 continue;
 
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
-            switch (contentValue->primitiveType()) {
-            case CSSPrimitiveValue::CSS_STRING:
+
+            if (contentValue->isString()) {
                 m_style->setContent(contentValue->getStringValue().impl(), didSet);
                 didSet = true;
-                break;
-            case CSSPrimitiveValue::CSS_ATTR: {
+            } else if (contentValue->isAttr()) {
                 // FIXME: Can a namespace be specified for an attr(foo)?
                 if (m_style->styleType() == NOPSEUDO)
                     m_style->setUnique();
@@ -2839,16 +2834,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 didSet = true;
                 // register the fact that the attribute value affects the style
                 m_features.attrsInRules.add(attr.localName().impl());
-                break;
-            }
-            case CSSPrimitiveValue::CSS_URI: {
+            } else if (contentValue->isURI()) {
                 if (!contentValue->isImageValue())
                     break;
                 m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(contentValue)), didSet);
                 didSet = true;
-                break;
-            }
-            case CSSPrimitiveValue::CSS_COUNTER: {
+            } else if (contentValue->isCounter()) {
                 Counter* counterValue = contentValue->getCounterValue();
                 EListStyleType listStyleType = NoneListStyle;
                 int listStyleIdent = counterValue->listStyleIdent();
@@ -2857,9 +2848,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(), listStyleType, counterValue->separator()));
                 m_style->setContent(counter.release(), didSet);
                 didSet = true;
-                break;
-            }
-            case CSSPrimitiveValue::CSS_IDENT:
+            } else {
                 switch (contentValue->getIdent()) {
                 case CSSValueOpenQuote:
                     m_style->setContent(OPEN_QUOTE, didSet);
@@ -2907,12 +2896,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 CSSValue* item = i.value();
                 ASSERT(item->isPrimitiveValue());
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                ASSERT(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING);
+                ASSERT(primitiveValue->isString());
                 quotes[i.index()] = primitiveValue->getStringValue();
             }
             m_style->setQuotes(adoptRef(data));
         } else if (primitiveValue) {
-            ASSERT(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_IDENT);
+            ASSERT(primitiveValue->isIdent());
             if (primitiveValue->getIdent() == CSSValueNone)
                 m_style->setQuotes(adoptRef(QuotesData::create(0)));
         }
@@ -2958,10 +2947,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
             Settings* settings = m_checker.document()->settings();
-            if (contentValue->primitiveType() == CSSPrimitiveValue::CSS_STRING) {
+            if (contentValue->isString()) {
                 if (contentValue->isFontFamilyValue())
                     face = static_cast<FontFamilyValue*>(contentValue)->familyName();
-            } else if (contentValue->primitiveType() == CSSPrimitiveValue::CSS_IDENT && settings) {
+            } else if (settings) {
                 switch (contentValue->getIdent()) {
                     case CSSValueWebkitBody:
                         face = settings->standardFontFamily();
@@ -3159,8 +3148,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(reflectValue->direction());
         if (reflectValue->offset()) {
-            int type = reflectValue->offset()->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            if (reflectValue->offset()->isPercentage())
                 reflection->setOffset(Length(reflectValue->offset()->getDoubleValue(), Percent));
             else
                 reflection->setOffset(reflectValue->offset()->computeLength<Length>(style(), m_rootElementStyle, zoomFactor));
@@ -3175,7 +3163,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
     case CSSPropertyOpacity:
         HANDLE_INHERIT_AND_INITIAL(opacity, Opacity)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
+        if (!primitiveValue || !primitiveValue->isNumber())
             return; // Error case.
         // Clamp opacity to the range 0-1
         m_style->setOpacity(clampTo<float>(primitiveValue->getDoubleValue(), 0, 1));
@@ -3262,7 +3250,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         if (primitiveValue->getIdent() == CSSValueInfinite)
             m_style->setMarqueeLoopCount(-1); // -1 means repeat forever.
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+        else if (primitiveValue->isNumber())
             m_style->setMarqueeLoopCount(primitiveValue->getIntValue());
         return;
     }
@@ -3270,8 +3258,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(marqueeSpeed, MarqueeSpeed)
         if (!primitiveValue)
             return;
-        if (primitiveValue->getIdent()) {
-            switch (primitiveValue->getIdent()) {
+        if (int ident = primitiveValue->getIdent()) {
+            switch (ident) {
                 case CSSValueSlow:
                     m_style->setMarqueeSpeed(500); // 500 msec.
                     break;
@@ -3282,12 +3270,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     m_style->setMarqueeSpeed(10); // 10msec. Super fast.
                     break;
             }
-        }
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
-            m_style->setMarqueeSpeed(1000 * primitiveValue->getIntValue());
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_MS)
-            m_style->setMarqueeSpeed(primitiveValue->getIntValue());
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) // For scrollamount support.
+        } else if (primitiveValue->isTime())
+            m_style->setMarqueeSpeed(primitiveValue->computeTime<int, CSSPrimitiveValue::Milliseconds>());
+        else if (primitiveValue->isNumber()) // For scrollamount support.
             m_style->setMarqueeSpeed(primitiveValue->getIntValue());
         return;
     }
@@ -3307,8 +3292,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     m_style->setMarqueeIncrement(Length(36, Fixed)); // 36px.
                     break;
             }
-        }
-        else {
+        } else {
             bool ok = true;
             Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle, 1, &ok);
             if (ok)
@@ -3345,10 +3329,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
         if (!primitiveValue)
             return;
-        int type = primitiveValue->primitiveType();
-        if (type == CSSPrimitiveValue::CSS_NUMBER)
+        if (primitiveValue->isNumber())
             m_style->setLineClamp(LineClampValue(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), LineClampLineCount));
-        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+        else if (primitiveValue->isPercentage())
             m_style->setLineClamp(LineClampValue(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_PERCENTAGE), LineClampPercentage));
         return;
     }
@@ -3459,10 +3442,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         float perspectiveValue;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
+        if (primitiveValue->isLength())
             perspectiveValue = primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
-        else if (type == CSSPrimitiveValue::CSS_NUMBER) {
+        else if (primitiveValue->isNumber()) {
             // For backward compatibility, treat valueless numbers as px.
             perspectiveValue = CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
         } else
@@ -3615,7 +3597,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setWrapShapeInside(0);
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
+        else if (primitiveValue->isShape())
             m_style->setWrapShapeInside(primitiveValue->getShapeValue());
         return;
 
@@ -3625,7 +3607,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setWrapShapeOutside(0);
-        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
+        else if (primitiveValue->isShape())
             m_style->setWrapShapeOutside(primitiveValue->getShapeValue());
         return;
 
@@ -4036,25 +4018,23 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
     CSSPrimitiveValue* second = pair ? static_cast<CSSPrimitiveValue*>(pair->second()) : 0;
 
     Length firstLength, secondLength;
-    int firstType = first->primitiveType();
-    int secondType = second ? second->primitiveType() : 0;
 
     float zoomFactor = m_style->effectiveZoom();
 
     if (first->getIdent() == CSSValueAuto)
         firstLength = Length();
-    else if (CSSPrimitiveValue::isUnitTypeLength(firstType))
+    else if (first->isLength())
         firstLength = first->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (firstType == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (first->isPercentage())
         firstLength = Length(first->getDoubleValue(), Percent);
     else
         return;
 
     if (!second || second->getIdent() == CSSValueAuto)
         secondLength = Length();
-    else if (CSSPrimitiveValue::isUnitTypeLength(secondType))
+    else if (second->isLength())
         secondLength = second->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (secondType == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (second->isPercentage())
         secondLength = Length(second->getDoubleValue(), Percent);
     else
         return;
@@ -4078,10 +4058,9 @@ void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValu
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
-    int type = primitiveValue->primitiveType();
-    if (CSSPrimitiveValue::isUnitTypeLength(type))
+    if (primitiveValue->isLength())
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
     else
         return;
@@ -4102,10 +4081,9 @@ void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValu
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
-    int type = primitiveValue->primitiveType();
-    if (CSSPrimitiveValue::isUnitTypeLength(type))
+    if (primitiveValue->isLength())
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
     else
         return;
@@ -4123,10 +4101,7 @@ void CSSStyleSelector::mapAnimationDelay(Animation* animation, CSSValue* value)
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
-        animation->setDelay(primitiveValue->getFloatValue());
-    else
-        animation->setDelay(primitiveValue->getFloatValue()/1000.0f);
+    animation->setDelay(primitiveValue->computeTime<float, CSSPrimitiveValue::Seconds>());
 }
 
 void CSSStyleSelector::mapAnimationDirection(Animation* layer, CSSValue* value)
@@ -4154,10 +4129,7 @@ void CSSStyleSelector::mapAnimationDuration(Animation* animation, CSSValue* valu
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
-        animation->setDuration(primitiveValue->getFloatValue());
-    else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_MS)
-        animation->setDuration(primitiveValue->getFloatValue()/1000.0f);
+    animation->setDuration(primitiveValue->computeTime<float, CSSPrimitiveValue::Seconds>());
 }
 
 void CSSStyleSelector::mapAnimationFillMode(Animation* layer, CSSValue* value)
@@ -4364,19 +4336,19 @@ void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& i
     // Set up a length box to represent our image slices.
     LengthBox box;
     Quad* slices = borderImageSlice->slices();
-    if (slices->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    if (slices->top()->isPercentage())
         box.m_top = Length(slices->top()->getDoubleValue(), Percent);
     else
         box.m_top = Length(slices->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    if (slices->bottom()->isPercentage())
         box.m_bottom = Length(slices->bottom()->getDoubleValue(), Percent);
     else
         box.m_bottom = Length((int)slices->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    if (slices->left()->isPercentage())
         box.m_left = Length(slices->left()->getDoubleValue(), Percent);
     else
         box.m_left = Length(slices->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    if (slices->right()->isPercentage())
         box.m_right = Length(slices->right()->getDoubleValue(), Percent);
     else
         box.m_right = Length(slices->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
@@ -4400,30 +4372,30 @@ LengthBox CSSStyleSelector::mapNinePieceImageQuad(CSSValue* value)
     // Set up a length box to represent our image slices.
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
     Quad* slices = borderWidths->getQuadValue();
-    if (slices->top()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+    if (slices->top()->isNumber())
         box.m_top = Length(slices->top()->getIntValue(), Relative);
-    else if (slices->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (slices->top()->isPercentage())
         box.m_top = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->top()->getIdent() != CSSValueAuto)
         box.m_top = slices->top()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
-    if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+    if (slices->right()->isNumber())
         box.m_right = Length(slices->right()->getIntValue(), Relative);
-    else if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (slices->right()->isPercentage())
         box.m_right = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->right()->getIdent() != CSSValueAuto)
         box.m_right = slices->right()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
-    if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+    if (slices->bottom()->isNumber())
         box.m_bottom = Length(slices->bottom()->getIntValue(), Relative);
-    else if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (slices->bottom()->isPercentage())
         box.m_bottom = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->bottom()->getIdent() != CSSValueAuto)
         box.m_bottom = slices->bottom()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
-    if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+    if (slices->left()->isNumber())
         box.m_left = Length(slices->left()->getIntValue(), Relative);
-    else if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+    else if (slices->left()->isPercentage())
         box.m_left = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->left()->getIdent() != CSSValueAuto)
         box.m_left = slices->left()->computeLength<Length>(style(), rootElementStyle(), zoom);
@@ -4727,15 +4699,13 @@ static Color colorForCSSValue(int cssValueId)
 
 Color CSSStyleSelector::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forVisitedLink) const
 {
-    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+    if (value->isRGBColor())
         return Color(value->getRGBA32Value());
 
-    if (value->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
-        return Color();
-
     int ident = value->getIdent();
-
     switch (ident) {
+    case 0:
+        return Color();
     case CSSValueWebkitText:
         return m_element->document()->textColor();
     case CSSValueWebkitLink:
@@ -4932,14 +4902,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 break;
             }
             case WebKitCSSTransformValue::RotateTransformOperation: {
-                double angle = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                    angle = rad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                    angle = grad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
-                    angle = turn2deg(angle);
-
+                double angle = firstValue->computeDegrees();
                 operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, getTransformOperationType(transformValue->operationType())));
                 break;
             }
@@ -4949,11 +4912,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 double x = 0;
                 double y = 0;
                 double z = 0;
-                double angle = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                    angle = rad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                    angle = grad2deg(angle);
+                double angle = firstValue->computeDegrees();
 
                 if (transformValue->operationType() == WebKitCSSTransformValue::RotateXTransformOperation)
                     x = 1;
@@ -4973,11 +4932,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 double x = firstValue->getDoubleValue();
                 double y = secondValue->getDoubleValue();
                 double z = thirdValue->getDoubleValue();
-                double angle = fourthValue->getDoubleValue();
-                if (fourthValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                    angle = rad2deg(angle);
-                else if (fourthValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                    angle = grad2deg(angle);
+                double angle = fourthValue->computeDegrees();
                 operations.operations().append(RotateTransformOperation::create(x, y, z, angle, getTransformOperationType(transformValue->operationType())));
                 break;
             }
@@ -4986,13 +4941,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
             case WebKitCSSTransformValue::SkewYTransformOperation: {
                 double angleX = 0;
                 double angleY = 0;
-                double angle = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                    angle = rad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                    angle = grad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
-                    angle = turn2deg(angle);
+                double angle = firstValue->computeDegrees();
                 if (transformValue->operationType() == WebKitCSSTransformValue::SkewYTransformOperation)
                     angleY = angle;
                 else {
@@ -5000,13 +4949,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     if (transformValue->operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
                         if (transformValue->length() > 1) {
                             CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            angleY = secondValue->getDoubleValue();
-                            if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                                angleY = rad2deg(angleY);
-                            else if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                                angleY = grad2deg(angleY);
-                            else if (secondValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
-                                angleY = turn2deg(angleY);
+                            angleY = secondValue->computeDegrees();
                         }
                     }
                 }
@@ -5050,7 +4993,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
             case WebKitCSSTransformValue::PerspectiveTransformOperation: {
                 bool ok = true;
                 Length p = Length(0, Fixed);
-                if (CSSPrimitiveValue::isUnitTypeLength(firstValue->primitiveType()))
+                if (firstValue->isLength())
                     p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
                 else {
                     // This is a quirk that should go away when 3d transforms are finalized.
@@ -5180,7 +5123,7 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
 
         if (iterator.hasMore() && iterator.isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
-            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+            if (primitiveValue->isNumber()) {
                 // If only one integer value is specified, it will set both
                 // the rows and the columns.
                 meshRows = meshColumns = primitiveValue->getIntValue();
@@ -5189,7 +5132,7 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
                 // Try to match another number for the columns.
                 if (iterator.hasMore() && iterator.isPrimitiveValue()) {
                     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
-                    if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
+                    if (primitiveValue->isNumber()) {
                         meshColumns = primitiveValue->getIntValue();
                         iterator.advance();
                     }
@@ -5274,7 +5217,7 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             double amount = 1;
             if (filterValue->length() == 1) {
                 amount = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                if (firstValue->isPercentage())
                     amount /= 100;
             }
 
@@ -5283,15 +5226,8 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         }
         case WebKitCSSFilterValue::HueRotateFilterOperation: {
             double angle = 0;
-            if (filterValue->length() == 1) {
-                angle = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_RAD)
-                    angle = rad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
-                    angle = grad2deg(angle);
-                else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_TURN)
-                    angle = turn2deg(angle);
-            }
+            if (filterValue->length() == 1)
+                angle = firstValue->computeDegrees();
 
             operations.operations().append(BasicColorMatrixFilterOperation::create(angle, operationType));
             break;
