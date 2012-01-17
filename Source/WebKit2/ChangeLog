@@ -1,5 +1,18 @@
 2012-01-16  Mark Rowe  <mrowe@apple.com>
 
+        Merge r103925.
+
+    2012-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a typo I made in r103871.
+
+        Fixes <http://webkit.org/b/75450> Inline PDF doesn't preview correctly when attempting to print its frame
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToPDF): Changed USE(GC) to USE(CG).
+
+2012-01-16  Mark Rowe  <mrowe@apple.com>
+
         Merge r103871.
 
     2011-12-31  Dan Bernstein  <mitz@apple.com>
