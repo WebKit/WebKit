@@ -1,3 +1,9 @@
+2012-01-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium dependency 117616:117882
+
+        * DEPS:
+
 2012-01-17  Bill Budge  <bbudge@chromium.org>
 
         AssociatedURLLoader adds support for the HTTP response header Access-Control-Expose-Header.
