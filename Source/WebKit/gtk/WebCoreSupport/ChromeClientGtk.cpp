@@ -504,7 +504,6 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegio
 
     Vector<IntRect> rects = dirtyRegion.rects();
     coalesceRectsIfPossible(dirtyRegion.bounds(), rects);
-    frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
     RefPtr<cairo_t> backingStoreContext = adoptRef(cairo_create(webView->priv->backingStore->cairoSurface()));
     GraphicsContext gc(backingStoreContext.get());
@@ -560,6 +559,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
         return;
 
     performAllPendingScrolls();
+    frame->view()->updateLayoutAndStyleIfNeededRecursive();
     paintWebView(m_webView, frame, m_dirtyRegion);
 
     const IntRect& rect = m_dirtyRegion.bounds();
