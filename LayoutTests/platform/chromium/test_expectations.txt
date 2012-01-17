@@ -2047,8 +2047,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.line.width.basic.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.line.width.transformed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
@@ -2057,8 +2057,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
@@ -2638,6 +2638,14 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 // due to conversion to/from premultiplied-alpha. When we do the conversions on the
 // GPU we may be off by one in r, g, and/or b.
 BUGWK73952 GPU : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
+
+// These will have slight differences on the edges of antialiased paths and need rebaseling
+BUGBSALOMON GPU : fast/canvas/canvas-composite-fill-repaint.html = IMAGE
+BUGBSALOMON GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
+BUGBSALOMON GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
+BUGBSALOMON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGBSALOMON GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 
 // Will need windows and linux baselines
 
