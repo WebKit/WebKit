@@ -2384,13 +2384,13 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
     if (coreFrame) {
-        ASSERT(coreFrame->document()->printing()
-#if USE(CG)
-            || pdfDocumentForPrintingFrame(coreFrame)
-#endif
-        );
+#if !USE(GC)
+        UNUSED_PARAM(printInfo);
 
-#if USE(CG)
+        ASSERT(coreFrame->document()->printing());
+#else
+        ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
+
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
@@ -2423,8 +2423,6 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
 
         CGPDFContextEndPage(context.get());
         CGPDFContextClose(context.get());
-#else
-        UNUSED_PARAM(printInfo);
 #endif
     }
 
@@ -2440,13 +2438,11 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
 
     if (coreFrame) {
 
-        ASSERT(coreFrame->document()->printing()
-#if USE(CG)
-            || pdfDocumentForPrintingFrame(coreFrame)
-#endif
-        );
+#if !USE(CG)
+        ASSERT(coreFrame->document()->printing());
+#else
+        ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
 
-#if USE(CG)
         RetainPtr<CGPDFDocumentRef> pdfDocument = pdfDocumentForPrintingFrame(coreFrame);
 
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.

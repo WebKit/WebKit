@@ -1,5 +1,17 @@
 2012-01-16  Mark Rowe  <mrowe@apple.com>
 
+        Merge r103871.
+
+    2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Continue trying to fix the ASSERT-enabled Windows build after r103858.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+
+2012-01-16  Mark Rowe  <mrowe@apple.com>
+
         Merge r103869.
 
     2011-12-31  Dan Bernstein  <mitz@apple.com>
