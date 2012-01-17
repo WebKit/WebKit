@@ -1,3 +1,40 @@
+2012-01-17  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: start using typedefs
+        https://bugs.webkit.org/show_bug.cgi?id=76382
+
+        Reviewed by Yury Semikhatsky.
+
+        Generator is patched accordingly.
+
+        * inspector/CodeGeneratorInspector.py:
+        (EnumConstants.get_enum_constant_code):
+        (TypeBuilderPass):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.get_generate_pass_id):
+        (TypeBindings.create_type_declaration_):
+        (TypeBindings.create_type_declaration_.PlainString):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator):
+        (TypeBindings.create_type_declaration_.PlainString.reduce_to_raw_type):
+        (TypeBindings.create_type_declaration_.PlainString.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.PlainString.get_in_c_type_text):
+        (TypeBindings.create_type_declaration_.TypedefString):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator.generate_type_builder.String):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator.register_use):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator.get_generate_pass_id):
+        (TypeBindings.create_type_declaration_.TypedefString.reduce_to_raw_type):
+        (TypeBindings.create_type_declaration_.TypedefString.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.TypedefString.get_in_c_type_text):
+        (get_generate_pass_id):
+        (ArrayBinding.get_code_generator.CodeGenerator):
+        (ArrayBinding.get_code_generator.CodeGenerator.get_generate_pass_id):
+        (Generator.process_types.create_type_builder_caller):
+        (Generator.process_types.create_type_builder_caller.call_type_builder):
+        (Generator.process_types):
+
 2012-01-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide basic information about DOM character data size

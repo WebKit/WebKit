@@ -543,6 +543,13 @@ class EnumConstants:
         return join(output, ",\n") + "\n"
 
 
+# Typebuilder code is generated in several passes: first typedefs, then other classes.
+# Manual pass management is needed because we cannot have forward declarations for typedefs.
+class TypeBuilderPass:
+    TYPEDEF = "typedef"
+    MAIN = "main"
+
+
 class TypeBindings:
     @staticmethod
     def create_named_type_declaration(json_typable, context_domain_name, type_data):
@@ -626,6 +633,10 @@ class TypeBindings:
                             def register_use(forward_listener):
                                 pass
 
+                            @staticmethod
+                            def get_generate_pass_id():
+                                return TypeBuilderPass.MAIN
+
                         return CodeGenerator
 
                     @classmethod
@@ -642,42 +653,64 @@ class TypeBindings:
 
                 return EnumBinding
             else:
+                if helper.is_ad_hoc:
 
-                class PlainString:
-                    @staticmethod
-                    def get_code_generator():
-                        if helper.is_ad_hoc:
-                            return
+                    class PlainString:
+                        @staticmethod
+                        def get_code_generator():
+                            return None
 
-                        class CodeGenerator:
-                            @staticmethod
-                            def generate_type_builder(writer, forward_listener):
-                                helper.write_doc(writer)
-                                fixed_type_name.output_comment(writer)
-                                writer.newline("typedef String ")
-                                writer.append(fixed_type_name.class_name)
-                                writer.append(";\n\n")
+                        @staticmethod
+                        def reduce_to_raw_type():
+                            return RawTypes.String
 
-                            @staticmethod
-                            def register_use(forward_listener):
-                                pass
+                        @staticmethod
+                        def get_setter_value_expression_pattern():
+                            return None
 
-                        return CodeGenerator
+                        @classmethod
+                        def get_in_c_type_text(cls, optional):
+                            return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
 
-                    @staticmethod
-                    def reduce_to_raw_type():
-                        return RawTypes.String
+                    return PlainString
 
-                    @staticmethod
-                    def get_setter_value_expression_pattern():
-                        return None
+                else:
 
-                    @classmethod
-                    def get_in_c_type_text(cls, optional):
-                        #FIXME: return a typedef name instead.
-                        return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+                    class TypedefString:
+                        @staticmethod
+                        def get_code_generator():
+                            class CodeGenerator:
+                                @staticmethod
+                                def generate_type_builder(writer, forward_listener):
+                                    helper.write_doc(writer)
+                                    fixed_type_name.output_comment(writer)
+                                    writer.newline("typedef String ")
+                                    writer.append(fixed_type_name.class_name)
+                                    writer.append(";\n\n")
 
-                return PlainString
+                                @staticmethod
+                                def register_use(forward_listener):
+                                    pass
+
+                                @staticmethod
+                                def get_generate_pass_id():
+                                    return TypeBuilderPass.TYPEDEF
+
+                            return CodeGenerator
+
+                        @staticmethod
+                        def reduce_to_raw_type():
+                            return RawTypes.String
+
+                        @staticmethod
+                        def get_setter_value_expression_pattern():
+                            return None
+
+                        @classmethod
+                        def get_in_c_type_text(cls, optional):
+                            return "const %s%s&" % (helper.full_name_prefix, fixed_type_name.class_name)
+
+                    return TypedefString
 
         elif json_typable["type"] == "object":
             if "properties" in json_typable:
@@ -863,6 +896,10 @@ class TypeBindings:
                             def register_use(forward_listener):
                                 helper.add_to_forward_listener(forward_listener)
 
+                            @staticmethod
+                            def get_generate_pass_id():
+                                return TypeBuilderPass.MAIN
+
                         return CodeGenerator
 
                     @classmethod
@@ -971,6 +1008,10 @@ class TypeBindings:
                         @staticmethod
                         def register_use(forward_listener):
                             helper.add_to_forward_listener(forward_listener)
+
+                        @staticmethod
+                        def get_generate_pass_id():
+                            return TypeBuilderPass.MAIN
 
                     return CodeGenerator
 
@@ -2076,17 +2117,18 @@ class Generator:
                     if domain_guard:
                         domain_guard.generate_close(out)
 
-        def call_type_builder(type_data, writer_getter):
-            # Do not generate forwards for this type any longer.
-            ForwardListener.already_declared_set.add(type_data)
+        def create_type_builder_caller(generate_pass_id):
+            def call_type_builder(type_data, writer_getter):
+                # Do not generate forwards for this type any longer.
+                ForwardListener.already_declared_set.add(type_data)
 
-            code_generator = type_data.get_binding().get_code_generator()
-            # Call lazy getter even if we don't generat anything.
-            writer = writer_getter()
-            if code_generator:
-                code_generator.generate_type_builder(writer, ForwardListener)
+                code_generator = type_data.get_binding().get_code_generator()
+                if code_generator and generate_pass_id == code_generator.get_generate_pass_id():
+                    writer = writer_getter()
+                    code_generator.generate_type_builder(writer, ForwardListener)
+            return call_type_builder
 
-        generate_all_domains_code(output, call_type_builder)
+        generate_all_domains_code(output, create_type_builder_caller(TypeBuilderPass.MAIN))
 
         Generator.type_builder_forwards.append("// Forward declarations.\n")
 
@@ -2096,7 +2138,13 @@ class Generator:
                 binding.get_code_generator().generate_forward_declaration(writer_getter())
         generate_all_domains_code(Generator.type_builder_forwards, generate_forward_callback)
 
-        Generator.type_builder_forwards.append("// End of forward declarations.\n")
+        Generator.type_builder_forwards.append("// End of forward declarations.\n\n")
+
+        Generator.type_builder_forwards.append("// Typedefs.\n")
+
+        generate_all_domains_code(Generator.type_builder_forwards, create_type_builder_caller(TypeBuilderPass.TYPEDEF))
+
+        Generator.type_builder_forwards.append("// End of typedefs.\n\n")
 
 
 def flatten_list(input):
