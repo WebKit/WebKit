@@ -352,6 +352,11 @@ private:
 
     virtual void* preDispatchEventHandler(Event*);
 
+#if PLATFORM(MAC)
+    void updateDisableSleep();
+    bool shouldDisableSleep() const;
+#endif
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;

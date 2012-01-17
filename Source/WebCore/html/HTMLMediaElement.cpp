@@ -242,6 +242,10 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
             m_player->setControls(controls());
 #endif
     }
+#if PLATFORM(MAC)
+    else if (attrName == loopAttr)
+        updateDisableSleep();
+#endif
 }
 
 void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
@@ -1517,6 +1521,9 @@ void HTMLMediaElement::setLoop(bool b)
 {
     LOG(Media, "HTMLMediaElement::setLoop(%s)", boolString(b));
     setBooleanAttribute(loopAttr, b);
+#if PLATFORM(MAC)
+    updateDisableSleep();
+#endif
 }
 
 bool HTMLMediaElement::controls() const
@@ -1971,10 +1978,7 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     invalidateCachedTime();
 
 #if PLATFORM(MAC)
-    if (m_player->paused() && m_sleepDisabler)
-        m_sleepDisabler = nullptr;
-    else if (!m_player->paused() && !m_sleepDisabler)
-        m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+    updateDisableSleep();
 #endif
 
     endProcessingMediaPlayerCallback();
@@ -2786,6 +2790,21 @@ int HTMLMediaElement::offsetHeight()
         height = Element::adjustForLocalZoom(block->offsetHeight(), block);
     return height;
 }
+
+#if PLATFORM(MAC)
+void HTMLMediaElement::updateDisableSleep()
+{
+    if (!shouldDisableSleep() && m_sleepDisabler)
+        m_sleepDisabler = nullptr;
+    else if (shouldDisableSleep() && !m_sleepDisabler)
+        m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+}
+
+bool HTMLMediaElement::shouldDisableSleep() const
+{
+    return !m_player->paused() && hasVideo() && hasAudio() && !loop();
+}
+#endif
 
 }
 
