@@ -6306,7 +6306,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (NSRect)_convertRectFromRootView:(NSRect)rect
 {
-    return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y, rect.size.width, rect.size.height);
+    return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
 @end
