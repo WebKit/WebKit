@@ -65,7 +65,10 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         build_directory = getattr(options, 'build_directory', None)
         webkit_base = config_object.path_from_webkit_base()
         chromium_base = cls._chromium_base_dir(host.filesystem)
-        configuration = getattr(options, 'configuration', config_object.default_configuration())
+        if hasattr(options, 'configuration') and options.configuration:
+            configuration = options.configuration
+        else:
+            configuration = config_object.default_configuration()
         return cls._static_build_path(host.filesystem, build_directory, chromium_base, webkit_base, configuration, 'DumpRenderTree')
 
     @staticmethod
@@ -74,7 +77,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             return filesystem.join(build_directory, *comps)
         if filesystem.exists(filesystem.join(chromium_base, 'sconsbuild')):
             return filesystem.join(chromium_base, 'sconsbuild', *comps)
-        if filesystem.exists(filesystem.join(chromium_base, 'out', *comps)):
+        if filesystem.exists(filesystem.join(chromium_base, 'out')):
             return filesystem.join(chromium_base, 'out', *comps)
         if filesystem.exists(filesystem.join(webkit_base, 'sconsbuild')):
             return filesystem.join(webkit_base, 'sconsbuild', *comps)
