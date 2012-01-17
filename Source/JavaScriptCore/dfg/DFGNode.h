@@ -229,6 +229,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(PutByVal, NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByValAlias, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetByIdFlush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckStructure, NodeMustGenerate) \
@@ -502,6 +503,7 @@ struct Node {
     {
         switch (op) {
         case GetById:
+        case GetByIdFlush:
         case PutById:
         case PutByIdDirect:
         case Resolve:
@@ -718,6 +720,7 @@ struct Node {
     {
         switch (op) {
         case GetById:
+        case GetByIdFlush:
         case GetByVal:
         case Call:
         case Construct:

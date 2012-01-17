@@ -156,6 +156,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
+        info.codeOrigin = m_propertyAccesses[i].m_codeOrigin;
         info.callReturnLocation = callReturnLocation;
         info.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCheckImmToCall), callReturnLocation);
         info.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToStructCheck));
@@ -175,6 +176,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.valueGPR = m_propertyAccesses[i].m_valueGPR;
 #endif
         info.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
+        info.registersFlushed = m_propertyAccesses[i].m_registerMode == PropertyAccessRecord::RegistersFlushed;
     }
     
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());

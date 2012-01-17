@@ -716,6 +716,29 @@ private:
         return true;
     }
     
+    bool willNeedFlush(StructureStubInfo& stubInfo)
+    {
+        PolymorphicAccessStructureList* list;
+        int listSize;
+        switch (stubInfo.accessType) {
+        case access_get_by_id_self_list:
+            list = stubInfo.u.getByIdSelfList.structureList;
+            listSize = stubInfo.u.getByIdSelfList.listSize;
+            break;
+        case access_get_by_id_proto_list:
+            list = stubInfo.u.getByIdProtoList.structureList;
+            listSize = stubInfo.u.getByIdProtoList.listSize;
+            break;
+        default:
+            return false;
+        }
+        for (int i = 0; i < listSize; ++i) {
+            if (!list->list[i].isDirect)
+                return true;
+        }
+        return false;
+    }
+    
     void buildOperandMapsIfNecessary();
     
     JSGlobalData* m_globalData;
@@ -1707,7 +1730,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 
                 set(getInstruction[1].u.operand, cellConstant(methodCall.cachedFunction.get()));
             } else
-                set(getInstruction[1].u.operand, addToGraph(GetById, OpInfo(identifier), OpInfo(prediction), base));
+                set(getInstruction[1].u.operand, addToGraph(willNeedFlush(stubInfo) ? GetByIdFlush : GetById, OpInfo(identifier), OpInfo(prediction), base));
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
@@ -1818,7 +1841,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else
-                set(currentInstruction[1].u.operand, addToGraph(GetById, OpInfo(identifierNumber), OpInfo(prediction), base));
+                set(currentInstruction[1].u.operand, addToGraph(willNeedFlush(stubInfo) ? GetByIdFlush : GetById, OpInfo(identifierNumber), OpInfo(prediction), base));
 
             NEXT_OPCODE(op_get_by_id);
         }

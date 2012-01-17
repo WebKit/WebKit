@@ -31,7 +31,7 @@
 #include <assembler/LinkBuffer.h>
 #include <assembler/MacroAssembler.h>
 #include <bytecode/CodeBlock.h>
-#include <dfg/DFGAssemblyHelpers.h>
+#include <dfg/DFGCCallHelpers.h>
 #include <dfg/DFGFPRInfo.h>
 #include <dfg/DFGGPRInfo.h>
 #include <dfg/DFGGraph.h>
@@ -95,12 +95,15 @@ struct CallExceptionRecord {
 };
 
 struct PropertyAccessRecord {
+    enum RegisterMode { RegistersFlushed, RegistersInUse };
+    
 #if USE(JSVALUE64)
-    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
 #elif USE(JSVALUE32_64)
-    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
 #endif
-        : m_deltaCheckImmToCall(deltaCheckImmToCall)
+        : m_codeOrigin(codeOrigin)
+        , m_deltaCheckImmToCall(deltaCheckImmToCall)
         , m_functionCall(functionCall)
         , m_deltaCallToStructCheck(deltaCallToStructCheck)
 #if USE(JSVALUE64)
@@ -117,9 +120,11 @@ struct PropertyAccessRecord {
 #endif
         , m_valueGPR(valueGPR)
         , m_scratchGPR(scratchGPR)
+        , m_registerMode(registerMode)
     {
     }
 
+    CodeOrigin m_codeOrigin;
     MacroAssembler::DataLabelPtr m_deltaCheckImmToCall;
     MacroAssembler::Call m_functionCall;
     MacroAssembler::Jump m_deltaCallToStructCheck;
@@ -137,6 +142,7 @@ struct PropertyAccessRecord {
 #endif
     int8_t m_valueGPR;
     int8_t m_scratchGPR;
+    RegisterMode m_registerMode;
 };
 
 // === JITCompiler ===
@@ -147,10 +153,10 @@ struct PropertyAccessRecord {
 // relationship). The JITCompiler holds references to information required during
 // compilation, and also records information used in linking (e.g. a list of all
 // call to be linked).
-class JITCompiler : public AssemblyHelpers {
+class JITCompiler : public CCallHelpers {
 public:
     JITCompiler(JSGlobalData* globalData, Graph& dfg, CodeBlock* codeBlock)
-        : AssemblyHelpers(globalData, codeBlock)
+        : CCallHelpers(globalData, codeBlock)
         , m_graph(dfg)
     {
     }
@@ -178,12 +184,7 @@ public:
     // Add a call out from JIT code, with an exception check.
     Call addExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
-#if USE(JSVALUE64)
-        Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
-#elif USE(JSVALUE32_64)
-        Jump exceptionCheck = branch32(NotEqual, AbsoluteAddress(reinterpret_cast<char*>(&globalData()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
-#endif
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, emitExceptionCheck(), codeOrigin));
         return functionCall;
     }
     

@@ -1,3 +1,40 @@
+2012-01-16  Filip Pizlo  <fpizlo@apple.com>
+
+    Merge 105107.
+
+    2012-01-16  Filip Pizlo  <fpizlo@apple.com>
+    
+            DFG should be able to do JS and custom getter caching
+            https://bugs.webkit.org/show_bug.cgi?id=76361
+            <rdar://problem/10698060>
+    
+            Reviewed by Geoff Garen.
+            
+            * fast/js/dfg-custom-getter-expected.txt: Added.
+            * fast/js/dfg-custom-getter-throw-expected.txt: Added.
+            * fast/js/dfg-custom-getter-throw-inlined-expected.txt: Added.
+            * fast/js/dfg-custom-getter-throw-inlined.html: Added.
+            * fast/js/dfg-custom-getter-throw.html: Added.
+            * fast/js/dfg-custom-getter.html: Added.
+            * fast/js/dfg-getter-expected.txt: Added.
+            * fast/js/dfg-getter-throw-expected.txt: Added.
+            * fast/js/dfg-getter-throw.html: Added.
+            * fast/js/dfg-getter.html: Added.
+            * fast/js/script-tests/dfg-custom-getter-throw-inlined.js: Added.
+            (foo):
+            (baz):
+            (bar):
+            * fast/js/script-tests/dfg-custom-getter-throw.js: Added.
+            (foo):
+            (bar):
+            * fast/js/script-tests/dfg-custom-getter.js: Added.
+            (foo):
+            * fast/js/script-tests/dfg-getter-throw.js: Added.
+            (foo):
+            (bar):
+            * fast/js/script-tests/dfg-getter.js: Added.
+            (foo):
+    
 2012-01-17  Mark Rowe  <mrowe@apple.com>
 
         Merge r99649.
