@@ -1,3 +1,17 @@
+2011-1-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 104762
+
+    2012-01-09  Geoffrey Garen  <ggaren@apple.com>
+
+            REGRESSION: d3 Bullet Charts demo doesn't work (call with argument assignment is broken)
+            https://bugs.webkit.org/show_bug.cgi?id=75911
+
+            Reviewed by Filip Pizlo.
+
+            * fast/js/function-argument-evaluation-expected.txt: Added.
+            * fast/js/function-argument-evaluation.html: Added.
+
 2012-01-16  Mark Rowe  <mrowe@apple.com>
 
         Merge r102540.
