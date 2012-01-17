@@ -51,8 +51,8 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(GtkPort.name(), "Gtk")
         self.assertEquals(GtkPort.flag(), "--port=gtk")
         self.assertEquals(GtkPort.run_webkit_tests_command(), WebKitPort.script_shell_command("run-webkit-tests") + ["--gtk"])
-        self.assertEquals(GtkPort.build_webkit_command(), WebKitPort.script_shell_command("build-webkit") + ["--gtk", WebKitPort.makeArgs()])
-        self.assertEquals(GtkPort.build_webkit_command(build_style="debug"), WebKitPort.script_shell_command("build-webkit") + ["--debug", "--gtk", WebKitPort.makeArgs()])
+        self.assertEquals(GtkPort.build_webkit_command(), WebKitPort.script_shell_command("build-webkit") + ["--gtk", "--update-gtk", WebKitPort.makeArgs()])
+        self.assertEquals(GtkPort.build_webkit_command(build_style="debug"), WebKitPort.script_shell_command("build-webkit") + ["--debug", "--gtk", "--update-gtk", WebKitPort.makeArgs()])
 
     def test_qt_port(self):
         self.assertEquals(QtPort.name(), "Qt")
