@@ -629,7 +629,7 @@
                 "properties": [
                     { "name": "url", "type": "string", "description": "Resource URL." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Type of this resource." },
-                    { "name": "response", "$ref": "Response", "description": "Cached response data." },
+                    { "name": "response", "$ref": "Response", "optional": true, "description": "Cached response data." },
                     { "name": "bodySize", "type": "number", "description": "Cached response body size." }
                 ]
             },
