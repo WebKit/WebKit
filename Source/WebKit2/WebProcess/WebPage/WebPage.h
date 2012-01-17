@@ -217,7 +217,7 @@ public:
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
     WebFrame* mainFrame() const { return m_mainFrame.get(); }
-    PassRefPtr<Plugin> createPlugin(const Plugin::Parameters&);
+    PassRefPtr<Plugin> createPlugin(WebFrame*, const Plugin::Parameters&);
 
     EditorState editorState() const;
 
