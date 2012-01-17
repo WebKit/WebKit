@@ -1,3 +1,23 @@
+2012-01-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBIndex.get/getKey should yield undefined, not an error
+        https://bugs.webkit.org/show_bug.cgi?id=76116
+
+        Pass an undefined value (for IDBIndex.get()) or a null key
+        (for IDBIndex.getKey()) back as the result, rather than raising
+        an exception.
+
+        Reviewed by Adam Barth.
+
+        Tests: storage/indexeddb/index-basics.html
+               storage/indexeddb/cursor-index-delete.html
+               storage/indexeddb/duplicates.html
+
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+
 2012-01-17  Luke Macpherson   <macpherson@chromium.org>
 
         Remove references to CSSPrimitiveValue::primitiveType().

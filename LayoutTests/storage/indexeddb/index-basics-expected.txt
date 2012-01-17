@@ -49,11 +49,9 @@ indexObject.get('value')
 PASS event.target.result.x is "value"
 PASS event.target.result.y is "zzz"
 indexObject.getKey('does not exist')
-PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
+PASS event.target.result is undefined
 indexObject.get('does not exist')
-PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
-event.preventDefault()
+PASS event.target.result is undefined
 indexObject4.getKey('value2')
 PASS event.target.result is "key2"
 indexObject.openKeyCursor()

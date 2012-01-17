@@ -43,7 +43,7 @@ index.openCursor(keyRange)
 PASS [object IDBCursorWithValue] is non-null.
 event.target.result.delete()
 index.get(1)
-event.preventDefault()
+PASS event.target.result is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

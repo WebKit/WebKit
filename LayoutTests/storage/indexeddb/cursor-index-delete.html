@@ -104,13 +104,13 @@ function deleteObject()
     shouldBeNonNull(event.target.result);
     evalAndLog("event.target.result.delete()");
     request = evalAndLog("index.get(1)");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = verifyObjectDeleted;
+    request.onsuccess = verifyObjectDeleted;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function verifyObjectDeleted()
 {
-    evalAndLog("event.preventDefault()");
+    shouldBe("event.target.result", "undefined");
     done();
 }
 

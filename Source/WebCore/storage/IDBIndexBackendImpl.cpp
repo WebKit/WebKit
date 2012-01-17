@@ -151,14 +151,14 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
     if (getObject) {
         String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
         if (value.isNull()) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
+            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
             return;
         }
         callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
     } else {
         RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
         if (!keyResult) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
+            callbacks->onSuccess(static_cast<IDBKey*>(0));
             return;
         }
         callbacks->onSuccess(keyResult.get());

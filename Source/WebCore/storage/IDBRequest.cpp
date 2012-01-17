@@ -231,7 +231,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
-    m_result = IDBAny::create(idbKey);
+    if (idbKey && idbKey->valid())
+        m_result = IDBAny::create(idbKey);
+    else
+        m_result = IDBAny::create(SerializedScriptValue::undefinedValue());
     enqueueEvent(createSuccessEvent());
 }
 
