@@ -1,3 +1,18 @@
+2012-01-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Emit "resource,request,willsend" from ewk_view.
+        https://bugs.webkit.org/show_bug.cgi?id=76292
+
+        Reviewed by Andreas Kling.
+
+        Make ewk_view dispatch the "resource,request,willsend" signal as well,
+        so that it is possible to know whether the request is for the main
+        frame itself or for anything else.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest):
+        * ewk/ewk_view.h:
+
 2012-01-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build fix when using pango as font backends.
