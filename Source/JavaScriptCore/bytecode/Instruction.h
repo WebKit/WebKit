@@ -99,6 +99,10 @@ namespace JSC {
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
+        PolymorphicAccessStructureList()
+        {
+        }
+        
         PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, bool isDirect)
         {
             list[0].set(globalData, owner, stubRoutine, firstBase, isDirect);

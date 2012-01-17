@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "CodeOrigin.h"
 #include "Instruction.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
@@ -175,6 +176,8 @@ namespace JSC {
         int8_t seen;
         
 #if ENABLE(DFG_JIT)
+        CodeOrigin codeOrigin;
+        int8_t registersFlushed;
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;

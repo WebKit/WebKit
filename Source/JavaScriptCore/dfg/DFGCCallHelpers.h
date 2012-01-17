@@ -82,6 +82,13 @@ public:
         addCallArgument(arg2);
     }
 
+    ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
+    {
+        resetCallArguments();
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+    }
+
     ALWAYS_INLINE void setupArgumentsExecState()
     {
         resetCallArguments();
@@ -153,6 +160,15 @@ public:
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, TrustedImmPtr arg3)
+    {
+        resetCallArguments();
+        addCallArgument(GPRInfo::callFrameRegister);
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+        addCallArgument(arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2, TrustedImmPtr arg3)
     {
         resetCallArguments();
         addCallArgument(GPRInfo::callFrameRegister);
@@ -370,6 +386,11 @@ public:
     }
 #endif
 
+    ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
+    {
+        setupTwoStubArgs<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1, arg2);
+    }
+
     ALWAYS_INLINE void setupArgumentsExecState()
     {
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
@@ -442,6 +463,14 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2, TrustedImmPtr arg3)
+    {
+        move(arg1, GPRInfo::argumentGPR1);
+        move(arg2, GPRInfo::argumentGPR2);
+        move(arg3, GPRInfo::argumentGPR3);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImmPtr arg3)
     {
         setupStubArguments(arg1, arg2);
@@ -492,6 +521,23 @@ public:
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 #endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
+
+    void setupResults(GPRReg destA, GPRReg destB)
+    {
+        GPRReg srcA = GPRInfo::returnValueGPR;
+        GPRReg srcB = GPRInfo::returnValueGPR2;
+
+        if (srcB != destA) {
+            // Handle the easy cases - two simple moves.
+            move(srcA, destA);
+            move(srcB, destB);
+        } else if (srcA != destB) {
+            // Handle the non-swap case - just put srcB in place first.
+            move(srcB, destB);
+            move(srcA, destA);
+        } else
+            swap(destA, destB);
+    }
 };
 
 } } // namespace JSC::DFG

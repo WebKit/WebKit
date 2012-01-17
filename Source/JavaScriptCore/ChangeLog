@@ -1,3 +1,61 @@
+2012-01-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to do JS and custom getter caching
+        https://bugs.webkit.org/show_bug.cgi?id=76361
+        <rdar://problem/10698060>
+
+        Reviewed by Geoff Garen.
+        
+        Added the ability to cache JS getter calls and custom getter calls in the DFG.
+        Most of this is pretty mundane, since the old JIT supported this functionality
+        as well. But a couple interesting things had to happen:
+        
+        - There are now two variants of GetById: GetById, which works as before, and
+          GetByIdFlush, which flushes registers prior to doing the GetById. Only
+          GetByIdFlush can be used for caching getters. We detect which GetById style
+          to use by looking at the inline caches of the old JIT.
+        
+        - Exception handling for getter calls planted in stubs uses a separate lookup
+          handler routine, which uses the CodeOrigin stored in the StructureStubInfo.
+          
+        This is a 40% speed-up in the Dromaeo DOM Traversal average. It removes all of
+        the DFG regressions we saw in Dromaeo. This is neutral on SunSpider, V8, and
+        Kraken.
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::emitExceptionCheck):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::willNeedFlush):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupResults):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (JSC::DFG::JITCompiler::addExceptionCheck):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Build fix for r105086.

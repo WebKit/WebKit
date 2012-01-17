@@ -477,7 +477,7 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node& node)
     jsValueResult(result.gpr(), m_compileIndex);
 }
 
-JITCompiler::Call SpeculativeJIT::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)
+JITCompiler::Call SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
@@ -494,23 +494,25 @@ JITCompiler::Call SpeculativeJIT::cachedGetById(GPRReg baseGPR, GPRReg resultGPR
     
     JITCompiler::Label slowCase = m_jit.label();
 
-    silentSpillAllRegisters(resultGPR);
+    if (spillMode == NeedToSpill)
+        silentSpillAllRegisters(resultGPR);
     JITCompiler::Call functionCall = callOperation(operationGetByIdOptimize, resultGPR, baseGPR, identifier(identifierNumber));
-    silentFillAllRegisters(resultGPR);
+    if (spillMode == NeedToSpill)
+        silentFillAllRegisters(resultGPR);
     
     done.link(&m_jit);
     
     JITCompiler::Label doneLabel = m_jit.label();
 
-    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, loadWithPatch, slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR), safeCast<int8_t>(scratchGPR)));
+    m_jit.addPropertyAccess(PropertyAccessRecord(codeOrigin, structureToCompare, functionCall, structureCheck, loadWithPatch, slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR), safeCast<int8_t>(scratchGPR), spillMode == NeedToSpill ? PropertyAccessRecord::RegistersInUse : PropertyAccessRecord::RegistersFlushed));
     
-    if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg)
+    if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg && spillMode == NeedToSpill)
         unlock(scratchGPR);
     
     return functionCall;
 }
 
-void SpeculativeJIT::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
     
     JITCompiler::DataLabelPtr structureToCompare;
@@ -549,7 +551,7 @@ void SpeculativeJIT::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex va
     done.link(&m_jit);
     JITCompiler::Label doneLabel = m_jit.label();
 
-    m_jit.addPropertyAccess(PropertyAccessRecord(structureToCompare, functionCall, structureCheck, JITCompiler::DataLabelCompact(storeWithPatch.label()), slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
+    m_jit.addPropertyAccess(PropertyAccessRecord(codeOrigin, structureToCompare, functionCall, structureCheck, JITCompiler::DataLabelCompact(storeWithPatch.label()), slowCase, doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
 }
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert)
@@ -3123,7 +3125,7 @@ void SpeculativeJIT::compile(Node& node)
             
             base.use();
             
-            cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
+            cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber());
             
             jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
             break;
@@ -3145,7 +3147,53 @@ void SpeculativeJIT::compile(Node& node)
         
         JITCompiler::Jump notCell = m_jit.branchTestPtr(JITCompiler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
         
-        cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
+        cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
+        
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        
+        break;
+    }
+
+    case GetByIdFlush: {
+        if (!node.prediction()) {
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
+            break;
+        }
+        
+        if (isCellPrediction(at(node.child1()).prediction())) {
+            SpeculateCellOperand base(this, node.child1());
+            GPRReg baseGPR = base.gpr();
+
+            GPRResult result(this);
+            
+            GPRReg resultGPR = result.gpr();
+            
+            GPRReg scratchGPR = selectScratchGPR(baseGPR, resultGPR);
+            
+            base.use();
+            
+            flushRegisters();
+            
+            cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), JITCompiler::Jump(), DontSpill);
+            
+            jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+            break;
+        }
+        
+        JSValueOperand base(this, node.child1());
+        GPRReg baseGPR = base.gpr();
+
+        GPRResult result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        GPRReg scratchGPR = selectScratchGPR(baseGPR, resultGPR);
+        
+        base.use();
+        flushRegisters();
+        
+        JITCompiler::Jump notCell = m_jit.branchTestPtr(JITCompiler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
+        
+        cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell, DontSpill);
         
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         
@@ -3359,7 +3407,7 @@ void SpeculativeJIT::compile(Node& node)
         base.use();
         value.use();
 
-        cachedPutById(baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), NotDirect);
+        cachedPutById(node.codeOrigin, baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), NotDirect);
         
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
@@ -3377,7 +3425,7 @@ void SpeculativeJIT::compile(Node& node)
         base.use();
         value.use();
 
-        cachedPutById(baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), Direct);
+        cachedPutById(node.codeOrigin, baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), Direct);
 
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;

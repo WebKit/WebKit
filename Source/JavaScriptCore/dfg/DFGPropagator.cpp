@@ -464,6 +464,11 @@ private:
             break;
         }
             
+        case GetByIdFlush:
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
+            break;
+            
         case GetByVal: {
             if (m_graph[node.child1()].shouldSpeculateUint32Array() || m_graph[node.child1()].shouldSpeculateFloat32Array() || m_graph[node.child1()].shouldSpeculateFloat64Array())
                 changed |= mergePrediction(PredictDouble);

@@ -246,6 +246,16 @@ public:
         m_assembler.vmov(fpr, payloadGPR, tagGPR);
     }
 #endif
+    
+    enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
+    Jump emitExceptionCheck(ExceptionCheckKind kind = NormalExceptionCheck)
+    {
+#if USE(JSVALUE64)
+        return branchTestPtr(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(&globalData()->exception));
+#elif USE(JSVALUE32_64)
+        return branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(reinterpret_cast<char*>(&globalData()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
+#endif
+    }
 
 #if ENABLE(SAMPLING_COUNTERS)
     static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)

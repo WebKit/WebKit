@@ -104,7 +104,8 @@ EncodedJSValue DFG_OPERATION operationGetById(ExecState*, EncodedJSValue, Identi
 EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValue, Identifier*);
 EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, EncodedJSValue, Identifier*);
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, Identifier*);
-EncodedJSValue DFG_OPERATION operationGetMethodOptimize(ExecState*, EncodedJSValue, Identifier*);
+EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState*, JSCell*, PropertySlot::GetValueFunc, Identifier*);
+EncodedJSValue DFG_OPERATION operationCallGetter(ExecState*, JSCell*, JSCell*);
 EncodedJSValue DFG_OPERATION operationResolve(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*);
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*);
@@ -181,6 +182,7 @@ inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
 }
 #endif
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, uint32_t);
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState*, StructureStubInfo*);
 
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);

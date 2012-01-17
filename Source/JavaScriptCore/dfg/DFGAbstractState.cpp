@@ -688,6 +688,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetById:
+    case GetByIdFlush:
         if (!node.prediction()) {
             m_isValid = false;
             break;

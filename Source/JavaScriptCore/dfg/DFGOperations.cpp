@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
+#include "GetterSetter.h"
 #include "InlineASM.h"
 #include "Interpreter.h"
 #include "JSByteArray.h"
@@ -376,6 +377,22 @@ EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
         stubInfo.seen = true;
 
     return JSValue::encode(result);
+}
+
+EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* base, PropertySlot::GetValueFunc function, Identifier* ident)
+{
+    return JSValue::encode(function(exec, asObject(base), *ident));
+}
+
+EncodedJSValue DFG_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* value)
+{
+    GetterSetter* getterSetter = asGetterSetter(value);
+    JSObject* getter = getterSetter->getter();
+    if (!getter)
+        return JSValue::encode(jsUndefined());
+    CallData callData;
+    CallType callType = getter->methodTable()->getCallData(getter, callData);
+    return JSValue::encode(call(exec, getter, callType, callData, asObject(base), ArgList()));
 }
 
 void DFG_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
@@ -808,6 +825,22 @@ DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t
     return dfgHandlerEncoded(exec, catchRoutine);
 }
 
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState* exec, StructureStubInfo* stubInfo)
+{
+    JSValue exceptionValue = exec->exception();
+    ASSERT(exceptionValue);
+    
+    CodeOrigin codeOrigin = stubInfo->codeOrigin;
+    while (codeOrigin.inlineCallFrame)
+        codeOrigin = codeOrigin.inlineCallFrame->caller;
+
+    HandlerInfo* handler = exec->globalData().interpreter->throwException(exec, exceptionValue, codeOrigin.bytecodeIndex);
+
+    void* catchRoutine = handler ? handler->nativeCode.executableAddress() : (void*)ctiOpThrowNotCaught;
+    ASSERT(catchRoutine);
+    return dfgHandlerEncoded(exec, catchRoutine);
+}
+
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::decode(value).toNumber(exec);
@@ -830,7 +863,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void* debug
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    printf("Speculation failure in %p at @%u with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->nodeIndex, alternative ? alternative->executeCounter() : 0, alternative ? alternative->reoptimizationRetryCounter() : 0, alternative ? alternative->optimizationDelayCounter() : 0, codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
+    printf("Speculation failure in %p at @%u with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->nodeIndex, alternative ? alternative->jitExecuteCounter() : 0, alternative ? alternative->reoptimizationRetryCounter() : 0, alternative ? alternative->optimizationDelayCounter() : 0, codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
 }
 #endif
 

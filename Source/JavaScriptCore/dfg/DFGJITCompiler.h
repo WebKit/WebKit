@@ -95,12 +95,15 @@ struct CallExceptionRecord {
 };
 
 struct PropertyAccessRecord {
+    enum RegisterMode { RegistersFlushed, RegistersInUse };
+    
 #if USE(JSVALUE64)
-    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
 #elif USE(JSVALUE32_64)
-    PropertyAccessRecord(MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+    PropertyAccessRecord(CodeOrigin codeOrigin, MacroAssembler::DataLabelPtr deltaCheckImmToCall, MacroAssembler::Call functionCall, MacroAssembler::Jump deltaCallToStructCheck, MacroAssembler::DataLabelCompact deltaCallToTagLoadOrStore, MacroAssembler::DataLabelCompact deltaCallToPayloadLoadOrStore, MacroAssembler::Label deltaCallToSlowCase, MacroAssembler::Label deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR, RegisterMode registerMode = RegistersInUse)
 #endif
-        : m_deltaCheckImmToCall(deltaCheckImmToCall)
+        : m_codeOrigin(codeOrigin)
+        , m_deltaCheckImmToCall(deltaCheckImmToCall)
         , m_functionCall(functionCall)
         , m_deltaCallToStructCheck(deltaCallToStructCheck)
 #if USE(JSVALUE64)
@@ -117,9 +120,11 @@ struct PropertyAccessRecord {
 #endif
         , m_valueGPR(valueGPR)
         , m_scratchGPR(scratchGPR)
+        , m_registerMode(registerMode)
     {
     }
 
+    CodeOrigin m_codeOrigin;
     MacroAssembler::DataLabelPtr m_deltaCheckImmToCall;
     MacroAssembler::Call m_functionCall;
     MacroAssembler::Jump m_deltaCallToStructCheck;
@@ -137,6 +142,7 @@ struct PropertyAccessRecord {
 #endif
     int8_t m_valueGPR;
     int8_t m_scratchGPR;
+    RegisterMode m_registerMode;
 };
 
 // === JITCompiler ===
@@ -179,12 +185,7 @@ public:
     Call addExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
         move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
-#if USE(JSVALUE64)
-        Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
-#elif USE(JSVALUE32_64)
-        Jump exceptionCheck = branch32(NotEqual, AbsoluteAddress(reinterpret_cast<char*>(&globalData()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
-#endif
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, emitExceptionCheck(), codeOrigin));
         return functionCall;
     }
     
