@@ -40,6 +40,7 @@
 #include "platform/WebURLLoaderClient.h"
 #include "platform/WebURLRequest.h"
 #include "platform/WebURLResponse.h"
+#include <wtf/text/WTFString.h>
 
 #include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
@@ -219,6 +220,42 @@ public:
         webkit_support::RunMessageLoop();
         EXPECT_TRUE(m_didFail);
         EXPECT_FALSE(m_didReceiveResponse);
+    }
+
+    bool CheckAccessControlHeaders(const char* headerName, bool exposed)
+    {
+        std::string id("http://www.other.com/CheckAccessControlExposeHeaders_");
+        id.append(headerName);
+        if (exposed)
+            id.append("-Exposed");
+        id.append(".html");
+
+        GURL url = GURL(id);
+        WebURLRequest request;
+        request.initialize();
+        request.setURL(url);
+
+        WebString headerNameString(WebString::fromUTF8(headerName));
+        m_expectedResponse = WebURLResponse();
+        m_expectedResponse.initialize();
+        m_expectedResponse.setMIMEType("text/html");
+        m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
+        if (exposed)
+            m_expectedResponse.addHTTPHeaderField("access-control-expose-header", headerNameString);
+        m_expectedResponse.addHTTPHeaderField(headerNameString, "foo");
+        webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+
+        WebURLLoaderOptions options;
+        options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
+        m_expectedLoader = createAssociatedURLLoader(options);
+        EXPECT_TRUE(m_expectedLoader);
+        m_expectedLoader->loadAsynchronously(request, this);
+        serveRequests();
+        EXPECT_TRUE(m_didReceiveResponse);
+        EXPECT_TRUE(m_didReceiveData);
+        EXPECT_TRUE(m_didFinishLoading);
+
+        return !m_actualResponse.httpHeaderField(headerNameString).isEmpty();
     }
 
 protected:
@@ -489,50 +526,29 @@ TEST_F(AssociatedURLLoaderTest, UntrustedCheckHeaders)
     CheckHeaderFails("foo", "bar\x0d\x0ax-csrf-token:\x20test1234");
 }
 
-// Test that a CORS load only returns whitelisted headers.
+// Test that the loader filters response headers according to the CORS standard.
 TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderWhitelisting)
 {
-    // This is cross-origin since the frame was loaded from www.test.com.
-    GURL url = GURL("http://www.other.com/CrossOriginHeaderWhitelisting.html");
-    WebURLRequest request;
-    request.initialize();
-    request.setURL(url);
+    // Test that whitelisted headers are returned without exposing them.
+    EXPECT_TRUE(CheckAccessControlHeaders("cache-control", false));
+    EXPECT_TRUE(CheckAccessControlHeaders("content-language", false));
+    EXPECT_TRUE(CheckAccessControlHeaders("content-type", false));
+    EXPECT_TRUE(CheckAccessControlHeaders("expires", false));
+    EXPECT_TRUE(CheckAccessControlHeaders("last-modified", false));
+    EXPECT_TRUE(CheckAccessControlHeaders("pragma", false));
 
-    m_expectedResponse = WebURLResponse();
-    m_expectedResponse.initialize();
-    m_expectedResponse.setMIMEType("text/html");
-    m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
-    // These headers are whitelisted and should be in the response.
-    m_expectedResponse.addHTTPHeaderField("cache-control", "foo");
-    m_expectedResponse.addHTTPHeaderField("content-language", "foo");
-    m_expectedResponse.addHTTPHeaderField("content-type", "foo");
-    m_expectedResponse.addHTTPHeaderField("expires", "foo");
-    m_expectedResponse.addHTTPHeaderField("last-modified", "foo");
-    m_expectedResponse.addHTTPHeaderField("pragma", "foo");
-    // These should never be in the response.
-    m_expectedResponse.addHTTPHeaderField("Set-Cookie", "foo");
-    m_expectedResponse.addHTTPHeaderField("Set-Cookie2", "foo");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    // Test that non-whitelisted headers aren't returned.
+    EXPECT_FALSE(CheckAccessControlHeaders("non-whitelisted", false));
 
-    WebURLLoaderOptions options;
-    options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
-    m_expectedLoader = createAssociatedURLLoader(options);
-    EXPECT_TRUE(m_expectedLoader);
-    m_expectedLoader->loadAsynchronously(request, this);
-    serveRequests();
-    EXPECT_TRUE(m_didReceiveResponse);
-    EXPECT_TRUE(m_didReceiveData);
-    EXPECT_TRUE(m_didFinishLoading);
+    // Test that Set-Cookie headers aren't returned.
+    EXPECT_FALSE(CheckAccessControlHeaders("Set-Cookie", false));
+    EXPECT_FALSE(CheckAccessControlHeaders("Set-Cookie2", false));
 
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("cache-control").isEmpty());
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("content-language").isEmpty());
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("content-type").isEmpty());
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("expires").isEmpty());
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("last-modified").isEmpty());
-    EXPECT_FALSE(m_actualResponse.httpHeaderField("pragma").isEmpty());
+    // Test that exposed headers that aren't whitelisted are returned.
+    EXPECT_TRUE(CheckAccessControlHeaders("non-whitelisted", true));
 
-    EXPECT_TRUE(m_actualResponse.httpHeaderField("Set-Cookie").isEmpty());
-    EXPECT_TRUE(m_actualResponse.httpHeaderField("Set-Cookie2").isEmpty());
+    // Test that Set-Cookie headers aren't returned, even if exposed.
+    EXPECT_FALSE(CheckAccessControlHeaders("Set-Cookie", true));
 }
 
 }

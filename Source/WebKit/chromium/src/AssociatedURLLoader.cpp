@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -50,7 +50,7 @@
 #include "platform/WebURLError.h"
 #include "platform/WebURLLoaderClient.h"
 #include "platform/WebURLRequest.h"
-#include <wtf/Vector.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -72,6 +72,8 @@ private:
     bool m_isSafe;
 };
 
+typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
+
 void HTTPRequestHeaderValidator::visitHeader(const WebString& name, const WebString& value)
 {
     m_isSafe = m_isSafe && isValidHTTPToken(name) && XMLHttpRequest::isAllowedHTTPHeader(name) && isValidHTTPHeaderValue(value);
@@ -83,21 +85,40 @@ public:
     HTTPResponseHeaderValidator(bool usingAccessControl) : m_usingAccessControl(usingAccessControl) { }
 
     void visitHeader(const WebString& name, const WebString& value);
-    const Vector<WebString>& disallowedHeaders() const { return m_disallowedHeaders; }
+    const HTTPHeaderSet& blockedHeaders();
 
 private:
-    Vector<WebString> m_disallowedHeaders;
+    HTTPHeaderSet m_exposedHeaders;
+    HTTPHeaderSet m_blockedHeaders;
     bool m_usingAccessControl;
 };
 
 void HTTPResponseHeaderValidator::visitHeader(const WebString& name, const WebString& value)
 {
     String headerName(name);
-    // Hide non-whitelisted headers for CORS requests.
-    // Hide Set-Cookie headers for all requests.
-    if ((m_usingAccessControl && !isOnAccessControlResponseHeaderWhitelist(headerName))
-         || (equalIgnoringCase(headerName, "set-cookie") || equalIgnoringCase(headerName, "set-cookie2")))
-        m_disallowedHeaders.append(name);
+    if (m_usingAccessControl) {
+        if (equalIgnoringCase(headerName, "access-control-expose-header"))
+            parseAccessControlExposeHeadersAllowList(value, m_exposedHeaders);
+        else if (!isOnAccessControlResponseHeaderWhitelist(headerName))
+            m_blockedHeaders.add(name);
+    }
+}
+
+const HTTPHeaderSet& HTTPResponseHeaderValidator::blockedHeaders()
+{
+    // Remove exposed headers from the blocked set.
+    if (!m_exposedHeaders.isEmpty()) {
+        // Don't allow Set-Cookie headers to be exposed.
+        m_exposedHeaders.remove("set-cookie");
+        m_exposedHeaders.remove("set-cookie2");
+        // Block Access-Control-Expose-Header itself. It could be exposed later.
+        m_blockedHeaders.add("access-control-expose-header");
+        HTTPHeaderSet::const_iterator end = m_exposedHeaders.end();
+        for (HTTPHeaderSet::const_iterator it = m_exposedHeaders.begin(); it != end; ++it)
+            m_blockedHeaders.remove(*it);
+    }
+
+    return m_blockedHeaders;
 }
 
 }
@@ -187,12 +208,13 @@ void AssociatedURLLoader::ClientAdapter::didReceiveResponse(unsigned long, const
     WebURLResponse validatedResponse = WrappedResourceResponse(response);
     HTTPResponseHeaderValidator validator(m_options.crossOriginRequestPolicy == WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl);
     validatedResponse.visitHTTPHeaderFields(&validator);
-    // If there are disallowed headers, copy the response so we can remove them.
-    const Vector<WebString>& disallowedHeaders = validator.disallowedHeaders();
-    if (!disallowedHeaders.isEmpty()) {
+    // If there are blocked headers, copy the response so we can remove them.
+    const HTTPHeaderSet& blockedHeaders = validator.blockedHeaders();
+    if (!blockedHeaders.isEmpty()) {
         validatedResponse = WebURLResponse(validatedResponse);
-        for (size_t i = 0; i < disallowedHeaders.size(); ++i)
-            validatedResponse.clearHTTPHeaderField(disallowedHeaders[i]);
+        HTTPHeaderSet::const_iterator end = blockedHeaders.end();
+        for (HTTPHeaderSet::const_iterator it = blockedHeaders.begin(); it != end; ++it)
+            validatedResponse.clearHTTPHeaderField(*it);
     }
     m_client->didReceiveResponse(m_loader, validatedResponse);
 }
