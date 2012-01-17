@@ -43,6 +43,13 @@ public:
         return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
 
+    virtual void setContainerSize(const IntSize&) { }
+    virtual bool usesContainerSize() const { return false; }
+    virtual bool hasRelativeWidth() const { return false; }
+    virtual bool hasRelativeHeight() const { return false; }
+
+    virtual IntSize size() const { return m_crossfadeSize; }
+
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect);
