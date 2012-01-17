@@ -1,5 +1,5 @@
 # Copyright (c) 2011, Apple Inc. All rights reserved.
-# Copyright (c) 2009, 2011 Google Inc. All rights reserved.
+# Copyright (c) 2009, 2011, 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -299,6 +299,7 @@ committers_unable_to_review = [
     Committer("Mike Reed", "reed@google.com", "reed"),
     Committer("Mike Thole", ["mthole@mikethole.com", "mthole@apple.com"]),
     Committer("Mikhail Naganov", "mnaganov@chromium.org"),
+    Committer("Naoki Takano", ["honten@chromium.org", "takano.naoki@gmail.com"], "honten"),
     Committer("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Committer("Nayan Kumar K", ["nayankk@motorola.com", "nayankk@gmail.com"], "xc0ffee"),
     Committer("Nico Weber", ["thakis@chromium.org", "thakis@google.com"], "thakis"),
@@ -326,6 +327,7 @@ committers_unable_to_review = [
     Committer("Sergio Villar Senin", ["svillar@igalia.com", "sergio@webkit.org"], "svillar"),
     Committer("Siddharth Mathur", "siddharth.mathur@nokia.com", "simathur"),
     Committer("Steve Lacey", "sjl@chromium.org", "stevela"),
+    Committer("Takashi Toyoshima", "toyoshim@chromium.org", "toyoshim"),
     Committer("Tim Horton", "timothy_horton@apple.com", "thorton"),
     Committer("Tom Zakrajsek", "tomz@codeaurora.org", "tomz"),
     Committer("Tommy Widenflycht", "tommyw@google.com", "tommyw"),
@@ -353,7 +355,6 @@ committers_unable_to_review = [
     Committer("Zeno Albisser", ["zeno@webkit.org", "zeno.albisser@nokia.com"], "zalbisser"),
     Committer("Zhenyao Mo", "zmo@google.com", "zhenyao"),
     Committer("Zoltan Horvath", ["zoltan@webkit.org", "hzoltan@inf.u-szeged.hu", "horvath.zoltan.6@stud.u-szeged.hu"], "zoltan"),
-    Committer("Naoki Takano", ["honten@chromium.org", "takano.naoki@gmail.com"], "honten"),
 ]
 
 
