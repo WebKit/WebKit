@@ -268,8 +268,12 @@ void CachedResourceRequest::didReceiveData(SubresourceLoader* loader, const char
         return;
 
     if (m_resource->response().httpStatusCode() >= 400) {
-        if (!m_resource->shouldIgnoreHTTPStatusCodeErrors())
+        if (!m_resource->shouldIgnoreHTTPStatusCodeErrors()) {
+            // Prevent the document from being destroyed before we are done with
+            // the cachedResourceLoader that it will delete when the document gets deleted.
+            RefPtr<Document> protector(m_cachedResourceLoader->document());
             m_resource->error(CachedResource::LoadError);
+        }
         return;
     }
 
