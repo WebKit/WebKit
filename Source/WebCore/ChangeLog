@@ -1,5 +1,21 @@
 2012-01-17  Mark Rowe  <mrowe@apple.com>
 
+        Merge r99649.
+
+    2011-11-08  Chris Evans  <cevans@google.com>
+
+        Crash accessing font fact rule parent
+        https://bugs.webkit.org/show_bug.cgi?id=71860
+
+        Reviewed by Adam Barth.
+
+        Test: fast/css/css-fontface-rule-crash.html
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::~CSSFontFaceRule): tell our child rule when we are going away.
+
+2012-01-17  Mark Rowe  <mrowe@apple.com>
+
         Merge r99982.
 
     2011-11-11  Gavin Peters  <gavinp@chromium.org>

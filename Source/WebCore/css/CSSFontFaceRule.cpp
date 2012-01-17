@@ -33,6 +33,8 @@ CSSFontFaceRule::CSSFontFaceRule(CSSStyleSheet* parent)
 
 CSSFontFaceRule::~CSSFontFaceRule()
 {
+    if (m_style)
+        m_style->setParent(0);
 }
 
 void CSSFontFaceRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration> style)
