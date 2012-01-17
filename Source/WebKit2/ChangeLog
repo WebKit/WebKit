@@ -1,3 +1,14 @@
+2012-01-16  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10702758> REGRESSION: Every Safari Reader WKView leaks
+
+        Reviewed by John Sullivan and Ada Chan.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]): Since this method can be called multiple times in a row
+        while [self window] is non-nil, check if there isn’t already an event monitor before adding
+        a new one.
+
 2012-01-16  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling SecItemAdd with a null result pointer

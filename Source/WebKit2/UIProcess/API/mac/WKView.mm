@@ -1834,10 +1834,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
 
-        _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
-            [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
-            return flagsChangedEvent;
-        }];
+        if (!_data->_flagsChangedEventMonitor) {
+            _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
+                [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
+                return flagsChangedEvent;
+            }];
+        }
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
