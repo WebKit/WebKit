@@ -80,8 +80,9 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
     OwnPtr<SecItemResponseData> response = sendSeqItemRequest(SecItemRequestData::Add, query);
     if (!response)
         return errSecInteractionNotAllowed;
-    
-    *result = response->resultObject().leakRef();
+
+    if (result)
+        *result = response->resultObject().leakRef();
     return response->resultCode();
 }
 

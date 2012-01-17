@@ -1,3 +1,16 @@
+2012-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Crash when calling SecItemAdd with a null result pointer
+        https://bugs.webkit.org/show_bug.cgi?id=76407
+        <rdar://problem/10696087>
+
+        Reviewed by Brady Eidson.
+
+        Add null check.
+
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::webSecItemAdd):
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Build fix for r105086.
