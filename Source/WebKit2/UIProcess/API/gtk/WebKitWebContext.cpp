@@ -20,10 +20,8 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebKitPrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKType.h>
 
 struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;

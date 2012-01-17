@@ -35,9 +35,6 @@
 #include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragIcon.h>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKURL.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>

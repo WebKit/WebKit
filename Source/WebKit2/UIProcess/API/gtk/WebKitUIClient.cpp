@@ -20,10 +20,10 @@
 #include "config.h"
 #include "WebKitUIClient.h"
 
+#include "WebKitPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
-#include <WebKit2/WKBase.h>
 
 using namespace WebKit;
 

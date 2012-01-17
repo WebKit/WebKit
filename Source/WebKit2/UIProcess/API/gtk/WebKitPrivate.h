@@ -26,6 +26,9 @@
 #ifndef WebKitPrivate_h
 #define WebKitPrivate_h
 
+#include <WebKit2/WKAPICast.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WebKit2.h>
 #include <glib.h>
 #include <wtf/Assertions.h>
 

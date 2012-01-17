@@ -35,6 +35,7 @@
 #include "PageClientImpl.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
+#include "WebKitPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/ClipboardGtk.h>
@@ -50,7 +51,6 @@
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
-#include <WebKit2/WKContext.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

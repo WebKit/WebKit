@@ -21,8 +21,7 @@
 #include "WebKitBackForwardListItem.h"
 
 #include "WebKitBackForwardListPrivate.h"
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKRetainPtr.h>
+#include "WebKitPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

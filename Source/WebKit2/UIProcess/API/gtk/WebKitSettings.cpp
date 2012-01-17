@@ -33,9 +33,6 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
-#include <WebKit2/WKAPICast.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKRetainPtr.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 

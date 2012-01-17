@@ -24,10 +24,6 @@
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebURLRequest.h"
 #include <WebCore/IntRect.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKString.h>
 #include <glib/gi18n-lib.h>
 
 /**
