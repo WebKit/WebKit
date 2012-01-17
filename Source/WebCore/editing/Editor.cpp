@@ -3075,6 +3075,8 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
         checkingTypes |= TextCheckingTypeGrammar;
     if (shouldCheckForCorrection)
         checkingTypes |= TextCheckingTypeCorrection;
+    if (shouldShowCorrectionPanel)
+        checkingTypes |= TextCheckingTypeShowCorrectionPanel;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;

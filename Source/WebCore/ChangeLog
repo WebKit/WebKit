@@ -1,3 +1,19 @@
+2012-01-16  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION: r102553 Autocorrection bubble doesn't show up
+        https://bugs.webkit.org/show_bug.cgi?id=76408
+        <rdar://problem/10644746>
+
+        Prior to r102553 Editor::markAllMisspellingsAndBadGrammarInRanges() used to pass its
+        textCheckingOptions directly to markAndReplaceFor(). Now a request object is used,
+        but, when the object is created, the TextCheckingTypeShowCorrectionPanel flag is dropped.
+        
+        Reviewed by Darin Adler.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::resolveTextCheckingTypeMask): Add TextCheckingTypeShowCorrectionPanel to
+        the returned checkingTypes when appropriate.
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Build fix for r105086.
