@@ -436,7 +436,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
 
         // CFURLCreateAbsoluteURLWithBytes would complain to console if we passed a path to it.
-        if (bytes[0] == '/')
+        if (bytes[0] == '/' && !baseURL)
             return nil;
 
         // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components

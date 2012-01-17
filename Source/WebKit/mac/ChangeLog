@@ -1,3 +1,16 @@
+2012-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        A follow-up fix for:
+        A warning is logged to console when typing a bare "/" in Safari address bar
+        https://bugs.webkit.org/show_bug.cgi?id=76236
+
+        <rdar://problem/10702986>        
+
+        Reviewed by John Sullivan.
+
+        * Misc/WebNSURLExtras.mm: (+[NSURL _web_URLWithData:relativeToURL:]): It's OK to have a
+        path when there is a base URL.
+
 2012-01-16  Jon Lee  <jonlee@apple.com>
 
         Build fix for r105086.
