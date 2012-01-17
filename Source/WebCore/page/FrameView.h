@@ -44,6 +44,7 @@ class IntRect;
 class KURL;
 class Node;
 class Page;
+class RenderBox;
 class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
@@ -281,6 +282,8 @@ public:
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     void setAnimatorsAreActive();
+
+    void clearOwningRendererForCustomScrollbars(RenderBox*);
 
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
