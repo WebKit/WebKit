@@ -69,6 +69,39 @@ private:
     QString m_defaultValue;
 };
 
+class AuthenticationDialogContextObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString hostname READ hostname CONSTANT)
+    Q_PROPERTY(QString realm READ realm CONSTANT)
+    Q_PROPERTY(QString prefilledUsername READ prefilledUsername CONSTANT)
+
+public:
+    AuthenticationDialogContextObject(const QString& hostname, const QString& realm, const QString& prefilledUsername)
+        : QObject()
+        , m_hostname(hostname)
+        , m_realm(realm)
+        , m_prefilledUsername(prefilledUsername)
+    {
+    }
+
+    QString hostname() const { return m_hostname; }
+    QString realm() const { return m_realm; }
+    QString prefilledUsername() const { return m_prefilledUsername; }
+
+public slots:
+    void accept(const QString& username, const QString& password) { emit accepted(username, password); }
+    void reject() { emit rejected(); }
+
+signals:
+    void accepted(const QString& username, const QString& password);
+    void rejected();
+
+private:
+    QString m_hostname;
+    QString m_realm;
+    QString m_prefilledUsername;
+};
+
 bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
@@ -100,6 +133,19 @@ bool QtDialogRunner::initForPrompt(QDeclarativeComponent* component, QQuickItem*
     connect(contextObject, SIGNAL(accepted(QString)), SLOT(onAccepted(QString)));
     connect(contextObject, SIGNAL(accepted(QString)), SLOT(quit()));
     connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+    return true;
+}
+
+bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername)
+{
+    AuthenticationDialogContextObject* contextObject = new AuthenticationDialogContextObject(hostname, realm, prefilledUsername);
+    if (!createDialog(component, dialogParent, contextObject))
+        return false;
+
+    connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(onAuthenticationAccepted(QString, QString)));
+    connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(quit()));
+    connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+
     return true;
 }
 

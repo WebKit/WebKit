@@ -55,6 +55,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
+    , authenticationDialog(0)
     , itemSelector(0)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , isTransitioningToNewPage(false)
@@ -440,6 +441,26 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
     return dialogRunner.result();
 }
 
+void QQuickWebViewPrivate::handleAuthenticationRequiredRequest(const QString& hostname, const QString& realm, const QString& prefilledUsername, QString& username, QString& password)
+{
+    if (!authenticationDialog)
+        return;
+
+    Q_Q(QQuickWebView);
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForAuthentication(authenticationDialog, q, hostname, realm, prefilledUsername))
+        return;
+
+    setViewInAttachedProperties(dialogRunner.dialog());
+
+    disableMouseEvents();
+    dialogRunner.exec();
+    enableMouseEvents();
+
+    username = dialogRunner.username();
+    password = dialogRunner.password();
+}
+
 void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
@@ -669,6 +690,21 @@ void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDia
         return;
     d->promptDialog = promptDialog;
     emit promptDialogChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::authenticationDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->authenticationDialog;
+}
+
+void QQuickWebViewExperimental::setAuthenticationDialog(QDeclarativeComponent* authenticationDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->authenticationDialog == authenticationDialog)
+        return;
+    d->authenticationDialog = authenticationDialog;
+    emit authenticationDialogChanged();
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::itemSelector() const

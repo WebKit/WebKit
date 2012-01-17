@@ -110,6 +110,7 @@ public:
     virtual void didReceiveMessageFromNavigatorQtObject(const String&) = 0;
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
     virtual void updateTextInputState() = 0;
+    virtual void handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password) = 0;
 #endif
 
 #if PLATFORM(QT) || PLATFORM(GTK)

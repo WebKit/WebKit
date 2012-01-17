@@ -75,6 +75,7 @@ messages -> WebPageProxy {
     DidChangeContentsSize(WebCore::IntSize newSize)
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
     FocusEditableArea(WebCore::IntRect caret, WebCore::IntRect area)
+    AuthenticationRequiredRequest(WTF::String hostname, WTF::String realm, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     NeedTouchEvents(bool needTouchEvents)

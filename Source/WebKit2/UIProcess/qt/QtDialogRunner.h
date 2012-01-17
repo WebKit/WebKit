@@ -38,17 +38,27 @@ public:
     bool initForAlert(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message);
     bool initForConfirm(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message);
     bool initForPrompt(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message, const QString& defaultValue);
+    bool initForAuthentication(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername);
 
     QQuickItem* dialog() const { return m_dialog.get(); }
 
     bool wasAccepted() const { return m_wasAccepted; }
     QString result() const { return m_result; }
 
+    QString username() const { return m_username; }
+    QString password() const { return m_password; }
+
 public slots:
     void onAccepted(const QString& result = QString())
     {
         m_wasAccepted = true;
         m_result = result;
+    }
+
+    void onAuthenticationAccepted(const QString& username, const QString& password)
+    {
+        m_username = username;
+        m_password = password;
     }
 
 private:
@@ -58,6 +68,9 @@ private:
     OwnPtr<QQuickItem> m_dialog;
     QString m_result;
     bool m_wasAccepted;
+
+    QString m_username;
+    QString m_password;
 };
 
 #endif // QtDialogRunner_h

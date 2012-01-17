@@ -1,3 +1,49 @@
+2012-01-17  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Implement HTTP authentication QML API
+        https://bugs.webkit.org/show_bug.cgi?id=75535
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch implements the QML API for handling HTTP authentication.
+        The implementation uses a syncronous message between the WebProcess
+        and the UIProcess which is called when the authenticationRequired
+        signal is emitted from QNAM.
+
+        Based in part upon patch by Peter Hartmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::handleAuthenticationRequiredRequest):
+        (QQuickWebViewExperimental::authenticationDialog):
+        (QQuickWebViewExperimental::setAuthenticationDialog):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::authenticationRequiredRequest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (AuthenticationDialogContextObject::AuthenticationDialogContextObject):
+        (AuthenticationDialogContextObject::hostname):
+        (AuthenticationDialogContextObject::realm):
+        (AuthenticationDialogContextObject::prefilledUsername):
+        (AuthenticationDialogContextObject::accept):
+        (AuthenticationDialogContextObject::reject):
+        (QtDialogRunner::initForAuthentication):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner::username):
+        (QtDialogRunner::password):
+        (QtDialogRunner::onAuthenticationAccepted):
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::handleAuthenticationRequiredRequest):
+        * UIProcess/qt/QtPageClient.h:
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::QtNetworkAccessManager):
+        (WebKit::QtNetworkAccessManager::onAuthenticationRequired):
+        * WebProcess/qt/QtNetworkAccessManager.h:
+
 2012-01-16  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10702758> REGRESSION: Every Safari Reader WKView leaks

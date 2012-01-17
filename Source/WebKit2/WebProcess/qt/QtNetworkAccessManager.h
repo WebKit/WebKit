@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Zeno Albisser <zeno@webkit.org>
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +44,9 @@ public:
 
 protected:
     virtual QNetworkReply* createRequest(Operation, const QNetworkRequest&, QIODevice* outgoingData = 0) OVERRIDE;
+
+private Q_SLOTS:
+    void onAuthenticationRequired(QNetworkReply *, QAuthenticator *);
 
 private:
     WebPage* obtainOriginatingWebPage(const QNetworkRequest&);

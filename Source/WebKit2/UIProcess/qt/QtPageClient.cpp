@@ -107,6 +107,17 @@ void QtPageClient::handleApplicationSchemeRequest(PassRefPtr<QtNetworkRequestDat
     m_webView->experimental()->invokeApplicationSchemeHandler(requestData.get());
 }
 
+void QtPageClient::handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password)
+{
+    QString qUsername;
+    QString qPassword;
+
+    QQuickWebViewPrivate::get(m_webView)->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, qUsername, qPassword);
+
+    username = qUsername;
+    password = qPassword;
+}
+
 void QtPageClient::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: This is a temporary fix until we get cursor support in QML items.
