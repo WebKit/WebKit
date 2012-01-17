@@ -1,3 +1,15 @@
+2012-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/10703228> ASSERTION FAILED: Uncaught exception - Cannot lock focus on image <NSImage 0x1206572a0 Size={0, 0} Reps=( )>, because it is size zero loading techcrunch.com
+
+        Reviewed by Anders Carlsson.
+        
+        Avoid trying to create image snapshots for zero-sized plugins, because
+        it causes -[NSView lockFocus] to throw an exception.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView cacheSnapshot]):
+
 2012-01-16  Alexey Proskuryakov  <ap@apple.com>
 
         A follow-up fix for:

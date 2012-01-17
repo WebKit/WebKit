@@ -476,7 +476,12 @@ using namespace WebCore;
 
 - (void)cacheSnapshot
 {
-    NSImage *snapshot = [[NSImage alloc] initWithSize: [self bounds].size];
+    NSSize boundsSize = [self bounds].size;
+    if (!boundsSize.height || !boundsSize.width)
+        return;
+
+    NSImage *snapshot = [[NSImage alloc] initWithSize:boundsSize];
+        
     _snapshotting = YES;
     [snapshot lockFocus];
     [self drawRect:[self bounds]];
