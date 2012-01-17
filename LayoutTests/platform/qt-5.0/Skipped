@@ -810,6 +810,3 @@ editing/text-iterator/findString-selection-disabled.html
 # https://bugs.webkit.org/show_bug.cgi?id=74785
 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
 
-# [Qt] fast/canvas/canvas-largedraws.html crashes with newer Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=75167
-fast/canvas/canvas-largedraws.html
