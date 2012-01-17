@@ -1,3 +1,21 @@
+2012-01-16  Hayato Ito  <hayato@chromium.org>
+
+        Implement multiple AT_TARGET event dispatching in regard to shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=76217
+
+        Reviewed by Dimitri Glazkov.
+
+        The original motivation is to fix the regression: Event.eventPhase is not set to 2
+        (at target) when handling dblclick event in <input> element.
+        Since the issue is not specific to <input> element, but general one, this patch fixes
+        the regression by adapting a living draft spec of shadow DOM.
+        This won't break a compatibility if there is no shadow boundaries in event dispatching.
+        See the following shadow dom spec how multiple AT_TARGET events work.
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#event-dispatch
+
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::handleLocalEvents):
+
 2012-01-16  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         platformRequest(QNX) need to get the conditional information from ResourceRequest.

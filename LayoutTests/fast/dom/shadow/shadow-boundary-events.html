@@ -59,6 +59,8 @@ function recordEvent(event)
         eventString += '(@' + event.currentTarget.id + ')';
     if (event.eventPhase == 1)
         eventString += '(capturing phase)';
+    if (event.target && event.currentTarget && event.target.id == event.currentTarget.id)
+        shouldBe("event.eventPhase", "2", true);
     eventRecords[eventType].push(eventString);
 }
 
@@ -204,8 +206,8 @@ function test()
 
     moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("focus")', '["shadowK(@divJ)(capturing phase)", "shadowK(@shadowK)(capturing phase)", "divL(@divL)"]');
-    shouldBe('dispatchedEvent("blur")', '["shadowF(@divE)(capturing phase)", "shadowF(@shadowF)(capturing phase)", "shadowG(@shadowG)(capturing phase)", "divH(@divH)"]');
+    shouldBe('dispatchedEvent("focus")', '["shadowK(@divJ)(capturing phase)", "shadowK(@shadowK)", "divL(@divL)"]');
+    shouldBe('dispatchedEvent("blur")', '["shadowF(@divE)(capturing phase)", "shadowF(@shadowF)", "shadowG(@shadowG)", "divH(@divH)"]');
 }
 
 test();
