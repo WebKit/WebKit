@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGResourceLinearGradient {linearGradient} [id="strokeLinearGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
-      RenderSVGText {text} at (-150,5) size 437x85 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 437x85
-          chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 16 width 436.80: "Gradient on fill"
-      RenderSVGText {text} at (-150,75) size 559x85 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 559x85
-          chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 18 width 558.60: "Gradient on stroke"
-      RenderSVGText {text} at (-150,145) size 641x85 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 641x85
-          chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 23 width 640.80: "Gradient on fill/stroke"
+      RenderSVGText {text} at (-150,5) size 440x85 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 440x85
+          chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 16 width 440.00: "Gradient on fill"
+      RenderSVGText {text} at (-150,75) size 562x85 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 562x85
+          chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 18 width 562.00: "Gradient on stroke"
+      RenderSVGText {text} at (-150,145) size 645x85 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 645x85
+          chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 23 width 645.00: "Gradient on fill/stroke"
