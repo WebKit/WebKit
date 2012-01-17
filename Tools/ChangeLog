@@ -1,3 +1,14 @@
+2012-01-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't set the 'primary' flag when mocking touch-points in MiniBrowser
+
+        Qt 5 no longer has that flag.
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+
 2012-01-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         GTK+ EWS needs to run update-webkitgtk-libs after applying a patch

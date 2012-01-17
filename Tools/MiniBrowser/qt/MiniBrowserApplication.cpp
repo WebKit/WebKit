@@ -155,8 +155,6 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         }
 
         // Update current touch-point
-        if (m_touchPoints.isEmpty())
-            touchPoint.flags |= QTouchEvent::TouchPoint::Primary;
         m_touchPoints.insert(touchPoint.id, touchPoint);
 
         // Update states for all other touch-points
