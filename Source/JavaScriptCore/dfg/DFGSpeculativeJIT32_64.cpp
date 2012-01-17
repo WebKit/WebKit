@@ -3192,7 +3192,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg basePayloadGPR = base.payloadGPR();
 
         GPRResult resultTag(this);
-        GPRResult resultPayload(this);
+        GPRResult2 resultPayload(this);
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
 

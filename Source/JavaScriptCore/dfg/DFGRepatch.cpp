@@ -360,7 +360,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 #if USE(JSVALUE64)
             stubJit.move(GPRInfo::returnValueGPR, resultGPR);
 #else
-            stubJit.setupResults(resultTagGPR, resultGPR);
+            stubJit.setupResults(resultGPR, resultTagGPR);
 #endif
             success = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
             
