@@ -37,6 +37,8 @@ _log = logging.getLogger(__name__)
 
 
 class ChromiumLinuxPort(chromium.ChromiumPort):
+    port_name = 'chromium-linux'
+
     SUPPORTED_ARCHITECTURES = ('x86', 'x86_64')
 
     FALLBACK_PATHS = {
@@ -98,26 +100,22 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         # if we actually try to use the binary, check_build() should fail.
         return 'x86_64'
 
-    def __init__(self, host, port_name=None, **kwargs):
-        port_name = port_name or 'chromium-linux'
-        chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
-        # We re-set the port name once the base object is fully initialized
-        # in order to be able to find the DRT binary properly.
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
         if port_name.endswith('-linux'):
-            self._architecture = self._determine_architecture(self._filesystem, self._executive, self._determine_driver_path_statically(host, self._options))
-            # FIXME: This is an ugly hack to avoid renaming the GPU port.
-            if port_name == 'chromium-linux':
-                port_name = port_name + '-' + self._architecture
-        else:
-            base, arch = port_name.rsplit('-', 1)
-            assert base in ('chromium-linux', 'chromium-gpu-linux')
-            self._architecture = arch
-        assert self._architecture in self.SUPPORTED_ARCHITECTURES
+            return port_name + '-' + cls._determine_architecture(host.filesystem, host.executive, cls._determine_driver_path_statically(host, options))
+        return port_name
+
+    def __init__(self, host, port_name, **kwargs):
+        chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
+        (base, arch) = port_name.rsplit('-', 1)
+        assert base in ('chromium-linux', 'chromium-gpu-linux')
+        assert arch in self.SUPPORTED_ARCHITECTURES
         assert port_name in ('chromium-linux', 'chromium-gpu-linux',
                              'chromium-linux-x86', 'chromium-linux-x86_64',
                              'chromium-gpu-linux-x86_64')
-        self._name = port_name
         self._version = 'lucid'  # We only support lucid right now.
+        self._architecture = arch
 
     def baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self._architecture]

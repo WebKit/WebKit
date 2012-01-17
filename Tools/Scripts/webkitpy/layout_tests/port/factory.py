@@ -74,6 +74,7 @@ class PortFactory(object):
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
         port_to_use = self._port_name_from_arguments_and_options(port_name, options, self._host.platform)
+        port_name = port_name or port_to_use
         if port_to_use.startswith('test'):
             import test
             maker = test.TestPort
@@ -137,7 +138,8 @@ class PortFactory(object):
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
 
-        return maker(self._host, port_name=port_name, options=options, **kwargs)
+        port_name = maker.determine_full_port_name(self._host, options, port_name)
+        return maker(self._host, port_name, options=options, **kwargs)
 
     def all_port_names(self):
         """Return a list of all valid, fully-specified, "real" port names.

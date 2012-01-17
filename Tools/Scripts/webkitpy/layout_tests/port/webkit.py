@@ -51,8 +51,8 @@ _log = logging.getLogger(__name__)
 
 
 class WebKitPort(Port):
-    def __init__(self, host, **kwargs):
-        Port.__init__(self, host, **kwargs)
+    def __init__(self, host, port_name=None, **kwargs):
+        Port.__init__(self, host, port_name=port_name, **kwargs)
 
         # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
         self.set_option_default("pixel_tests", False)

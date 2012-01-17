@@ -50,14 +50,18 @@ _log = logging.getLogger(__name__)
 
 class MockDRTPort(object):
     """MockPort implementation of the Port interface."""
+    port_name = 'mock'
 
-    def __init__(self, host, **kwargs):
-        prefix = 'mock-'
-        if 'port_name' in kwargs:
-            kwargs['port_name'] = kwargs['port_name'][len(prefix):]
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # Subclasses will usually override this.
+        return port_name
+
+    def __init__(self, host, port_name, **kwargs):
+        self.__delegate = PortFactory(host).get(port_name.replace('mock-', ''), **kwargs)
+        self.__real_name = port_name
         self._host = host
-        self.__delegate = PortFactory(host).get(**kwargs)
-        self.__real_name = prefix + self.__delegate.name()
 
     def real_name(self):
         return self.__real_name
@@ -174,6 +178,12 @@ class _DRTInput(object):
 
 
 class MockDRT(object):
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # Subclasses will usually override this.
+        return cls.port_name
+
     def __init__(self, options, args, host, stdin, stdout, stderr):
         self._options = options
         self._args = args

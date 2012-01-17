@@ -58,15 +58,16 @@ from webkitpy.layout_tests.port import Driver, DriverOutput, factory
 # all of the methods are passed to the __delegate, not to the base class.
 class DryRunPort(object):
     """DryRun implementation of the Port interface."""
+    port_name = 'dryrun'
 
-    def __init__(self, host, **kwargs):
-        pfx = 'dryrun-'
-        if 'port_name' in kwargs:
-            if kwargs['port_name'].startswith(pfx):
-                kwargs['port_name'] = kwargs['port_name'][len(pfx):]
-            else:
-                kwargs['port_name'] = None
-        self.__delegate = factory.PortFactory(host).get(**kwargs)
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # Subclasses will usually override this.
+        return port_name
+
+    def __init__(self, host, port_name, **kwargs):
+        self.__delegate = factory.PortFactory(host).get(port_name.replace('dryrun-', ''), **kwargs)
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

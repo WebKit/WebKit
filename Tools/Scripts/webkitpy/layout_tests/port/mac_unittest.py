@@ -98,23 +98,19 @@ java/
         self.assertTrue(port.version())
 
     def test_versions(self):
-        self.assert_name(None, 'leopard', 'mac-leopard')
         self.assert_name('mac', 'leopard', 'mac-leopard')
         self.assert_name('mac-leopard', 'tiger', 'mac-leopard')
         self.assert_name('mac-leopard', 'leopard', 'mac-leopard')
         self.assert_name('mac-leopard', 'snowleopard', 'mac-leopard')
 
-        self.assert_name(None, 'snowleopard', 'mac-snowleopard')
         self.assert_name('mac', 'snowleopard', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'tiger', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'leopard', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'snowleopard', 'mac-snowleopard')
 
-        self.assert_name(None, 'lion', 'mac-lion')
         self.assert_name('mac', 'lion', 'mac-lion')
         self.assert_name('mac-lion', 'lion', 'mac-lion')
 
-        self.assert_name(None, 'future', 'mac-future')
         self.assert_name('mac', 'future', 'mac-future')
         self.assert_name('mac-future', 'future', 'mac-future')
 

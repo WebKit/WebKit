@@ -47,6 +47,13 @@ def _test_expectations_overrides(port, super):
 
 
 class GoogleChromeLinux32Port(chromium_linux.ChromiumLinuxPort):
+    port_name = 'google-chrome-linux32'
+
+    # FIXME: Make google-chrome-XXX work as a port name.
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        return 'chromium-linux-x86'
+
     def baseline_search_path(self):
         paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(self)
         paths.insert(0, self._webkit_baseline_path('google-chrome-linux32'))
@@ -60,6 +67,13 @@ class GoogleChromeLinux32Port(chromium_linux.ChromiumLinuxPort):
 
 
 class GoogleChromeLinux64Port(chromium_linux.ChromiumLinuxPort):
+    port_name = 'google-chrome-linux64'
+
+    # FIXME: Make google-chrome-XXX work as a port name.
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        return 'chromium-linux-x86_64'
+
     def baseline_search_path(self):
         paths = chromium_linux.ChromiumLinuxPort.baseline_search_path(self)
         paths.insert(0, self._webkit_baseline_path('google-chrome-linux64'))
@@ -73,6 +87,13 @@ class GoogleChromeLinux64Port(chromium_linux.ChromiumLinuxPort):
 
 
 class GoogleChromeMacPort(chromium_mac.ChromiumMacPort):
+    port_name = 'google-chrome-mac'
+
+    # FIXME: Make google-chrome-XXX work as a port name.
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        return 'chromium-mac-leopard'
+
     def baseline_search_path(self):
         paths = chromium_mac.ChromiumMacPort.baseline_search_path(self)
         paths.insert(0, self._webkit_baseline_path('google-chrome-mac'))
@@ -83,6 +104,13 @@ class GoogleChromeMacPort(chromium_mac.ChromiumMacPort):
 
 
 class GoogleChromeWinPort(chromium_win.ChromiumWinPort):
+    port_name = 'google-chrome-win'
+
+    # FIXME: Make google-chrome-XXX work as a port name.
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        return 'chromium-win-xp'
+
     def baseline_search_path(self):
         paths = chromium_win.ChromiumWinPort.baseline_search_path(self)
         paths.insert(0, self._webkit_baseline_path('google-chrome-win'))

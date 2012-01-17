@@ -58,8 +58,6 @@ _log = logging.getLogger(__name__)
 class ChromiumPort(Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
-    port_name = "chromium"
-
     ALL_SYSTEMS = (
         ('leopard', 'x86'),
         ('snowleopard', 'x86'),
@@ -94,10 +92,9 @@ class ChromiumPort(Port):
         else:
             return module_path[0:offset]
 
-    def __init__(self, host, **kwargs):
-        Port.__init__(self, host, **kwargs)
+    def __init__(self, host, port_name, **kwargs):
+        Port.__init__(self, host, port_name, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
-        self._version = 'xp'
         self._chromium_base_dir_path = None
 
     def _check_file_exists(self, path_to_file, file_description,

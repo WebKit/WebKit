@@ -1,5 +1,105 @@
 2012-01-17  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: add determine_full_port_name(), clean up port.__init__()
+        https://bugs.webkit.org/show_bug.cgi?id=76357
+
+        Reviewed by Adam Barth.
+
+        Each Port class is now required to implement a 'port_name' field
+        that will match the start of all ports constructed by this class and
+        a 'determine_full_port_name' field that will make the port
+        fully-qualified.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.__init__):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port):
+        (Port.determine_port_name):
+        (Port.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.for):
+        (ChromiumPort.__init__):
+        (ChromiumPort):
+        (ChromiumPort._chromium_base_dir):
+        (ChromiumPort.path_from_chromium_base):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (ChromiumGpuLinuxPort):
+        (ChromiumGpuLinuxPort.__init__):
+        (ChromiumGpuMacPort):
+        (ChromiumGpuMacPort.__init__):
+        (ChromiumGpuWinPort):
+        (ChromiumGpuWinPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort):
+        (ChromiumLinuxPort.determine_port_name):
+        (ChromiumLinuxPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        (ChromiumMacPort.determine_port_name):
+        (ChromiumMacPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort):
+        (ChromiumWinPort.determine_port_name):
+        (ChromiumWinPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        (DryRunPort):
+        (DryRunPort.determine_port_name):
+        (DryRunPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory):
+        (PortFactory._default_port):
+        (PortFactory.get):
+        (PortFactory.get.in):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.assert_port):
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        (GoogleChromeLinux32Port):
+        (GoogleChromeLinux32Port.determine_port_name):
+        (GoogleChromeLinux64Port):
+        (GoogleChromeLinux64Port.determine_port_name):
+        (GoogleChromeMacPort):
+        (GoogleChromeMacPort.determine_port_name):
+        (GoogleChromeWinPort):
+        (GoogleChromeWinPort.determine_port_name):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        (MacPort.determine_port_name):
+        (MacPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_versions):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort):
+        (MockDRTPort.determine_port_name):
+        (MockDRTPort.__init__):
+        (MockDRT):
+        (MockDRT.determine_port_name):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.make_port):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort):
+        (QtPort.determine_port_name):
+        (QtPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort):
+        (TestPort.determine_port_name):
+        (TestPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+        (WinPort.determine_port_name):
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (get_test_baselines.AllPlatformsPort.__init__):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (get_test_config.TestMacPort):
+        (get_test_config):
+
+2012-01-17  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up port code in preparation for static port names
         https://bugs.webkit.org/show_bug.cgi?id=76356
 

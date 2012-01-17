@@ -81,17 +81,33 @@ class DummyOptions(object):
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package."""
 
-    port_name = None  # Subclasses override this
+    # Subclasses override this. This should indicate the basic implementation
+    # part of the port name, e.g., 'chromium-mac', 'win', 'gtk'; there is probably (?)
+    # one unique value per class.
+
+    # FIXME: We should probably rename this to something like 'implementation_name'.
+    port_name = None
 
     # Test names resemble unix relative paths, and use '/' as a directory separator.
     TEST_PATH_SEPARATOR = '/'
 
     ALL_BUILD_TYPES = ('debug', 'release')
 
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # Subclasses will usually override this.
+        return cls.port_name
+
     def __init__(self, host, port_name=None, options=None, config=None, **kwargs):
 
+        # This value may be different from cls.port_name by having version modifiers
+        # and other fields appended to it (for example, 'qt-arm' or 'mac-wk2').
+
+        # FIXME: port_name should be a required parameter. It isn't yet because lots of tests need to be updatd.
+        self._name = port_name or self.port_name
+
         # These are default values that should be overridden in a subclasses.
-        self._name = port_name or self.port_name  # Subclasses may append a -VERSION (like mac-leopard) or other qualifiers.
         self._version = ''
         self._architecture = 'x86'
         self._graphics_type = 'cpu'

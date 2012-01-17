@@ -165,7 +165,7 @@ def get_test_baselines(test_file, test_config):
     # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
     class AllPlatformsPort(WebKitPort):
         def __init__(self, host):
-            WebKitPort.__init__(self, host)
+            WebKitPort.__init__(self, host, 'mac')
             self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):

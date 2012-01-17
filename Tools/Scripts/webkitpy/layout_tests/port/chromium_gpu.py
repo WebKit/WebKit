@@ -71,8 +71,10 @@ def _default_tests_paths(port):
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
-    def __init__(self, host, port_name='chromium-gpu-linux', **kwargs):
-        chromium_linux.ChromiumLinuxPort.__init__(self, host, port_name=port_name, **kwargs)
+    port_name = 'chromium-gpu-linux'
+
+    def __init__(self, host, port_name, **kwargs):
+        chromium_linux.ChromiumLinuxPort.__init__(self, host, port_name, **kwargs)
         _set_gpu_options(self)
 
     def baseline_search_path(self):
@@ -86,8 +88,10 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
-    def __init__(self, host, port_name='chromium-gpu-mac', **kwargs):
-        chromium_mac.ChromiumMacPort.__init__(self, host, port_name=port_name, **kwargs)
+    port_name = 'chromium-gpu-mac'
+
+    def __init__(self, host, port_name, **kwargs):
+        chromium_mac.ChromiumMacPort.__init__(self, host, port_name, **kwargs)
         _set_gpu_options(self)
 
     def baseline_search_path(self):
@@ -100,8 +104,10 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
 
 
 class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
-    def __init__(self, host, port_name='chromium-gpu-win', **kwargs):
-        chromium_win.ChromiumWinPort.__init__(self, host, port_name=port_name, **kwargs)
+    port_name = 'chromium-gpu-win'
+
+    def __init__(self, host, port_name, **kwargs):
+        chromium_win.ChromiumWinPort.__init__(self, host, port_name, **kwargs)
         _set_gpu_options(self)
 
     def baseline_search_path(self):

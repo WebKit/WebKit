@@ -76,10 +76,6 @@ class GtkDriver(WebKitDriver):
 class GtkPort(WebKitPort):
     port_name = "gtk"
 
-    def __init__(self, host, **kwargs):
-        WebKitPort.__init__(self, host, **kwargs)
-        self._version = self.port_name
-
     def _port_flag_for_scripts(self):
         return "--gtk"
 

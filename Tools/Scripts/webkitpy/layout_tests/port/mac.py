@@ -42,8 +42,8 @@ class MacPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
 
-    def __init__(self, host, **kwargs):
-        ApplePort.__init__(self, host, **kwargs)
+    def __init__(self, host, port_name, **kwargs):
+        ApplePort.__init__(self, host, port_name, **kwargs)
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
             # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch

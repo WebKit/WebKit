@@ -59,10 +59,12 @@ class PortTestCase(unittest.TestCase):
     os_version = None
     port_maker = None
 
-    def make_port(self, host=None, options=None, os_name=None, os_version=None, **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
         host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
         options = options or MockOptions(configuration='Release')
-        return self.port_maker(host, options=options, **kwargs)
+        port_name = port_name or self.port_name
+        port_name = self.port_maker.determine_full_port_name(host, options, port_name)
+        return self.port_maker(host, port_name, options=options, **kwargs)
 
     def test_default_worker_model(self):
         port = self.make_port()
