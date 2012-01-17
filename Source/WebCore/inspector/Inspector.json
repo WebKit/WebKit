@@ -1632,8 +1632,8 @@
                     { "name": "shorthandEntries", "type": "array", "items": { "$ref": "ShorthandEntry" }, "description": "Computed values for all shorthands found in the style." },
                     { "name": "cssText", "type": "string", "optional": true, "description": "Style declaration text (if available)." },
                     { "name": "range", "$ref": "SourceRange", "optional": true, "description": "Style declaration range in the enclosing stylesheet (if available)." },
-                    { "name": "width", "type": "string", "description": "The effective \"width\" property value from this style." },
-                    { "name": "height", "type": "string", "description": "The effective \"height\" property value from this style." }
+                    { "name": "width", "type": "string", "optional": true, "description": "The effective \"width\" property value from this style." },
+                    { "name": "height", "type": "string", "optional": true, "description": "The effective \"height\" property value from this style." }
                 ],
                 "description": "CSS style representation."
             },
@@ -1658,7 +1658,7 @@
                 "type": "object",
                 "properties": [
                     { "name": "text", "type": "string", "description": "Media query text." },
-                    { "name": "source", "type": "string", "enum": ["mediaRule", "importRule", "stylesheet"], "optional": true, "description": "Source of the media query: \"mediaRule\" if specified by a @media rule, \"importRule\" if specified by an @import rule, \"stylesheet\" (implied if absent) if specified by a \"media\" attribute in a stylesheet's LINK or STYLE tag." },
+                    { "name": "source", "type": "string", "enum": ["mediaRule", "importRule", "linkedSheet", "inlineSheet"], "description": "Source of the media query: \"mediaRule\" if specified by a @media rule, \"importRule\" if specified by an @import rule, \"linkedSheet\" if specified by a \"media\" attribute in a linked stylesheet's LINK tag, \"inlineSheet\" if specified by a \"media\" attribute in an inline stylesheet's STYLE tag." },
                     { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the media query description." },
                     { "name": "sourceLine", "type": "integer", "optional": true, "description": "Line in the document containing the media query (not defined for the \"stylesheet\" source)." }
                 ],

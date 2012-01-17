@@ -1,3 +1,14 @@
+2012-01-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: CSS backend doesn't conform to Inspector.json
+        https://bugs.webkit.org/show_bug.cgi?id=76402
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+
 2012-01-17  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the mediaStream constructor

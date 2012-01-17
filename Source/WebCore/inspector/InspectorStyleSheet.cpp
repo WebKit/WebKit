@@ -848,8 +848,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyle(CSSStyleDec
     if (id.isEmpty()) {
         RefPtr<InspectorObject> bogusStyle = InspectorObject::create();
         bogusStyle->setArray("cssProperties", InspectorArray::create());
-        bogusStyle->setObject("shorthandValues", InspectorObject::create());
-        bogusStyle->setObject("properties", InspectorObject::create());
+        bogusStyle->setObject("shorthandEntries", InspectorObject::create());
         return bogusStyle.release();
     }
     RefPtr<InspectorStyle> inspectorStyle = inspectorStyleForId(id);
