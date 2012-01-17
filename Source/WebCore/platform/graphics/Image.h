@@ -39,11 +39,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSImage;
-#else
-class NSImage;
-#endif
+OBJC_CLASS NSImage;
 #endif
 
 #if USE(CG)

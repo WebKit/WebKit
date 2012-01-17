@@ -36,11 +36,7 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class CAPropertyAnimation;
-#else
-class CAPropertyAnimation;
-#endif
+OBJC_CLASS CAPropertyAnimation;
 typedef CAPropertyAnimation* PlatformAnimationRef;
 #elif PLATFORM(WIN)
 typedef struct _CACFAnimation* CACFAnimationRef;

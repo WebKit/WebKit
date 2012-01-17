@@ -26,11 +26,7 @@
 #ifndef MediaPlayerProxy_h
 #define MediaPlayerProxy_h
 
-#ifdef __OBJC__
-@class WebMediaPlayerProxy;
-#else
-class WebMediaPlayerProxy;
-#endif
+OBJC_CLASS WebMediaPlayerProxy;
 
 enum MediaPlayerProxyNotificationType {
 

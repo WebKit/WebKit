@@ -1,3 +1,15 @@
+2012-01-17  Sam Weinig  <sam@webkit.org>
+
+        Add helper macro for forward declaring objective-c classes
+        https://bugs.webkit.org/show_bug.cgi?id=76485
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h:
+        Add OBJC_CLASS macro which helps reduce code when forward declaring an
+        objective-c class in a header which can be included from both Objective-C
+        and non-Objective-C files.
+
 2012-01-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to do JS and custom getter caching

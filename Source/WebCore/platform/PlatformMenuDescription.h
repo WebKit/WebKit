@@ -27,11 +27,7 @@
 #define PlatformMenuDescription_h
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSMutableArray;
-#else
-class NSMutableArray;
-#endif
+OBJC_CLASS NSMutableArray;
 #elif PLATFORM(QT)
 #include <qlist.h>
 #elif PLATFORM(GTK)

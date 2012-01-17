@@ -40,11 +40,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSCachedURLResponse;
-#else
-class NSCachedURLResponse;
-#endif
+OBJC_CLASS NSCachedURLResponse;
 #endif
 
 namespace WebCore {

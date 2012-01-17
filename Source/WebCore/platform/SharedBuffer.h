@@ -23,6 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef SharedBuffer_h
 #define SharedBuffer_h
 
@@ -37,12 +38,7 @@
 #endif
 
 #if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
-#ifdef __OBJC__
-@class NSData;
-#else
-class NSData;
-#endif
-
+OBJC_CLASS NSData;
 #endif
 
 namespace WebCore {

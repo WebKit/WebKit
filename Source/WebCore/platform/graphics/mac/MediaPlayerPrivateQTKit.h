@@ -35,21 +35,17 @@
 
 #ifdef __OBJC__
 #import <QTKit/QTTime.h>
-@class QTMovie;
-@class QTMovieView;
-@class QTMovieLayer;
-@class QTVideoRendererWebKitOnly;
-@class WebCoreMovieObserver;
 #else
-class NSDictionary;
-class NSMutableDictionary;
-class QTMovie;
-class QTMovieView;
 class QTTime;
-class QTMovieLayer;
-class QTVideoRendererWebKitOnly;
-class WebCoreMovieObserver;
 #endif
+
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSMutableDictionary;
+OBJC_CLASS QTMovie;
+OBJC_CLASS QTMovieView;
+OBJC_CLASS QTMovieLayer;
+OBJC_CLASS QTVideoRendererWebKitOnly;
+OBJC_CLASS WebCoreMovieObserver;
 
 #ifndef DRAW_FRAME_RATE
 #define DRAW_FRAME_RATE 0

@@ -55,11 +55,7 @@
 #endif
 
 #if OS(DARWIN)
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
+OBJC_CLASS NSFont;
 
 typedef struct CGFont* CGFontRef;
 typedef const struct __CTFont* CTFontRef;

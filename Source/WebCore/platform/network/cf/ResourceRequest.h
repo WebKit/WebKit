@@ -34,11 +34,7 @@
 typedef const struct _CFURLRequest* CFURLRequestRef;
 #endif
 
-#ifdef __OBJC__
-@class NSURLRequest;
-#else
-class NSURLRequest;
-#endif
+OBJC_CLASS NSURLRequest;
 
 #if USE(CFURLSTORAGESESSIONS) && (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD))
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;

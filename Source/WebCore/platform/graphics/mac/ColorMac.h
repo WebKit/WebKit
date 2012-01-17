@@ -31,11 +31,7 @@
 
 #include "Color.h"
 
-#ifdef __OBJC__
-@class NSColor;
-#else
-class NSColor;
-#endif
+OBJC_CLASS NSColor;
 
 namespace WebCore {
     

@@ -52,16 +52,11 @@ typedef LPVOID HINTERNET;
 #endif
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSData;
-@class NSError;
-@class NSURLConnection;
-@class WebCoreResourceHandleAsDelegate;
-#else
-class NSData;
-class NSError;
-class NSURLConnection;
-class WebCoreResourceHandleAsDelegate;
+OBJC_CLASS NSData;
+OBJC_CLASS NSError;
+OBJC_CLASS NSURLConnection;
+OBJC_CLASS WebCoreResourceHandleAsDelegate;
+#ifndef __OBJC__
 typedef struct objc_object *id;
 #endif
 #endif

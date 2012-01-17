@@ -32,11 +32,7 @@
 #include <runtime/Error.h>
 #include <runtime/JSObject.h>
 
-#ifdef __OBJC__
-@class NSString;
-#else
-class NSString;
-#endif
+OBJC_CLASS NSString;
 
 namespace JSC {
 namespace Bindings {

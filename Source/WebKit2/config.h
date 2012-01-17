@@ -61,12 +61,6 @@ static const type& name() \
 
 #if PLATFORM(MAC)
 
-#ifdef __OBJC__
-#define OBJC_CLASS @class
-#else
-#define OBJC_CLASS class
-#endif
-
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #define ENABLE_WEB_PROCESS_SANDBOX 1
 #endif

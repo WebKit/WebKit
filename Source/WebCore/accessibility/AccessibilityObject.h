@@ -47,37 +47,26 @@
 #include "AccessibilityObjectWrapper.h"
 #endif
 
+#if PLATFORM(MAC)
+
 typedef struct _NSRange NSRange;
 
-#ifdef __OBJC__
-@class NSArray;
-@class NSAttributedString;
-@class NSData;
-@class NSMutableAttributedString;
-@class NSString;
-@class NSValue;
-@class NSView;
-@class WebAccessibilityObjectWrapper;
-#else
-class NSArray;
-class NSAttributedString;
-class NSData;
-class NSMutableAttributedString;
-class NSString;
-class NSValue;
-class NSView;
-#if PLATFORM(GTK)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSData;
+OBJC_CLASS NSMutableAttributedString;
+OBJC_CLASS NSString;
+OBJC_CLASS NSValue;
+OBJC_CLASS NSView;
+OBJC_CLASS WebAccessibilityObjectWrapper;
+
+typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
+
+#elif PLATFORM(GTK)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
-#elif PLATFORM(MAC)
-class WebAccessibilityObjectWrapper;
 #else
 class AccessibilityObjectWrapper;
-#endif
-#endif
-
-#if PLATFORM(MAC)
-typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #endif
 
 namespace WebCore {

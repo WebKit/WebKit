@@ -30,13 +30,8 @@
 #include "Clipboard.h"
 #include <wtf/RetainPtr.h>
 
-#ifdef __OBJC__
-@class NSImage;
-@class NSPasteboard;
-#else
-class NSImage;
-class NSPasteboard;
-#endif
+OBJC_CLASS NSImage;
+OBJC_CLASS NSPasteboard;
 
 namespace WebCore {
 

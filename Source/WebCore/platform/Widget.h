@@ -45,13 +45,8 @@
 #endif
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSView;
-@class NSWindow;
-#else
-class NSView;
-class NSWindow;
-#endif
+OBJC_CLASS NSView;
+OBJC_CLASS NSWindow;
 typedef NSView *PlatformWidget;
 #endif
 

@@ -32,17 +32,10 @@
 #include "IntPoint.h"
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class DOMElement;
-@class NSURL;
-@class NSString;
-@class NSPasteboard;
-#else
-class DOMElement;
-class NSURL;
-class NSString;
-class NSPasteboard;
-#endif
+OBJC_CLASS DOMElement;
+OBJC_CLASS NSURL;
+OBJC_CLASS NSString;
+OBJC_CLASS NSPasteboard;
 #endif
 
 namespace WebCore {

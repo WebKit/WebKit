@@ -28,11 +28,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSImage;
-#else
-class NSImage;
-#endif
+OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
 typedef struct HICON__* HICON;
 #elif PLATFORM(QT)

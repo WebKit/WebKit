@@ -31,15 +31,9 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
-#ifdef __OBJC__
-@class CALayer;
-@class WebTileCacheLayer;
-@class WebTileLayer;
-#else
-class CALayer;
-class WebTileCacheLayer;
-class WebTileLayer;
-#endif
+OBJC_CLASS CALayer;
+OBJC_CLASS WebTileCacheLayer;
+OBJC_CLASS WebTileLayer;
 
 namespace WebCore {
 

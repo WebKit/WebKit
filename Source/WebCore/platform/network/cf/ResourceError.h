@@ -37,10 +37,8 @@
 #include <wincrypt.h> // windows.h must be included before wincrypt.h.
 #endif
 
-#ifdef __OBJC__
-@class NSError;
-#else
-class NSError;
+#if PLATFORM(MAC)
+OBJC_CLASS NSError;
 #endif
 
 namespace WebCore {

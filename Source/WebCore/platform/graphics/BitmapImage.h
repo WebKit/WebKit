@@ -34,11 +34,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSImage;
-#else
-class NSImage;
-#endif
+OBJC_CLASS NSImage;
 #endif
 
 #if PLATFORM(WIN)

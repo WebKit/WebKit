@@ -61,13 +61,8 @@ class QNetworkReplyHandler;
 #endif
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSURLAuthenticationChallenge;
-@class NSURLConnection;
-#else
-class NSURLAuthenticationChallenge;
-class NSURLConnection;
-#endif
+OBJC_CLASS NSURLAuthenticationChallenge;
+OBJC_CLASS NSURLConnection;
 #endif
 
 // The allocations and releases in ResourceHandleInternal are

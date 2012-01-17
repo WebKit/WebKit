@@ -34,11 +34,7 @@
 
 #import <wtf/Forward.h>
 
-#ifdef __OBJC__
-@class DOMDocumentFragment;
-#else
-class DOMDocumentFragment;
-#endif
+OBJC_CLASS DOMDocumentFragment;
 
 namespace WebCore {
 

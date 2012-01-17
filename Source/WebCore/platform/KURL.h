@@ -35,11 +35,7 @@ typedef const struct __CFURL* CFURLRef;
 #endif
 
 #if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
-#ifdef __OBJC__
-@class NSURL;
-#else
-class NSURL;
-#endif
+OBJC_CLASS NSURL;
 #endif
 
 #if PLATFORM(QT)

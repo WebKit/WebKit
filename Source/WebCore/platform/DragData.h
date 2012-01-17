@@ -36,15 +36,17 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+
 #ifdef __OBJC__ 
 #import <Foundation/Foundation.h>
 #import <AppKit/NSDragging.h>
 typedef id <NSDraggingInfo> DragDataRef;
-@class NSPasteboard;
 #else
 typedef void* DragDataRef;
-class NSPasteboard;
 #endif
+
+OBJC_CLASS NSPasteboard;
+
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QMimeData;

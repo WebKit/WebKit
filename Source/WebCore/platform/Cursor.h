@@ -46,11 +46,7 @@ typedef HICON HCURSOR;
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-#ifdef __OBJC__
-@class NSCursor;
-#else
-class NSCursor;
-#endif
+OBJC_CLASS NSCursor;
 #endif
 
 #if PLATFORM(WX)

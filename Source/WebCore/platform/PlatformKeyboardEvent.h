@@ -32,11 +32,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class NSEvent;
-#else
-class NSEvent;
-#endif
+OBJC_CLASS NSEvent;
 #endif
 
 #if PLATFORM(WIN)

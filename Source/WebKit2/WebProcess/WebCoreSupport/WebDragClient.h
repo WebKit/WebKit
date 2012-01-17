@@ -29,13 +29,8 @@
 #include <WebCore/DragClient.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WKPasteboardFilePromiseOwner;
-@class WKPasteboardOwner;
-#else
-class WKPasteboardFilePromiseOwner;
-class WKPasteboardOwner;
-#endif
+OBJC_CLASS WKPasteboardFilePromiseOwner;
+OBJC_CLASS WKPasteboardOwner;
 #endif
 
 namespace WebKit {

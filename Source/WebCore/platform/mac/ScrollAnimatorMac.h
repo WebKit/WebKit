@@ -36,15 +36,9 @@
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
-#ifdef __OBJC__
-@class WebScrollAnimationHelperDelegate;
-@class WebScrollbarPainterControllerDelegate;
-@class WebScrollbarPainterDelegate;
-#else
-class WebScrollAnimationHelperDelegate;
-class WebScrollbarPainterControllerDelegate;
-class WebScrollbarPainterDelegate;
-#endif
+OBJC_CLASS WebScrollAnimationHelperDelegate;
+OBJC_CLASS WebScrollbarPainterControllerDelegate;
+OBJC_CLASS WebScrollbarPainterDelegate;
 
 typedef id ScrollbarPainterController;
 

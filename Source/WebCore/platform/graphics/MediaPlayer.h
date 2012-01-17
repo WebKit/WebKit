@@ -46,13 +46,9 @@
 #include "GraphicsLayer.h"
 #endif
 
-#ifdef __OBJC__
-@class AVPlayer;
-@class QTMovie;
-#else
-class AVPlayer;
-class QTMovie;
-#endif
+OBJC_CLASS AVPlayer;
+OBJC_CLASS QTMovie;
+
 class AVCFPlayer;
 class QTMovieGWorld;
 class QTMovieVisualContext;

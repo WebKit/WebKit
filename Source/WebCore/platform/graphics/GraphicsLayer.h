@@ -44,11 +44,7 @@
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class CALayer;
-#else
-class CALayer;
-#endif
+OBJC_CLASS CALayer;
 typedef CALayer PlatformLayer;
 #elif PLATFORM(WIN)
 typedef struct _CACFLayer PlatformLayer;

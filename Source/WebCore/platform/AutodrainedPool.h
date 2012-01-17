@@ -31,11 +31,7 @@
 
 #include <wtf/Noncopyable.h>
 
-#ifdef __OBJC__
-@class NSAutoreleasePool;
-#else
-class NSAutoreleasePool;
-#endif
+OBJC_CLASS NSAutoreleasePool;
 
 namespace WebCore {
 

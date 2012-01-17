@@ -24,11 +24,7 @@
 #include "skia/ext/skia_utils_mac.h"
 #endif
 
-#ifdef __OBJC__
-@class NSGraphicsContext;
-#else
-class NSGraphicsContext;
-#endif
+OBJC_CLASS NSGraphicsContext;
 
 namespace WebCore {
 

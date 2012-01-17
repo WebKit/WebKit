@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -237,6 +237,16 @@
 
 #ifndef FINAL
 #define FINAL
+#endif
+
+/* OBJC_CLASS */
+
+#ifndef OBJC_CLASS
+#ifdef __OBJC__
+#define OBJC_CLASS @class
+#else
+#define OBJC_CLASS class
+#endif
 #endif
 
 #endif /* WTF_Compiler_h */

@@ -27,16 +27,12 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
-class RenderProgress;
 
-#ifdef __OBJC__
-@class WebCoreRenderThemeNotificationObserver;
-#else
-class WebCoreRenderThemeNotificationObserver;
-#endif
+OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
 
+class RenderProgress;
 class RenderStyle;
 
 class RenderThemeMac : public RenderTheme {

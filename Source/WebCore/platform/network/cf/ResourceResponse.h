@@ -33,11 +33,7 @@
 typedef struct _CFURLResponse* CFURLResponseRef;
 #endif
 
-#ifdef __OBJC__
-@class NSURLResponse;
-#else
-class NSURLResponse;
-#endif
+OBJC_CLASS NSURLResponse;
 
 namespace WebCore {
 

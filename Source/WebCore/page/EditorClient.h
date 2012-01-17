@@ -36,17 +36,10 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class NSAttributedString;
-@class NSPasteboard;
-@class NSString;
-@class NSURL;
-#else
-class NSAttributedString;
-class NSPasteboard;
-class NSString;
-class NSURL;
-#endif
+OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSPasteboard;
+OBJC_CLASS NSString;
+OBJC_CLASS NSURL;
 #endif
 
 namespace WebCore {

@@ -31,14 +31,17 @@
 #include <wtf/RefPtr.h>
 
 #if USE(CFNETWORK)
+
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
+
 #else
+
 #ifndef __OBJC__
 typedef struct objc_object *id;
-class NSURLAuthenticationChallenge;
-#else
-@class NSURLAuthenticationChallenge;
 #endif
+
+OBJC_CLASS NSURLAuthenticationChallenge;
+
 #endif
 
 namespace WebCore {

@@ -33,12 +33,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-
-#ifdef __OBJC__
-@class NSMenuItem;
-#else
-class NSMenuItem;
-#endif
+OBJC_CLASS NSMenuItem;
 #elif PLATFORM(WIN)
 typedef struct tagMENUITEMINFOW MENUITEMINFO;
 #elif PLATFORM(GTK)

@@ -33,12 +33,7 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
-
-#ifdef __OBJC__
-@class WebScriptObject;
-#else
-class WebScriptObject;
-#endif
+OBJC_CLASS WebScriptObject;
 #endif
 
 struct NPObject;

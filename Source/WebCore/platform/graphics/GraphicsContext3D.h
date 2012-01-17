@@ -50,13 +50,8 @@
 #if PLATFORM(MAC)
 #include <OpenGL/OpenGL.h>
 #include <wtf/RetainPtr.h>
-#ifdef __OBJC__
-@class CALayer;
-@class WebGLLayer;
-#else
-class CALayer;
-class WebGLLayer;
-#endif
+OBJC_CLASS CALayer;
+OBJC_CLASS WebGLLayer;
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QPainter;
