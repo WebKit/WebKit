@@ -1,5 +1,22 @@
 2012-01-17  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: make PortFactory.get() be fully data-driven
+        https://bugs.webkit.org/show_bug.cgi?id=76360
+
+        Reviewed by Eric Seidel.
+
+        Refactor PortFactory.get() to be fully data-driven.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory):
+        (PortFactory._default_port):
+        (PortFactory.get):
+        (PortFactory.get.in):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.assert_port):
+
+2012-01-17  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: add determine_full_port_name(), clean up port.__init__()
         https://bugs.webkit.org/show_bug.cgi?id=76357
 
