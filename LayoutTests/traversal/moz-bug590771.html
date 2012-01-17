@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+Test adapted from http://mxr.mozilla.org/mozilla-central/source/content/base/test/test_bug590771.html
+
+https://bugzilla.mozilla.org/show_bug.cgi?id=590771
+-->
+<head>
+  <title>Test for Bug 590771</title>
+</head>
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=590771">Mozilla Bug 590771</a>
+<p id="display"></p>
+<pre id="test">
+<script type="application/javascript">
+
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+/** Test for Bug 590771 **/
+
+function test1()
+{
+  var attr = document.createAttribute("foo");
+  attr.value = "bar";
+  var ni = document.createNodeIterator(attr, -1, null, false);
+  ni.nextNode();
+  ni.nextNode();
+  console.log("test1: iterator should be on the first child attribute: " + (ni.referenceNode === attr.firstChild));
+
+  attr.removeChild(attr.firstChild);
+  console.log("test1: iterator should be on the attribute now: " + (ni.referenceNode === attr));
+}
+
+function test2()
+{
+  var attr = document.createAttribute("foo");
+  attr.value = "bar";
+  var ni = document.createNodeIterator(attr, -1, null, false);
+  ni.nextNode();
+  ni.nextNode();
+  console.log("test2: iterator should be on the first child attribute: " + (ni.referenceNode === attr.firstChild));
+
+  attr.value = "";
+  console.log("test2: iterator should be on the attribute now: " + (ni.referenceNode === attr));
+}
+
+function test3()
+{
+  var attr = document.createAttribute("foo");
+  attr.value = "bar";
+  var node = document.createElement("div");
+  node.setAttributeNode(attr);
+  var ni = document.createNodeIterator(attr, -1, null, false);
+  ni.nextNode();
+  ni.nextNode();
+  console.log("test3: iterator should be on the first child attribute: " + (ni.referenceNode === attr.firstChild));
+
+  node.setAttribute("foo", "");
+  console.log("test3: iterator should be on the attribute now: " + (ni.referenceNode === attr));
+}
+
+test1();
+test2();
+test3();
+
+</script>
+</pre>
+</body>
+</html>

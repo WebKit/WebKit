@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 29: test1: iterator should be on the first child attribute: true
+CONSOLE MESSAGE: line 32: test1: iterator should be on the attribute now: true
+CONSOLE MESSAGE: line 42: test2: iterator should be on the first child attribute: true
+CONSOLE MESSAGE: line 45: test2: iterator should be on the attribute now: true
+CONSOLE MESSAGE: line 57: test3: iterator should be on the first child attribute: true
+CONSOLE MESSAGE: line 60: test3: iterator should be on the attribute now: true
+Mozilla Bug 590771
+
+

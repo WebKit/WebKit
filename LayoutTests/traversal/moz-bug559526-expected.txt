@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 49: Should have thrown an exception: null
+CONSOLE MESSAGE: line 49: Should have thrown an exception: null
+CONSOLE MESSAGE: line 49: Should have thrown an exception: null
+CONSOLE MESSAGE: line 49: Should have thrown an exception: null
+CONSOLE MESSAGE: line 94: Should have tests 4 filter calls: 4
+Mozilla Bug 559526
+
+
+
