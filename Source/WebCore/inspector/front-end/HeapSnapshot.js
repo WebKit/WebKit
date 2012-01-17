@@ -909,8 +909,12 @@ WebInspector.HeapSnapshot.prototype = {
                 continue;
             if (node.type !== "native" && node.selfSize === 0)
                 continue;
-            var nameMatters = node.type === "object" || node.type === "native";
             var className = node.className;
+            if (className === "Document DOM tree")
+                continue;
+            if (className === "Detached DOM tree")
+                continue;
+            var nameMatters = node.type === "object" || node.type === "native";
             if (!aggregates.hasOwnProperty(className))
                 aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
             var clss = aggregates[className];
