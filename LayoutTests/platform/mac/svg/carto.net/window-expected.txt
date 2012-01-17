@@ -90,9 +90,9 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (613,81) size 185x159
             RenderSVGRect {rect} at (613,81) size 16x159 [fill={[type=SOLID] [color=#B0C4DE]}] [x=-15.00] [y=-15.00] [width=20.00] [height=202.00]
             RenderSVGRect {rect} at (613,81) size 185x16 [fill={[type=SOLID] [color=#B0C4DE]}] [x=-15.00] [y=-15.00] [width=236.00] [height=20.00]
-            RenderSVGText {text} at (0,169) size 99x13 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 99x13
-                chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 17 width 98.56: "Navigation Window"
+            RenderSVGText {text} at (0,169) size 106x14 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 106x14
+                chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 17 width 106.00: "Navigation Window"
           RenderSVGContainer {use} at (616,84) size 10x10
             RenderSVGContainer {g} at (616,84) size 10x10 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-5.00,-5.00)}]
               RenderSVGViewportContainer {svg} at (616,84) size 10x10

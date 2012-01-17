@@ -35,7 +35,7 @@ public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
 
     bool characterStartsNewTextChunk(int position) const;
-    SVGTextLayoutAttributes& layoutAttributes() { return m_layoutAttributes; }
+    SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
 
     float scalingFactor() const { return m_scalingFactor; }
     const Font& scaledFont() const { return m_scaledFont; }
@@ -49,8 +49,7 @@ private:
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
     virtual void willBeDestroyed();
-    
-    virtual void setStyle(PassRefPtr<RenderStyle>);
+    virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 
     virtual FloatRect objectBoundingBox() const { return floatLinesBoundingBox(); }

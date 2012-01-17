@@ -69,11 +69,11 @@ void SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer(RenderSVGInli
 void SVGTextLayoutAttributesBuilder::rebuildMetricsForWholeTree(RenderSVGText* textRoot)
 {
     ASSERT(textRoot);
-    Vector<SVGTextLayoutAttributes>& layoutAttributes = textRoot->layoutAttributes();
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot->layoutAttributes();
 
     size_t layoutAttributesSize = layoutAttributes.size();
     for (size_t i = 0; i < layoutAttributesSize; ++i)
-        m_metricsBuilder.measureTextRenderer(layoutAttributes[i].context());
+        m_metricsBuilder.measureTextRenderer(layoutAttributes[i]->context());
 }
 
 bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesIfNeeded(RenderSVGText* textRoot)

@@ -23,7 +23,6 @@
 #define RenderSVGText_h
 
 #if ENABLE(SVG)
-
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
 #include "SVGTextLayoutAttributesBuilder.h"
@@ -32,6 +31,7 @@ namespace WebCore {
 
 class RenderSVGInlineText;
 class SVGTextElement;
+class RenderSVGInlineText;
 
 class RenderSVGText : public RenderSVGBlock {
 public:
@@ -46,10 +46,15 @@ public:
     static RenderSVGText* locateRenderSVGTextAncestor(RenderObject*);
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
 
-    Vector<SVGTextLayoutAttributes>& layoutAttributes() { return m_layoutAttributes; }
     bool needsReordering() const { return m_needsReordering; }
 
+    void textDOMChanged();
+    void layoutAttributesChanged(RenderObject*);
+    void layoutAttributesWillBeDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
     void rebuildLayoutAttributes(bool performFullRebuild = false);
+    void rebuildLayoutAttributes(Vector<SVGTextLayoutAttributes*>& affectedAttributes);
+
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
 
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
@@ -70,6 +75,7 @@ private:
     virtual void computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect&, bool fixed = false) const;
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
     virtual FloatRect objectBoundingBox() const { return frameRect(); }
     virtual FloatRect strokeBoundingBox() const;
@@ -86,7 +92,7 @@ private:
     bool m_needsTransformUpdate : 1;
     AffineTransform m_localTransform;
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
-    Vector<SVGTextLayoutAttributes> m_layoutAttributes;
+    Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
 };
 
 inline RenderSVGText* toRenderSVGText(RenderObject* object)

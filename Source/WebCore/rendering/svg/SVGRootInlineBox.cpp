@@ -77,7 +77,7 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     ASSERT(textRoot);
 
     textRoot->rebuildLayoutAttributes();
-    Vector<SVGTextLayoutAttributes>& layoutAttributes = textRoot->layoutAttributes();
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot->layoutAttributes();
     if (layoutAttributes.isEmpty())
         return;
 
@@ -243,7 +243,7 @@ static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAtt
     firstAttributes->characterDataMap().set(firstPosition + 1, itLast->second);
 }
 
-static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
+static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes*>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,
                                                       SVGTextLayoutAttributes*& first, SVGTextLayoutAttributes*& last)
 {
     first = 0;
@@ -251,11 +251,11 @@ static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttrib
 
     unsigned attributesSize = attributes.size();
     for (unsigned i = 0; i < attributesSize; ++i) {
-        SVGTextLayoutAttributes& current = attributes[i];
-        if (!first && firstContext == current.context())
-            first = &current;
-        if (!last && lastContext == current.context())
-            last = &current;
+        SVGTextLayoutAttributes* current = attributes[i];
+        if (!first && firstContext == current->context())
+            first = current;
+        if (!last && lastContext == current->context())
+            last = current;
         if (first && last)
             break;
     }
@@ -267,7 +267,7 @@ static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttrib
 static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last)
 {
     ASSERT(userData);
-    Vector<SVGTextLayoutAttributes>& attributes = *reinterpret_cast<Vector<SVGTextLayoutAttributes>*>(userData);
+    Vector<SVGTextLayoutAttributes*>& attributes = *reinterpret_cast<Vector<SVGTextLayoutAttributes*>*>(userData);
 
     // This is a copy of std::reverse(first, last). It additionally assures that the metrics map within the renderers belonging to the InlineBoxes are reordered as well.
     while (true)  {
@@ -304,7 +304,7 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
     }
 }
 
-void SVGRootInlineBox::reorderValueLists(Vector<SVGTextLayoutAttributes>& attributes)
+void SVGRootInlineBox::reorderValueLists(Vector<SVGTextLayoutAttributes*>& attributes)
 {
     Vector<InlineBox*> leafBoxesInLogicalOrder;
     collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder, reverseInlineBoxRangeAndValueListsIfNeeded, &attributes);

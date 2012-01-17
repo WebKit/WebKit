@@ -3843,3 +3843,14 @@ BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMA
 
 // Started failing at http://trac.webkit.org/changeset/105007
 BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
+
+// SVG text layout optimizations: probably just need a rebaseline for chromium.
+BUGWK65711 : svg/carto.net/window.svg = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/text/remove-tspan-from-text.html = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/custom/use-detach.svg = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/custom/js-late-clipPath-and-object-creation.svg = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/text/modify-text-node-in-tspan.html = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/text/remove-text-node-from-tspan.html = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT IMAGE
+BUGWK65711 : svg/text/append-text-node-to-tspan.html = IMAGE+TEXT IMAGE

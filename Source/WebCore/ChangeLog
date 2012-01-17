@@ -1,3 +1,114 @@
+2012-01-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Large SVG text layout performance regression in r81168
+        https://bugs.webkit.org/show_bug.cgi?id=65711
+
+        Reviewed by Zoltan Herczeg.
+
+        Final patch fixing the performance regression from r81168 plus giving us more performance we ever had.
+        The testcase attached to bug 65711 creates 200 tspans as <text> children, and modifies just the first <tspan>s
+        content periodically using a timer. It ran with <3 FPS in release builds before, and now at around 60 FPS,
+        where the most dominant code path remaining is CG painting text. Still theres room to optimize further, as
+        Intruments shows.
+
+        Historically we rebuilt all SVGTextLayoutAttributes stored in the RenderSVGInlineText, whenever any
+        children of the <text> subtree changed, in any way. This lead to a recomputation of the x/y/dx/dy/rotate
+        value lists, for the whole tree, a recreation of the line box tree and finally a measurement of all characters
+        in the subtree.
+
+        This patch, and its previous patches preparing this, introduces progressive relayout for the SVG text subtree.
+        DOM tree mutations, x/y/dx/dy/rotate value lists changes, and measuring-all-characters are now strictly decoupled.
+
+        #1) x/y/dx/dy/rotate list changes:
+        The x/y/dx/dy/rotate lists are only ever rebuilt, if they change or upon the initial RenderSVGText layout.
+        This information is now cached in the so-called SVGCharacterDataMap, in each of the SVGTextLayoutAttributes,
+        associated with a specific RenderSVGInlineText.
+
+        #2) DOM tree mutations:
+        If a new RenderSVGInlineText gets added to the tree, we have to create SVGTextLayoutAttributes for the new
+        renderer, measure its characters, and cache the information in the attributes. Adding a new renderer to
+        a SVG <text> subtree can affect the positioning of the previous and next sibling in the tree, due the
+        whitespace merging logic. Example:
+
+        <text y="50" x="50 100 150">A<tspan></tspan> C</text>:
+        RenderSVGText {text} at (50,36) size 111x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 12x18
+            chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 12.00: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (50,0) size 61x18
+            chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
+            chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 1 width 11.00: "C"
+
+        <text y="50" x="50 100 150">A<tspan>B</tspan> C</text>:
+        RenderSVGText {text} at (50,36) size 115x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 12x18
+            chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 12.00: "A"
+          RenderSVGTSpan {tspan} at (0,0) size 11x18
+            RenderSVGInlineText {#text} at (50,0) size 11x18
+              chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 1 width 11.00: "B"
+          RenderSVGInlineText {#text} at (100,0) size 15x18
+            chunk 1 text run 1 at (150.00,50.00) startOffset 0 endOffset 2 width 15.00: " C"
+
+        Its obvious that adding a #text node as child to the <tspan> potentially affects the next & previous
+        siblings in the DOM tree. Take extra care of these possibilities, by properly remeasuring not only
+        the newly added renderer, but also the previous & next siblings layout attributes.
+
+        Mutation of text nodes, or removal of text/tspan elements from the tree is handled in the same way.
+
+        #3) Measuring the text subtree:
+        Don't cache the metrics information in the SVGRootInlineBox, as it doesn't survive relayouts (RenderSVGText::layout).
+        They're stored in the SVGTextLayoutAttributes, and will be updated if the underlying text content changes.
+
+        Tests: svg/text/append-text-node-to-tspan.html
+               svg/text/modify-text-node-in-tspan.html
+               svg/text/remove-text-node-from-tspan.html
+
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::addChild):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::willBeDestroyed):
+        (WebCore::RenderSVGInlineText::setTextInternal):
+        (WebCore::RenderSVGInlineText::styleDidChange):
+        * rendering/svg/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::layoutAttributes):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::recursiveUpdateLayoutAttributes):
+        (WebCore::RenderSVGText::layoutAttributesChanged):
+        (WebCore::findPreviousAndNextAttributes):
+        (WebCore::RenderSVGText::layoutAttributesWillBeDestroyed):
+        (WebCore::RenderSVGText::textDOMChanged):
+        (WebCore::RenderSVGText::layout):
+        (WebCore::RenderSVGText::addChild):
+        (WebCore::recursiveCollectLayoutAttributes):
+        (WebCore::RenderSVGText::rebuildLayoutAttributes):
+        * rendering/svg/RenderSVGText.h:
+        (WebCore::RenderSVGText::layoutAttributes):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::findFirstAndLastAttributesInVector):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        (WebCore::SVGRootInlineBox::reorderValueLists):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::SVGTextLayoutAttributesBuilder::rebuildMetricsForWholeTree):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::SVGTextLayoutEngine):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterAttributes):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterMetrics):
+        (WebCore::SVGTextLayoutEngine::currentVisualCharacterMetrics):
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextLayoutEngine.h:
+        (WebCore::SVGTextLayoutEngine::layoutAttributes):
+        * rendering/svg/SVGTextMetrics.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::modifyStartEndPositionsRespectingLigatures):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::childrenChanged):
+
 2012-01-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [TextPrompt] Autocomplete adds unwanted text that's hard to remove

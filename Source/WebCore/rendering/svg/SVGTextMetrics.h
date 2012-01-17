@@ -21,8 +21,6 @@
 #define SVGTextMetrics_h
 
 #if ENABLE(SVG)
-#include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

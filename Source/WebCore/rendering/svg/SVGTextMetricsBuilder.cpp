@@ -144,7 +144,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
 {
     ASSERT(text);
 
-    SVGTextLayoutAttributes* attributes = &text->layoutAttributes();
+    SVGTextLayoutAttributes* attributes = text->layoutAttributes();
     Vector<SVGTextMetrics>* textMetricsValues = &attributes->textMetricsValues();
     if (data->processRenderer) {
         if (data->allCharactersMap)

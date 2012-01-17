@@ -22,6 +22,8 @@
 
 #if ENABLE(SVG)
 #include "SVGTextMetrics.h"
+#include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,6 +44,7 @@ struct SVGCharacterData {
 typedef HashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
 
 class SVGTextLayoutAttributes {
+    WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributes);
 public:
     SVGTextLayoutAttributes(RenderSVGInlineText*);
 

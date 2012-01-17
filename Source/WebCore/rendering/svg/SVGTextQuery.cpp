@@ -158,8 +158,8 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
 
 void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, int& startPosition, int& endPosition) const
 {
-    SVGTextLayoutAttributes& layoutAttributes = queryData->textRenderer->layoutAttributes();
-    Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes.textMetricsValues();
+    SVGTextLayoutAttributes* layoutAttributes = queryData->textRenderer->layoutAttributes();
+    Vector<SVGTextMetrics>& textMetricsValues = layoutAttributes->textMetricsValues();
     unsigned boxStart = queryData->textBox->start();
     unsigned boxLength = queryData->textBox->len();
 
@@ -167,7 +167,7 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, i
     unsigned textMetricsSize = textMetricsValues.size();
 
     unsigned positionOffset = 0;
-    unsigned positionSize = layoutAttributes.context()->textLength();
+    unsigned positionSize = layoutAttributes->context()->textLength();
 
     bool alterStartPosition = true;
     bool alterEndPosition = true;

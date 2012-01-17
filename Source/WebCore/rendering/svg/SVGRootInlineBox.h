@@ -55,7 +55,7 @@ public:
     InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
 private:
-    void reorderValueLists(Vector<SVGTextLayoutAttributes>&);
+    void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
     void layoutChildBoxes(InlineFlowBox*, FloatRect* = 0);
     void layoutRootBox(const FloatRect&);

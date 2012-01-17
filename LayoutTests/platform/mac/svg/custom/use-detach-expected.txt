@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 17x14
             chunk 1 (middle anchor) text run 1 at (41.88,31.00) startOffset 0 endOffset 3 width 16.25: "use"
         RenderSVGPath {circle} at (220,96) size 24x24 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
-      RenderSVGContainer {g} at (208,57) size 48x65
-        RenderSVGContainer {use} at (208,57) size 48x42
-          RenderSVGContainer {g} at (208,57) size 48x42
-            RenderSVGText {text} at (41,20) size 17x14 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 17x14
-                chunk 1 (middle anchor) text run 1 at (41.88,31.00) startOffset 0 endOffset 3 width 16.25: "use"
+      RenderSVGContainer {g} at (210,57) size 44x65
+        RenderSVGContainer {use} at (210,57) size 44x39
+          RenderSVGContainer {g} at (210,57) size 44x39
+            RenderSVGText {text} at (42,20) size 16x14 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 16x14
+                chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
         RenderSVGContainer {use} at (218,94) size 28x28
           RenderSVGContainer {g} at (218,94) size 28x28
             RenderSVGPath {circle} at (218,94) size 28x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
