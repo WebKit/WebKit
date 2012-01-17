@@ -1,3 +1,20 @@
+2012-01-16  Mark Rowe  <mrowe@apple.com>
+
+        Merge r102540.
+
+    2011-12-11  Andreas Kling  <kling@webkit.org>
+
+        WK2/NetscapePlugin: Incorrect mouse event coordinates when frameScaleFactor != 1.
+        <http://webkit.org/b/74209> and <rdar://problem/10438197>
+
+        Reviewed by Anders Carlsson.
+
+        Add a test verifying that NetscapePlugins receive correctly transformed
+        mouse events with a page scale factor applied.
+
+        * platform/mac-wk2/plugins/mouse-events-scaled-expected.txt: Added.
+        * platform/mac-wk2/plugins/mouse-events-scaled.html: Added.
+
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
     Merge 104352

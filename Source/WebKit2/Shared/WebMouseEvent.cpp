@@ -78,21 +78,6 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
 }
 #endif
 
-WebMouseEvent::WebMouseEvent(const WebMouseEvent& event, float pageScaleFactor)
-    : WebEvent(event.type(), event.modifiers(), event.timestamp())
-    , m_button(event.button())
-    , m_position(WebCore::IntPoint(event.position().x() / pageScaleFactor, event.position().y() / pageScaleFactor))
-    , m_globalPosition(m_position + (event.globalPosition() - event.position()))
-    , m_deltaX(event.deltaX())
-    , m_deltaY(event.deltaY())
-    , m_deltaZ(event.deltaZ())
-    , m_clickCount(event.clickCount())
-#if PLATFORM(WIN)
-    , m_didActivateWebView(false)
-#endif
-{
-}
-
 void WebMouseEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     WebEvent::encode(encoder);
