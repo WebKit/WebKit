@@ -156,6 +156,8 @@ void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
     RefPtr<Document> protector(m_cachedResourceLoader->document());
+    CachedResourceHandle<CachedResource> protectResource(m_resource);
+
     if (!m_multipart)
         m_cachedResourceLoader->decrementRequestCount(m_resource);
     m_finishing = true;
@@ -188,6 +190,8 @@ void CachedResourceRequest::didFail(bool cancelled)
     // Prevent the document from being destroyed before we are done with
     // the cachedResourceLoader that it will delete when the document gets deleted.
     RefPtr<Document> protector(m_cachedResourceLoader->document());
+    CachedResourceHandle<CachedResource> protectResource(m_resource);
+
     if (!m_multipart)
         m_cachedResourceLoader->decrementRequestCount(m_resource);
     m_finishing = true;
