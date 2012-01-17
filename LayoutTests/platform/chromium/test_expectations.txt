@@ -3850,6 +3850,8 @@ BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMA
 // Started failing at http://trac.webkit.org/changeset/105007
 BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
 
+BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
+
 // SVG text layout optimizations: probably just need a rebaseline for chromium.
 // The MAC LINUX tests are disabled above for WIN (BUGCR99500).
 BUGWK65711 MAC LINUX : svg/carto.net/window.svg = IMAGE+TEXT IMAGE
