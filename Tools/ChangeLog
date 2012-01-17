@@ -1,3 +1,12 @@
+2012-01-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add more files to project-files for easier navigation in Qt Creator
+
+        Reviewed by Simon Hausmann.
+
+        * Tools.pro:
+        * qmake/config.tests/README: Added.
+
 2012-01-17  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] fast/dom/constructed-objects-prototypes.html fails

@@ -1,3 +1,11 @@
+2012-01-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add more files to project-files for easier navigation in Qt Creator
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit.pro:
+
 2012-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.7.4 release

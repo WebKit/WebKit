@@ -21,3 +21,5 @@ SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 !win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }
+
+OTHER_FILES = Scripts/*

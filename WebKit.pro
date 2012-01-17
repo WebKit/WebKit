@@ -44,6 +44,7 @@ OTHER_FILES = \
     Tools/qmake/README \
     Tools/qmake/configure.pro \
     Tools/qmake/sync.profile \
+    Tools/qmake/config.tests/README \
     Tools/qmake/config.tests/fontconfig/* \
     Tools/qmake/mkspecs/modules/* \
     Tools/qmake/mkspecs/features/*.prf \
