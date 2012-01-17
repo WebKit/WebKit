@@ -198,6 +198,9 @@ void RenderBlock::willBeDestroyed()
 
     m_lineBoxes.deleteLineBoxes(renderArena());
 
+    if (lineGridBox())
+        lineGridBox()->destroy(renderArena());
+
     if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
         gDelayedUpdateScrollInfoSet->remove(this);
 
@@ -1987,6 +1990,10 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
     LayoutUnit afterEdge = borderAfter() + paddingAfter() + scrollbarLogicalHeight();
 
     setLogicalHeight(beforeEdge);
+    
+    // Lay out our hypothetical grid line as though it occurs at the top of the block.
+    if (view()->layoutState()->currentLineGrid() == this)
+        layoutLineGridBox();
 
     // The margin struct caches all our current margin collapsing state.  The compact struct caches state when we encounter compacts,
     MarginInfo marginInfo(this, beforeEdge, afterEdge);
@@ -2301,11 +2308,11 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         if (r->needsPositionedMovementLayoutOnly() && r->tryLayoutDoingPositionedMovementOnly())
             r->setNeedsLayout(false);
             
-        // If we are in a flow thread, go ahead and compute a vertical position for our object now.
+        // If we are paginated or in a line grid, go ahead and compute a vertical position for our object now.
         // If it's wrong we'll lay out again.
         LayoutUnit oldLogicalTop = 0;
-        bool checkForPaginationRelayout = r->needsLayout() && view()->layoutState()->isPaginated() && view()->layoutState()->pageLogicalHeight(); 
-        if (checkForPaginationRelayout) {
+        bool needsBlockDirectionLocationSetBeforeLayout = r->needsLayout() && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout(); 
+        if (needsBlockDirectionLocationSetBeforeLayout) {
             if (isHorizontalWritingMode() == r->isHorizontalWritingMode())
                 r->computeLogicalHeight();
             else
@@ -2316,7 +2323,7 @@ bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         r->layoutIfNeeded();
         
         // Lay out again if our estimate was wrong.
-        if (checkForPaginationRelayout && logicalTopForChild(r) != oldLogicalTop) {
+        if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
             r->setChildNeedsLayout(true, false);
             r->layoutIfNeeded();
         }
@@ -3307,8 +3314,8 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
         if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
             o->setChildNeedsLayout(true, false);
             
-        bool affectedByPagination = isChildRenderBlock && view()->layoutState()->m_pageLogicalHeight;
-        if (!affectedByPagination || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
+        bool needsBlockDirectionLocationSetBeforeLayout = isChildRenderBlock && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+        if (!needsBlockDirectionLocationSetBeforeLayout || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
             o->layoutIfNeeded();
         else {
             o->computeLogicalWidth();
@@ -3488,13 +3495,14 @@ bool RenderBlock::positionNewFloats()
         setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
         setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
 
-        if (view()->layoutState()->isPaginated()) {
-            RenderBlock* childBlock = childBox->isRenderBlock() ? toRenderBlock(childBox) : 0;
+        LayoutState* layoutState = view()->layoutState();
+        bool isPaginated = layoutState->isPaginated();
+        if (isPaginated && !childBox->needsLayout())
+            childBox->markForPaginationRelayoutIfNeeded();
+        
+        childBox->layoutIfNeeded();
 
-            if (!childBox->needsLayout())
-                childBox->markForPaginationRelayoutIfNeeded();
-            childBox->layoutIfNeeded();
-
+        if (isPaginated) {
             // If we are unsplittable and don't fit, then we need to move down.
             // We include our margins as part of the unsplittable area.
             LayoutUnit newLogicalTop = adjustForUnsplittableChild(childBox, floatLogicalLocation.y(), true);
@@ -3502,6 +3510,7 @@ bool RenderBlock::positionNewFloats()
             // See if we have a pagination strut that is making us move down further.
             // Note that an unsplittable child can't also have a pagination strut, so this is
             // exclusive with the case above.
+            RenderBlock* childBlock = childBox->isRenderBlock() ? toRenderBlock(childBox) : 0;
             if (childBlock && childBlock->paginationStrut()) {
                 newLogicalTop += childBlock->paginationStrut();
                 childBlock->setPaginationStrut(0);
@@ -6392,6 +6401,22 @@ LayoutUnit RenderBlock::applyAfterBreak(RenderBox* child, LayoutUnit logicalOffs
     return logicalOffset;
 }
 
+LayoutUnit RenderBlock::pageLogicalTopForOffset(LayoutUnit offset) const
+{
+    RenderView* renderView = view();
+    LayoutUnit firstPageLogicalTop = isHorizontalWritingMode() ? renderView->layoutState()->m_pageOffset.height() : renderView->layoutState()->m_pageOffset.width();
+    LayoutUnit blockLogicalTop = isHorizontalWritingMode() ? renderView->layoutState()->m_layoutOffset.height() : renderView->layoutState()->m_layoutOffset.width();
+
+    LayoutUnit cumulativeOffset = offset + blockLogicalTop;
+    if (!inRenderFlowThread()) {
+        LayoutUnit pageLogicalHeight = renderView->layoutState()->pageLogicalHeight();
+        if (!pageLogicalHeight)
+            return 0;
+        return cumulativeOffset - (cumulativeOffset - firstPageLogicalTop) % pageLogicalHeight;
+    }
+    return enclosingRenderFlowThread()->regionLogicalTopForLine(cumulativeOffset);
+}
+
 LayoutUnit RenderBlock::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
     RenderView* renderView = view();
@@ -6506,7 +6531,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
             delta += remainingLogicalHeight;
             lineBox->setPaginationStrut(remainingLogicalHeight);
         }
-    }  
+    }
 }
 
 LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock)

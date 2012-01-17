@@ -176,11 +176,14 @@ public:
 
     Node* getLogicalStartBoxWithNode(InlineBox*&) const;
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;
+
 #ifndef NDEBUG
     virtual const char* boxName() const;
 #endif
 private:
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }
+    
+    LayoutUnit lineGridSnapAdjustment(LayoutUnit delta = 0) const;
 
     int beforeAnnotationsAdjustment() const;
 

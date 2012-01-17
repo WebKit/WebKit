@@ -239,6 +239,17 @@ public:
     int pageLogicalOffset() const { return m_rareData ? m_rareData->m_pageLogicalOffset : 0; }
     void setPageLogicalOffset(int);
 
+    RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }
+    void setLineGridBox(RootInlineBox* box)
+    {
+        if (!m_rareData)
+            m_rareData = adoptPtr(new RenderBlockRareData(this));
+        if (m_rareData->m_lineGridBox)
+            m_rareData->m_lineGridBox->destroy(renderArena());
+        m_rareData->m_lineGridBox = box;
+    }
+    void layoutLineGridBox();
+
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
     LayoutUnit logicalWidthForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->width() : child->height(); }
@@ -471,7 +482,7 @@ private:
     virtual void borderFitAdjust(LayoutRect&) const; // Shrink the box in which the border paints if border-fit is set.
 
     virtual void updateBeforeAfterContent(PseudoId);
-
+    
     virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run.
@@ -895,8 +906,12 @@ protected:
     LayoutUnit applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     LayoutUnit applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
 
+public:
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
+    
+protected:
     bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
 
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
@@ -1017,6 +1032,7 @@ protected:
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_paginationStrut(0)
             , m_pageLogicalOffset(0)
+            , m_lineGridBox(0)
         { 
         }
 
@@ -1039,8 +1055,10 @@ protected:
         }
         
         MarginValues m_margins;
-        int m_paginationStrut;
-        int m_pageLogicalOffset;
+        LayoutUnit m_paginationStrut;
+        LayoutUnit m_pageLogicalOffset;
+        
+        RootInlineBox* m_lineGridBox;
      };
 
     OwnPtr<RenderBlockRareData> m_rareData;

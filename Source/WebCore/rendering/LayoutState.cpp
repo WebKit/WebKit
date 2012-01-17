@@ -37,6 +37,7 @@ namespace WebCore {
 
 LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, ColumnInfo* columnInfo)
     : m_columnInfo(columnInfo)
+    , m_currentLineGrid(0)
     , m_next(prev)
 #ifndef NDEBUG
     , m_renderer(renderer)
@@ -107,7 +108,14 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     m_layoutDelta = m_next->m_layoutDelta;
     
     m_isPaginated = m_pageLogicalHeight || m_columnInfo;
-    
+
+    // Propagate line grid information.
+    propagateLineGridInfo(renderer);
+
+    // If we have a new grid to track, then add it to our set.
+    if (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
+        establishLineGrid(toRenderBlock(renderer));
+
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
@@ -117,6 +125,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderFlowThread* flowThread, bool r
     , m_pageLogicalHeight(1) // Use a fake height here. That value is not important, just needs to be non-zero.
     , m_pageLogicalHeightChanged(regionsChanged)
     , m_columnInfo(0)
+    , m_currentLineGrid(0)
     , m_next(prev)
 #ifndef NDEBUG
     , m_renderer(flowThread)
@@ -133,6 +142,7 @@ LayoutState::LayoutState(RenderObject* root)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
     , m_columnInfo(0)
+    , m_currentLineGrid(0)
     , m_next(0)
 #ifndef NDEBUG
     , m_renderer(root)
@@ -194,6 +204,41 @@ void LayoutState::addForcedColumnBreak(LayoutUnit childLogicalOffset)
     if (!m_columnInfo || m_columnInfo->columnHeight())
         return;
     m_columnInfo->addForcedBreak(pageLogicalOffset(childLogicalOffset));
+}
+
+void LayoutState::propagateLineGridInfo(RenderBox* renderer)
+{
+    // Disable line grids for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and
+    // writing mode roots.
+    if (!m_next || renderer->isUnsplittableForPagination())
+        return;
+
+    m_currentLineGrid = m_next->m_currentLineGrid;
+    m_currentLineGridOffset = m_next->m_currentLineGridOffset;
+}
+
+void LayoutState::establishLineGrid(RenderBlock* block)
+{
+    // First check to see if this grid has been established already.
+    if (m_currentLineGrid) {
+        if (m_currentLineGrid->style()->lineGrid() == block->style()->lineGrid())
+            return;
+        RenderBlock* currentGrid = m_currentLineGrid;
+        for (LayoutState* currentState = m_next; currentState; currentState = currentState->m_next) {
+            if (currentState->m_currentLineGrid == currentGrid)
+                continue;
+            currentGrid = currentState->m_currentLineGrid;
+            if (currentGrid->style()->lineGrid() == block->style()->lineGrid()) {
+                m_currentLineGrid = currentGrid;
+                m_currentLineGridOffset = currentState->m_currentLineGridOffset;
+                return;
+            }
+        }
+    }
+    
+    // We didn't find an already-established grid with this identifier. Our render object establishes the grid.
+    m_currentLineGrid = block;
+    m_currentLineGridOffset = m_layoutOffset; 
 }
 
 } // namespace WebCore

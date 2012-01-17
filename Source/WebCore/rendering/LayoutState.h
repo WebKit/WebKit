@@ -27,12 +27,14 @@
 #define LayoutState_h
 
 #include "LayoutTypes.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class ColumnInfo;
 class RenderArena;
+class RenderBlock;
 class RenderBox;
 class RenderObject;
 class RenderFlowThread;
@@ -46,6 +48,7 @@ public:
         , m_pageLogicalHeight(0)
         , m_pageLogicalHeightChanged(false)
         , m_columnInfo(0)
+        , m_currentLineGrid(0)
         , m_next(0)
 #ifndef NDEBUG
         , m_renderer(0)
@@ -75,12 +78,22 @@ public:
 
     void addForcedColumnBreak(LayoutUnit childLogicalOffset);
     
-    bool pageLogicalHeight() const { return m_pageLogicalHeight; }
+    LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
+
+    RenderBlock* currentLineGrid() const { return m_currentLineGrid; }
+    LayoutSize currentLineGridOffset() const { return m_currentLineGridOffset; }
+
+    LayoutSize layoutOffset() const { return m_layoutOffset; }
+
+    bool needsBlockDirectionLocationSetBeforeLayout() const { return m_currentLineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
 private:
     // The normal operator new is disallowed.
     void* operator new(size_t) throw();
+
+    void propagateLineGridInfo(RenderBox*);
+    void establishLineGrid(RenderBlock*);
 
 public:
     bool m_clipped;
@@ -105,6 +118,10 @@ public:
     // If the enclosing pagination model is a column model, then this will store column information for easy retrieval/manipulation.
     ColumnInfo* m_columnInfo;
 
+    // The current line grid that we're snapping to and the offset of the start of the grid.
+    RenderBlock* m_currentLineGrid;
+    LayoutSize m_currentLineGridOffset;
+    
     LayoutState* m_next;
 #ifndef NDEBUG
     RenderObject* m_renderer;

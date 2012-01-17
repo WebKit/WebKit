@@ -192,8 +192,9 @@ public:
 
     bool hasTextChildren() const { return m_hasTextChildren; }
     bool hasTextDescendants() const { return m_hasTextDescendants; }
+    void setHasTextChildren() { m_hasTextChildren = true; setHasTextDescendants(); }
     void setHasTextDescendants() { m_hasTextDescendants = true; }
-
+    
     void checkConsistency() const;
     void setHasBadChildList();
 

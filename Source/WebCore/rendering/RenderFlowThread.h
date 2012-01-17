@@ -100,6 +100,7 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
+    LayoutUnit regionLogicalTopForLine(LayoutUnit position) const;
     LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
     LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
     LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, PageBoundaryRule = IncludePageBoundary) const;

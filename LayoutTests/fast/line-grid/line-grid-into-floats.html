@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>
+.grid { -webkit-line-grid: simple; -webkit-line-grid-snap: baseline; 
+        font-size:36px; 
+        padding:10px; }
+</style>
+</head>
+<body class="grid">
+<div style="float:left;font-size:12px;border:2px solid black; margin:5px">
+This text should snap<br>
+to a 36px font-size grid.<br>
+There should be lots of spacing between these lines.
+</div>
+
+<div style="float:left;font-size:20px;border:2px solid black; margin:5px">
+This text should snap<br>
+to a 36px font-size grid.<br>
+</div>
+
+Here we can see the actual lines of the grid outside of the floating
+objects. Everything should be aligned to these lines, including what
+is inside the two floats. 
+
+</body>
+</html>

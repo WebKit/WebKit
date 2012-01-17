@@ -1,3 +1,53 @@
+2012-01-12  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76197
+        
+        Implementation of baseline grid alignment. This patch implements line grid tracking in the layout state,
+        and also implements the snapping of lines to baselines. It works with normal flow, positioning and floats and
+        with pagination, as long as the grid is inside the pagination context and not outside.
+
+        Reviewed by Simon Fraser.
+
+        Added a bunch of new tests in fast/line-grid.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::setHasTextChildren):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::propagateLineGridInfo):
+        (WebCore::LayoutState::establishLineGrid):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::pageLogicalHeight):
+        (WebCore::LayoutState::currentLineGrid):
+        (WebCore::LayoutState::currentLineGridOffset):
+        (WebCore::LayoutState::layoutOffset):
+        (WebCore::LayoutState::needsBlockDirectionLocationSetBeforeLayout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::pageLogicalTopForOffset):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::lineGridBox):
+        (WebCore::RenderBlock::setLineGridBox):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::layoutLineGridBox):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionLogicalTopForLine):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::lineGridSnapAdjustment):
+        * rendering/RootInlineBox.h:
+
 2012-01-17  Tim Horton  <timothy_horton@apple.com>
 
         -webkit-cross-fade doesn't respect background-size

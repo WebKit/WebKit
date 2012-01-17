@@ -33,6 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderView.h"
 #include "VerticalPositionCache.h"
 #include <wtf/unicode/Unicode.h>
 
@@ -285,6 +286,12 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
         heightOfBlock += annotationsAdjustment;
     }
 
+    LayoutUnit gridSnapAdjustment = lineGridSnapAdjustment();
+    if (gridSnapAdjustment) {
+        adjustBlockDirectionPosition(gridSnapAdjustment);
+        heightOfBlock += gridSnapAdjustment;
+    }
+
     return heightOfBlock + maxHeight;
 }
 
@@ -317,6 +324,73 @@ int RootInlineBox::beforeAnnotationsAdjustment() const
     }
 
     return result;
+}
+
+LayoutUnit RootInlineBox::lineGridSnapAdjustment(LayoutUnit delta) const
+{
+    // If our block doesn't have snapping turned on, do nothing.
+    // FIXME: Implement bounds snapping.
+    if (block()->style()->lineGridSnap() != LineGridSnapBaseline)
+        return 0;
+
+    // Get the current line grid and offset.
+    LayoutState* layoutState = block()->view()->layoutState();
+    RenderBlock* lineGrid = layoutState->currentLineGrid();
+    LayoutSize lineGridOffset = layoutState->currentLineGridOffset();
+    if (!lineGrid || lineGrid->style()->writingMode() != block()->style()->writingMode())
+        return 0;
+
+    // Get the hypothetical line box used to establish the grid.
+    RootInlineBox* lineGridBox = lineGrid->lineGridBox();
+    if (!lineGridBox)
+        return 0;
+    
+    LayoutUnit lineGridBlockOffset = lineGrid->isHorizontalWritingMode() ? lineGridOffset.height() : lineGridOffset.width();
+    LayoutUnit blockOffset = block()->isHorizontalWritingMode() ? layoutState->layoutOffset().height() : layoutState->layoutOffset().width();
+
+    // Now determine our position on the grid. Our baseline needs to be adjusted to the nearest baseline multiple
+    // as established by the line box.
+    // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
+    // the grid should honor line-box-contain.
+    LayoutUnit baselineMultiple = lineGridBox->lineBottomWithLeading() - lineGridBox->lineTopWithLeading();
+    if (!baselineMultiple)
+        return 0;
+
+    LayoutUnit lineGridAscent = lineGrid->style()->fontMetrics().ascent(baselineType());
+    LayoutUnit firstBaselinePosition = lineGridBlockOffset + lineGridAscent + lineGridBox->logicalTop();
+    LayoutUnit currentBaselinePosition = blockOffset + logicalTop() + delta + block()->style()->fontMetrics().ascent(baselineType());
+
+    // If we're paginated, see if we're on a page after the first one. If so, the grid resets on subsequent pages.
+    // FIXME: If the grid is an ancestor of the pagination establisher, then this is incorrect.
+    LayoutUnit pageLogicalTop = 0;
+    if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
+        pageLogicalTop = block()->pageLogicalTopForOffset(logicalTop() + delta);
+        if (pageLogicalTop > lineGridBlockOffset + lineGridBox->logicalTop())
+            firstBaselinePosition = lineGridAscent + pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderBefore() - lineGrid->paddingBefore();
+    }
+            
+    // If we're above the first line, just push to the first line.
+    if (currentBaselinePosition < firstBaselinePosition)
+        return delta + firstBaselinePosition - currentBaselinePosition;
+
+    // Otherwise we're in the middle of the grid somewhere. Just push to the next line.
+    LayoutUnit baselineOffset = currentBaselinePosition - firstBaselinePosition;
+    LayoutUnit remainder = baselineOffset % baselineMultiple;
+    LayoutUnit result = delta;
+    if (remainder)
+        result += baselineMultiple - remainder;
+
+    // If we aren't paginated we can return the result.
+    if (!layoutState->isPaginated() || !layoutState->pageLogicalHeight() || result == delta)
+        return result;
+    
+    // We may have shifted to a new page. We need to do a re-snap when that happens.
+    LayoutUnit newPageLogicalTop = block()->pageLogicalTopForOffset(logicalTop() + result);
+    if (newPageLogicalTop == pageLogicalTop)
+        return result;
+    
+    // Put ourselves at the top of the next page to force a snap onto the new grid established by that page.
+    return lineGridSnapAdjustment(newPageLogicalTop - (blockOffset + logicalTop()));
 }
 
 GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock, 

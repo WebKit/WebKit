@@ -554,6 +554,14 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
     return lastValidRegion;
 }
 
+LayoutUnit RenderFlowThread::regionLogicalTopForLine(LayoutUnit position) const
+{
+    RenderRegion* region = renderRegionForLine(position);
+    if (!region)
+        return 0;
+    return isHorizontalWritingMode() ? region->regionRect().y() : region->regionRect().x();
+}
+
 LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
 {
     RenderRegion* region = renderRegionForLine(position, true);
