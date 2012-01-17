@@ -30,45 +30,66 @@
 
 /**
  * @constructor
+ * @param {Element} relativeToElement
+ * @param {WebInspector.DialogDelegate} delegate
  */
-WebInspector.Dialog = function(relativeToElement, dialogDelegate)
+WebInspector.Dialog = function(relativeToElement, delegate)
 {
-    this._dialogDelegate = dialogDelegate;
+    this._delegate = delegate;
     this._relativeToElement = relativeToElement;
 
     // Install glass pane capturing events.
     this._glassPaneElement = document.body.createChild("div");
     this._glassPaneElement.className = "dialog-glass-pane";
     this._glassPaneElement.tabIndex = 0;
-    this._glassPaneElement.addEventListener("focus", this._onFocus.bind(this), false);
-    
+    this._glassPaneElement.addEventListener("focus", this._onGlassPaneFocus.bind(this), false);
+
     this._element = this._glassPaneElement.createChild("div");
     this._element.className = "dialog";
     this._element.tabIndex = 0;
+    this._element.addEventListener("focus", this._onFocus.bind(this), false);
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
     this._closeKeys = [
         WebInspector.KeyboardShortcut.Keys.Enter.code,
         WebInspector.KeyboardShortcut.Keys.Esc.code,
     ];
 
-    if (dialogDelegate.okButton)
-        dialogDelegate.okButton.addEventListener("click", this._onClick.bind(this), false);
-    dialogDelegate.element.addStyleClass("dialog-contents");
-    this._element.appendChild(dialogDelegate.element);
-    
+    delegate.element.addStyleClass("dialog-contents");
+    this._element.appendChild(delegate.element);
+
+    this._delegate.wasShown();
     this._position();
     this._windowResizeHandler = this._position.bind(this);
     window.addEventListener("resize", this._windowResizeHandler, true);
 
     this._previousFocusElement = WebInspector.currentFocusElement();
-    this._doFocus();
+    this._delegate.focus();
 }
 
-WebInspector.Dialog.show = function(relativeToElement, dialogDelegate)
+/**
+ * @return {WebInspector.Dialog}
+ */
+WebInspector.Dialog.currentInstance = function()
+{
+    return WebInspector.Dialog._instance;
+}
+
+/**
+ * @param {Element} relativeToElement
+ * @param {WebInspector.DialogDelegate} delegate
+ */
+WebInspector.Dialog.show = function(relativeToElement, delegate)
 {
     if (WebInspector.Dialog._instance)
         return;
-    WebInspector.Dialog._instance = new WebInspector.Dialog(relativeToElement, dialogDelegate);
+    WebInspector.Dialog._instance = new WebInspector.Dialog(relativeToElement, delegate);
+}
+
+WebInspector.Dialog.hide = function()
+{
+    if (!WebInspector.Dialog._instance)
+        return;
+    WebInspector.Dialog._instance._hide();
 }
 
 WebInspector.Dialog.prototype = {
@@ -78,39 +99,27 @@ WebInspector.Dialog.prototype = {
             return;
         this._isHiding = true;
 
+        this._delegate.willHide();
+
         WebInspector.setCurrentFocusElement(this._previousFocusElement);
         WebInspector.Dialog._instance = null;
         document.body.removeChild(this._glassPaneElement);
         window.removeEventListener("resize", this._windowResizeHandler, true);
     },
 
-    _onFocus: function(event)
+    _onGlassPaneFocus: function(event)
     {
         this._hide();
     },
 
-    _doFocus: function()
+    _onFocus: function(event)
     {
-        if (this._dialogDelegate.defaultFocusedElement) {
-            WebInspector.setCurrentFocusElement(this._dialogDelegate.defaultFocusedElement);
-            if (typeof(this._dialogDelegate.defaultFocusedElement.select) === "function")
-                this._dialogDelegate.defaultFocusedElement.select();
-        } else 
-            WebInspector.setCurrentFocusElement(this._element);
+        this._delegate.focus();
     },
 
     _position: function()
     {
-        var offset = this._relativeToElement.offsetRelativeToWindow(window);
-
-        var positionX = offset.x + (this._relativeToElement.offsetWidth - this._element.offsetWidth) / 2;
-        positionX = Number.constrain(positionX, 0, window.innerWidth - this._element.offsetWidth);
-        
-        var positionY = offset.y + (this._relativeToElement.offsetHeight - this._element.offsetHeight) / 2;
-        positionY = Number.constrain(positionY, 0, window.innerHeight - this._element.offsetHeight);
-        
-        this._element.style.left = positionX + "px";
-        this._element.style.top = positionY + "px";
+        this._delegate.position(this._element, this._relativeToElement);
     },
 
     _onKeyDown: function(event)
@@ -121,33 +130,43 @@ WebInspector.Dialog.prototype = {
         }
 
         if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Enter.code)
-            this._dialogDelegate.onAction();
+            this._delegate.onEnter();
 
         if (this._closeKeys.indexOf(event.keyCode) >= 0) {
             this._hide();
             event.preventDefault();
             event.stopPropagation();
         }
-    },
-
-    _onClick: function(event)
-    {
-        this._dialogDelegate.onAction();
-        this._hide();
     }
 };
 
 /**
- * @interface
+ * @constructor
  */
 WebInspector.DialogDelegate = function()
 {
 }
 
 WebInspector.DialogDelegate.prototype = {
-    get defaultFocusedElement() { },
-    
-    get okButton() { },
-    
-    onAction: function() { }
+    wasShown: function() { },
+
+    position: function(element, relativeToElement)
+    {
+        var offset = relativeToElement.offsetRelativeToWindow(window);
+
+        var positionX = offset.x + (relativeToElement.offsetWidth - element.offsetWidth) / 2;
+        positionX = Number.constrain(positionX, 0, window.innerWidth - element.offsetWidth);
+
+        var positionY = offset.y + (relativeToElement.offsetHeight - element.offsetHeight) / 2;
+        positionY = Number.constrain(positionY, 0, window.innerHeight - element.offsetHeight);
+
+        element.style.left = positionX + "px";
+        element.style.top = positionY + "px";
+    },
+
+    focus: function() { },
+
+    onEnter: function() { },
+
+    willHide: function() { }
 };

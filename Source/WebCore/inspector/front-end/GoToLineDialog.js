@@ -30,7 +30,7 @@
 
 /**
  * @constructor
- * @implements {WebInspector.DialogDelegate}
+ * @extends {WebInspector.DialogDelegate}
  */
 WebInspector.GoToLineDialog = function(view)
 {
@@ -47,10 +47,14 @@ WebInspector.GoToLineDialog = function(view)
 
     this._goButton = this.element.createChild("button");
     this._goButton.textContent = WebInspector.UIString("Go");
+    this._goButton.addEventListener("click", this._onGoClick.bind(this), false);
 
     this._view = view;
 }
 
+/**
+ * @param {WebInspector.Panel} panel
+ */
 WebInspector.GoToLineDialog.install = function(panel, viewGetter)
 {
     function showGoToLineDialog()
@@ -81,22 +85,29 @@ WebInspector.GoToLineDialog.createShortcut = function()
 }
 
 WebInspector.GoToLineDialog.prototype = {
-    get defaultFocusedElement()
+    focus: function()
     {
-        return this._input;
-    },
-
-    get okButton()
-    {
-        return this._goButton;
+        WebInspector.setCurrentFocusElement(this._input);
+        this._input.select();
     },
     
-    onAction: function()
+    _onGoClick: function()
+    {
+        this._applyLineNumber();
+        WebInspector.Dialog.hide();
+    },
+    
+    _applyLineNumber: function()
     {
         var value = this._input.value;
         var lineNumber = parseInt(value, 10) - 1;
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
+    },
+    
+    onEnter: function()
+    {
+        this._applyLineNumber();
     }
 }
 

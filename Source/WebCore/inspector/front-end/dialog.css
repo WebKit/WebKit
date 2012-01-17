@@ -10,11 +10,18 @@
 .dialog {
     position: absolute;
     
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#E9E9E9), to(#CFCFCF));
     padding: 10px;
     border-radius: 10px;
     border: 1px solid gray;
+
     -webkit-box-shadow: rgb(40,40,40) 0px 0px 50px;
+    
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#E9E9E9), to(#CFCFCF));
+    font-size: 11px;
+    font-family: 'Lucida Grande', sans-serif;
 }
 
 .dialog-contents {
