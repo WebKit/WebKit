@@ -324,7 +324,7 @@ my @features = (
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$videoSupport },
 
     { option => "video-track", desc => "Toggle Video Track support",
-      define => "ENABLE_VIDEO_TRACK", default => isAppleWebKit(), value => \$videoTrackSupport },
+      define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk()), value => \$videoTrackSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },
