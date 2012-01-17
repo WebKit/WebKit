@@ -72,6 +72,8 @@ enum MediaControlElementType {
 
 HTMLMediaElement* toParentMediaElement(RenderObject*);
 
+MediaControlElementType mediaControlElementType(Node*);
+
 // ----------------------------
 
 class MediaControlElement : public HTMLDivElement {

@@ -52,6 +52,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
+static const float cSeekRepeatDelay = 0.1f;
+static const float cStepTime = 0.07f;
+static const float cSeekTime = 0.2f;
+
 HTMLMediaElement* toParentMediaElement(RenderObject* o)
 {
     Node* node = o->node();
@@ -62,10 +67,14 @@ HTMLMediaElement* toParentMediaElement(RenderObject* o)
     return static_cast<HTMLMediaElement*>(mediaNode);
 }
 
-// FIXME: These constants may need to be tweaked to better match the seeking in the QuickTime plug-in.
-static const float cSeekRepeatDelay = 0.1f;
-static const float cStepTime = 0.07f;
-static const float cSeekTime = 0.2f;
+MediaControlElementType mediaControlElementType(Node* node)
+{
+    ASSERT(node->isMediaControlElement());
+    HTMLElement* element = toHTMLElement(node);
+    if (element->hasTagName(inputTag))
+        return static_cast<MediaControlInputElement*>(element)->displayType();
+    return static_cast<MediaControlElement*>(element)->displayType();
+}
 
 // ----------------------------
 
