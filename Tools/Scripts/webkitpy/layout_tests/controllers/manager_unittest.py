@@ -45,6 +45,8 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.manager import interpret_test_failures,  Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.result_summary import ResultSummary
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
+from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
@@ -244,6 +246,22 @@ class ManagerTest(unittest.TestCase):
         manager._options.exit_after_n_crashes_or_timeouts = None
         manager._options.exit_after_n_failures = 10
         exception = self.assertRaises(TestRunInterruptedException, manager._interrupt_if_at_failure_limits, result_summary)
+
+    def test_update_summary_with_result(self):
+        host = MockHost()
+        port = host.port_factory.get('test-win-xp')
+        test = 'failures/expected/reftest.html'
+        expectations = TestExpectations(port, tests=[test],
+             expectations='WONTFIX : failures/expected/reftest.html = IMAGE',
+             test_config=port.test_configuration())
+        # Reftests expected to be image mismatch should be respected when pixel_tests=False.
+        manager = Manager(port=port, options=MockOptions(pixel_tests=False, exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None), printer=Mock())
+        manager._expectations = expectations
+        result_summary = ResultSummary(expectations=expectations, test_files=[test])
+        result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()])
+        manager._update_summary_with_result(result_summary, result)
+        self.assertEquals(1, result_summary.expected)
+        self.assertEquals(0, result_summary.unexpected)
 
     def test_needs_servers(self):
         def get_manager_with_tests(test_names):

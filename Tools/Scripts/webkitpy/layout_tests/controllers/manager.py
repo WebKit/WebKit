@@ -1024,7 +1024,7 @@ class Manager(object):
         if result.type == test_expectations.SKIP:
             result_summary.add(result, expected=True)
         else:
-            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests)
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or test_failures.is_reftest_failure(result.failures))
             result_summary.add(result, expected)
             exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
