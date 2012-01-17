@@ -2577,9 +2577,9 @@ sub readChecksumFromPng($)
 
 my @testsFound;
 
-sub isUsedInReftest
+sub isUsedInReftest($)
 {
-    my $filename = $_;
+    my $filename = $_[0];
     if ($filename =~ /-$expectedTag(-$mismatchTag)?\.html$/) {
         return 1;
     }
@@ -2615,7 +2615,7 @@ sub findTestsToRun
         my $fullPath = catfile($testDirectory, $test);
         if (file_name_is_absolute($test)) {
             print "can't run test $test outside $testDirectory\n";
-        } elsif (-f $fullPath) {
+        } elsif (-f $fullPath && !isUsedInReftest($fullPath)) {
             my ($filename, $pathname, $fileExtension) = fileparse($test, qr{\.[^.]+$});
             if (!exists $supportedFileExtensions{substr($fileExtension, 1)}) {
                 print "test $test does not have a supported extension\n";

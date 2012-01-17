@@ -1,3 +1,14 @@
+2012-01-17  Balazs Ankes  <Ankes.Balazs@stud.u-szeged.hu>
+
+        REGRESSION(r81225): ORWT should ignore reftests
+        https://bugs.webkit.org/show_bug.cgi?id=67936
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/old-run-webkit-tests:
+        (isUsedInReftest): $filename should be the first parameter
+        (findTestsToRun): run test if it isn't reftest
+
 2012-01-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Fix python unit test I broke with r105142
