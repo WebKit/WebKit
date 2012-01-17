@@ -47,6 +47,7 @@ public:
     };
 
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackList>);
     virtual ~MediaStream();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);

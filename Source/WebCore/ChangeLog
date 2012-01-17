@@ -1,3 +1,25 @@
+2012-01-17  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the mediaStream constructor
+        https://bugs.webkit.org/show_bug.cgi?id=76436
+
+        Adding support for creating a MediaStream using a collection of MediaStreamTracks.
+
+        Reviewed by Adam Barth.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
+        * mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        * mediastream/MediaStream.h:
+        * mediastream/MediaStream.idl:
+        * mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::component):
+        * mediastream/MediaStreamTrack.h:
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore::MediaStreamCenter::didConstructMediaStream):
+        * platform/mediastream/MediaStreamCenter.h:
+
 2012-01-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDBIndex.get/getKey should yield undefined, not an error

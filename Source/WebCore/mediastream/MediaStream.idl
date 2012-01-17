@@ -26,8 +26,10 @@ module core {
 
     interface [
         Conditional=MEDIA_STREAM,
-        EventTarget
-    ] MediaStream {
+        EventTarget,
+        Constructor(in MediaStreamTrackList trackList),
+        CallWith=ScriptExecutionContext
+   ] MediaStream {
         readonly attribute DOMString label;
         readonly attribute MediaStreamTrackList tracks;
 

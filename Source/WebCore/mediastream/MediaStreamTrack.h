@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class MediaStreamComponent;
+
 class MediaStreamTrack : public RefCounted<MediaStreamTrack> {
 public:
     static PassRefPtr<MediaStreamTrack> create(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);
@@ -46,6 +48,8 @@ public:
 
     bool enabled() const;
     void setEnabled(bool);
+
+    MediaStreamComponent* component();
 
 private:
     MediaStreamTrack(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);

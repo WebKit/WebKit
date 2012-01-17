@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamCenter.h"
+#include "MediaStreamComponent.h"
 
 namespace WebCore {
 
@@ -81,6 +82,11 @@ void MediaStreamTrack::setEnabled(bool enabled)
     m_streamDescriptor->component(m_trackIndex)->setEnabled(enabled);
 
     MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_trackIndex);
+}
+
+MediaStreamComponent* MediaStreamTrack::component()
+{
+    return m_streamDescriptor->component(m_trackIndex);
 }
 
 } // namespace WebCore

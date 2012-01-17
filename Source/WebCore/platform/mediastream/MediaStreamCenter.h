@@ -65,6 +65,7 @@ public:
     // Calls from the DOM objects to notify the platform
     void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, unsigned componentIndex);
     void didStopLocalMediaStream(MediaStreamDescriptor*);
+    void didConstructMediaStream(MediaStreamDescriptor*);
 
     // Calls from the platform to update the DOM objects
     void endLocalMediaStream(MediaStreamDescriptor*);

@@ -57,6 +57,7 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
 
 // FIXME: remove when real implementations are available
 // Empty implementations for ports that build with MEDIA_STREAM enabled by default.
+
 MediaStreamCenter::MediaStreamCenter()
 {
 }
@@ -76,6 +77,10 @@ void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, un
 }
 
 void MediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor*)
+{
+}
+
+void MediaStreamCenter::didConstructMediaStream(MediaStreamDescriptor*)
 {
 }
 

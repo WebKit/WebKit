@@ -29,9 +29,23 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Event.h"
+#include "MediaStreamCenter.h"
 #include "ScriptExecutionContext.h"
+#include "UUID.h"
 
 namespace WebCore {
+
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackList> prpTracks)
+{
+    RefPtr<MediaStreamTrackList> tracks = prpTracks;
+    MediaStreamSourceVector sources;
+    for (unsigned i = 0; i < tracks->length(); ++i)
+        sources.append(tracks->item(i)->component()->source());
+
+    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), sources);
+    MediaStreamCenter::instance().didConstructMediaStream(descriptor.get());
+    return adoptRef(new MediaStream(context, descriptor.release()));
+}
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
