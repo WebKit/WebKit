@@ -755,9 +755,6 @@ svg/dynamic-updates/SVGTextElement-dom-textLength-attr.html
 svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html
 svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html
 
-# crashing test
-fast/text/regional-indicator-symobls.html
-
 # timeout
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/forms/textfield-drag-into-disabled.html
