@@ -1,5 +1,26 @@
 2011-1-16  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 104660
+
+    2012-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG inlining block linking compares BlockIndex against bytecode index
+            https://bugs.webkit.org/show_bug.cgi?id=76018
+            <rdar://problem/10671979>
+
+            Reviewed by Gavin Barraclough.
+
+            * fast/js/dfg-inline-many-blocks-expected.txt: Added.
+            * fast/js/dfg-inline-many-blocks.html: Added.
+            * fast/js/script-tests/dfg-inline-many-blocks.js: Added.
+            (stuff):
+            (foo):
+            (fuzz):
+            (baz):
+            (bar):
+
+2011-1-16  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104762
 
     2012-01-09  Geoffrey Garen  <ggaren@apple.com>

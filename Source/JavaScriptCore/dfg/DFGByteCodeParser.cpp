@@ -2556,9 +2556,9 @@ void ByteCodeParser::parseCodeBlock()
                     // Either the block is linkable or it isn't. If it's linkable then it's the last
                     // block in the blockLinkingTargets list. If it's not then the last block will
                     // have a lower bytecode index that the one we're about to give to this block.
-                    if (m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_blockLinkingTargets.last() != m_currentIndex) {
+                    if (m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_blockLinkingTargets.last()]->bytecodeBegin != m_currentIndex) {
                         // Make the block linkable.
-                        ASSERT(m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_blockLinkingTargets.last() < m_currentIndex);
+                        ASSERT(m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_blockLinkingTargets.last()]->bytecodeBegin < m_currentIndex);
                         m_inlineStackTop->m_blockLinkingTargets.append(m_graph.m_blocks.size() - 1);
                     }
                     // Change its bytecode begin and continue.
