@@ -1,9 +1,19 @@
 <!doctype html>
 
  <style>
+
+    @font-face {
+	    font-family: webkit-ahem;
+	    font-style: normal;
+	    src: url(../../resources/Ahem.ttf);
+    }
+
+    #test-goals, #test, #test2{
+	    font-family: webkit-ahem;
+    }
+
     #content {
         -webkit-flow-into: flow1;
-        text-align: justify;
         padding: 5px;
     }
     
@@ -12,7 +22,7 @@
     }
     
     #second-box {
-        margin:10px;
+        margin:7px;
         border: 1px solid green;
     }
     
@@ -22,27 +32,28 @@
     }
 
     #region1 {
-        width: 200px;
-        height: 100px;
+        width: 15em;
+        height: 55px;
     }
     
     #region2 {
-        width: 300px;
-        height: 180px;
+        width: 35em;
+        height: 45px;
     }
     
     #region3 {
-        width: 120px;
-        height: 120px;
+        width: 10em;
+        height: 55px;
     }
 </style>
 
+<div id="topLevel">
+	<span id="test-goals">Text should flow through all three regions and not spill outside of the border</span>
+</div>
 <div id="content">
     <div id="first-box">
         <div id="second-box">
-            <span id="test">This line of text should not get out of the region.</span> This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.<br><br>
-            This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.<br><br>
-            This line of text should not get out of the region.<br><br>
+            <span id="test">mnopq mnopq mnopq mnopq </span> <span id="test2"> mnopqmnopq mnopqmnopq mnopqmnopq mnopqmnopq mnopqmnopq mno mno mno mno mno mno mno mno</span>
         </div>
     </div>
 </div>
@@ -55,5 +66,5 @@
 
 <script>
 document.body.offsetWidth;
-document.getElementById('test').appendChild(document.createTextNode(" Here is some added content that will mess things up, since it shoves things down."));
+document.getElementById('test').appendChild(document.createTextNode("qponmqponm "));
 </script>

@@ -1,0 +1,108 @@
+<!doctype html>
+
+ <style>
+
+    @font-face {
+        font-family: webkit-ahem;
+        font-style: normal;
+        src: url(../../resources/Ahem.ttf);
+    }
+
+    #test-goals, #test, #test2, #test3 {
+        font-family: webkit-ahem;
+    }    
+
+    #first-box {
+	    border-top: 1px solid blue;
+	    margin-top: 5px;
+	    height: 49px;
+    }
+
+    #first-box2 {
+	    height: 45px;
+    }
+
+    #first-box3 {
+	    border-bottom: 1px solid blue;
+    }
+
+    #first-box, #first-box2, #first-box3 {
+	    border-left: 1px solid blue;
+	    border-right: 1px solid blue;
+	    margin-left: 5px;
+	    margin-right: 5px;
+    }
+
+    #second-box {
+	    border-top: 1px solid green;
+	    margin-top: 7px;
+	    height: 41px;
+    }
+
+    #second-box2 {
+	    height: 45px;
+    }
+
+    #second-box3 {
+	    border-bottom: 1px solid green;
+	    margin-bottom: 7px;
+    }
+
+    #second-box, #second-box2, #second-box3 {
+	    border-left: 1px solid green;
+	    border-right: 1px solid green;
+	    margin-left: 7px;
+	    margin-right: 7px;
+    }
+
+    #region1 {
+	    width: 15em;
+	    height: 55px;
+    }
+
+    #region2 {
+	    width: 35em;
+	    height: 45px;
+    }
+
+    #region3 {
+	    width: 10em;
+	    height: 55px;
+    }
+
+    #region1, #region2, #region3 {
+	    border: 1px solid black;
+    }
+
+</style>
+
+<div id="topLevel">
+	<span id="test-goals">Text should flow through all three regions and not spill outside of the border</span>
+</div>
+
+<div id="container">
+	<div id="region1">
+		<div id="first-box">
+			<div id="second-box">
+				<span id="test">mnopq mnopq mnopq mnopq</span>
+			</div>
+		</div>
+	</div>
+	
+	<div id="region2">
+		<div id="first-box2">
+			<div id="second-box2">
+				<span id="test2">qponmqponm mnopqmnopq mnopqmnopq mnopqmnopq mnopqmnopq mnopqmnopq</span>
+			</div>
+		</div>
+	</div>
+	
+	<div id="region3">
+		<div id="first-box3">
+			<div id="second-box3">
+				<span id="test3">mno mno mno mno mno mno mno mno</span>
+			</div>
+		</div>
+	</div>
+	
+</div>
