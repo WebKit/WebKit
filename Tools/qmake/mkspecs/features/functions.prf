@@ -232,10 +232,12 @@ defineTest(linkAgainstLibrary) {
 
     library = $$lower($$target)
 
-    original_template = $$TEMPLATE
-    TEMPLATE = lib # So that qtLibraryTarget works
-    target = $$qtLibraryTarget($$target)
-    TEMPLATE = $$original_template
+    debug_and_release {
+        original_template = $$TEMPLATE
+        TEMPLATE = lib # So that qtLibraryTarget works
+        target = $$qtLibraryTarget($$target)
+        TEMPLATE = $$original_template
+    }
 
     path = $$replace(source_dir, $${ROOT_WEBKIT_DIR}, $${ROOT_BUILD_DIR})/$$activeBuildConfig()
 

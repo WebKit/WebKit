@@ -187,7 +187,8 @@ contains(TEMPLATE, lib) {
     # Build both debug and release configurations
     mac: CONFIG += build_all
 
-    TARGET = $$qtLibraryTarget($$TARGET)
+    # Prevent name clashes when building both debug and release
+    debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
 
     isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
 

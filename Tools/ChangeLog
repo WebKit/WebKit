@@ -1,5 +1,14 @@
 2012-01-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Don't add _debug postfix to targets when building debug only
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
+2012-01-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Add more files to project-files for easier navigation in Qt Creator
 
         Reviewed by Simon Hausmann.
