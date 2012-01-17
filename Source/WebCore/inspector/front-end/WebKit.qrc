@@ -56,6 +56,7 @@
     <file>ExtensionPanel.js</file>
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
+    <file>FilteredItemSelectionDialog.js</file>
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
@@ -75,7 +76,6 @@
     <file>InspectorView.js</file>
     <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
-    <file>JavaScriptOutlineDialog.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
@@ -162,14 +162,14 @@
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
-    <file>elementsPanel.css</file>
     <file>dialog.css</file>
+    <file>elementsPanel.css</file>
+    <file>filteredItemSelectionDialog.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
-    <file>javaScriptOutlineDialog.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
     <file>panelEnablerView.css</file>

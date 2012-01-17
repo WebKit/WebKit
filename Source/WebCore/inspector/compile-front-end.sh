@@ -118,9 +118,9 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/DOMPresentationUtils.js \
         --js Source/WebCore/inspector/front-end/ElementsTreeOutline.js \
         --js Source/WebCore/inspector/front-end/EventListenersSidebarPane.js \
+        --js Source/WebCore/inspector/front-end/FilteredItemSelectionDialog.js \
         --js Source/WebCore/inspector/front-end/GoToLineDialog.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
-        --js Source/WebCore/inspector/front-end/JavaScriptOutlineDialog.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
         --js Source/WebCore/inspector/front-end/PropertiesSidebarPane.js \

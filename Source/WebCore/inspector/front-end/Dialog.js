@@ -57,7 +57,6 @@ WebInspector.Dialog = function(relativeToElement, delegate)
     delegate.element.addStyleClass("dialog-contents");
     this._element.appendChild(delegate.element);
 
-    this._delegate.wasShown();
     this._position();
     this._windowResizeHandler = this._position.bind(this);
     window.addEventListener("resize", this._windowResizeHandler, true);
@@ -102,7 +101,7 @@ WebInspector.Dialog.prototype = {
         this._delegate.willHide();
 
         WebInspector.setCurrentFocusElement(this._previousFocusElement);
-        WebInspector.Dialog._instance = null;
+        delete WebInspector.Dialog._instance;
         document.body.removeChild(this._glassPaneElement);
         window.removeEventListener("resize", this._windowResizeHandler, true);
     },
@@ -148,8 +147,10 @@ WebInspector.DialogDelegate = function()
 }
 
 WebInspector.DialogDelegate.prototype = {
-    wasShown: function() { },
-
+    /**
+     * @param {Element} element
+     * @param {Element} relativeToElement
+     */
     position: function(element, relativeToElement)
     {
         var offset = relativeToElement.offsetRelativeToWindow(window);

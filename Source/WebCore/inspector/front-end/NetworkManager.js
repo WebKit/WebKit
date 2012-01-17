@@ -149,7 +149,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     /**
      * @param {WebInspector.Resource} resource
-     * @param {?NetworkAgent.Response} response
+     * @param {NetworkAgent.Response=} response
      */
     _updateResourceWithResponse: function(resource, response)
     {

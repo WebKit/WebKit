@@ -71921,6 +71921,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FilteredItemSelectionDialog.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\filteredItemSelectionDialog.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FontView.js"
 					>
 				</File>
@@ -72022,14 +72030,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\JavaScriptOutlineDialog.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\javaScriptOutlineDialog.css"
 					>
 				</File>
 				<File

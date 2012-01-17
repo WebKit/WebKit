@@ -1,3 +1,70 @@
+2012-01-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Refactor JavaScriptOutlineDialog: extract FilteredItemSelectionDialog and reuse DialogDelegate.
+        https://bugs.webkit.org/show_bug.cgi?id=76455
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Dialog.js:
+        (WebInspector.Dialog):
+        (WebInspector.Dialog.prototype._hide):
+        * inspector/front-end/FilteredItemSelectionDialog.js: Added.
+        (WebInspector.FilteredItemSelectionDialog):
+        (WebInspector.FilteredItemSelectionDialog.prototype.position):
+        (WebInspector.FilteredItemSelectionDialog.prototype.focus):
+        (WebInspector.FilteredItemSelectionDialog.prototype.willHide):
+        (WebInspector.FilteredItemSelectionDialog.prototype.onEnter):
+        (WebInspector.FilteredItemSelectionDialog.prototype.get _itemsLoaded):
+        (WebInspector.FilteredItemSelectionDialog.prototype._createItemElement):
+        (WebInspector.FilteredItemSelectionDialog.prototype._hideItemElement):
+        (WebInspector.FilteredItemSelectionDialog.prototype._itemElementVisible):
+        (WebInspector.FilteredItemSelectionDialog.prototype._showItemElement):
+        (WebInspector.FilteredItemSelectionDialog.prototype._checkItemAt):
+        (WebInspector.FilteredItemSelectionDialog.prototype._createSearchRegExp):
+        (WebInspector.FilteredItemSelectionDialog.prototype._filterItems):
+        (WebInspector.FilteredItemSelectionDialog.prototype._onKeyDown):
+        (WebInspector.FilteredItemSelectionDialog.prototype._scheduleFilter):
+        (WebInspector.FilteredItemSelectionDialog.prototype._updateSelection):
+        (WebInspector.FilteredItemSelectionDialog.prototype._onMouseMove):
+        (WebInspector.FilteredItemSelectionDialog.prototype._onScroll):
+        (WebInspector.FilteredItemSelectionDialog.prototype._highlightItems):
+        (WebInspector.FilteredItemSelectionDialog.prototype._clearHighlight):
+        (WebInspector.FilteredItemSelectionDialog.prototype._clearElementHighlight.changes.this._elementHighlightChanges.get if):
+        (WebInspector.FilteredItemSelectionDialog.prototype._clearElementHighlight):
+        (WebInspector.FilteredItemSelectionDialog.prototype._highlightItem.get var):
+        (WebInspector.FilteredItemSelectionDialog.prototype._highlightItem):
+        (WebInspector.FilteredItemSelectionDialog.prototype._itemElementInViewport):
+        (WebInspector.SelectionDialogContentProvider):
+        (WebInspector.SelectionDialogContentProvider.prototype.itemTitleAt):
+        (WebInspector.SelectionDialogContentProvider.prototype.itemKeyAt):
+        (WebInspector.SelectionDialogContentProvider.prototype.itemsCount):
+        (WebInspector.SelectionDialogContentProvider.prototype.requestItems):
+        (WebInspector.SelectionDialogContentProvider.prototype.selectItem):
+        (WebInspector.JavaScriptOutlineDialog):
+        (WebInspector.JavaScriptOutlineDialog.didAddChunk):
+        (WebInspector.JavaScriptOutlineDialog.install):
+        (WebInspector.JavaScriptOutlineDialog._show):
+        (WebInspector.JavaScriptOutlineDialog.createShortcut):
+        (WebInspector.JavaScriptOutlineDialog.prototype.itemTitleAt):
+        (WebInspector.JavaScriptOutlineDialog.prototype.itemKeyAt):
+        (WebInspector.JavaScriptOutlineDialog.prototype.itemsCount):
+        (WebInspector.JavaScriptOutlineDialog.prototype.requestItems):
+        (WebInspector.JavaScriptOutlineDialog.prototype.selectItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._appendItemElements):
+        * inspector/front-end/JavaScriptOutlineDialog.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/filteredItemSelectionDialog.css: Renamed from Source/WebCore/inspector/front-end/javaScriptOutlineDialog.css.
+        (.js-outline-dialog > input):
+        (.js-outline-dialog > div.progress):
+        (.js-outline-dialog > div.container):
+        (.js-outline-dialog > .container > div.item):
+        (.js-outline-dialog > .container > div.item.selected):
+        (.js-outline-dialog > .container > div.item > span.highlight):
+        * inspector/front-end/inspector.html:
+
 2012-01-17  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: start using typedefs
