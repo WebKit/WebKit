@@ -37,7 +37,11 @@ from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import test
 from webkitpy.thirdparty.mock import Mock
-from webkitpy.thirdparty import simplejson
+
+try:
+    import json
+except ImportError, e:
+    from webkitpy.thirdparty import simplejson as json
 
 class JSONGeneratorTest(unittest.TestCase):
     def setUp(self):
@@ -229,8 +233,7 @@ class JSONGeneratorTest(unittest.TestCase):
           }
         }
 
-        self.assertEqual(simplejson.dumps(trie), simplejson.dumps(expected_trie))
-
+        self.assertEqual(json.dumps(trie), json.dumps(expected_trie))
 
 
 if __name__ == '__main__':
