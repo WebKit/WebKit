@@ -715,7 +715,9 @@ void PluginView::viewGeometryDidChange()
     if (m_plugin->wantsWindowRelativeCoordinates()) {
         // Get the frame rect in window coordinates.
         IntRect rect = parent()->contentsToWindow(frameRect());
-        m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
+
+        // The clip rect isn't correct here.
+        m_plugin->deprecatedGeometryDidChange(rect, rect);
     }
 
     ASSERT(frame());
