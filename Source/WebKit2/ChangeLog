@@ -1,5 +1,16 @@
 2012-01-16  Mark Rowe  <mrowe@apple.com>
 
+        Merge r103869.
+
+    2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Start trying to fix the Windows build after r103858.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::drawPDFPage):
+
+2012-01-16  Mark Rowe  <mrowe@apple.com>
+
         Merge r103858.
 
     2011-12-31  Dan Bernstein  <mitz@apple.com>
