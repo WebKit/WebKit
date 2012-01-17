@@ -118,7 +118,7 @@ public:
     bool generatesLineBoxesForInlineChild(RenderObject*);
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
-    void markSiblingsWithFloatsForLayout();
+    void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = 0);
     void markPositionedObjectsForLayout();
     virtual void markForPaginationRelayoutIfNeeded();
     

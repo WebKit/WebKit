@@ -286,6 +286,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
             if (parent && parent->isDeprecatedFlexibleBox())
                 parentBlock = toRenderBlock(parent);
 
+            parentBlock->markSiblingsWithFloatsForLayout(this);
             parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
         }
     }

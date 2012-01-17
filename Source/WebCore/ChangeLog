@@ -1,3 +1,23 @@
+2012-01-16  Robert Hogan  <robert@webkit.org>
+
+        Heap-use-after-free in WebCore::RenderBlock::selectionGaps
+        https://bugs.webkit.org/show_bug.cgi?id=75013
+
+        Reviewed by David Hyatt.
+
+        Test: fast/table/multiple-captions-crash3.html
+              fast/table/multiple-captions-crash4.html
+              fast/table/multiple-captions-crash5.html
+
+        When a child float is removed, the parent needs to ensure any reference to the
+        child is also removed from the floating objects list in any sibling block that 
+        it intruded into.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+
 2012-01-16  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: r102553 Autocorrection bubble doesn't show up
