@@ -251,7 +251,11 @@ void DocumentWriter::setDecoder(TextResourceDecoder* decoder)
 
 String DocumentWriter::deprecatedFrameEncoding() const
 {
-    return m_frame->document()->url().isEmpty() ? m_encoding : encoding();
+    Document* document = m_frame->document();
+    if (!document || document->url().isEmpty())
+        return m_encoding;
+
+    return encoding();
 }
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
