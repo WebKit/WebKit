@@ -2156,9 +2156,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _hasBeenModifiedIncrementally: function()
     {
-        // New properties applied via up/down have an originalPropertyText and will be deleted later
+        // New properties applied via up/down or live editing have an originalPropertyText and will be deleted later
         // on, if cancelled, when the empty string gets applied as their style text.
-        return typeof this.originalPropertyText === "string";
+        return typeof this.originalPropertyText === "string" || (!!this.property.propertyText && this._newProperty);
     },
 
     applyStyleText: function(styleText, updateInterface, majorChange, isRevert)
@@ -2184,7 +2184,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         styleText = styleText.replace(/\s/g, " ").trim(); // Replace &nbsp; with whitespace.
         var styleTextLength = styleText.length;
         if (!styleTextLength && updateInterface && !isRevert && this._newProperty && !this._hasBeenModifiedIncrementally()) {
-            // The user deleted everything and never applied a new property value via Up/Down scrolling, so remove the tree element and update.
+            // The user deleted everything and never applied a new property value via Up/Down scrolling/live editing, so remove the tree element and update.
             this.parent.removeChild(this);
             section.afterUpdate();
             return;
@@ -2258,15 +2258,17 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
                 return;
             }
             break;
-        case "U+0009":
-            if (this.isSuggestBoxVisible()) {
-                this._suggestBox.acceptSuggestion();
-                return !this._isEditingName;
-            }
-            return this.acceptAutoComplete();
         }
 
         WebInspector.TextPrompt.prototype.onKeyDown.call(this, event);
+    },
+
+    tabKeyPressed: function()
+    {
+        this.acceptAutoComplete();
+
+        // Always tab to the next field.
+        return false;
     },
 
     _handleNameOrValueUpDown: function(event)

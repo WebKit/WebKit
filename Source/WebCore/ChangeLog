@@ -1,3 +1,47 @@
+2012-01-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [TextPrompt] Autocomplete adds unwanted text that's hard to remove
+        https://bugs.webkit.org/show_bug.cgi?id=76058
+
+        Reviewed by Pavel Feldman.
+
+        As per the results of a war room:
+        - Auto-suggest only after user typing (avoid showing suggestions when navigating through the user input.)
+        - Do not select the first item if the suggest box is shown at the end of prompt (to allow Enter to commit the input.)
+        - Only show grayed autocompletion at the end of prompt (otherwise show a suggest box with the first item selected.)
+        - Grayed autocompletion can only be accepted with the End or Right keys.
+        - Enter can accept a selected suggestion item from the list, without committing the input.
+        - Retain the CSS model editing behavior as close to the existing one as possible.
+        - Enable PageUp/PageDown to navigate the suggest box items.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.set text):
+        (WebInspector.TextPrompt.prototype._removeSuggestionAids):
+        (WebInspector.TextPrompt.prototype._selectStart.moveBackIfOutside):
+        (WebInspector.TextPrompt.prototype._selectStart):
+        (WebInspector.TextPrompt.prototype.onKeyDown):
+        (WebInspector.TextPrompt.prototype.acceptAutoComplete):
+        (WebInspector.TextPrompt.prototype.complete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype.isCaretAtEndOfPrompt):
+        (WebInspector.TextPrompt.prototype.tabKeyPressed):
+        (WebInspector.TextPrompt.prototype.downKeyPressed):
+        (WebInspector.TextPrompt.prototype.pageUpKeyPressed):
+        (WebInspector.TextPrompt.prototype.pageDownKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onNextItem):
+        (WebInspector.TextPrompt.SuggestBox.prototype._onPreviousItem):
+        (WebInspector.TextPrompt.SuggestBox.prototype.updateSuggestions):
+        (WebInspector.TextPrompt.SuggestBox.prototype._updateItems):
+        (WebInspector.TextPrompt.SuggestBox.prototype._canShowBox):
+        (WebInspector.TextPrompt.SuggestBox.prototype._rememberRowCountPerViewport):
+        (WebInspector.TextPrompt.SuggestBox.prototype._completionsReady):
+        (WebInspector.TextPrompt.SuggestBox.prototype.pageUpKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.pageDownKeyPressed):
+        (WebInspector.TextPrompt.SuggestBox.prototype.enterKeyPressed):
+
 2012-01-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: CSS backend doesn't conform to Inspector.json

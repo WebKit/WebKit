@@ -137,7 +137,7 @@ WebInspector.TextPrompt.prototype = {
 
     set text(x)
     {
-        this.clearAutoComplete(true);
+        this._removeSuggestionAids();
         if (!x) {
             // Append a break element instead of setting textContent to make sure the selection is inside the prompt.
             this._element.removeChildren();
@@ -186,19 +186,26 @@ WebInspector.TextPrompt.prototype = {
         WebInspector.markBeingEdited(this._element, false);
     },
 
+    _removeSuggestionAids: function()
+    {
+        this.clearAutoComplete();
+        this.hideSuggestBox();
+    },
+
     _selectStart: function(event)
     {
         if (this._selectionTimeout)
             clearTimeout(this._selectionTimeout);
 
-        this.clearAutoComplete();
+        this._removeSuggestionAids();
 
         function moveBackIfOutside()
         {
             delete this._selectionTimeout;
-            if (!this.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+            if (!this.isCaretInsidePrompt() && window.getSelection().isCollapsed) {
                 this.moveCaretToEndOfPrompt();
-            this.autoCompleteSoon();
+                this.autoCompleteSoon();
+            }
         }
 
         this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
@@ -226,28 +233,37 @@ WebInspector.TextPrompt.prototype = {
         case "Down":
             handled = this.downKeyPressed(event);
             break;
+        case "PageUp":
+            handled = this.pageUpKeyPressed(event);
+            break;
+        case "PageDown":
+            handled = this.pageDownKeyPressed(event);
+            break;
         case "U+0009": // Tab
             handled = this.tabKeyPressed(event);
             break;
         case "Enter":
             handled = this.enterKeyPressed(event);
             break;
+        case "Left":
+        case "Home":
+            this._removeSuggestionAids();
+            invokeDefault = false;
+            break;
         case "Right":
         case "End":
-            if (this.isSuggestBoxVisible() && this.isCaretAtEndOfPrompt())
-                handled = this._suggestBox.tabKeyPressed(event);
-            else {
+            if (this.isCaretAtEndOfPrompt())
                 handled = this.acceptAutoComplete();
-                if (!handled)
-                    this.autoCompleteSoon();
-            }
+            else
+                this._removeSuggestionAids();
+            invokeDefault = false;
             break;
         case "U+001B": // Esc
             if (this.isSuggestBoxVisible()) {
                 this._suggestBox.hide();
                 handled = true;
-                break;
             }
+            break;
         case "U+0020": // Space
             if (this._suggestForceable && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                 this.defaultKeyHandler(event, true);
@@ -275,9 +291,13 @@ WebInspector.TextPrompt.prototype = {
 
     acceptAutoComplete: function()
     {
+        var result = false;
         if (this.isSuggestBoxVisible())
-            return this._suggestBox.acceptSuggestion();
-        return this.acceptSuggestion();
+            result = this._suggestBox.acceptSuggestion();
+        if (!result)
+            result = this.acceptSuggestion();
+
+        return result;
     },
 
     /**
@@ -348,7 +368,7 @@ WebInspector.TextPrompt.prototype = {
             shouldExit = true;
         else if (!auto && !isEmptyInput && !selectionRange.commonAncestorContainer.isDescendant(this._element))
             shouldExit = true;
-        else if (auto && !this._suggestBox && !force && !this.isCaretAtEndOfPrompt())
+        else if (auto && !force && !this.isCaretAtEndOfPrompt() && !this.isSuggestBoxVisible())
             shouldExit = true;
         else if (!selection.isCollapsed)
             shouldExit = true;
@@ -407,7 +427,7 @@ WebInspector.TextPrompt.prototype = {
         this._userEnteredText = fullWordRange.toString();
 
         if (this._suggestBox)
-            this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions);
+            this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions, !this.isCaretAtEndOfPrompt());
 
         var wordPrefixLength = originalWordPrefixRange.toString().length;
 
@@ -454,25 +474,27 @@ WebInspector.TextPrompt.prototype = {
         }
 
         if (auto) {
-            this._userEnteredRange.deleteContents();
-            this._element.pruneEmptyTextNodes();
-            var finalSelectionRange = document.createRange();
-            var prefixText = completionText.substring(0, wordPrefixLength);
-            var suffixText = completionText.substring(wordPrefixLength);
+            if (this.isCaretAtEndOfPrompt()) {
+                this._userEnteredRange.deleteContents();
+                this._element.pruneEmptyTextNodes();
+                var finalSelectionRange = document.createRange();
+                var prefixText = completionText.substring(0, wordPrefixLength);
+                var suffixText = completionText.substring(wordPrefixLength);
 
-            var prefixTextNode = document.createTextNode(prefixText);
-            fullWordRange.insertNode(prefixTextNode);
+                var prefixTextNode = document.createTextNode(prefixText);
+                fullWordRange.insertNode(prefixTextNode);
 
-            this.autoCompleteElement = document.createElement("span");
-            this.autoCompleteElement.className = "auto-complete-text";
-            this.autoCompleteElement.textContent = suffixText;
+                this.autoCompleteElement = document.createElement("span");
+                this.autoCompleteElement.className = "auto-complete-text";
+                this.autoCompleteElement.textContent = suffixText;
 
-            prefixTextNode.parentNode.insertBefore(this.autoCompleteElement, prefixTextNode.nextSibling);
+                prefixTextNode.parentNode.insertBefore(this.autoCompleteElement, prefixTextNode.nextSibling);
 
-            finalSelectionRange.setStart(prefixTextNode, wordPrefixLength);
-            finalSelectionRange.setEnd(prefixTextNode, wordPrefixLength);
-            selection.removeAllRanges();
-            selection.addRange(finalSelectionRange);
+                finalSelectionRange.setStart(prefixTextNode, wordPrefixLength);
+                finalSelectionRange.setEnd(prefixTextNode, wordPrefixLength);
+                selection.removeAllRanges();
+                selection.addRange(finalSelectionRange);
+            }
         } else
             this.applySuggestion(completionText, completions.length > 1, originalWordPrefixRange);
     },
@@ -572,7 +594,7 @@ WebInspector.TextPrompt.prototype = {
         var foundNextText = false;
         while (node) {
             if (node.nodeType === Node.TEXT_NODE && node.nodeValue.length) {
-                if (foundNextText)
+                if (foundNextText && (!this.autoCompleteElement || !this.autoCompleteElement.isAncestor(node)))
                     return false;
                 foundNextText = true;
             }
@@ -642,10 +664,7 @@ WebInspector.TextPrompt.prototype = {
 
     tabKeyPressed: function(event)
     {
-        if (this.isSuggestBoxVisible())
-            return this._suggestBox.tabKeyPressed(event);
-
-        this.complete(false, false, event.shiftKey);
+        // Just consume the key.
         return true;
     },
 
@@ -671,7 +690,23 @@ WebInspector.TextPrompt.prototype = {
             return this._suggestBox.downKeyPressed(event);
 
         return false;
-    }
+    },
+
+    pageUpKeyPressed: function(event)
+    {
+        if (this.isSuggestBoxVisible())
+            return this._suggestBox.pageUpKeyPressed(event);
+
+        return false;
+    },
+
+    pageDownKeyPressed: function(event)
+    {
+        if (this.isSuggestBoxVisible())
+            return this._suggestBox.pageDownKeyPressed(event);
+
+        return false;
+    },
 }
 
 WebInspector.TextPrompt.prototype.__proto__ = WebInspector.Object.prototype;
@@ -994,31 +1029,59 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         return true;
     },
 
-    _onNextItem: function(event)
+    _onNextItem: function(event, isPageScroll)
     {
         var children = this.contentElement.childNodes;
         if (!children.length)
             return false;
 
-        if (this._selectedElement)
-            this._selectedElement = this._selectedElement.nextSibling || this.contentElement.firstChild;
-        else
+        if (!this._selectedElement)
             this._selectedElement = this.contentElement.firstChild;
+        else {
+            if (!isPageScroll)
+                this._selectedElement = this._selectedElement.nextSibling || this.contentElement.firstChild;
+            else {
+                var candidate = this._selectedElement;
+
+                for (var itemsLeft = this._rowCountPerViewport; itemsLeft; --itemsLeft) {
+                    if (candidate.nextSibling)
+                        candidate = candidate.nextSibling;
+                    else
+                        break;
+                }
+
+                this._selectedElement = candidate;
+            }
+        }
         this._updateSelection();
         this._applySuggestion(undefined, true);
         return true;
     },
 
-    _onPreviousItem: function(event)
+    _onPreviousItem: function(event, isPageScroll)
     {
         var children = this.contentElement.childNodes;
         if (!children.length)
             return false;
 
-        if (this._selectedElement)
-            this._selectedElement = this._selectedElement.previousSibling || this.contentElement.lastChild;
-        else
+        if (!this._selectedElement)
             this._selectedElement = this.contentElement.lastChild;
+        else {
+            if (!isPageScroll)
+                this._selectedElement = this._selectedElement.previousSibling || this.contentElement.lastChild;
+            else {
+                var candidate = this._selectedElement;
+
+                for (var itemsLeft = this._rowCountPerViewport; itemsLeft; --itemsLeft) {
+                    if (candidate.previousSibling)
+                        candidate = candidate.previousSibling;
+                    else
+                        break;
+                }
+
+                this._selectedElement = candidate;
+            }
+        }
         this._updateSelection();
         this._applySuggestion(undefined, true);
         return true;
@@ -1027,14 +1090,15 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     /**
      * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
+     * @param {boolean=} canShowForSingleItem
      */
-    updateSuggestions: function(anchorBox, completions)
+    updateSuggestions: function(anchorBox, completions, canShowForSingleItem)
     {
         if (this._suggestTimeout) {
             clearTimeout(this._suggestTimeout);
             delete this._suggestTimeout;
         }
-        this._completionsReady(anchorBox, completions);
+        this._completionsReady(anchorBox, completions, canShowForSingleItem);
     },
 
     _onItemMouseDown: function(text, event)
@@ -1062,14 +1126,11 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         return element;
     },
 
-    _updateItems: function(items)
+    /**
+     * @param {boolean=} canShowForSingleItem
+     */
+    _updateItems: function(items, canShowForSingleItem)
     {
-        var children = this.contentElement.children;
-        this._selectedIndex = Math.min(children.length - 1, this._selectedIndex);
-        var selectedItemText = this._selectedIndex >= 0 ? children[this._selectedIndex].textContent : null;
-        var itemIndex = 0;
-        var child = this.contentElement.firstChild;
-        var childText = child ? child.textContent : null;
         this.contentElement.removeChildren();
 
         var userEnteredText = this._textPrompt._userEnteredText;
@@ -1079,7 +1140,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
             this.contentElement.appendChild(currentItemElement);
         }
 
-        this._selectedElement = this.contentElement.firstChild;
+        this._selectedElement = canShowForSingleItem ? this.contentElement.firstChild : null;
         this._updateSelection();
     },
 
@@ -1097,21 +1158,41 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     },
 
     /**
+     * @param {Array.<string>=} completions
+     * @param {boolean=} canShowForSingleItem
+     */
+    _canShowBox: function(completions, canShowForSingleItem)
+    {
+        if (!completions || !completions.length)
+            return false;
+
+        if (completions.length > 1)
+            return true;
+
+        // Do not show a single suggestion if it is the same as user-entered prefix, even if allowed to show single-item suggest boxes.
+        return canShowForSingleItem && completions[0] !== this._textPrompt._userEnteredText;
+    },
+
+    _rememberRowCountPerViewport: function()
+    {
+        if (!this.contentElement.firstChild)
+            return;
+
+        this._rowCountPerViewport = Math.floor(this.containerElement.offsetHeight / this.contentElement.firstChild.offsetHeight);
+    },
+
+    /**
      * @param {AnchorBox} anchorBox
      * @param {Array.<string>=} completions
+     * @param {boolean=} canShowForSingleItem
      */
-    _completionsReady: function(anchorBox, completions)
+    _completionsReady: function(anchorBox, completions, canShowForSingleItem)
     {
-        if (!completions || !completions.length) {
-            this.hide()
-            return;
-        }
-
-        this._updateItems(completions);
-        this._updateBoxPosition(anchorBox);
-        if (this.contentElement.children.length && this.contentElement.children.length > 1) {
-            // Will not be shown for a sole suggestion or no suggestions.
+        if (this._canShowBox(completions, canShowForSingleItem)) {
+            this._updateItems(completions, canShowForSingleItem);
+            this._updateBoxPosition(anchorBox);
             this._element.addStyleClass("visible");
+            this._rememberRowCountPerViewport();
         } else
             this.hide();
     },
@@ -1126,10 +1207,24 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         return this._onNextItem(event);
     },
 
+    pageUpKeyPressed: function(event)
+    {
+        return this._onPreviousItem(event, true);
+    },
+
+    pageDownKeyPressed: function(event)
+    {
+        return this._onNextItem(event, true);
+    },
+
     enterKeyPressed: function(event)
     {
+        var hasSelectedItem = !!this._selectedElement;
         this.acceptSuggestion();
-        return true;
+
+        // Report the event as non-handled if there is no selected item,
+        // to commit the input or handle it otherwise.
+        return hasSelectedItem;
     },
 
     tabKeyPressed: function(event)
