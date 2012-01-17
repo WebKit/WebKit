@@ -1,3 +1,14 @@
+2012-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/9593456> Many crashes at DocumentThreadableLoader::cancel
+
+        No tests, because we could not reproduce this.
+
+        * loader/DocumentThreadableLoader.cpp: (WebCore::DocumentThreadableLoader::cancel): Added
+        a null check.
+
 2012-01-16  Mark Rowe  <mrowe@apple.com>
 
         Merge r104378.

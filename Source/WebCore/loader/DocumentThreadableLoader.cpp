@@ -165,7 +165,11 @@ void DocumentThreadableLoader::cancel()
         return;
 
     m_loader->cancel();
-    m_loader->clearClient();
+
+    // It is not clear how this happens, but reports indicate that m_loader can be null here.
+    if (m_loader)
+        m_loader->clearClient();
+    
     m_loader = 0;
     m_client = 0;
 }
