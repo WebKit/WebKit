@@ -28,7 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import chromium
+
+from webkitpy.layout_tests.port import chromium
+from webkitpy.layout_tests.port import config
 
 
 _log = logging.getLogger(__name__)
@@ -55,33 +57,33 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         ],
     }
 
-    def __init__(self, host, port_name=None, **kwargs):
-        port_name = port_name or 'chromium-linux'
-        chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
-        # We re-set the port name once the base object is fully initialized
-        # in order to be able to find the DRT binary properly.
-        if port_name.endswith('-linux'):
-            self._architecture = self._determine_architecture()
-            # FIXME: This is an ugly hack to avoid renaming the GPU port.
-            if port_name == 'chromium-linux':
-                port_name = port_name + '-' + self._architecture
-        else:
-            base, arch = port_name.rsplit('-', 1)
-            assert base in ('chromium-linux', 'chromium-gpu-linux')
-            self._architecture = arch
-        assert self._architecture in self.SUPPORTED_ARCHITECTURES
-        assert port_name in ('chromium-linux', 'chromium-gpu-linux',
-                             'chromium-linux-x86', 'chromium-linux-x86_64',
-                             'chromium-gpu-linux-x86_64')
-        self._name = port_name
-        self._version = 'lucid'  # We only support lucid right now.
+    @classmethod
+    def _determine_driver_path_statically(cls, host, options):
+        config_object = config.Config(host.executive, host.filesystem)
+        build_directory = getattr(options, 'build_directory', None)
+        webkit_base = config_object.path_from_webkit_base()
+        chromium_base = cls._chromium_base_dir(host.filesystem)
+        configuration = getattr(options, 'configuration', config_object.default_configuration())
+        return cls._static_build_path(host.filesystem, build_directory, chromium_base, webkit_base, configuration, 'DumpRenderTree')
 
-    def _determine_architecture(self):
-        driver_path = self._path_to_driver()
+    @staticmethod
+    def _static_build_path(filesystem, build_directory, chromium_base, webkit_base, *comps):
+        if build_directory:
+            return filesystem.join(build_directory, *comps)
+        if filesystem.exists(filesystem.join(chromium_base, 'sconsbuild')):
+            return filesystem.join(chromium_base, 'sconsbuild', *comps)
+        if filesystem.exists(filesystem.join(chromium_base, 'out', *comps)):
+            return filesystem.join(chromium_base, 'out', *comps)
+        if filesystem.exists(filesystem.join(webkit_base, 'sconsbuild')):
+            return filesystem.join(webkit_base, 'sconsbuild', *comps)
+        return filesystem.join(webkit_base, 'out', *comps)
+
+    @staticmethod
+    def _determine_architecture(filesystem, executive, driver_path):
         file_output = ''
-        if self._filesystem.exists(driver_path):
+        if filesystem.exists(driver_path):
             # The --dereference flag tells file to follow symlinks
-            file_output = self._executive.run_command(['file', '--dereference', driver_path], return_stderr=True)
+            file_output = executive.run_command(['file', '--dereference', driver_path], return_stderr=True)
 
         if 'ELF 32-bit LSB executable' in file_output:
             return 'x86'
@@ -95,6 +97,27 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         # or something else weird is going on. It's okay to do this because
         # if we actually try to use the binary, check_build() should fail.
         return 'x86_64'
+
+    def __init__(self, host, port_name=None, **kwargs):
+        port_name = port_name or 'chromium-linux'
+        chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
+        # We re-set the port name once the base object is fully initialized
+        # in order to be able to find the DRT binary properly.
+        if port_name.endswith('-linux'):
+            self._architecture = self._determine_architecture(self._filesystem, self._executive, self._determine_driver_path_statically(host, self._options))
+            # FIXME: This is an ugly hack to avoid renaming the GPU port.
+            if port_name == 'chromium-linux':
+                port_name = port_name + '-' + self._architecture
+        else:
+            base, arch = port_name.rsplit('-', 1)
+            assert base in ('chromium-linux', 'chromium-gpu-linux')
+            self._architecture = arch
+        assert self._architecture in self.SUPPORTED_ARCHITECTURES
+        assert port_name in ('chromium-linux', 'chromium-gpu-linux',
+                             'chromium-linux-x86', 'chromium-linux-x86_64',
+                             'chromium-gpu-linux-x86_64')
+        self._name = port_name
+        self._version = 'lucid'  # We only support lucid right now.
 
     def baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self._architecture]
@@ -118,18 +141,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
-        if self.get_option('build_directory'):
-            return self._filesystem.join(self.get_option('build_directory'), *comps)
-
-        base = self.path_from_chromium_base()
-        if self._filesystem.exists(self._filesystem.join(base, 'sconsbuild')):
-            return self._filesystem.join(base, 'sconsbuild', *comps)
-        if self._filesystem.exists(self._filesystem.join(base, 'out', *comps)):
-            return self._filesystem.join(base, 'out', *comps)
-        base = self.path_from_webkit_base()
-        if self._filesystem.exists(self._filesystem.join(base, 'sconsbuild')):
-            return self._filesystem.join(base, 'sconsbuild', *comps)
-        return self._filesystem.join(base, 'out', *comps)
+        return self._static_build_path(self._filesystem, self.get_option('build_directory'), self.path_from_chromium_base(), self.path_from_webkit_base(), *comps)
 
     def _check_apache_install(self):
         result = self._check_file_exists(self._path_to_apache(), "apache2")

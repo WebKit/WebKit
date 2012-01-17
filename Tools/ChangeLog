@@ -1,3 +1,28 @@
+2012-01-17  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up port code in preparation for static port names
+        https://bugs.webkit.org/show_bug.cgi?id=76356
+
+        Reviewed by Adam Barth.
+
+        To fix bug 76215 and be able to determine appropriate port names
+        in webkitpy without actually constructing Port objects, we need
+        to shuffle some logic in the chromium ports to be able to figure
+        out whether we built DRT in 32 or 64-bit mode.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort._chromium_base_dir):
+        (ChromiumPort.__init__):
+        (ChromiumPort.path_from_chromium_base):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort):
+        (ChromiumLinuxPort._determine_driver_path_statically):
+        (ChromiumLinuxPort._static_build_path):
+        (ChromiumLinuxPort._determine_architecture):
+        (ChromiumLinuxPort.__init__):
+        (ChromiumLinuxPort._build_path):
+
 2012-01-17  Hao Zheng  <zhenghao@chromium.org>
 
         Do not remove pixel failures for ref tests.

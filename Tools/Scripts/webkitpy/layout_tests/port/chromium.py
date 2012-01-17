@@ -85,11 +85,20 @@ class ChromiumPort(Port):
         'linux': ['lucid'],
     }
 
+    @classmethod
+    def _chromium_base_dir(cls, filesystem):
+        module_path = filesystem.path_to_module(cls.__module__)
+        offset = module_path.find('third_party')
+        if offset == -1:
+            return filesystem.join(module_path[0:module_path.find('Tools')], 'Source', 'WebKit', 'chromium')
+        else:
+            return module_path[0:offset]
+
     def __init__(self, host, **kwargs):
         Port.__init__(self, host, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
         self._version = 'xp'
-        self._chromium_base_dir = None
+        self._chromium_base_dir_path = None
 
     def _check_file_exists(self, path_to_file, file_description,
                            override_step=None, logging=True):
@@ -220,14 +229,9 @@ class ChromiumPort(Port):
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         Chromium source tree and the list of path components in |*comps|."""
-        if not self._chromium_base_dir:
-            chromium_module_path = self._filesystem.path_to_module(self.__module__)
-            offset = chromium_module_path.find('third_party')
-            if offset == -1:
-                self._chromium_base_dir = self._filesystem.join(chromium_module_path[0:chromium_module_path.find('Tools')], 'Source', 'WebKit', 'chromium')
-            else:
-                self._chromium_base_dir = chromium_module_path[0:offset]
-        return self._filesystem.join(self._chromium_base_dir, *comps)
+        if self._chromium_base_dir_path is None:
+            self._chromium_base_dir_path = self._chromium_base_dir(self._filesystem)
+        return self._filesystem.join(self._chromium_base_dir_path, *comps)
 
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations.txt')
