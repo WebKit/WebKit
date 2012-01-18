@@ -161,7 +161,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     if (!cell)
         return 0;
 
-    return m_parent->axObjectCache()->getOrCreate(cell);
+    return axObjectCache()->getOrCreate(cell);
 }
     
 bool AccessibilityTableColumn::accessibilityIsIgnored() const

@@ -753,6 +753,11 @@ void AccessibilityObject::updateChildrenIfNecessary()
 
 void AccessibilityObject::clearChildren()
 {
+    // Some objects have weak pointers to their parents and those associations need to be detached.
+    size_t length = m_children.size();
+    for (size_t i = 0; i < length; i++)
+        m_children[i]->detachFromParent();
+    
     m_children.clear();
     m_haveChildren = false;
 }
