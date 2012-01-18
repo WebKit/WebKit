@@ -196,7 +196,8 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& tok
     element->parserSetAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
     attachLater(m_attachmentRoot, element);
     m_openElements.pushHTMLHtmlElement(element);
-    // FIXME: We probably need to call executeQueuedTasks() before calling these methods.
+
+    executeQueuedTasks();
     element->insertedByParser();
     dispatchDocumentElementAvailableIfNeeded();
 }

@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.addUserScript("if (document.documentElement) console.log('SUCCESS');", true, true);
+}
+</script>
+</head>
+<body>
+This test should log a console message on success.
+<iframe src="about:blank"></iframe>
+</body>
+</html>

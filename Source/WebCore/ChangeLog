@@ -1,3 +1,21 @@
+2012-01-18  Adam Barth  <abarth@webkit.org>
+
+        REGRESSION (r104000): AdBlock extension fails to load/function
+        https://bugs.webkit.org/show_bug.cgi?id=75554
+
+        Reviewed by Andy Estes.
+
+        Previously, we would claim the documentElement was available before
+        we'd actually attached it to the DOM (which we now do via the
+        attachment queue).  This issue was noted in the code with a FIXME
+        comment, but there was no test coverage for the issue.  This patch
+        resolves the FIXME and adds a test.
+
+        Test: userscripts/document-element-available-at-start.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+
 2012-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Provide access to user's list of preferred languages
