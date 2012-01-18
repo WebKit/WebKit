@@ -1283,7 +1283,7 @@ static void runTest(const string& testPathOrURL)
     }
 
     NSURL *url;
-    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"])
+    if ([pathOrURLString hasPrefix:@"http://"] || [pathOrURLString hasPrefix:@"https://"] || [pathOrURLString hasPrefix:@"file://"])
         url = [NSURL URLWithString:pathOrURLString];
     else
         url = [NSURL fileURLWithPath:pathOrURLString];
