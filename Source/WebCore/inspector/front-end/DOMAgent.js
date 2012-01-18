@@ -500,14 +500,9 @@ WebInspector.DOMNode.prototype = {
 WebInspector.DOMDocument = function(domAgent, payload)
 {
     WebInspector.DOMNode.call(this, domAgent, this, payload);
-    this.documentURL = payload.documentURL;
+    this.documentURL = payload.documentURL || "";
     this.xmlVersion = payload.xmlVersion;
     domAgent._idToDOMNode[this.id] = this;
-
-    /**
-     * @type {string} Document nodes always have documentURL
-     */
-    this.documentURL;
     this._listeners = {};
 }
 
@@ -1152,7 +1147,7 @@ WebInspector.DOMModelResourceBinding.prototype = {
                 return true;
             }
             if (reportError)
-                callback("No document with given URL found");
+                userCallback("No document with given URL found");
             return false;
         }
     
