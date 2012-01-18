@@ -1,3 +1,15 @@
+2012-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Fix compile error from bug #76211
+        https://bugs.webkit.org/show_bug.cgi?id=76575
+
+        Reviewed by James Robinson.
+
+        No new tests. Fixing compile only.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::prepareToUpdate):
+
 2012-01-18  Adam Barth  <abarth@webkit.org>
 
         REGRESSION (r104000): AdBlock extension fails to load/function
