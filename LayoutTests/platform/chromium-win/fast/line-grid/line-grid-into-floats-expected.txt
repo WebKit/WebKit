@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (15,15) size 253x120 [border: (2px solid #000000)]
+        RenderText {#text} at (2,16) size 104x15
+          text run at (2,16) width 104: "This text should snap"
+        RenderBR {BR} at (106,28) size 0x0
+        RenderText {#text} at (2,59) size 115x15
+          text run at (2,59) width 115: "to a 36px font-size grid."
+        RenderBR {BR} at (117,71) size 0x0
+        RenderText {#text} at (2,102) size 249x15
+          text run at (2,102) width 249: "There should be lots of spacing between these lines."
+      RenderBlock (floating) {DIV} at (278,15) size 192x79 [border: (2px solid #000000)]
+        RenderText {#text} at (2,11) size 166x22
+          text run at (2,11) width 166: "This text should snap"
+        RenderBR {BR} at (168,28) size 0x0
+        RenderText {#text} at (2,54) size 188x22
+          text run at (2,54) width 188: "to a 36px font-size grid."
+        RenderBR {BR} at (190,71) size 0x0
+      RenderText {#text} at (475,11) size 756x256
+        text run at (475,11) width 286: "Here we can see the"
+        text run at (475,54) width 249: "actual lines of the"
+        text run at (475,97) width 260: "grid outside of the"
+        text run at (273,140) width 493: "floating objects. Everything should"
+        text run at (10,183) width 738: "be aligned to these lines, including what is inside the"
+        text run at (10,226) width 151: "two floats."
