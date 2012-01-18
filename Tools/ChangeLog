@@ -1,3 +1,16 @@
+2012-01-17  Adam Barth  <abarth@webkit.org>
+
+        Enable tests on the mac-ews
+        https://bugs.webkit.org/show_bug.cgi?id=76502
+
+        Reviewed by Simon Fraser.
+
+        Apple now has five machines running the mac-ews.  Lucas Forschler has
+        asked that we try enabling tests to see if we have enough bandwidth.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+
 2012-01-17  Sanjoy Das  <sanjoy@playingwithpointers.com>
 
         Add a check-webkit-style exception for GDBInterface.cpp
