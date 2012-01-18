@@ -1,3 +1,20 @@
+2012-01-17  Sanjoy Das  <sanjoy@playingwithpointers.com>
+
+        Add a check-webkit-style exception for GDBInterface.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=76187
+
+        Add an exception for Source/JavaScriptCore/jit/GDBInterface.cpp so
+        that it does not fail the style check.
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/style/checker.py: Tell the style checker to not run
+        readability/naming tests on
+        Source/JavaScriptCore/jit/GDBInterface.cpp.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier): Add a test for
+        the above exception.
+
 2012-01-17  Hajime Morrita  <morrita@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=76245

@@ -261,6 +261,10 @@ class GlobalVariablesTest(unittest.TestCase):
         assertCheck(path, "pep8/W291")
         assertCheck(path, "whitespace/carriage_return")
 
+        # Test if the exception for GDBInterface.cpp is in place.
+        assertNoCheck("Source/JavaScriptCore/jit/GDBInterface.cpp",
+                      "readability/naming")
+
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
         all_categories = self._all_categories()

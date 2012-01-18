@@ -225,6 +225,11 @@ _PATH_RULES_SPECIFIER = [
       "-whitespace",
       "-build/header_guard",
       "-build/include_order"]),
+
+    ([# There is no way to avoid the symbols __jit_debug_register_code
+      # and __jit_debug_descriptor when integrating with gdb.
+      "Source/JavaScriptCore/jit/GDBInterface.cpp"],
+     ["-readability/naming"]),
 ]
 
 
