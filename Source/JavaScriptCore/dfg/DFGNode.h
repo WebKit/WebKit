@@ -245,6 +245,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetInt16ArrayLength, NodeResultInt32) \
     macro(GetInt32ArrayLength, NodeResultInt32) \
     macro(GetUint8ArrayLength, NodeResultInt32) \
+    macro(GetUint8ClampedArrayLength, NodeResultInt32) \
     macro(GetUint16ArrayLength, NodeResultInt32) \
     macro(GetUint32ArrayLength, NodeResultInt32) \
     macro(GetFloat32ArrayLength, NodeResultInt32) \
@@ -962,6 +963,11 @@ struct Node {
     bool shouldSpeculateUint8Array()
     {
         return isUint8ArrayPrediction(prediction());
+    }
+
+    bool shouldSpeculateUint8ClampedArray()
+    {
+        return isUint8ClampedArrayPrediction(prediction());
     }
     
     bool shouldSpeculateUint16Array()

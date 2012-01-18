@@ -30,6 +30,7 @@ for (var x in constructorNames) {
         name == "DataView" ||
         name == "Int8Array" ||
         name == "Uint8Array" ||
+        name == "Uint8ClampedArray" ||
         name == "Int16Array" ||
         name == "Uint16Array" ||
         name == "Int32Array" ||

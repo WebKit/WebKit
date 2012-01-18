@@ -345,6 +345,7 @@ namespace JSC {
         registerTypedArrayFunction(int16, Int16);
         registerTypedArrayFunction(int32, Int32);
         registerTypedArrayFunction(uint8, Uint8);
+        registerTypedArrayFunction(uint8Clamped, Uint8Clamped);
         registerTypedArrayFunction(uint16, Uint16);
         registerTypedArrayFunction(uint32, Uint32);
         registerTypedArrayFunction(float32, Float32);
@@ -366,6 +367,7 @@ namespace JSC {
         TypedArrayDescriptor m_int16ArrayDescriptor;
         TypedArrayDescriptor m_int32ArrayDescriptor;
         TypedArrayDescriptor m_uint8ArrayDescriptor;
+        TypedArrayDescriptor m_uint8ClampedArrayDescriptor;
         TypedArrayDescriptor m_uint16ArrayDescriptor;
         TypedArrayDescriptor m_uint32ArrayDescriptor;
         TypedArrayDescriptor m_float32ArrayDescriptor;

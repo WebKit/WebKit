@@ -353,7 +353,7 @@ sub IsTypedArrayType
 {
     my $type = shift;
     return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
-    return 1 if (($type eq "Uint8Array") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
+    return 1 if (($type eq "Uint8Array") or ($type eq "Uint8ClampedArray") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
     return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
     return 1 if (($type eq "Float32Array") or ($type eq "Float64Array"));
     return 0;
@@ -945,6 +945,7 @@ sub GenerateHeader
         push(@headerContent, "TypedArrayInt16") if $implType eq "Int16Array";
         push(@headerContent, "TypedArrayInt32") if $implType eq "Int32Array";
         push(@headerContent, "TypedArrayUint8") if $implType eq "Uint8Array";
+        push(@headerContent, "TypedArrayUint8Clamped") if $implType eq "Uint8ClampedArray";
         push(@headerContent, "TypedArrayUint16") if $implType eq "Uint16Array";
         push(@headerContent, "TypedArrayUint32") if $implType eq "Uint32Array";
         push(@headerContent, "TypedArrayFloat32") if $implType eq "Float32Array";

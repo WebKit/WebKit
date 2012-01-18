@@ -219,7 +219,11 @@ function testIntegralArrayTruncationBehavior(type, name, unsigned) {
 
   if (unsigned) {
     sourceData = [0.6, 10.6];
-    expectedResults = [0, 10];
+    if (type === Uint8ClampedArray) {
+      expectedResults = [1, 11];
+    } else {
+      expectedResults = [0, 10];
+    }
   } else {
     sourceData = [0.6, 10.6, -0.6, -10.6];
     expectedResults = [0, 10, 0, -10];
@@ -259,6 +263,14 @@ function testIntegralArrayTruncationBehavior(type, name, unsigned) {
       }
       break;
     case Uint8Array:
+      for (var ii = 0; ii < sourceData.length; ++ii) {
+        for (var jj = 0; jj < numIterations; ++jj) {
+          array[jj] = sourceData[ii];
+          assertEq('Storing ' + sourceData[ii], expectedResults[ii], array[jj]);
+        }
+      }
+      break;
+    case Uint8ClampedArray:
       for (var ii = 0; ii < sourceData.length; ++ii) {
         for (var jj = 0; jj < numIterations; ++jj) {
           array[jj] = sourceData[ii];
@@ -834,6 +846,12 @@ function testNaNConversion(type, name) {
         results[i] = array[i];
       }
       break;
+    case Uint8ClampedArray:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
     case Uint16Array:
       for (var i = 0; i < array.length; ++i) {
         array[i] = NaN;
@@ -921,6 +939,13 @@ function runTests() {
        elementSizeInBytes: 1,
        testValues:     [ 0, 255,  -1, 256 ],
        expectedValues: [ 0, 255, 255,   0 ]
+      },
+      {name: "Uint8ClampedArray",
+       unsigned: true,
+       integral: true,
+       elementSizeInBytes: 1,
+       testValues:     [ 0, 255,  -1, 256 ],
+       expectedValues: [ 0, 255,   0, 255 ]
       },
       {name: "Uint16Array",
        unsigned: true,

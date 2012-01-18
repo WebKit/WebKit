@@ -453,6 +453,7 @@
 #include "JSUint16Array.cpp"
 #include "JSUint32Array.cpp"
 #include "JSUint8Array.cpp"
+#include "JSUint8ClampedArray.cpp"
 #include "JSUIEvent.cpp"
 #include "JSValidityState.cpp"
 #include "JSWebKitAnimation.cpp"

@@ -320,6 +320,56 @@ PASS Setting Uint8Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Uint8Array
+PASS test Uint8ClampedArray SetAndGet10To1
+PASS test Uint8ClampedArray ConstructWithArrayOfUnsignedValues
+PASS test Uint8ClampedArray ConstructWithTypedArrayOfUnsignedValues
+PASS test integral array truncation behavior for Uint8ClampedArray
+Testing Uint8ClampedArray GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
+PASS test Uint8ClampedArray OffsetsAndSizes
+PASS test Uint8ClampedArray SetFromTypedArray
+PASS negativeTest Uint8ClampedArray SetFromTypedArray
+PASS test Uint8ClampedArray SetFromArray
+PASS negativeTest Uint8ClampedArray SetFromArray
+PASS test Uint8ClampedArray Subarray
+PASS negativeTest Uint8ClampedArray Subarray
+PASS test Uint8ClampedArray SetBoundaryConditions
+PASS test Uint8ClampedArray ConstructionBoundaryConditions
+PASS Construction of Uint8ClampedArray with null buffer threw exception
+PASS Construction of Uint8ClampedArray with (null buffer, 0) threw exception
+PASS Construction of Uint8ClampedArray with (null buffer, 0, 0) threw exception
+PASS Construction of Uint8ClampedArray with out-of-range number of elements threw an exception
+PASS Construction of Uint8ClampedArray with out-of-range offset threw an exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Uint8ClampedArray with negative size threw exception
+PASS Construction of Uint8ClampedArray with negative out-of-range values threw an exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+Testing subarray of Uint8ClampedArray
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+Testing subarray with default inputs of Uint8ClampedArray
+PASS array.length is 32 / typeSize
+PASS array.subarray(0).length is (32 / typeSize)
+PASS array.subarray(2).length is (32 / typeSize) - 2
+PASS array.subarray(-2).length is 2
+PASS array.subarray(-2147483648).length is (32 / typeSize)
+PASS Setting Uint8ClampedArray from array with out-of-range offset was caught
+PASS Setting Uint8ClampedArray from Uint8ClampedArray with out-of-range offset was caught
+PASS Setting Uint8ClampedArray from array with negative offset was caught
+PASS Setting Uint8ClampedArray from Uint8ClampedArray with negative offset was caught
+PASS Setting Uint8ClampedArray from array with -0 offset
+PASS Setting Uint8ClampedArray from Uint8ClampedArray with -0 offset
+PASS Setting Uint8ClampedArray from array with boundary offset
+PASS Setting Uint8ClampedArray from Uint8ClampedArray with boundary offset
+PASS Setting Uint8ClampedArray from array with non-integer offset
+PASS Setting Uint8ClampedArray from Uint8ClampedArray with non-integer offset
+PASS Setting Uint8ClampedArray from fake array with invalid length was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
+PASS test storing NaN in Uint8ClampedArray
 PASS test Uint16Array SetAndGet10To1
 PASS test Uint16Array ConstructWithArrayOfUnsignedValues
 PASS test Uint16Array ConstructWithTypedArrayOfUnsignedValues

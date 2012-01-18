@@ -1,3 +1,49 @@
+2012-01-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Uint8ClampedArray support
+        https://bugs.webkit.org/show_bug.cgi?id=74455
+
+        Reviewed by Filip Pizlo.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC::isUint8ClampedArrayPrediction):
+        (JSC::isActionableMutableArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateUint8ClampedArray):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::clampDoubleToByte):
+        (JSC::DFG::compileClampIntegerToByte):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.h:
+        * wtf/Forward.h:
+        * wtf/Uint8Array.h:
+        * wtf/Uint8ClampedArray.h: Added.
+        (WTF::Uint8ClampedArray::set):
+        (WTF::Uint8ClampedArray::create):
+        (WTF::Uint8ClampedArray::Uint8ClampedArray):
+        (WTF::Uint8ClampedArray::subarray):
+
 2012-01-17  Sam Weinig  <sam@webkit.org>
 
         Add helper macro for forward declaring objective-c classes

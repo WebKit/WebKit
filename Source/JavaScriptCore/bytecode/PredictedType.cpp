@@ -92,6 +92,11 @@ const char* predictionToString(PredictedType value)
         ptr.strcat("Uint8array");
     else
         isTop = false;
+
+    if (value & PredictUint8ClampedArray)
+        ptr.strcat("Uint8clampedarray");
+    else
+        isTop = false;
     
     if (value & PredictUint16Array)
         ptr.strcat("Uint16array");
@@ -184,6 +189,8 @@ PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
             return PredictInt32Array;
         case TypedArrayUint8:
             return PredictUint8Array;
+        case TypedArrayUint8Clamped:
+            return PredictUint8ClampedArray;
         case TypedArrayUint16:
             return PredictUint16Array;
         case TypedArrayUint32:

@@ -46,7 +46,7 @@ public:
     inline PassRefPtr<Uint8Array> subarray(int start) const;
     inline PassRefPtr<Uint8Array> subarray(int start, int end) const;
 
-private:
+protected:
     inline Uint8Array(PassRefPtr<ArrayBuffer>,
                            unsigned byteOffset,
                            unsigned length);

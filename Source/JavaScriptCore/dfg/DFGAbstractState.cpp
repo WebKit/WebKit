@@ -121,6 +121,8 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(PredictInt32Array);
         else if (isUint8ArrayPrediction(prediction))
             root->valuesAtHead.argument(i).set(PredictUint8Array);
+        else if (isUint8ClampedArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictUint8ClampedArray);
         else if (isUint16ArrayPrediction(prediction))
             root->valuesAtHead.argument(i).set(PredictUint16Array);
         else if (isUint32ArrayPrediction(prediction))
@@ -448,6 +450,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
+        if (m_graph[node.child1()].shouldSpeculateUint8ClampedArray()) {
+            forNode(node.child1()).filter(PredictUint8ClampedArray);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
         if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
             forNode(node.child1()).filter(PredictUint16Array);
             forNode(node.child2()).filter(PredictInt32);
@@ -518,6 +526,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         }
         if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
             forNode(node.child1()).filter(PredictUint8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8ClampedArray()) {
+            forNode(node.child1()).filter(PredictUint8ClampedArray);
             forNode(node.child2()).filter(PredictInt32);
             forNode(node.child3()).filter(PredictNumber);
             break;
@@ -729,6 +743,10 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).filter(PredictUint8Array);
         forNode(nodeIndex).set(PredictInt32);
         break;
+    case GetUint8ClampedArrayLength:
+        forNode(node.child1()).filter(PredictUint8ClampedArray);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
     case GetUint16ArrayLength:
         forNode(node.child1()).filter(PredictUint16Array);
         forNode(nodeIndex).set(PredictInt32);
@@ -795,6 +813,11 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         }
         if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
             forNode(node.child1()).filter(PredictUint8Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8ClampedArray()) {
+            forNode(node.child1()).filter(PredictUint8ClampedArray);
             forNode(nodeIndex).clear();
             break;
         }

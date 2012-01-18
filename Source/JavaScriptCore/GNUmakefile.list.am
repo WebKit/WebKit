@@ -706,6 +706,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Uint16Array.h \
 	Source/JavaScriptCore/wtf/Uint32Array.h \
 	Source/JavaScriptCore/wtf/Uint8Array.h \
+	Source/JavaScriptCore/wtf/Uint8ClampedArray.h \
 	Source/JavaScriptCore/wtf/unicode/CharacterNames.h \
 	Source/JavaScriptCore/wtf/unicode/Collator.h \
 	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \

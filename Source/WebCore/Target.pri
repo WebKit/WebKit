@@ -342,6 +342,7 @@ v8 {
         bindings/js/JSUint16ArrayCustom.cpp \
         bindings/js/JSUint32ArrayCustom.cpp \
         bindings/js/JSUint8ArrayCustom.cpp \
+        bindings/js/JSUint8ClampedArrayCustom.cpp \
         bindings/js/JSWebKitAnimationCustom.cpp \
         bindings/js/JSWebKitAnimationListCustom.cpp \
         bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \

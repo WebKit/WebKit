@@ -3866,3 +3866,6 @@ BUGWK65711 : svg/text/modify-text-node-in-tspan.html = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/text/remove-text-node-from-tspan.html = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/text/append-text-node-to-tspan.html = IMAGE+TEXT IMAGE
+
+// Uint8ClampedArray still not implemented.
+BUGWK74455 : fast/js/dfg-uint8clampedarray.html = TEXT

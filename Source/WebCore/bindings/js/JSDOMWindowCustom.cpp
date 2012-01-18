@@ -46,6 +46,7 @@
 #include "JSUint16Array.h"
 #include "JSUint32Array.h"
 #include "JSUint8Array.h"
+#include "JSUint8ClampedArray.h"
 #include "JSWebKitCSSMatrix.h"
 #include "JSWebKitPoint.h"
 #include "JSXMLHttpRequest.h"

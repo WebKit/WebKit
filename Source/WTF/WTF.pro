@@ -143,6 +143,7 @@ HEADERS += \
     Uint16Array.h \
     Uint32Array.h \
     Uint8Array.h \
+    Uint8ClampedArray.h \
     unicode/CharacterNames.h \
     unicode/Collator.h \
     unicode/icu/UnicodeIcu.h \

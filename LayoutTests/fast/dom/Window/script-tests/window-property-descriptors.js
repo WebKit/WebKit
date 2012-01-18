@@ -37,6 +37,7 @@ var __skip__ = {
     "Uint16Array" : 1,
     "Uint32Array" : 1,
     "Uint8Array" : 1,
+    "Uint8ClampedArray" : 1,
     "WebGLActiveInfo" : 1,
     "WebGLBuffer" : 1,
     "WebGLFramebuffer" : 1,

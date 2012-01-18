@@ -3007,6 +3007,9 @@
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
+		91089D3214C33600005AFC49 /* JSUint8ClampedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */; };
+		91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */; };
+		91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9817,6 +9820,10 @@
 		9001773F12E0347800648462 /* OESStandardDerivatives.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESStandardDerivatives.idl; path = canvas/OESStandardDerivatives.idl; sourceTree = "<group>"; };
 		9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESStandardDerivatives.cpp; sourceTree = "<group>"; };
 		9001787F12E0370700648462 /* JSOESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESStandardDerivatives.h; sourceTree = "<group>"; };
+		91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ClampedArray.cpp; sourceTree = "<group>"; };
+		91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUint8ClampedArray.h; sourceTree = "<group>"; };
+		91A3905814C0F4B900F67901 /* Uint8ClampedArray.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = Uint8ClampedArray.idl; path = canvas/Uint8ClampedArray.idl; sourceTree = "<group>"; };
+		91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ClampedArrayCustom.cpp; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -14350,6 +14357,7 @@
 				49EECDDE10503C2400099FAB /* Uint16Array.idl */,
 				49EECDDB10503C2300099FAB /* Uint32Array.idl */,
 				49EECDD810503C2300099FAB /* Uint8Array.idl */,
+				91A3905814C0F4B900F67901 /* Uint8ClampedArray.idl */,
 				A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */,
 				A7D20F3B107F373800A80392 /* WebGLActiveInfo.idl */,
 				49C7B9A81042D32E0009D447 /* WebGLBuffer.cpp */,
@@ -17329,6 +17337,8 @@
 				49EECEFD105070C400099FAB /* JSUint32Array.h */,
 				49EECEFA105070C400099FAB /* JSUint8Array.cpp */,
 				49EECEFB105070C400099FAB /* JSUint8Array.h */,
+				91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */,
+				91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */,
 				15C77092100D3CA8005BA267 /* JSValidityState.cpp */,
 				15C77091100D3CA8005BA267 /* JSValidityState.h */,
 				A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */,
@@ -19212,6 +19222,7 @@
 				49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */,
 				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
 				49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */,
+				91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */,
 				FD8E9BDE13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */,
@@ -24016,6 +24027,7 @@
 				503D0CAE14B5B0BA00F32F57 /* StyleCustomFilterProgram.h in Headers */,
 				50ACE2CB14B5D79300446666 /* CustomFilterOperation.h in Headers */,
 				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
+				91089D3214C33600005AFC49 /* JSUint8ClampedArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26931,6 +26943,8 @@
 				A8F457A014BC1A88000CEA59 /* DOMWindowSQLDatabase.cpp in Sources */,
 				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
 				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
+				91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */,
+				91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2348,7 +2348,14 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;            
         }
-        
+
+        if (at(node.child1()).shouldSpeculateUint8ClampedArray()) {
+            compileGetByValOnIntTypedArray(m_jit.globalData()->uint8ClampedArrayDescriptor(), node, sizeof(uint8_t), isUint8ClampedArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+            if (!m_compileOkay)
+                return;
+            break;
+        }
+
         if (at(node.child1()).shouldSpeculateUint16Array()) {
             compileGetByValOnIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
             if (!m_compileOkay)
@@ -2460,7 +2467,12 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;            
         }
-        
+
+        if (at(node.child1()).shouldSpeculateUint8ClampedArray()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ClampedArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), isUint8ClampedArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray, ClampRounding);
+            break;
+        }
+
         if (at(node.child1()).shouldSpeculateUint16Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
             if (!m_compileOkay)
@@ -2593,7 +2605,14 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;            
         }
-        
+
+        if (at(node.child1()).shouldSpeculateUint8ClampedArray()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ClampedArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), NoTypedArraySpecCheck, UnsignedTypedArray, ClampRounding);
+            if (!m_compileOkay)
+                return;
+            break;
+        }
+
         if (at(node.child1()).shouldSpeculateUint16Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), NoTypedArraySpecCheck, UnsignedTypedArray);
             if (!m_compileOkay)
@@ -3265,6 +3284,10 @@ void SpeculativeJIT::compile(Node& node)
     }
     case GetUint8ArrayLength: {
         compileGetTypedArrayLength(m_jit.globalData()->uint8ArrayDescriptor(), node, !isUint8ArrayPrediction(m_state.forNode(node.child1()).m_type));
+        break;
+    }
+    case GetUint8ClampedArrayLength: {
+        compileGetTypedArrayLength(m_jit.globalData()->uint8ClampedArrayDescriptor(), node, !isUint8ClampedArrayPrediction(m_state.forNode(node.child1()).m_type));
         break;
     }
     case GetUint16ArrayLength: {

@@ -51,6 +51,7 @@ namespace WTF {
     class StringBuilder;
     class StringImpl;
     class Uint8Array;
+    class Uint8ClampedArray;
     class Uint16Array;
     class Uint32Array;
 }
@@ -82,6 +83,7 @@ using WTF::StringBuffer;
 using WTF::StringBuilder;
 using WTF::StringImpl;
 using WTF::Uint8Array;
+using WTF::Uint8ClampedArray;
 using WTF::Uint16Array;
 using WTF::Uint32Array;
 

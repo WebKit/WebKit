@@ -239,6 +239,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/WebGLUniformLocation.idl \
     $$PWD/html/canvas/WebGLVertexArrayObjectOES.idl \
     $$PWD/html/canvas/Uint8Array.idl \
+    $$PWD/html/canvas/Uint8ClampedArray.idl \
     $$PWD/html/canvas/Uint32Array.idl \
     $$PWD/html/canvas/Uint16Array.idl \
     $$PWD/html/DOMFormData.idl \

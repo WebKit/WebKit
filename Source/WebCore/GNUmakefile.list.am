@@ -530,6 +530,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSUint32Array.h \
 	DerivedSources/WebCore/JSUint8Array.cpp \
 	DerivedSources/WebCore/JSUint8Array.h \
+	DerivedSources/WebCore/JSUint8ClampedArray.cpp \
+	DerivedSources/WebCore/JSUint8ClampedArray.h \
 	DerivedSources/WebCore/JSValidityState.cpp \
 	DerivedSources/WebCore/JSValidityState.h \
 	DerivedSources/WebCore/JSVoidCallback.cpp \
@@ -838,6 +840,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/Uint16Array.idl \
 	$(WebCore)/html/canvas/Uint32Array.idl \
 	$(WebCore)/html/canvas/Uint8Array.idl \
+	$(WebCore)/html/canvas/Uint8ClampedArray.idl \
 	$(WebCore)/html/canvas/WebGLActiveInfo.idl \
 	$(WebCore)/html/canvas/WebGLBuffer.idl \
 	$(WebCore)/html/canvas/WebGLContextAttributes.idl \
@@ -1161,6 +1164,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSUint16ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSUint32ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSUint8ArrayCustom.cpp \
+	Source/WebCore/bindings/js/JSUint8ClampedArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \

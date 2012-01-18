@@ -509,6 +509,9 @@ module window {
         attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
         attribute Int8ArrayConstructor Int8Array; // Usable with new operator
         attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
+#if !defined(V8_BINDING) || !V8_BINDING
+        attribute Uint8ClampedArrayConstructor Uint8ClampedArray; // Usable with new operator
+#endif
         attribute Int16ArrayConstructor Int16Array; // Usable with new operator
         attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
         attribute Int32ArrayConstructor Int32Array; // Usable with new operator

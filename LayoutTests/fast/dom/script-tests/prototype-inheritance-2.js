@@ -91,6 +91,7 @@ function constructorNamesForWindow(globalObject)
             type =="Int16ArrayConstructor" ||
             type =="Int32ArrayConstructor" ||
             type =="Uint8ArrayConstructor" ||
+            type =="Uint8ClampedArrayConstructor" ||
             type =="Uint16ArrayConstructor" ||
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
