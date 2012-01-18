@@ -68,20 +68,20 @@
 #include "DeviceOrientationClientEfl.h"
 #endif
 
-#define ZOOM_MIN (0.05)
-#define ZOOM_MAX (4.0)
+static const float zoomMinimum = 0.05;
+static const float zoomMaximum = 4.0;
 
-#define DEVICE_PIXEL_RATIO (1.0)
+static const float devicePixelRatio = 1.0;
 
-static const char EWK_VIEW_TYPE_STR[] = "EWK_View";
+static const char ewkViewTypeString[] = "EWK_View";
 
-static const size_t EWK_VIEW_REPAINTS_SIZE_INITIAL = 32;
-static const size_t EWK_VIEW_REPAINTS_SIZE_STEP = 8;
-static const size_t EWK_VIEW_REPAINTS_SIZE_MAX_FREE = 64;
+static const size_t ewkViewRepaintsSizeInitial = 32;
+static const size_t ewkViewRepaintsSizeStep = 8;
+static const size_t ewkViewRepaintsSizeMaximumFree = 64;
 
-static const size_t EWK_VIEW_SCROLLS_SIZE_INITIAL = 8;
-static const size_t EWK_VIEW_SCROLLS_SIZE_STEP = 2;
-static const size_t EWK_VIEW_SCROLLS_SIZE_MAX_FREE = 32;
+static const size_t ewkViewScrollsSizeInitial = 8;
+static const size_t ewkViewScrollsSizeStep = 2;
+static const size_t ewkViewScrollsSizeMaximumFree = 32;
 
 static const Evas_Smart_Cb_Description _ewk_view_callback_names[] = {
     { "download,request", "p" },
@@ -233,11 +233,11 @@ struct _Ewk_View_Private_Data {
                 _tmp_otype ? _tmp_otype : "(null)");                   \
             return __VA_ARGS__;                                         \
         }                                                               \
-        if (EINA_UNLIKELY(_tmp_sc->data != EWK_VIEW_TYPE_STR)) {        \
+        if (EINA_UNLIKELY(_tmp_sc->data != ewkViewTypeString)) {        \
             EINA_LOG_CRIT                                               \
                 ("%p (%s) is not of an ewk_view (need %p, got %p)!",    \
                 ewkView, _tmp_otype ? _tmp_otype : "(null)",                 \
-                EWK_VIEW_TYPE_STR, _tmp_sc->data);                     \
+                ewkViewTypeString, _tmp_sc->data);                     \
             return __VA_ARGS__;                                         \
         }                                                               \
     } while (0)
@@ -297,9 +297,9 @@ static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Eva
     size_t newSize = 0;
 
     if (priv->repaints.allocated == priv->repaints.count)
-        newSize = priv->repaints.allocated + EWK_VIEW_REPAINTS_SIZE_STEP;
-    else if (!priv->repaints.count && priv->repaints.allocated > EWK_VIEW_REPAINTS_SIZE_INITIAL)
-        newSize = EWK_VIEW_REPAINTS_SIZE_INITIAL;
+        newSize = priv->repaints.allocated + ewkViewRepaintsSizeStep;
+    else if (!priv->repaints.count && priv->repaints.allocated > ewkViewRepaintsSizeInitial)
+        newSize = ewkViewRepaintsSizeInitial;
 
     if (newSize) {
         if (!_ewk_view_repaints_resize(priv, newSize))
@@ -320,9 +320,9 @@ static void _ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Eva
 static void _ewk_view_repaints_flush(Ewk_View_Private_Data* priv)
 {
     priv->repaints.count = 0;
-    if (priv->repaints.allocated <= EWK_VIEW_REPAINTS_SIZE_MAX_FREE)
+    if (priv->repaints.allocated <= ewkViewRepaintsSizeMaximumFree)
         return;
-    _ewk_view_repaints_resize(priv, EWK_VIEW_REPAINTS_SIZE_MAX_FREE);
+    _ewk_view_repaints_resize(priv, ewkViewRepaintsSizeMaximumFree);
 }
 
 static Eina_Bool _ewk_view_scrolls_resize(Ewk_View_Private_Data* priv, size_t size)
@@ -366,9 +366,9 @@ static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord deltaX,
     if (priv->scrolls.allocated == priv->scrolls.count) {
         size_t size;
         if (!priv->scrolls.allocated)
-            size = EWK_VIEW_SCROLLS_SIZE_INITIAL;
+            size = ewkViewScrollsSizeInitial;
         else
-            size = priv->scrolls.allocated + EWK_VIEW_SCROLLS_SIZE_STEP;
+            size = priv->scrolls.allocated + ewkViewScrollsSizeStep;
         if (!_ewk_view_scrolls_resize(priv, size))
             return;
     }
@@ -401,9 +401,9 @@ static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord deltaX,
 static void _ewk_view_scrolls_flush(Ewk_View_Private_Data* priv)
 {
     priv->scrolls.count = 0;
-    if (priv->scrolls.allocated <= EWK_VIEW_SCROLLS_SIZE_MAX_FREE)
+    if (priv->scrolls.allocated <= ewkViewScrollsSizeMaximumFree)
         return;
-    _ewk_view_scrolls_resize(priv, EWK_VIEW_SCROLLS_SIZE_MAX_FREE);
+    _ewk_view_scrolls_resize(priv, ewkViewScrollsSizeMaximumFree);
 }
 
 // Default Event Handling //////////////////////////////////////////////
@@ -700,10 +700,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
     // this functionality will be modified by the scale zoom patch.
-    priv->settings.zoomRange.minScale = ZOOM_MIN;
-    priv->settings.zoomRange.maxScale = ZOOM_MAX;
+    priv->settings.zoomRange.minScale = zoomMinimum;
+    priv->settings.zoomRange.maxScale = zoomMaximum;
     priv->settings.zoomRange.userScalable = true;
-    priv->settings.devicePixelRatio = DEVICE_PIXEL_RATIO;
+    priv->settings.devicePixelRatio = devicePixelRatio;
 
     priv->settings.domTimerInterval = priv->pageSettings->defaultMinDOMTimerInterval();
 
@@ -1136,7 +1136,7 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->sc.calculate = _ewk_view_smart_calculate;
     api->sc.show = _ewk_view_smart_show;
     api->sc.hide = _ewk_view_smart_hide;
-    api->sc.data = EWK_VIEW_TYPE_STR; /* used by type checking */
+    api->sc.data = ewkViewTypeString; /* used by type checking */
     api->sc.callbacks = _ewk_view_callback_names;
 
     api->contents_resize = _ewk_view_smart_contents_resize;

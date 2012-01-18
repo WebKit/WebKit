@@ -262,8 +262,8 @@ static Eina_Bool _ewk_view_tiled_smart_pre_render_start(Ewk_View_Smart_Data* sma
     // pre-render works when two conditions are met.
     // zoom has been changed.
     // and the view has been moved more than tile size.
-    if (abs(previousViewX - viewX) < DEFAULT_TILE_W
-        && abs(previousViewY - viewY) < DEFAULT_TILE_H
+    if (abs(previousViewX - viewX) < defaultTileWidth
+        && abs(previousViewY - viewY) < defaultTileHeigth
         && smartData->previousView.zoom == currentViewZoom) {
         return false;
     }
@@ -295,7 +295,7 @@ static Eina_Bool _ewk_view_tiled_smart_pre_render_start(Ewk_View_Smart_Data* sma
         // Make a base rectangle as big as possible with using maxMemory.
         // and then reshape the base rectangle to fit to contents.
         const int baseSize = static_cast<int>(sqrt(maxMemory / 4.0f));
-        const float widthRate = (viewRect.w + (DEFAULT_TILE_W * 2)) / static_cast<float>(baseSize);
+        const float widthRate = (viewRect.w + (defaultTileWidth * 2)) / static_cast<float>(baseSize);
         const float heightRate = baseSize / static_cast<float>(contentHeight);
         const float rectRate = std::max(widthRate, heightRate);
 

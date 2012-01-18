@@ -696,8 +696,8 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object* ewkBackingStore)
 
     priv->self = ewkBackingStore;
     priv->view.tile.zoom = 1.0;
-    priv->view.tile.width = DEFAULT_TILE_W;
-    priv->view.tile.height = DEFAULT_TILE_H;
+    priv->view.tile.width = defaultTileWidth;
+    priv->view.tile.height = defaultTileHeigth;
     priv->view.offset.cur.x = 0;
     priv->view.offset.cur.y = 0;
     priv->view.offset.old.x = 0;
@@ -1485,9 +1485,9 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     *offsetX = priv->view.offset.cur.x;
     *offsetY = priv->view.offset.cur.y;
 
-    if (fabsf(priv->view.tile.zoom - *zoom) < ZOOM_STEP_MIN) {
+    if (fabsf(priv->view.tile.zoom - *zoom) < zoomStepMinimum) {
         DBG("ignored as zoom difference is < %f: %f",
-            (double)ZOOM_STEP_MIN, fabsf(priv->view.tile.zoom - *zoom));
+            (double)zoomStepMinimum, fabsf(priv->view.tile.zoom - *zoom));
         return true;
     }
 

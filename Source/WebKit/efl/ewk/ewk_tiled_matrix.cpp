@@ -225,8 +225,8 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
     tileMatrix->cspace = colorSpace;
     tileMatrix->render.callback = renderCallback;
     tileMatrix->render.data = (void*)renderData;
-    tileMatrix->tile.width = DEFAULT_TILE_W;
-    tileMatrix->tile.height = DEFAULT_TILE_H;
+    tileMatrix->tile.width = defaultTileWidth;
+    tileMatrix->tile.height = defaultTileHeigth;
 
     return tileMatrix;
 }

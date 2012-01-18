@@ -33,10 +33,10 @@
  */
 #undef DEBUG_MEM_LEAKS
 
-#define DEFAULT_TILE_W (256)
-#define DEFAULT_TILE_H (256)
+const int defaultTileWidth = 256;
+const int defaultTileHeigth = 256;
 
-#define ZOOM_STEP_MIN (0.01)
+const float zoomStepMinimum = 0.01;
 
 #define TILE_SIZE_AT_ZOOM(SIZE, ZOOM) ((int)roundf((SIZE) * (ZOOM)))
 #define TILE_ZOOM_AT_SIZE(SIZE, ORIG_TILE) ((float)(SIZE) / (float)(ORIG_TILE))
