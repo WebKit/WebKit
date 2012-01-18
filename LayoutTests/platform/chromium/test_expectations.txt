@@ -1108,7 +1108,6 @@ BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
 BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
-BUGCR105305 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
 BUGCR105305 MAC LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
 // -----------------------------------------------------------------
@@ -1316,7 +1315,6 @@ BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUGCR23488 LEOPARD : fast/lists/ol-start-parsing.html = IMAGE
 BUGCR23488 LEOPARD : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGCR23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
 BUGCR23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
 // Looks the same to me... huh. Variation of above?
@@ -1440,6 +1438,12 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
+
+// To be rebaselined after skia rev. 3039 lands
+BUGCR110493 CPU : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUGCR110493 CPU : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
+BUGCR110493 CPU : fast/borders/border-image-rotate-transform.html = IMAGE
+BUGCR110493 CPU : svg/custom/focus-ring.svg = IMAGE
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
@@ -2436,10 +2440,6 @@ BUG_YUTAK LINUX WIN : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
-
-// Need to rebaseline now that we antialias rotated images
-BUGCR36902 LINUX WIN : fast/borders/border-image-rotate-transform.html = IMAGE
-BUGCR36902 LINUX WIN : svg/custom/focus-ring.svg = IMAGE
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
