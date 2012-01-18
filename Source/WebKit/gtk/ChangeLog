@@ -1,3 +1,13 @@
+2012-01-18  Evan Nemerson  <evan@coeus-group.com>
+
+        [GTK] WebKit-3.0.gir does not include information about C includes or exported packages
+        https://bugs.webkit.org/show_bug.cgi?id=49875
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add some information to the GIR generator to fix
+        Vala binding generation.
+
 2012-01-18  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK] Listen to GDK_SCROLL_MASK

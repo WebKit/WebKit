@@ -294,9 +294,11 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --pkg=gobject-2.0 \
 	     --pkg=gtk+-@GTK_API_VERSION@ \
 	     --pkg=libsoup-2.4 \
+	     --pkg-export=webkitgtk-@WEBKITGTK_API_VERSION@ \
 	     --output=$@ \
 	     --add-include-path=$(WebKit) \
 	     --add-include-path=$(top_builddir) \
+	     --c-include="webkit/webkit.h" \
 	     -I$(srcdir)/Source \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
