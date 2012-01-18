@@ -19,7 +19,7 @@ Single checkbox should not submit: PASS
 Single checkbox with a submit should submit: PASS
 Single checkbox with a submit disabled should not submit: PASS
 Single select should not submit: PASS
-Select with a submit should submit: FAIL
+Select with a submit should submit: PASS
 Select with a disabled submit should not submit: PASS
 Multi-line select with a submit should submit: PASS
 Multi-line select with a disabled submit should not submit: PASS
