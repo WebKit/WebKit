@@ -224,9 +224,4 @@ plugin_backend_xlib: PKGCONFIG += x11
 linux-g++*: {
     PRE_TARGETDEPS += $$PWD/qtwebkit-export.map
     QMAKE_LFLAGS += -Wl,--version-script=$$PWD/qtwebkit-export.map
-
-    !no_webkit2: {
-        # -lrt is required for shm_open and shm_unlink.
-        LIBS += -lrt
-    }
 }

@@ -60,3 +60,8 @@ INCLUDEPATH += \
 INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api
 
 INCLUDEPATH += $$WEBKIT2_GENERATED_SOURCES_DIR
+
+linux-g++*: {
+    # -lrt is required for shm_open and shm_unlink.
+    LIBS += -lrt
+}

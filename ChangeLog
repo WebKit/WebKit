@@ -1,3 +1,20 @@
+2012-01-18  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt][WK2] Broken build with undefined reference to shm_open and shm_unlink
+        https://bugs.webkit.org/show_bug.cgi?id=76538
+
+        Reviewed by Tor Arne Vestbø.
+
+        The -lrt parameter was coming before -lWebKit2 during linkage.
+
+        Moved rt lib inclusion from Source/api.pri to WebKit2.pri as it should be aware
+        of its own dependencies instead of letting WebKit guess about. Letting
+        it on api.pri can lead to a wrong parameter's order during linker phase.
+        Ubuntu 11.10 was giving errors about SharedMemory (shm_open and
+        shm_unlink undefined symbols).
+
+        * Source/api.pri:
+
 2012-01-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Consolidate layout test crash logging
