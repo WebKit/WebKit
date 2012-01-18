@@ -82,6 +82,8 @@ public:
     virtual void systemFont(int propId, FontDescription&) const;
     virtual Color systemColor(int cssValueId) const;
 
+    virtual bool popsMenuByArrowKeys() const OVERRIDE { return true; }
+
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;

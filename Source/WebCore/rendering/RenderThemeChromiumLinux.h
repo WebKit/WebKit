@@ -74,6 +74,8 @@ namespace WebCore {
         virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
+        virtual bool popsMenuBySpaceOrReturn() const OVERRIDE { return true; }
+
 #if ENABLE(PROGRESS_TAG)
         virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif

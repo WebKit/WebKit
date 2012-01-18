@@ -1,3 +1,25 @@
+2012-01-18  Jun Mukai  <mukai@chromium.org>
+
+        Use RenderTheme in HTMLSelectElement instead of #defines.
+        <http://webkit.org/b/76519>
+
+        Reviewed by Kent Tamura.
+
+        Tests: no new tests because of no behavioral changes.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * platform/gtk/RenderThemeGtk.h:
+        (WebCore::RenderThemeGtk::popsMenuByArrowKeys):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::popsMenuByArrowKeys):
+        (WebCore::RenderTheme::popsMenuBySpaceOrReturn):
+        * rendering/RenderThemeChromiumLinux.h:
+        (WebCore::RenderThemeChromiumLinux::popsMenuBySpaceOrReturn):
+        * rendering/RenderThemeMac.h:
+        (WebCore::RenderThemeMac::popsMenuByArrowKeys):
+
 2012-01-18  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FrameView::forceLayoutParentViewIfNeeded.        

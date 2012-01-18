@@ -76,6 +76,8 @@ public:
     
     virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&);
 
+    virtual bool popsMenuByArrowKeys() const OVERRIDE { return true; }
+
 #if ENABLE(METER_TAG)
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);
