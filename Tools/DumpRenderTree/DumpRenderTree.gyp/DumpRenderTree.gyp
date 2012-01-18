@@ -30,8 +30,8 @@
 
 {
     'variables': {
-        'tools_dir': '../../../Tools',
-        'source_dir': '../..',
+        'tools_dir': '../..',
+        'source_dir': '../../../Source',
     },
      # FIXME: Remove this conditional check once chromium's
     # build/common.gypi is setting this flag to 0 by default. See
@@ -39,8 +39,8 @@
    'conditions': [
          ['build_webkit_exes_from_webkit_gyp==0', {
             'includes': [
-                '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
-                'features.gypi',
+                '../DumpRenderTree.gypi',
+                '../../../Source/WebKit/chromium/features.gypi',
             ],
             'variables': {
                 'conditions': [
@@ -52,7 +52,7 @@
                         'chromium_src_dir': '<(source_dir)/WebKit/chromium',
                     },{
                         # WebKit is checked out in src/chromium/third_party/WebKit
-                        'chromium_src_dir': '../../../..',
+                        'chromium_src_dir': '<(tools_dir)/../..',
                     }],
                 ],
                 'ahem_path': '<(tools_dir)/DumpRenderTree/qt/fonts/AHEM____.TTF',

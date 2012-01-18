@@ -41,7 +41,7 @@
             'type': 'none',
             'dependencies': [
                 'WebKitUnitTests.gyp:webkit_unit_tests',
-                'Tools.gyp:DumpRenderTree',
+                '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree',
             ],
         }
     ],

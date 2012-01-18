@@ -1,3 +1,15 @@
+2012-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] move Tools.gyp, switch build-webkit --chromium to All.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=76505
+
+        Reviewed by Tony Chang.
+
+        Update chromium build script to use All.gyp instead of WebKit.gyp
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp: Renamed from Source/WebKit/chromium/Tools.gyp.
+        * Scripts/webkitdirs.pm:
+
 2012-01-18  Sam Weinig  <sam@webkit.org>
 
         Don’t hardcode the path to ‘make‘.

@@ -119,7 +119,7 @@ if __name__ == '__main__':
                '-Dinside_chromium_build=0',
                '-Dv8_use_snapshot=false',
                '-Dmsvs_use_common_release=0',
-               '-Dbuild_webkit_exes_from_webkit_gyp=1',
+               '-Dbuild_webkit_exes_from_webkit_gyp=0',
 
                # WebKit doesn't use the chromium style checker.
                '-Dmake_clang_dir=Source/WebKit/chromium/third_party/llvm-build/Release+Asserts',
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                '--depth=./',
 
                # gyp file to execute.
-               'WebKit.gyp'])
+               'All.gyp'])
 
   print 'Updating webkit projects from gyp files...'
   sys.stdout.flush()

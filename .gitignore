@@ -58,8 +58,13 @@ Source/Platform/Platform.gyp/*.Makefile
 Source/Platform/Platform.gyp/*.mk
 Source/Platform/Platform.gyp/*.sln
 Source/Platform/Platform.gyp/*.vcproj*
-Tools/Tools.xcodeproj
-Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
+Source/Platform/Platform.gyp/*.xcodeproj*
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.Makefile
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.mk
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.ninja
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.sln
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.vcproj*
+Tools/DumpRenderTree/DumpRenderTree.gyp/*.xcodeproj*
 
 # Ignore status files that manage Chromium dependencies.
 Source/WebKit/chromium/.gclient
