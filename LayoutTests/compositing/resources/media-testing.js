@@ -2,19 +2,25 @@
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
-function ensureFrameVisible(video, videoRenderedCallbac)
+function ensureFrameVisible(video, videoRenderedCallback)
 {
-    video.addEventListener('seeked', videoRenderedCallbac, false);
-    video.currentTime = 0.5;
+    video.addEventListener('timeupdate', function() {
+        video.pause();
+        video.currentTime = 0;
+        if (videoRenderedCallback)
+            videoRenderedCallback();
+    }, false);
+    
+    video.play();
 }
 
-function setupVideo(videoElement, videoPath, canPlayThroughCallback, videoRenderedCallbac)
+function setupVideo(videoElement, videoPath, canPlayThroughCallback, videoRenderedCallback)
 {
     var mediaFile = findMediaFile("video", videoPath);
     videoElement.addEventListener("canplaythrough", function () {
         if (canPlayThroughCallback)
             canPlayThroughCallback();
-        ensureFrameVisible(this, videoRenderedCallbac);
+        ensureFrameVisible(this, videoRenderedCallback);
     }, false);
     videoElement.src = mediaFile;
 }
