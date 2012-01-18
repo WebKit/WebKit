@@ -95,6 +95,14 @@ void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVecto
     m_private = MediaStreamDescriptor::create(label, s);
 }
 
+void WebMediaStreamDescriptor::assign(const WebMediaStreamDescriptor& other)
+{
+    MediaStreamDescriptor* p = other.m_private.get();
+    if (p)
+        p->ref();
+    m_private = p;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)

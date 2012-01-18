@@ -42,8 +42,16 @@ class WebString;
 class WebMediaStreamDescriptor {
 public:
     WebMediaStreamDescriptor() { }
+    WebMediaStreamDescriptor(const WebMediaStreamDescriptor& request) { assign(request); }
     ~WebMediaStreamDescriptor() { reset(); }
 
+    WebMediaStreamDescriptor& operator=(const WebMediaStreamDescriptor& other)
+    {
+        assign(other);
+        return *this;
+    }
+
+    WEBKIT_EXPORT void assign(const WebMediaStreamDescriptor&);
     WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>&);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }

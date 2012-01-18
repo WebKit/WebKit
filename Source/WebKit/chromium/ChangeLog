@@ -1,3 +1,18 @@
+2012-01-18  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Make WebMediaStreamDescriptor copyable
+        https://bugs.webkit.org/show_bug.cgi?id=76526
+
+        Reviewed by Darin Fisher.
+
+        This patch adds a copy constructor and a assignment operator to WebMediaStreamDescriptor.
+
+        * public/platform/WebMediaStreamDescriptor.h:
+        (WebKit::WebMediaStreamDescriptor::WebMediaStreamDescriptor):
+        (WebKit::WebMediaStreamDescriptor::operator=):
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::assign):
+
 2012-01-18  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Enable tracking opaque region in Skia graphics context, return it from LayerTextureUpdater
