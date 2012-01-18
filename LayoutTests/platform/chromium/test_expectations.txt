@@ -1704,10 +1704,6 @@ BUGCR20345 : fast/dom/Window/window-property-descriptors.html = TEXT
 // Failures from Webkit merger 51724 -> 51772
 BUGCR20345 : http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html = TEXT
 
-// Flaky, not clear as of when.
-BUGCR21411 LINUX WIN DEBUG : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
-
-
 BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 
 // Flaky. The width of containing RenderBlocks sometimes becomes larger
@@ -3851,6 +3847,10 @@ BUGWK76272 LEOPARD DEBUG : svg/dom/SVGPathSegList-segment-modification.svg = IMA
 BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
 
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
+
+BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
+
+BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
 
 BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
