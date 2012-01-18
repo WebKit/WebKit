@@ -2578,3 +2578,7 @@ css3/flexbox/flex-align.html
 # [Qt] REGRESSION(r105090): css3/filters/filtered-compositing-descendant.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76432
 css3/filters/filtered-compositing-descendant.html
+
+# [Qt] REGRESSION(r105143): svg/carto.net/frameless-svg-parse-error.html asserting
+# https://bugs.webkit.org/show_bug.cgi?id=76534
+svg/carto.net/frameless-svg-parse-error.html
