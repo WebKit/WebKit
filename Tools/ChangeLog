@@ -1,3 +1,11 @@
+2012-01-18  Sam Weinig  <sam@webkit.org>
+
+        Don’t hardcode the path to ‘make‘.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+
 2012-01-18  Joshua Bell  <jsbell@chromium.org>
 
         Adding myself to committers.py

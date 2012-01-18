@@ -705,7 +705,7 @@
 			buildConfigurationList = 5DC82A6E1023C92A00FD1D3B /* Build configuration list for PBXLegacyTarget "DumpRenderTree Perl Support" */;
 			buildPhases = (
 			);
-			buildToolPath = /usr/bin/make;
+			buildToolPath = make;
 			buildWorkingDirectory = "$(SRCROOT)/mac/PerlSupport";
 			dependencies = (
 			);
