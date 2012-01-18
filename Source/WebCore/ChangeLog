@@ -1,3 +1,39 @@
+2012-01-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        RenderSVGRoot should inherit from RenderReplaced
+        https://bugs.webkit.org/show_bug.cgi?id=76446
+
+        Reviewed by Zoltan Herczeg.
+
+        Let RenderSVGRoot inherit from RenderReplaced, instead of faking RenderReplaced, by inherting from RenderBox
+        and calling setReplaced(true) in the constructor. The outermost <svg> element is a replaced element in the
+        sense of CSS, and thus this is just a logical move. It fixes some issues where the <svg> root appeared
+        as selection leaf, covered by existing tests.
+
+        It allows us to simplify the painting, as outlines, etc. are painted by RenderReplaced now.
+        While I was it, speed up the local to border box computations by caching the result.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::paintReplaced):
+        (WebCore::RenderSVGRoot::willBeDestroyed):
+        (WebCore::RenderSVGRoot::styleWillChange):
+        (WebCore::RenderSVGRoot::styleDidChange):
+        (WebCore::RenderSVGRoot::updateFromElement):
+        (WebCore::RenderSVGRoot::buildLocalToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint):
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::canHaveChildren):
+        (WebCore::RenderSVGRoot::canBeSelectionLeaf):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setupInitialView):
+
 2012-01-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105244.

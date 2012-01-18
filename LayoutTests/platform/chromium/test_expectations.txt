@@ -3878,3 +3878,24 @@ BUGWK65711 : svg/text/append-text-node-to-tspan.html = IMAGE+TEXT IMAGE
 
 // Uint8ClampedArray still not implemented.
 BUGWK74455 : fast/js/dfg-uint8clampedarray.html = TEXT
+
+// Text layout should have changed, kerning should look more natural. We previously didn't relayout
+// the text when moving to a new view target, and thus didn't update the scaledFont.
+BUGWK76446 : svg/custom/linking-a-03-b-all.svg = IMAGE+TEXT
+BUGWK76446 : svg/custom/linking-a-03-b-viewBox-transform.svg = IMAGE+TEXT
+BUGWK76446 : svg/custom/linking-a-03-b-viewBox.svg = IMAGE+TEXT
+
+// Selection should have disappeared, a side-effect of moving RenderSVGRoot to RenderReplaced (a progression!)
+BUGWK76446 : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE+TEXT
+BUGWK76446 : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE+TEXT
+BUGWK76446 : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE+TEXT
+BUGWK76446 : svg/custom/mouse-move-on-svg-root.xhtml = IMAGE+TEXT
+
+// Caret position reported differently, should start at 0 instead of 18.
+BUGWK76446 : svg/custom/pointer-events-image-css-transform.svg = TEXT
+BUGWK76446 : svg/custom/pointer-events-image.svg = TEXT
+BUGWK76446 : svg/custom/pointer-events-text-css-transform.svg = TEXT
+BUGWK76446 : svg/custom/pointer-events-text.svg = TEXT
+
+// RenderSVGRoot now reports a correct size.
+BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT

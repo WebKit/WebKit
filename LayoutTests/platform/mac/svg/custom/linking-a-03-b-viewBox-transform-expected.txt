@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 480x360
-      RenderSVGText {text} at (100,9) size 184x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 184x14
-          chunk 1 text run 1 at (100.00,20.00) startOffset 0 endOffset 41 width 184.00: "Some circles with ids, for linking tests."
+      RenderSVGText {text} at (100,9) size 188x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 188x14
+          chunk 1 text run 1 at (100.00,20.00) startOffset 0 endOffset 41 width 188.00: "Some circles with ids, for linking tests."
       RenderSVGPath {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=220.00] [cy=140.00] [r=35.00]
-      RenderSVGText {text} at (203,87) size 40x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x14
-          chunk 1 text run 1 at (203.00,99.00) startOffset 0 endOffset 8 width 40.00: "circle-1"
+      RenderSVGText {text} at (203,87) size 39x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x14
+          chunk 1 text run 1 at (203.00,99.00) startOffset 0 endOffset 8 width 38.40: "circle-1"
       RenderSVGPath {circle} at (5,84) size 239x239 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=100.00] [cy=260.00] [r=20.00]
-      RenderSVGText {text} at (80,283) size 40x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x14
-          chunk 1 text run 1 at (80.00,295.00) startOffset 0 endOffset 8 width 40.00: "circle-2"
+      RenderSVGText {text} at (80,283) size 39x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x14
+          chunk 1 text run 1 at (80.00,295.00) startOffset 0 endOffset 8 width 38.40: "circle-2"
       RenderSVGRect {rect} at (0,20) size 322x340 [stroke={[type=SOLID] [color=#000000]}] [x=64.00] [y=227.00] [width=72.00] [height=72.00]
       RenderSVGPath {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
-      RenderSVGText {text} at (320,320) size 40x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x14
-          chunk 1 text run 1 at (320.00,332.00) startOffset 0 endOffset 8 width 40.00: "circle-3"
+      RenderSVGText {text} at (320,320) size 39x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x14
+          chunk 1 text run 1 at (320.00,332.00) startOffset 0 endOffset 8 width 38.40: "circle-3"
     RenderSVGContainer {g} at (0,0) size 480x360
       RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

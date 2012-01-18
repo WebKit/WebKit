@@ -55,12 +55,11 @@ using namespace std;
 namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
-    : RenderBox(node)
+    : RenderReplaced(node)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
     , m_needsSizeNegotiationWithHostDocument(false)
 {
-    setReplaced(true);
 }
 
 RenderSVGRoot::~RenderSVGRoot()
@@ -97,25 +96,6 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, 
         isPercentageIntrinsicSize = true;
         intrinsicRatio = FloatSize(style()->width().percent(), style()->height().percent());
     }
-}
-
-void RenderSVGRoot::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    LayoutUnit borderAndPadding = borderAndPaddingWidth();
-    LayoutUnit width = computeReplacedLogicalWidth(false) + borderAndPadding;
-
-    if (style()->maxWidth().isFixed())
-        width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
-
-    if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
-        m_minPreferredLogicalWidth = 0;
-        m_maxPreferredLogicalWidth = width;
-    } else
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = width;
-
-    setPreferredLogicalWidthsDirty(false);
 }
 
 bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
@@ -245,6 +225,7 @@ void RenderSVGRoot::layout()
     LayoutSize oldSize(width(), height());
     computeLogicalWidth();
     computeLogicalHeight();
+    buildLocalToBorderBoxTransform();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     m_isLayoutSizeChanged = needsLayout || (svg->hasRelativeLengths() && oldSize != size());
@@ -270,44 +251,33 @@ void RenderSVGRoot::layout()
     setNeedsLayout(false);
 }
 
-bool RenderSVGRoot::selfWillPaint()
+void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
-    return resources && resources->filter();
-}
-
-void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (paintInfo.context->paintingDisabled())
-        return;
-
-    bool isVisible = style()->visibility() == VISIBLE;
-    LayoutPoint borderBoxOriginInContainer = paintOffset + parentOriginToBorderBox();
-
-    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) && isVisible)
-        paintBoxDecorations(paintInfo, borderBoxOriginInContainer);
-
-    if (paintInfo.phase == PaintPhaseBlockBackground)
-        return;
-
     // An empty viewport disables rendering.
     if (borderBoxRect().isEmpty())
         return;
 
-    // Don't paint if we don't have kids, except if we have filters we should paint those.
-    if (!firstChild() && !selfWillPaint())
+    // Don't paint, if the context explicitely disabled it.
+    if (paintInfo.context->paintingDisabled())
         return;
+
+    // Don't paint if we don't have kids, except if we have filters we should paint those.
+    if (!firstChild()) {
+        SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
+        if (!resources || !resources->filter())
+            return;
+    }
 
     // Make a copy of the PaintInfo because applyTransform will modify the damage rect.
     PaintInfo childPaintInfo(paintInfo);
     childPaintInfo.context->save();
 
     // Apply initial viewport clip - not affected by overflow handling
-    childPaintInfo.context->clip(overflowClipRect(borderBoxOriginInContainer, paintInfo.renderRegion));
+    childPaintInfo.context->clip(overflowClipRect(adjustedPaintOffset, paintInfo.renderRegion));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
-    childPaintInfo.applyTransform(localToRepaintContainerTransform(paintOffset));
+    childPaintInfo.applyTransform(AffineTransform::translation(adjustedPaintOffset.x() - x(), adjustedPaintOffset.y() - y()) * localToParentTransform());
 
     bool continueRendering = true;
     if (childPaintInfo.phase == PaintPhaseForeground)
@@ -320,69 +290,55 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
 
     childPaintInfo.context->restore();
-
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth() && isVisible)
-        paintOutline(paintInfo.context, LayoutRect(borderBoxOriginInContainer, size()));
 }
 
 void RenderSVGRoot::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(this);
-    RenderBox::willBeDestroyed();
+    RenderReplaced::willBeDestroyed();
 }
 
 void RenderSVGRoot::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
-    RenderBox::styleWillChange(diff, newStyle);
+    RenderReplaced::styleWillChange(diff, newStyle);
 }
 
 void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBox::styleDidChange(diff, oldStyle);
+    RenderReplaced::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }
 
 void RenderSVGRoot::updateFromElement()
 {
-    RenderBox::updateFromElement();
+    RenderReplaced::updateFromElement();
     SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates
 // relative to our borderBox origin.  This method gives us exactly that.
-AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
+void RenderSVGRoot::buildLocalToBorderBoxTransform()
 {
-    LayoutSize borderAndPadding = borderOriginToContentBox();
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     float scale = style()->effectiveZoom();
     FloatPoint translate = svg->currentTranslate();
-    AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y());
-    return ctm * svg->viewBoxToViewTransform(width() / scale, height() / scale);
-}
-
-LayoutSize RenderSVGRoot::parentOriginToBorderBox() const
-{
-    return locationOffset();
-}
-
-LayoutSize RenderSVGRoot::borderOriginToContentBox() const
-{
-    return LayoutSize(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-}
-
-AffineTransform RenderSVGRoot::localToRepaintContainerTransform(const LayoutPoint& parentOriginInContainer) const
-{
-    return AffineTransform::translation(parentOriginInContainer.x(), parentOriginInContainer.y()) * localToParentTransform();
+    LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
+    m_localToBorderBoxTransform = svg->viewBoxToViewTransform(width() / scale, height() / scale);
+    if (borderAndPadding.isEmpty() && scale == 1 && translate == FloatPoint::zero())
+        return;
+    m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;
 }
 
 const AffineTransform& RenderSVGRoot::localToParentTransform() const
 {
-    LayoutSize parentToBorderBoxOffset = parentOriginToBorderBox();
-
-    m_localToParentTransform = AffineTransform::translation(parentToBorderBoxOffset.width(), parentToBorderBoxOffset.height()) * localToBorderBoxTransform();
-
+    // Slightly optimized version of m_localToParentTransform = AffineTransform::translation(x(), y()) * m_localToBorderBoxTransform;
+    m_localToParentTransform = m_localToBorderBoxTransform;
+    if (x())
+        m_localToParentTransform.setE(m_localToParentTransform.e() + x());
+    if (y())
+        m_localToParentTransform.setF(m_localToParentTransform.f() + y());
     return m_localToParentTransform;
 }
 
@@ -395,7 +351,7 @@ void RenderSVGRoot::computeFloatRectForRepaint(RenderBoxModelObject* repaintCont
 {
     // Apply our local transforms (except for x/y translation), then our shadow, 
     // and then call RenderBox's method to handle all the normal CSS Box model bits
-    repaintRect = localToBorderBoxTransform().mapRect(repaintRect);
+    repaintRect = m_localToBorderBoxTransform.mapRect(repaintRect);
 
     // Apply initial viewport clip - not affected by overflow settings    
     repaintRect.intersect(borderBoxRect());
@@ -405,7 +361,7 @@ void RenderSVGRoot::computeFloatRectForRepaint(RenderBoxModelObject* repaintCont
         shadow->adjustRectForShadow(repaintRect);
 
     LayoutRect rect = enclosingIntRect(repaintRect);
-    RenderBox::computeRectForRepaint(repaintContainer, rect, fixed);
+    RenderReplaced::computeRectForRepaint(repaintContainer, rect, fixed);
     repaintRect = rect;
 }
 
@@ -415,8 +371,8 @@ void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
     ASSERT(useTransforms); // mapping a point through SVG w/o respecting trasnforms is useless.
 
     // Transform to our border box and let RenderBox transform the rest of the way.
-    transformState.applyTransform(localToBorderBoxTransform());
-    RenderBox::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
+    transformState.applyTransform(m_localToBorderBoxTransform);
+    RenderReplaced::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 void RenderSVGRoot::updateCachedBoundaries()
@@ -433,7 +389,7 @@ void RenderSVGRoot::updateCachedBoundaries()
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     LayoutPoint pointInParent = pointInContainer - toLayoutSize(accumulatedOffset);
-    LayoutPoint pointInBorderBox = pointInParent - parentOriginToBorderBox();
+    LayoutPoint pointInBorderBox(pointInParent.x() - x(), pointInParent.y() - y());
 
     // Note: For now, we're ignoring hits to border and padding for <svg>
     if (!contentBoxRect().contains(pointInBorderBox))

@@ -11,5 +11,4 @@ layer at (0,0) size 800x410
             chunk 1 (middle anchor) text run 1 at (48.50,50.00) startOffset 0 endOffset 49 width 303.00: "The circle should stay in the bottom-right corner"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 3 {text} of child 1 {svg} of body
-selection end:   position 24 of child 0 {#text} of child 3 {text} of child 1 {svg} of body
+caret: position 0 of child 0 {#text} of child 3 {text} of child 1 {svg} of body

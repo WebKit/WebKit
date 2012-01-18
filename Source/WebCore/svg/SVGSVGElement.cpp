@@ -603,20 +603,14 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
 void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* anchorNode)
 {
     bool hadUseCurrentView = m_useCurrentView;
-    setUseCurrentView(false);
     if (fragmentIdentifier.startsWith("xpointer(")) {
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
-        return;
-    }
-    if (fragmentIdentifier.startsWith("svgView(")) {
-        if (!currentView()->parseViewSpec(fragmentIdentifier))
-            return;
-        setUseCurrentView(true);
-        return;
-    }
-    if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
-        SVGViewElement* viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
-        if (viewElement) {
+        setUseCurrentView(false);
+    } else if (fragmentIdentifier.startsWith("svgView(")) {
+        if (currentView()->parseViewSpec(fragmentIdentifier))
+            setUseCurrentView(true);
+    } else if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
+        if (SVGViewElement* viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0) {
             SVGElement* element = SVGLocatable::nearestViewportElement(viewElement);
             if (element->hasTagName(SVGNames::svgTag)) {
                 SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
@@ -624,13 +618,18 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
                 setUseCurrentView(true);
             }
         }
-        return;
     }
-    if (hadUseCurrentView) {
+
+    if (!hadUseCurrentView) {
+        if (!m_useCurrentView)
+            return;
+    } else if (!m_useCurrentView)
         currentView()->setTransform(emptyString());
-        if (RenderObject* object = renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
-    }
+
+    // Force a layout, otherwise RenderSVGRoots localToBorderBoxTransform won't be rebuild.
+    if (RenderObject* object = renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+
     // FIXME: We need to decide which <svg> to focus on, and zoom to it.
     // FIXME: We need to actually "highlight" the viewTarget(s).
 }

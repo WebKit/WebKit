@@ -122,7 +122,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, paintRect);
     
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection)
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && !canHaveChildren())
         return;
     
     if (!paintInfo.shouldPaintWithinRoot(this))
