@@ -116,7 +116,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         assert arch in self.SUPPORTED_ARCHITECTURES
         assert port_name in ('chromium-linux', 'chromium-gpu-linux',
                              'chromium-linux-x86', 'chromium-linux-x86_64',
-                             'chromium-gpu-linux-x86_64')
+                             'chromium-gpu-linux-x86', 'chromium-gpu-linux-x86_64')
         self._version = 'lucid'  # We only support lucid right now.
         self._architecture = arch
 

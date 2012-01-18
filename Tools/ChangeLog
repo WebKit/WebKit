@@ -1,3 +1,11 @@
+2012-01-18  Adam Barth  <abarth@webkit.org>
+
+        Add Chromium Linux GPU 32 to the list of allowed Chromium Linux
+        configurations.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.__init__):
+
 2012-01-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Chromium needs methods to scroll an object into view or to a specific location.
