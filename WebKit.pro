@@ -39,15 +39,3 @@ QtWebKit.makefile = Makefile.QtWebKit
 SUBDIRS += QtWebKit
 
 SUBDIRS += Tools
-
-OTHER_FILES = \
-    Tools/qmake/README \
-    Tools/qmake/configure.pro \
-    Tools/qmake/sync.profile \
-    Tools/qmake/config.tests/README \
-    Tools/qmake/config.tests/fontconfig/* \
-    Tools/qmake/mkspecs/modules/* \
-    Tools/qmake/mkspecs/features/*.prf \
-    Tools/qmake/mkspecs/features/mac/*.prf \
-    Tools/qmake/mkspecs/features/unix/*.prf \
-    Tools/qmake/mkspecs/features/win32/*.prf

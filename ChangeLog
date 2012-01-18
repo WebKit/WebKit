@@ -1,3 +1,11 @@
+2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move OTHER_FILES from WebKit.pro to Tools.pro
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit.pro:
+
 2012-01-18  Shinya Kawanaka  <shinyak@google.com>
 
         Move ShadowContentElement from dom/ to html/ and make ShadowContentElement subclass of HTMLElement.

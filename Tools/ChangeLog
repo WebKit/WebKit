@@ -1,5 +1,13 @@
 2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Move OTHER_FILES from WebKit.pro to Tools.pro
+
+        Reviewed by Simon Hausmann.
+
+        * Tools.pro:
+
+2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Allow building only a subset of the WebKit sub-projects
 
         Fixes build-jsc, broken in r104825.
