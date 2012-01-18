@@ -2582,3 +2582,7 @@ css3/filters/filtered-compositing-descendant.html
 # [Qt] REGRESSION(r105143): svg/carto.net/frameless-svg-parse-error.html asserting
 # https://bugs.webkit.org/show_bug.cgi?id=76534
 svg/carto.net/frameless-svg-parse-error.html
+
+# Web Inspector: track HTML revisions when editing DOM and / or upon free flow edits.
+# https://bugs.webkit.org/show_bug.cgi?id=76457
+inspector/elements/set-html-via-resource.html
