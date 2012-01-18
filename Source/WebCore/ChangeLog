@@ -1,3 +1,40 @@
+2012-01-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Fix region style code in CSSStyleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=76453
+
+        Reviewed by Antti Koivisto.
+
+        Follow up after comments in https://bugs.webkit.org/show_bug.cgi?id=76064.
+        With the new approach, the css rule specificity is correctly taken into account
+        when applying the region style rule.
+        No new tests, the region style tests are still disabled.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleSet::RuleSetSelectorPair::RuleSetSelectorPair):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::collectMatchingRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForRegion):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::checkRegionStyle):
+        (WebCore::CSSStyleSelector::checkRegionSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::isInsideRegionRule):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::isValidRegionStyleProperty):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+
 2012-01-17  Jer Noble  <jer.noble@apple.com>
 
         Mac fails to fire an 'error' event for a <video> <source> having an URL with no file extension

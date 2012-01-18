@@ -172,7 +172,7 @@ if (primitiveValue) \
 
 class RuleData {
 public:
-    RuleData(CSSStyleRule*, CSSSelector*, unsigned position, ERegionStyleEnabled useInRegionStyle = DoNotUseInRegionStyle);
+    RuleData(CSSStyleRule*, CSSSelector*, unsigned position);
 
     unsigned position() const { return m_position; }
     CSSStyleRule* rule() const { return m_rule; }
@@ -184,7 +184,6 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
     unsigned linkMatchType() const { return m_linkMatchType; }
-    ERegionStyleEnabled useInRegionStyle() const { return static_cast<ERegionStyleEnabled>(m_useInRegionStyle); }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -196,13 +195,12 @@ private:
     unsigned m_specificity;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 25;
+    unsigned m_position : 26;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_hasMultipartSelector : 1;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_useInRegionStyle : 1; // ERegionStyleEnabled
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -220,7 +218,7 @@ COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_s
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
-    RuleSet(ERegionStyleEnabled useInRegionStyle = DoNotUseInRegionStyle);
+    RuleSet();
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
@@ -230,6 +228,7 @@ public:
     void addRule(CSSStyleRule*, CSSSelector*);
     void addPageRule(CSSPageRule*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
+    void addRegionRule(WebKitCSSRegionRule*);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
 
@@ -255,9 +254,16 @@ public:
     Vector<RuleData> m_pageRules;
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;
-    ERegionStyleEnabled m_useInRegionStyle;
-
     CSSStyleSelector::Features m_features;
+
+    struct RuleSetSelectorPair {
+        RuleSetSelectorPair(CSSSelector* selector, RuleSet* ruleSet) : selector(selector), ruleSet(adoptPtr(ruleSet)) { }
+        RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
+        CSSSelector* selector;
+        OwnPtr<RuleSet> ruleSet;
+    };
+
+    Vector<RuleSetSelectorPair> m_regionSelectorsAndRuleSets;
 };
 
 static RuleSet* defaultStyle;
@@ -327,7 +333,6 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
-    , m_applyPropertyToRegionStyle(false)
     , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
 #if ENABLE(CSS_SHADERS)
     , m_hasPendingShaders(false)
@@ -440,11 +445,6 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
     
     if (document()->renderer() && document()->renderer()->style())
         document()->renderer()->style()->font().update(fontSelector());
-}
-
-void CSSStyleSelector::addRegionRule(PassRefPtr<WebKitCSSRegionRule> regionStyleRule)
-{
-    m_regionStyleRules.append(regionStyleRule);
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -634,13 +634,57 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
     ASSERT_UNUSED(loadedMathMLUserAgentSheet, loadedMathMLUserAgentSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType, ERegionStyleEnabled useInRegionStyle)
+void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* styleDeclaration, unsigned linkMatchType)
 {
     m_matchedDecls.grow(m_matchedDecls.size() + 1);
     MatchedStyleDeclaration& newDeclaration = m_matchedDecls.last();
     newDeclaration.styleDeclaration = styleDeclaration;
     newDeclaration.linkMatchType = linkMatchType;
-    newDeclaration.useInRegionStyle = useInRegionStyle;
+}
+
+void CSSStyleSelector::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+{
+    ASSERT(rules);
+    ASSERT(m_element);
+
+    // We need to collect the rules for id, class, tag, and everything else into a buffer and
+    // then sort the buffer.
+    if (m_element->hasID())
+        collectMatchingRulesForList(rules->idRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    if (m_element->hasClass()) {
+        ASSERT(m_styledElement);
+        const SpaceSplitString& classNames = m_styledElement->classNames();
+        size_t size = classNames.size();
+        for (size_t i = 0; i < size; ++i)
+            collectMatchingRulesForList(rules->classRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+    const AtomicString& pseudoId = m_element->shadowPseudoId();
+    if (!pseudoId.isEmpty()) {
+        ASSERT(m_styledElement);
+        collectMatchingRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+    if (m_element->isLink())
+        collectMatchingRulesForList(rules->linkPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    if (m_checker.matchesFocusPseudoClass(m_element))
+        collectMatchingRulesForList(rules->focusPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForList(rules->tagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForList(rules->universalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+}
+
+void CSSStyleSelector::collectMatchingRulesForRegion(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+{
+    if (!m_regionForStyling)
+        return;
+
+    unsigned size = rules->m_regionSelectorsAndRuleSets.size();
+    for (unsigned i = 0; i < size; ++i) {
+        CSSSelector* regionSelector = rules->m_regionSelectorsAndRuleSets.at(i).selector;
+        if (checkRegionSelector(regionSelector, static_cast<Element*>(m_regionForStyling->node()))) {
+            RuleSet* regionRules = rules->m_regionSelectorsAndRuleSets.at(i).ruleSet.get();
+            ASSERT(regionRules);
+            collectMatchingRules(regionRules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        }
+    }
 }
 
 void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
@@ -650,28 +694,8 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
     if (!rules || !m_element)
         return;
 
-    // We need to collect the rules for id, class, tag, and everything else into a buffer and
-    // then sort the buffer.
-    if (m_element->hasID())
-        matchRulesForList(rules->idRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    if (m_element->hasClass()) {
-        ASSERT(m_styledElement);
-        const SpaceSplitString& classNames = m_styledElement->classNames();
-        size_t size = classNames.size();
-        for (size_t i = 0; i < size; ++i)
-            matchRulesForList(rules->classRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    }
-    const AtomicString& pseudoId = m_element->shadowPseudoId();
-    if (!pseudoId.isEmpty()) {
-        ASSERT(m_styledElement);
-        matchRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    }
-    if (m_element->isLink())
-        matchRulesForList(rules->linkPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    if (m_checker.matchesFocusPseudoClass(m_element))
-        matchRulesForList(rules->focusPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    matchRulesForList(rules->tagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    matchRulesForList(rules->universalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRules(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForRegion(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
 
     if (m_matchedRules.isEmpty())
         return;
@@ -695,7 +719,7 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
         unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
         if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType, m_matchedRules[i]->useInRegionStyle());
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType);
     }
 }
 
@@ -733,7 +757,7 @@ inline static bool matchesInTreeScope(TreeScope* treeScope, bool ruleReachesInto
     return MatchingUARulesScope::isMatchingUARules() || treeScope->applyAuthorSheets() || ruleReachesIntoShadowDOM;
 }
 
-void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
     if (!rules)
         return;
@@ -853,9 +877,6 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
     if (m_matchAuthorAndUserStyles)
         matchRules(m_authorStyle.get(), result.firstAuthorRule, result.lastAuthorRule, false);
 
-    if (m_regionForStyling)
-        matchRules(m_regionRules.get(), result.firstAuthorRule, result.lastAuthorRule, false);
-
     // Now check our inline style attribute.
     if (m_matchAuthorAndUserStyles && m_styledElement) {
         CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
@@ -906,37 +927,6 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
     m_ruleList = 0;
 
     m_fontDirty = false;
-}
-
-inline void CSSStyleSelector::initForRegionStyling(RenderRegion* region)
-{
-    setRegionForStyling(region);
-
-    if (region)
-        initRegionRules(region);
-}
-
-void CSSStyleSelector::initRegionRules(RenderRegion* region)
-{
-    ASSERT(region);
-    // Mark that the set of rules comes from region styling since we need to filter
-    // the properties that can be applied.
-    m_regionRules = adoptPtr(new RuleSet(UseInRegionStyle));
-
-    // From all the region style rules, select those that apply to the specified region.
-    for (Vector<RefPtr<WebKitCSSRegionRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
-        const CSSSelectorList& regionSelectorList = (*it)->selectorList();
-        for (CSSSelector* s = regionSelectorList.first(); s; s = regionSelectorList.next(s)) {
-            if (!m_checker.checkSelector(s, static_cast<Element*>(region->node())))
-                continue;
-            CSSRuleList* regionStylingRules = (*it)->cssRules();
-            for (unsigned index = 0; index < regionStylingRules->length(); ++index) {
-                CSSRule* regionStylingRule = regionStylingRules->item(index);
-                if (regionStylingRule->isStyleRule())
-                    m_regionRules->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule));
-            }
-        }
-    }
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -1322,7 +1312,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 
     initElement(element);
     initForStyleResolve(element, defaultParent);
-    initForRegionStyling(regionForStyling);
+    m_regionForStyling = regionForStyling;
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1479,7 +1469,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     }
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle)
 {
     if (!e)
         return 0;
@@ -1487,7 +1477,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     initElement(e);
 
     initForStyleResolve(e, parentStyle, pseudo);
-    initForRegionStyling(regionForStyling);
     m_style = RenderStyle::create();
 
     if (m_parentStyle)
@@ -1780,15 +1769,20 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
 #endif
 }
 
-bool CSSStyleSelector::checkRegionStyle(Element* e)
+bool CSSStyleSelector::checkRegionStyle(Element* regionElement)
 {
-    m_checker.clearHasUnknownPseudoElements();
-    m_checker.setPseudoStyle(NOPSEUDO);
+    unsigned rulesSize = m_authorStyle->m_regionSelectorsAndRuleSets.size();
+    for (unsigned i = 0; i < rulesSize; ++i) {
+        ASSERT(m_authorStyle->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
+        if (checkRegionSelector(m_authorStyle->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
+            return true;
+    }
 
-    for (Vector<RefPtr<WebKitCSSRegionRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
-        const CSSSelectorList& regionSelectorList = (*it)->selectorList();
-        for (CSSSelector* s = regionSelectorList.first(); s; s = regionSelectorList.next(s)) {
-            if (m_checker.checkSelector(s, e))
+    if (m_userStyle) {
+        rulesSize = m_userStyle->m_regionSelectorsAndRuleSets.size();
+        for (unsigned i = 0; i < rulesSize; ++i) {
+            ASSERT(m_userStyle->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
+            if (checkRegionSelector(m_userStyle->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
                 return true;
         }
     }
@@ -1887,6 +1881,21 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
         return false;
     return true;
 }
+
+bool CSSStyleSelector::checkRegionSelector(CSSSelector* regionSelector, Element* regionElement)
+{
+    if (!regionSelector || !regionElement)
+        return false;
+
+    m_checker.clearHasUnknownPseudoElements();
+    m_checker.setPseudoStyle(NOPSEUDO);
+
+    for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
+        if (m_checker.checkSelector(s, regionElement))
+            return true;
+
+    return false;
+}
     
 bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
 {
@@ -1971,7 +1980,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position, ERegionStyleEnabled useInRegionStyle)
+RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     : m_rule(rule)
     , m_selector(selector)
     , m_specificity(selector->specificity())
@@ -1981,15 +1990,13 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position,
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector))
-    , m_useInRegionStyle(useInRegionStyle)
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
-RuleSet::RuleSet(ERegionStyleEnabled useInRegionStyle)
+RuleSet::RuleSet()
     : m_ruleCount(0)
     , m_autoShrinkToFitEnabled(true)
-    , m_useInRegionStyle(useInRegionStyle)
 {
 }
 
@@ -2049,7 +2056,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 
 void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* selector)
 {
-    RuleData ruleData(rule, selector, m_ruleCount++, m_useInRegionStyle);
+    RuleData ruleData(rule, selector, m_ruleCount++);
     collectFeaturesFromRuleData(m_features, ruleData);
 
     if (selector->m_match == CSSSelector::Id) {
@@ -2090,6 +2097,26 @@ void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* selector)
 void RuleSet::addPageRule(CSSPageRule* rule)
 {
     m_pageRules.append(RuleData(rule, rule->selectorList().first(), m_pageRules.size()));
+}
+
+void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
+{
+    RuleSet* regionRuleSet = new RuleSet;
+    // The region rule set should take into account the position inside the parent rule set.
+    // Otherwise, the rules inside region block might be incorrectly positioned before other similar rules from
+    // the stylesheet that contains the region block.
+    regionRuleSet->m_ruleCount = m_ruleCount;
+
+    // Collect the region rules into a rule set
+    CSSRuleList* regionStylingRules = rule->cssRules();
+    unsigned rulesSize = regionStylingRules->length();
+    for (unsigned i = 0; i < rulesSize; ++i) {
+        CSSRule* regionStylingRule = regionStylingRules->item(i);
+        if (regionStylingRule->isStyleRule())
+            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule));
+    }
+
+    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
 }
 
 void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
@@ -2145,7 +2172,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         } else if (rule->isKeyframesRule())
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
         else if (rule->isRegionRule() && styleSelector)
-            styleSelector->addRegionRule(static_cast<WebKitCSSRegionRule*>(rule));
+            addRegionRule(static_cast<WebKitCSSRegionRule*>(rule));
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
@@ -2217,11 +2244,27 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
     return convertToLength(primitiveValue, style, rootStyle, true, multiplier, ok);
 }
 
+static inline bool isInsideRegionRule(CSSMutableStyleDeclaration* styleDeclaration)
+{
+    ASSERT(styleDeclaration);
+
+    CSSRule* parentRule = styleDeclaration->parentRule();
+    while (parentRule) {
+        if (parentRule->isRegionRule())
+            return true;
+        parentRule = parentRule->parentRule();
+    }
+    return false;
+}
+
 template <bool applyFirst>
 void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRule());
     CSSMutableStyleDeclaration::const_iterator end = styleDeclaration->end();
+
+    bool styleDeclarationInsideRegionRule = m_regionForStyling ? isInsideRegionRule(styleDeclaration) : false;
+
     for (CSSMutableStyleDeclaration::const_iterator it = styleDeclaration->begin(); it != end; ++it) {
         const CSSProperty& current = *it;
         if (isImportant != current.isImportant())
@@ -2234,6 +2277,11 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
             continue;
         }
         int property = current.id();
+
+        // Filter the properties that can be applied using region styling.
+        if (styleDeclarationInsideRegionRule && !CSSStyleSelector::isValidRegionStyleProperty(property))
+            continue;
+
         if (applyFirst) {
             COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
             COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 18, CSS_zoom_is_end_of_first_prop_range);
@@ -2275,11 +2323,8 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
         m_applyPropertyToVisitedLinkStyle = false;
         return;
     }
-    for (int i = startIndex; i <= endIndex; ++i) {
-        m_applyPropertyToRegionStyle = m_matchedDecls[i].useInRegionStyle;
+    for (int i = startIndex; i <= endIndex; ++i)
         applyDeclaration<applyFirst>(m_matchedDecls[i].styleDeclaration.get(), isImportant, inheritedOnly);
-        m_applyPropertyToRegionStyle = false;
-    }
 }
 
 unsigned CSSStyleSelector::computeDeclarationHash(MatchedStyleDeclaration* declarations, unsigned size)
@@ -2567,7 +2612,7 @@ inline bool isValidVisitedLinkProperty(int id)
 
 // http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
 // FIXME: add incremental support for other region styling properties.
-inline bool isValidRegionStyleProperty(int id)
+inline bool CSSStyleSelector::isValidRegionStyleProperty(int id)
 {
     switch (static_cast<CSSPropertyID>(id)) {
     case CSSPropertyBackgroundColor:
@@ -2657,10 +2702,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
-
-    // Filter region style property
-    if (applyPropertyToRegionStyle() && !isValidRegionStyleProperty(id))
-        return;
 
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 

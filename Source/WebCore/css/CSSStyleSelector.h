@@ -36,7 +36,6 @@
 namespace WebCore {
 
 enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
-enum ERegionStyleEnabled { DoNotUseInRegionStyle, UseInRegionStyle };
 
 class CSSFontSelector;
 class CSSMutableStyleDeclaration;
@@ -115,7 +114,7 @@ public:
 
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
-    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0, RenderRegion* regionForStyling = 0);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0);
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
@@ -142,8 +141,6 @@ public:
 private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
-    void initForRegionStyling(RenderRegion*);
-    void initRegionRules(RenderRegion*);
     void collectFeatures();
     RenderStyle* locateSharedStyle();
     bool matchesRuleSet(RuleSet*);
@@ -152,8 +149,6 @@ private:
     bool canShareStyleWithElement(StyledElement*) const;
 
     PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
-    void setRegionForStyling(RenderRegion* region) { m_regionForStyling = region; }
-    RenderRegion* regionForStyling() const { return m_regionForStyling; }
 
 public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -209,9 +204,8 @@ public:
 
     void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
     void addPageStyle(PassRefPtr<CSSPageRule>);
-    void addRegionRule(PassRefPtr<WebKitCSSRegionRule>);
 
-    bool checkRegionStyle(Element*);
+    bool checkRegionStyle(Element* regionElement);
 
     bool usesSiblingRules() const { return !m_features.siblingRules.isEmpty(); }
     bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
@@ -262,7 +256,7 @@ private:
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll, ERegionStyleEnabled useInRegionStyle = DoNotUseInRegionStyle);
+    void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     struct MatchResult {
         MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1), isCacheable(true) { }
@@ -277,17 +271,21 @@ private:
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
     void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-    void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
 
     bool checkSelector(const RuleData&);
-
+    bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedDeclarations(const MatchResult&);
     template <bool firstPass>
     void applyDeclarations(bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
     void applyDeclaration(CSSMutableStyleDeclaration*, bool isImportant, bool inheritedOnly);
+
+    static bool isValidRegionStyleProperty(int id);
 
     void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
@@ -298,7 +296,6 @@ private:
 
     OwnPtr<RuleSet> m_authorStyle;
     OwnPtr<RuleSet> m_userStyle;
-    OwnPtr<RuleSet> m_regionRules;
 
     Features m_features;
     OwnPtr<RuleSet> m_siblingRuleSet;
@@ -312,9 +309,6 @@ private:
     typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
-    typedef Vector<RefPtr<WebKitCSSRegionRule> > RegionStyleRules;
-    RegionStyleRules m_regionStyleRules;
-
 public:
     static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
@@ -324,7 +318,6 @@ public:
 
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
-    bool applyPropertyToRegionStyle() const { return m_applyPropertyToRegionStyle; }
 
 private:
     static RenderStyle* s_styleNotYetAvailable;
@@ -373,10 +366,7 @@ private:
 
         RefPtr<CSSMutableStyleDeclaration> styleDeclaration;
         union {
-            struct {
-                unsigned linkMatchType : 31;
-                unsigned useInRegionStyle : 1; // ERegionStyleEnabled
-            };
+            unsigned linkMatchType;
             // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
             void* possiblyPaddedMember;
         };
@@ -438,7 +428,6 @@ private:
 
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
-    bool m_applyPropertyToRegionStyle;
     const CSSStyleApplyProperty& m_applyProperty;
     
 #if ENABLE(CSS_SHADERS)
