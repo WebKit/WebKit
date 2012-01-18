@@ -84,15 +84,12 @@ public:
     };
 
 private:
-    static void determineMaxNumberOfParallelThreads();
-
     ThreadFunction m_threadFunction;
     size_t m_sizeOfParameter;
     int m_numberOfJobs;
 
     Vector< RefPtr<ThreadPrivate> > m_threads;
     static Vector< RefPtr<ThreadPrivate> >* s_threadPool;
-    static int s_maxNumberOfParallelThreads;
 };
 
 } // namespace WTF

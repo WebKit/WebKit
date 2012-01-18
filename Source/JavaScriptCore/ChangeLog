@@ -1,3 +1,27 @@
+2012-01-18  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        Cross-platform processor core counter
+        https://bugs.webkit.org/show_bug.cgi?id=76530
+
+        Reviewed by Zoltan Herczeg.
+
+        Two files have been created that include the processor core counter function.
+        It used to be in ParallelJobsGeneric.h/cpp before.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions):
+        * wtf/CMakeLists.txt:
+        * wtf/NumberOfCores.cpp: Added.
+        (WTF::numberOfProcessorCores):
+        * wtf/NumberOfCores.h: Added.
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ParallelEnvironment):
+        * wtf/ParallelJobsGeneric.h:
+
 2012-01-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Consolidate layout test crash logging

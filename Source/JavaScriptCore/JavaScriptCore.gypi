@@ -571,6 +571,8 @@
             'wtf/MainThread.cpp',
             'wtf/MallocZoneSupport.h',
             'wtf/NullPtr.cpp',
+            'wtf/NumberOfCores.cpp',
+            'wtf/NumberOfCores.h',
             'wtf/OSAllocatorPosix.cpp',
             'wtf/OSAllocatorWin.cpp',
             'wtf/OSRandomSource.cpp',

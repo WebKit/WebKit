@@ -31,6 +31,7 @@
 
 #include "ParallelJobs.h"
 #include "UnusedParam.h"
+#include <wtf/NumberOfCores.h>
 
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
 #include <sys/sysctl.h>
@@ -45,19 +46,16 @@ namespace WTF {
 
 Vector< RefPtr<ParallelEnvironment::ThreadPrivate> >* ParallelEnvironment::s_threadPool = 0;
 
-int ParallelEnvironment::s_maxNumberOfParallelThreads = -1;
-
 ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t sizeOfParameter, int requestedJobNumber) :
     m_threadFunction(threadFunction),
     m_sizeOfParameter(sizeOfParameter)
 {
     ASSERT_ARG(requestedJobNumber, requestedJobNumber >= 1);
 
-    if (s_maxNumberOfParallelThreads == -1)
-        determineMaxNumberOfParallelThreads();
+    int maxNumberOfCores = numberOfProcessorCores();
 
-    if (!requestedJobNumber || requestedJobNumber > s_maxNumberOfParallelThreads)
-        requestedJobNumber = static_cast<unsigned>(s_maxNumberOfParallelThreads);
+    if (!requestedJobNumber || requestedJobNumber > maxNumberOfCores)
+        requestedJobNumber = static_cast<unsigned>(maxNumberOfCores);
 
     if (!s_threadPool)
         s_threadPool = new Vector< RefPtr<ThreadPrivate> >();
@@ -65,7 +63,7 @@ ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t s
     // The main thread should be also a worker.
     int maxNumberOfNewThreads = requestedJobNumber - 1;
 
-    for (int i = 0; i < s_maxNumberOfParallelThreads && m_threads.size() < static_cast<unsigned>(maxNumberOfNewThreads); ++i) {
+    for (int i = 0; i < maxNumberOfCores && m_threads.size() < static_cast<unsigned>(maxNumberOfNewThreads); ++i) {
         if (s_threadPool->size() < static_cast<unsigned>(i) + 1U)
             s_threadPool->append(ThreadPrivate::create());
 
@@ -91,32 +89,6 @@ void ParallelEnvironment::execute(void* parameters)
     // Wait until all jobs are done.
     for (i = 0; i < m_threads.size(); ++i)
         m_threads[i]->waitForFinish();
-}
-
-void ParallelEnvironment::determineMaxNumberOfParallelThreads()
-{
-    const int defaultIfUnavailable = 2;
-#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
-    unsigned result;
-    size_t length = sizeof(result);
-    int name[] = {
-        CTL_HW,
-        HW_NCPU
-    };
-    int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
-    s_maxNumberOfParallelThreads = sysctlResult < 0 ? defaultIfUnavailable : result;
-#elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
-    long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
-    s_maxNumberOfParallelThreads = sysconfResult < 0 ? defaultIfUnavailable : static_cast<int>(sysconfResult);
-#elif OS(WINDOWS)
-    UNUSED_PARAM(defaultIfUnavailable);
-
-    SYSTEM_INFO sysInfo;
-    GetSystemInfo(&sysInfo);
-    s_maxNumberOfParallelThreads = sysInfo.dwNumberOfProcessors;
-#else
-    s_maxNumberOfParallelThreads = defaultIfUnavailable;
-#endif
 }
 
 bool ParallelEnvironment::ThreadPrivate::tryLockFor(ParallelEnvironment* parent)

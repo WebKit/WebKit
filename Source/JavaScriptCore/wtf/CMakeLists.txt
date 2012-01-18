@@ -53,6 +53,7 @@ SET(WTF_HEADERS
     Noncopyable.h
     NotFound.h
     NullPtr.h
+    NumberOfCores.h
     OSAllocator.h
     OSRandomSource.h
     OwnArrayPtr.h
@@ -146,6 +147,7 @@ SET(WTF_SOURCES
     MainThread.cpp
     MD5.cpp
     OSRandomSource.cpp
+    NumberOfCores.cpp
     PageAllocationAligned.cpp
     PageBlock.cpp
     ParallelJobsGeneric.cpp

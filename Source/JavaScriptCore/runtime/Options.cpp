@@ -27,6 +27,7 @@
 #include "Options.h"
 
 #include <limits>
+#include <wtf/NumberOfCores.h>
 #include <wtf/PageBlock.h>
 
 #if OS(DARWIN) && ENABLE(PARALLEL_GC)
@@ -174,12 +175,8 @@ void initializeOptions()
     SET(opaqueRootMergeThreshold,             1000);
 
     int cpusToUse = 1;
-#if OS(DARWIN) && ENABLE(PARALLEL_GC)
-    int name[2];
-    size_t valueSize = sizeof(cpusToUse);
-    name[0] = CTL_HW;
-    name[1] = HW_AVAILCPU;
-    sysctl(name, 2, &cpusToUse, &valueSize, 0, 0);
+#if ENABLE(PARALLEL_GC)
+    cpusToUse = WTF::numberOfProcessorCores();
 #endif
     // We don't scale so well beyond 4.
     if (cpusToUse > 4)

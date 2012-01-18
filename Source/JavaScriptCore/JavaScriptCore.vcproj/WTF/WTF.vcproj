@@ -949,6 +949,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\NumberOfCores.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\NumberOfCores.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\OSAllocatorWin.cpp"
 			>
 		</File>

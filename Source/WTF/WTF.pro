@@ -82,6 +82,7 @@ HEADERS += \
     NonCopyingSort.h \
     NotFound.h \
     NullPtr.h \
+    NumberOfCores.h \
     OSAllocator.h \
     OSRandomSource.h \
     OwnArrayPtr.h \
@@ -188,6 +189,7 @@ SOURCES += \
     MainThread.cpp \
     MetaAllocator.cpp \
     NullPtr.cpp \
+    NumberOfCores.cpp \
     OSRandomSource.cpp \
     qt/MainThreadQt.cpp \
     qt/StringQt.cpp \

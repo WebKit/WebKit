@@ -618,6 +618,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/NotFound.h \
 	Source/JavaScriptCore/wtf/NullPtr.h \
+	Source/JavaScriptCore/wtf/NumberOfCores.cpp \
+	Source/JavaScriptCore/wtf/NumberOfCores.h \
 	Source/JavaScriptCore/wtf/OSAllocator.h \
 	Source/JavaScriptCore/wtf/OSRandomSource.cpp \
 	Source/JavaScriptCore/wtf/OSRandomSource.h \
