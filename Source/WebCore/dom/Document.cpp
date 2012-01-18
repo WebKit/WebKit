@@ -4902,6 +4902,9 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     ASSERT(element);
     ASSERT(page() && page()->settings()->fullScreenEnabled());
 
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->unwrapRenderer();
+
     m_fullScreenElement = element;
 
     // Create a placeholder block for a the full-screen element, to keep the page from reflowing
@@ -4916,7 +4919,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     }
 
     if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+        RenderFullScreen::wrapRenderer(renderer, this);
 
     setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), true);
     
@@ -4967,15 +4970,11 @@ void Document::webkitDidExitFullScreenForElement(Element*)
 {
     m_areKeysEnabledInFullScreen = false;
     setAnimatingFullScreen(false);
-
-    if (m_fullScreenRenderer)
-        m_fullScreenRenderer->remove();
     
-    if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->unwrapRenderer();
 
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
-    setFullScreenRenderer(0);
 #if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif
