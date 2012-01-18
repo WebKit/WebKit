@@ -33,7 +33,6 @@
 
 #include "WebAccessibilityObject.h"
 #include "platform/WebCString.h"
-#include "platform/WebPoint.h"
 #include "platform/WebRect.h"
 #include "platform/WebString.h"
 #include <wtf/Assertions.h>
@@ -356,9 +355,6 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     bindMethod("addNotificationListener", &AccessibilityUIElement::addNotificationListenerCallback);
     bindMethod("removeNotificationListener", &AccessibilityUIElement::removeNotificationListenerCallback);
     bindMethod("takeFocus", &AccessibilityUIElement::takeFocusCallback);
-    bindMethod("scrollToMakeVisible", &AccessibilityUIElement::scrollToMakeVisibleCallback);
-    bindMethod("scrollToMakeVisibleWithSubFocus", &AccessibilityUIElement::scrollToMakeVisibleWithSubFocusCallback);
-    bindMethod("scrollToGlobalPoint", &AccessibilityUIElement::scrollToGlobalPointCallback);
 
     bindFallbackMethod(&AccessibilityUIElement::fallbackCallback);
 }
@@ -764,47 +760,6 @@ void AccessibilityUIElement::removeNotificationListenerCallback(const CppArgumen
 void AccessibilityUIElement::takeFocusCallback(const CppArgumentList&, CppVariant* result)
 {
     accessibilityObject().setFocused(true);
-    result->setNull();
-}
-
-void AccessibilityUIElement::scrollToMakeVisibleCallback(const CppArgumentList&, CppVariant* result)
-{
-    accessibilityObject().scrollToMakeVisible();
-    result->setNull();
-}
-
-void AccessibilityUIElement::scrollToMakeVisibleWithSubFocusCallback(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-
-    if (arguments.size() != 4
-        || !arguments[0].isNumber()
-        || !arguments[1].isNumber()
-        || !arguments[2].isNumber()
-        || !arguments[3].isNumber())
-        return;
-
-    int x = arguments[0].toInt32();
-    int y = arguments[1].toInt32();
-    int width = arguments[2].toInt32();
-    int height = arguments[3].toInt32();
-    accessibilityObject().scrollToMakeVisibleWithSubFocus(WebRect(x, y, width, height));
-    result->setNull();
-}
-
-void AccessibilityUIElement::scrollToGlobalPointCallback(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-
-    if (arguments.size() != 2
-        || !arguments[0].isNumber()
-        || !arguments[1].isNumber())
-        return;
-
-    int x = arguments[0].toInt32();
-    int y = arguments[1].toInt32();
-
-    accessibilityObject().scrollToGlobalPoint(WebPoint(x, y));
     result->setNull();
 }
 

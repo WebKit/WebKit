@@ -39,10 +39,6 @@ public:
     static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
     virtual AccessibilityRole roleValue() const { return ScrollAreaRole; }
     ScrollView* scrollView() const { return m_scrollView.get(); }
-
-protected:
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const;
-    virtual void scrollTo(const IntPoint&) const;
     
 private:
     AccessibilityScrollView(ScrollView*);
@@ -90,3 +86,4 @@ inline AccessibilityScrollView* toAccessibilityScrollView(AccessibilityObject* o
 } // namespace WebCore
 
 #endif // AccessibilityScrollView_h
+

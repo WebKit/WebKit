@@ -216,11 +216,7 @@ public:
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
-
-    void scrollToMakeVisible();
-    void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
-    void scrollToGlobalPoint(int x, int y);
-
+    
     // Notifications
     // Function callback should take one argument, the name of the notification.
     bool addNotificationListener(JSObjectRef functionCallback);

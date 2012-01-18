@@ -266,8 +266,6 @@ protected:
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
-    ScrollableArea* getScrollableAreaIfScrollable() const;
-    void scrollTo(const IntPoint&) const;
     
     virtual bool isDetached() const { return !m_renderer; }
 

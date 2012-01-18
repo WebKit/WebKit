@@ -84,7 +84,6 @@ class Node;
 class Page;
 class RenderObject;
 class RenderListItem;
-class ScrollableArea;
 class VisibleSelection;
 class Widget;
 
@@ -643,14 +642,7 @@ public:
     
     // CSS3 Speech properties.
     virtual ESpeak speakProperty() const { return SpeakNormal; }
-
-    // Make this object visible by scrolling as many nested scrollable views as needed.
-    virtual void scrollToMakeVisible() const;
-    // Same, but if the whole object can't be made visible, try for this subrect, in local coordinates.
-    virtual void scrollToMakeVisibleWithSubFocus(const IntRect&) const;
-    // Scroll this object to a given point in global coordinates of the top-level window.
-    virtual void scrollToGlobalPoint(const IntPoint&) const;
-
+    
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)
     AccessibilityObjectWrapper* wrapper() const;
@@ -684,10 +676,6 @@ protected:
     mutable bool m_haveChildren;
     AccessibilityRole m_role;
     
-    // If this object itself scrolls, return its ScrollableArea.
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }
-    virtual void scrollTo(const IntPoint&) const { }
-
     virtual bool isDetached() const { return true; }
     static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);

@@ -126,9 +126,6 @@ private:
     void addNotificationListenerCallback(const CppArgumentList&, CppVariant*);
     void removeNotificationListenerCallback(const CppArgumentList&, CppVariant*);
     void takeFocusCallback(const CppArgumentList&, CppVariant*);
-    void scrollToMakeVisibleCallback(const CppArgumentList&, CppVariant*);
-    void scrollToMakeVisibleWithSubFocusCallback(const CppArgumentList&, CppVariant*);
-    void scrollToGlobalPointCallback(const CppArgumentList&, CppVariant*);
 
     void fallbackCallback(const CppArgumentList&, CppVariant*);
 

@@ -164,13 +164,6 @@ public:
     WEBKIT_EXPORT unsigned cellRowIndex() const;
     WEBKIT_EXPORT unsigned cellRowSpan() const;
 
-    // Make this object visible by scrolling as many nested scrollable views as needed.
-    WEBKIT_EXPORT void scrollToMakeVisible() const;
-    // Same, but if the whole object can't be made visible, try for this subrect, in local coordinates.
-    WEBKIT_EXPORT void scrollToMakeVisibleWithSubFocus(const WebRect&) const;
-    // Scroll this object to a given point in global coordinates of the top-level window.
-    WEBKIT_EXPORT void scrollToGlobalPoint(const WebPoint&) const;
-
 #if WEBKIT_IMPLEMENTATION
     WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);
     WebAccessibilityObject& operator=(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);
