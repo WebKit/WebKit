@@ -4,11 +4,13 @@
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
+<div id="console"></div>
 <xht:input id="test"></xht:input>
 <script>
 var source = document.getElementById('test');
 var imported = document.importNode(source, true);
 shouldBe('imported.constructor', 'source.constructor');
+var successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
