@@ -1,3 +1,30 @@
+2012-01-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Chromium needs methods to scroll an object into view or to a specific location.
+        https://bugs.webkit.org/show_bug.cgi?id=73460
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::scrollToMakeVisibleCallback):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocusCallback):
+        (AccessibilityUIElement::scrollToGlobalPointCallback):
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+
 2012-01-17  Enrica Casucci  <enrica@apple.com>
 
         Missing NSForegroundColorAttributeName should be treated as black instead of transparent.

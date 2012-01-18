@@ -1,0 +1,17 @@
+Tests that scrolling to make an element visible successfully scrolls the main window.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Upper Target
+5000-pixel box
+Lower Target
+PASS window.pageYOffset is 0
+PASS window.pageYOffset is >= 4532
+PASS 5110 is >= window.pageYOffset
+PASS window.pageYOffset is >= -496
+PASS 82 is >= window.pageYOffset
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

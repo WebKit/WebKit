@@ -870,6 +870,24 @@ unsigned WebAccessibilityObject::cellRowSpan() const
     return rowRange.second;
 }
 
+void WebAccessibilityObject::scrollToMakeVisible() const
+{
+    m_private->updateBackingStore();
+    m_private->scrollToMakeVisible();
+}
+
+void WebAccessibilityObject::scrollToMakeVisibleWithSubFocus(const WebRect& subfocus) const
+{
+    m_private->updateBackingStore();
+    m_private->scrollToMakeVisibleWithSubFocus(subfocus);
+}
+
+void WebAccessibilityObject::scrollToGlobalPoint(const WebPoint& point) const
+{
+    m_private->updateBackingStore();
+    m_private->scrollToGlobalPoint(point);
+}
+
 WebAccessibilityObject::WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>& object)
     : m_private(object)
 {

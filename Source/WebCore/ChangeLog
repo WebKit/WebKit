@@ -1,3 +1,37 @@
+2012-01-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Chromium needs methods to scroll an object into view or to a specific location.
+        https://bugs.webkit.org/show_bug.cgi?id=73460
+
+        Reviewed by Chris Fleizach.
+
+        Tests: platform/chromium/accessibility/scroll-to-global-point-main-window.html
+               platform/chromium/accessibility/scroll-to-global-point-nested.html
+               platform/chromium/accessibility/scroll-to-global-point-iframe.html
+               platform/chromium/accessibility/scroll-to-global-point-iframe-nested.html
+               platform/chromium/accessibility/scroll-to-make-visible-div-overflow.html
+               platform/chromium/accessibility/scroll-to-make-visible-iframe.html
+               platform/chromium/accessibility/scroll-to-make-visible-main-window.html
+               platform/chromium/accessibility/scroll-to-make-visible-nested.html
+               platform/chromium/accessibility/scroll-to-make-visible-with-subfocus.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::computeBestScrollOffset):
+        (WebCore::AccessibilityObject::scrollToMakeVisible):
+        (WebCore::AccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        (WebCore::AccessibilityObject::scrollToGlobalPoint):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityObject::scrollTo):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityRenderObject::scrollTo):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityScrollView::scrollTo):
+        * accessibility/AccessibilityScrollView.h:
+
 2012-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         file:// doesn't work as base URL
