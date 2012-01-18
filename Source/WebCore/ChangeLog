@@ -1,3 +1,22 @@
+2012-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] [regression] A couple of tests failing after r105253
+        https://bugs.webkit.org/show_bug.cgi?id=76549
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixes a regression added by r105253. The method that
+        RenderThemeGtk needs to overwrite is popsMenuBySpaceOrReturn()
+        instead of popsMenuByArrowKeys().
+
+        No new tests as it's already covered by
+        fast/forms/select-popup-pagekeys.html and
+        fast/forms/select/menulist-onchange-fired-with-key-up-down.html
+        that started to fail after the revision mentioned above.
+
+        * platform/gtk/RenderThemeGtk.h:
+        (WebCore::RenderThemeGtk::popsMenuBySpaceOrReturn):
+
 2012-01-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: omit compression field in HAR entries for resources coming from cache
