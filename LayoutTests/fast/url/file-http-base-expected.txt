@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 FAIL canonicalize('file:c:\\foo\\bar.html') should be file:///C:/foo/bar.html. Was file://c:/foo/bar.html.
 FAIL canonicalize('  File:c|////foo\\bar.html') should be file:///C:////foo/bar.html. Was file://c|////foo/bar.html.
-FAIL canonicalize('file:') should be file:///. Was file:.
+PASS canonicalize('file:') is 'file:///'
 FAIL canonicalize('file:UNChost/path') should be file://unchost/path. Was file://UNChost/path.
 FAIL canonicalize('c:\\foo\\bar') should be file:///C:/foo/bar. Was c:/foo/bar.
 FAIL canonicalize('C|/foo/bar') should be file:///C:/foo/bar. Was http://example.com/mock/C|/foo/bar.
@@ -28,8 +28,8 @@ FAIL canonicalize('file:c|//foo\\bar.html') should be file:///c%7C//foo/bar.html
 FAIL canonicalize('//') should be file:///. Was http:/.
 FAIL canonicalize('///') should be file:///. Was http:/.
 FAIL canonicalize('///test') should be file:///test. Was http:/test.
-FAIL canonicalize('file://test') should be file://test/. Was file://test.
-FAIL canonicalize('file://localhost') should be file://localhost/. Was file:.
+PASS canonicalize('file://test') is 'file://test/'
+FAIL canonicalize('file://localhost') should be file://localhost/. Was file:///.
 FAIL canonicalize('file://localhost/') should be file://localhost/. Was file:///.
 FAIL canonicalize('file://localhost/test') should be file://localhost/test. Was file:///test.
 PASS successfullyParsed is true

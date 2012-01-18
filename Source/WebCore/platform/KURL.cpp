@@ -1324,7 +1324,7 @@ void KURL::parse(const char* url, const String* originalString)
         && isLetterMatchIgnoringCase(url[userStart+8], 't');
 
     // File URLs need a host part unless it is just file:// or file://localhost
-    bool degenFilePath = pathStart == pathEnd && (hostStart == hostEnd || hostIsLocalHost);
+    bool degenerateFilePath = pathStart == pathEnd && (hostStart == hostEnd || hostIsLocalHost);
 
     bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
 
@@ -1332,7 +1332,7 @@ void KURL::parse(const char* url, const String* originalString)
     *p++ = ':';
 
     // if we have at least one authority part or a file URL - add "//" and authority
-    if (isFile ? !degenFilePath : (haveNonHostAuthorityPart || hostStart != hostEnd)) {
+    if (isFile ? !degenerateFilePath : (haveNonHostAuthorityPart || hostStart != hostEnd)) {
         *p++ = '/';
         *p++ = '/';
 
@@ -1385,12 +1385,18 @@ void KURL::parse(const char* url, const String* originalString)
             }
         }
         m_portEnd = p - buffer.data();
-    } else
+    } else {
+        if (isFile) {
+            ASSERT(degenerateFilePath);
+            *p++ = '/';
+            *p++ = '/';
+        }
         m_userStart = m_userEnd = m_passwordEnd = m_hostEnd = m_portEnd = p - buffer.data();
+    }
 
     // For canonicalization, ensure we have a '/' for no path.
-    // Do this only for URL with protocol http or https.
-    if (m_protocolIsInHTTPFamily && pathEnd == pathStart)
+    // Do this only for URL with protocol file, http or https.
+    if ((m_protocolIsInHTTPFamily || isFile) && pathEnd == pathStart)
         *p++ = '/';
 
     // add path, escaping bad characters

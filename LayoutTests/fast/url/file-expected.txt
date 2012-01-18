@@ -24,11 +24,11 @@ FAIL canonicalize('file:///C:/asdf#\xc2') should be file:///C:/asdf#ï¿½. Was 
 PASS canonicalize('file:///home/me') is 'file:///home/me'
 FAIL canonicalize('file:c:\\foo\\bar.html') should be file:///c:/foo/bar.html. Was file:///tmp/mock/c:/foo/bar.html.
 FAIL canonicalize('file:c|//foo\\bar.html') should be file:///c%7C//foo/bar.html. Was file:///tmp/mock/c|//foo/bar.html.
-FAIL canonicalize('//') should be file:///. Was file:.
+PASS canonicalize('//') is 'file:///'
 PASS canonicalize('///') is 'file:///'
 PASS canonicalize('///test') is 'file:///test'
-FAIL canonicalize('file://test') should be file://test/. Was file://test.
-FAIL canonicalize('file://localhost') should be file://localhost/. Was file:.
+PASS canonicalize('file://test') is 'file://test/'
+FAIL canonicalize('file://localhost') should be file://localhost/. Was file:///.
 FAIL canonicalize('file://localhost/') should be file://localhost/. Was file:///.
 FAIL canonicalize('file://localhost/test') should be file://localhost/test. Was file:///test.
 PASS successfullyParsed is true
