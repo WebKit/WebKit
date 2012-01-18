@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NumberOfCores.h"
 
-#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
+#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #elif OS(LINUX) || OS(AIX) || OS(SOLARIS)

@@ -1,3 +1,19 @@
+2012-01-18  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        Cross-platform processor core counter fix
+        https://bugs.webkit.org/show_bug.cgi?id=76540
+
+        Reviewed by Zoltan Herczeg.
+
+        I attached "OS(FREEBSD)" to "#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)"
+        and I removed the OS checking macros from ParallelJobsGeneric.cpp because
+        the NumberOfCores.cpp contains them for counting CPU cores.
+        The processor core counter patch located at
+        https://bugs.webkit.org/show_bug.cgi?id=76530
+
+        * wtf/NumberOfCores.cpp:
+        * wtf/ParallelJobsGeneric.cpp:
+
 2012-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Cross-platform processor core counter

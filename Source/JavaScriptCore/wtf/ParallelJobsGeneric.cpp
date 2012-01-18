@@ -30,17 +30,7 @@
 #if ENABLE(THREADING_GENERIC)
 
 #include "ParallelJobs.h"
-#include "UnusedParam.h"
 #include <wtf/NumberOfCores.h>
-
-#if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD)
-#include <sys/sysctl.h>
-#include <sys/types.h>
-#elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
-#include <unistd.h>
-#elif OS(WINDOWS)
-#include <windows.h>
-#endif
 
 namespace WTF {
 
