@@ -258,6 +258,7 @@ committers_unable_to_review = [
     Committer("Jon Lee", "jonlee@apple.com", "jonlee"),
     Committer("Joone Hur", ["joone.hur@collabora.co.uk", "joone@kldp.org", "joone@webkit.org"], "joone"),
     Committer("Joost de Valk", ["joost@webkit.org", "webkit-dev@joostdevalk.nl"], "Altha"),
+    Committer("Joshua Bell", ["jsbell@chromium.org", "jsbell@google.com"], "jsbell"),
     Committer("Julie Parent", ["jparent@google.com", "jparent@chromium.org"], "jparent"),
     Committer("Jungshik Shin", "jshin@chromium.org"),
     Committer("Justin Schuh", "jschuh@chromium.org", "jschuh"),
