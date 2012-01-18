@@ -1609,6 +1609,8 @@
             'accessibility/AccessibilityMenuListOption.h',
             'accessibility/AccessibilityMenuListPopup.cpp',
             'accessibility/AccessibilityMenuListPopup.h',
+            'accessibility/AccessibilityMockObject.cpp',
+            'accessibility/AccessibilityMockObject.h',
             'accessibility/AccessibilityObject.cpp',
             'accessibility/AccessibilityProgressIndicator.cpp',
             'accessibility/AccessibilityProgressIndicator.h',

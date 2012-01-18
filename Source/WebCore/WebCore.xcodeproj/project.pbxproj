@@ -610,6 +610,8 @@
 		29A812490FBB9CA900510293 /* AccessibilityObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */; };
 		29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */; };
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
+		29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */; };
+		29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
@@ -7048,6 +7050,8 @@
 		29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectWrapper.h; sourceTree = "<group>"; };
 		29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
 		29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; };
+		29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMockObject.h; sourceTree = "<group>"; };
+		29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMockObject.cpp; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
@@ -13292,6 +13296,8 @@
 				76CDD2F11103DA6600680521 /* AccessibilityMenuListOption.h */,
 				76CDD2EE1103DA6600680521 /* AccessibilityMenuListPopup.cpp */,
 				76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */,
+				29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */,
+				29ACB211143E7128006BCA5F /* AccessibilityMockObject.h */,
 				2981CAA5131822EC00D12F2A /* AccessibilityObject.cpp */,
 				29A812180FBB9C1D00510293 /* AccessibilityObject.h */,
 				A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */,
@@ -22796,6 +22802,7 @@
 				1A927FD31416A15B003A83C8 /* npruntime.h in Headers */,
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */,
+				29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25468,6 +25475,7 @@
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
 				6EBC5D85138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp in Sources */,
 				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
+				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

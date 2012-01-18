@@ -23682,6 +23682,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\accessibility\AccessibilityMockObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilityMockObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\accessibility\AccessibilityObject.cpp"
 				>
 				<FileConfiguration

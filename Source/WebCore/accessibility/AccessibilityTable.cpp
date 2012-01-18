@@ -351,7 +351,7 @@ void AccessibilityTable::addChildren()
     for (unsigned i = 0; i < length; ++i) {
         AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->getOrCreate(ColumnRole));
         column->setColumnIndex((int)i);
-        column->setParentTable(this);
+        column->setParent(this);
         m_columns.append(column);
         if (!column->accessibilityIsIgnored())
             m_children.append(column);
@@ -368,7 +368,7 @@ AccessibilityObject* AccessibilityTable::headerContainer()
         return m_headerContainer;
     
     m_headerContainer = static_cast<AccessibilityTableHeaderContainer*>(axObjectCache()->getOrCreate(TableHeaderContainerRole));
-    m_headerContainer->setParentTable(this);
+    m_headerContainer->setParent(this);
     
     return m_headerContainer;
 }

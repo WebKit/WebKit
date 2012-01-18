@@ -29,13 +29,13 @@
 #ifndef AccessibilityImageMapLink_h
 #define AccessibilityImageMapLink_h
 
-#include "AccessibilityObject.h"
+#include "AccessibilityMockObject.h"
 #include "HTMLAreaElement.h"
 #include "HTMLMapElement.h"
 
 namespace WebCore {
     
-class AccessibilityImageMapLink : public AccessibilityObject {
+class AccessibilityImageMapLink : public AccessibilityMockObject {
         
 private:
     AccessibilityImageMapLink();
@@ -50,13 +50,11 @@ public:
     HTMLMapElement* mapElement() const { return m_mapElement.get(); }
     
     virtual Node* node() const { return m_areaElement.get(); }
-    void setParent(AccessibilityObject* parent) { m_parent = parent; }
         
     virtual AccessibilityRole roleValue() const;
     virtual bool accessibilityIsIgnored() const { return false; }
     virtual bool isEnabled() const { return true; }
     
-    virtual AccessibilityObject* parentObject() const;
     virtual Element* anchorElement() const;
     virtual Element* actionElement() const;
     virtual KURL url() const;
@@ -64,7 +62,8 @@ public:
     virtual bool isLinked() const { return true; }
     virtual String title() const;
     virtual String accessibilityDescription() const;
-
+    virtual AccessibilityObject* parentObject() const;
+    
     virtual String stringValueForMSAA() const;
     virtual String nameForMSAA() const;
 
@@ -73,7 +72,6 @@ public:
 private:    
     RefPtr<HTMLAreaElement> m_areaElement;
     RefPtr<HTMLMapElement> m_mapElement;
-    AccessibilityObject* m_parent;
     
     virtual bool isImageMapLink() const { return true; }
 };

@@ -92,8 +92,8 @@ void AccessibilitySlider::addChildren()
     AXObjectCache* cache = m_renderer->document()->axObjectCache();
 
     AccessibilitySliderThumb* thumb = static_cast<AccessibilitySliderThumb*>(cache->getOrCreate(SliderThumbRole));
-    thumb->setParentObject(this);
-
+    thumb->setParent(this);
+    
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
     if (thumb->accessibilityIsIgnored())
@@ -164,7 +164,6 @@ HTMLInputElement* AccessibilitySlider::element() const
 
 
 AccessibilitySliderThumb::AccessibilitySliderThumb()
-    : m_parentSlider(0)
 {
 }
 
@@ -175,11 +174,11 @@ PassRefPtr<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
     
 IntRect AccessibilitySliderThumb::elementRect() const
 {
-    if (!m_parentSlider->renderer())
+    if (!m_parent->renderer())
         return IntRect();
 
-    IntRect intRect = toRenderSlider(m_parentSlider->renderer())->thumbRect();
-    FloatQuad floatQuad = m_parentSlider->renderer()->localToAbsoluteQuad(FloatRect(intRect));
+    IntRect intRect = toRenderSlider(m_parent->renderer())->thumbRect();
+    FloatQuad floatQuad = m_parent->renderer()->localToAbsoluteQuad(FloatRect(intRect));
 
     return floatQuad.enclosingBoundingBox();
 }

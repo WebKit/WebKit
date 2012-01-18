@@ -37,7 +37,6 @@ using namespace std;
 namespace WebCore {
 
 AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer()
-    : m_parentTable(0)
 {
 }
 
@@ -70,14 +69,14 @@ IntSize AccessibilityTableHeaderContainer::size() const
     
 bool AccessibilityTableHeaderContainer::accessibilityIsIgnored() const
 {
-    if (!m_parentTable)
+    if (!m_parent)
         return true;
     
 #if PLATFORM(GTK)
     return true;
 #endif
 
-    return m_parentTable->accessibilityIsIgnored();
+    return m_parent->accessibilityIsIgnored();
 }
 
 void AccessibilityTableHeaderContainer::addChildren()
@@ -85,10 +84,10 @@ void AccessibilityTableHeaderContainer::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!m_parentTable || !m_parentTable->isAccessibilityTable())
+    if (!m_parent || !m_parent->isAccessibilityTable())
         return;
     
-    static_cast<AccessibilityTable*>(m_parentTable)->columnHeaders(m_children);
+    static_cast<AccessibilityTable*>(m_parent)->columnHeaders(m_children);
     
     unsigned length = m_children.size();
     for (unsigned k = 0; k < length; ++k)

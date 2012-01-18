@@ -126,7 +126,7 @@ void AccessibilityARIAGrid::addChildren()
     for (unsigned i = 0; i < columnCount; ++i) {
         AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->getOrCreate(ColumnRole));
         column->setColumnIndex((int)i);
-        column->setParentTable(this);
+        column->setParent(this);
         m_columns.append(column);
         if (!column->accessibilityIsIgnored())
             m_children.append(column);

@@ -91,7 +91,13 @@ protected:
     bool hasARIARole() const;
     bool isTableExposableThroughAccessibility() const;
 };
-
+    
+inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)
+{
+    ASSERT(!object || object->isAccessibilityTable());
+    return static_cast<AccessibilityTable*>(object);
+}
+    
 } // namespace WebCore 
 
 #endif // AccessibilityTable_h

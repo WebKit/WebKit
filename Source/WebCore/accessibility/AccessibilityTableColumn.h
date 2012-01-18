@@ -29,7 +29,7 @@
 #ifndef AccessibilityTableColumn_h
 #define AccessibilityTableColumn_h
 
-#include "AccessibilityObject.h"
+#include "AccessibilityMockObject.h"
 #include "AccessibilityTable.h"
 #include "IntRect.h"
 
@@ -37,7 +37,7 @@ namespace WebCore {
     
 class RenderTableSection;
 
-class AccessibilityTableColumn : public AccessibilityObject {
+class AccessibilityTableColumn : public AccessibilityMockObject {
     
 private:
     AccessibilityTableColumn();
@@ -45,8 +45,6 @@ public:
     static PassRefPtr<AccessibilityTableColumn> create();
     virtual ~AccessibilityTableColumn();
     
-    void setParentTable(AccessibilityTable*);
-    virtual AccessibilityObject* parentObject() const { return m_parentTable; }
     AccessibilityObject* headerObject();
         
     virtual bool accessibilityIsIgnored() const;
@@ -58,12 +56,12 @@ public:
     
     virtual const AccessibilityChildrenVector& children();
     virtual void addChildren();
+    virtual void setParent(AccessibilityObject*);
     
     virtual IntSize size() const;
     virtual IntRect elementRect() const;
     
 private:    
-    AccessibilityTable* m_parentTable;
     int m_columnIndex;
     IntRect m_columnRect;
     
