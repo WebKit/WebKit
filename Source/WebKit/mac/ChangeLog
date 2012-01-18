@@ -1,3 +1,21 @@
+2012-01-17  Enrica Casucci  <enrica@apple.com>
+
+        Missing NSForegroundColorAttributeName should be treated as black instead of transparent.
+        https://bugs.webkit.org/show_bug.cgi?id=76490
+        <rdar://problem/9460733>
+        
+        Starting with Lion, there is no more NSForegroundColor attribute in the dictionary
+        if the color matches the default (solid black).
+        The fix consists in treating the lack of color as solid black instead of transparent as
+        we did before.
+
+        Added a TestWebKitAPI test.
+        
+        Reviewed by Darin Adler and Dan Bernstein.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _styleForAttributeChange:]):
+
 2012-01-17  Matthew Delaney  <mdelaney@apple.com>
 
         On post-Lion releases, preserve the Lion behavior where WebKit explicitly calls -setGeometryFlipped on the hosting layer for applications that were linked on Lion or earlier.
