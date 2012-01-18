@@ -102,10 +102,8 @@ Vector<String> platformUserPreferredLanguages()
         if (!languageCount)
             userPreferredLanguages.append("en");
         else {
-            for (CFIndex i = 0; i < languageCount; i++) {
-                RetainPtr<CFStringRef> language(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
-                userPreferredLanguages.append(createHTTPStyleLanguageCode((NSString *)language.get()));
-            }
+            for (CFIndex i = 0; i < languageCount; i++)
+                userPreferredLanguages.append(createHTTPStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i)));
         }
     }
 
