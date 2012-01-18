@@ -3855,11 +3855,12 @@ BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK76511 : compositing/overflow/scroll-ancestor-update.html = IMAGE
 BUGWK76511 : compositing/visibility/visibility-simple-video-layer.html = IMAGE
 BUGWK76511 : compositing/self-painting-layers.html = IMAGE
 BUGWK76511 : compositing/layers-inside-overflow-scroll.html = IMAGE
 BUGWK76511 : compositing/reflections/load-video-in-reflection.html = IMAGE
+BUGWK76511 MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
+BUGWK76511 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = IMAGE+TEXT
 
 // Seems flaky - it depends on property dumping of JS internal fields in a specific order, which doesn't seem stable.
 BUGCR110537 : inspector/protocol/runtime-agent.html = PASS TEXT
