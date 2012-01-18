@@ -915,6 +915,8 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     if (!svgRoot->needsSizeNegotiationWithHostDocument())
         return;
 
+    RefPtr<FrameView> frameView = ownerRenderer->frame()->view();
+
     ASSERT(!m_inLayoutParentView);
     TemporaryChange<bool> resetInLayoutParentView(m_inLayoutParentView, true);
 
@@ -933,7 +935,6 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     rootView->updateWidgetPositions();
 
     // Synchronously enter layout, to layout the view containing the host object/embed/iframe.
-    FrameView* frameView = ownerRenderer->frame()->view();
     ASSERT(frameView);
     frameView->layout();
 #endif
