@@ -1,3 +1,14 @@
+2012-01-17  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Remove public/WebWorker.h from the gyp projects
+        https://bugs.webkit.org/show_bug.cgi?id=76512
+
+        Reviewed by David Levin.
+
+        public/WebWorker.h was removed in r105020, remove references from the gyp projects.
+
+        * WebKit.gyp:
+
 2012-01-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium dependency 117616:117882
