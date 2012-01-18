@@ -84,8 +84,12 @@ th {
     cursor: default;
 }
 
-.expand-button.current {
+.current {
     color: red;
+}
+
+.current .expand-button {
+    border-color: red;
 }
 
 .expand-button-text {
@@ -95,7 +99,7 @@ th {
 }
 
 .test-link.flagged:after {
-    content: ' (flagged)';
+    content: ' \2691';
 }
 
 .stopped-running-early-message {
@@ -908,11 +912,16 @@ document.addEventListener('mouseout', PixelZoomer.handleMouseOut, false);
 
 var TestNavigator = {};
 
-TestNavigator.currentTestIndex = 0;
-TestNavigator.flaggedTests = {};
+TestNavigator.reset = function() {
+    TestNavigator.currentTestIndex = -1;
+    TestNavigator.flaggedTests = {};
+}
 
 TestNavigator.handleKeyEvent = function(event)
 {
+    if (event.metaKey || event.shiftKey || event.ctrlKey)
+        return;
+
     switch (String.fromCharCode(event.charCode)) {
         case 'i':
             TestNavigator._scrollToFirstTest();
@@ -956,13 +965,17 @@ TestNavigator._scrollToLastTest = function()
 
 TestNavigator._scrollToNextTest = function()
 {
-    if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex + 1))
+    if (TestNavigator.currentTestIndex == -1)
+        TestNavigator._scrollToFirstTest();
+    else if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex + 1))
         TestNavigator._scrollToCurrentTest();
 }
 
 TestNavigator._scrollToPreviousTest = function()
 {
-    if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex - 1))
+    if (TestNavigator.currentTestIndex == -1)
+        TestNavigator._scrollToLastTest();
+    else if (TestNavigator._setCurrentTest(TestNavigator.currentTestIndex - 1))
         TestNavigator._scrollToCurrentTest();
 }
 
@@ -999,21 +1012,27 @@ TestNavigator._toggleCurrentTestFlagged = function()
         testLink.classList.add('flagged');
         TestNavigator.flaggedTests[testName] = 1;
     }
-    
+
+    TestNavigator.updateFlaggedTests();
+}
+
+TestNavigator.updateFlaggedTests = function()
+{
     var flaggedTestTextbox = document.getElementById('flagged-tests');
     if (!flaggedTestTextbox) {
         var flaggedTestContainer = document.createElement('div');
-        flaggedTestContainer.className = 'flagged-test-container';
-        flaggedTestContainer.innerHTML = '<h2>Flagged Tests</h2><div id="flagged-tests" contentEditable></div>';
+        flaggedTestContainer.id = 'flagged-test-container';
+        flaggedTestContainer.innerHTML = '<h2>Flagged Tests</h2><pre id="flagged-tests" contentEditable></pre>';
         document.body.appendChild(flaggedTestContainer);
 
         flaggedTestTextbox = document.getElementById('flagged-tests');
     }
 
-
     var flaggedTests = Object.keys(this.flaggedTests);
     flaggedTests.sort();
-    flaggedTestTextbox.innerHTML = flaggedTests.join('<br>');
+    var separator = document.getElementById('use-newlines').checked ? '\n' : ' ';
+    flaggedTestTextbox.innerHTML = flaggedTests.join(separator);
+    document.getElementById('flagged-test-container').style.display = flaggedTests.length ? '' : 'none';
 }
 
 TestNavigator._setCurrentTest = function(testIndex)
@@ -1024,12 +1043,12 @@ TestNavigator._setCurrentTest = function(testIndex)
 
     var currExpandLink = links[TestNavigator.currentTestIndex];
     if (currExpandLink)
-        currExpandLink.parentNode.classList.remove('current');
+        parentOfType(currExpandLink, 'tr').classList.remove('current');
 
     TestNavigator.currentTestIndex = testIndex;
 
     currExpandLink = links[TestNavigator.currentTestIndex];
-    currExpandLink.parentNode.classList.add('current');
+    parentOfType(currExpandLink, 'tr').classList.add('current');
 
     return true;
 }
@@ -1082,8 +1101,6 @@ function updateExpectedFailures()
         '.expected { display: none; }' : '';
 
     TestNavigator.onlyShowUnexpectedFailuresChanged();
-    // if (onlyShowUnexpectedFailures() && parentOfType(TestNavigator.currentTestLink(), 'tbody').classList.contains('expected'))
-    //     TestNavigator.currentTestLink().classList.remove('current');
 }
 
 var OptionWriter = {};
@@ -1121,6 +1138,12 @@ OptionWriter.apply = function()
 function updateAllOptions()
 {
     forEach(document.querySelectorAll('#options-menu input'), function(input) { input.onchange(); });
+}
+
+function handleToggleUseNewlines()
+{
+    OptionWriter.save();
+    TestNavigator.updateFlaggedTests();
 }
 
 function handleToggleImagesChange()
@@ -1233,6 +1256,7 @@ function generatePage()
         '<div id=options-menu class=hidden-menu>' +
             '<label><input id="unexpected-results" type=checkbox checked onchange="handleUnexpectedResultsChange()">Only unexpected results</label>' +
             '<label><input id="toggle-images" type=checkbox checked onchange="handleToggleImagesChange()">Toggle images</label>' +
+            '<label title="Use newlines instead of spaces to separate flagged tests"><input id="use-newlines" type=checkbox checked onchange="handleToggleUseNewlines()">Use newlines</input>' +
         '</div></div>';
 
     if (globalState().results.interrupted)
@@ -1279,6 +1303,7 @@ function generatePage()
         }
     }
 
+    TestNavigator.reset();
     OptionWriter.apply();
 }
 </script>

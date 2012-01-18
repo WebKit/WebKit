@@ -564,50 +564,123 @@ function runTests()
     subtree['bar.html'] = mockExpectation('TEXT', 'FAIL');
     subtree['bar1.html'] = mockExpectation('TEXT', 'FAIL');
     subtree['bar2.html'] = mockExpectation('TEXT', 'FAIL');
-    
+
+    runTest(results, function() {
+        if (window.eventSender) {
+            eventSender.keyDown('k'); // previous
+            var testRows = document.querySelectorAll('#results-table tbody tr');
+            assertTrue(!testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(testRows[2].classList.contains('current'));
+        }
+    });
+
+    runTest(results, function() {
+        if (window.eventSender) {
+            eventSender.keyDown('j'); // next
+            var testRows = document.querySelectorAll('#results-table tbody tr');
+            assertTrue(testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
+        }
+    });
+
     runTest(results, function() {
         assertTrue(document.getElementById('results-table'));
         assertTrue(visibleExpandLinks().length == 3);
         
         if (window.eventSender) {
+            eventSender.keyDown('i', ["metaKey"]);
+            eventSender.keyDown('i', ["shiftKey"]);
+            eventSender.keyDown('i', ["ctrlKey"]);
+            var testRows = document.querySelectorAll('#results-table tbody tr');
+            assertTrue(!testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
+
             eventSender.keyDown('i'); // first
-            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
-            assertTrue(expandButtons[0].classList.contains('current'));
-            assertTrue(!expandButtons[1].classList.contains('current'));
-            assertTrue(!expandButtons[2].classList.contains('current'));
+            assertTrue(testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
+
+            eventSender.keyDown('j', ["metaKey"]);
+            eventSender.keyDown('j', ["shiftKey"]);
+            eventSender.keyDown('j', ["ctrlKey"]);
+            assertTrue(testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
 
             eventSender.keyDown('j'); // next
-            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
-            assertTrue(!expandButtons[0].classList.contains('current'));
-            assertTrue(expandButtons[1].classList.contains('current'));
-            assertTrue(!expandButtons[2].classList.contains('current'));
+            assertTrue(!testRows[0].classList.contains('current'));
+            assertTrue(testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
+
+            eventSender.keyDown('k', ["metaKey"]);
+            eventSender.keyDown('k', ["shiftKey"]);
+            eventSender.keyDown('k', ["ctrlKey"]);
+            assertTrue(!testRows[0].classList.contains('current'));
+            assertTrue(testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
 
             eventSender.keyDown('k'); // previous
-            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
-            assertTrue(expandButtons[0].classList.contains('current'));
-            assertTrue(!expandButtons[1].classList.contains('current'));
-            assertTrue(!expandButtons[2].classList.contains('current'));
+            assertTrue(testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
+
+            eventSender.keyDown('l', ["metaKey"]);
+            eventSender.keyDown('l', ["shiftKey"]);
+            eventSender.keyDown('l', ["ctrlKey"]);
+            assertTrue(testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(!testRows[2].classList.contains('current'));
 
             eventSender.keyDown('l'); // last
-            var expandButtons = document.querySelectorAll('#results-table tbody .expand-button');
-            assertTrue(!expandButtons[0].classList.contains('current'));
-            assertTrue(!expandButtons[1].classList.contains('current'));
-            assertTrue(expandButtons[2].classList.contains('current'));
+            assertTrue(!testRows[0].classList.contains('current'));
+            assertTrue(!testRows[1].classList.contains('current'));
+            assertTrue(testRows[2].classList.contains('current'));
 
             eventSender.keyDown('i'); // first
-            eventSender.keyDown('e'); // expand
+
+            eventSender.keyDown('e', ["metaKey"]);
+            eventSender.keyDown('e', ["shiftKey"]);
+            eventSender.keyDown('e', ["ctrlKey"]);
             var expandLinks = document.querySelectorAll('.expand-button-text');
+            assertTrue(!isExpanded(expandLinks[0]));
+
+            eventSender.keyDown('e'); // expand
+            assertTrue(isExpanded(expandLinks[0]));
+
+            eventSender.keyDown('c', ["metaKey"]);
+            eventSender.keyDown('c', ["shiftKey"]);
+            eventSender.keyDown('c', ["ctrlKey"]);
             assertTrue(isExpanded(expandLinks[0]));
 
             eventSender.keyDown('c'); // collapse
             assertTrue(isCollapsed(expandLinks[0]));
 
-            eventSender.keyDown('f'); // flag
+            eventSender.keyDown('f', ["metaKey"]);
+            eventSender.keyDown('f', ["shiftKey"]);
+            eventSender.keyDown('f', ["ctrlKey"]);
             var flaggedTestsTextbox = document.getElementById('flagged-tests');
-            flaggedTestsTextbox.innerText == 'bar.html';
+            assertTrue(flaggedTestsTextbox.innerText == '');
+
+            eventSender.keyDown('f'); // flag
+            assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html');
+
+            eventSender.keyDown('j'); // next
+            eventSender.keyDown('f'); // flag
+            assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html\nfoo/bar1.html');
+
+            document.getElementById('use-newlines').checked = false;
+            TestNavigator.updateFlaggedTests();
+            assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html foo/bar1.html');
 
             eventSender.keyDown('f'); // unflag
-            flaggedTestsTextbox.innerText == '';
+            assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html');
+
+            eventSender.keyDown('k'); // previous
+            eventSender.keyDown('f'); // flag
+            assertTrue(flaggedTestsTextbox.innerText == '');
         }
     });
 
