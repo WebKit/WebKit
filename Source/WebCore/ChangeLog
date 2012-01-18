@@ -1,3 +1,12 @@
+2012-01-18  Shinya Kawanaka  <shinyak@google.com>
+
+        Unreviewed build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=76525
+
+        Removed missing build headers.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-01-18  Jun Mukai  <mukai@chromium.org>
 
         Use RenderTheme in HTMLSelectElement instead of #defines.
