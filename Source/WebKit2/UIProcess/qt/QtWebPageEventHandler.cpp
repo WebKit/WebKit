@@ -427,8 +427,6 @@ void QtWebPageEventHandler::resetGestureRecognizers()
 
 static void setInputPanelVisible(bool visible)
 {
-    Q_ASSERT(m_webView->hasFocus());
-
     if (qApp->inputPanel()->visible() == visible)
         return;
 

@@ -1,3 +1,12 @@
+2012-01-18  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix the debug build.
+
+        Unreviewed.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (setInputPanelVisible): Remove assertion from non-member function.
+
 2012-01-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Zoom in to the focused node only when vkb starts becoming visible
