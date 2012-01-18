@@ -1,5 +1,17 @@
 2012-01-18  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Implement create-intermediate-objects semantics when injecting values via keyPaths
+        https://bugs.webkit.org/show_bug.cgi?id=76493
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/objectstore-autoincrement.html
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoSerializedValue):
+
+2012-01-18  Joshua Bell  <jsbell@chromium.org>
+
         IndexedDB: Invalid keys yielded by key paths should raise exceptions, not error callbacks
         https://bugs.webkit.org/show_bug.cgi?id=76075
 
