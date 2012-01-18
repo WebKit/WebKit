@@ -2012,9 +2012,9 @@ sub promptUser
     return $input ? $input : $default;
 }
 
-sub buildQMakeProject($@)
+sub buildQMakeProjects
 {
-    my ($project, $clean, @buildParams) = @_;
+    my ($projects, $clean, @buildParams) = @_;
 
     my @buildArgs = ();
 
@@ -2134,9 +2134,7 @@ sub buildQMakeProject($@)
 
     my $makefile = File::Spec->catfile($dir, "Makefile");
     if (! -e $makefile) {
-        if ($project) {
-            push @buildArgs, "-after OVERRIDE_SUBDIRS=" . $project;
-        }
+        push @buildArgs, "-after OVERRIDE_SUBDIRS=\"@{$projects}\"" if @{$projects};
 
         push @buildArgs, File::Spec->catfile(sourceDir(), "WebKit.pro");
         my $command = "$qmakecommand @buildArgs";
@@ -2148,10 +2146,6 @@ sub buildQMakeProject($@)
         if ($result ne 0) {
            die "Failed to setup build environment using $qmakebin!\n";
         }
-    } elsif ($project) {
-        $dir = File::Spec->catfile($dir, "Source", $project);
-        chdir $dir or die "Failed to cd into " . $dir . "\n";
-        $make = "$make -f Makefile.$project";
     }
 
     my $command = "$make $makeargs";
@@ -2168,13 +2162,6 @@ sub buildQMakeProject($@)
 
     chdir ".." or die;
     return $result;
-}
-
-sub buildQMakeQtProject($$@)
-{
-    my ($project, $clean, @buildArgs) = @_;
-
-    return buildQMakeProject("", $clean, @buildArgs);
 }
 
 sub buildGtkProject

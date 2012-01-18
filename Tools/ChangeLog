@@ -1,3 +1,21 @@
+2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Allow building only a subset of the WebKit sub-projects
+
+        Fixes build-jsc, broken in r104825.
+
+        We no longer need the intermediate buildQMakeQtProject(), as we're the
+        only port using qmake, and buildQMakeProject is now highly Qt specific.
+
+        <http://webkit.org/b/76179>
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should generate a json file that summaries the result

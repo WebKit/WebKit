@@ -655,13 +655,19 @@ if (isBlackBerry()) {
     buildCMakeProjectOrExit($clean, "BlackBerry", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()));
 }
 
+if (isQt()) {
+    @projects = (); # An empty projects list will build the default projects
+    my $result = buildQMakeProjects(\@projects, $clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
 
-    # For Gtk and Qt the WebKit project builds all others
-    if ((isGtk() || isQt()) && $dir ne "Source/WebKit") {
+    # For Gtk the WebKit project builds all others
+    if (isGtk() && $dir ne "Source/WebKit") {
         chdirWebKit();
         next;
     }
@@ -672,9 +678,6 @@ for my $dir (@projects) {
             unshift(@options, "--enable-webkit2");
         }
         $result = buildGtkProject($project, $clean, @options);
-    } elsif (isQt()) {
-        #FIXME: $dir should probably be $project.
-        $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
