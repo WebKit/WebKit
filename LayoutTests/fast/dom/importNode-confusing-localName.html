@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<xht:input id="test"></xht:input>
+<script>
+var source = document.getElementById('test');
+var imported = document.importNode(source, true);
+shouldBe('imported.constructor', 'source.constructor');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
