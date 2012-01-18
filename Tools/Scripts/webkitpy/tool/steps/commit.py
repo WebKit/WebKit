@@ -50,10 +50,29 @@ class Commit(AbstractStep):
                 'To avoid this prompt, set "git config webkit-patch.commit-should-always-squash true".' % (
                 error.num_local_commits, working_directory_message))
 
+    def _check_test_expectations(self, changed_files):
+        test_expectations_files = []
+        for filename in changed_files:
+            if filename.endswith('test_expectations.txt'):
+                test_expectations_files.append(filename)
+
+        if not test_expectations_files:
+            return
+
+        args = ["--diff-files"]
+        args.extend(test_expectations_files)
+        try:
+            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
+        except ScriptError, e:
+            if not self._tool.user.confirm("Are you sure you want to continue?", default="n"):
+                exit(1)
+
     def run(self, state):
         self._commit_message = self._tool.checkout().commit_message_for_this_commit(self._options.git_commit).message()
         if len(self._commit_message) < 10:
             raise Exception("Attempted to commit with a commit message shorter than 10 characters.  Either your patch is missing a ChangeLog or webkit-patch may have a bug.")
+
+        self._check_test_expectations(self._changed_files(state))
 
         self._state = state
 
