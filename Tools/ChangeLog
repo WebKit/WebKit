@@ -1,3 +1,23 @@
+2012-01-18  Ojan Vafai  <ojan@chromium.org>
+
+        Shave 0.5 seconds off check-webkit-style runtime for test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=76576
+
+        Reviewed by Adam Barth.
+
+        Avoid calling default_configuration in base.py. We don't need it for
+        checking test_expectations.txt style. It takes ~0.5 seconds to run on my
+        Mac Pro. It's the call to "perl Tools/Scripts/webkit-build-directory --top-level"
+        from common.executive.
+
+        At some point someone should probably look into why that call is so slow
+        since it's on the critical path for run-webkit-tests and build-webkit startup.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._determine_port_from_exepectations_path):
+
 2012-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] move Tools.gyp, switch build-webkit --chromium to All.gyp
