@@ -29,6 +29,7 @@
 #define cookiejar_h
 
 #include <QFile>
+#include <QNetworkCookie>
 #include <QNetworkCookieJar>
 #include <QTimer>
 

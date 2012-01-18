@@ -25,6 +25,7 @@
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include <QNetworkAccessManager>
+#include <QNetworkCookie>
 #include <QNetworkCookieJar>
 
 namespace WebCore {

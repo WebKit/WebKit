@@ -1,3 +1,14 @@
+2012-01-17  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] Debug build fails with debug qt5
+        https://bugs.webkit.org/show_bug.cgi?id=76463
+
+        Reviewed by Simon Hausmann.
+
+        Add QNetworkCookie include in order to satisfy sizeof in QTypeInfo in debug builds.
+
+        * QtTestBrowser/cookiejar.h:
+
 2012-01-17  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: fix json import on linux
