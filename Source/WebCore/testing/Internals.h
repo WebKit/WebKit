@@ -26,6 +26,7 @@
 #ifndef Internals_h
 #define Internals_h
 
+#include "FrameDestructionObserver.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +42,8 @@ class Range;
 
 typedef int ExceptionCode;
 
-class Internals : public RefCounted<Internals> {
+class Internals : public RefCounted<Internals>,
+                  public FrameDestructionObserver {
 public:
     static PassRefPtr<Internals> create();
     virtual ~Internals();

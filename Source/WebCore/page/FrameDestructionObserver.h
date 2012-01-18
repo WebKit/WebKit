@@ -38,6 +38,7 @@ public:
 
 protected:
     virtual ~FrameDestructionObserver();
+    void observeFrame(Frame*);
 
     Frame* m_frame;
 };

@@ -31,16 +31,26 @@
 namespace WebCore {
 
 FrameDestructionObserver::FrameDestructionObserver(Frame* frame)
-    : m_frame(frame)
+    : m_frame(0)
 {
-    if (m_frame)
-        m_frame->addDestructionObserver(this);
+    observeFrame(frame);
 }
 
 FrameDestructionObserver::~FrameDestructionObserver()
 {
+    observeFrame(0);
+
+}
+
+void FrameDestructionObserver::observeFrame(Frame* frame)
+{
     if (m_frame)
         m_frame->removeDestructionObserver(this);
+
+    m_frame = frame;
+
+    if (m_frame)
+        m_frame->addDestructionObserver(this);
 }
 
 void FrameDestructionObserver::frameDestroyed()

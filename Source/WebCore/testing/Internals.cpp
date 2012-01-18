@@ -113,7 +113,8 @@ Internals::~Internals()
 }
 
 Internals::Internals()
-    : m_passwordEchoDurationInSecondsBackup(0)
+    : FrameDestructionObserver(0)
+    , m_passwordEchoDurationInSecondsBackup(0)
     , m_passwordEchoDurationInSecondsBackedUp(false)
     , m_passwordEchoEnabledBackedUp(false)
 {
@@ -465,6 +466,8 @@ void Internals::reset(Document* document)
 {
     if (!document || !document->settings())
         return;
+
+    observeFrame(document->frame());
 
     if (m_passwordEchoDurationInSecondsBackedUp) {
         document->settings()->setPasswordEchoDurationInSeconds(m_passwordEchoDurationInSecondsBackup);
