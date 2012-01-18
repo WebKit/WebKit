@@ -49,8 +49,8 @@ Tests that resources panel shows form data parameters.
         ]
         content : {
             size : 14
-            compression : <number>
             mimeType : "application/xml"
+            compression : <number>
         }
         redirectURL : ""
         headersSize : <number>

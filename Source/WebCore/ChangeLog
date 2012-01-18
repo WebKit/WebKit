@@ -1,3 +1,14 @@
+2012-01-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: omit compression field in HAR entries for resources coming from cache
+        https://bugs.webkit.org/show_bug.cgi?id=76543
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype._buildContent):
+        (WebInspector.HAREntry.prototype.get responseCompression):
+
 2012-01-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Fix region style code in CSSStyleSelector

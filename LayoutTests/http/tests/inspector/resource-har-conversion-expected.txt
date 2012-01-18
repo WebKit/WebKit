@@ -98,7 +98,6 @@ Page reloaded.
                 ]
                 content : {
                     size : <number>
-                    compression : <number>
                     mimeType : "application/x-javascript"
                 }
                 redirectURL : ""
@@ -134,8 +133,8 @@ Page reloaded.
                 ]
                 content : {
                     size : <number>
-                    compression : <number>
                     mimeType : "text/html"
+                    compression : <number>
                 }
                 redirectURL : ""
                 headersSize : <number>
@@ -170,7 +169,6 @@ Page reloaded.
                 ]
                 content : {
                     size : <number>
-                    compression : <number>
                     mimeType : "application/x-javascript"
                 }
                 redirectURL : ""
@@ -210,8 +208,8 @@ Page reloaded.
                 ]
                 content : {
                     size : <number>
-                    compression : <number>
                     mimeType : "application/xml"
+                    compression : <number>
                 }
                 redirectURL : ""
                 headersSize : <number>

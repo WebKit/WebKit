@@ -104,12 +104,15 @@ WebInspector.HAREntry.prototype = {
      */
     _buildContent: function()
     {
-        return {
+        var content = {
             size: this._resource.resourceSize,
-            compression: this.responseCompression,
             mimeType: this._resource.mimeType,
             // text: this._resource.content // TODO: pull out into a boolean flag, as content can be huge (and needs to be requested with an async call)
         };
+        var compression = this.responseCompression;
+        if (typeof compression === "number")
+            content.compression = compression;
+        return content;
     },
 
     /**
@@ -252,6 +255,8 @@ WebInspector.HAREntry.prototype = {
      */
     get responseCompression()
     {
+        if (this._resource.cahced || this._resource.statusCode === 304)
+            return;
         return this._resource.resourceSize - (this._resource.transferSize - this._resource.responseHeadersSize);
     }
 }
