@@ -231,7 +231,7 @@ void WebContext::languageChanged(void* context)
 
 void WebContext::languageChanged()
 {
-    sendToAllProcesses(Messages::WebProcess::LanguageChanged(defaultLanguage()));
+    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(userPreferredLanguages()));
 }
 
 void WebContext::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
@@ -255,7 +255,7 @@ void WebContext::ensureWebProcess()
 
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
-    parameters.languageCode = defaultLanguage();
+    parameters.languages = userPreferredLanguages();
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     parameters.databaseDirectory = databaseDirectory();
     parameters.localStorageDirectory = localStorageDirectory();

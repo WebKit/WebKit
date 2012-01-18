@@ -1,3 +1,12 @@
+2012-01-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide access to user's list of preferred languages
+        https://bugs.webkit.org/show_bug.cgi?id=76138
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Source/autotools/symbols.filter: List the new functions.
+
 2012-01-18  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt][WK2] Broken build with undefined reference to shm_open and shm_unlink

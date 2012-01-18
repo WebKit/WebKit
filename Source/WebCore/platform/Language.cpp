@@ -56,24 +56,33 @@ void languageDidChange()
         iter->second(iter->first);
 }
 
-static String& languageOverride()
+String defaultLanguage()
 {
-    DEFINE_STATIC_LOCAL(String, override, ());
+    Vector<String> languages = userPreferredLanguages();
+    if (languages.size())
+        return languages[0];
+
+    return emptyString();
+}
+
+static Vector<String>& preferredLanguagesOverride()
+{
+    DEFINE_STATIC_LOCAL(Vector<String>, override, ());
     return override;
 }
 
-String defaultLanguage()
+void overrideUserPreferredLanguages(const Vector<String>& override)
 {
-    const String& override = languageOverride();
-    if (!override.isNull())
-        return override;
-
-    return platformDefaultLanguage();
+    preferredLanguagesOverride() = override;
 }
-
-void overrideDefaultLanguage(const String& override)
+    
+Vector<String> userPreferredLanguages()
 {
-    languageOverride() = override;
+    Vector<String>& override = preferredLanguagesOverride();
+    if (!override.isEmpty())
+        return override;
+    
+    return platformUserPreferredLanguages();
 }
 
 }

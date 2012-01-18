@@ -67,7 +67,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 #if ENABLE(PLUGIN_PROCESS)
     encoder->encode(disablePluginProcessMessageTimeout);
 #endif
-    encoder->encode(languageCode);
+    encoder->encode(languages);
     encoder->encode(textCheckerState);
     encoder->encode(fullKeyboardAccessEnabled);
     encoder->encode(defaultRequestTimeoutInterval);
@@ -138,7 +138,7 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
 #endif
 
-    if (!decoder->decode(parameters.languageCode))
+    if (!decoder->decode(parameters.languages))
         return false;
     if (!decoder->decode(parameters.textCheckerState))
         return false;

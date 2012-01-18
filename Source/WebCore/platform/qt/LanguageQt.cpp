@@ -29,13 +29,21 @@
 
 #include "PlatformString.h"
 #include <QLocale>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-String platformDefaultLanguage()
+static String platformLanguage()
 {
     QLocale locale;
     return locale.name().replace(QLatin1Char('_'), QLatin1Char('-'));
+}
+
+Vector<String> platformUserPreferredLanguages()
+{
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.append(platformLanguage());
+    return userPreferredLanguages;
 }
 
 }

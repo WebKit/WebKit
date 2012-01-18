@@ -1,3 +1,12 @@
+2012-01-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide access to user's list of preferred languages
+        https://bugs.webkit.org/show_bug.cgi?id=76138
+
+        Reviewed by Alexey Proskuryakov.
+
+        * GNUmakefile.am: Add JSInternalsCustom.cpp.
+
 2012-01-18  Adam Barth  <abarth@webkit.org>
 
         Add Chromium Linux GPU 32 to the list of allowed Chromium Linux

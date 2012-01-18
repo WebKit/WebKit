@@ -41,6 +41,7 @@
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
 #include "IntRect.h"
+#include "Language.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "Range.h"
@@ -672,6 +673,16 @@ void Internals::setPerTileDrawingEnabled(Document* document, bool enabled, Excep
     }
 
     document->settings()->setPerTileDrawingEnabled(enabled);
+}
+
+Vector<String> Internals::userPreferredLanguages() const
+{
+    return WebCore::userPreferredLanguages();
+}
+
+void Internals::setUserPreferredLanguages(const Vector<String>& languages)
+{
+    WebCore::overrideUserPreferredLanguages(languages);
 }
 
 }

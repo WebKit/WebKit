@@ -86,6 +86,8 @@ module window {
 
         float pageScaleFactor(in Document document) raises(DOMException);
         void setPageScaleFactor(in Document document, in float scaleFactor, in long x, in long y) raises(DOMException);
+
+        attribute [Custom] Array userPreferredLanguages;
     };
 }
 

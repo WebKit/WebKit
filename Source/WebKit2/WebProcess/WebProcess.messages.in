@@ -41,7 +41,7 @@ messages -> WebProcess {
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)
-    LanguageChanged(WTF::String language)
+    UserPreferredLanguagesChanged(Vector<WTF::String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)

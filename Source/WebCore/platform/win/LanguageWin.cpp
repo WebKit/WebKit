@@ -27,6 +27,7 @@
 #include "Language.h"
 
 #include <windows.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
     return localeName;
 }
 
-String platformDefaultLanguage()
+static String platformLanguage()
 {
     static String computedDefaultLanguage;
     if (!computedDefaultLanguage.isEmpty())
@@ -64,6 +65,13 @@ String platformDefaultLanguage()
         computedDefaultLanguage = languageName + '-' + countryName;
 
     return computedDefaultLanguage;
+}
+
+Vector<String> platformUserPreferredLanguages()
+{
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.append(platformLanguage());
+    return userPreferredLanguages;
 }
 
 }

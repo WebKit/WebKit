@@ -32,10 +32,11 @@
 #include "PlatformString.h"
 
 #include <locale.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-String platformDefaultLanguage()
+static String platformLanguage()
 {
     char* localeDefault = setlocale(LC_CTYPE, 0);
 
@@ -48,6 +49,13 @@ String platformDefaultLanguage()
         *ptr = '-';
   
     return String(localeDefault);
+}
+
+Vector<String> platformUserPreferredLanguages()
+{
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.append(platformLanguage());
+    return userPreferredLanguages;
 }
 
 }

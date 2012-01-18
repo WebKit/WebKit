@@ -213,8 +213,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
-    if (!parameters.languageCode.isEmpty())
-        overrideDefaultLanguage(parameters.languageCode);
+    if (!parameters.languages.isEmpty())
+        overrideUserPreferredLanguages(parameters.languages);
 
     m_textCheckerState = parameters.textCheckerState;
 
@@ -288,9 +288,9 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
     WebCore::Font::setShouldUseSmoothing(useFontSmoothing);
 }
 
-void WebProcess::languageChanged(const String& language) const
+void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
-    overrideDefaultLanguage(language);
+    overrideUserPreferredLanguages(languages);
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)

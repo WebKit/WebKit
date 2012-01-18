@@ -27,18 +27,22 @@
 #define Language_h
 
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 String defaultLanguage();
-void overrideDefaultLanguage(const String&);
+Vector<String> userPreferredLanguages();
+void overrideUserPreferredLanguages(const Vector<String>&);
 
-// The observer function will be called when system language changes (unless it's overridden by overrideDefaultLanguage()).
+// The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);
 void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
 void removeLanguageChangeObserver(void* context);
 
-String platformDefaultLanguage();
+Vector<String> platformUserPreferredLanguages();
+
+// Called from platform specific code when the user's preferred language(s) change.
 void languageDidChange();
 }
 

@@ -1,3 +1,71 @@
+2012-01-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide access to user's list of preferred languages
+        https://bugs.webkit.org/show_bug.cgi?id=76138
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/harness/user-preferred-language.html
+
+        * WebCore.exp.in: Export the new functions.
+        * WebCore.order: Ditto.
+
+        * Target.pri: Include new files.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCoreTestSupport.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/Language.cpp:
+        (WebCore::defaultLanguage): Return userPreferredLanguages[0].
+        (WebCore::preferredLanguagesOverride): New, return the languages override.
+        (WebCore::overrideUserPreferredLanguages): New, set the languages override.
+        (WebCore::userPreferredLanguages): New, return the languages array.
+        * platform/Language.h:
+
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * platform/chromium/LanguageChromium.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * platform/efl/LanguageEfl.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * platform/gtk/LanguageGtk.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * platform/mac/Language.mm:
+        (+[WebLanguageChangeObserver _webkit_languagePreferencesDidChange]): Flag the user languages
+            as invalid.
+        (WebCore::platformLanguage): Removed.
+        (WebCore::platformUserPreferredLanguages): New, return the list of user preferred languages.
+
+        * platform/qt/LanguageQt.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * platform/win/LanguageWin.cpp:
+        (WebCore::platformLanguage): Renamed from platformDefaultLanguage, now static.
+        (WebCore::platformUserPreferredLanguages): New.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::userPreferredLanguages): New, return the platform's user preferred languages.
+        (WebCore::Internals::setUserPreferredLanguages): New, override the user's preferred languages.
+        * testing/Internals.h:
+        * testing/Internals.idl: Add userPreferredLanguages.
+
+        * testing/js/JSInternalsCustom.cpp:
+        (WebCore::JSInternals::userPreferredLanguages): New.
+        (WebCore::JSInternals::setUserPreferredLanguages): New.
+
+        * testing/v8/V8InternalsCustom.cpp:
+        (WebCore::V8Internals::userPreferredLanguagesAccessorGetter): New.
+        (WebCore::V8Internals::userPreferredLanguagesAccessorSetter): New.
+
 2012-01-18  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Enable tracking opaque region in Skia graphics context, return it from LayerTextureUpdater

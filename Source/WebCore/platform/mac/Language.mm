@@ -30,11 +30,12 @@
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
-static NSString *preferredLanguageCode;
+static BOOL useCachedPreferredLanguages;
 
 @interface WebLanguageChangeObserver : NSObject {
 }
@@ -46,8 +47,7 @@ static NSString *preferredLanguageCode;
 {
     ASSERT(isMainThread());
 
-    [preferredLanguageCode release];
-    preferredLanguageCode = nil;
+    useCachedPreferredLanguages = NO;
 
     languageDidChange();
 }
@@ -85,22 +85,29 @@ static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
     return httpStyleLanguageCode;
 }
 
-String platformDefaultLanguage()
+Vector<String> platformUserPreferredLanguages()
 {
+    DEFINE_STATIC_LOCAL(Vector<String>, userPreferredLanguages, ());
+
     ASSERT(isMainThread());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!preferredLanguageCode) {
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        NSArray *languages = [[NSUserDefaults standardUserDefaults] stringArrayForKey:@"AppleLanguages"];
-        if (![languages count])
-            preferredLanguageCode = @"en";
-        else
-            preferredLanguageCode = createHTTPStyleLanguageCode([languages objectAtIndex:0]);
-    }
+    if (!useCachedPreferredLanguages) {
+        useCachedPreferredLanguages = YES;
+        userPreferredLanguages.clear();
 
-    NSString *code = [[preferredLanguageCode retain] autorelease];
+        RetainPtr<CFArrayRef> languages(AdoptCF, CFLocaleCopyPreferredLanguages());
+        CFIndex languageCount = CFArrayGetCount(languages.get());
+        if (!languageCount)
+            userPreferredLanguages.append("en");
+        else {
+            for (CFIndex i = 0; i < languageCount; i++) {
+                RetainPtr<CFStringRef> language(AdoptCF, reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
+                userPreferredLanguages.append(createHTTPStyleLanguageCode((NSString *)language.get()));
+            }
+        }
+    }
 
 #if !PLATFORM(IOS)
     static bool languageChangeObserverAdded;
@@ -112,11 +119,12 @@ String platformDefaultLanguage()
         languageChangeObserverAdded = true;
     }
 #endif // !PLATFORM(IOS)
-
-    return code;
+    
+    return userPreferredLanguages;
 
     END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+
+    return Vector<String>();
 }
 
 }

@@ -119,6 +119,9 @@ public:
 
     void setPerTileDrawingEnabled(Document*, bool enabled, ExceptionCode&);
 
+    Vector<String> userPreferredLanguages() const;
+    void setUserPreferredLanguages(const Vector<String>&);
+
     static const char* internalsId;
 
 private:

@@ -23,6 +23,7 @@
 #include "NotImplemented.h"
 #include <BlackBerryPlatformClient.h>
 #include <LocalizeResource.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ String inputElementAltText()
     return String();
 }
 
-String platformDefaultLanguage()
+static String platformLanguage()
 {
     String lang = BlackBerry::Platform::Client::get()->getLocale().c_str();
     // getLocale() returns a POSIX locale which uses '_' to separate language and country.
@@ -69,6 +70,13 @@ String platformDefaultLanguage()
     if (underscorePosition != notFound)
         return lang.replace(underscorePosition, replaceWith.length(), replaceWith);
     return lang;
+}
+
+Vector<String> platformUserPreferredLanguages()
+{
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.append(platformLanguage());
+    return userPreferredLanguages;
 }
 
 #if ENABLE(CONTEXT_MENUS)

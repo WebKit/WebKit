@@ -1,3 +1,28 @@
+2012-01-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Provide access to user's list of preferred languages
+        https://bugs.webkit.org/show_bug.cgi?id=76138
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode the languages array.
+        (WebKit::WebProcessCreationParameters::decode): Decode the languages array.
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::languageChanged): Override the WebProcess userPreferredLanguages.
+        (WebKit::WebContext::ensureWebProcess): Initialize parameters.languages.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Override user languages array.
+        (WebKit::WebProcess::userPreferredLanguagesChanged): Ditto.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Define UserPreferredLanguagesChanged.
+
+        * win/WebKit2.def: Export the new functions.
+        * win/WebKit2CFLite.def: Ditto.
+
 2012-01-18  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt][WK2] Broken build with undefined reference to shm_open and shm_unlink

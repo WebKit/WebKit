@@ -22,6 +22,7 @@
 
 #include "GOwnPtr.h"
 #include "PlatformString.h"
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
 #include <glib.h>
@@ -32,7 +33,7 @@ namespace WebCore {
 // Using pango_language_get_default() here is not an option, because
 // it doesn't support changing the locale in runtime, so it returns
 // always the same value.
-String platformDefaultLanguage()
+static String platformLanguage()
 {
     char* localeDefault = setlocale(LC_CTYPE, NULL);
 
@@ -53,4 +54,11 @@ String platformDefaultLanguage()
     return String(normalizedDefault.get());
 }
 
+Vector<String> platformUserPreferredLanguages()
+{
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.append(platformLanguage());
+    return userPreferredLanguages;
+}
+    
 }
