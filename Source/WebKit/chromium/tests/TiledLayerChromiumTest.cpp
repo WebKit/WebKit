@@ -72,7 +72,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float);
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect*);
 
 private:
     int m_prepareCount;
@@ -149,7 +149,7 @@ void FakeLayerTextureUpdater::setRectToInvalidate(const IntRect& rect, FakeTiled
     m_layer = layer;
 }
 
-void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float)
+void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect* resultingOpaqueRect)
 {
     m_prepareCount++;
     m_lastUpdateRect = contentRect;
@@ -158,6 +158,7 @@ void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const 
         m_rectToInvalidate = IntRect();
         m_layer = 0;
     }
+    *resultingOpaqueRect = IntRect();
 }
 
 TEST(TiledLayerChromiumTest, pushDirtyTiles)

@@ -1,3 +1,20 @@
+2012-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Enable tracking opaque region in Skia graphics context, return it from LayerTextureUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=76211
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/LayerTextureUpdaterTest.cpp: Added.
+        (WebCore::TestLayerPainterChromium::TestLayerPainterChromium):
+        (WebCore::TestLayerPainterChromium::paint):
+        (WebCore::PaintFillOpaque::operator()):
+        (WebCore::PaintFillAlpha::operator()):
+        (WebCore::TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeLayerTextureUpdater::prepareToUpdate):
+
 2012-01-18  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Refactor canvas, plugin, and video drawing to be more data-driven

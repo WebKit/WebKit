@@ -1,3 +1,32 @@
+2012-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Enable tracking opaque region in Skia graphics context, return it from LayerTextureUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=76211
+
+        Reviewed by James Robinson.
+
+        New unit tests in LayerTextureUpdaterTest.cpp
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        (WebCore::PlatformCanvas::Painter::skiaContext):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::SkPictureCanvasLayerTextureUpdater):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::SkPictureCanvasLayerTextureUpdater::setOpaque):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+
 2012-01-18  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Refactor canvas, plugin, and video drawing to be more data-driven

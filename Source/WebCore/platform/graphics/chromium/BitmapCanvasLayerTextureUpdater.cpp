@@ -32,6 +32,7 @@
 
 #include "LayerPainterChromium.h"
 #include "PlatformColor.h"
+#include "PlatformContextSkia.h"
 
 namespace WebCore {
 
@@ -77,9 +78,11 @@ LayerTextureUpdater::SampledTexelFormat BitmapCanvasLayerTextureUpdater::sampled
             LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale)
+void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect* resultingOpaqueRect)
 {
     m_texSubImage.setSubImageSize(tileSize);
+
+    bool layerIsOpaque = m_canvas.opaque();
 
     m_canvas.resize(contentRect.size());
     // Assumption: if a tiler is using border texels, then it is because the
@@ -88,7 +91,11 @@ void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect
     PlatformCanvas::Painter::TextOption textOption =
         borderTexels ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
     PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
+    canvasPainter.skiaContext()->setTrackOpaqueRegion(!layerIsOpaque);
     paintContents(*canvasPainter.context(), contentRect, contentsScale);
+
+    if (!layerIsOpaque)
+        *resultingOpaqueRect = canvasPainter.skiaContext()->opaqueRegion().asRect();
 }
 
 void BitmapCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)

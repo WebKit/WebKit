@@ -412,7 +412,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     // However, we can't free the memory backing the GraphicsContext until the paint finishes,
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
-    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale());
+    IntRect opaqueRect; // FIXME: unused. remove this and store in the layer to pass to impl for draw culling
+    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale(), &opaqueRect);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);

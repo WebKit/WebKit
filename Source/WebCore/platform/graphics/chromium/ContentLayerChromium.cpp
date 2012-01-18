@@ -119,18 +119,13 @@ void ContentLayerChromium::idlePaintContentsIfDirty()
 void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
 #if USE(SKIA)
-    if (host->settings().acceleratePainting) {
+    if (host->settings().acceleratePainting)
         m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
-        return;
-    }
-
-    if (host->settings().perTilePainting) {
+    else if (host->settings().perTilePainting)
         m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
-        return;
-    }
+    else
 #endif // USE(SKIA)
-
-    m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
+        m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
     m_textureUpdater->setOpaque(opaque());
 }
 

@@ -41,6 +41,7 @@ namespace WebCore {
 
 SkPictureCanvasLayerTextureUpdater::SkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
     : CanvasLayerTextureUpdater(painter)
+    , m_layerIsOpaque(false)
 {
 }
 
@@ -48,20 +49,29 @@ SkPictureCanvasLayerTextureUpdater::~SkPictureCanvasLayerTextureUpdater()
 {
 }
 
-void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int /* borderTexels */, float contentsScale)
+void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int /* borderTexels */, float contentsScale, IntRect* resultingOpaqueRect)
 {
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
     platformContext.setDeferred(true);
+    platformContext.setTrackOpaqueRegion(!m_layerIsOpaque);
     GraphicsContext graphicsContext(&platformContext);
     paintContents(graphicsContext, contentRect, contentsScale);
     m_picture.endRecording();
+
+    if (!m_layerIsOpaque)
+        *resultingOpaqueRect = platformContext.opaqueRegion().asRect();
 }
 
 void SkPictureCanvasLayerTextureUpdater::drawPicture(SkCanvas* canvas)
 {
     TRACE_EVENT("SkPictureCanvasLayerTextureUpdater::drawPicture", this, 0);
     canvas->drawPicture(m_picture);
+}
+
+void SkPictureCanvasLayerTextureUpdater::setOpaque(bool opaque)
+{
+    m_layerIsOpaque = opaque;
 }
 
 } // namespace WebCore

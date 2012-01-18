@@ -85,6 +85,7 @@ public:
         ~Painter();
 
         GraphicsContext* context() const { return m_context.get(); }
+        PlatformContextSkia* skiaContext() const { return m_skiaContext.get(); }
     private:
         OwnPtr<GraphicsContext> m_context;
 #if USE(SKIA)
