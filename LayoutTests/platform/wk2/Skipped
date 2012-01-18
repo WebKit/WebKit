@@ -315,6 +315,8 @@ css3/filters/custom-filter-shader-cache.html
 css3/filters/effect-blur.html
 css3/filters/effect-brightness.html
 css3/filters/effect-contrast.html
+css3/filters/effect-custom-combined-missing.html
+css3/filters/effect-custom-parameters.html
 css3/filters/effect-drop-shadow.html
 css3/filters/effect-grayscale.html
 css3/filters/effect-hue-rotate.html
