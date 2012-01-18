@@ -5,19 +5,19 @@ file:///BASE/		/BASE/
 test	file:///BASE/test		/BASE/test
 /	file:///		/
 /test	file:///test		/test
-//	file:		
-//test	file://test	test	
+//	file:///		/
+//test	file://test/	test	/
 ///	file:///		/
 ///test	file:///test		/test
 file:	file:///BASE/		/BASE/
 file:test	file:///BASE/test		/BASE/test
 file:/	file:///		/
 file:/test	file:///test		/test
-file://	file:		
-file://test	file://test	test	
+file://	file:///		/
+file://test	file://test/	test	/
 file:///	file:///		/
 file:///test	file:///test		/test
-file://localhost	file:		
+file://localhost	file:///		/
 file://localhost/	file:///		/
 file://localhost/test	file:///test		/test
 http:	http:/		/
