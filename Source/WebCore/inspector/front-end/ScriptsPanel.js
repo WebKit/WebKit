@@ -43,6 +43,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
     WebInspector.JavaScriptOutlineDialog.install(this, viewGetter.bind(this));
+    WebInspector.OpenResourceDialog.install(this, this._presentationModel, viewGetter.bind(this));
 
     this.debugToolbar = this._createDebugToolbar();
 
@@ -128,6 +129,9 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     var scriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
     helpSection.addKey(scriptOutlineShortcut.name, WebInspector.UIString("Go to Function"));
+
+    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
+    helpSection.addKey(openResourceShortcut.name, WebInspector.UIString("Open Script"));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -457,6 +461,11 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.showPanelForAnchorNavigation(this);
         var uiLocation = this._presentationModel.rawLocationToUILocation(functionLocation);
         this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
+    },
+
+    showUISourceCode: function(uiSourceCode)
+    {
+        this._showSourceLine(uiSourceCode, null);
     },
 
     /**

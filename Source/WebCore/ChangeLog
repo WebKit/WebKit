@@ -1,3 +1,26 @@
+2012-01-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Enable support for Open Script dialog based on FilteredItemSelectionDialog.
+        https://bugs.webkit.org/show_bug.cgi?id=76466
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/FilteredItemSelectionDialog.js:
+        (WebInspector.JavaScriptOutlineDialog.createShortcut):
+        (WebInspector.OpenResourceDialog.filterOutEmptyURLs):
+        (WebInspector.OpenResourceDialog):
+        (WebInspector.OpenResourceDialog.install):
+        (WebInspector.OpenResourceDialog._show):
+        (WebInspector.OpenResourceDialog.createShortcut):
+        (WebInspector.OpenResourceDialog.prototype.itemTitleAt):
+        (WebInspector.OpenResourceDialog.prototype.itemKeyAt):
+        (WebInspector.OpenResourceDialog.prototype.itemsCount):
+        (WebInspector.OpenResourceDialog.prototype.requestItems):
+        (WebInspector.OpenResourceDialog.prototype.selectItem):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showUISourceCode):
+
 2012-01-18  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: follow up to r105262, fixing front-end compilation.

@@ -513,9 +513,7 @@ WebInspector.JavaScriptOutlineDialog._show = function(panel, sourceView)
 
 WebInspector.JavaScriptOutlineDialog.createShortcut = function()
 {
-    if (WebInspector.isMac())
-        return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.Meta);
-    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
+    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
 }
 
 WebInspector.JavaScriptOutlineDialog.prototype = {
@@ -582,3 +580,106 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
 }
 
 WebInspector.JavaScriptOutlineDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.SelectionDialogContentProvider}
+ * @param {WebInspector.ScriptsPanel} panel
+ * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ */
+WebInspector.OpenResourceDialog = function(panel, presentationModel)
+{
+    WebInspector.SelectionDialogContentProvider.call(this);
+
+    this._panel = panel;
+    this._uiSourceCodes = presentationModel.uiSourceCodes();
+    
+    function filterOutEmptyURLs(uiSourceCode)
+    {
+        return !!uiSourceCode.fileName;
+    }
+    
+    this._uiSourceCodes = this._uiSourceCodes.filter(filterOutEmptyURLs);
+}
+
+/**
+ * @param {WebInspector.ScriptsPanel} panel
+ * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ */
+WebInspector.OpenResourceDialog.install = function(panel, presentationModel, viewGetter)
+{
+    function showOpenResourceDialog()
+    {
+         var view = viewGetter();
+         if (view)
+             WebInspector.OpenResourceDialog._show(panel, presentationModel, view.element);
+    }
+
+    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
+    panel.registerShortcut(openResourceShortcut.key, showOpenResourceDialog);
+}
+
+/**
+ * @param {WebInspector.ScriptsPanel} panel
+ * @param {WebInspector.DebuggerPresentationModel} presentationModel
+ * @param {Element} relativeToElement
+ */
+WebInspector.OpenResourceDialog._show = function(panel, presentationModel, relativeToElement)
+{
+    if (WebInspector.Dialog.currentInstance())
+        return;
+    
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenResourceDialog(panel, presentationModel));
+    WebInspector.Dialog.show(relativeToElement, filteredItemSelectionDialog);
+}
+
+WebInspector.OpenResourceDialog.createShortcut = function()
+{
+    return WebInspector.KeyboardShortcut.makeDescriptor("t", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
+}
+
+WebInspector.OpenResourceDialog.prototype = {
+    /**
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemTitleAt: function(itemIndex)
+    {
+        return this._uiSourceCodes[itemIndex].fileName;
+    },
+
+    /**
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemKeyAt: function(itemIndex)
+    {
+        return this._uiSourceCodes[itemIndex].fileName;
+    },
+
+    /**
+     * @return {number}
+     */
+    itemsCount: function()
+    {
+        return this._uiSourceCodes.length;
+    },
+
+    /**
+     * @param {function(number, number, number, number)} callback
+     */
+    requestItems: function(callback)
+    {
+        callback(0, this._uiSourceCodes.length, 1, 1);
+    },
+
+    /**
+     * @param {number} itemIndex
+     */
+    selectItem: function(itemIndex)
+    {
+        this._panel.showUISourceCode(this._uiSourceCodes[itemIndex]);
+    }
+}
+
+WebInspector.OpenResourceDialog.prototype.__proto__ = WebInspector.SelectionDialogContentProvider.prototype;
