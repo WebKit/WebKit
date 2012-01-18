@@ -384,6 +384,9 @@ class TestPort(Port):
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR
 
+    def webkit_base(self):
+        return '/test.checkout'
+
     def name(self):
         return self._name
 

@@ -29,10 +29,12 @@
 
 """Run Inspector's perf tests in perf mode."""
 
+import json
 import logging
 import optparse
 import re
 import sys
+import time
 
 from webkitpy.common import find_files
 from webkitpy.common.host import Host
@@ -46,17 +48,20 @@ class PerfTestsRunner(object):
     _perf_tests_base_dir = 'PerformanceTests'
     _test_directories_for_chromium_style_tests = ['inspector']
 
-    def __init__(self, regular_output=sys.stderr, buildbot_output=sys.stdout, args=None):
+    def __init__(self, regular_output=sys.stderr, buildbot_output=sys.stdout, args=None, port=None):
         self._buildbot_output = buildbot_output
-        self._options, self._args = self._parse_args(args)
-        self._host = Host()
+        self._options, self._args = PerfTestsRunner._parse_args(args)
+        self._port = port or self._host.port_factory.get(self._options.platform, self._options)
+        self._host = self._port.host
         self._host._initialize_scm()
-        self._port = self._host.port_factory.get(self._options.platform, self._options)
         self._printer = printing.Printer(self._port, self._options, regular_output, buildbot_output, configure_logging=False)
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._host.filesystem.join(self._port.webkit_base(), self._perf_tests_base_dir)
+        self._results = {}
+        self._timestamp = time.time()
 
-    def _parse_args(self, args=None):
+    @staticmethod
+    def _parse_args(args=None):
         print_options = printing.print_options()
 
         perf_option_list = [
@@ -66,10 +71,16 @@ class PerfTestsRunner(object):
                                  help='Set the configuration to Release'),
             optparse.make_option("--platform",
                                  help="Specify port/platform being tested (i.e. chromium-mac)"),
+            optparse.make_option("--build", dest="build", action="store_true", default=True,
+                                help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
             optparse.make_option("--build-directory",
                                  help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=30000,
                                  help="Set the timeout for each test"),
+            optparse.make_option("--output-json-path",
+                                 help="Filename of the JSON file that summaries the results"),
+            optparse.make_option("--source-json-path",
+                                 help="Path to a JSON file to be merged into the JSON file when --output-json-path is specified"),
             ]
 
         option_list = (perf_option_list + print_options)
@@ -102,7 +113,35 @@ class PerfTestsRunner(object):
         finally:
             self._printer.cleanup()
 
+        if not self._generate_json_if_specified(self._timestamp) and not unexpected:
+            return -2
+
         return unexpected
+
+    def _generate_json_if_specified(self, timestamp):
+        output_json_path = self._options.output_json_path
+        if not output_json_path:
+            return True
+
+        revision = self._host.scm().head_svn_revision()
+        contents = {'timestamp': int(timestamp), 'revision': revision, 'results': self._results}
+
+        filesystem = self._host.filesystem
+        source_json_path = self._options.source_json_path
+        if source_json_path:
+            try:
+                source_json_file = filesystem.open_text_file_for_reading(source_json_path)
+                source_json = json.load(source_json_file)
+            except:
+                _log.error("Failed to parse %s" % source_json_path)
+                return False
+            if not isinstance(source_json, dict):
+                _log.error("The source JSON was not a dictionary")
+                return False
+            contents = dict(source_json.items() + contents.items())
+
+        filesystem.write_text_file(output_json_path, json.dumps(contents))
+        return True
 
     def _print_status(self, tests, expected, unexpected):
         if len(tests) == expected + unexpected:
@@ -145,13 +184,15 @@ class PerfTestsRunner(object):
 
         return unexpected
 
-    _inspector_result_regex = re.compile('^RESULT .*$')
+    _inspector_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
 
     def _process_chromium_style_test_result(self, test, output):
         test_failed = False
         got_a_result = False
         for line in re.split('\n', output.text):
-            if self._inspector_result_regex.match(line):
+            resultLine = self._inspector_result_regex.match(line)
+            if resultLine:
+                self._results[resultLine.group('name').replace(' ', '')] = int(resultLine.group('value'))
                 self._buildbot_output.write("%s\n" % line)
                 got_a_result = True
             elif not len(line) == 0:
@@ -194,6 +235,7 @@ class PerfTestsRunner(object):
 
         if test_failed or set(keys) != set(results.keys()):
             return True
+        self._results[test_name] = results
         self._buildbot_output.write('RESULT %s: %s= %s ms\n' % (category, test_name, results['avg']))
         self._buildbot_output.write(', '.join(['%s= %s ms' % (key, results[key]) for key in keys[1:]]) + '\n')
         return False

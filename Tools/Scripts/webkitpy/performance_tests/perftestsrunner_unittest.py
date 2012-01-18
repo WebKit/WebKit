@@ -29,20 +29,19 @@
 
 """Unit tests for run_perf_tests."""
 
+import json
 import unittest
 
 from webkitpy.common import array_stream
+from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput
+from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.layout_tests.views import printing
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 
 class MainTest(unittest.TestCase):
-    class TestPort:
-        def create_driver(self, worker_number=None):
-            return MainTest.TestDriver()
-
     class TestDriver:
         def run_test(self, driver_input):
             text = ''
@@ -103,10 +102,19 @@ max 1120
         def stop(self):
             """do nothing"""
 
-    def create_runner(self, buildbot_output=None):
+    def create_runner(self, buildbot_output=None, args=[]):
         buildbot_output = buildbot_output or array_stream.ArrayStream()
         regular_output = array_stream.ArrayStream()
-        return PerfTestsRunner(regular_output, buildbot_output, args=[])
+
+        options, parsed_args = PerfTestsRunner._parse_args(args)
+        test_port = TestPort(host=MockHost(), options=options)
+        test_port.create_driver = lambda worker_number=None: MainTest.TestDriver()
+
+        runner = PerfTestsRunner(regular_output, buildbot_output, args=args, port=test_port)
+        runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')
+        runner._host.filesystem.maybe_make_directory(runner._base_path, 'Bindings')
+        runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
+        return runner
 
     def run_test(self, test_name):
         runner = self.create_runner()
@@ -146,12 +154,10 @@ max 1120
     def test_run_test_set(self):
         buildbot_output = array_stream.ArrayStream()
         runner = self.create_runner(buildbot_output)
-        runner._base_path = '/test.checkout/PerformanceTests'
-        port = MainTest.TestPort()
         dirname = runner._base_path + '/inspector/'
         tests = [dirname + 'pass.html', dirname + 'silent.html', dirname + 'failed.html',
             dirname + 'tonguey.html', dirname + 'timeout.html', dirname + 'crash.html']
-        unexpected_result_count = runner._run_tests_set(tests, port)
+        unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(unexpected_result_count, len(tests) - 1)
         self.assertEqual(len(buildbot_output.get()), 1)
         self.assertEqual(buildbot_output.get()[0], 'RESULT group_name: test_name= 42 ms\n')
@@ -159,35 +165,71 @@ max 1120
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = array_stream.ArrayStream()
         runner = self.create_runner(buildbot_output)
-        runner._base_path = '/test.checkout/PerformanceTests/'
-        port = MainTest.TestPort()
-        tests = [runner._base_path + 'Bindings/event-target-wrapper.html', runner._base_path + 'Parser/some-parser.html']
-        unexpected_result_count = runner._run_tests_set(tests, port)
+        tests = [runner._base_path + '/Bindings/event-target-wrapper.html', runner._base_path + '/Parser/some-parser.html']
+        unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(unexpected_result_count, 0)
         self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
         self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
         self.assertEqual(buildbot_output.get()[2], 'RESULT Parser: some-parser= 1100 ms\n')
         self.assertEqual(buildbot_output.get()[3], 'median= 1101 ms, stdev= 11 ms, min= 1080 ms, max= 1120 ms\n')
 
+    def test_run_test_set_with_json_output(self):
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output, args=['--output-json-path=/test.checkout/output.json'])
+        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        runner._timestamp = 123456789
+        self.assertEqual(runner.run(), 0)
+        self.assertEqual(len(buildbot_output.get()), 3)
+        self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
+        self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
+
+        self.assertEqual(json.loads(runner._host.filesystem.files['/test.checkout/output.json']), {
+            "timestamp": 123456789, "results":
+            {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
+            "group_name:test_name": 42},
+            "revision": 1234})
+
+    def test_run_test_set_with_json_source(self):
+        buildbot_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output, args=['--output-json-path=/test.checkout/output.json',
+            '--source-json-path=/test.checkout/source.json'])
+        runner._host.filesystem.files['/test.checkout/source.json'] = '{"key": "value"}'
+        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        runner._timestamp = 123456789
+        self.assertEqual(runner.run(), 0)
+        self.assertEqual(len(buildbot_output.get()), 3)
+        self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
+        self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
+
+        self.assertEqual(json.loads(runner._host.filesystem.files['/test.checkout/output.json']), {
+            "timestamp": 123456789, "results":
+            {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
+            "group_name:test_name": 42},
+            "revision": 1234,
+            "key": "value"})
+
     def test_collect_tests(self):
         runner = self.create_runner()
-        runner._base_path = '/test.checkout/PerformanceTests'
-        filesystem = MockFileSystem()
-        filename = filesystem.join(runner._base_path, 'inspector', 'a_file.html')
-        filesystem.maybe_make_directory(runner._base_path, 'inspector')
-        filesystem.files[filename] = 'a content'
-        runner._host.filesystem = filesystem
+        filename = runner._host.filesystem.join(runner._base_path, 'inspector', 'a_file.html')
+        runner._host.filesystem.files[filename] = 'a content'
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
 
     def test_parse_args(self):
         runner = self.create_runner()
-        options, args = runner._parse_args([
+        options, args = PerfTestsRunner._parse_args([
                 '--verbose',
                 '--build-directory=folder42',
                 '--platform=platform42',
                 '--time-out-ms=42',
+                '--output-json-path=a/output.json',
+                '--source-json-path=a/source.json',
                 '--debug', 'an_arg'])
+        self.assertEqual(options.build, True)
         self.assertEqual(options.verbose, True)
         self.assertEqual(options.help_printing, None)
         self.assertEqual(options.build_directory, 'folder42')
@@ -195,6 +237,8 @@ max 1120
         self.assertEqual(options.time_out_ms, '42')
         self.assertEqual(options.configuration, 'Debug')
         self.assertEqual(options.print_options, None)
+        self.assertEqual(options.output_json_path, 'a/output.json')
+        self.assertEqual(options.source_json_path, 'a/source.json')
 
 
 if __name__ == '__main__':

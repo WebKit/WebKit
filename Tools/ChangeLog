@@ -1,3 +1,35 @@
+2012-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should generate a json file that summaries the result
+        https://bugs.webkit.org/show_bug.cgi?id=76504
+
+        Reviewed by Adam Barth.
+
+        Add an ability to generate a json file to run-perf-test in the preparation for perf bots.
+        New option --outout-json-path specifies the json file's path, and --source-json-path specifies
+        another json file to be merged into the generated json file.
+
+        Also fixed a bug that --build wasn't set by default.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.webkit_base):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner):
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._generate_json_if_specified):
+        (PerfTestsRunner._process_chromium_style_test_result):
+        (PerfTestsRunner._process_parser_test_result):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest):
+        (create_runner):
+        (test_run_test_set):
+        (test_run_test_set_for_parser_tests):
+        (test_run_test_set_with_summary_json):
+        (test_collect_tests):
+        (test_parse_args):
+
 2012-01-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105244.
