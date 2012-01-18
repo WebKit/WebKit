@@ -25,29 +25,31 @@
       font-size: 24pt;
       line-height: 150%;
     }
-    
     </style>
-    <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
 
-      function testOnLoad()
+    <script src="resources/media-testing.js"></script>
+    <script src="../media/media-file.js"></script>
+
+    <script type="text/javascript" charset="utf-8">
+      function testDone()
       {
-        window.setTimeout(function() {
-          document.getElementById('details').scrollTop = 24;
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
-        }, 0);
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
       }
-      
-      window.addEventListener('load', function() {
-        var video = document.getElementById('video');
-        video.addEventListener('loadeddata', testOnLoad, false);
-        video.src = 'resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-      }, false);
+
+      function modifyDocument()
+      {
+        document.getElementById('details').scrollTop = 24;
+      }
+
+      function doTest()
+      {
+        var video = document.getElementsByTagName('video')[0];
+        setupVideo(video, 'resources/video', modifyDocument, testDone);
+      }
     </script>
   </head>
-  <body>
+  <body onload="doTest()">
       <p>You should not see double text when the div scrolls</p>
         <div id="container">
           <video id="video" width="300" height="200"></video>

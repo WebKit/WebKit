@@ -24,25 +24,31 @@
       background-color: rgba(0, 0, 255, 0.8);
     }
   </style>
+  <script src="../resources/media-testing.js"></script>
+  <script src="../../media/media-file.js"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    function testDone()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    function modifyDocument()
+    {
+      window.scrollBy(50, 50);
+    }
+
+    function doTest()
+    {
+      var video = document.getElementsByTagName('video')[0];
+      setupVideo(video, '../resources/video', modifyDocument, testDone);
+    }
   </script>
 </head>
-<body>
+<body onload="doTest()">
     <video></video>
 
     <p>The blue bar should be in front of the video, and at the top of the page.</p>
     <div id="fixed-bar"></div>
-
-  <script type="text/javascript" charset="utf-8">
-    var video = document.getElementsByTagName('video')[0];
-    video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-    video.addEventListener('canplaythrough', function() {
-      window.scrollBy(50, 50);
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
-    }, false);
-  </script>
 </body>
 </html>

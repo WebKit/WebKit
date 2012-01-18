@@ -28,11 +28,11 @@
       }
     </style>
 
-    <script>
-      if (window.layoutTestController) {
+    <script src="../resources/media-testing.js"></script>
+    <script src="../../media/media-file.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      if (window.layoutTestController)
           layoutTestController.dumpAsText(true);
-          layoutTestController.waitUntilDone();
-      }
 
       var counter = 0;
       function notifyVideoDone() {
@@ -41,26 +41,20 @@
               layoutTestController.notifyDone();
       }
 
-      function playVideoOnElement(video) {
-          video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mov');
-          video.addEventListener('ended', function(event) {
-              notifyVideoDone();
-          }, false);
-      }
-
-      function init() {
-          playVideoOnElement(document.getElementsByTagName('video')[0]);
-          playVideoOnElement(document.getElementsByTagName('video')[1]);
-          playVideoOnElement(document.getElementsByTagName('video')[2]);
+      function doTest()
+      {
+          setupVideo(document.getElementsByTagName('video')[0], '../resources/video', null, notifyVideoDone);
+          setupVideo(document.getElementsByTagName('video')[1], '../resources/video', null, notifyVideoDone);
+          setupVideo(document.getElementsByTagName('video')[2], '../resources/video', null, notifyVideoDone);
       }
     </script>
   </head>
 
-  <body onload="init()">
+  <body onload="doTest()">
     <!-- Tests CSS visibility flag for composited video layers. -->
     <!-- Pixel test only. Only the top video should be visible, the other two should be hidden (borders should remain visible) -->
-    <div><video class="visible composited box" autoplay></video></div>
-    <div><video class="hidden box" autoplay></video></div>
-    <div><video class="hidden composited box" autoplay></video></div>
+    <div><video class="visible composited box"></video></div>
+    <div><video class="hidden box"></video></div>
+    <div><video class="hidden composited box"></video></div>
   </body>
 </html>

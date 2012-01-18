@@ -2,6 +2,9 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+BUGWK76478 : compositing/iframes/repaint-after-losing-scrollbars.html = IMAGE
+BUGWK76489 : compositing/webgl/webgl-reflection.html = IMAGE
+
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
 

@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Clipped Video</title>
-</head>
   <style>
     
       #box {
@@ -18,25 +15,30 @@
       }
     
   </style>
+  <script src="../resources/media-testing.js"></script>
+  <script src="../../media/media-file.js"></script>
+
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+  
+    function testDone()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    function doTest()
+    {
+      var video = document.getElementsByTagName('video')[0];
+      setupVideo(video, '../resources/video', null, testDone);
     }
   </script>
-
-<body>
+</head>
+<body onload="doTest()">
     <p>The video controller should not be visible below</p>
     <div id="box">
       <video controls></video>
     </div>
-    <script type="text/javascript" charset="utf-8">
-      var video = document.getElementsByTagName('video')[0];
-      video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-      video.addEventListener('canplaythrough', function() {
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
-      }, false);
-    </script>
 </body>
 </html>

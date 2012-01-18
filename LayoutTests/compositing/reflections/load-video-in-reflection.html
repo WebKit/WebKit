@@ -20,31 +20,23 @@
     }
 
   </style>
+  <script src="../resources/media-testing.js"></script>
+  <script src="../../media/media-file.js"></script>
   <script type="text/javascript" charset="utf-8">
-    
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
-
-    function videoLoaded()
+    function testDone()
     {
       if (window.layoutTestController)
         layoutTestController.notifyDone();
     }
 
-    function runTest()
+    function doTest()
     {
       var video = document.getElementsByTagName('video')[0];
-      video.addEventListener('canplaythrough', videoLoaded, false);
-      
-      window.setTimeout(function() {
-        video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-      }, 100);
+      setupVideo(video, '../resources/video', null, testDone);
     }
-    
-    window.addEventListener('load', runTest, false)
   </script>
 </head>
-<body>
+<body onload="doTest()">
   <p>You should see a reflected video below, rather than the red video background.</p>
   <div class="container">
     <video></video>

@@ -4,7 +4,6 @@ layer at (0,0) size 800x104
   RenderBlock {HTML} at (0,0) size 800x104
     RenderBody {BODY} at (0,0) size 800x104
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
 layer at (0,0) size 100x100
   RenderVideo {VIDEO} at (0,0) size 100x100
 layer at (50,50) size 100x100

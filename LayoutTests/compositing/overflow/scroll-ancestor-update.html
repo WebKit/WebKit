@@ -50,18 +50,29 @@
             background-color: red;
         }
     </style>
+
+    <script src="../resources/media-testing.js"></script>
+    <script src="../../media/media-file.js"></script>
     <script type="text/javascript" charset="utf-8">
+      function testDone()
+      {
         if (window.layoutTestController)
-          layoutTestController.waitUntilDone();
-        
-        function scrollTestDiv()
-        {
-            var scroller = document.getElementById('scroller');
-            scroller.scrollTop = 50;
-        }
+          layoutTestController.notifyDone();
+      }
+
+      function modifyDocument()
+      {
+        document.getElementById('scroller').scrollTop = 50;
+      }
+
+      function doTest()
+      {
+        var video = document.getElementsByTagName('video')[0];
+        setupVideo(video, '../resources/video', modifyDocument, testDone);
+      }
     </script>
 </head>
-<body>
+<body onload="doTest()">
   
   <div class="indicator box"></div>
 
@@ -76,14 +87,5 @@
   
   <video></video>
 
-  <script type="text/javascript" charset="utf-8">
-    var video = document.getElementsByTagName('video')[0];
-    video.src = '../resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-    video.addEventListener('canplaythrough', function() {
-      scrollTestDiv();
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
-    }, false);
-  </script>
 </body>
 </html>

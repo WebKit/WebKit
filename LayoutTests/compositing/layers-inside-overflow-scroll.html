@@ -33,30 +33,32 @@
       -webkit-transform: translateZ(0);
     }
     </style>
-    <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    <script src="resources/media-testing.js"></script>
+    <script src="../media/media-file.js"></script>
 
-      function testOnLoad()
+    <script type="text/javascript" charset="utf-8">
+      function testDone()
       {
-        window.setTimeout(function() {
-          document.getElementById('details').scrollTop = 100;
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
-        }, 0);
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
       }
       
-      window.addEventListener('load', function() {
-        var video = document.getElementById('video');
-        video.addEventListener('loadeddata', testOnLoad, false);
-        video.src = 'resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-      }, false);
+      function modifyDocument()
+      {
+          document.getElementById('details').scrollTop = 100;
+      }
+      
+      function doTest()
+      {
+          var video = document.getElementsByTagName('video')[0];
+          setupVideo(video, 'resources/video', modifyDocument, testDone);
+      }
     </script>
   </head>
-  <body>
+  <body onload="doTest()">
       <p>The red box in the overflow:scroll div should be scrolled out of view.</p>
         <div id="container">
-          <video id="video" width="300" height="200"></video>
+          <video width="300" height="200"></video>
         </div>
 
         <div id="details">
