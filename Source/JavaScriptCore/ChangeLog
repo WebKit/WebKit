@@ -1,3 +1,17 @@
+2012-01-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Factored out some code into a helper function.
+        
+        I think this might help getting rid of omit-frame-pointer.
+
+        Reviewed by Sam Weinig.
+        
+        No benchmark change.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch): Moved to here...
+        (JSC::replaceUsingRegExpSearch): ...from here.
+
 2012-01-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Uint8ClampedArray support

@@ -398,6 +398,47 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     return jsString(exec, impl.release());
 }
 
+static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSString* string, const UString& source, RegExp* regExp)
+{
+    int lastIndex = 0;
+    unsigned startPosition = 0;
+
+    Vector<StringRange, 16> sourceRanges;
+    JSGlobalData* globalData = &exec->globalData();
+    RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+    unsigned sourceLen = source.length();
+
+    while (true) {
+        int matchIndex;
+        int matchLen = 0;
+        int* ovector;
+        regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
+        if (matchIndex < 0)
+            break;
+
+        if (lastIndex < matchIndex)
+            sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+
+        lastIndex = matchIndex + matchLen;
+        startPosition = lastIndex;
+
+        // special case of empty match
+        if (!matchLen) {
+            startPosition++;
+            if (startPosition > sourceLen)
+                break;
+        }
+    }
+
+    if (!lastIndex)
+        return JSValue::encode(string);
+
+    if (static_cast<unsigned>(lastIndex) < sourceLen)
+        sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
+
+    return JSValue::encode(jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
+}
+
 static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
 {
     UString replacementString;
@@ -413,45 +454,10 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     RegExp* regExp = asRegExpObject(searchValue)->regExp();
     bool global = regExp->global();
 
+    if (global && callType == CallTypeNone && !replacementString.length())
+        return removeUsingRegExpSearch(exec, string, source, regExp);
+
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-
-    // Optimization for substring removal (replace with empty).
-    if (global && callType == CallTypeNone && !replacementString.length()) {
-        int lastIndex = 0;
-        unsigned startPosition = 0;
-
-        Vector<StringRange, 16> sourceRanges;
-        JSGlobalData* globalData = &exec->globalData();
-        while (true) {
-            int matchIndex;
-            int matchLen = 0;
-            int* ovector;
-            regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
-            if (matchIndex < 0)
-                break;
-
-            if (lastIndex < matchIndex)
-                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
-
-            lastIndex = matchIndex + matchLen;
-            startPosition = lastIndex;
-
-            // special case of empty match
-            if (!matchLen) {
-                startPosition++;
-                if (startPosition > sourceLen)
-                    break;
-            }
-        }
-
-        if (!lastIndex)
-            return JSValue::encode(string);
-
-        if (static_cast<unsigned>(lastIndex) < sourceLen)
-            sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
-
-        return JSValue::encode(jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
-    }
 
     int lastIndex = 0;
     unsigned startPosition = 0;
