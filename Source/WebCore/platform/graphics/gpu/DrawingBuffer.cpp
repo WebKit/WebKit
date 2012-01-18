@@ -72,8 +72,10 @@ void DrawingBuffer::clear()
         return;
 
     m_context->makeContextCurrent();
-    if (!m_size.isEmpty())
+    if (!m_size.isEmpty()) {
         s_currentResourceUsePixels -= m_size.width() * m_size.height();
+        m_size = IntSize();
+    }
 
     if (m_colorBuffer) {
         m_context->deleteTexture(m_colorBuffer);

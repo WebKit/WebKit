@@ -1,3 +1,16 @@
+2012-01-17  Yongsheng Zhu  <yongsheng.zhu@intel.com>
+
+        Clear 'm_size' of DrawingBuffer in the 'clear' function
+        https://bugs.webkit.org/show_bug.cgi?id=76239
+
+        Reviewed by Kenneth Russell.
+        
+        Clear the resources of DrawingBuffer but don't clear 'm_size'. This makes
+        's_currentResourceUsePixels' is not calculated correctly.
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+
 2012-01-17  Philip Rogers  <pdr@google.com>
 
         Fix getBBox for perpendicular paths
