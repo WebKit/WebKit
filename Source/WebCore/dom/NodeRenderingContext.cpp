@@ -27,13 +27,13 @@
 #include "NodeRenderingContext.h"
 
 #include "ContainerNode.h"
+#include "ContentInclusionSelector.h"
+#include "HTMLContentElement.h"
 #include "Node.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderObject.h"
 #include "RenderView.h"
-#include "ShadowContentElement.h"
-#include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
 
 #if ENABLE(SVG)
@@ -111,7 +111,7 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
     return m_style.release();
 }
 
-static RenderObject* nextRendererOf(ShadowContentElement* parent, Node* current)
+static RenderObject* nextRendererOf(HTMLContentElement* parent, Node* current)
 {
     ShadowInclusion* currentInclusion = parent->inclusions()->find(current);
     if (!currentInclusion)
@@ -125,7 +125,7 @@ static RenderObject* nextRendererOf(ShadowContentElement* parent, Node* current)
     return 0;
 }
 
-static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* current)
+static RenderObject* previousRendererOf(HTMLContentElement* parent, Node* current)
 {
     RenderObject* lastRenderer = 0;
 
@@ -139,7 +139,7 @@ static RenderObject* previousRendererOf(ShadowContentElement* parent, Node* curr
     return lastRenderer;
 }
 
-static RenderObject* firstRendererOf(ShadowContentElement* parent)
+static RenderObject* firstRendererOf(HTMLContentElement* parent)
 {
     for (ShadowInclusion* inclusion = parent->inclusions()->first(); inclusion; inclusion = inclusion->next()) {
         if (RenderObject* renderer = inclusion->content()->renderer())
@@ -149,7 +149,7 @@ static RenderObject* firstRendererOf(ShadowContentElement* parent)
     return 0;
 }
 
-static RenderObject* lastRendererOf(ShadowContentElement* parent)
+static RenderObject* lastRendererOf(HTMLContentElement* parent)
 {
     for (ShadowInclusion* inclusion = parent->inclusions()->last(); inclusion; inclusion = inclusion->previous()) {
         if (RenderObject* renderer = inclusion->content()->renderer())
@@ -187,7 +187,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
             return node->renderer();
         }
         if (node->isContentElement()) {
-            if (RenderObject* first = firstRendererOf(toShadowContentElement(node)))
+            if (RenderObject* first = firstRendererOf(toHTMLContentElement(node)))
                 return first;
         }
     }
@@ -220,7 +220,7 @@ RenderObject* NodeRenderingContext::previousRenderer() const
             return node->renderer();
         }
         if (node->isContentElement()) {
-            if (RenderObject* last = lastRendererOf(toShadowContentElement(node)))
+            if (RenderObject* last = lastRendererOf(toHTMLContentElement(node)))
                 return last;
         }
     }

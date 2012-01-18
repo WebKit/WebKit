@@ -26,12 +26,12 @@
 
 #include "config.h"
 #include "ShadowRoot.h"
-#include "Element.h"
 
+#include "ContentInclusionSelector.h"
 #include "Document.h"
+#include "Element.h"
+#include "HTMLContentElement.h"
 #include "NodeRareData.h"
-#include "ShadowContentElement.h"
-#include "ShadowInclusionSelector.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -101,7 +101,7 @@ void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-ShadowContentElement* ShadowRoot::includerFor(Node* node) const
+HTMLContentElement* ShadowRoot::includerFor(Node* node) const
 {
     if (!m_inclusions)
         return 0;
@@ -155,15 +155,15 @@ void ShadowRoot::attach()
         m_inclusions->didSelect();
 }
 
-ShadowInclusionSelector* ShadowRoot::inclusions() const
+ContentInclusionSelector* ShadowRoot::inclusions() const
 {
     return m_inclusions.get();
 }
 
-ShadowInclusionSelector* ShadowRoot::ensureInclusions()
+ContentInclusionSelector* ShadowRoot::ensureInclusions()
 {
     if (!m_inclusions)
-        m_inclusions = adoptPtr(new ShadowInclusionSelector());
+        m_inclusions = adoptPtr(new ContentInclusionSelector());
     m_inclusions->willSelectOver(this);
     return m_inclusions.get();
 }

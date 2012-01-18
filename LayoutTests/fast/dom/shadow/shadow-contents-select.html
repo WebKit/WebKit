@@ -15,7 +15,7 @@ function appendShadow(target, select) {
     child0.innerHTML = "Hello,";
     root.appendChild(child0);
 
-    var content = internals.createShadowContentElement(document);
+    var content = internals.createContentElement(document);
     content.setAttribute('select', select);
     root.appendChild(content);
 

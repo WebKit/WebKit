@@ -29,7 +29,7 @@ function setupTargetTree()
     var child0 = document.createElement("span");
     child0.innerHTML = "Hello,";
     root.appendChild(child0);
-    root.appendChild(window.internals.createShadowContentElement(document));
+    root.appendChild(window.internals.createContentElement(document));
     var child1 = document.createElement("span");
     child1.innerHTML = "World.";
     root.appendChild(child1);

@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -46,7 +47,6 @@
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "Settings.h"
-#include "ShadowContentElement.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
@@ -128,14 +128,14 @@ bool Internals::isPreloaded(Document* document, const String& url)
     return document->cachedResourceLoader()->isPreloaded(url);
 }
 
-PassRefPtr<Element> Internals::createShadowContentElement(Document* document, ExceptionCode& ec)
+PassRefPtr<Element> Internals::createContentElement(Document* document, ExceptionCode& ec)
 {
     if (!document) {
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
 
-    return ShadowContentElement::create(document);
+    return HTMLContentElement::create(document);
 }
 
 Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode& ec)

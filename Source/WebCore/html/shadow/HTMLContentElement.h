@@ -28,24 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowContentElement_h
-#define ShadowContentElement_h
+#ifndef HTMLContentElement_h
+#define HTMLContentElement_h
 
-#include "StyledElement.h"
+#include "HTMLElement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class ShadowContentSelectorQuery;
+class ContentSelectorQuery;
 class ShadowInclusionList;
 
-// NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
-// You should create ShadowContentElement during the host construction.
-class ShadowContentElement : public StyledElement {
+// NOTE: Current implementation doesn't support dynamic insertion/deletion of HTMLContentElement.
+// You should create HTMLContentElement during the host construction.
+class HTMLContentElement : public HTMLElement {
 public:
-    static PassRefPtr<ShadowContentElement> create(Document*);
+    static PassRefPtr<HTMLContentElement> create(Document*);
 
-    virtual ~ShadowContentElement();
+    virtual ~HTMLContentElement();
     virtual void attach();
     virtual void detach();
 
@@ -61,7 +61,7 @@ public:
     const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
 
 protected:
-    ShadowContentElement(const QualifiedName&, Document*);
+    HTMLContentElement(const QualifiedName&, Document*);
 
 private:
     virtual bool isContentElement() const { return true; }
@@ -71,10 +71,10 @@ private:
     OwnPtr<ShadowInclusionList> m_inclusions;
 };
 
-inline ShadowContentElement* toShadowContentElement(Node* node)
+inline HTMLContentElement* toHTMLContentElement(Node* node)
 {
     ASSERT(!node || node->isContentElement());
-    return static_cast<ShadowContentElement*>(node);
+    return static_cast<HTMLContentElement*>(node);
 }
 
 }

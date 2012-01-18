@@ -62,7 +62,7 @@ function createTreeFrom(html)
     var contentPlaceholder = root.getElementsByTagName("CONTENT")[0];
     if (contentPlaceholder) {
         var contentParent = contentPlaceholder.parentNode;
-        contentParent.replaceChild(window.internals.createShadowContentElement(document), contentPlaceholder);
+        contentParent.replaceChild(window.internals.createContentElement(document), contentPlaceholder);
     };
 
     return root;

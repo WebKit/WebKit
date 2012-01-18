@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowInclusionSelector_h
-#define ShadowInclusionSelector_h
+#ifndef ContentInclusionSelector_h
+#define ContentInclusionSelector_h
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -39,15 +39,15 @@
 namespace WebCore {
 
 class Element;
+class HTMLContentElement;
 class Node;
 class ShadowRoot;
-class ShadowContentElement;
 
 class ShadowInclusion : public RefCounted<ShadowInclusion> {
 public:
-    static PassRefPtr<ShadowInclusion> create(ShadowContentElement*, Node*);
+    static PassRefPtr<ShadowInclusion> create(HTMLContentElement*, Node*);
 
-    ShadowContentElement* includer() const { return m_includer; }
+    HTMLContentElement* includer() const { return m_includer; }
     Node* content() const { return m_content.get(); }
     ShadowInclusion* next() const { return m_next.get(); }
     ShadowInclusion* previous() const { return m_previous.get(); }
@@ -56,19 +56,19 @@ public:
     void unlink();
 
 private:
-    ShadowInclusion(ShadowContentElement*, Node*);
+    ShadowInclusion(HTMLContentElement*, Node*);
 
-    ShadowContentElement* m_includer;
+    HTMLContentElement* m_includer;
     RefPtr<Node> m_content;
     RefPtr<ShadowInclusion> m_next;
     RefPtr<ShadowInclusion> m_previous;
 };
 
-inline ShadowInclusion::ShadowInclusion(ShadowContentElement* includer, Node* content)
+inline ShadowInclusion::ShadowInclusion(HTMLContentElement* includer, Node* content)
     : m_includer(includer), m_content(content)
 { }
 
-inline PassRefPtr<ShadowInclusion> ShadowInclusion::create(ShadowContentElement* includer, Node* content)
+inline PassRefPtr<ShadowInclusion> ShadowInclusion::create(HTMLContentElement* includer, Node* content)
 {
     return adoptRef(new ShadowInclusion(includer, content));
 }
@@ -123,13 +123,13 @@ inline ShadowInclusion* ShadowInclusionSet::find(Node* key) const
     return found != m_set.end() ? *found : 0;
 }
 
-class ShadowInclusionSelector {
-    WTF_MAKE_NONCOPYABLE(ShadowInclusionSelector);
+class ContentInclusionSelector {
+    WTF_MAKE_NONCOPYABLE(ContentInclusionSelector);
 public:
-    ShadowInclusionSelector();
-    ~ShadowInclusionSelector();
+    ContentInclusionSelector();
+    ~ContentInclusionSelector();
 
-    void select(ShadowContentElement*, ShadowInclusionList*);
+    void select(HTMLContentElement*, ShadowInclusionList*);
     void unselect(ShadowInclusionList*);
     ShadowInclusion* findFor(Node* key) const;
 

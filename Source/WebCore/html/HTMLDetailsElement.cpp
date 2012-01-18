@@ -23,12 +23,12 @@
 
 #if ENABLE(DETAILS)
 
+#include "HTMLContentElement.h"
 #include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderDetails.h"
-#include "ShadowContentElement.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 
@@ -42,13 +42,13 @@ static const AtomicString& summaryQuerySelector()
     return selector;
 };
 
-class DetailsContentElement : public ShadowContentElement {
+class DetailsContentElement : public HTMLContentElement {
 public:
     static PassRefPtr<DetailsContentElement> create(Document*);
 
 private:
     DetailsContentElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::divTag, document)
     {
     }
 };
@@ -58,13 +58,13 @@ PassRefPtr<DetailsContentElement> DetailsContentElement::create(Document* docume
     return adoptRef(new DetailsContentElement(document));
 }
 
-class DetailsSummaryElement : public ShadowContentElement {
+class DetailsSummaryElement : public HTMLContentElement {
 public:
     static PassRefPtr<DetailsSummaryElement> create(Document*);
 
 private:
     DetailsSummaryElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::divTag, document)
     {
         setSelect(summaryQuerySelector());
     }

@@ -25,10 +25,10 @@
  */
 
 #include "config.h"
-#include "ShadowInclusionSelector.h"
+#include "ContentInclusionSelector.h"
 
-#include "ShadowContentElement.h"
-#include "ShadowContentSelectorQuery.h"
+#include "ContentSelectorQuery.h"
+#include "HTMLContentElement.h"
 #include "ShadowRoot.h"
 
 
@@ -99,20 +99,20 @@ void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
     m_last = m_last->next();
 }
 
-ShadowInclusionSelector::ShadowInclusionSelector()
+ContentInclusionSelector::ContentInclusionSelector()
 {
 }
 
-ShadowInclusionSelector::~ShadowInclusionSelector()
+ContentInclusionSelector::~ContentInclusionSelector()
 {
     ASSERT(m_candidates.isEmpty());
 }
 
-void ShadowInclusionSelector::select(ShadowContentElement* contentElement, ShadowInclusionList* inclusions)
+void ContentInclusionSelector::select(HTMLContentElement* contentElement, ShadowInclusionList* inclusions)
 {
     ASSERT(inclusions->isEmpty());
 
-    ShadowContentSelectorQuery query(contentElement);
+    ContentSelectorQuery query(contentElement);
     for (size_t i = 0; i < m_candidates.size(); ++i) {
         Node* child = m_candidates[i].get();
         if (!child)
@@ -127,24 +127,24 @@ void ShadowInclusionSelector::select(ShadowContentElement* contentElement, Shado
     }
 }
 
-void ShadowInclusionSelector::unselect(ShadowInclusionList* list)
+void ContentInclusionSelector::unselect(ShadowInclusionList* list)
 {
     for (ShadowInclusion* inclusion = list->first(); inclusion; inclusion = inclusion->next())
         m_inclusionSet.remove(inclusion);
     list->clear();
 }
 
-ShadowInclusion* ShadowInclusionSelector::findFor(Node* key) const
+ShadowInclusion* ContentInclusionSelector::findFor(Node* key) const
 {
     return m_inclusionSet.find(key);
 }
 
-void ShadowInclusionSelector::didSelect()
+void ContentInclusionSelector::didSelect()
 {
     m_candidates.clear();
 }
 
-void ShadowInclusionSelector::willSelectOver(ShadowRoot* scope)
+void ContentInclusionSelector::willSelectOver(ShadowRoot* scope)
 {
     if (!m_candidates.isEmpty())
         return;

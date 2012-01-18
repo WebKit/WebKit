@@ -38,7 +38,7 @@ class Node;
 class RenderFlowThread;
 class RenderObject;
 class RenderStyle;
-class ShadowContentElement;
+class HTMLContentElement;
 class ShadowRoot;
 
 class NodeRenderingContext {
@@ -52,7 +52,7 @@ public:
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
-    ShadowContentElement* includer() const;
+    HTMLContentElement* includer() const;
 
     RenderStyle* style() const;
     void setStyle(PassRefPtr<RenderStyle>);
@@ -86,7 +86,7 @@ private:
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
-    ShadowContentElement* m_includer;
+    HTMLContentElement* m_includer;
     RefPtr<RenderStyle> m_style;
     RenderFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;
@@ -108,7 +108,7 @@ inline RenderStyle* NodeRenderingContext::style() const
     return m_style.get();
 }
 
-inline ShadowContentElement* NodeRenderingContext::includer() const
+inline HTMLContentElement* NodeRenderingContext::includer() const
 {
     return m_includer;
 }

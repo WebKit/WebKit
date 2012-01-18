@@ -1,3 +1,101 @@
+2012-01-18  Shinya Kawanaka  <shinyak@google.com>
+
+        Move ShadowContentElement from dom/ to html/ and make ShadowContentElement subclass of HTMLElement.
+        https://bugs.webkit.org/show_bug.cgi?id=76241
+
+        Reviewed by Dimitri Glazkov.
+
+        Renamed ShadowContentElement to HTMLContentElement, and move it from dom/ to html/.
+        Also, ShadowInclusionSelector and ShadowContentSelectorQuery are renamed to
+        Content InclusionSelector and ContentSelectorQuery respectively.
+
+        No new tests, because no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::nextRendererOf):
+        (WebCore::previousRendererOf):
+        (WebCore::firstRendererOf):
+        (WebCore::lastRendererOf):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        * dom/NodeRenderingContext.h:
+        (WebCore::NodeRenderingContext::includer):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::includerFor):
+        (WebCore::ShadowRoot::inclusions):
+        (WebCore::ShadowRoot::ensureInclusions):
+        * dom/ShadowRoot.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsContentElement::DetailsContentElement):
+        (WebCore::DetailsSummaryElement::DetailsSummaryElement):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::SummaryContentElement):
+        * html/shadow/ContentInclusionSelector.cpp: Renamed from Source/WebCore/dom/ShadowInclusionSelector.cpp.
+        (WebCore::ShadowInclusion::append):
+        (WebCore::ShadowInclusion::unlink):
+        (WebCore::ShadowInclusionList::ShadowInclusionList):
+        (WebCore::ShadowInclusionList::~ShadowInclusionList):
+        (WebCore::ShadowInclusionList::find):
+        (WebCore::ShadowInclusionList::clear):
+        (WebCore::ShadowInclusionList::append):
+        (WebCore::ContentInclusionSelector::ContentInclusionSelector):
+        (WebCore::ContentInclusionSelector::~ContentInclusionSelector):
+        (WebCore::ContentInclusionSelector::select):
+        (WebCore::ContentInclusionSelector::unselect):
+        (WebCore::ContentInclusionSelector::findFor):
+        (WebCore::ContentInclusionSelector::didSelect):
+        (WebCore::ContentInclusionSelector::willSelectOver):
+        * html/shadow/ContentInclusionSelector.h: Renamed from Source/WebCore/dom/ShadowInclusionSelector.h.
+        (WebCore::ShadowInclusion::includer):
+        (WebCore::ShadowInclusion::content):
+        (WebCore::ShadowInclusion::next):
+        (WebCore::ShadowInclusion::previous):
+        (WebCore::ShadowInclusion::ShadowInclusion):
+        (WebCore::ShadowInclusion::create):
+        (WebCore::ShadowInclusionList::first):
+        (WebCore::ShadowInclusionList::last):
+        (WebCore::ShadowInclusionList::isEmpty):
+        (WebCore::ShadowInclusionSet::add):
+        (WebCore::ShadowInclusionSet::remove):
+        (WebCore::ShadowInclusionSet::isEmpty):
+        (WebCore::ShadowInclusionSet::Translator::hash):
+        (WebCore::ShadowInclusionSet::Translator::equal):
+        (WebCore::ShadowInclusionSet::Hash::hash):
+        (WebCore::ShadowInclusionSet::Hash::equal):
+        (WebCore::ShadowInclusionSet::find):
+        (WebCore::ContentInclusionSelector::hasCandidates):
+        * html/shadow/ContentSelectorQuery.cpp: Renamed from Source/WebCore/dom/ShadowContentSelectorQuery.cpp.
+        (WebCore::ContentSelectorQuery::ContentSelectorQuery):
+        (WebCore::ContentSelectorQuery::matches):
+        * html/shadow/ContentSelectorQuery.h: Renamed from Source/WebCore/dom/ShadowContentSelectorQuery.h.
+        * html/shadow/HTMLContentElement.cpp: Renamed from Source/WebCore/dom/ShadowContentElement.cpp.
+        (WebCore::HTMLContentElement::create):
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::~HTMLContentElement):
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        (WebCore::HTMLContentElement::select):
+        (WebCore::HTMLContentElement::setSelect):
+        * html/shadow/HTMLContentElement.h: Renamed from Source/WebCore/dom/ShadowContentElement.h.
+        (WebCore::HTMLContentElement::inclusions):
+        (WebCore::HTMLContentElement::isContentElement):
+        (WebCore::HTMLContentElement::rendererIsNeeded):
+        (WebCore::HTMLContentElement::createRenderer):
+        (WebCore::toHTMLContentElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createContentElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-01-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         RenderSVGRoot should inherit from RenderReplaced

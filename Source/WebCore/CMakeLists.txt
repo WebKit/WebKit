@@ -594,9 +594,6 @@ SET(WebCore_SOURCES
     dom/ScriptRunner.cpp
     dom/SecurityContext.cpp
     dom/SelectorQuery.cpp
-    dom/ShadowContentElement.cpp
-    dom/ShadowContentSelectorQuery.cpp
-    dom/ShadowInclusionSelector.cpp
     dom/ShadowRoot.cpp
     dom/SpaceSplitString.cpp
     dom/StaticHashSetNodeList.cpp
@@ -862,7 +859,10 @@ SET(WebCore_SOURCES
     html/parser/TextViewSourceParser.cpp
     html/parser/XSSAuditor.cpp
 
+    html/shadow/ContentSelectorQuery.cpp
+    html/shadow/ContentInclusionSelector.cpp
     html/shadow/DetailsMarkerControl.cpp
+    html/shadow/HTMLContentElement.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp
     html/shadow/MeterShadowElement.cpp

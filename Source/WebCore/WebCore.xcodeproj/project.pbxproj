@@ -1570,6 +1570,12 @@
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		570DBA8114B5804900DAEFA0 /* ShadowContentSelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 570DB7A814B5696A00DAEFA0 /* ShadowContentSelectorQuery.cpp */; };
 		570DBA8214B5804B00DAEFA0 /* ShadowContentSelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 570DB7A914B5696A00DAEFA0 /* ShadowContentSelectorQuery.h */; };
+		57B791A314C6A62900F202D1 /* ContentInclusionSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */; };
+		57B791A414C6A62900F202D1 /* ContentInclusionSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */; };
+		57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */; };
+		57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */; };
+		57B791A914C6A63300F202D1 /* HTMLContentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */; };
+		57B791AA14C6A63300F202D1 /* HTMLContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A814C6A63300F202D1 /* HTMLContentElement.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8396,6 +8402,12 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		570DB7A814B5696A00DAEFA0 /* ShadowContentSelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowContentSelectorQuery.cpp; sourceTree = "<group>"; };
 		570DB7A914B5696A00DAEFA0 /* ShadowContentSelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowContentSelectorQuery.h; sourceTree = "<group>"; };
+		57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentInclusionSelector.cpp; sourceTree = "<group>"; };
+		57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentInclusionSelector.h; sourceTree = "<group>"; };
+		57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSelectorQuery.cpp; sourceTree = "<group>"; };
+		57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSelectorQuery.h; sourceTree = "<group>"; };
+		57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLContentElement.cpp; sourceTree = "<group>"; };
+		57B791A814C6A63300F202D1 /* HTMLContentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLContentElement.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
@@ -13722,9 +13734,6 @@
 		1AE82EC90CAAE177002237AE /* storage */ = {
 			isa = PBXGroup;
 			children = (
-				A8F4579D14BC13EC000CEA59 /* DOMWindowSQLDatabase.cpp */,
-				A8F4579E14BC13EC000CEA59 /* DOMWindowSQLDatabase.h */,
-				A8F4579F14BC13EC000CEA59 /* DOMWindowSQLDatabase.idl */,
 				B5B5DC67119BB3D5002A8790 /* AbstractDatabase.cpp */,
 				B5B5DC68119BB3D5002A8790 /* AbstractDatabase.h */,
 				514185ED0CD65F0400763C99 /* ChangeVersionWrapper.cpp */,
@@ -13747,6 +13756,9 @@
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
 				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
+				A8F4579D14BC13EC000CEA59 /* DOMWindowSQLDatabase.cpp */,
+				A8F4579E14BC13EC000CEA59 /* DOMWindowSQLDatabase.h */,
+				A8F4579F14BC13EC000CEA59 /* DOMWindowSQLDatabase.idl */,
 				C585A69811D4FB3D004C3E4B /* IDBAny.cpp */,
 				C585A69911D4FB3D004C3E4B /* IDBAny.h */,
 				C585A69A11D4FB3D004C3E4B /* IDBAny.idl */,
@@ -14227,8 +14239,14 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
+				57B7919F14C6A62900F202D1 /* ContentInclusionSelector.cpp */,
+				57B791A014C6A62900F202D1 /* ContentInclusionSelector.h */,
+				57B791A114C6A62900F202D1 /* ContentSelectorQuery.cpp */,
+				57B791A214C6A62900F202D1 /* ContentSelectorQuery.h */,
 				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
 				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
+				57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */,
+				57B791A814C6A63300F202D1 /* HTMLContentElement.h */,
 				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
 				417253A91354BBBC00360F2A /* MediaControlElements.h */,
 				4157AF7F12F1FB0400A8C6F5 /* MediaControlRootElement.cpp */,
@@ -17054,13 +17072,13 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				49ECEB5C1499790D00CDD3A4 /* arm */,
+				50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */,
+				50D405F8147D31F300D30BB5 /* CustomFilterMesh.h */,
 				50ACE2CA14B5D79300446666 /* CustomFilterOperation.h */,
 				503D0CA714B5B08700F32F57 /* CustomFilterProgram.cpp */,
 				503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */,
 				503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */,
-				49ECEB5C1499790D00CDD3A4 /* arm */,
-				50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */,
-				50D405F8147D31F300D30BB5 /* CustomFilterMesh.h */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterShader.cpp */,
 				50D40610147D49DE00D30BB5 /* CustomFilterShader.h */,
 				A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */,
@@ -19245,7 +19263,6 @@
 		BC8C8FAA0DDCD2F200B592F4 /* style */ = {
 			isa = PBXGroup;
 			children = (
-				503D0CAD14B5B0BA00F32F57 /* StyleCustomFilterProgram.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
 				BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */,
 				BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */,
@@ -19280,6 +19297,7 @@
 				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
 				5038BE2D1472AD230095E0D1 /* StyleCachedShader.cpp */,
 				5038BE2E1472AD230095E0D1 /* StyleCachedShader.h */,
+				503D0CAD14B5B0BA00F32F57 /* StyleCustomFilterProgram.h */,
 				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
 				BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */,
 				BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */,
@@ -21139,8 +21157,10 @@
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
 				BC5EB9810E82072500B25965 /* ContentData.h in Headers */,
+				57B791A414C6A62900F202D1 /* ContentInclusionSelector.h in Headers */,
 				59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
+				57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
 				370D6EDB138454550044103E /* ContentTypeParser.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
@@ -21235,6 +21255,9 @@
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				50D405FA147D31F300D30BB5 /* CustomFilterMesh.h in Headers */,
+				50ACE2CB14B5D79300446666 /* CustomFilterOperation.h in Headers */,
+				503D0CAB14B5B08700F32F57 /* CustomFilterProgram.h in Headers */,
+				503D0CAC14B5B08700F32F57 /* CustomFilterProgramClient.h in Headers */,
 				50D40612147D49DE00D30BB5 /* CustomFilterShader.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
@@ -21366,6 +21389,7 @@
 				85E711970AC5D5350053270F /* DOMDOMImplementationInternal.h in Headers */,
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
 				7694565B1214DB630007CBAE /* DOMDOMTokenList.h in Headers */,
+				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
 				85ACA9C00A9B5FA500671E90 /* DOMElement.h in Headers */,
 				85E711980AC5D5350053270F /* DOMElementInternal.h in Headers */,
 				E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */,
@@ -21902,6 +21926,8 @@
 				85C7F5E70AAFBAFB004014DD /* DOMWheelEvent.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
+				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
+				A8F457A114BC1A94000CEA59 /* DOMWindowSQLDatabase.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
 				BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */,
 				1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */,
@@ -22083,6 +22109,7 @@
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				A7B070D3130A409C00A3763C /* FrameActionScheduler.h in Headers */,
+				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */,
 				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,
@@ -22156,6 +22183,7 @@
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */,
 				977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */,
+				57B791AA14C6A63300F202D1 /* HTMLContentElement.h in Headers */,
 				E1A31663134BCAE8007C9A4F /* HTMLConverter.h in Headers */,
 				F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */,
 				D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */,
@@ -22347,6 +22375,7 @@
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
+				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				7AA51DD6148506A900AD2752 /* InspectorMemoryAgent.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
@@ -22854,6 +22883,7 @@
 				49EECF0D105070C400099FAB /* JSUint16Array.h in Headers */,
 				49EECF0B105070C400099FAB /* JSUint32Array.h in Headers */,
 				49EECF09105070C400099FAB /* JSUint8Array.h in Headers */,
+				91089D3214C33600005AFC49 /* JSUint8ClampedArray.h in Headers */,
 				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
 				A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */,
@@ -23501,6 +23531,7 @@
 				BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */,
 				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
 				5038BE301472AD230095E0D1 /* StyleCachedShader.h in Headers */,
+				503D0CAE14B5B0BA00F32F57 /* StyleCustomFilterProgram.h in Headers */,
 				BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
@@ -23745,6 +23776,7 @@
 				080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */,
 				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,
+				7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */,
 				B2227ACE0D00BF220071B782 /* SVGTextPathElement.h in Headers */,
 				B2227AD10D00BF220071B782 /* SVGTextPositioningElement.h in Headers */,
 				0854B0251255E4E600B9CDD0 /* SVGTextQuery.h in Headers */,
@@ -24017,17 +24049,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
-				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
-				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
-				A8F457A114BC1A94000CEA59 /* DOMWindowSQLDatabase.h in Headers */,
-				7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */,
-				503D0CAB14B5B08700F32F57 /* CustomFilterProgram.h in Headers */,
-				503D0CAC14B5B08700F32F57 /* CustomFilterProgramClient.h in Headers */,
-				503D0CAE14B5B0BA00F32F57 /* StyleCustomFilterProgram.h in Headers */,
-				50ACE2CB14B5D79300446666 /* CustomFilterOperation.h in Headers */,
-				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
-				91089D3214C33600005AFC49 /* JSUint8ClampedArray.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24538,8 +24559,10 @@
 				41F0618F0F5F069800A07EAC /* ConsoleMessage.cpp in Sources */,
 				A818721F0977D3C0005826D9 /* ContainerNode.cpp in Sources */,
 				BC5EB9800E82072500B25965 /* ContentData.cpp in Sources */,
+				57B791A314C6A62900F202D1 /* ContentInclusionSelector.cpp in Sources */,
 				59102FBB14327D3B003C9D04 /* ContentSearchUtils.cpp in Sources */,
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
+				57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */,
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
@@ -24623,6 +24646,7 @@
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */,
+				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
 				50D40611147D49DE00D30BB5 /* CustomFilterShader.cpp in Sources */,
 				5196116A0CAC56570010A80C /* Database.cpp in Sources */,
 				51A45B570CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp in Sources */,
@@ -24714,6 +24738,7 @@
 				85CA975D0A962E5400690CCF /* DOMDocumentType.mm in Sources */,
 				8518DCEA0A9CC80D0091B7A6 /* DOMDOMImplementation.mm in Sources */,
 				7694565C1214DB630007CBAE /* DOMDOMTokenList.mm in Sources */,
+				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
 				85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */,
 				85CA96B90A9621A600690CCF /* DOMEntity.mm in Sources */,
 				85089CDE0A98C42800A275AA /* DOMEntityReference.mm in Sources */,
@@ -24987,6 +25012,8 @@
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
+				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
+				A8F457A014BC1A88000CEA59 /* DOMWindowSQLDatabase.cpp in Sources */,
 				BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */,
 				1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */,
 				85E9E0A20AB3A0C700069CD0 /* DOMXPathExpression.mm in Sources */,
@@ -25133,6 +25160,7 @@
 				41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				A7B070D2130A409C00A3763C /* FrameActionScheduler.cpp in Sources */,
+				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
 				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
 				D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */,
 				65BF02450974819000C43196 /* FrameMac.mm in Sources */,
@@ -25191,6 +25219,7 @@
 				93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */,
 				A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */,
 				977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */,
+				57B791A914C6A63300F202D1 /* HTMLContentElement.cpp in Sources */,
 				5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */,
 				F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */,
 				D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */,
@@ -25365,6 +25394,7 @@
 				4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */,
 				F344C75811294FF600F26EEE /* InspectorFrontendClientLocal.cpp in Sources */,
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
+				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
 				20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */,
 				7AA51DD5148506A900AD2752 /* InspectorMemoryAgent.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
@@ -25978,6 +26008,8 @@
 				49EECF7D10508D9C00099FAB /* JSUint32ArrayCustom.cpp in Sources */,
 				49EECF08105070C400099FAB /* JSUint8Array.cpp in Sources */,
 				49EECF7C10508D9C00099FAB /* JSUint8ArrayCustom.cpp in Sources */,
+				91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */,
+				91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,
 				FD8E9BDF13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp in Sources */,
@@ -26937,14 +26969,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
-				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
-				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
-				A8F457A014BC1A88000CEA59 /* DOMWindowSQLDatabase.cpp in Sources */,
-				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
-				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
-				91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */,
-				91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

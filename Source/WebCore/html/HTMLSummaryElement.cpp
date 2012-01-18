@@ -24,12 +24,12 @@
 #if ENABLE(DETAILS)
 
 #include "DetailsMarkerControl.h"
+#include "HTMLContentElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
-#include "ShadowContentElement.h"
 
 #include "ShadowRoot.h"
 
@@ -37,13 +37,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class SummaryContentElement : public ShadowContentElement {
+class SummaryContentElement : public HTMLContentElement {
 public:
     static PassRefPtr<SummaryContentElement> create(Document*);
 
 private:
     SummaryContentElement(Document* document)
-        : ShadowContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::divTag, document)
     {
     }
 };

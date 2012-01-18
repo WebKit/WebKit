@@ -25,12 +25,12 @@
  */
 
 #include "config.h"
-#include "ShadowContentElement.h"
+#include "HTMLContentElement.h"
 
+#include "ContentInclusionSelector.h"
+#include "ContentSelectorQuery.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
-#include "ShadowContentSelectorQuery.h"
-#include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
@@ -38,29 +38,29 @@ namespace WebCore {
 
 using HTMLNames::selectAttr;
 
-PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
+PassRefPtr<HTMLContentElement> HTMLContentElement::create(Document* document)
 {
     DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
-    return adoptRef(new ShadowContentElement(tagName, document));
+    return adoptRef(new HTMLContentElement(tagName, document));
 }
 
-ShadowContentElement::ShadowContentElement(const QualifiedName& name, Document* document)
-    : StyledElement(name, document, CreateHTMLElement)
+HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
+    : HTMLElement(name, document)
     , m_inclusions(adoptPtr(new ShadowInclusionList()))
 {
 }
 
-ShadowContentElement::~ShadowContentElement()
+HTMLContentElement::~HTMLContentElement()
 {
 }
 
-void ShadowContentElement::attach()
+void HTMLContentElement::attach()
 {
     ASSERT(!firstChild()); // Currently doesn't support any light child.
-    StyledElement::attach();
+    HTMLElement::attach();
 
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        ShadowInclusionSelector* selector = root->ensureInclusions();
+        ContentInclusionSelector* selector = root->ensureInclusions();
         selector->unselect(m_inclusions.get());
         selector->select(this, m_inclusions.get());
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
@@ -70,23 +70,23 @@ void ShadowContentElement::attach()
     }
 }
 
-void ShadowContentElement::detach()
+void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (ShadowInclusionSelector* selector = root->inclusions())
+        if (ContentInclusionSelector* selector = root->inclusions())
             selector->unselect(m_inclusions.get());
     }
 
     ASSERT(m_inclusions->isEmpty());
-    StyledElement::detach();
+    HTMLElement::detach();
 }
 
-const AtomicString& ShadowContentElement::select() const
+const AtomicString& HTMLContentElement::select() const
 {
     return getAttribute(selectAttr);
 }
 
-void ShadowContentElement::setSelect(const AtomicString& selectValue)
+void HTMLContentElement::setSelect(const AtomicString& selectValue)
 {
     setAttribute(selectAttr, selectValue);
 }

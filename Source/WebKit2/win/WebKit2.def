@@ -150,8 +150,8 @@ EXPORTS
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBE@Z
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
+        ?create@HTMLContentElement@WebCore@@SA?AV?$PassRefPtr@VHTMLContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
-        ?create@ShadowContentElement@WebCore@@SA?AV?$PassRefPtr@VShadowContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?ensureShadowRoot@Element@WebCore@@QAEPAVShadowRoot@2@XZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z

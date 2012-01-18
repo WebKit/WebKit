@@ -560,9 +560,6 @@ SOURCES += \
     dom/ScriptRunner.cpp \
     dom/SecurityContext.cpp \
     dom/SelectorQuery.cpp \
-    dom/ShadowContentElement.cpp \
-    dom/ShadowContentSelectorQuery.cpp \
-    dom/ShadowInclusionSelector.cpp \
     dom/ShadowRoot.cpp \
     dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
@@ -842,7 +839,10 @@ SOURCES += \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
     html/parser/XSSAuditor.cpp \
+    html/shadow/ContentSelectorQuery.cpp \
+    html/shadow/ContentInclusionSelector.cpp \
     html/shadow/DetailsMarkerControl.cpp \
+    html/shadow/HTMLContentElement.cpp \
     html/shadow/MediaControls.cpp \
     html/shadow/MediaControlRootElement.cpp \
     html/shadow/MeterShadowElement.cpp \
@@ -1661,9 +1661,6 @@ HEADERS += \
     dom/ScriptElement.h \
     dom/ScriptExecutionContext.h \
     dom/SelectorQuery.h \
-    dom/ShadowContentElement.h \
-    dom/ShadowContentSelectorQuery.h \
-    dom/ShadowInclusionSelector.h \
     dom/ShadowRoot.h \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \
@@ -1902,6 +1899,9 @@ HEADERS += \
     html/parser/HTMLTreeBuilder.h \
     html/parser/HTMLViewSourceParser.h \
     html/parser/XSSAuditor.h \
+    html/shadow/ContentSelectorQuery.h \
+    html/shadow/ContentInclusionSelector.h \
+    html/shadow/HTMLContentElement.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
     html/track/TextTrackList.h \

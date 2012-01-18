@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowContentSelectorQuery_h
-#define ShadowContentSelectorQuery_h
+#ifndef ContentSelectorQuery_h
+#define ContentSelectorQuery_h
 
 #include "CSSSelectorList.h"
 #include "SelectorChecker.h"
@@ -41,17 +41,17 @@ namespace WebCore {
 
 class Document;
 class Node;
-class ShadowContentElement;
+class HTMLContentElement;
 
-class ShadowContentSelectorQuery {
-    WTF_MAKE_NONCOPYABLE(ShadowContentSelectorQuery);
+class ContentSelectorQuery {
+    WTF_MAKE_NONCOPYABLE(ContentSelectorQuery);
 public:
-    explicit ShadowContentSelectorQuery(ShadowContentElement*);
+    explicit ContentSelectorQuery(HTMLContentElement*);
 
     bool matches(Node*) const;
 
 private:
-    ShadowContentElement* m_contentElement;
+    HTMLContentElement* m_contentElement;
     SelectorDataList m_selectors;
     CSSSelectorList m_selectorList;
     SelectorChecker m_selectorChecker;

@@ -59,7 +59,7 @@ public:
     void removeShadowRoot(Element* host, ExceptionCode&);
     Element* includerFor(Node*, ExceptionCode&);
     String shadowPseudoId(Element*, ExceptionCode&);
-    PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
+    PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
 
 #if ENABLE(INPUT_COLOR)

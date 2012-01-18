@@ -1647,12 +1647,6 @@ webcore_sources += \
 	Source/WebCore/dom/SecurityContext.h \
 	Source/WebCore/dom/SelectorQuery.cpp \
 	Source/WebCore/dom/SelectorQuery.h \
-	Source/WebCore/dom/ShadowContentElement.cpp \
-	Source/WebCore/dom/ShadowContentElement.h \
-	Source/WebCore/dom/ShadowContentSelectorQuery.cpp \
-	Source/WebCore/dom/ShadowContentSelectorQuery.h \
-	Source/WebCore/dom/ShadowInclusionSelector.cpp \
-	Source/WebCore/dom/ShadowInclusionSelector.h \
 	Source/WebCore/dom/ShadowRoot.cpp \
 	Source/WebCore/dom/ShadowRoot.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \
@@ -2231,8 +2225,14 @@ webcore_sources += \
 	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSAuditor.cpp \
 	Source/WebCore/html/parser/XSSAuditor.h \
+	Source/WebCore/html/shadow/ContentInclusionSelector.cpp \
+	Source/WebCore/html/shadow/ContentInclusionSelector.h \
+	Source/WebCore/html/shadow/ContentSelectorQuery.cpp \
+	Source/WebCore/html/shadow/ContentSelectorQuery.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
 	Source/WebCore/html/shadow/DetailsMarkerControl.h \
+	Source/WebCore/html/shadow/HTMLContentElement.cpp \
+	Source/WebCore/html/shadow/HTMLContentElement.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \
 	Source/WebCore/html/shadow/MediaControls.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \

@@ -25,15 +25,15 @@
  */
 
 #include "config.h"
-#include "ShadowContentSelectorQuery.h"
+#include "ContentSelectorQuery.h"
 
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
-#include "ShadowContentElement.h"
+#include "HTMLContentElement.h"
 
 namespace WebCore {
 
-ShadowContentSelectorQuery::ShadowContentSelectorQuery(ShadowContentElement* element)
+ContentSelectorQuery::ContentSelectorQuery(HTMLContentElement* element)
     : m_contentElement(element)
     , m_selectorChecker(element->document(), !element->document()->inQuirksMode())
 {
@@ -48,7 +48,7 @@ ShadowContentSelectorQuery::ShadowContentSelectorQuery(ShadowContentElement* ele
     m_selectors.initialize(m_selectorList);
 }
 
-bool ShadowContentSelectorQuery::matches(Node* node) const
+bool ContentSelectorQuery::matches(Node* node) const
 {
     ASSERT(node);
     if (!node)
