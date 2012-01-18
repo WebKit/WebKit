@@ -436,6 +436,70 @@
     IMPL->setCustomAttr(newCustomAttr);
 }
 
+- (int)withScriptStateAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->withScriptStateAttribute();
+}
+
+- (void)setWithScriptStateAttribute:(int)newWithScriptStateAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setWithScriptStateAttribute(newWithScriptStateAttribute);
+}
+
+- (DOMTestObj *)withScriptExecutionContextAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->withScriptExecutionContextAttribute()));
+}
+
+- (void)setWithScriptExecutionContextAttribute:(DOMTestObj *)newWithScriptExecutionContextAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newWithScriptExecutionContextAttribute);
+
+    IMPL->setWithScriptExecutionContextAttribute(core(newWithScriptExecutionContextAttribute));
+}
+
+- (DOMTestObj *)withScriptStateAttributeRaises
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->withScriptStateAttributeRaises(ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)setWithScriptStateAttributeRaises:(DOMTestObj *)newWithScriptStateAttributeRaises
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newWithScriptStateAttributeRaises);
+
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setWithScriptStateAttributeRaises(core(newWithScriptStateAttributeRaises), ec);
+    WebCore::raiseOnDOMError(ec);
+}
+
+- (DOMTestObj *)withScriptExecutionContextAttributeRaises
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->withScriptExecutionContextAttributeRaises(ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)setWithScriptExecutionContextAttributeRaises:(DOMTestObj *)newWithScriptExecutionContextAttributeRaises
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newWithScriptExecutionContextAttributeRaises);
+
+    WebCore::ExceptionCode ec = 0;
+    IMPL->setWithScriptExecutionContextAttributeRaises(core(newWithScriptExecutionContextAttributeRaises), ec);
+    WebCore::raiseOnDOMError(ec);
+}
+
 - (NSString *)scriptStringAttr
 {
     WebCore::JSMainThreadNullState state;

@@ -119,6 +119,14 @@ enum {
 - (void)setStringAttrWithSetterException:(NSString *)newStringAttrWithSetterException;
 - (int)customAttr;
 - (void)setCustomAttr:(int)newCustomAttr;
+- (int)withScriptStateAttribute;
+- (void)setWithScriptStateAttribute:(int)newWithScriptStateAttribute;
+- (DOMTestObj *)withScriptExecutionContextAttribute;
+- (void)setWithScriptExecutionContextAttribute:(DOMTestObj *)newWithScriptExecutionContextAttribute;
+- (DOMTestObj *)withScriptStateAttributeRaises;
+- (void)setWithScriptStateAttributeRaises:(DOMTestObj *)newWithScriptStateAttributeRaises;
+- (DOMTestObj *)withScriptExecutionContextAttributeRaises;
+- (void)setWithScriptExecutionContextAttributeRaises:(DOMTestObj *)newWithScriptExecutionContextAttributeRaises;
 - (NSString *)scriptStringAttr;
 #if ENABLE(Condition1)
 - (int)conditionalAttr1;

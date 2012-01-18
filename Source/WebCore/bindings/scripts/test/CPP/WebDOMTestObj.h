@@ -124,6 +124,14 @@ public:
     void setStringAttrWithGetterException(const WebDOMString&);
     WebDOMString stringAttrWithSetterException() const;
     void setStringAttrWithSetterException(const WebDOMString&);
+    int withScriptStateAttribute() const;
+    void setWithScriptStateAttribute(int);
+    WebDOMTestObj withScriptExecutionContextAttribute() const;
+    void setWithScriptExecutionContextAttribute(const WebDOMTestObj&);
+    WebDOMTestObj withScriptStateAttributeRaises() const;
+    void setWithScriptStateAttributeRaises(const WebDOMTestObj&);
+    WebDOMTestObj withScriptExecutionContextAttributeRaises() const;
+    void setWithScriptExecutionContextAttributeRaises(const WebDOMTestObj&);
     WebDOMString scriptStringAttr() const;
 #if ENABLE(Condition1)
     int conditionalAttr1() const;

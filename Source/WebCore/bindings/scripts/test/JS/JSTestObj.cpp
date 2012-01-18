@@ -107,6 +107,10 @@ static const HashTableValue JSTestObjTableValues[] =
     { "stringAttrWithGetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t)setJSTestObjStringAttrWithGetterException, NoIntrinsic },
     { "stringAttrWithSetterException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t)setJSTestObjStringAttrWithSetterException, NoIntrinsic },
     { "customAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t)setJSTestObjCustomAttr, NoIntrinsic },
+    { "withScriptStateAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttribute), (intptr_t)setJSTestObjWithScriptStateAttribute, NoIntrinsic },
+    { "withScriptExecutionContextAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttribute), (intptr_t)setJSTestObjWithScriptExecutionContextAttribute, NoIntrinsic },
+    { "withScriptStateAttributeRaises", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttributeRaises), (intptr_t)setJSTestObjWithScriptStateAttributeRaises, NoIntrinsic },
+    { "withScriptExecutionContextAttributeRaises", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttributeRaises), (intptr_t)setJSTestObjWithScriptExecutionContextAttributeRaises, NoIntrinsic },
     { "scriptStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjScriptStringAttr), (intptr_t)0, NoIntrinsic },
 #if ENABLE(Condition1)
     { "conditionalAttr1", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr1), (intptr_t)setJSTestObjConditionalAttr1, NoIntrinsic },
@@ -139,7 +143,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjTable = { 136, 127, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 137, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -631,6 +635,52 @@ JSValue jsTestObjCustomAttr(ExecState* exec, JSValue slotBase, const Identifier&
 }
 
 
+JSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->withScriptStateAttribute(exec));
+    return result;
+}
+
+
+JSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptExecutionContextAttribute(scriptContext)));
+    return result;
+}
+
+
+JSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    ExceptionCode ec = 0;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptStateAttributeRaises(exec, ec)));
+    setDOMException(exec, ec);
+    return result;
+}
+
+
+JSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    ExceptionCode ec = 0;
+    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptExecutionContextAttributeRaises(scriptContext, ec)));
+    setDOMException(exec, ec);
+    return result;
+}
+
+
 JSValue jsTestObjScriptStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
@@ -1014,6 +1064,48 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisOb
 void setJSTestObjCustomAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     static_cast<JSTestObj*>(thisObject)->setCustomAttr(exec, value);
+}
+
+
+void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    impl->setWithScriptStateAttribute(exec, value.toInt32(exec));
+}
+
+
+void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return;
+    impl->setWithScriptExecutionContextAttribute(scriptContext, toTestObj(value));
+}
+
+
+void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    ExceptionCode ec = 0;
+    impl->setWithScriptStateAttributeRaises(exec, toTestObj(value), ec);
+    setDOMException(exec, ec);
+}
+
+
+void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    ExceptionCode ec = 0;
+    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return;
+    impl->setWithScriptExecutionContextAttributeRaises(scriptContext, toTestObj(value), ec);
+    setDOMException(exec, ec);
 }
 
 

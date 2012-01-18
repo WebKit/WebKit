@@ -1765,7 +1765,11 @@ sub GenerateImplementation
                     # Once JSDOMWrappers have a back-pointer to the globalObject we can pass castedThis->globalObject()
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
                 } elsif (!@{$attribute->getterExceptions}) {
-                    push(@implContent, "    UNUSED_PARAM(exec);\n");
+                    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"};
+                    my $callWithArg = "";
+
+                    push(@implContent, "    UNUSED_PARAM(exec);\n") if (!$callWith);
+
                     my $cacheIndex = 0;
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                         $cacheIndex = $currentCachedAttribute;
@@ -1774,14 +1778,19 @@ sub GenerateImplementation
                         push(@implContent, "        return cachedValue;\n");
                     }
 
+                    if ($callWith) {
+                        $callWithArg = GenerateCallWith($callWith, \@implContent, "jsUndefined()");
+                    }
+
                     if ($svgListPropertyType) {
-                        push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "castedThis->impl()->$implGetterFunctionName()", "castedThis") . ";\n");
+                        push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "castedThis->impl()->$implGetterFunctionName($callWithArg)", "castedThis") . ";\n");
                     } elsif ($svgPropertyOrListPropertyType) {
                         push(@implContent, "    $svgPropertyOrListPropertyType& impl = castedThis->impl()->propertyReference();\n");
                         if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl", "castedThis") . ";\n");
                         } else {
-                            push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl.$implGetterFunctionName()", "castedThis") . ";\n");
+                            push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl.$implGetterFunctionName($callWithArg)", "castedThis") . ";\n");
+
                         }
                     } else {
                         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
@@ -1792,6 +1801,10 @@ sub GenerateImplementation
                             unshift(@arguments, "impl");
                         } else {
                             $functionName = "impl->${functionName}";
+                        }
+
+                        if ($callWith) {
+                            unshift(@arguments, $callWithArg);
                         }
 
                         my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
@@ -1808,13 +1821,21 @@ sub GenerateImplementation
                     push(@implContent, "    return result;\n");
 
                 } else {
+                    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"};
+                    my @arguments = ("ec");
+
                     push(@implContent, "    ExceptionCode ec = 0;\n");                    
+
+                    if ($callWith) {
+                        unshift(@arguments, GenerateCallWith($callWith, \@implContent, "jsUndefined()"));
+                    }
+
                     if ($svgPropertyOrListPropertyType) {
                         push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->impl());\n");
-                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl.$implGetterFunctionName(ec)", "castedThis") . ";\n");
+                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                     } else {
                         push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
-                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName(ec)", "castedThis") . ";\n");
+                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "impl->$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                     }
 
                     push(@implContent, "    setDOMException(exec, ec);\n");
@@ -2010,6 +2031,12 @@ sub GenerateImplementation
                                 } else {
                                     $functionName = "impl->${functionName}";
                                 }
+
+                                my $callWith = $attribute->signature->extendedAttributes->{"CallWith"};
+                                if ($callWith) {
+                                    unshift(@arguments, GenerateCallWith($callWith, \@implContent, ""));
+                                }
+
                                 push(@arguments, "ec") if @{$attribute->setterExceptions};
                                 push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -2362,6 +2389,25 @@ sub GenerateImplementation
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
+sub GenerateCallWith
+{
+    my $callWith = shift;
+    my $outputArray = shift;
+    my $returnValue = shift;
+    my $callWithArg = "COMPILE_ASSERT(false)";
+
+    if ($callWith eq "ScriptState") {
+        $callWithArg = "exec";
+    } elsif ($callWith eq "ScriptExecutionContext") {
+        push(@$outputArray, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
+        push(@$outputArray, "    if (!scriptContext)\n");
+        push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
+        $callWithArg = "scriptContext";
+    }
+
+    return $callWithArg;
+}
+
 sub GenerateArgumentsCountCheck
 {
     my $outputArray = shift;
@@ -2423,16 +2469,7 @@ sub GenerateParametersCheck
 
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     if ($callWith and !$function->signature->extendedAttributes->{"Constructor"}) {
-        my $callWithArg = "COMPILE_ASSERT(false)";
-        if ($callWith eq "ScriptState") {
-            $callWithArg = "exec";
-        } elsif ($callWith eq "ScriptExecutionContext") {
-            push(@$outputArray, "    ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
-            push(@$outputArray, "    if (!scriptContext)\n");
-            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-            $callWithArg = "scriptContext"; 
-        }
-        push @arguments, $callWithArg;
+        push(@arguments, GenerateCallWith($callWith, \@$outputArray, "JSValue::encode(jsUndefined())"));
     }
 
     $implIncludes{"ExceptionCode.h"} = 1;

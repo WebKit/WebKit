@@ -249,6 +249,14 @@ JSC::JSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::JSValu
 void setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjCustomAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+void setJSTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjScriptStringAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjConditionalAttr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr1(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);

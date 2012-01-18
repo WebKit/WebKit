@@ -109,6 +109,13 @@ module test {
             raises(DOMException);
         [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
 
+        attribute [CallWith=ScriptState] long withScriptStateAttribute;
+        attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttribute;
+        attribute [CallWith=ScriptState] TestObj withScriptStateAttributeRaises
+            getter raises(DOMException);
+        attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttributeRaises
+            getter raises(DOMException);
+
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);

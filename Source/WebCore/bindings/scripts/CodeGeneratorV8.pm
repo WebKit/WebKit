@@ -899,8 +899,15 @@ END
 
     my $returnType = GetTypeFromSignature($attribute->signature);
     my $getterString;
+    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"} || "";
+
     if ($getterStringUsesImp) {
         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+
+        if ($callWith) {
+            push(@arguments, GenerateCallWith($callWith, \@implContentDecls, "    ", 0, 0));
+        }
+
         push(@arguments, "ec") if $useExceptions;
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
@@ -930,6 +937,12 @@ END
             push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
         push(@implContentDecls, GenerateSetDOMException("    "));
+
+        if ($callWith eq "ScriptState") {
+            push(@implContentDecls, "    if (state.hadException())\n");
+            push(@implContentDecls, "        return throwError(state.exception());\n");
+        }
+
         $result = "v";
         $result .= ".release()" if (IsRefPtrType($returnType));
     } else {
@@ -1128,6 +1141,8 @@ END
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
     }
 
+    my $callWith = $attribute->signature->extendedAttributes->{"CallWith"} || "";
+
     if ($implClassName eq "SVGNumber") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
@@ -1152,6 +1167,11 @@ END
             push(@implContentDecls, ");\n");
         } else {
             my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
+
+            if ($callWith) {
+                push(@arguments, GenerateCallWith($callWith, \@implContentDecls, "    ", 1, 0));
+            }
+
             push(@arguments, $result);
             push(@arguments, "ec") if $useExceptions;
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
@@ -1169,6 +1189,11 @@ END
     if ($useExceptions) {
         push(@implContentDecls, "    if (UNLIKELY(ec))\n");
         push(@implContentDecls, "        V8Proxy::setDOMException(ec);\n");
+    }
+
+    if ($callWith eq "ScriptState") {
+        push(@implContentDecls, "    if (state.hadException())\n");
+        push(@implContentDecls, "        throwError(state.exception());\n");
     }
 
     if ($svgNativeType) {
@@ -1452,6 +1477,35 @@ END
 
     push(@implContentDecls, "}\n\n");
     push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+}
+
+sub GenerateCallWith
+{
+    my $callWith = shift;
+    my $outputArray = shift;
+    my $indent = shift;
+    my $returnVoid = shift;
+    my $emptyContext = shift;
+    my $callWithArg = "COMPILE_ASSERT(false)";
+
+    if ($callWith eq "ScriptState") {
+        if ($emptyContext) {
+            push(@$outputArray, $indent . "EmptyScriptState state;\n");
+            $callWithArg = "&state";
+        } else {
+            push(@$outputArray, $indent . "ScriptState* state = ScriptState::current();\n");
+            push(@$outputArray, $indent . "if (!state)\n");
+            push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
+            $callWithArg = "state";
+        }
+    } elsif ($callWith eq "ScriptExecutionContext") {
+        push(@$outputArray, $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n");
+        push(@$outputArray, $indent . "if (!scriptContext)\n");
+        push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
+        $callWithArg = "scriptContext";
+    }
+
+    return $callWithArg;
 }
 
 sub GenerateArgumentsCountCheck
@@ -3193,20 +3247,11 @@ sub GenerateFunctionCallString()
         $functionName = "imp->${name}";
     }
 
-    my $callWith = $function->signature->extendedAttributes->{"CallWith"};
+    my $callWith = $function->signature->extendedAttributes->{"CallWith"} || "";
     if ($callWith) {
-        my $callWithArg = "COMPILE_ASSERT(false)";
-        if ($callWith eq "ScriptState") {
-            $result .= $indent . "EmptyScriptState state;\n";
-            $callWithArg = "&state";
-            $hasScriptState = 1;
-        } elsif ($callWith eq "ScriptExecutionContext") {
-            $result .= $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n";
-            $result .= $indent . "if (!scriptContext)\n";
-            $result .= $indent . "    return v8::Undefined();\n";
-            $callWithArg = "scriptContext";
-        }
-        push @arguments, $callWithArg;
+        my @callWithOutput = ();
+        push(@arguments, GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1));
+        $result .= join("", @callWithOutput);
         $index++;
         $numberOfParameters++
     }
@@ -3249,7 +3294,7 @@ sub GenerateFunctionCallString()
 
     if ($returnType eq "void") {
         $result .= $indent . "$functionString;\n";
-    } elsif ($hasScriptState or @{$function->raisesExceptions}) {
+    } elsif ($callWith eq "ScriptState" or @{$function->raisesExceptions}) {
         $result .= $indent . $nativeReturnType . " result = $functionString;\n";
     } else {
         # Can inline the function call into the return statement to avoid overhead of using a Ref<> temporary
@@ -3266,7 +3311,7 @@ sub GenerateFunctionCallString()
         $result .= $indent . "    goto fail;\n";
     }
 
-    if ($hasScriptState) {
+    if ($callWith eq "ScriptState") {
         $result .= $indent . "if (state.hadException())\n";
         $result .= $indent . "    return throwError(state.exception());\n"
     }
