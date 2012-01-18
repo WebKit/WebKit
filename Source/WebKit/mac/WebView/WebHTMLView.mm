@@ -4548,6 +4548,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     ca = [a objectForKey:NSForegroundColorAttributeName];
     cb = [b objectForKey:NSForegroundColorAttributeName];
     if (ca == cb) {
+        if (!ca)
+            ca = [NSColor blackColor];
         [style setColor:[self _colorAsString:ca]];
     }
 
