@@ -125,6 +125,7 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
         adjustSize(resource->hasClients(), delta);
     
     revalidatingResource->switchClientsToRevalidatedResource();
+    ASSERT(!revalidatingResource->m_deleted);
     // this deletes the revalidating resource
     revalidatingResource->clearResourceToRevalidate();
 }

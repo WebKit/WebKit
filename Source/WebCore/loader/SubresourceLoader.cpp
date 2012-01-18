@@ -175,12 +175,9 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
             // Existing resource is ok, just use it updating the expiration time.
-            m_state = Revalidating;
             memoryCache()->revalidationSucceeded(m_resource, response);
-            if (!reachedTerminalState()) {
+            if (!reachedTerminalState())
                 ResourceLoader::didReceiveResponse(response);
-                didFinishLoading(monotonicallyIncreasingTime());
-            }
             return;
         }
         // Did not get 304 response, continue as a regular resource load.
@@ -265,7 +262,7 @@ void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
 
 void SubresourceLoader::didFinishLoading(double finishTime)
 {
-    if (m_state != Initialized && m_state != Revalidating)
+    if (m_state != Initialized)
         return;
     ASSERT(!reachedTerminalState());
     ASSERT(!m_resource->resourceToRevalidate());
