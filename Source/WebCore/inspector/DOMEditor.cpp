@@ -93,7 +93,7 @@ void DOMEditor::patchDocument(const String& markup)
 Node* DOMEditor::patchNode(Node* node, const String& markup, ExceptionCode& ec)
 {
     // Don't parse <html> as a fragment.
-    if (node == node->ownerDocument()->documentElement()) {
+    if (node->isDocumentNode() || (node->parentNode() && node->parentNode()->isDocumentNode())) {
         patchDocument(markup);
         return 0;
     }

@@ -490,6 +490,7 @@ function output(text)
 
         outputElement = document.createElement("div");
         outputElement.className = "output";
+        outputElement.id = "output";
         outputElement.style.whiteSpace = "pre";
         intermediate2.appendChild(outputElement);
     }

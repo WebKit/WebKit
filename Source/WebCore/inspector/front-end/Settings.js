@@ -164,6 +164,7 @@ WebInspector.ExperimentsSettings = function()
 {
     this._setting = WebInspector.settings.createSetting("experiments", {});
     this._experiments = [];
+    this._enabledForTest = {};
     
     // Add currently running experiments here.
     // FIXME: Move out from experiments once navigator is production-ready.
@@ -209,6 +210,9 @@ WebInspector.ExperimentsSettings.prototype = {
      */
     isEnabled: function(experimentName)
     {
+        if (this._enabledForTest[experimentName])
+            return true;
+
         if (!this.experimentsEnabled)
             return false;
         
@@ -226,7 +230,15 @@ WebInspector.ExperimentsSettings.prototype = {
         experimentsSetting[experimentName] = enabled;
         this._setting.set(experimentsSetting);
     },
-    
+
+    /**
+     * @param {string} experimentName
+     */
+    _enableForTest: function(experimentName)
+    {
+        this._enabledForTest[experimentName] = true;
+    },
+
     _cleanUpSetting: function()
     {
         var experimentsSetting = this._setting.get();
@@ -284,6 +296,11 @@ WebInspector.Experiment.prototype = {
     setEnabled: function(enabled)
     {
         return this._experimentsSettings.setEnabled(this._name, enabled);
+    },
+
+    enableForTest: function()
+    {
+        this._experimentsSettings._enableForTest(this._name);
     }
 }
 

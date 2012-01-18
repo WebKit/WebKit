@@ -1320,7 +1320,10 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        this.representedObject.setAttribute(attributeName, newText, moveToNextAttributeIfNeeded.bind(this));
+        if (oldText !== newText)
+            this.representedObject.setAttribute(attributeName, newText, moveToNextAttributeIfNeeded.bind(this));
+        else
+            moveToNextAttributeIfNeeded.call(this);
     },
 
     _tagNameEditingCommitted: function(element, newText, oldText, tagName, moveDirection)

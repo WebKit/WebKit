@@ -1,0 +1,51 @@
+<html>
+<head>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script src="../../http/tests/inspector/resources-test.js"></script>
+
+<script>
+
+function test()
+{
+    WebInspector.experimentsSettings.freeFlowDOMEditing.enableForTest();
+    new WebInspector.DOMModelResourceBinding(WebInspector.domAgent);
+
+    InspectorTest.runAfterResourcesAreFinished(["set-html-via-resource.html", "set-html-via-resource-iframe.html"], step1);
+
+    function step1()
+    {
+        WebInspector.resourceTreeModel.forAllResources(formatter);
+
+        function formatter(resource)
+        {
+            if (resource.url.indexOf("set-html-via-resource-iframe.html") !== -1)
+                resource.setContent("<body>New iframe content</body>", false, step2.bind(this, resource.url));
+        }
+    }
+
+    function step2(url)
+    {
+        var doc = WebInspector.domAgent._documentURLToDocument[url];
+        DOMAgent.getOuterHTML(doc.id, step3);
+    }
+
+    function step3(error, text)
+    {
+        InspectorTest.addResult(text);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body>
+<p>
+Tests that the DOM content can be set via editing resource content.
+</p>
+
+<iframe src="resources/set-html-via-resource-iframe.html" onload="runTest()"></iframe>
+
+</body>
+</html>

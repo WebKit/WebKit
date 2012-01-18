@@ -1,3 +1,43 @@
+2012-01-17  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: track HTML revisions when editing DOM and / or upon free flow edits.
+        https://bugs.webkit.org/show_bug.cgi?id=76457
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/elements/set-html-via-resource.html
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::patchNode):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getOuterHTML):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.setNodeName):
+        (WebInspector.DOMNode.prototype.setNodeValue):
+        (WebInspector.DOMNode.prototype.setAttribute):
+        (WebInspector.DOMNode.prototype.setAttributeValue):
+        (WebInspector.DOMNode.prototype.removeAttribute):
+        (WebInspector.DOMNode.prototype.getChildNodes.mycallback):
+        (WebInspector.DOMNode.prototype.getChildNodes):
+        (WebInspector.DOMNode.prototype.setOuterHTML):
+        (WebInspector.DOMNode.prototype.removeNode):
+        (WebInspector.DOMNode.prototype.moveTo):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._buildHighlightConfig):
+        (WebInspector.DOMAgent.prototype._markRevision):
+        (WebInspector.DOMAgent.prototype._captureDOM.callback):
+        (WebInspector.DOMAgent.prototype._captureDOM):
+        (WebInspector.DOMModelResourceBinding.prototype.setContent):
+        (WebInspector.DOMModelResourceBinding.prototype.setContent.setOuterHTML):
+        (WebInspector.DOMModelResourceBinding.prototype.setContent.withDocument):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+
 2012-01-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Popover does not disappear, causes debugger failure.

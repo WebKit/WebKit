@@ -1,6 +1,7 @@
 var initialize_SetOuterHTMLTest = function() {
 
 InspectorTest.events = [];
+InspectorTest.containerId;
 
 InspectorTest.setUpTestSuite = function(next)
 {
@@ -33,6 +34,11 @@ InspectorTest.setUpTestSuite = function(next)
 InspectorTest.recordEvent = function(eventName, event)
 {
     var node = event.data.node || event.data;
+    var parent = event.data.parent;
+    for (var currentNode = parent || node; currentNode; currentNode = currentNode.parentNode) {
+        if (currentNode.getAttribute("id") === "output")
+            return;
+    }
     InspectorTest.events.push("Event " + eventName + ": " + node.nodeName());
 }
 

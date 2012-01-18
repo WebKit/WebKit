@@ -616,22 +616,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
     if (!node)
         return;
 
-    if (node->isHTMLElement()) {
-        *outerHTML = static_cast<HTMLElement*>(node)->outerHTML();
-        return;
-    }
-
-    if (node->isCommentNode()) {
-        *outerHTML = "<!--" + node->nodeValue() + "-->";
-        return;
-    }
-
-    if (node->isTextNode()) {
-        *outerHTML = node->nodeValue();
-        return;
-    }
-
-    *errorString = "Only HTMLElements, Comments, and Text nodes are supported";
+    *outerHTML = createMarkup(node);
 }
 
 void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML)
@@ -646,8 +631,8 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     if (!node)
         return;
 
-    Document* document = node->ownerDocument();
-    if (!document->isHTMLDocument()) {
+    Document* document = node->isDocumentNode() ? static_cast<Document*>(node) : node->ownerDocument();
+    if (!document || !document->isHTMLDocument()) {
         *errorString = "Not an HTML document";
         return;
     }
@@ -1136,33 +1121,33 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         .setLocalName(localName)
         .setNodeValue(nodeValue);
 
-    if (node->nodeType() == Node::ELEMENT_NODE || node->nodeType() == Node::DOCUMENT_NODE || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
+    if (node->isContainerNode()) {
         int nodeCount = innerChildNodeCount(node);
         value->setChildNodeCount(nodeCount);
         RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, depth, nodesMap);
         if (children->length() > 0)
             value->setArray("children", children.release());
+    }
 
-        if (node->nodeType() == Node::ELEMENT_NODE) {
-            Element* element = static_cast<Element*>(node);
-            value->setArray("attributes", buildArrayForElementAttributes(element));
-            if (node->isFrameOwnerElement()) {
-                HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
-                Document* doc = frameOwner->contentDocument();
-                if (doc)
-                    value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
-            }
-        } else if (node->nodeType() == Node::DOCUMENT_NODE) {
-            Document* document = static_cast<Document*>(node);
-            value->setDocumentURL(documentURLString(document));
-            value->setXmlVersion(document->xmlVersion());
+    if (node->isElementNode()) {
+        Element* element = static_cast<Element*>(node);
+        value->setArray("attributes", buildArrayForElementAttributes(element));
+        if (node->isFrameOwnerElement()) {
+            HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
+            Document* doc = frameOwner->contentDocument();
+            if (doc)
+                value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
         }
+    } else if (node->isDocumentNode()) {
+        Document* document = static_cast<Document*>(node);
+        value->setDocumentURL(documentURLString(document));
+        value->setXmlVersion(document->xmlVersion());
     } else if (node->nodeType() == Node::DOCUMENT_TYPE_NODE) {
         DocumentType* docType = static_cast<DocumentType*>(node);
         value->setPublicId(docType->publicId());
         value->setSystemId(docType->systemId());
         value->setInternalSubset(docType->internalSubset());
-    } else if (node->nodeType() == Node::ATTRIBUTE_NODE) {
+    } else if (node->isAttributeNode()) {
         Attr* attribute = static_cast<Attr*>(node);
         value->setName(attribute->name());
         value->setValue(attribute->value());

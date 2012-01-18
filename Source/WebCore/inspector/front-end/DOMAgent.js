@@ -64,9 +64,13 @@ WebInspector.DOMNode = function(domAgent, doc, payload) {
 
     if (payload.contentDocument) {
         this._contentDocument = new WebInspector.DOMDocument(domAgent, payload.contentDocument);
+        for (var i = 0; i < this._attributes.length; ++i) {
+            // Only bind document to URL when src attribute is set.
+            if (this._attributes[i].name.toLowerCase() === "src")
+                this._domAgent._documentURLToDocument[this._contentDocument.documentURL] = this._contentDocument;
+        }
         this.children = [this._contentDocument];
         this._renumber();
-        this._domAgent._idToDOMNode[this._contentDocument.id] = this._contentDocument;
     }
 
     if (this._nodeType === Node.ELEMENT_NODE) {
@@ -75,15 +79,10 @@ WebInspector.DOMNode = function(domAgent, doc, payload) {
             this.ownerDocument.documentElement = this;
         if (this.ownerDocument && !this.ownerDocument.body && this._nodeName === "BODY")
             this.ownerDocument.body = this;
-        if (payload.documentURL)
-            this.documentURL = payload.documentURL;
     } else if (this._nodeType === Node.DOCUMENT_TYPE_NODE) {
         this.publicId = payload.publicId;
         this.systemId = payload.systemId;
         this.internalSubset = payload.internalSubset;
-    } else if (this._nodeType === Node.DOCUMENT_NODE) {
-        this.documentURL = payload.documentURL;
-        this.xmlVersion = payload.xmlVersion;
     } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
         this.name = payload.name;
         this.value = payload.value;
@@ -133,11 +132,11 @@ WebInspector.DOMNode.prototype = {
 
     /**
      * @param {string} name
-     * @param {function()=} callback
+     * @param {function(?Protocol.Error)=} callback
      */
     setNodeName: function(name, callback)
     {
-        DOMAgent.setNodeName(this.id, name, callback);
+        DOMAgent.setNodeName(this.id, name, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -162,7 +161,7 @@ WebInspector.DOMNode.prototype = {
      */
     setNodeValue: function(value, callback)
     {
-        DOMAgent.setNodeValue(this.id, value, callback);
+        DOMAgent.setNodeValue(this.id, value, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -178,21 +177,21 @@ WebInspector.DOMNode.prototype = {
     /**
      * @param {string} name
      * @param {string} text
-     * @param {function()=} callback
+     * @param {function(?Protocol.Error)=} callback
      */
     setAttribute: function(name, text, callback)
     {
-        DOMAgent.setAttributesAsText(this.id, text, name, callback);
+        DOMAgent.setAttributesAsText(this.id, text, name, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
      * @param {string} name
      * @param {string} value
-     * @param {function()=} callback
+     * @param {function(?Protocol.Error)=} callback
      */
     setAttributeValue: function(name, value, callback)
     {
-        DOMAgent.setAttributeValue(this.id, name, value, callback);
+        DOMAgent.setAttributeValue(this.id, name, value, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -205,7 +204,7 @@ WebInspector.DOMNode.prototype = {
 
     /**
      * @param {string} name
-     * @param {function()=} callback
+     * @param {function(?Protocol.Error)=} callback
      */
     removeAttribute: function(name, callback)
     {
@@ -221,8 +220,7 @@ WebInspector.DOMNode.prototype = {
                 }
             }
 
-            if (callback)
-                callback();
+            WebInspector.domAgent._markRevision(this, callback)(error);
         }
         DOMAgent.removeAttribute(this.id, name, mycallback.bind(this));
     },
@@ -242,7 +240,8 @@ WebInspector.DOMNode.prototype = {
          * @this {WebInspector.DOMNode}
          * @param {?Protocol.Error} error
          */
-        function mycallback(error) {
+        function mycallback(error)
+        {
             if (!error && callback)
                 callback(this.children);
         }
@@ -264,7 +263,7 @@ WebInspector.DOMNode.prototype = {
      */
     setOuterHTML: function(html, callback)
     {
-        DOMAgent.setOuterHTML(this.id, html, callback);
+        DOMAgent.setOuterHTML(this.id, html, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -272,7 +271,7 @@ WebInspector.DOMNode.prototype = {
      */
     removeNode: function(callback)
     {
-        DOMAgent.removeNode(this.id, callback);
+        DOMAgent.removeNode(this.id, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -480,7 +479,7 @@ WebInspector.DOMNode.prototype = {
      */
     moveTo: function(targetNode, anchorNode, callback)
     {
-        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, callback);
+        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, WebInspector.domAgent._markRevision(this, callback));
     },
 
     /**
@@ -501,6 +500,9 @@ WebInspector.DOMNode.prototype = {
 WebInspector.DOMDocument = function(domAgent, payload)
 {
     WebInspector.DOMNode.call(this, domAgent, this, payload);
+    this.documentURL = payload.documentURL;
+    this.xmlVersion = payload.xmlVersion;
+    domAgent._idToDOMNode[this.id] = this;
 
     /**
      * @type {string} Document nodes always have documentURL
@@ -518,6 +520,7 @@ WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 WebInspector.DOMAgent = function() {
     /** @type {Object|undefined} */
     this._idToDOMNode = {};
+    this._documentURLToDocument = {};
     this._document = null;
     this._attributeLoadNodeIds = {};
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
@@ -733,9 +736,10 @@ WebInspector.DOMAgent.prototype = {
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
+        this._documentURLToDocument = {};
         if (payload && "nodeId" in payload) {
             this._document = new WebInspector.DOMDocument(this, payload);
-            this._idToDOMNode[payload.nodeId] = this._document;
+            this._documentURLToDocument[this._document.documentURL] = this._document;
             if (this._document.children)
                 this._bindNodes(this._document.children);
         } else
@@ -969,6 +973,56 @@ WebInspector.DOMAgent.prototype = {
             highlightConfig.marginColor = WebInspector.Color.PageHighlight.Margin.toProtocolRGBA();
 
         return highlightConfig;
+    },
+
+    /**
+     * @param {WebInspector.DOMNode} node
+     * @param {function(?Protocol.Error)=} callback
+     * @return {function(?Protocol.Error)}
+     */
+    _markRevision: function(node, callback)
+    {
+        function wrapperFunction(error)
+        {
+            if (callback)
+                callback(error);
+            if (error || !WebInspector.experimentsSettings.freeFlowDOMEditing.isEnabled())
+                return;
+            if (this._captureDOMTimer)
+               clearTimeout(this._captureDOMTimer);
+            this._captureDOMTimer = setTimeout(this._captureDOM.bind(this, node), 500);
+        }
+        return wrapperFunction.bind(this);
+    },
+
+    /**
+     * @param {WebInspector.DOMNode} node
+     */
+    _captureDOM: function(node)
+    {
+        delete this._captureDOMTimer;
+        if (!node.ownerDocument)
+            return;
+
+        function callback(error, text)
+        {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            var url = node.ownerDocument.documentURL;
+            if (!url)
+                return;
+
+            var resource = WebInspector.resourceForURL(url);
+            if (!resource)
+                return;
+
+            resource.addRevision(text);
+        }
+        DOMAgent.getOuterHTML(node.ownerDocument.id, callback);
+        
     }
 }
 
@@ -1082,7 +1136,37 @@ WebInspector.DOMModelResourceBinding = function(domAgent)
 WebInspector.DOMModelResourceBinding.prototype = {
     setContent: function(resource, content, majorChange, userCallback)
     {
-        DOMAgent.setOuterHTML(0, content, userCallback);
+        function callbackWrapper(error)
+        {
+            if (majorChange)
+                resource.addRevision(content);
+            if (userCallback)
+                userCallback(error);
+        }
+
+        function setOuterHTML(reportError)
+        {
+            var doc = this._domAgent._documentURLToDocument[resource.url];
+            if (doc) {
+                DOMAgent.setOuterHTML(doc.id, content, callbackWrapper.bind(this));
+                return true;
+            }
+            if (reportError)
+                callback("No document with given URL found");
+            return false;
+        }
+    
+        this._domAgent.requestDocument(withDocument.bind(this));
+
+        function withDocument(doc)
+        {
+            if (setOuterHTML.call(this, false))
+                return;
+
+            // We are editing one of the iframes, but it has not yet been loaded in the DOM tree.
+            // Load all iframe nodes here.
+            DOMAgent.querySelectorAll(doc.id, "iframe[src]", setOuterHTML.bind(this, true));
+        }
     },
 
     canSetContent: function()
