@@ -1,3 +1,18 @@
+2012-01-18  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK] Listen to GDK_SCROLL_MASK
+        https://bugs.webkit.org/show_bug.cgi?id=76529
+
+        Set GDK_SCROLL_MASK explicitly, as WebKitWebViewBase does handle
+        scroll events, scrolling currently works because GTK+ happens 
+        to send such events to widgets listening to GDK_BUTTON_PRESS_MASK,
+        but this isn't the intended behavior, so it's subject to change.
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+
 2012-01-18  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix the debug build.
