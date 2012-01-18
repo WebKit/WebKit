@@ -1,5 +1,22 @@
 2011-01-18  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 98935
+
+    2011-10-31  Jeremy Apthorp  <jeremya@google.com>
+
+            Fix a crash relating to anonymous block merging in
+            RenderFullScreen::unwrapRenderer.
+            https://bugs.webkit.org/show_bug.cgi?id=70705
+
+            Reviewed by Simon Fraser.
+
+            Test: fullscreen/anonymous-block-merge-crash.html
+
+            * rendering/RenderFullScreen.cpp:
+            (RenderFullScreen::unwrapRenderer):
+
+2011-01-18  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104275
 
     2012-01-05  Kent Tamura  <tkent@chromium.org>

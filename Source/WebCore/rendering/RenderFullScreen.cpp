@@ -125,14 +125,11 @@ RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, Document* doc
 void RenderFullScreen::unwrapRenderer()
 {
     RenderObject* holder = placeholder() ? placeholder() : this;
-    RenderObject* parent = holder->parent();
-    if (parent) {
-        RenderObject* child = firstChild();
-        while (child) {
-            RenderObject* nextChild = child->nextSibling();
+    if (holder->parent()) {
+        RenderObject* child;
+        while ((child = firstChild())) {
             child->remove();
-            parent->addChild(child, holder);
-            child = nextChild;
+            holder->parent()->addChild(child, holder);
         }
     }
     remove();
