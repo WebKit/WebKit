@@ -1,5 +1,15 @@
 2012-01-17  Sam Weinig  <sam@webkit.org>
 
+        Rename quickLookPreviewItemsAtWindowLocation: to quickLookWithEvent:
+        <rdar://problem/10688913>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView quickLookWithEvent:]):
+
+2012-01-17  Sam Weinig  <sam@webkit.org>
+
         Add helper macro for forward declaring objective-c classes
         https://bugs.webkit.org/show_bug.cgi?id=76485
 

@@ -2141,9 +2141,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 }
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
-- (void)quickLookPreviewItemsAtWindowLocation:(NSPoint)location
+- (void)quickLookWithEvent:(NSEvent *)event
 {
-    NSPoint locationInViewCoordinates = [self convertPoint:location fromView:nil];
+    NSPoint locationInViewCoordinates = [self convertPoint:[event locationInWindow] fromView:nil];
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(locationInViewCoordinates.x, locationInViewCoordinates.y));
 }
 #endif
