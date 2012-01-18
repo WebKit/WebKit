@@ -3861,6 +3861,10 @@ BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-iframe.h
 BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-with-subfocus.html = TEXT
 BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-iframe.html = TEXT
 
+BUGWK76562 : fast/canvas/webgl/drawingbuffer-test.html = TEXT
+
+BUGWK76446 : svg/text/select-x-list-4.svg = IMAGE+TEXT
+
 BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
