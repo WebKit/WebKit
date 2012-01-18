@@ -5,6 +5,8 @@
         #borderImageNone { -webkit-border-image: none }
         #borderImageStretch { -webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 stretch stretch; }
         #borderImageRepeat { -webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 50 repeat; }
+        #borderImageWidth { -webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 / 20 20 20 20 repeat; }
+        #borderImageWidth2 { -webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 50 / 20 stretch stretch; }
     </style>
     <script type="text/javascript">
         function log(msg)
@@ -40,6 +42,14 @@
             log('');
 
             test('borderImageRepeat', '-webkit-gradient(linear, 0 0, 0 0) 50 repeat');
+
+            log('');
+
+            test('borderImageWidth', '-webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 / 20 20 20 20 repeat');
+
+            log('');
+
+            test('borderImageWidth2', '-webkit-gradient(linear, 0 0, 0 0) 50 / 20 stretch stretch');
         }
     </script>
 </head>
@@ -50,6 +60,7 @@
     <div id="borderImageNone"></div>
     <div id="borderImageStretch"></div>
     <div id="borderImageRepeat"></div>
-    
+    <div id="borderImageWidth"></div>
+    <div id="borderImageWidth2"></div>
 </body>
 </html>
