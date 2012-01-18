@@ -1,0 +1,59 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+
+<button id="upper_target">Upper Target</button>
+<div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+<button id="lower_target">Lower Target</button>
+
+<div id="console"></div>
+
+<script>
+description("Tests that scrolling to make an element visible successfully scrolls the main window.");
+
+function runTest() {
+    var upperTarget = document.getElementById("upper_target");
+    var lowerTarget = document.getElementById("lower_target");
+
+    if (window.accessibilityController) {
+        lowerTarget.focus();
+        var lowerTargetAccessibleObject = accessibilityController.focusedElement;
+        upperTarget.focus();
+        var upperTargetAccessibleObject = accessibilityController.focusedElement;
+    }
+
+    // Reset the initial scroll position (since calling focus() can scroll the page too).
+    window.scrollTo(0, 0);
+    shouldBe("window.pageYOffset", "0");
+
+    // Scroll to make lower target visible and check.
+    if (window.accessibilityController)
+        lowerTargetAccessibleObject.scrollToMakeVisible();
+    var minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - window.innerHeight;
+    var maxYOffset = lowerTarget.offsetTop;
+    shouldBeGreaterThanOrEqual("window.pageYOffset", "" + minYOffset);
+    shouldBeGreaterThanOrEqual("" + maxYOffset, "window.pageYOffset");
+
+    // Scroll to make upper target visible and check.
+    if (window.accessibilityController)
+        upperTargetAccessibleObject.scrollToMakeVisible();
+    minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - window.innerHeight;
+    maxYOffset = upperTarget.offsetTop;
+    shouldBeGreaterThanOrEqual("window.pageYOffset", "" + minYOffset);
+    shouldBeGreaterThanOrEqual("" + maxYOffset, "window.pageYOffset");
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

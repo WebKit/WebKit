@@ -3937,4 +3937,33 @@ AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
     return m_roleForMSAA;
 }
 
+ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
+{
+    // If the parent is a scroll view, then this object isn't really scrollable, the parent ScrollView should handle the scrolling.
+    if (parentObject() && parentObject()->isAccessibilityScrollView())
+        return 0;
+
+    if (!m_renderer || !m_renderer->isBox())
+        return 0;
+
+    RenderBox* box = toRenderBox(m_renderer);
+    if (!box->canBeScrolledAndHasScrollableArea())
+        return 0;
+
+    return box->layer();
+}
+
+void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
+{
+    if (!m_renderer || !m_renderer->isBox())
+        return;
+
+    RenderBox* box = toRenderBox(m_renderer);
+    if (!box->canBeScrolledAndHasScrollableArea())
+        return;
+
+    RenderLayer* layer = box->layer();
+    layer->scrollToOffset(point.x(), point.y(), RenderLayer::ScrollOffsetClamped);
+}
+
 } // namespace WebCore

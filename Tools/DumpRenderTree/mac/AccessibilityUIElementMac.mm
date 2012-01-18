@@ -1392,3 +1392,18 @@ AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker
 }
 
 #endif // SUPPORTS_AX_TEXTMARKERS
+
+void AccessibilityUIElement::scrollToMakeVisible()
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
+{
+    // FIXME: implement
+}
+
+void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
+{
+    // FIXME: implement
+}

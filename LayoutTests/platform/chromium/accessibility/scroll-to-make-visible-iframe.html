@@ -1,0 +1,68 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+
+<iframe id="frame" src="data:text/html,<body><button id='upper_target'>Upper Target</button><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><button id='lower_target'>Lower Target</button></body>"></iframe>
+
+<div id="console"></div>
+
+<script>
+description("Tests that scrolling to make an element visible successfully scrolls an iframe.");
+
+if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+window.jsTestIsAsync = true;
+
+function runTest() {
+    window.frame = document.getElementById("frame");
+    window.frameWindow = frame.contentWindow;
+    window.frameDoc = frameWindow.document;
+
+    var upperTarget = frameDoc.getElementById("upper_target");
+    var lowerTarget = frameDoc.getElementById("lower_target");
+
+    if (window.accessibilityController) {
+        lowerTarget.focus();
+        var lowerTargetAccessibleObject = accessibilityController.focusedElement;
+        upperTarget.focus();
+        var upperTargetAccessibleObject = accessibilityController.focusedElement;
+    }
+
+    // Reset the initial scroll position (since calling focus() can scroll the page too).
+    frameWindow.scrollTo(0, 0);
+    shouldBe("frameWindow.pageYOffset", "0");
+
+    // Scroll to make lower target visible and check.
+    if (window.accessibilityController)
+        lowerTargetAccessibleObject.scrollToMakeVisible();
+    var minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - frameWindow.innerHeight;
+    var maxYOffset = lowerTarget.offsetTop;
+    shouldBeGreaterThanOrEqual("frameWindow.pageYOffset", "" + minYOffset);
+    shouldBeGreaterThanOrEqual("" + maxYOffset, "frameWindow.pageYOffset");
+
+    // Scroll to make upper target visible and check.
+    if (window.accessibilityController)
+        upperTargetAccessibleObject.scrollToMakeVisible();
+    minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - frameWindow.innerHeight;
+    maxYOffset = upperTarget.offsetTop;
+    shouldBeGreaterThanOrEqual("frameWindow.pageYOffset", "" + minYOffset);
+    shouldBeGreaterThanOrEqual("" + maxYOffset, "frameWindow.pageYOffset");
+
+    finishJSTest();
+}
+
+window.addEventListener('load', function() {
+    setTimeout(runTest, 10);
+}, false);
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

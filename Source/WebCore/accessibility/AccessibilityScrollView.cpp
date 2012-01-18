@@ -214,4 +214,14 @@ AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
     return 0;
 }
 
+ScrollableArea* AccessibilityScrollView::getScrollableAreaIfScrollable() const
+{
+    return m_scrollView.get();
+}
+
+void AccessibilityScrollView::scrollTo(const IntPoint& point) const
+{
+    m_scrollView->setScrollPosition(point);
+}
+
 } // namespace WebCore    

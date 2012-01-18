@@ -1,3 +1,16 @@
+2012-01-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: Chromium needs methods to scroll an object into view or to a specific location.
+        https://bugs.webkit.org/show_bug.cgi?id=73460
+
+        Reviewed by Chris Fleizach.
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::scrollToMakeVisible):
+        (WebKit::WebAccessibilityObject::scrollToMakeVisibleWithSubFocus):
+        (WebKit::WebAccessibilityObject::scrollToGlobalPoint):
+
 2012-01-17  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Remove public/WebWorker.h from the gyp projects
