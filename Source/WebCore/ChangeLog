@@ -1,3 +1,18 @@
+2012-01-18  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: there should be a way to set HTML for given frame.
+        https://bugs.webkit.org/show_bug.cgi?id=76548
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setDocumentContent):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMModelResourceBinding.prototype.setContent.callbackWrapper):
+        (WebInspector.DOMModelResourceBinding.prototype.setContent):
+
 2012-01-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] [regression] A couple of tests failing after r105253

@@ -64,11 +64,6 @@ WebInspector.DOMNode = function(domAgent, doc, payload) {
 
     if (payload.contentDocument) {
         this._contentDocument = new WebInspector.DOMDocument(domAgent, payload.contentDocument);
-        for (var i = 0; i < this._attributes.length; ++i) {
-            // Only bind document to URL when src attribute is set.
-            if (this._attributes[i].name.toLowerCase() === "src")
-                this._domAgent._documentURLToDocument[this._contentDocument.documentURL] = this._contentDocument;
-        }
         this.children = [this._contentDocument];
         this._renumber();
     }
@@ -515,7 +510,6 @@ WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 WebInspector.DOMAgent = function() {
     /** @type {Object|undefined} */
     this._idToDOMNode = {};
-    this._documentURLToDocument = {};
     this._document = null;
     this._attributeLoadNodeIds = {};
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
@@ -731,10 +725,8 @@ WebInspector.DOMAgent.prototype = {
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
-        this._documentURLToDocument = {};
         if (payload && "nodeId" in payload) {
             this._document = new WebInspector.DOMDocument(this, payload);
-            this._documentURLToDocument[this._document.documentURL] = this._document;
             if (this._document.children)
                 this._bindNodes(this._document.children);
         } else
@@ -1131,36 +1123,18 @@ WebInspector.DOMModelResourceBinding = function(domAgent)
 WebInspector.DOMModelResourceBinding.prototype = {
     setContent: function(resource, content, majorChange, userCallback)
     {
+        var frameId = resource.frameId;
+        if (!frameId)
+            return;
+
+        PageAgent.setDocumentContent(frameId, content, callbackWrapper);
+
         function callbackWrapper(error)
         {
             if (majorChange)
                 resource.addRevision(content);
             if (userCallback)
                 userCallback(error);
-        }
-
-        function setOuterHTML(reportError)
-        {
-            var doc = this._domAgent._documentURLToDocument[resource.url];
-            if (doc) {
-                DOMAgent.setOuterHTML(doc.id, content, callbackWrapper.bind(this));
-                return true;
-            }
-            if (reportError)
-                userCallback("No document with given URL found");
-            return false;
-        }
-    
-        this._domAgent.requestDocument(withDocument.bind(this));
-
-        function withDocument(doc)
-        {
-            if (setOuterHTML.call(this, false))
-                return;
-
-            // We are editing one of the iframes, but it has not yet been loaded in the DOM tree.
-            // Load all iframe nodes here.
-            DOMAgent.querySelectorAll(doc.id, "iframe[src]", setOuterHTML.bind(this, true));
         }
     },
 

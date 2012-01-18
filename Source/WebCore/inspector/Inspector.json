@@ -299,6 +299,15 @@
                     { "name": "result", "type": "array", "items": { "$ref": "SearchResult" }, "description": "List of search results." }
                 ],
                 "hidden": true
+            },
+            {
+                "name": "setDocumentContent",
+                "description": "Sets given markup as the document's HTML.",
+                "parameters": [
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id to set HTML for." },
+                    { "name": "html", "type": "string", "description": "HTML content to set."  }
+                ],
+                "hidden": true
             }
         ],
         "events": [

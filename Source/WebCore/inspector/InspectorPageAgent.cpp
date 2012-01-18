@@ -42,6 +42,7 @@
 #include "ContentSearchUtils.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "DOMEditor.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -560,6 +561,21 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
     }
 
     results = searchResults;
+}
+
+void InspectorPageAgent::setDocumentContent(ErrorString* errorString, const String& frameId, const String& html)
+{
+    Frame* frame = assertFrame(errorString, frameId);
+    if (!frame)
+        return;
+
+    Document* document = frame->document();
+    if (!document) {
+        *errorString = "No Document instance to set HTML for";
+        return;
+    }
+    DOMEditor editor(document);
+    editor.patchDocument(html);
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
