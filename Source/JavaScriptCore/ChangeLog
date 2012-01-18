@@ -1,3 +1,12 @@
+2012-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Cross-platform processor core counter
+        https://bugs.webkit.org/show_bug.cgi?id=76530
+
+        Unreviewed cross-MinGW buildfix after r105270.
+
+        * wtf/NumberOfCores.cpp: Use windows.h instead of Windows.h.
+
 2012-01-18  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         Cross-platform processor core counter

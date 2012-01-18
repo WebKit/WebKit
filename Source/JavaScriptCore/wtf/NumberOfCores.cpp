@@ -32,7 +32,7 @@
 #elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
 #include <unistd.h>
 #elif OS(WINDOWS)
-#include <Windows.h>
+#include <windows.h>
 #include <wtf/UnusedParam.h>
 #endif
 
