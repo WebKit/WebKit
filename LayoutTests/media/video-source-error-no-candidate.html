@@ -8,7 +8,7 @@
 
             var sources = [];
             var errorCount = 0;
-            var expectedErrorCount = 4;
+            var expectedErrorCount = 5;
 
             function errorEvent(evt)
             {
@@ -52,6 +52,7 @@
             <source id=bogus-type src=content/test.mp4 type="video/blahblah">
             <source id=unsupported-media-query src=content/test.mp4 media=print>
             <source id=empty-src src="" type="video/mp4">
+            <source id=no-extension-no-type src=nonexistent>
         </video>
         
         <p>Test that 'error' events are fired from &lt;source&gt; element when it can not be used.</p>

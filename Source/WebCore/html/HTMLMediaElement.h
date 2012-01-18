@@ -347,6 +347,7 @@ private:
     virtual void mediaPlayerRateChanged(MediaPlayer*);
     virtual void mediaPlayerPlaybackStateChanged(MediaPlayer*);
     virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*);
+    virtual void mediaPlayerResourceNotSupported(MediaPlayer*);
     virtual void mediaPlayerRepaint(MediaPlayer*);
     virtual void mediaPlayerSizeChanged(MediaPlayer*);
 #if USE(ACCELERATED_COMPOSITING)

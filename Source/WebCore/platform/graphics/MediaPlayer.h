@@ -135,6 +135,9 @@ public:
     // element to an <embed> in standalone documents
     virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*) { }
 
+    // The MediaPlayer could not discover an engine which supports the requested resource.
+    virtual void mediaPlayerResourceNotSupported(MediaPlayer*) { }
+
 // Presentation-related methods
     // a new frame of video is available
     virtual void mediaPlayerRepaint(MediaPlayer*) { }

@@ -2785,6 +2785,14 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
     }
 }
 
+void HTMLMediaElement::mediaPlayerResourceNotSupported(MediaPlayer*)
+{
+    LOG(Media, "HTMLMediaElement::mediaPlayerResourceNotSupported");
+
+    // The MediaPlayer came across content which no installed engine supports.
+    mediaLoadingFailed(MediaPlayer::FormatError);
+}
+
 // MediaPlayerPresentation methods
 void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
 {

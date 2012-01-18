@@ -394,8 +394,10 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
         m_private->load(m_url);
     else {
         m_private = createNullMediaPlayer(this);
-        if (m_mediaPlayerClient)
+        if (m_mediaPlayerClient) {
             m_mediaPlayerClient->mediaPlayerEngineUpdated(this);
+            m_mediaPlayerClient->mediaPlayerResourceNotSupported(this);
+        }
     }
 }    
 
