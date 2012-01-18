@@ -55,7 +55,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         results = reader.results()
         self.assertNotEquals(results, None)
-        self.assertEquals(results.failure_limit_count(), 20)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
+        self.assertEquals(results.failure_limit_count(), 30)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
 
     def test_archive_last_layout_test_results(self):
         tool = MockTool()

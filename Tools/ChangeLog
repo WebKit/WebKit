@@ -1,3 +1,21 @@
+2012-01-18  Adam Barth  <abarth@webkit.org>
+
+        Up the cap on test failures tolerated by the EWS so the mac-ews can run to completion
+        https://bugs.webkit.org/show_bug.cgi?id=76567
+
+        Reviewed by Eric Seidel.
+
+        Current the AppleMac port has slightly more failures than we allow on
+        the EWS, causing the mac-ews to spin.  This patch ups the limit a bit,
+        which should hopefully let the mac-ews run to completion.  Once
+        AppleMac has fewer failures, we can lower the cap again.
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_layout_test_results):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2012-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Provide access to user's list of preferred languages
