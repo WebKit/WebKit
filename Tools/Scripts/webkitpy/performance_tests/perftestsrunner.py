@@ -51,8 +51,12 @@ class PerfTestsRunner(object):
     def __init__(self, regular_output=sys.stderr, buildbot_output=sys.stdout, args=None, port=None):
         self._buildbot_output = buildbot_output
         self._options, self._args = PerfTestsRunner._parse_args(args)
-        self._port = port or self._host.port_factory.get(self._options.platform, self._options)
-        self._host = self._port.host
+        if port:
+            self._port = port
+            self._host = self._port.host
+        else:
+            self._host = Host()
+            self._port = self._host.port_factory.get(self._options.platform, self._options)
         self._host._initialize_scm()
         self._printer = printing.Printer(self._port, self._options, regular_output, buildbot_output, configure_logging=False)
         self._webkit_base_dir_len = len(self._port.webkit_base())
