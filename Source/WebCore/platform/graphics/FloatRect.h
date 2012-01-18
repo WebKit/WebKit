@@ -152,6 +152,7 @@ public:
 
     void intersect(const FloatRect&);
     void unite(const FloatRect&);
+    void uniteEvenIfEmpty(const FloatRect&);
     void uniteIfNonZero(const FloatRect&);
 
     // Note, this doesn't match what IntRect::contains(IntPoint&) does; the int version

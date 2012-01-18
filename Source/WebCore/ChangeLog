@@ -1,3 +1,20 @@
+2012-01-17  Philip Rogers  <pdr@google.com>
+
+        Fix getBBox for perpendicular paths
+        https://bugs.webkit.org/show_bug.cgi?id=76177
+
+        Reviewed by Darin Adler.
+
+        Test: svg/custom/getBBox-perpendicular-path.svg
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::unite):
+        (WebCore::FloatRect::uniteEvenIfEmpty):
+        (WebCore::FloatRect::uniteIfNonZero):
+        * platform/graphics/FloatRect.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+
 2012-01-17  Kenneth Russell  <kbr@google.com>
 
         [chromium] Apply color profiles in more cases

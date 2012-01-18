@@ -103,12 +103,17 @@ void FloatRect::unite(const FloatRect& other)
         return;
     }
 
-    float l = min(x(), other.x());
-    float t = min(y(), other.y());
-    float r = max(maxX(), other.maxX());
-    float b = max(maxY(), other.maxY());
+    uniteEvenIfEmpty(other);
+}
 
-    setLocationAndSizeFromEdges(l, t, r, b);
+void FloatRect::uniteEvenIfEmpty(const FloatRect& other)
+{
+    float minX = min(x(), other.x());
+    float minY = min(y(), other.y());
+    float maxX = max(this->maxX(), other.maxX());
+    float maxY = max(this->maxY(), other.maxY());
+
+    setLocationAndSizeFromEdges(minX, minY, maxX, maxY);
 }
 
 void FloatRect::uniteIfNonZero(const FloatRect& other)
@@ -121,12 +126,7 @@ void FloatRect::uniteIfNonZero(const FloatRect& other)
         return;
     }
 
-    float left = min(x(), other.x());
-    float top = min(y(), other.y());
-    float right = max(maxX(), other.maxX());
-    float bottom = max(maxY(), other.maxY());
-
-    setLocationAndSizeFromEdges(left, top, right, bottom);
+    uniteEvenIfEmpty(other);
 }
 
 void FloatRect::scale(float sx, float sy)

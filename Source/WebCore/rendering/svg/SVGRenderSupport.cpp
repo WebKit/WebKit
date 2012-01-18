@@ -167,20 +167,31 @@ void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& p
 
 void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
 {
+    bool isFirstChild = true;
+
     for (RenderObject* current = container->firstChild(); current; current = current->nextSibling()) {
         if (current->isSVGHiddenContainer())
             continue;
 
         const AffineTransform& transform = current->localToParentTransform();
         if (transform.isIdentity()) {
-            objectBoundingBox.unite(current->objectBoundingBox());
+            if (isFirstChild)
+                objectBoundingBox = current->objectBoundingBox();
+            else
+                objectBoundingBox.uniteEvenIfEmpty(current->objectBoundingBox());
             strokeBoundingBox.unite(current->strokeBoundingBox());
             repaintBoundingBox.unite(current->repaintRectInLocalCoordinates());
         } else {
-            objectBoundingBox.unite(transform.mapRect(current->objectBoundingBox()));
+            if (isFirstChild)
+                objectBoundingBox = transform.mapRect(current->objectBoundingBox());
+            else
+                objectBoundingBox.uniteEvenIfEmpty(transform.mapRect(current->objectBoundingBox()));
             strokeBoundingBox.unite(transform.mapRect(current->strokeBoundingBox()));
             repaintBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
         }
+
+        if (isFirstChild)
+            isFirstChild = false;
     }
 }
 
