@@ -3852,6 +3852,9 @@ BUGCR110365 WIN : webaudio/gain.html = PASS AUDIO
 
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
+// Seems flaky - it depends on property dumping of JS internal fields in a specific order, which doesn't seem stable.
+BUGCR110537 : inspector/protocol/runtime-agent.html = PASS TEXT
+
 // SVG text layout optimizations: probably just need a rebaseline for chromium.
 // The MAC LINUX tests are disabled above for WIN (BUGCR99500).
 BUGWK65711 MAC LINUX : svg/carto.net/window.svg = IMAGE+TEXT IMAGE
