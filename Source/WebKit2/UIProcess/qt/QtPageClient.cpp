@@ -195,12 +195,6 @@ void QtPageClient::didFindZoomableArea(const IntPoint& target, const IntRect& ar
     m_eventHandler->didFindZoomableArea(target, area);
 }
 
-void QtPageClient::focusEditableArea(const IntRect& caret, const IntRect& area)
-{
-    ASSERT(m_eventHandler);
-    m_eventHandler->focusEditableArea(caret, area);
-}
-
 void QtPageClient::didReceiveMessageFromNavigatorQtObject(const String& message)
 {
     QQuickWebViewPrivate::get(m_webView)->didReceiveMessageFromNavigatorQtObject(message);

@@ -2331,11 +2331,6 @@ void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& ar
     m_pageClient->didFindZoomableArea(target, area);
 }
 
-void WebPageProxy::focusEditableArea(const WebCore::IntRect& caret, const WebCore::IntRect& area)
-{
-    m_pageClient->focusEditableArea(caret, area);
-}
-
 void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
 {
     if (!isValid())

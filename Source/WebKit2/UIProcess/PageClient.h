@@ -106,7 +106,6 @@ public:
 #if PLATFORM(QT)
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
-    virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&) = 0;
     virtual void didReceiveMessageFromNavigatorQtObject(const String&) = 0;
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
     virtual void updateTextInputState() = 0;

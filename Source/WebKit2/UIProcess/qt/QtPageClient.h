@@ -93,7 +93,6 @@ public:
     virtual void findStringInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
-    virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
     virtual void updateTextInputState();
     virtual void doneWithGestureEvent(const WebGestureEvent&, bool wasEventHandled);
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);

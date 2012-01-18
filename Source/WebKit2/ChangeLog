@@ -1,3 +1,31 @@
+2012-01-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Zoom in to the focused node only when vkb starts becoming visible
+        https://bugs.webkit.org/show_bug.cgi?id=76174
+
+        Reviewed by Simon Hausmann.
+
+        Remove the old code which always zoomed in when something got focus,
+        even via JavaScript, and replaced it with code checking the state of
+        the Qt input panel.
+
+        Also make sure that we do not zoom in or request the input panel if
+        the item is not focused.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::~QtWebPageEventHandler):
+        (QtWebPageEventHandler::inputPanelVisibleChanged):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+
 2012-01-18  Shinya Kawanaka  <shinyak@google.com>
 
         Move ShadowContentElement from dom/ to html/ and make ShadowContentElement subclass of HTMLElement.

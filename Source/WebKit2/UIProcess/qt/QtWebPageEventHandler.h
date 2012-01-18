@@ -51,7 +51,6 @@ public:
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 
     void didFindZoomableArea(const WebCore::IntPoint& target, const WebCore::IntRect& area);
-    void focusEditableArea(const WebCore::IntRect& caret, const WebCore::IntRect& area);
     void updateTextInputState();
     void doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled);
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
@@ -69,6 +68,9 @@ protected:
     QtTapGestureRecognizer m_tapGestureRecognizer;
     QQuickWebPage* m_webPage;
     QQuickWebView* m_webView;
+
+private slots:
+    void inputPanelVisibleChanged();
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);
