@@ -309,14 +309,18 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         var highlightElement = this._highlightElement;
         if (!highlightElement)
             return;
+        // FIXME: the text editor should maintain highlight on its own. The check below is a workaround for
+        // the case when highlight element is detached from DOM by the TextViewer when re-building the DOM.
         var parentElement = highlightElement.parentElement;
-        var child = highlightElement.firstChild;
-        while (child) {
-            var nextSibling = child.nextSibling;
-            parentElement.insertBefore(child, highlightElement);
-            child = nextSibling;
+        if (parentElement) {
+            var child = highlightElement.firstChild;
+            while (child) {
+                var nextSibling = child.nextSibling;
+                parentElement.insertBefore(child, highlightElement);
+                child = nextSibling;
+            }
+            parentElement.removeChild(highlightElement);
         }
-        parentElement.removeChild(highlightElement);
         delete this._highlightElement;
         RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
     },

@@ -1,3 +1,17 @@
+2012-01-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: Popover does not disappear, causes debugger failure.
+        https://bugs.webkit.org/show_bug.cgi?id=71363
+
+        Reviewed by Pavel Feldman.
+
+        This is a work-around simple enough for a merge. The real fix would
+        be to get TextViewer to manage the highlight on its own, so it's not
+        accidently removed while re-building DOM for the text chunk.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._onHidePopover):
+
 2012-01-18  Shinya Kawanaka  <shinyak@google.com>
 
         Unreviewed build fix.
