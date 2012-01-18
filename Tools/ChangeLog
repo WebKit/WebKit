@@ -1,5 +1,13 @@
 2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Add new watchlist rule for the Qt build system
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2012-01-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Move OTHER_FILES from WebKit.pro to Tools.pro
 
         Reviewed by Simon Hausmann.

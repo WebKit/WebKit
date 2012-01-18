@@ -81,6 +81,13 @@
         "GtkWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/gtk/",
         },
+        "QtBuildSystem": {
+            # Project files for each target are intentionally left out, as those
+            # mostly list source and header files, which would just add noise.
+            "filename": r"Tools/qmake/"
+                        r"|WebKit.pro"
+                        r"|.*DerivedSources\.pri",
+        },
         "QtWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/qt/"
                         r"|Source/WebKit2/UIProcess/API/cpp/qt/"
@@ -144,6 +151,7 @@
         "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org" ],
+        "QtBuildSystem" : [ "vestbo@webkit.org", ],
         "QtWebKit2PublicAPI": [ "zoltan@webkit.org", ],
         "QtWebKit2PlatformSpecific": [ "zoltan@webkit.org", ],
         "CSS": [ "macpherson@chromium.org", ],
