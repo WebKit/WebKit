@@ -3852,6 +3852,15 @@ BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
 
 BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
 
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-div-overflow.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-main-window.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-iframe-nested.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-main-window.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-nested.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-iframe.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-with-subfocus.html = TEXT
+BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-iframe.html = TEXT
+
 BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
