@@ -1,3 +1,29 @@
+2012-01-18  Tim Horton  <timothy_horton@apple.com>
+
+        [CG] Rasterized scaling of transformed SVG shapes with gradient fill and -webkit-svg-shadow applied
+        https://bugs.webkit.org/show_bug.cgi?id=76482
+        <rdar://problem/10415483>
+
+        Reviewed by Simon Fraser.
+
+        Scale the CGLayer used when filling or stroking a shadowed path or rect with
+        a gradient in GraphicsContextCG. Previously, the CGLayer was created and rendered
+        into at the untransformed size of the shape, leading to pixelation when it was
+        then scaled up and drawn into the destination.
+
+        Add AffineTransform::mapSize() to map a size through a transformation.
+
+        Test: svg/custom/transform-with-shadow-and-gradient.svg
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::mapSize): Added.
+        * platform/graphics/transforms/AffineTransform.h:
+
 2012-01-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Chromium needs methods to scroll an object into view or to a specific location.

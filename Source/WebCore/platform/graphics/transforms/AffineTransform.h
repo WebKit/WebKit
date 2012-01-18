@@ -76,6 +76,10 @@ public:
 
     FloatPoint mapPoint(const FloatPoint&) const;
 
+    IntSize mapSize(const IntSize&) const;
+
+    FloatSize mapSize(const FloatSize&) const;
+
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
     // box computations but may not be what is wanted in other contexts.
     IntRect mapRect(const IntRect&) const;

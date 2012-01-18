@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <title>None of the shapes should be pixelated, even when zoomed.</title>
+    <defs>
+        <linearGradient id="gradient">
+            <stop offset="0%" stop-color="blue"></stop>
+            <stop offset="100%" stop-color="green"></stop>
+        </linearGradient>
+    </defs>
+    <circle transform="scale(4,4)" style="-webkit-svg-shadow: black 1px 1px 1px;" fill="url(#gradient)" cx="25" cy="25" r="20"></circle>
+    <rect transform="scale(32,32)" style="-webkit-svg-shadow: black 1px 1px 1px;" fill="url(#gradient)" x="10" y="0.5" width="5" height="5"></rect>
+    <circle transform="scale(4,4)" style="-webkit-svg-shadow: black 1px 1px 1px;" stroke="url(#gradient)" fill="transparent" cx="25" cy="100" r="20"></circle>
+    <rect transform="scale(32,32)" style="-webkit-svg-shadow: black 1px 1px 1px;" stroke="url(#gradient)" fill="transparent" x="10" y="10" width="5" height="5"></rect>
+</svg>

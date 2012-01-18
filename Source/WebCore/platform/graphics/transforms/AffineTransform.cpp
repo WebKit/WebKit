@@ -250,6 +250,22 @@ FloatPoint AffineTransform::mapPoint(const FloatPoint& point) const
     return FloatPoint(narrowPrecisionToFloat(x2), narrowPrecisionToFloat(y2));
 }
 
+IntSize AffineTransform::mapSize(const IntSize& size) const
+{
+    double width2 = size.width() * xScale();
+    double height2 = size.height() * yScale();
+
+    return IntSize(lround(width2), lround(height2));
+}
+
+FloatSize AffineTransform::mapSize(const FloatSize& size) const
+{
+    double width2 = size.width() * xScale();
+    double height2 = size.height() * yScale();
+
+    return FloatSize(narrowPrecisionToFloat(width2), narrowPrecisionToFloat(height2));
+}
+
 IntRect AffineTransform::mapRect(const IntRect &rect) const
 {
     return enclosingIntRect(mapRect(FloatRect(rect)));
