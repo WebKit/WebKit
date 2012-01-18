@@ -12,7 +12,11 @@ function test()
     WebInspector.experimentsSettings.freeFlowDOMEditing.enableForTest();
     new WebInspector.DOMModelResourceBinding(WebInspector.domAgent);
 
-    InspectorTest.runAfterResourcesAreFinished(["set-html-via-resource.html", "set-html-via-resource-iframe.html"], step1);
+    InspectorTest.expandElementsTree(step0);
+    function step0()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["set-html-via-resource.html", "set-html-via-resource-iframe.html"], step1);
+    }
 
     function step1()
     {
@@ -27,8 +31,13 @@ function test()
 
     function step2(url)
     {
-        var doc = WebInspector.domAgent._documentURLToDocument[url];
-        DOMAgent.getOuterHTML(doc.id, step3);
+        for (var id in WebInspector.domAgent._idToDOMNode) {
+            var node = WebInspector.domAgent._idToDOMNode[id];
+            if (node.documentURL === url) {
+                DOMAgent.getOuterHTML(parseInt(id), step3);
+                break;
+            }
+        }
     }
 
     function step3(error, text)
