@@ -286,8 +286,66 @@ function removeSuccessButFalse()
     debug("Passing an invalid key into store.put().");
     evalAndExpectException("store.put(null, {})", "webkitIDBDatabaseException.DATA_ERR");
 
-    done();
+    testPreConditions();
 }
+
+function testPreConditions()
+{
+    debug("");
+    debug("testPreConditions():");
+    request = evalAndLog("db.setVersion('precondition version')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        storeWithInLineKeys = evalAndLog("storeWithInLineKeys = db.createObjectStore('storeWithInLineKeys', {keyPath: 'key'})");
+        storeWithOutOfLineKeys = evalAndLog("storeWithOutOfLineKeys = db.createObjectStore('storeWithOutIOfLineKeys')");
+        storeWithIndex = evalAndLog("storeWithIndex = db.createObjectStore('storeWithIndex')");
+        index = evalAndLog("index = storeWithIndex.createIndex('indexName', 'indexKey')");
+
+        debug("");
+        debug("IDBObjectStore.put()");
+        debug("The object store uses in-line keys and the key parameter was provided.");
+        evalAndExpectException("storeWithInLineKeys.put({key: 1}, 'key')", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
+        evalAndExpectException("storeWithOutOfLineKeys.put({})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.");
+        evalAndExpectException("storeWithInLineKeys.put({key: null})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.");
+        evalAndExpectException("storeWithInLineKeys.put({})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The key parameter was provided but does not contain a valid key.");
+        evalAndExpectException("storeWithOutOfLineKeys.put({}, null)", "webkitIDBDatabaseException.DATA_ERR");
+
+        // FIXME: Add precondition checks for put() with index key paths that yield invalid keys.
+        // https://bugs.webkit.org/show_bug.cgi?id=76487
+
+        debug("");
+        debug("IDBObjectStore.add()");
+        debug("The object store uses in-line keys and the key parameter was provided.");
+        evalAndExpectException("storeWithInLineKeys.add({key: 1}, 'key')", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
+        evalAndExpectException("storeWithOutOfLineKeys.add({})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.");
+        evalAndExpectException("storeWithInLineKeys.add({key: null})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.");
+        evalAndExpectException("storeWithInLineKeys.add({})", "webkitIDBDatabaseException.DATA_ERR");
+
+        debug("The key parameter was provided but does not contain a valid key.");
+        evalAndExpectException("storeWithOutOfLineKeys.add({}, null)", "webkitIDBDatabaseException.DATA_ERR");
+
+        // FIXME: Add precondition checks for add() with index key paths that yield invalid keys.
+        // https://bugs.webkit.org/show_bug.cgi?id=76487
+
+        done();
+    };
+}
+
+
 
 test();
 

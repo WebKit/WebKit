@@ -135,6 +135,57 @@ Passing an invalid key into store.put().
 Expecting exception from store.put(null, {})
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
+
+testPreConditions():
+db.setVersion('precondition version')
+storeWithInLineKeys = db.createObjectStore('storeWithInLineKeys', {keyPath: 'key'})
+storeWithOutOfLineKeys = db.createObjectStore('storeWithOutIOfLineKeys')
+storeWithIndex = db.createObjectStore('storeWithIndex')
+index = storeWithIndex.createIndex('indexName', 'indexKey')
+
+IDBObjectStore.put()
+The object store uses in-line keys and the key parameter was provided.
+Expecting exception from storeWithInLineKeys.put({key: 1}, 'key')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+Expecting exception from storeWithOutOfLineKeys.put({})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
+Expecting exception from storeWithInLineKeys.put({key: null})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
+Expecting exception from storeWithInLineKeys.put({})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The key parameter was provided but does not contain a valid key.
+Expecting exception from storeWithOutOfLineKeys.put({}, null)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+
+IDBObjectStore.add()
+The object store uses in-line keys and the key parameter was provided.
+Expecting exception from storeWithInLineKeys.add({key: 1}, 'key')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
+Expecting exception from storeWithOutOfLineKeys.add({})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
+Expecting exception from storeWithInLineKeys.add({key: null})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
+Expecting exception from storeWithInLineKeys.add({})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+The key parameter was provided but does not contain a valid key.
+Expecting exception from storeWithOutOfLineKeys.add({}, null)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

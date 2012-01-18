@@ -54,14 +54,7 @@ function cleanDatabase()
 
 function addFirstSuccess()
 {
-    request = evalAndLog("request = objectStore.add({});");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = addSecondExpectedError;
-}
-
-function addSecondExpectedError()
-{
-    shouldBe("event.target.errorCode", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("request = objectStore.add({});", "IDBDatabaseException.DATA_ERR");
     done();
 }
 

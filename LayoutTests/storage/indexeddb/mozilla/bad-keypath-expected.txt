@@ -13,8 +13,9 @@ request = db.setVersion('1')
 Deleted all object stores.
 objectStore = db.createObjectStore('foo', { keyPath: 'keyPath' });
 request = objectStore.add({ keyPath: 'foo' });
-request = objectStore.add({});
-PASS event.target.errorCode is IDBDatabaseException.DATA_ERR
+Expecting exception from request = objectStore.add({});
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

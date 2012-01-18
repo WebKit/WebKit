@@ -138,18 +138,29 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
 
     const bool autoIncrement = objectStore->autoIncrement();
     const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-    if (!key && !autoIncrement && !hasKeyPath) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return;
-    }
 
-    if (key && hasKeyPath && (putMode == AddOnly || putMode == AddOrUpdate)) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return;
-    }
+    if (putMode != CursorUpdate) {
+        if (!key && !autoIncrement && !hasKeyPath) {
+            ec = IDBDatabaseException::DATA_ERR;
+            return;
+        }
+        if (hasKeyPath) {
+            if (key && key->valid()) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+            if (!autoIncrement) {
+                RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+                if (!keyPathKey || !keyPathKey->valid()) {
+                    ec = IDBDatabaseException::DATA_ERR;
+                    return;
+                }
+            }
+        }
+        // FIXME: Add precondition checks for index key paths that yield invalid keys.
+        // https://bugs.webkit.org/show_bug.cgi?id=76487
+     }
 
-    // FIXME: This should throw a SERIAL_ERR on structured clone problems.
-    // FIXME: This should throw a DATA_ERR when the wrong key/keyPath data is supplied.
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
