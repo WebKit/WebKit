@@ -52,16 +52,18 @@
 #include "TrackingTextureAllocator.h"
 #include "TreeSynchronizer.h"
 #include "WebGLLayerChromium.h"
-#include "cc/CCCustomLayerDrawQuad.h"
+#include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCPluginDrawQuad.h"
 #include "cc/CCProxy.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
+#include "cc/CCVideoDrawQuad.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
 #include "GrContext.h"
@@ -422,8 +424,14 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
     case CCDrawQuad::TiledContent:
         drawTileQuad(quad->toTileDrawQuad());
         break;
-    case CCDrawQuad::CustomLayer:
-        drawCustomLayerQuad(quad->toCustomLayerDrawQuad());
+    case CCDrawQuad::CanvasContent:
+        drawCanvasQuad(quad->toCanvasDrawQuad());
+        break;
+    case CCDrawQuad::VideoContent:
+        drawVideoQuad(quad->toVideoDrawQuad());
+        break;
+    case CCDrawQuad::PluginContent:
+        drawPluginQuad(quad->toPluginDrawQuad());
         break;
     }
 }
@@ -659,7 +667,19 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     drawTexturedQuad(quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
 }
 
-void LayerRendererChromium::drawCustomLayerQuad(const CCCustomLayerDrawQuad* quad)
+void LayerRendererChromium::drawCanvasQuad(const CCCanvasDrawQuad* quad)
+{
+    CCLayerImpl* layer = quad->layer();
+    layer->draw(this);
+}
+
+void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
+{
+    CCLayerImpl* layer = quad->layer();
+    layer->draw(this);
+}
+
+void LayerRendererChromium::drawPluginQuad(const CCPluginDrawQuad* quad)
 {
     CCLayerImpl* layer = quad->layer();
     layer->draw(this);

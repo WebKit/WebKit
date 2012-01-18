@@ -41,6 +41,8 @@ public:
     }
     virtual ~CCPluginLayerImpl();
 
+    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> Program;
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TexRectProgram;

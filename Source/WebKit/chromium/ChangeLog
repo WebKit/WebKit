@@ -1,3 +1,19 @@
+2012-01-18  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Refactor canvas, plugin, and video drawing to be more data-driven
+        https://bugs.webkit.org/show_bug.cgi?id=76274
+
+        Reviewed by James Robinson.
+
+        No longer test culling in CCLayerTreeHostImplTest.blendingOffWhenDrawingLayers.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::BlendStateCheckLayer::appendQuads):
+        (WebKit::BlendStateCheckLayer::setExpectation):
+        (WebKit::BlendStateCheckLayer::quadsAppended):
+        (WebKit::BlendStateCheckLayer::BlendStateCheckLayer):
+        (WebKit::TEST_F):
+
 2012-01-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         Accessibility: Chromium needs methods to scroll an object into view or to a specific location.

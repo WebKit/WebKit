@@ -27,12 +27,14 @@
 
 #include "cc/CCDrawQuad.h"
 
-#include "cc/CCCustomLayerDrawQuad.h"
+#include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCPluginDrawQuad.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
+#include "cc/CCVideoDrawQuad.h"
 
 namespace WebCore {
 
@@ -71,10 +73,22 @@ const CCTileDrawQuad* CCDrawQuad::toTileDrawQuad() const
     return static_cast<const CCTileDrawQuad*>(this);
 }
 
-const CCCustomLayerDrawQuad* CCDrawQuad::toCustomLayerDrawQuad() const
+const CCCanvasDrawQuad* CCDrawQuad::toCanvasDrawQuad() const
 {
-    ASSERT(m_material == CustomLayer);
-    return static_cast<const CCCustomLayerDrawQuad*>(this);
+    ASSERT(m_material == CanvasContent);
+    return static_cast<const CCCanvasDrawQuad*>(this);
+}
+
+const CCVideoDrawQuad* CCDrawQuad::toVideoDrawQuad() const
+{
+    ASSERT(m_material == VideoContent);
+    return static_cast<const CCVideoDrawQuad*>(this);
+}
+
+const CCPluginDrawQuad* CCDrawQuad::toPluginDrawQuad() const
+{
+    ASSERT(m_material == PluginContent);
+    return static_cast<const CCPluginDrawQuad*>(this);
 }
 
 }

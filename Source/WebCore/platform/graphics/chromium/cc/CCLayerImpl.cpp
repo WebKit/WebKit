@@ -32,7 +32,6 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
-#include "cc/CCCustomLayerDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerSorter.h"
 #include <wtf/text/WTFString.h>
@@ -129,8 +128,6 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 
 void CCLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
-    IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCCustomLayerDrawQuad::create(sharedQuadState, quadRect, this));
 }
 
 void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState) const

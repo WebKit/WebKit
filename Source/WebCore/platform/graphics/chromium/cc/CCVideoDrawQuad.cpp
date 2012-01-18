@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,17 @@
 
 #include "config.h"
 
-#include "cc/CCCustomLayerDrawQuad.h"
+#include "cc/CCVideoDrawQuad.h"
 
 namespace WebCore {
 
-PassOwnPtr<CCCustomLayerDrawQuad> CCCustomLayerDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
 {
-    return adoptPtr(new CCCustomLayerDrawQuad(sharedQuadState, quadRect, layer));
+    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, layer));
 }
 
-CCCustomLayerDrawQuad::CCCustomLayerDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::CustomLayer, quadRect)
+CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::VideoContent, quadRect)
     , m_layer(layer)
 {
     ASSERT(m_layer);

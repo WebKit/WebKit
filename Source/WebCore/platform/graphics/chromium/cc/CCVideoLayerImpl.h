@@ -46,6 +46,8 @@ public:
     }
     virtual ~CCVideoLayerImpl();
 
+    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
     typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> NativeTextureProgram;

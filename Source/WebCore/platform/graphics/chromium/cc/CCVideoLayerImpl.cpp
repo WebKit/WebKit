@@ -32,9 +32,10 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "ProgramBinding.h"
 #include "NotImplemented.h"
+#include "ProgramBinding.h"
 #include "cc/CCProxy.h"
+#include "cc/CCVideoDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -148,6 +149,12 @@ void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
     for (unsigned plane = 0; plane < frame->planes(); ++plane)
         m_textures[plane].m_texture->unreserve();
     m_provider->putCurrentFrame(frame);
+}
+
+void CCVideoLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+{
+    IntRect quadRect(IntPoint(), bounds());
+    quadList.append(CCVideoDrawQuad::create(sharedQuadState, quadRect, this));
 }
 
 bool CCVideoLayerImpl::copyFrameToTextures(const VideoFrameChromium* frame, GC3Denum format, LayerRendererChromium* layerRenderer)

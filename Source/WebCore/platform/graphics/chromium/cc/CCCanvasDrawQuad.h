@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCCustomLayerDrawQuad_h
-#define CCCustomLayerDrawQuad_h
+#ifndef CCCanvasDrawQuad_h
+#define CCCanvasDrawQuad_h
 
 #include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
@@ -32,19 +32,15 @@
 namespace WebCore {
 
 class CCLayerImpl;
-
-// FIXME: This class is a temporary way to access CCLayerImpl::draw. This class
-// should be converted to a set of draw quads for each layer material type and
-// then removed.
-class CCCustomLayerDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCCustomLayerDrawQuad);
+class CCCanvasDrawQuad : public CCDrawQuad {
+    WTF_MAKE_NONCOPYABLE(CCCanvasDrawQuad);
 public:
-    static PassOwnPtr<CCCustomLayerDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    static PassOwnPtr<CCCanvasDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
 
     CCLayerImpl* layer() const { return m_layer; }
 
 private:
-    CCCustomLayerDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    CCCanvasDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
 
     CCLayerImpl* m_layer;
 };

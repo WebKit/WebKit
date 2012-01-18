@@ -167,7 +167,9 @@ private:
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);
-    void drawCustomLayerQuad(const CCCustomLayerDrawQuad*);
+    void drawCanvasQuad(const CCCanvasDrawQuad*);
+    void drawVideoQuad(const CCVideoDrawQuad*);
+    void drawPluginQuad(const CCPluginDrawQuad*);
 
     ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();

@@ -34,7 +34,9 @@ class CCDebugBorderDrawQuad;
 class CCRenderSurfaceDrawQuad;
 class CCSolidColorDrawQuad;
 class CCTileDrawQuad;
-class CCCustomLayerDrawQuad;
+class CCCanvasDrawQuad;
+class CCVideoDrawQuad;
+class CCPluginDrawQuad;
 
 // CCDrawQuad is a bag of data used for drawing a quad. Because different
 // materials need different bits of per-quad data to render, classes that derive
@@ -60,9 +62,9 @@ public:
         RenderSurface,
         SolidColor,
         TiledContent,
-
-        // FIXME: remove this and add proper material types for all layer types
-        CustomLayer,
+        CanvasContent,
+        VideoContent,
+        PluginContent,
     };
 
     Material material() const { return m_material; }
@@ -71,7 +73,9 @@ public:
     const CCRenderSurfaceDrawQuad* toRenderSurfaceDrawQuad() const;
     const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;
     const CCTileDrawQuad* toTileDrawQuad() const;
-    const CCCustomLayerDrawQuad* toCustomLayerDrawQuad() const;
+    const CCCanvasDrawQuad* toCanvasDrawQuad() const;
+    const CCVideoDrawQuad* toVideoDrawQuad() const;
+    const CCPluginDrawQuad* toPluginDrawQuad() const;
 
 protected:
     CCDrawQuad(const CCSharedQuadState*, Material, const IntRect&);

@@ -32,6 +32,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCPluginDrawQuad.h"
 #include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
@@ -176,6 +177,11 @@ void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
     }
 }
 
+void CCPluginLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+{
+    IntRect quadRect(IntPoint(), bounds());
+    quadList.append(CCPluginDrawQuad::create(sharedQuadState, quadRect, this));
+}
 
 void CCPluginLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {

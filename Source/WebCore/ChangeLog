@@ -1,3 +1,57 @@
+2012-01-18  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Refactor canvas, plugin, and video drawing to be more data-driven
+        https://bugs.webkit.org/show_bug.cgi?id=76274
+
+        Reviewed by James Robinson.
+
+        This is the first step in refactoring canvas, plugin, and video drawing.
+        The CCCustomLayerDrawQuad implementation has been copied to CCCanvasDrawQuad, CCPluginDrawQuad and CCVideoDrawQuad.
+        All references to CustomLayer have been removed.
+
+        As this is a refactor, no new tests were added. CCLayerTreeHostImplTest.blendingOffWhenDrawingOpaqueLayers was modified to
+        no longer test culling.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawCanvasQuad):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        (WebCore::LayerRendererChromium::drawPluginQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCCanvasDrawQuad.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.cpp.
+        (WebCore::CCCanvasDrawQuad::create):
+        (WebCore::CCCanvasDrawQuad::CCCanvasDrawQuad):
+        * platform/graphics/chromium/cc/CCCanvasDrawQuad.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.h.
+        (WebCore::CCCanvasDrawQuad::layer):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::toCanvasDrawQuad):
+        (WebCore::CCDrawQuad::toVideoDrawQuad):
+        (WebCore::CCDrawQuad::toPluginDrawQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCPluginDrawQuad.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.cpp.
+        (WebCore::CCPluginDrawQuad::create):
+        (WebCore::CCPluginDrawQuad::CCPluginDrawQuad):
+        * platform/graphics/chromium/cc/CCPluginDrawQuad.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.h.
+        (WebCore::CCPluginDrawQuad::layer):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.cpp.
+        (WebCore::CCVideoDrawQuad::create):
+        (WebCore::CCVideoDrawQuad::CCVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCCustomLayerDrawQuad.h.
+        (WebCore::CCVideoDrawQuad::layer):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2012-01-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Unsafe cross origin access errors should show stack trace in console.

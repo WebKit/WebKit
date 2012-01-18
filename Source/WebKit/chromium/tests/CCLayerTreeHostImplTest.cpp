@@ -31,6 +31,7 @@
 #include "LayerRendererChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
+#include "cc/CCSolidColorDrawQuad.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
@@ -183,11 +184,12 @@ class BlendStateCheckLayer : public CCLayerImpl {
 public:
     static PassRefPtr<BlendStateCheckLayer> create(int id) { return adoptRef(new BlendStateCheckLayer(id)); }
 
-    virtual void draw(LayerRendererChromium* renderer)
+    virtual void appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
     {
-        m_drawn = true;
-        BlendStateTrackerContext* context = static_cast<BlendStateTrackerContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(renderer->context()));
-        EXPECT_EQ(m_blend, context->blend());
+        m_quadsAppended = true;
+        
+        OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCSolidColorDrawQuad::create(sharedQuadState, IntRect(5, 5, 5, 5), Color::white);
+        EXPECT_EQ(m_blend, testBlendingDrawQuad->needsBlending());
         EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
     }
 
@@ -195,17 +197,17 @@ public:
     {
         m_blend = blend;
         m_hasRenderSurface = hasRenderSurface;
-        m_drawn = false;
+        m_quadsAppended = false;
     }
 
-    bool drawn() const { return m_drawn; }
+    bool quadsAppended() const { return m_quadsAppended; }
 
 private:
     explicit BlendStateCheckLayer(int id)
         : CCLayerImpl(id)
         , m_blend(false)
         , m_hasRenderSurface(false)
-        , m_drawn(false)
+        , m_quadsAppended(false)
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
@@ -214,7 +216,7 @@ private:
 
     bool m_blend;
     bool m_hasRenderSurface;
-    bool m_drawn;
+    bool m_quadsAppended;
 };
 
 // https://bugs.webkit.org/show_bug.cgi?id=75783
@@ -238,20 +240,20 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setOpaque(true);
     layer1->setExpectation(false, false);
     m_hostImpl->drawLayers();
-    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent content, drawn with blending.
     layer1->setOpaque(false);
     layer1->setExpectation(true, false);
     m_hostImpl->drawLayers();
-    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
 
     // Layer with translucent opacity, drawn with blending.
     layer1->setOpaque(true);
     layer1->setOpacity(0.5);
     layer1->setExpectation(true, false);
     m_hostImpl->drawLayers();
-    EXPECT_TRUE(layer1->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
 
     RefPtr<BlendStateCheckLayer> layer2 = BlendStateCheckLayer::create(2);
     layer1->addChild(layer2);
@@ -264,8 +266,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpacity(1);
     layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
-    EXPECT_FALSE(layer1->drawn());
-    EXPECT_TRUE(layer2->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
 
     // Parent layer with translucent content, drawn with blending.
     // Child layer with opaque content, drawn without blending.
@@ -273,8 +275,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setExpectation(true, false);
     layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
-    EXPECT_FALSE(layer1->drawn());
-    EXPECT_TRUE(layer2->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
 
     // Parent layer with translucent opacity and opaque content. Since it has a
     // drawing child, it's drawn to a render surface which carries the opacity,
@@ -286,8 +288,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer1->setExpectation(false, true);
     layer2->setExpectation(false, false);
     m_hostImpl->drawLayers();
-    EXPECT_FALSE(layer1->drawn());
-    EXPECT_TRUE(layer2->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
 
     // Draw again, but with child non-opaque, to make sure
     // layer1 not culled.
@@ -298,8 +300,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpacity(0.5);
     layer2->setExpectation(true, false);
     m_hostImpl->drawLayers();
-    EXPECT_TRUE(layer1->drawn());
-    EXPECT_TRUE(layer2->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
 
     // A second way of making the child non-opaque.
     layer1->setOpaque(true);
@@ -309,8 +311,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     layer2->setOpacity(1);
     layer2->setExpectation(true, false);
     m_hostImpl->drawLayers();
-    EXPECT_TRUE(layer1->drawn());
-    EXPECT_TRUE(layer2->drawn());
+    EXPECT_TRUE(layer1->quadsAppended());
+    EXPECT_TRUE(layer2->quadsAppended());
 }
 
 class ReshapeTrackerContext: public FakeWebGraphicsContext3D {

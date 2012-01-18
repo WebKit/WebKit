@@ -31,7 +31,6 @@
 
 #include "Region.h"
 #include "TransformationMatrix.h"
-#include "cc/CCCustomLayerDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"

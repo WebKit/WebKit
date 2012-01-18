@@ -31,6 +31,7 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
@@ -77,6 +78,11 @@ void CCCanvasLayerImpl::draw(LayerRendererChromium* layerRenderer)
         context->enable(GraphicsContext3D::BLEND);
 }
 
+void CCCanvasLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+{
+    IntRect quadRect(IntPoint(), bounds());
+    quadList.append(CCCanvasDrawQuad::create(sharedQuadState, quadRect, this));
+}
 
 void CCCanvasLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {

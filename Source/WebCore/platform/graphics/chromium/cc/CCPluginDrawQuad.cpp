@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCCanvasLayerImpl_h
-#define CCCanvasLayerImpl_h
+#include "config.h"
 
-#include "ProgramBinding.h"
-#include "ShaderChromium.h"
-#include "cc/CCLayerImpl.h"
+#include "cc/CCPluginDrawQuad.h"
 
 namespace WebCore {
 
-class CCCanvasLayerImpl : public CCLayerImpl {
-public:
-    static PassRefPtr<CCCanvasLayerImpl> create(int id)
-    {
-        return adoptRef(new CCCanvasLayerImpl(id));
-    }
-    virtual ~CCCanvasLayerImpl();
-
-    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
-
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
-
-    virtual void draw(LayerRendererChromium*);
-
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
-
-    unsigned textureId() const { return m_textureId; }
-    void setTextureId(unsigned id) { m_textureId = id; }
-    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
-    void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
-private:
-    explicit CCCanvasLayerImpl(int);
-
-    virtual const char* layerTypeAsString() const { return "CanvasLayer"; }
-
-    unsigned m_textureId;
-    bool m_hasAlpha;
-    bool m_premultipliedAlpha;
-};
-
+PassOwnPtr<CCPluginDrawQuad> CCPluginDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+{
+    return adoptPtr(new CCPluginDrawQuad(sharedQuadState, quadRect, layer));
 }
 
-#endif // CCCanvasLayerImpl_h
+CCPluginDrawQuad::CCPluginDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::PluginContent, quadRect)
+    , m_layer(layer)
+{
+    ASSERT(m_layer);
+}
+
+}
