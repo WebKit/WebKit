@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Testing that the custom filter receives the correct number parameters.</title>
+        <script>
+            if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+                // Force software rendering mode.
+                window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+                window.layoutTestController.dumpAsText(true);
+                window.layoutTestController.waitUntilDone();
+            }
+            
+            function runTest()
+            {
+                // We need to run the tests after the downloading succeeded.
+                // Using a timer is not ideal, but there seems to be no better options.
+                setTimeout(function() {
+                    if (window.layoutTestController)
+                        window.layoutTestController.notifyDone();
+                }, 200);
+            }
+        </script>
+        <style>
+        /* Testing parameters of type float, vec2 and vec3 in vertex-offset-parameters.vs and vec4 in color-offset-parameters.fs. */
+        .filterA {
+            -webkit-filter: custom(url('resources/vertex-offset-parameters.vs') url('resources/color-offset-parameters.fs'), 
+                                   perspective 2, 
+                                   vertex_offset -0.05 0.1,
+                                   rotate 45 -25 -10, 
+                                   color_offset 0.4 0.2 0.5 0.1);
+        }
+        .filterB {
+            -webkit-filter: custom(url('resources/vertex-offset-parameters.vs') url('resources/color-offset-parameters.fs'), 
+                                   rotate 45 25 -10,
+                                   perspective 10, 
+                                   vertex_offset -0.05 0.1,
+                                   color_offset 0.1 0.9 0.5 -0.5);
+        }
+        .filterC {
+            -webkit-filter: custom(url('resources/vertex-offset-parameters.vs') url('resources/color-offset-parameters.fs'), 
+                                   color_offset 0 0 0 0,
+                                   perspective 2, 
+                                   vertex_offset -0.05 0.1,
+                                   rotate 45 -25 -10);
+        }
+        .filterD {
+            -webkit-filter: custom(url('resources/vertex-offset-parameters.vs') url('resources/color-offset-parameters.fs'), 
+                                   vertex_offset -0.15 0.1,
+                                   rotate 15 -45 10,
+                                   perspective 1.5, 
+                                   color_offset 0.4 0.2 0.5 0.1);
+        }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <img class="filterA" src="resources/reference.png" />
+        <img class="filterB" src="resources/reference.png" />
+        <img class="filterC" src="resources/reference.png" />
+        <img class="filterD" src="resources/reference.png" />
+        <!--
+            Testing that simple custom filters send the correct parameters of type number. You should see 4 blocks of colored bars with different rotation, perspective, offset
+            and color effects applied.
+        -->
+    </body>
+</html>

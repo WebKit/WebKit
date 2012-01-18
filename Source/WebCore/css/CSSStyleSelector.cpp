@@ -124,7 +124,9 @@
 #endif
 
 #if ENABLE(CSS_SHADERS)
+#include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
+#include "CustomFilterParameter.h"
 #include "StyleCachedShader.h"
 #include "StyleCustomFilterProgram.h"
 #include "StylePendingShader.h"
@@ -5097,6 +5099,88 @@ void CSSStyleSelector::loadPendingShaders()
     m_hasPendingShaders = false;
 }
 
+static bool sortParametersByNameComparator(const RefPtr<CustomFilterParameter>& a, const RefPtr<CustomFilterParameter>& b)
+{
+    return codePointCompareLessThan(a->name(), b->name());
+}
+
+PassRefPtr<CustomFilterParameter> CSSStyleSelector::parseCustomFilterNumberParamter(const String& name, CSSValueList* values)
+{
+    RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
+    for (unsigned i = 0; i < values->length(); ++i) {
+        CSSValue* value = values->itemWithoutBoundsCheck(i);
+        if (!value->isPrimitiveValue())
+            return 0;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
+            return 0;
+        numberParameter->addValue(primitiveValue->getDoubleValue());
+    }
+    return numberParameter.release();
+}
+
+bool CSSStyleSelector::parseCustomFilterParameterList(CSSValue* parametersValue, CustomFilterParameterList& parameterList)
+{
+    HashSet<String> knownParameterNames;
+    CSSValueListIterator parameterIterator(parametersValue);
+    for (; parameterIterator.hasMore(); parameterIterator.advance()) {
+        if (!parameterIterator.value()->isValueList())
+            return false;
+        CSSValueListIterator iterator(parameterIterator.value());
+        if (!iterator.isPrimitiveValue())
+            return false;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+        if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_STRING)
+            return false;
+        
+        String name = primitiveValue->getStringValue();
+        // Do not allow duplicate parameter names.
+        if (knownParameterNames.contains(name))
+            return false;
+        knownParameterNames.add(name);
+        
+        iterator.advance();
+        
+        if (!iterator.hasMore())
+            return false;
+        
+        // FIXME: Implement other parameters types parsing.
+        // booleans: https://bugs.webkit.org/show_bug.cgi?id=76438
+        // textures: https://bugs.webkit.org/show_bug.cgi?id=71442
+        // 3d-transforms: https://bugs.webkit.org/show_bug.cgi?id=71443
+        // mat2, mat3, mat4: https://bugs.webkit.org/show_bug.cgi?id=71444
+        RefPtr<CustomFilterParameter> parameter;
+        if (iterator.value()->isValueList()) {
+            CSSValueList* values = static_cast<CSSValueList*>(iterator.value());
+            iterator.advance();
+            
+            // We can have only arrays of booleans or numbers, so use the first value to choose between those two.
+            // Make sure we have at least one value. We need up to 4 values (all booleans or all numbers).
+            if (!values->length() || values->length() > 4)
+                return false;
+            
+            if (!values->itemWithoutBoundsCheck(0)->isPrimitiveValue())
+                return false;
+            
+            CSSPrimitiveValue* firstPrimitiveValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(0));
+            if (firstPrimitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
+                parameter = parseCustomFilterNumberParamter(name, values);
+            // FIXME: Implement the boolean array parameter here.
+            // https://bugs.webkit.org/show_bug.cgi?id=76438
+        }
+        
+        if (!parameter)
+            return false;
+        
+        parameterList.append(parameter.release());
+    }
+    
+    // Make sure we sort the parameters before passing them down to the CustomFilterOperation.
+    std::sort(parameterList.begin(), parameterList.end(), sortParametersByNameComparator);
+    
+    return true;
+}
+
 PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(WebKitCSSFilterValue* filterValue)
 {
     ASSERT(filterValue->length());
@@ -5113,6 +5197,8 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
     unsigned meshColumns = 1;
     CustomFilterOperation::MeshBoxType meshBoxType = CustomFilterOperation::FILTER_BOX;
     CustomFilterOperation::MeshType meshType = CustomFilterOperation::ATTACHED;
+    
+    CSSValue* parametersValue = 0;
     
     if (filterValue->length() > 1) {
         CSSValueListIterator iterator(filterValue->itemWithoutBoundsCheck(1));
@@ -5158,9 +5244,24 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
                 iterator.advance();
             }
         }
+        
+        if (!iterator.index()) {
+            // If no value was consumed from the mesh value, then it is just a parameter list, meaning that we end up
+            // having just two CSSListValues: list of shaders and list of parameters.
+            ASSERT(filterValue->length() == 2);
+            parametersValue = filterValue->itemWithoutBoundsCheck(1);
+        }
     }
+    
+    if (filterValue->length() > 2 && !parametersValue)
+        parametersValue = filterValue->itemWithoutBoundsCheck(2);
+    
+    CustomFilterParameterList parameterList;
+    if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
+        return 0;
+    
     RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release());
-    return CustomFilterOperation::create(program.release(), meshRows, meshColumns, meshBoxType, meshType);
+    return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif
 

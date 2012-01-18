@@ -38,6 +38,11 @@ class RenderStyle;
 class ShadowData;
 class SVGPaint;
 
+#if ENABLE(CSS_SHADERS)
+class CustomFilterNumberParameter;
+class CustomFilterParameter;
+#endif
+
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
 class CSSComputedStyleDeclaration : public CSSStyleDeclaration {
@@ -81,6 +86,11 @@ private:
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
 #if ENABLE(SVG)
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
+#endif
+
+#if ENABLE(CSS_SHADERS)
+    PassRefPtr<CSSValue> valueForCustomFilterNumberParameter(const CustomFilterNumberParameter*) const;
+    PassRefPtr<CSSValue> valueForCustomFilterParameter(const CustomFilterParameter*) const;
 #endif
 
 #if ENABLE(CSS_FILTERS)

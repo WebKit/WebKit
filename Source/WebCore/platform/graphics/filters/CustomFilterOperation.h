@@ -34,9 +34,14 @@
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 // CSS Shaders
+
+class CustomFilterParameter;
+typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
 
 class CustomFilterOperation : public FilterOperation {
 public:
@@ -52,18 +57,22 @@ public:
         DETACHED
     };
     
-    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
+    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
     {
-        return adoptRef(new CustomFilterOperation(program, meshRows, meshColumns, meshBoxType, meshType));
+        return adoptRef(new CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshBoxType, meshType));
     }
     
     CustomFilterProgram* program() const { return m_program.get(); }
+    
+    const CustomFilterParameterList& parameters() { return m_parameters; }
     
     unsigned meshRows() const { return m_meshRows; }
     unsigned meshColumns() const { return m_meshColumns; }
     
     MeshBoxType meshBoxType() const { return m_meshBoxType; }
     MeshType meshType() const { return m_meshType; }
+    
+    virtual ~CustomFilterOperation();
     
 private:
     virtual bool operator==(const FilterOperation& o) const
@@ -79,17 +88,14 @@ private:
                && m_meshType == other->m_meshType;
     }
     
-    CustomFilterOperation(PassRefPtr<CustomFilterProgram> program, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
-        : FilterOperation(CUSTOM)
-        , m_program(program)
-        , m_meshRows(meshRows)
-        , m_meshColumns(meshColumns)
-        , m_meshBoxType(meshBoxType)
-        , m_meshType(meshType)
-    {
-    }
+    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, MeshType);
+    
+#ifndef NDEBUG
+    bool hasSortedParameterList();
+#endif
 
     RefPtr<CustomFilterProgram> m_program;
+    CustomFilterParameterList m_parameters;
     
     unsigned m_meshRows;
     unsigned m_meshColumns;

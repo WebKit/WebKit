@@ -106,9 +106,9 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 
     m_effects.clear();
 
-    RefPtr<FilterEffect> effect;
     RefPtr<FilterEffect> previousEffect;
     for (size_t i = 0; i < operations.operations().size(); ++i) {
+        RefPtr<FilterEffect> effect;
         FilterOperation* filterOperation = operations.operations().at(i).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {
@@ -257,7 +257,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             cachedCustomFilterPrograms.append(program);
             program->addClient(this);
             if (program->isLoaded()) {
-                effect = FECustomFilter::create(this, document, program,
+                effect = FECustomFilter::create(this, document, program, customFilterOperation->parameters(),
                                                 customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
                                                 customFilterOperation->meshBoxType(), customFilterOperation->meshType());
             }
@@ -276,12 +276,12 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             if (previousEffect)
                 effect->inputEffects().append(previousEffect);
             m_effects.append(effect);
-            previousEffect = effect;
+            previousEffect = effect.release();
         }
     }
 
     // If we didn't make a real filter, create a null-op (FEMerge with one input).
-    if (!effect)
+    if (!previousEffect)
         m_effects.append(FEMerge::create(this));
 
     m_effects.first()->inputEffects().append(m_sourceGraphic);

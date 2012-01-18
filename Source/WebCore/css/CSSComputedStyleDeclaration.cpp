@@ -42,7 +42,9 @@
 #include "CounterContent.h"
 #include "CursorList.h"
 #if ENABLE(CSS_SHADERS)
+#include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
+#include "CustomFilterParameter.h"
 #endif
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -713,6 +715,30 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
     return list.release();
 }
 
+#if ENABLE(CSS_SHADERS)
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForCustomFilterNumberParameter(const CustomFilterNumberParameter* numberParameter) const
+{
+    RefPtr<CSSValueList> numberParameterValue = CSSValueList::createSpaceSeparated();
+    CSSValuePool* cssValuePool = m_node->document()->cssValuePool().get();
+    for (unsigned i = 0; i < numberParameter->size(); ++i)
+        numberParameterValue->append(cssValuePool->createValue(numberParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
+    return numberParameterValue.release();
+}
+
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForCustomFilterParameter(const CustomFilterParameter* parameter) const
+{
+    // FIXME: Add here computed style for the other types: boolean, transform, matrix, texture.
+    ASSERT(parameter);
+    switch (parameter->parameterType()) {
+    case CustomFilterParameter::NUMBER:
+        return valueForCustomFilterNumberParameter(static_cast<const CustomFilterNumberParameter*>(parameter));
+    }
+    
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+#endif // ENABLE(CSS_SHADERS)
+
 #if ENABLE(CSS_FILTERS)
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* style) const
 {
@@ -830,6 +856,20 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
             
             filterValue->append(meshParameters.release());
             
+            const CustomFilterParameterList& parameters = customOperation->parameters();
+            size_t parametersSize = parameters.size();
+            if (!parametersSize)
+                break;
+            RefPtr<CSSValueList> parametersCSSValue = CSSValueList::createCommaSeparated();
+            for (size_t i = 0; i < parametersSize; ++i) {
+                const CustomFilterParameter* parameter = parameters.at(i).get();
+                RefPtr<CSSValueList> parameterCSSNameAndValue = CSSValueList::createSpaceSeparated();
+                parameterCSSNameAndValue->append(cssValuePool->createValue(parameter->name(), CSSPrimitiveValue::CSS_STRING));
+                parameterCSSNameAndValue->append(valueForCustomFilterParameter(parameter));
+                parametersCSSValue->append(parameterCSSNameAndValue.release());
+            }
+            
+            filterValue->append(parametersCSSValue.release());
             break;
         }
 #endif

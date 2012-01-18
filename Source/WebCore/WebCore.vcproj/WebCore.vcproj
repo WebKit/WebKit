@@ -29604,7 +29604,19 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterNumberParameter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterOperation.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterOperation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterParameter.h"
 						>
 					</File>
 					<File

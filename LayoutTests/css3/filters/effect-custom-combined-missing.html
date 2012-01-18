@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Testing that the custom filter is applied correctly when a filter in the stack is not loaded yet.</title>
+        <script>
+            if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+                // Force software rendering mode.
+                window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+                window.layoutTestController.dumpAsText(true);
+                window.layoutTestController.waitUntilDone();
+            }
+            
+            function runTest()
+            {
+                // We need to run the tests after the downloading succeeded.
+                // Using a timer is not ideal, but there seems to be no better options.
+                setTimeout(function() {
+                    if (window.layoutTestController)
+                        window.layoutTestController.notifyDone();
+                }, 200);
+            }
+        </script>
+        <style>
+        .helper_marker {
+            background: green;
+            width:160px;
+            height: 90px;
+        }
+        .filterA {
+            -webkit-filter: custom(url('resources/vertex-offset.vs') url('resources/color-offset.fs'))
+                            custom(url('resources/missing-vertex-offset.vs') url('resources/missing-color-offset.fs'))
+                            custom(url('resources/vertex-offset.vs') url('resources/color-offset.fs'));
+        }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <div class="helper_marker">
+            <img class='filterA' src="resources/reference.png">
+        </div>
+        <!--
+            Testing that multiple filters can be applied even if some filters cannot be loaded. You should see a washed out block of colored bars on top of green background. 
+            There should be two columns at the left of the block with different shades of green.
+        -->
+    </body>
+</html>

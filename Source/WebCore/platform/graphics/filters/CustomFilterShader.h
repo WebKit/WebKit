@@ -63,6 +63,8 @@ public:
     int samplerLocation() const { return m_samplerLocation; }
     int contentSamplerLocation() const { return m_contentSamplerLocation; }
     int samplerSizeLocation() const { return m_samplerSizeLocation; }
+
+    int uniformLocationByName(const String&);
     
     bool isInitialized() const { return m_isInitialized; }
     

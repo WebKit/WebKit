@@ -160,6 +160,13 @@ void CustomFilterShader::initializeParameterLocations()
     m_samplerSizeLocation = m_context->getUniformLocation(m_program, "s_textureSize");
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "s_contentTexture");
 }
+
+int CustomFilterShader::uniformLocationByName(const String& name)
+{
+    ASSERT(m_isInitialized);
+    // FIXME: Improve this by caching the uniform locations.
+    return m_context->getUniformLocation(m_program, name);
+}
     
 CustomFilterShader::~CustomFilterShader()
 {

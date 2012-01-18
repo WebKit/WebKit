@@ -55,6 +55,7 @@ class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
 class CustomFilterOperation;
+class CustomFilterParameter;
 class Document;
 class Element;
 class Frame;
@@ -79,6 +80,10 @@ class WebKitCSSKeyframesRule;
 class WebKitCSSFilterValue;
 class WebKitCSSRegionRule;
 class WebKitCSSShaderValue;
+
+#if ENABLE(CSS_SHADERS)
+typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
+#endif
 
 class MediaQueryResult {
     WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
@@ -222,6 +227,8 @@ public:
 #if ENABLE(CSS_SHADERS)
     StyleShader* styleShader(CSSValue*);
     StyleShader* cachedOrPendingStyleShaderFromValue(WebKitCSSShaderValue*);
+    bool parseCustomFilterParameterList(CSSValue*, CustomFilterParameterList&);
+    PassRefPtr<CustomFilterParameter> parseCustomFilterNumberParamter(const String& name, CSSValueList*);
     PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
     void loadPendingShaders();
 #endif

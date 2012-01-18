@@ -111,6 +111,18 @@ testFilterRule("Custom with both mesh-sizes and padding-box and detached",
 testFilterRule("Custom with padding-box and detached",
     "custom(none url(fragment.shader), padding-box detached)", "custom(none url(fragment.shader), 1 1 padding-box detached)");
 
+testFilterRule("Custom with integer parameters",
+            "custom(none url(fragment.shader), p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)");
+
+testFilterRule("Custom with float parameters",
+            "custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)",
+            "custom(none url(fragment.shader), 1 1 filter-box, p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)");
+
+testFilterRule("Custom with mesh size and number parameters",
+            "custom(none url(fragment.shader), 10 20 filter-box, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)",
+            "custom(none url(fragment.shader), 10 20 filter-box, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)");
+
 testFilterRule("Multiple with fragment shader",
     "grayscale() custom(none url(fragment.shader)) sepia()", "grayscale(1) custom(none url(fragment.shader), 1 1 filter-box) sepia(1)",
     ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",

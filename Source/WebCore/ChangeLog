@@ -1,3 +1,83 @@
+2012-01-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Parse float parameters for the custom() filter syntax
+        https://bugs.webkit.org/show_bug.cgi?id=76253
+
+        Reviewed by Nikolas Zimmermann.
+
+        Custom CSS filters allow passing parameters from CSS to the underlying rendering technology (in this case WebGL Shaders).
+        This patch adds support for parameters of types float, vec2, vec3 and vec4.
+
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/custom/index.html#feCustomParamsAttribute
+
+        Tests: css3/filters/effect-custom-combined-missing.html
+               css3/filters/effect-custom-parameters.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            Added CustomFilterParameter.h, CustomFilterNumberParameter.h and CustomFilterOperation.cpp to the projects.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForCustomFilterNumberParameter):
+        (WebCore::CSSComputedStyleDeclaration::valueForCustomFilterParameter):
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+            Added the computed parameters in alphabetic order (CustomFilterOperation always keeps the parameters sorted).
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::sortParametersByNameComparator):
+        (WebCore::CSSStyleSelector::parseCustomFilterNumberParamter):
+        (WebCore::CSSStyleSelector::parseCustomFilterParameterList):
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+            Added parsing for float, vec2, vec3 and vec4. The values are space separated.
+
+        * css/CSSStyleSelector.h:
+        * platform/graphics/filters/CustomFilterNumberParameter.h: Added.
+        (WebCore::CustomFilterNumberParameter::create):
+        (WebCore::CustomFilterNumberParameter::size):
+        (WebCore::CustomFilterNumberParameter::valueAt):
+        (WebCore::CustomFilterNumberParameter::addValue):
+        (WebCore::CustomFilterNumberParameter::CustomFilterNumberParameter):
+
+        * platform/graphics/filters/CustomFilterOperation.cpp: Added.
+        (WebCore::CustomFilterOperation::CustomFilterOperation):
+        (WebCore::CustomFilterOperation::~CustomFilterOperation):
+            Moved constructor and destructor in CustomFilterOperation.cpp to avoid including CustomFilterParameter everywhere.
+        (WebCore::CustomFilterOperation::hasSortedParameterList):
+            Debug runtime check that we always have parameters in alphabetic order.
+
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore::CustomFilterOperation::create):
+        (WebCore::CustomFilterOperation::parameters):
+            Just added the parameters list. Not using a map, but keeping the items sorted by name. We need them sorted
+            to make it easy and fast to merge two CustomFilterOperations during animations.
+
+        * platform/graphics/filters/CustomFilterParameter.h: Added.
+        (WebCore::CustomFilterParameter::~CustomFilterParameter):
+        (WebCore::CustomFilterParameter::parameterType):
+        (WebCore::CustomFilterParameter::name):
+        (WebCore::CustomFilterParameter::CustomFilterParameter):
+        * platform/graphics/filters/CustomFilterShader.cpp:
+        (WebCore::CustomFilterShader::uniformLocationByName):
+        * platform/graphics/filters/CustomFilterShader.h:
+
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::create):
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore::FECustomFilter::bindProgramNumberParameters):
+        (WebCore::FECustomFilter::bindProgramParameters):
+            Added code that maps the parameters from CSS to WebGL.
+        (WebCore::FECustomFilter::bindProgramAndBuffers):
+        * platform/graphics/filters/FECustomFilter.h:
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+            Fixed a case when the filter was not created, letting the filter add itself as a source of its own. 
+            Also added a test case for this particular case: css3/filters/effect-custom-combined-missing.html.
+
 2012-01-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: resource tree model leaks frames
