@@ -1581,6 +1581,7 @@ _wkGetNSEventMomentumPhase
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 _wkGetMacOSXVersionString
+_wkExecutableWasLinkedOnOrBeforeLion
 #endif
 
 #if PLATFORM(IOS)
