@@ -1,3 +1,25 @@
+2011-01-17  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 103913 & 103915
+
+    2012-01-02  Sam Weinig  <sam@webkit.org>
+
+            Fix the build.
+
+            * bindings/scripts/CodeGeneratorJS.pm:
+
+    2012-01-02  Sam Weinig  <sam@webkit.org>
+
+            REGRESSION(r100517): We're leaking many, many DOM objects!
+            https://bugs.webkit.org/show_bug.cgi?id=75451
+
+            Reviewed by Mark Rowe.
+
+            * bindings/scripts/CodeGeneratorJS.pm:
+            Add a temporary workaround to the problem of handle finalizers
+            not getting called by adding back the destructors (or rather
+            their replacement, destroy() functions).
+
 2011-1-17  Lucas Forschler  <lforschler@apple.com>
 
     Merge 104593
