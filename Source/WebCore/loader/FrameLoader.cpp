@@ -87,9 +87,11 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"
-#include "ScrollAnimator.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "SegmentedString.h"
@@ -1560,17 +1562,14 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     if (canAccessAncestor(activeSecurityOrigin, targetFrame))
         return true;
 
-    Settings* settings = targetFrame->settings();
-    if (settings && !settings->privateBrowsingEnabled()) {
-        Document* targetDocument = targetFrame->document();
-        // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
-        String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
-                         targetDocument->url().string() + " from frame with URL " + activeDocument->url().string() + ".\n";
+    Document* targetDocument = targetFrame->document();
+    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
+    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
+                     targetDocument->url().string() + " from frame with URL " + activeDocument->url().string() + ".\n";
 
-        // FIXME: should we print to the console of the activeFrame as well?
-        targetFrame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
-    }
-    
+    // FIXME: should we print to the console of the activeFrame as well?
+    targetFrame->domWindow()->printErrorMessage(message);
+
     return false;
 }
 

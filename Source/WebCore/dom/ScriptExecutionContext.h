@@ -93,6 +93,7 @@ public:
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, String& sourceURL);
     void reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>);
     void addConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& sourceURL = String(), unsigned lineNumber = 0, PassRefPtr<ScriptCallStack> = 0);
+    void addConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
 
     // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
     bool canSuspendActiveDOMObjects();

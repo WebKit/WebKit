@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unable to post message to http://127.0.0.1:8000. Recipient has origin http://localhost:8000.
+
+Tests that cross origin errors are logged with source url and line number.
+
+
+console-cross-origin-iframe-logging.html:9Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
+
+console-cross-origin-iframe-logging.html:12Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
+
+console-cross-origin-iframe-logging.html:15Unable to post message to http://127.0.0.1:8000. Recipient has origin http://localhost:8000.
+
+

@@ -83,6 +83,8 @@
 #include "PlatformScreen.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -123,13 +125,14 @@ namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
 public:
-    PostMessageTimer(DOMWindow* window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortChannelArray> channels, SecurityOrigin* targetOrigin)
+    PostMessageTimer(DOMWindow* window, PassRefPtr<SerializedScriptValue> message, const String& sourceOrigin, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortChannelArray> channels, SecurityOrigin* targetOrigin, PassRefPtr<ScriptCallStack> stackTrace)
         : m_window(window)
         , m_message(message)
         , m_origin(sourceOrigin)
         , m_source(source)
         , m_channels(channels)
         , m_targetOrigin(targetOrigin)
+        , m_stackTrace(stackTrace)
     {
     }
 
@@ -139,6 +142,7 @@ public:
         return MessageEvent::create(messagePorts.release(), m_message, m_origin, "", m_source);
     }
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
+    ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }
 
 private:
     virtual void fired()
@@ -153,6 +157,7 @@ private:
     RefPtr<DOMWindow> m_source;
     OwnPtr<MessagePortChannelArray> m_channels;
     RefPtr<SecurityOrigin> m_targetOrigin;
+    RefPtr<ScriptCallStack> m_stackTrace;
 };
 
 typedef HashCountedSet<DOMWindow*> DOMWindowSet;
@@ -858,8 +863,13 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
         return;
     String sourceOrigin = sourceDocument->securityOrigin()->toString();
 
+    // Capture stack trace only when inspector front-end is loaded as it may be time consuming.
+    RefPtr<ScriptCallStack> stackTrace;
+    if (InspectorInstrumentation::hasFrontends())
+        stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+
     // Schedule the message.
-    PostMessageTimer* timer = new PostMessageTimer(this, message, sourceOrigin, source, channels.release(), target.get());
+    PostMessageTimer* timer = new PostMessageTimer(this, message, sourceOrigin, source, channels.release(), target.get(), stackTrace.release());
     timer->startOneShot(0);
 }
 
@@ -883,7 +893,7 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
         if (!timer->targetOrigin()->isSameSchemeHostPort(document()->securityOrigin())) {
             String message = "Unable to post message to " + timer->targetOrigin()->toString() +
                              ". Recipient has origin " + document()->securityOrigin()->toString() + ".\n";
-            console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+            console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, timer->stackTrace());
             return;
         }
     }
@@ -1710,7 +1720,8 @@ void DOMWindow::printErrorMessage(const String& message)
         return;
 
     // FIXME: Add arguments so that we can provide a correct source URL and line number.
-    console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+    console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, stackTrace.release());
 }
 
 String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)

@@ -43,6 +43,8 @@
 #include "IDBFactoryBackendInterface.h"
 #include "InspectorInstrumentation.h"
 #include "PlatformSupport.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -137,10 +139,12 @@ void V8Proxy::reportUnsafeAccessTo(Frame* target)
     String str = "Unsafe JavaScript attempt to access frame with URL " + targetDocument->url().string() +
                  " from frame with URL " + sourceDocument->url().string() + ". Domains, protocols and ports must match.\n";
 
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+
     // NOTE: Safari prints the message in the target page, but it seems like
     // it should be in the source page. Even for delayed messages, we put it in
     // the source page.
-    sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str);
+    sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str, stackTrace.release());
 }
 
 static void handleFatalErrorInV8()

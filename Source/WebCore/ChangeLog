@@ -1,3 +1,29 @@
+2012-01-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Unsafe cross origin access errors should show stack trace in console.
+        https://bugs.webkit.org/show_bug.cgi?id=73099
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/console-cross-origin-iframe-logging.html
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        * page/Console.h:
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::stackTrace):
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::printErrorMessage):
+
 2012-01-18  Pablo Flouret  <pablof@motorola.com>
 
         Add [CallWith] support for attributes in JSC/V8 idl code generators.

@@ -332,6 +332,12 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType
     addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
 }
 
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+{
+    addMessage(source, type, level, message, String(), 0, callStack);
+}
+
+
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
     EventTarget* target = errorEventTarget();

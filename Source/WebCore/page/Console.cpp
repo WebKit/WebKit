@@ -128,6 +128,13 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     printf("%s %s:", sourceString, levelString);
 }
 
+void addMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
+
+void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+{
+    addMessage(source, type, level, message, String(), 0, callStack);
+}
+
 void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
 {
     Page* page = this->page();
