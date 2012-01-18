@@ -294,6 +294,7 @@ extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 extern NSString *(*wkGetMacOSXVersionString)(void);
+extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
 }

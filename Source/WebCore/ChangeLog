@@ -1,3 +1,13 @@
+2012-01-17  Matthew Delaney  <mdelaney@apple.com>
+
+        On post-Lion releases, preserve the Lion behavior where WebKit explicitly calls -setGeometryFlipped on the hosting layer for applications that were linked on Lion or earlier.
+        <rdar://problem/10692025>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/WebCoreSystemInterface.h: Added in new function for checking if linked-on-or-before Lion.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2012-01-17  Yongsheng Zhu  <yongsheng.zhu@intel.com>
 
         Clear 'm_size' of DrawingBuffer in the 'clear' function

@@ -171,6 +171,7 @@ void InitWebCoreSystemInterface(void)
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
     INIT(GetMacOSXVersionString);
+    INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
     didInit = true;

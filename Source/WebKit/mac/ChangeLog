@@ -1,3 +1,13 @@
+2012-01-17  Matthew Delaney  <mdelaney@apple.com>
+
+        On post-Lion releases, preserve the Lion behavior where WebKit explicitly calls -setGeometryFlipped on the hosting layer for applications that were linked on Lion or earlier.
+        <rdar://problem/10692025>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebSystemInterface.mm: Init newly added function.
+        * WebView/WebHTMLView.mm: Added case for post-Lion builds that calls -setGeometryFlipped if the app is linked on or before Lion.
+
 2012-01-17  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (r101413): Correction panel overlaps misspelled text.

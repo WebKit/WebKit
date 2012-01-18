@@ -5519,6 +5519,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 #elif (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION))
     // Do geometry flipping here, which flips all the compositing layers so they are top-down.
     [viewLayer setGeometryFlipped:YES];
+#else
+    if (WKExecutableWasLinkedOnOrBeforeLion())
+        [viewLayer setGeometryFlipped:YES];
 #endif
 }
 
