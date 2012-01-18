@@ -39,7 +39,7 @@ ContextDestructionObserver::ContextDestructionObserver(ScriptExecutionContext* s
     if (!m_scriptExecutionContext)
         return;
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
+    ASSERT(m_scriptExecutionContext->isContextThread() && 1);
     m_scriptExecutionContext->didCreateDestructionObserver(this);
 }
 
@@ -48,7 +48,7 @@ ContextDestructionObserver::~ContextDestructionObserver()
     if (!m_scriptExecutionContext)
         return;
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
+    ASSERT(m_scriptExecutionContext->isContextThread() && 2);
     m_scriptExecutionContext->willDestroyDestructionObserver(this);
 }
 
@@ -64,7 +64,7 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext,
     if (!m_scriptExecutionContext)
         return;
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
+    ASSERT(m_scriptExecutionContext->isContextThread() && 3);
     m_scriptExecutionContext->didCreateActiveDOMObject(this, upcastPointer);
 }
 
@@ -73,7 +73,7 @@ ActiveDOMObject::~ActiveDOMObject()
     if (!m_scriptExecutionContext)
         return;
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
+    ASSERT(m_scriptExecutionContext->isContextThread() && 4);
     m_scriptExecutionContext->willDestroyActiveDOMObject(this);
 }
 

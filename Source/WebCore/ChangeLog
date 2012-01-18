@@ -1,3 +1,27 @@
+2012-01-17  David Levin  <levin@chromium.org>
+
+        Need to figure out which assert is firing when worker-read-blob-async.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=76503
+
+        Reviewed by Adam Barth.
+
+        No new functionality exposed so no new tests.
+
+        This is just a quick and dirty way to make these asserts unique
+        to expose which one of them is firing on a machine that doesn't have a
+        good stack trace.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ContextDestructionObserver::ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::~ContextDestructionObserver):
+        (WebCore::ActiveDOMObject::ActiveDOMObject):
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::~DatabaseSync):
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::runTransaction):
+
 2012-01-17  Matthew Delaney  <mdelaney@apple.com>
 
         On post-Lion releases, preserve the Lion behavior where WebKit explicitly calls -setGeometryFlipped on the hosting layer for applications that were linked on Lion or earlier.
