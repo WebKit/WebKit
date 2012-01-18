@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function onMouseMove()
+{
+    document.body.innerHTML = "PASS";
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    root = document.getElementById('root').contentDocument;
+    root.addEventListener('mousemove', onMouseMove, 0);
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.mouseMoveTo(0, 0);
+}
+</script>
+<style>body { margin: 0px; }</style>
+<object data="resources/mouse-move.html" id="root" onload="runTest()"></object>
+</html>
