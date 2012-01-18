@@ -308,7 +308,14 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
         goto doneDispatching;
 
     for (size_t i = m_ancestors.size(); i; --i) {
-        m_ancestors[i - 1].handleLocalEvents(event.get());
+        const EventContext& eventContext = m_ancestors[i-1];
+        if (eventContext.currentTargetSameAsTarget()) {
+            if (event->bubbles())
+                continue;
+            event->setEventPhase(Event::AT_TARGET);
+        } else
+            event->setEventPhase(Event::CAPTURING_PHASE);
+        eventContext.handleLocalEvents(event.get());
         if (event->propagationStopped())
             goto doneDispatching;
     }
@@ -326,7 +333,12 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
 
         size_t size = m_ancestors.size();
         for (size_t i = 0; i < size; ++i) {
-            m_ancestors[i].handleLocalEvents(event.get());
+            const EventContext& eventContext = m_ancestors[i];
+            if (eventContext.currentTargetSameAsTarget())
+                event->setEventPhase(Event::AT_TARGET);
+            else
+                event->setEventPhase(Event::BUBBLING_PHASE);
+            eventContext.handleLocalEvents(event.get());
             if (event->propagationStopped() || event->cancelBubble())
                 goto doneDispatching;
         }

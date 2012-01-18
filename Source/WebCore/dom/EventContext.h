@@ -42,6 +42,7 @@ public:
 
     Node* node() const;
     EventTarget* target() const;
+    bool currentTargetSameAsTarget() const;
     void handleLocalEvents(Event*) const;
 
 private:
@@ -58,6 +59,11 @@ inline Node* EventContext::node() const
 inline EventTarget* EventContext::target() const
 {
     return m_target.get();
+}
+
+inline bool EventContext::currentTargetSameAsTarget() const
+{
+    return m_currentTarget.get() == m_target.get();
 }
 
 }

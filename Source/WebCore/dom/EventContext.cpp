@@ -43,16 +43,9 @@ EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> curren
 
 void EventContext::handleLocalEvents(Event* event) const
 {
-    unsigned short eventPhase = event->eventPhase();
-    if (m_target.get() == m_currentTarget.get()) {
-        if (eventPhase == Event::CAPTURING_PHASE && event->bubbles())
-            return;
-        event->setEventPhase(Event::AT_TARGET);
-    }
     event->setTarget(m_target.get());
     event->setCurrentTarget(m_currentTarget.get());
     m_node->handleLocalEvents(event);
-    event->setEventPhase(eventPhase);
 }
 
 }

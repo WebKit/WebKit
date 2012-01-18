@@ -1,3 +1,19 @@
+2012-01-17  Hayato Ito  <hayato@chromium.org>
+
+        Clean EventContext and move phase-tweaking logic to EventDispatcher.
+        https://bugs.webkit.org/show_bug.cgi?id=76414
+
+        Reviewed by Dimitri Glazkov.
+
+        No tests. No change in behavior.
+
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::handleLocalEvents):
+        * dom/EventContext.h:
+        (WebCore::EventContext::currentTargetSameAsTarget):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+
 2012-01-17  David Levin  <levin@chromium.org>
 
         Need to figure out which assert is firing when worker-read-blob-async.html fails.
