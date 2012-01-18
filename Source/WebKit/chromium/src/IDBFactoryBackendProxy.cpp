@@ -47,6 +47,7 @@
 #include "platform/WebVector.h"
 #include "WebViewImpl.h"
 #include "WebWorkerBase.h"
+#include "WebWorkerClientImpl.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
@@ -85,9 +86,91 @@ void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks
     m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext*, const String&, const WebSecurityOrigin&)
+static const char allowIndexedDBMode[] = "allowIndexedDBMode";
+
+class AllowIndexedDBMainThreadBridge : public ThreadSafeRefCounted<AllowIndexedDBMainThreadBridge> {
+public:
+    static PassRefPtr<AllowIndexedDBMainThreadBridge> create(WebWorkerClientImpl* webWorkerClientImpl, const String& mode, const String& name)
+    {
+        return adoptRef(new AllowIndexedDBMainThreadBridge(webWorkerClientImpl, mode, name));
+    }
+
+    // These methods are invoked on the worker context.
+    void cancel()
+    {
+        MutexLocker locker(m_mutex);
+        m_webWorkerClientImpl = 0;
+    }
+
+    bool result()
+    {
+        return m_result;
+    }
+
+    // This method is invoked on the main thread.
+    void signalCompleted(bool result, const String& mode)
+    {
+        MutexLocker locker(m_mutex);
+        if (m_webWorkerClientImpl)
+            m_webWorkerClientImpl->postTaskForModeToWorkerContext(createCallbackTask(&didComplete, this, result), mode);
+    }
+
+private:
+    AllowIndexedDBMainThreadBridge(WebWorkerClientImpl* webWorkerClientImpl, const String& mode, const String& name)
+        : m_result(false)
+        , m_webWorkerClientImpl(webWorkerClientImpl)
+    {
+        WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(webWorkerClientImpl->view()->mainFrame());
+        // webFrame is not deleted as long as the process is alive, relying on
+        // it to exist on the main thread should be ok.
+        WebWorkerBase::dispatchTaskToMainThread(
+            createCallbackTask(&allowIndexedDBTask, this, WebCore::AllowCrossThreadAccess(webFrame), name, mode));
+    }
+
+    static void allowIndexedDBTask(ScriptExecutionContext*, PassRefPtr<AllowIndexedDBMainThreadBridge> bridge, PassRefPtr<WebFrameImpl> prpWebFrame, const String& name, const String& mode)
+    {
+        RefPtr<WebFrameImpl> webFrame = prpWebFrame;
+        WebViewImpl* webView = webFrame->viewImpl();
+        if (!webView) {
+            bridge->signalCompleted(false, mode);
+            return;
+        }
+        bool allowed = !webView->permissionClient() || webView->permissionClient()->allowIndexedDB(webFrame.get(), name, WebSecurityOrigin());
+        bridge->signalCompleted(allowed, mode);
+    }
+
+    static void didComplete(ScriptExecutionContext* context, PassRefPtr<AllowIndexedDBMainThreadBridge> bridge, bool result)
+    {
+        bridge->m_result = result;
+    }
+
+    bool m_result;
+    Mutex m_mutex;
+    // WebWorkerClientImpl is never deleted as long as the renderer process
+    // is alive. We use it on the main thread to notify the worker thread that
+    // the permission result has been set. The underlying message proxy object
+    // is valid as long as the worker run loop hasn't returned
+    // MessageQueueTerminated, in which case we don't use the
+    // WebWorkerClientImpl.
+    WebWorkerClientImpl* m_webWorkerClientImpl;
+};
+
+bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext* workerContext, const String& name, const WebSecurityOrigin&)
 {
-    return true;
+    WebWorkerClientImpl* webWorkerClientImpl = static_cast<WebWorkerClientImpl*>(&workerContext->thread()->workerLoaderProxy());
+    WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
+
+    String mode = allowIndexedDBMode;
+    mode.append(String::number(runLoop.createUniqueId()));
+    RefPtr<AllowIndexedDBMainThreadBridge> bridge = AllowIndexedDBMainThreadBridge::create(webWorkerClientImpl, mode, name);
+
+    // Either the bridge returns, or the queue gets terminated.
+    if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
+        bridge->cancel();
+        return false;
+    }
+
+    return bridge->result();
 }
 
 void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, WorkerContext* context, const String& dataDir)

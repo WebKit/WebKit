@@ -1,3 +1,25 @@
+2012-01-18  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Check for permission before using IndexedDB from a worker.
+        https://bugs.webkit.org/show_bug.cgi?id=76500
+
+        Reviewed by David Levin.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::AllowIndexedDBMainThreadBridge::create):
+        (WebKit::AllowIndexedDBMainThreadBridge::cancel):
+        (WebKit::AllowIndexedDBMainThreadBridge::result):
+        (WebKit::AllowIndexedDBMainThreadBridge::signalCompleted):
+        (WebKit::AllowIndexedDBMainThreadBridge::AllowIndexedDBMainThreadBridge):
+        (WebKit::AllowIndexedDBMainThreadBridge::allowIndexedDBTask): Call
+        webView->permissionClient()->allowIndexedDB on the main thread because
+        ContentSettingsObserver::AllowIndexedDB(), which is called down the
+        chain, expects to be run on the main thread.
+        (WebKit::AllowIndexedDBMainThreadBridge::didComplete):
+        (WebKit::IDBFactoryBackendProxy::allowIDBFromWorkerThread): Wait for
+        main permission check to complete on main thread before proceeding on
+        worker thread.
+
 2012-01-18  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Make WebMediaStreamDescriptor copyable
