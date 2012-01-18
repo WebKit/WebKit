@@ -1,3 +1,22 @@
+2012-01-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Consolidate layout test crash logging
+        https://bugs.webkit.org/show_bug.cgi?id=75088
+
+        Reviewed by Simon Hausmann.
+
+        Move backtrace generating logic into WTFReportBacktrace
+        and add a way to deinstall signal handlers if we know
+        that we have already printed the backtrace.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/Assertions.cpp:
+        (WTFLogLocker::WTFReportBacktrace):
+        (WTFLogLocker::WTFSetCrashHook):
+        (WTFLogLocker::WTFInvokeCrashHook):
+        * wtf/Assertions.h:
+
 2012-01-17  Geoffrey Garen  <ggaren@apple.com>
 
         Factored out some code into a helper function.

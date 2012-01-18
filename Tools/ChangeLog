@@ -1,3 +1,25 @@
+2012-01-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Consolidate layout test crash logging
+        https://bugs.webkit.org/show_bug.cgi?id=75088
+
+        Reviewed by Simon Hausmann.
+
+        Move backtrace generating logic into WTFReportBacktrace
+        and add a way to deinstall signal handlers if we know
+        that we have already printed the backtrace.
+
+        * DumpRenderTree/qt/main.cpp:
+        (crashHandler):
+        (setupSignalHandlers):
+        (WTFCrashHook):
+        (main):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::crashHandler):
+        (WTR::setupSignalHandlers):
+        (WTR::crashHook):
+        (WTR::InjectedBundle::platformInitialize):
+
 2012-01-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix after r105256.

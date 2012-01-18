@@ -147,6 +147,10 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace();
 
+typedef void (*WTFCrashHookFunction)();
+WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
+WTF_EXPORT_PRIVATE void WTFInvokeCrashHook();
+
 #ifdef __cplusplus
 }
 #endif
@@ -163,12 +167,14 @@ WTF_EXPORT_PRIVATE void WTFReportBacktrace();
 #if COMPILER(CLANG)
 #define CRASH() do { \
     WTFReportBacktrace(); \
+    WTFInvokeCrashHook(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     __builtin_trap(); \
 } while (false)
 #else
 #define CRASH() do { \
     WTFReportBacktrace(); \
+    WTFInvokeCrashHook(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
 } while (false)

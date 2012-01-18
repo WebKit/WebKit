@@ -40,6 +40,8 @@ qwk_1.0 {
     WTFReportArgumentAssertionFailure;
     WTFReportAssertionFailure;
     WTFReportBacktrace;
+    WTFInvokeCrashHook;
+    WTFSetCrashHook;
     extern "C++" {
         # WebKit 1 API
         *QGraphicsWebView;

@@ -91,6 +91,7 @@ _JSWeakObjectMapGet
 _JSWeakObjectMapRemove
 _JSWeakObjectMapSet
 _WTFGetBacktrace
+_WTFInvokeCrashHook
 _WTFLog
 _WTFLogVerbose
 _WTFReportArgumentAssertionFailure
@@ -99,6 +100,7 @@ _WTFReportAssertionFailureWithMessage
 _WTFReportBacktrace
 _WTFReportError
 _WTFReportFatalError
+_WTFSetCrashHook
 __ZN14OpaqueJSString6createERKN3JSC7UStringE
 __ZN3JSC10HandleHeap12writeBarrierEPNS_7JSValueERKS1_
 __ZN3JSC10HandleHeap4growEv

@@ -272,6 +272,16 @@ void WTFGetBacktrace(void** stack, int* size)
 #endif
 }
 
+#if OS(DARWIN) || OS(LINUX)
+#  if PLATFORM(QT) || PLATFORM(GTK)
+#    if defined(__GLIBC__) && !defined(__UCLIBC__)
+#      define WTF_USE_BACKTRACE_SYMBOLS 1
+#    endif
+#  else
+#    define WTF_USE_DLADDR 1
+#  endif
+#endif
+
 void WTFReportBacktrace()
 {
     static const int framesToShow = 31;
@@ -281,11 +291,18 @@ void WTFReportBacktrace()
 
     WTFGetBacktrace(samples, &frames);
 
+#if USE(BACKTRACE_SYMBOLS)
+    char** symbols = backtrace_symbols(samples, frames);
+    if (!symbols)
+        return;
+#endif
+
     for (int i = framesToSkip; i < frames; ++i) {
         const char* mangledName = 0;
         char* cxaDemangled = 0;
-
-#if !PLATFORM(GTK) && !PLATFORM(QT) && (OS(DARWIN) || OS(LINUX))
+#if USE(BACKTRACE_SYMBOLS)
+        mangledName = symbols[i];
+#elif USE(DLADDR)
         Dl_info info;
         if (dladdr(samples[i], &info) && info.dli_sname)
             mangledName = info.dli_sname;
@@ -299,6 +316,26 @@ void WTFReportBacktrace()
             printf_stderr_common("%-3d %p\n", frameNumber, samples[i]);
         free(cxaDemangled);
     }
+
+#if USE(BACKTRACE_SYMBOLS)
+    free(symbols);
+#endif
+}
+
+#undef WTF_USE_BACKTRACE_SYMBOLS
+#undef WTF_USE_DLADDR
+
+static WTFCrashHookFunction globalHook = 0;
+
+void WTFSetCrashHook(WTFCrashHookFunction function)
+{
+    globalHook = function;
+}
+
+void WTFInvokeCrashHook()
+{
+    if (globalHook)
+        globalHook();
 }
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)

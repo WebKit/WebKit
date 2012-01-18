@@ -31,43 +31,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/AlwaysInline.h>
+#include <wtf/Assertions.h>
 
 #if HAVE(SIGNAL_H)
 #include <signal.h>
 #endif
 
-#if defined(__GLIBC__) && !defined(__UCLIBC__)
-#include <execinfo.h>
-#endif
-
 namespace WTR {
 
-static inline void printBacktrace()
+#if HAVE(SIGNAL_H)
+typedef void (*SignalHandler)(int);
+
+static NO_RETURN void crashHandler(int sig)
 {
-#if defined(__GLIBC__) && !defined(__UCLIBC__)
-    void* frames[256];
-    size_t size = backtrace(frames, 256);
-    if (!size)
-        return;
-
-    char** symbols = backtrace_symbols(frames, size);
-    if (!symbols)
-        return;
-
-    for (unsigned i = 0; i < size; ++i)
-        fprintf(stderr, "%u: %s\n", i, symbols[i]);
-
-    fflush(stderr);
-    free(symbols);
-#endif
+    WTFReportBacktrace();
+    exit(128 + sig);
 }
 
-#if HAVE(SIGNAL_H)
-static NO_RETURN void crashHandler(int signal)
+static void setupSignalHandlers(SignalHandler handler)
 {
-    fprintf(stderr, "%s\n", strsignal(signal));
-    printBacktrace();
-    exit(128 + signal);
+    signal(SIGILL, handler);    /* 4:   illegal instruction (not reset when caught) */
+    signal(SIGTRAP, handler);   /* 5:   trace trap (not reset when caught) */
+    signal(SIGFPE, handler);    /* 8:   floating point exception */
+    signal(SIGBUS, handler);    /* 10:  bus error */
+    signal(SIGSEGV, handler);   /* 11:  segmentation violation */
+    signal(SIGSYS, handler);    /* 12:  bad argument to system call */
+    signal(SIGPIPE, handler);   /* 13:  write on a pipe with no reader */
+    signal(SIGXCPU, handler);   /* 24:  exceeded CPU time limit */
+    signal(SIGXFSZ, handler);   /* 25:  exceeded file size limit */
+}
+
+static void crashHook()
+{
+    setupSignalHandlers(SIG_DFL);
 }
 #endif
 
@@ -77,15 +73,8 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         return;
 
 #if HAVE(SIGNAL_H)
-    signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
-    signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */
-    signal(SIGFPE, crashHandler);    /* 8:   floating point exception */
-    signal(SIGBUS, crashHandler);    /* 10:  bus error */
-    signal(SIGSEGV, crashHandler);   /* 11:  segmentation violation */
-    signal(SIGSYS, crashHandler);    /* 12:  bad argument to system call */
-    signal(SIGPIPE, crashHandler);   /* 13:  write on a pipe with no reader */
-    signal(SIGXCPU, crashHandler);   /* 24:  exceeded CPU time limit */
-    signal(SIGXFSZ, crashHandler);   /* 25:  exceeded file size limit */
+    setupSignalHandlers(&crashHandler);
+    WTFSetCrashHook(&crashHook);
 #endif
 }
 
