@@ -1,3 +1,23 @@
+2012-01-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        [chromium] Web Inspector: highlight DOM nodes from detached DOM trees.
+        https://bugs.webkit.org/show_bug.cgi?id=76545
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get isNativeRoot):
+        (WebInspector.HeapSnapshotNode.prototype.get isDetachedDOMTree):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype._markDetachedDOMTreeNodes):
+        (WebInspector.HeapSnapshot.prototype._markQueriableHeapObjects):
+        (WebInspector.HeapSnapshot.prototype._calculateFlags):
+        * inspector/front-end/heapProfiler.css:
+        (.detached-dom-tree-node):
+
 2012-01-18  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: there should be a way to set HTML for given frame.

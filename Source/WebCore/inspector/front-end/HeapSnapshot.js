@@ -571,6 +571,16 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this.name.substr(0, 9) === "DOMWindow";
     },
 
+    get isNativeRoot()
+    {
+        return this.name === "(Native objects)";
+    },
+
+    get isDetachedDOMTree()
+    {
+        return this.className === "Detached DOM tree";
+    },
+
     get isRoot()
     {
         return this.nodeIndex === this._snapshot._rootNodeIndex;
@@ -710,7 +720,10 @@ WebInspector.HeapSnapshot.prototype = {
         this._edgeInvisibleType = this._edgeTypes.length;
         this._edgeTypes.push("invisible");
 
-        this._nodeFlags = { canBeQueried: 1 };
+        this._nodeFlags = { // bit flags
+            canBeQueried: 1,
+            detachedDOMTreeNode: 2,
+        };
 
         this._markInvisibleEdges();
     },
@@ -1037,13 +1050,37 @@ WebInspector.HeapSnapshot.prototype = {
         return a < b ? -1 : (a > b ? 1 : 0);
     },
 
-    _calculateFlags: function()
+    _markDetachedDOMTreeNodes: function()
     {
-        var flag = this._nodeFlags.canBeQueried;
-        this._flags = new Array(this.nodeCount);
+        var flag = this._nodeFlags.detachedDOMTreeNode;
+        var nativeRoot;
+        for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
+            var node = iter.edge.node;
+            if (node.isNativeRoot) {
+                nativeRoot = node;
+                break;
+            }
+        }
+
+        if (!nativeRoot)
+            return;
+
+        for (var iter = nativeRoot.edges; iter.hasNext(); iter.next()) {
+            var node = iter.edge.node;
+            if (node.isDetachedDOMTree) {
+                for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next())
+                    this._flags[edgesIter.edge.node.nodeIndex] |= flag;
+            }
+        }
+    },
+
+    _markQueriableHeapObjects: function()
+    {
         // Allow runtime properties query for objects accessible from DOMWindow objects
         // via regular properties, and for DOM wrappers. Trying to access random objects
         // can cause a crash due to insonsistent state of internal properties of wrappers.
+        var flag = this._nodeFlags.canBeQueried;
+
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
             if (iter.edge.node.isDOMWindow)
@@ -1052,9 +1089,9 @@ WebInspector.HeapSnapshot.prototype = {
 
         while (list.length) {
             var node = list.pop();
-            if (this._flags[node.nodeIndex])
+            if (this._flags[node.nodeIndex] & flag)
                 continue;
-            this._flags[node.nodeIndex] = flag;
+            this._flags[node.nodeIndex] |= flag;
             for (var iter = node.edges; iter.hasNext(); iter.next()) {
                 var edge = iter.edge;
                 var node = edge.node;
@@ -1070,6 +1107,13 @@ WebInspector.HeapSnapshot.prototype = {
                 list.push(node);
             }
         }
+    },
+
+    _calculateFlags: function()
+    {
+        this._flags = new Array(this.nodeCount);
+        this._markDetachedDOMTreeNodes();
+        this._markQueriableHeapObjects();
     },
 
     baseSnapshotHasNode: function(baseSnapshotId, className, nodeId)

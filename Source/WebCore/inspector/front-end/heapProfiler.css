@@ -120,6 +120,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     position: static;
 }
 
+.detached-dom-tree-node {
+    background-color: #FF9999;
+}
+
 .detailed-heapshot-view .console-formatted-string {
     white-space: nowrap;
 }

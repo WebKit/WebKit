@@ -188,6 +188,8 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
         this.hasHoverMessage = true;
     } else if (node.flags & tree.snapshot.nodeFlags.canBeQueried)
         this.hasHoverMessage = true;
+    if (node.flags & tree.snapshot.nodeFlags.detachedDOMTreeNode)
+        this.detachedDOMTreeNode = true;
 };
 
 WebInspector.HeapSnapshotGenericObjectNode.prototype = {
@@ -259,6 +261,8 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         };
         if (this.hasHoverMessage)
             valueStyle += " highlight";
+        if (this.detachedDOMTreeNode)
+            valueStyle += " detached-dom-tree-node";
         data["object"] = { valueStyle: valueStyle, value: value + " @" + this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
