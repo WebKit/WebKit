@@ -2583,3 +2583,6 @@ css3/filters/filtered-compositing-descendant.html
 # https://bugs.webkit.org/show_bug.cgi?id=76534
 svg/carto.net/combobox.svg
 
+# [Qt] DumpRenderTree converts "file:///" to a path differently
+# https://bugs.webkit.org/show_bug.cgi?id=76563
+http/tests/misc/iframe-invalid-source-crash.html
