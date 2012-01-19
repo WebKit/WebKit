@@ -1,3 +1,14 @@
+2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TabbedPane closeAllTabs does not close all tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=76624
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.closeAllTabs):
+
 2012-01-18  Rob Buis  <rbuis@rim.com>
 
         image/pjpeg not supported for decoding on BlackBerry platform

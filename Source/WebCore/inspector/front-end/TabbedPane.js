@@ -131,8 +131,9 @@ WebInspector.TabbedPane.prototype = {
 
     closeAllTabs: function()
     {
-        for (var i = 0; i < this._tabs.length; ++i)
-            this.closeTab(this._tabs[i].id, false);
+        var tabs = this._tabs.slice();
+        for (var i = 0; i < tabs.length; ++i)
+            this.closeTab(tabs[i].id, false);
     },
 
     /**
