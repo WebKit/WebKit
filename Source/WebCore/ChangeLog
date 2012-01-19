@@ -1,3 +1,15 @@
+2012-01-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105331.
+        http://trac.webkit.org/changeset/105331
+        https://bugs.webkit.org/show_bug.cgi?id=76599
+
+        May have broken Chromium InjectIDBKey browser_test (Requested
+        by rolandsteiner on #webkit).
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoSerializedValue):
+
 2012-01-18  Raymond Liu  <raymond.liu@intel.com>
 
         Remove some unused code in AudioContext
