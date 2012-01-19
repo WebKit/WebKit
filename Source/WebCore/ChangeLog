@@ -1,3 +1,19 @@
+2012-01-18  Robert Hogan  <robert@webkit.org>
+
+        Hit ASSERTION FAILED: table()->collapseBorders() on techcrunch.com
+        https://bugs.webkit.org/show_bug.cgi?id=76405
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/css/nested-table-with-collapsed-borders.html
+
+        Change recalcCollapsedBorders() so that it only collects border values for the current
+        table. Calculating the borders for nested tables was wrong as well as wasting cycles, though it would never
+        have impacted rendering since a cell only paints the borders that match its own.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::recalcCollapsedBorders):
+
 2012-01-18  Jer Noble  <jer.noble@apple.com>
 
         Make WebAudio API const-correct.

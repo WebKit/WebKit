@@ -447,10 +447,19 @@ void RenderTable::recalcCollapsedBorders()
         return;
     m_collapsedBordersValid = true;
     m_collapsedBorders.clear();
-    RenderObject* stop = nextInPreOrderAfterChildren();
-    for (RenderObject* o = firstChild(); o && o != stop; o = o->nextInPreOrder()) {
-        if (o->isTableCell())
-            toRenderTableCell(o)->collectBorderValues(m_collapsedBorders);
+    for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
+        if (!section->isTableSection())
+            continue;
+        for (RenderObject* row = section->firstChild(); row; row = row->nextSibling()) {
+            if (!row->isTableRow())
+                continue;
+            for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
+                if (!cell->isTableCell())
+                    continue;
+                ASSERT(cell->table() == this);
+                toRenderTableCell(cell)->collectBorderValues(m_collapsedBorders);
+            }
+        }
     }
     RenderTableCell::sortBorderValues(m_collapsedBorders);
 }
