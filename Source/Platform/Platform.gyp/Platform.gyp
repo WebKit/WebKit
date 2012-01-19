@@ -30,6 +30,7 @@
 
 {
     'includes': [
+        '../../WebKit/chromium/WinPrecompile.gypi',
         '../Platform.gypi',
     ],
     'targets': [

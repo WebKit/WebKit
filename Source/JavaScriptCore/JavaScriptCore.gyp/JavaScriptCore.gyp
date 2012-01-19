@@ -1,10 +1,10 @@
 #
 # Copyright (C) 2009, 2012 Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -30,6 +30,7 @@
 
 {
   'includes': [
+    '../../WebKit/chromium/WinPrecompile.gypi',
     # FIXME: Sense whether upstream or downstream build, and
     # include the right features.gypi
     '../../WebKit/chromium/features.gypi',
@@ -66,7 +67,7 @@
         'defines': [
           # Import features_defines from features.gypi
           '<@(feature_defines)',
-          
+
           # Turns on #if PLATFORM(CHROMIUM)
           'BUILDING_CHROMIUM__=1',
           # Controls wtf/FastMalloc
@@ -123,18 +124,18 @@
         ['exclude', '../'],
         # ... Then include what we want.
         ['include', '../wtf/'],
-        # FIXME: This is clearly not sustainable. 
-        ['exclude', '../wtf/efl'], 
-        ['exclude', '../wtf/gobject'], 
-        ['exclude', '../wtf/gtk'], 
-        ['exclude', '../wtf/mac'], 
-        ['exclude', '../wtf/qt'], 
-        ['exclude', '../wtf/url'], 
-        ['exclude', '../wtf/wince'], 
-        ['exclude', '../wtf/wx'], 
-        ['exclude', '../wtf/unicode/wince'], 
-        ['exclude', '../wtf/unicode/glib'], 
-        ['exclude', '../wtf/unicode/qt4'], 
+        # FIXME: This is clearly not sustainable.
+        ['exclude', '../wtf/efl'],
+        ['exclude', '../wtf/gobject'],
+        ['exclude', '../wtf/gtk'],
+        ['exclude', '../wtf/mac'],
+        ['exclude', '../wtf/qt'],
+        ['exclude', '../wtf/url'],
+        ['exclude', '../wtf/wince'],
+        ['exclude', '../wtf/wx'],
+        ['exclude', '../wtf/unicode/wince'],
+        ['exclude', '../wtf/unicode/glib'],
+        ['exclude', '../wtf/unicode/qt4'],
         # GLib/GTK, even though its name doesn't really indicate.
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl|Symbian)\\.(cpp|mm)$'],

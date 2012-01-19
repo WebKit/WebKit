@@ -1,3 +1,17 @@
+2012-01-19  Joi Sigurdsson  <joi@chromium.org>
+
+        Enable use of precompiled headers in Chromium port on Windows.
+
+        Bug 76381 - Use precompiled headers in Chromium port on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=76381
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp: Include WinPrecompile.gypi.
+        * WinPrecompile.cpp: Added.
+        * WinPrecompile.gypi: Added.
+        * WinPrecompile.h: Added.
+
 2012-01-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory

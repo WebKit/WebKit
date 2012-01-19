@@ -1,3 +1,14 @@
+2012-01-19  Joi Sigurdsson  <joi@chromium.org>
+
+        Enable use of precompiled headers in Chromium port on Windows.
+
+        Bug 76381 - Use precompiled headers in Chromium port on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=76381
+
+        Reviewed by Tony Chang.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp: Include WinPrecompile.gypi.
+
 2012-01-18  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         Cross-platform processor core counter fix

@@ -25,26 +25,29 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Include this file to make targets in your .gyp use the default precompiled
+# header on Windows, when precompiled headers are turned on.
+
 {
-  'includes': [
-    '../../WebKit/chromium/WinPrecompile.gypi',
-    '../../WebKit/chromium/features.gypi',
-    '../WTF.gypi',
+  'conditions': [
+      ['OS=="win" and chromium_win_pch==1', {
+          'variables': {
+              'conditions': [
+                  # We need to calculate the path to the gyp directory differently depending on whether we are
+                  # being built stand-alone (via build-webkit --chromium) or as part of the Chromium checkout.
+                  ['inside_chromium_build==0', {
+                      'win_pch_dir': '<(DEPTH)/../../WebKit/chromium',
+                  },{
+                      'win_pch_dir': '<(DEPTH)/third_party/WebKit/Source/WebKit/chromium',
+                  }],
+              ]
+          },
+          'target_defaults': {
+              'msvs_precompiled_header': '<(win_pch_dir)/WinPrecompile.h',
+              'msvs_precompiled_source': '<(win_pch_dir)/WinPrecompile.cpp',
+              'sources': ['<(win_pch_dir)/WinPrecompile.cpp'],
+          }
+      }],
   ],
-  'targets': [{
-    'target_name': 'newwtf',
-    'type': 'static_library',
-    'include_dirs': [
-      '../',
-    ],
-    'sources': [
-      '<@(wtf_privateheader_files)',
-      '<@(wtf_files)',
-    ],
-    'direct_dependent_settings': {
-      'include_dirs': [
-        '../',
-      ],
-    },
-  }]
 }

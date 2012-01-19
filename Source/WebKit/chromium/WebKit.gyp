@@ -30,6 +30,7 @@
 
 {
     'includes': [
+        'WinPrecompile.gypi',
         '../../WebCore/WebCore.gypi',
         'WebKit.gypi',
         'features.gypi',
