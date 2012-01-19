@@ -1,3 +1,16 @@
+2012-01-19  Jer Noble  <jer.noble@apple.com>
+
+        HRTFPanner not rendering correctly on mac port
+        https://bugs.webkit.org/show_bug.cgi?id=76397
+
+        Reviewed by Eric Carlson.
+
+        No new tests; HRTF results are currently not testable.
+
+        Re-generate the Composite.wav file from its constituent azimuth & elevation files.
+
+        * platform/audio/resources/Composite.wav:
+
 2012-01-19  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76577
