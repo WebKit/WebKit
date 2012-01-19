@@ -27,10 +27,12 @@
 #define WebNotificationManager_h
 
 #include "MessageID.h"
+#include <WebCore/NotificationPresenter.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -39,6 +41,7 @@ class Connection;
 
 namespace WebCore {
 class Notification;
+class SecurityOrigin;
 }
 
 namespace WebKit {
@@ -52,12 +55,17 @@ public:
     explicit WebNotificationManager(WebProcess*);
     ~WebNotificationManager();
 
+    void initialize(const HashMap<String, bool>& permissions);
+    
     bool show(WebCore::Notification*, WebPage*);
     void cancel(WebCore::Notification*, WebPage*);
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::Notification*, WebPage*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    
+    // Looks in local cache for permission. If not found, returns DefaultDenied.
+    WebCore::NotificationPresenter::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
 
 private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
@@ -66,6 +74,8 @@ private:
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);
     void didCloseNotifications(const Vector<uint64_t>& notificationIDs);
+    void didUpdateNotificationDecision(const String& originString, bool allowed);
+    void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
     WebProcess* m_process;
 
@@ -75,6 +85,8 @@ private:
     
     typedef HashMap<uint64_t, RefPtr<WebCore::Notification> > NotificationIDMap;
     NotificationIDMap m_notificationIDMap;
+    
+    HashMap<String, bool> m_permissionsMap;
 #endif
 };
 

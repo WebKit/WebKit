@@ -99,6 +99,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 #if PLATFORM(QT)
     encoder->encode(cookieStorageDirectory);
 #endif
+
+#if ENABLE(NOTIFICATIONS)
+    encoder->encode(notificationPermissions);
+#endif
 }
 
 bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebProcessCreationParameters& parameters)
@@ -190,6 +194,11 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 
 #if PLATFORM(QT)
     if (!decoder->decode(parameters.cookieStorageDirectory))
+        return false;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+    if (!decoder->decode(parameters.notificationPermissions))
         return false;
 #endif
 

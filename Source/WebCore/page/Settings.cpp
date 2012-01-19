@@ -236,6 +236,7 @@ Settings::Settings(Page* page)
 #if ENABLE(THREADED_SCROLLING)
     , m_scrollingCoordinatorEnabled(false)
 #endif
+    , m_notificationsEnabled(true)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

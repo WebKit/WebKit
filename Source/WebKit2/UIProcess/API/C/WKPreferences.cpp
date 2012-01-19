@@ -711,3 +711,13 @@ bool WKPreferencesGetShouldDisplayTextDescriptions(WKPreferencesRef preferencesR
 {
     return toImpl(preferencesRef)->shouldDisplayTextDescriptions();
 }
+
+void WKPreferencesSetNotificationsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setNotificationsEnabled(enabled);
+}
+
+bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->notificationsEnabled();
+}

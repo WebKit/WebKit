@@ -102,6 +102,7 @@ namespace WebKit {
     macro(ShouldDisplaySubtitles, shouldDisplaySubtitles, Bool, bool, false) \
     macro(ShouldDisplayCaptions, shouldDisplayCaptions, Bool, bool, false) \
     macro(ShouldDisplayTextDescriptions, shouldDisplayTextDescriptions, Bool, bool, false) \
+    macro(NotificationsEnabled, notificationsEnabled, Bool, bool, true) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

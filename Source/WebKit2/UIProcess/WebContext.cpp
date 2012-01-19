@@ -281,6 +281,10 @@ void WebContext::ensureWebProcess()
 
     parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
 
+#if ENABLE(NOTIFICATIONS)
+    m_notificationManagerProxy->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
+#endif
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

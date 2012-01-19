@@ -1878,6 +1878,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setShouldDisplayTextDescriptions(store.getBoolValueForKey(WebPreferencesKey::shouldDisplayTextDescriptionsKey()));
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+    settings->setNotificationsEnabled(store.getBoolValueForKey(WebPreferencesKey::notificationsEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 }
 

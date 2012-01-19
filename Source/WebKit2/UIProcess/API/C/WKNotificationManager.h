@@ -39,6 +39,8 @@ WK_EXPORT void WKNotificationManagerSetProvider(WKNotificationManagerRef manager
 WK_EXPORT void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID);
 WK_EXPORT void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef managerRef, uint64_t notificationID);
 WK_EXPORT void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef managerRef, WKArrayRef notificationIDs);
+WK_EXPORT void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerRef managerRef, WKSecurityOriginRef origin, bool allowed);
+WK_EXPORT void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins);
 
 #ifdef __cplusplus
 }

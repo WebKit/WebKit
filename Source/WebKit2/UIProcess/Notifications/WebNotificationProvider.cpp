@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebNotificationProvider.h"
 
+#include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
@@ -57,14 +58,6 @@ void WebNotificationProvider::didDestroyNotification(WebNotification* notificati
     m_client.didDestroyNotification(toAPI(notification), m_client.clientInfo);
 }
 
-int WebNotificationProvider::policyForNotificationPermissionAtOrigin(WebSecurityOrigin* origin)
-{
-    if (!m_client.policyForNotificationPermissionAtOrigin)
-        return INT_MIN;
-    
-    return m_client.policyForNotificationPermissionAtOrigin(toAPI(origin), m_client.clientInfo);
-}
-
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)
 {
     if (!m_client.addNotificationManager)
@@ -79,6 +72,14 @@ void WebNotificationProvider::removeNotificationManager(WebNotificationManagerPr
         return;
     
     m_client.removeNotificationManager(toAPI(manager), m_client.clientInfo);
+}
+
+PassRefPtr<ImmutableDictionary> WebNotificationProvider::notificationPermissions()
+{
+    if (!m_client.notificationPermissions)
+        return ImmutableDictionary::create();
+
+    return adoptRef(toImpl(m_client.notificationPermissions(m_client.clientInfo)));
 }
 
 } // namespace WebKit

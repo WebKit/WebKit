@@ -511,6 +511,9 @@ namespace WebCore {
         bool scrollingCoordinatorEnabled() const { return m_scrollingCoordinatorEnabled; }
 #endif
 
+        void setNotificationsEnabled(bool enabled) { m_notificationsEnabled = enabled; }
+        bool notificationsEnabled() const { return m_notificationsEnabled; }
+
     private:
         Settings(Page*);
 
@@ -651,6 +654,8 @@ namespace WebCore {
 #if ENABLE(THREADED_SCROLLING)
         bool m_scrollingCoordinatorEnabled : 1;
 #endif
+
+        bool m_notificationsEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

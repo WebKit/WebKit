@@ -55,3 +55,13 @@ void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef
 {
     toImpl(managerRef)->providerDidCloseNotifications(toImpl(notificationIDs));
 }
+
+void WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerRef managerRef, WKSecurityOriginRef origin, bool allowed)
+{
+    toImpl(managerRef)->providerDidUpdateNotificationPolicy(toImpl(origin), allowed);
+}
+
+void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationManagerRef managerRef, WKArrayRef origins)
+{
+    toImpl(managerRef)->providerDidRemoveNotificationPolicies(toImpl(origins));
+}

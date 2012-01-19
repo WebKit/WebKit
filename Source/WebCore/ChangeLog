@@ -1,3 +1,21 @@
+2012-01-18  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Sync call for notifications permissions causes flashes on gmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=76570
+        <rdar://problem/10647155>
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        * WebCore.exp.in: Export SecurityOrigin::toString().
+
+        Add runtime setting to enable/disable notifications.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h: Add new bit for whether notifications are enabled.
+        (WebCore::Settings::setNotificationsEnabled):
+        (WebCore::Settings::notificationsEnabled):
+
 2012-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         Provide access to user's list of preferred languages

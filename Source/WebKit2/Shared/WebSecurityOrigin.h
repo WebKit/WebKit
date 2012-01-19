@@ -36,7 +36,15 @@ class WebSecurityOrigin : public APIObject {
 public:
     static const Type APIType = TypeSecurityOrigin;
 
-    static PassRefPtr<WebSecurityOrigin> create(const String& identifier)
+    static PassRefPtr<WebSecurityOrigin> createFromString(const String& string)
+    {
+        RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromString(string);
+        if (!securityOrigin)
+            return 0;
+        return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
+    }
+
+    static PassRefPtr<WebSecurityOrigin> createFromDatabaseIdentifier(const String& identifier)
     {
         RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromDatabaseIdentifier(identifier);
         if (!securityOrigin)
@@ -57,6 +65,7 @@ public:
     unsigned short port() const { return m_securityOrigin->port(); }
 
     const String databaseIdentifier() const { return m_securityOrigin->databaseIdentifier(); }
+    const String toString() const { return m_securityOrigin->toString(); }
 
 private:
     WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)

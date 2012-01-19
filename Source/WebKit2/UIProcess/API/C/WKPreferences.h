@@ -193,6 +193,10 @@ WK_EXPORT bool WKPreferencesGetShouldDisplayCaptions(WKPreferencesRef preference
 WK_EXPORT void WKPreferencesSetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetShouldDisplayTextDescriptions(WKPreferencesRef preferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetNotificationsEnabled(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

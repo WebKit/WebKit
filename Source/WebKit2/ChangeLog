@@ -1,3 +1,170 @@
+2012-01-18  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Sync call for notifications permissions causes flashes on gmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=76570
+        <rdar://problem/10647155>
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        The website code figures out the permission level for its security origin by making a JS call (called
+        checkPermission()) that is synchronous. The way this was implemented was to make a synchronous call from
+        the WebNotificationManager to its proxy. That call goes to the WK API layer to find the policy, and
+        returns that policy back to the JS.
+
+        The synchronous nature of this call causes the white flash to appear in certain cases.
+
+        To fix this, the checkPermission() call is handled all within the web process, instead of going up into
+        the UI process. To do this, the web process initializes the WebNotificationManager with a copy of the
+        notification permissions. Any time the WK client makes a change to the permissions, that gets sent down
+        asynchronously, and the cached copy in WebNotificationManager gets updated.
+
+        A page's settings may disable notifications altogether. Before, this would have been handled by the WK
+        client, since retrieving the permissions were also handled there. Now that the lookup happens in the web
+        process, we need to add that setting in WebCore.
+
+        == Update notification permissions to use the security origin's string representation, rather than its
+        database identifier.
+
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show): Registering the provider with the manager is handled in
+        initialize() now.
+        (WebKit::WebNotificationManagerProxy::cancel): Registering the provider with the manager is handled in
+        initialize() now.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest): Only start the request if notifications
+        are enabled.
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Only show notification is they are enabled.
+        (WebKit::WebNotificationManager::cancel): Only cancel if notifications are enabled.
+
+        == Remove synchronous message to get policy for a given origin. Instead, use the cached copy in
+        WebNotificationManager.
+
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::policyForOrigin): Looks for the permission in the cached copy.
+        If it doesn't exist, return NotificationPresenter::PermissionNotAllowed.
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::permissionLevel): Update permissionLevel to use
+        policyForOrigin().
+
+        Remove old WK API function to get the policy. Because this function was the only synchronous message,
+        we remove the sync-message-related functions also. Also, add in some #includes that might have been
+        omitted in prior patches.
+
+        * UIProcess/API/C/WKNotificationProvider.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: Remove NotificationPermissionLevel.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+
+        * UIProcess/Notifications/WebNotificationProvider.h: Remove policyForNotificationPermissionAtOrigin().
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage): Remove conditional to forward sync messages to the
+        notification manager proxy.
+
+        == Mechanism for client to update the permissions copy in WebNotificationManager.
+
+        * WebProcess/Notifications/WebNotificationManager.messages.in: Add new messages
+        didUpdateNotificationDecision and didRemoveNotificationDecisions.
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::initialize):
+        (WebKit::WebNotificationManager::didUpdateNotificationDecision): Update the entry.
+        (WebKit::WebNotificationManager::didRemoveNotificationDecisions): Remove the entry.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::providerDidUpdateNotificationPolicy):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies): Convert the array of
+        origins to remove, and send it to the WebNotificationManager.
+
+        * UIProcess/API/C/WKNotificationManager.h: Expose these update functions as WK API.
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerProviderDidUpdateNotificationPolicy):
+        (WKNotificationManagerProviderDidRemoveNotificationPolicies):
+
+        == Initialize WebNotificationManager with permissions. Initialize WebPage with notifications enabled bit
+        from settings.
+
+        * Shared/WebProcessCreationParameters.h: Add map of notification permissions as part of the
+        parameters.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+
+        * UIProcess/Notifications/WebNotificationProvider.h: Retrieve copy of existing notification permissions.
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        * UIProcess/API/C/WKNotificationProvider.h: Add WK API to get a copy of the permissions.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.h: Add populateCopyOfNotificationPermissions().
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::initializeProvider): Add the manager at the time of initialization.
+        Similar calls in show() and cancel() are removed in following patch.
+        (WebKit::WebNotificationManagerProxy::populateCopyOfNotificationPermissions): Clear the existing copy.
+        Populate with origin string, and whether that origin is allowed to post. If no decision has been made
+        by the user, then there should be no item in this dictionary.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess): When the web process is initialized, we get a copy of the
+        permissions, and send it to the web process to initialize the notification manager.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Initialize the notification manager.
+
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::initialize): Initialize the permissions copy.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Set notifications enabled bit from settings.
+
+        == Expose toString() method from WebCore::SecurityOrigin. Work is also towards bug 74956.
+
+        * Shared/API/c/WKSecurityOrigin.h: Refactor WKSecurityOriginCreateFromIdentifier to
+        WKSecurityOriginCreateFromDatabaseIdentifier and add WKSecurityOriginCreateFromString function.
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginCreateFromString):
+        (WKSecurityOriginCreateFromDatabaseIdentifier):
+        (WKSecurityOriginCopyToString):
+
+        Refactor WebSecurityOrigin::create() to WebSecurityOrigin::createFromDatabaseIdentifier()
+        and add WebSecurityOrigin::createFromString().
+
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::createFromString):
+        (WebKit::WebSecurityOrigin::createFromDatabaseIdentifier):
+        (WebKit::WebSecurityOrigin::toString): Added function.
+        
+        Refactor with renamed createFromDatabaseIdentifier() method.
+        
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyDatabase):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+
+        == Add WK API calls to change notificationsEnabled bit in WebCore::Settings.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetNotificationsEnabled):
+        (WKPreferencesGetNotificationsEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+
 2012-01-18  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r88886): Tabs restore blank when running Safari with a nightly build for the first time

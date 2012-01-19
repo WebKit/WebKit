@@ -334,11 +334,6 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()) {
-        m_context->notificationManagerProxy()->didReceiveSyncMessage(connection, messageID, arguments, reply);
-        return;
-    }
-
     uint64_t pageID = arguments->destinationID();
     if (!pageID)
         return;

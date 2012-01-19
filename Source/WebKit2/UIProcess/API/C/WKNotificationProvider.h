@@ -35,9 +35,9 @@ extern "C" {
 typedef void (*WKNotificationProviderShowCallback)(WKPageRef page, WKNotificationRef notification, const void* clientInfo);
 typedef void (*WKNotificationProviderCancelCallback)(WKNotificationRef notification, const void* clientInfo);
 typedef void (*WKNotificationProviderDidDestroyNotificationCallback)(WKNotificationRef notification, const void* clientInfo);
-typedef int (*WKNotificationProviderPolicyForNotificationPermissionAtOriginCallback)(WKSecurityOriginRef origin, const void *clientInfo);
 typedef void (*WKNotificationProviderAddNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
 typedef void (*WKNotificationProviderRemoveNotificationManagerCallback)(WKNotificationManagerRef manager, const void* clientInfo);
+typedef WKDictionaryRef (*WKNotificationProviderNotificationPermissionsCallback)(const void* clientInfo);
 
 struct WKNotificationProvider {
     int                                                                   version;
@@ -45,9 +45,9 @@ struct WKNotificationProvider {
     WKNotificationProviderShowCallback                                    show;
     WKNotificationProviderCancelCallback                                  cancel;
     WKNotificationProviderDidDestroyNotificationCallback                  didDestroyNotification;
-    WKNotificationProviderPolicyForNotificationPermissionAtOriginCallback policyForNotificationPermissionAtOrigin;
     WKNotificationProviderAddNotificationManagerCallback                  addNotificationManager;
     WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
+    WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
 };
 typedef struct WKNotificationProvider WKNotificationProvider;
 

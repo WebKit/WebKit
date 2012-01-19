@@ -32,8 +32,10 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Notification.h>
+#include <WebCore/Page.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -60,11 +62,14 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
 #if ENABLE(NOTIFICATIONS)
+    if (permissionLevel(origin) != NotificationPresenter::PermissionNotAllowed)
+        return;
+
     uint64_t requestID = generateRequestID();
     m_originToIDMap.set(origin, requestID);
     m_idToOriginMap.set(requestID, origin);
     m_idToCallbackMap.set(requestID, callback);
-    m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, origin->databaseIdentifier()));
+    m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, origin->toString()));
 #else
     UNUSED_PARAM(origin);
     UNUSED_PARAM(callback);
@@ -88,11 +93,10 @@ void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 NotificationPresenter::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
 {
 #if ENABLE(NOTIFICATIONS)
-    uint64_t permissionLevel;
-    WebProcess::shared().connection()->sendSync(Messages::WebNotificationManagerProxy::NotificationPermissionLevel(securityOrigin->databaseIdentifier()),
-                                                Messages::WebNotificationManagerProxy::NotificationPermissionLevel::Reply(permissionLevel),
-                                                0);
-    return static_cast<NotificationPresenter::Permission>(permissionLevel);
+    if (!m_page->corePage()->settings()->notificationsEnabled())
+        return NotificationPresenter::PermissionDenied;
+    
+    return WebProcess::shared().notificationManager().policyForOrigin(securityOrigin);
 #else
     UNUSED_PARAM(securityOrigin);
     return NotificationPresenter::PermissionDenied;

@@ -29,9 +29,11 @@
 #include "APIObject.h"
 #include "MessageID.h"
 #include "WebNotificationProvider.h"
+#include <WebCore/NotificationPresenter.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -44,6 +46,7 @@ namespace WebKit {
 class ImmutableArray;
 class WebContext;
 class WebPageProxy;
+class WebSecurityOrigin;
 
 class WebNotificationManagerProxy : public APIObject {
 public:
@@ -55,15 +58,17 @@ public:
     void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKNotificationProvider*);
+    void populateCopyOfNotificationPermissions(HashMap<String, bool>&);
 
-    void show(WebPageProxy*, const WTF::String& title, const WTF::String& body, const WTF::String& originIdentifier, uint64_t notificationID);
+    void show(WebPageProxy*, const String& title, const String& body, const String& originString, uint64_t notificationID);
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
     void providerDidCloseNotifications(ImmutableArray* notificationIDs);
+    void providerDidUpdateNotificationPolicy(const WebSecurityOrigin*, bool allowed);
+    void providerDidRemoveNotificationPolicies(ImmutableArray* origins);
     
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
 private:
     explicit WebNotificationManagerProxy(WebContext*);
@@ -71,12 +76,10 @@ private:
     virtual Type type() const { return APIType; }
     
     void didReceiveWebNotificationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void didReceiveSyncWebNotificationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     
     // Message handlers
     void cancel(uint64_t notificationID);
     void didDestroyNotification(uint64_t notificationID);
-    void notificationPermissionLevel(const WTF::String& originIdentifier, uint64_t& permissionLevel);
 
     typedef HashMap<uint64_t, RefPtr<WebNotification> > WebNotificationMap;
     

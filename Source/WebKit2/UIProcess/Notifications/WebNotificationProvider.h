@@ -32,6 +32,7 @@
 
 namespace WebKit {
 
+class ImmutableDictionary;
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
@@ -42,10 +43,11 @@ public:
     void show(WebPageProxy*, WebNotification*);
     void cancel(WebNotification*);
     void didDestroyNotification(WebNotification*);
-    int policyForNotificationPermissionAtOrigin(WebSecurityOrigin*);
 
     void addNotificationManager(WebNotificationManagerProxy*);
     void removeNotificationManager(WebNotificationManagerProxy*);
+    
+    PassRefPtr<ImmutableDictionary> notificationPermissions();
 };
 
 } // namespace WebKit

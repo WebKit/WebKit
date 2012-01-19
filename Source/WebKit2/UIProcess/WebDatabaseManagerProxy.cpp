@@ -137,7 +137,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
     for (size_t i = 0; i < originAndDatabasesCount; ++i) {
         const OriginAndDatabases& originAndDatabases = originAndDatabasesVector[i];
     
-        RefPtr<APIObject> origin = WebSecurityOrigin::create(originAndDatabases.originIdentifier);
+        RefPtr<APIObject> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
     
         size_t databasesCount = originAndDatabases.databases.size();
         Vector<RefPtr<APIObject> > databases(databasesCount);
@@ -188,7 +188,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     Vector<RefPtr<APIObject> > securityOrigins(originIdentifiersCount);
 
     for (size_t i = 0; i < originIdentifiersCount; ++i)
-        securityOrigins[i] = WebSecurityOrigin::create(originIdentifiers[i]);
+        securityOrigins[i] = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifiers[i]);
 
     callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
 }
@@ -219,13 +219,13 @@ void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint6
 
 void WebDatabaseManagerProxy::didModifyOrigin(const String& originIdentifier)
 {
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     m_client.didModifyOrigin(this, origin.get());
 }
 
 void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, const String& databaseIdentifier)
 {
-    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     m_client.didModifyDatabase(this, origin.get(), databaseIdentifier);
 }
 

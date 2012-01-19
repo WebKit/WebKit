@@ -31,6 +31,7 @@
 #include "TextCheckerState.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -120,6 +121,10 @@ struct WebProcessCreationParameters {
 #endif // PLATFORM(WIN)
 #if PLATFORM(QT)
     String cookieStorageDirectory;
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+    HashMap<String, bool> notificationPermissions;
 #endif
 };
 
