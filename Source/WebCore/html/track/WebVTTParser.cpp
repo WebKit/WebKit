@@ -109,6 +109,8 @@ String WebVTTParser::collectWord(const String& input, unsigned* position)
 WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* context)
     : m_scriptExecutionContext(context)
     , m_state(Initial)
+    , m_currentStartTime(0)
+    , m_currentEndTime(0)
     , m_tokenizer(WebVTTTokenizer::create())
     , m_client(client)
 {

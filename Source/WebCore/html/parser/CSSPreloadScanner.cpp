@@ -38,6 +38,7 @@ namespace WebCore {
 
 CSSPreloadScanner::CSSPreloadScanner(Document* document)
     : m_state(Initial)
+    , m_scanningBody(false)
     , m_document(document)
 {
 }

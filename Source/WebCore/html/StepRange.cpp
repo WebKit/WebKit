@@ -35,10 +35,10 @@ using namespace HTMLNames;
 
 StepRange::StepRange(const HTMLInputElement* element)
 {
-    if (element->hasAttribute(precisionAttr)) {
-        step = 1.0;
+    step = 1;
+    if (element->hasAttribute(precisionAttr))
         hasStep = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
-    } else
+    else
         hasStep = element->getAllowedValueStep(&step);
 
     maximum = element->maximum();

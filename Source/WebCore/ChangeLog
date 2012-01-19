@@ -1,3 +1,27 @@
+2012-01-19  Greg Billock  <gbillock@google.com>
+
+        [Coverity] Fix uninitialized constructor defects in .../html
+        https://bugs.webkit.org/show_bug.cgi?id=74965
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/canvas/script-tests/canvas-webkitLineDash.js
+
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::CMYKAValues::CMYKAValues):
+        * html/canvas/WebGLGetInfo.cpp:
+        (WebCore::WebGLGetInfo::WebGLGetInfo):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::CSSPreloadScanner):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::WebVTTParser):
+
 2012-01-19  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Shaders: Remove the setTimeout from the layout tests

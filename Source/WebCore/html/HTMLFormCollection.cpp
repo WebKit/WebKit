@@ -37,6 +37,7 @@ using namespace HTMLNames;
 
 HTMLFormCollection::HTMLFormCollection(HTMLFormElement* form)
     : HTMLCollection(form, OtherCollection)
+    , currentPos(0)
 {
 }
 

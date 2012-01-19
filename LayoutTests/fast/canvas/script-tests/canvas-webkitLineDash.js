@@ -20,3 +20,9 @@ lineDash = ctx.webkitLineDash;
 shouldBe('lineDash[0]', '15');
 shouldBe('lineDash[1]', '10');
 shouldBe('ctx.webkitLineDashOffset', '5');
+
+// Verify that line dash offset persists after
+// clearRect (which causes a save/restore of the context
+// state to the stack).
+ctx.clearRect(0, 0, 700, 700);
+shouldBe('ctx.webkitLineDashOffset', '5');

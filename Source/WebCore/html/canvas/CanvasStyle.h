@@ -88,8 +88,8 @@ namespace WebCore {
         RefPtr<CanvasPattern> m_pattern;
 
         struct CMYKAValues {
-            CMYKAValues() {}
-            CMYKAValues(float cyan, float magenta, float yellow, float black, float alpha) : c(cyan), m(magenta), y(yellow), k(black), a(alpha) {}
+            CMYKAValues() : c(0), m(0), y(0), k(0), a(0) { }
+            CMYKAValues(float cyan, float magenta, float yellow, float black, float alpha) : c(cyan), m(magenta), y(yellow), k(black), a(alpha) { }
             float c;
             float m;
             float y;

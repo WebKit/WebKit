@@ -45,11 +45,18 @@ namespace WebCore {
 WebGLGetInfo::WebGLGetInfo(bool value)
     : m_type(kTypeBool)
     , m_bool(value)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(const bool* value, int size)
     : m_type(kTypeBoolArray)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
 {
     if (!value || size <=0)
         return;
@@ -60,83 +67,136 @@ WebGLGetInfo::WebGLGetInfo(const bool* value, int size)
 
 WebGLGetInfo::WebGLGetInfo(float value)
     : m_type(kTypeFloat)
+    , m_bool(false)
     , m_float(value)
+    , m_int(0)
+    , m_unsignedInt(0)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(int value)
     : m_type(kTypeInt)
+    , m_bool(false)
+    , m_float(0)
     , m_int(value)
+    , m_unsignedInt(0)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo()
     : m_type(kTypeNull)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(const String& value)
     : m_type(kTypeString)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
     , m_string(value)
+    , m_unsignedInt(0)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(unsigned int value)
     : m_type(kTypeUnsignedInt)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
     , m_unsignedInt(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLBuffer> value)
     : m_type(kTypeWebGLBuffer)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglBuffer(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<Float32Array> value)
     : m_type(kTypeWebGLFloatArray)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglFloatArray(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLFramebuffer> value)
     : m_type(kTypeWebGLFramebuffer)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglFramebuffer(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<Int32Array> value)
     : m_type(kTypeWebGLIntArray)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglIntArray(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLProgram> value)
     : m_type(kTypeWebGLProgram)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglProgram(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLRenderbuffer> value)
     : m_type(kTypeWebGLRenderbuffer)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglRenderbuffer(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLTexture> value)
     : m_type(kTypeWebGLTexture)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglTexture(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<Uint8Array> value)
     : m_type(kTypeWebGLUnsignedByteArray)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglUnsignedByteArray(value)
 {
 }
 
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value)
     : m_type(kTypeWebGLVertexArrayObjectOES)
+    , m_bool(false)
+    , m_float(0)
+    , m_int(0)
+    , m_unsignedInt(0)
     , m_webglVertexArrayObject(value)
 {
 }
