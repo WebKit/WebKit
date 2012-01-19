@@ -1,3 +1,27 @@
+2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make build-webkit always do safe incremental builds after update-webkit
+
+        When building against Qt5 with GCC we would just run 'make' in the build dir,
+        and rely on the dependency files output by GCC (-MD) to handle dependency
+        tracking, but that fails for special-cases like adding a Q_OBJECT macro
+        to a header.
+
+        To guarantee that an incrmental build will work, we have to run 'make qmake',
+        which we now do on every build-webkit that's followed by a successful run
+        of update-webkit. The reasoning is that update-webkit can result in such
+        potential corner-cases being applied, and since we can't know for sure
+        unless we inspect the diff and account for all the corner cases we assume
+        the worst and always run 'make qmake'.
+
+        After a succesful run of build-webkit we proceed to do just 'make' for any
+        subsequent runs, since we assume that the developer knows what kind of
+        changes he/she is doing, and when a 'make qmake' is needed.
+
+        Reviewed by Simon Hausmann.
+
+        * .gitignore:
+
 2012-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] move Tools.gyp, switch build-webkit --chromium to All.gyp

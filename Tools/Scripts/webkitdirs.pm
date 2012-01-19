@@ -416,7 +416,9 @@ sub setConfigurationProductDir($)
 
 sub determineCurrentSVNRevision
 {
-    return if defined $currentSVNRevision;
+    # We always update the current SVN revision here, and leave the caching
+    # to currentSVNRevision(), so that changes to the SVN revision while the
+    # script is running can be picked up by calling this function again.
     determineSourceDir();
     $currentSVNRevision = svnRevisionForDirectory($sourceDir);
     return $currentSVNRevision;
@@ -470,7 +472,7 @@ sub configurationForVisualStudio()
 
 sub currentSVNRevision
 {
-    determineCurrentSVNRevision();
+    determineCurrentSVNRevision() if not defined $currentSVNRevision;
     return $currentSVNRevision;
 }
 
@@ -2068,6 +2070,13 @@ sub buildQMakeProjects
 
     my %defines = qtFeatureDefaults(\@buildArgs);
 
+    my $pathToBuildHint = File::Spec->catfile(sourceDir(), "Tools", "qmake", ".build-hint");
+    my $buildHint = "";
+    if (-e $pathToBuildHint && open(BUILDHINT, $pathToBuildHint)) {
+        chomp($buildHint = <BUILDHINT>);
+        close(BUILDHINT);
+    }
+
     my $needsCleanBuild = 0;
 
     my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
@@ -2153,7 +2162,7 @@ sub buildQMakeProjects
 
     if ($clean) {
         $command = "$command distclean";
-    } else {
+    } elsif ($buildHint =~ /^incremental$/) {
         $command = "$command incremental";
     }
 
@@ -2161,6 +2170,9 @@ sub buildQMakeProjects
     $result = system $command;
 
     chdir ".." or die;
+
+    unlink($pathToBuildHint) || die "Could not delete $pathToBuildHint: $!" if $result eq 0;
+
     return $result;
 }
 
