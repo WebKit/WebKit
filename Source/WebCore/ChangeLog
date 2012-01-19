@@ -1,3 +1,30 @@
+2012-01-18  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r105366.
+        http://trac.webkit.org/changeset/105366
+        https://bugs.webkit.org/show_bug.cgi?id=76015
+
+        Breaks CCLayerTreeHostImplTest unit test
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::drawsOpaque):
+        (WebCore::CCDrawQuad::needsBlending):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp:
+        (WebCore::CCSolidColorDrawQuad::CCSolidColorDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp:
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        (WebCore::CCTiledLayerImpl::syncTextureId):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2012-01-18  Thiago Marcos P. Santos  <tmpsantos@gmail.com>
 
         Save two ID checks on CSS Min/Width property validation

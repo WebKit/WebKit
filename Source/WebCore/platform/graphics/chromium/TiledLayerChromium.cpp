@@ -67,7 +67,6 @@ public:
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
-    IntRect m_opaqueRect;
 private:
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
@@ -273,7 +272,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         if (tile->isDirty())
             continue;
 
-        tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->m_opaqueRect);
+        tiledLayer->syncTextureId(i, j, tile->managedTexture()->textureId());
     }
 }
 
@@ -413,8 +412,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     // However, we can't free the memory backing the GraphicsContext until the paint finishes,
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
-    IntRect paintedOpaqueRect;
-    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale(), &paintedOpaqueRect);
+    IntRect opaqueRect; // FIXME: unused. remove this and store in the layer to pass to impl for draw culling
+    textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale(), &opaqueRect);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
@@ -423,21 +422,12 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 CRASH();
 
-            IntRect tileRect = m_tiler->tileRect(tile);
-
-            // Save what was painted opaque in the tile. If everything painted in the tile was opaque, and the area is a subset of an
-            // already opaque area, keep the old area.
-            IntRect tilePaintedRect = intersection(tileRect, m_paintRect);
-            IntRect tilePaintedOpaqueRect = intersection(tileRect, paintedOpaqueRect);
-            if (tilePaintedOpaqueRect != tilePaintedRect || !tile->m_opaqueRect.contains(tilePaintedOpaqueRect))
-                tile->m_opaqueRect = tilePaintedOpaqueRect;
-
             // Use m_updateRect as copyAndClearDirty above moved the existing dirty rect to m_updateRect.
             const IntRect& dirtyRect = tile->m_updateRect;
             if (dirtyRect.isEmpty())
                 continue;
 
-            IntRect sourceRect = tileRect;
+            IntRect sourceRect = m_tiler->tileRect(tile);
             sourceRect.intersect(dirtyRect);
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.

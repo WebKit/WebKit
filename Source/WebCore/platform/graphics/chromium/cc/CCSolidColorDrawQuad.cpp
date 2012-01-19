@@ -40,8 +40,6 @@ CCSolidColorDrawQuad::CCSolidColorDrawQuad(const CCSharedQuadState* sharedQuadSt
 {
     if (m_color.alpha() != 1)
         m_quadOpaque = false;
-    else
-        m_opaqueRect = quadRect;
 }
 
 }

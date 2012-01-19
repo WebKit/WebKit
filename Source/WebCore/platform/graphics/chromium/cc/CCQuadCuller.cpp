@@ -77,8 +77,8 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
 
         bool keepQuad = !regionContainsRect(opaqueCoverageThusFar, quadRect);
 
-        if (keepQuad && drawQuad->isLayerAxisAlignedIntRect())
-            opaqueCoverageThusFar.unite(drawQuad->quadTransform().mapRect(drawQuad->opaqueRect()));
+        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect())
+            opaqueCoverageThusFar.unite(Region(quadRect));
 
         if (keepQuad)
             culledList.append(quadList[i].release());
