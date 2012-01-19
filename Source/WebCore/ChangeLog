@@ -1,3 +1,16 @@
+2012-01-18  Li Yin  <li.yin@intel.com>
+
+        [v8] Low efficiency of writing long string from web application to plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=76592
+
+        The efficiency will be improved by 300 times in the best case, when the
+        size of string reaches 1MB.
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertV8ObjectToNPVariant):
+
 2012-01-18  Adam Barth  <abarth@webkit.org>
 
         Assigning to Element.prefix should throw exception when using illegal characters
