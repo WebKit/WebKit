@@ -1911,15 +1911,18 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     clearDragState();
 }
 
-void EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
+bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     Frame* targetFrame;
+    bool preventedDefault = false;
     if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
         if (targetFrame)
-            targetFrame->eventHandler()->performDragAndDrop(event, clipboard);
+            preventedDefault = targetFrame->eventHandler()->performDragAndDrop(event, clipboard);
     } else if (m_dragTarget.get())
-        dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
-    clearDragState();
+        preventedDefault = dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
+    if (preventedDefault)
+        clearDragState();
+    return preventedDefault;
 }
 
 void EventHandler::clearDragState()
@@ -2783,7 +2786,14 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     // that consecutive mousemove events don't reinitiate the drag and drop.
     m_mouseDownMayStartDrag = false;
 }
-    
+
+void EventHandler::updateDragStateAfterEditDragIfNeeded(Element* rootEditableElement)
+{
+    // If inserting the dragged contents removed the drag source, we still want to fire dragend at the root editble element.
+    if (dragState().m_dragSrc && !dragState().m_dragSrc->inDocument())
+        dragState().m_dragSrc = rootEditableElement;
+}
+
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
 bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
 {

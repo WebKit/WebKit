@@ -1,3 +1,43 @@
+2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        drop event isn't fired for contentEditable in edit drag
+        https://bugs.webkit.org/show_bug.cgi?id=57185
+
+        Reviewed by Adam Barth.
+
+        Dispatch drop and dragend events after edit drag per HTML5 spec:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#drag-and-drop-processing-model
+
+        There are two major differences between the spec and WebKit's new behavior:
+
+        While the spec says we have to insert the dragged contents immediately after dispatching drop event
+        and delete the source in the default event handler of dragend event, doing so in WebKit is extremely
+        difficult because of the way we manage the selection. Instead, we continue to delete the source
+        and insert the dragged contents immediately after the drop event; this behavior matches that of Firefox 9.
+
+        When the dragged contents and the destination of the move is in the same text node, ReplaceSelectionCommand
+        may end up replacing it with a new text node. But this removal causes a problem when EventHandler uses
+        the node to dispatch dragend event because the node is "orphaned" from its parent at that point. To mitigate
+        this issue, we update the dragState's m_dragSrc when the node is orphaned by the edit drag. While this behavior
+        may differ from the spec and other browsers, not delivering dragend to the editing host seems strictly worse than
+        dispatching it at the slightly wrong target.
+
+        Tests: fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+               fast/events/moving-text-should-fire-drop-and-dragend-events.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag): Dispatch drop event even when m_isHandlingDrag is true as long
+        as DragDestinationActionDHTML is an acceptable action.
+        (WebCore::DragController::concludeEditDrag): Call updateDragStateAfterEditDragIfNeeded after inserting
+        the dragged contents. This is necessary when ReplaceSelectionCommand or MoveSelectionCommand modifies
+        the source node while inserting the dragged contents.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::performDragAndDrop): Clear the drag state only if drop event's default action
+        was prevented so that we dispatch dragevent event later.
+        (WebCore::EventHandler::updateDragStateAfterEditDragIfNeeded): Update dragState's m_dragSrc when the node
+        is orphaned. See above for the rationale.
+        * page/EventHandler.h:
+
 2012-01-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory

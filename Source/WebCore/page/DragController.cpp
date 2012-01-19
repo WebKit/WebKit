@@ -201,19 +201,21 @@ bool DragController::performDrag(DragData* dragData)
 {
     ASSERT(dragData);
     m_documentUnderMouse = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
-    if (m_isHandlingDrag) {
-        ASSERT(m_dragDestinationAction & DragDestinationActionDHTML);
+    if (m_dragDestinationAction & DragDestinationActionDHTML) {
         m_client->willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
         RefPtr<Frame> mainFrame = m_page->mainFrame();
+        bool preventedDefault = false;
         if (mainFrame->view()) {
             // Sending an event can result in the destruction of the view and part.
             RefPtr<Clipboard> clipboard = Clipboard::create(ClipboardReadable, dragData, mainFrame.get());
             clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
-            mainFrame->eventHandler()->performDragAndDrop(createMouseEvent(dragData), clipboard.get());
-            clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
+            preventedDefault = mainFrame->eventHandler()->performDragAndDrop(createMouseEvent(dragData), clipboard.get());
+            clipboard->setAccessPolicy(ClipboardNumb); // Invalidate clipboard here for security
         }
-        m_documentUnderMouse = 0;
-        return true;
+        if (m_isHandlingDrag || preventedDefault) {
+            m_documentUnderMouse = 0;
+            return true;
+        }
     }
 
     if ((m_dragDestinationAction & DragDestinationActionEdit) && concludeEditDrag(dragData)) {
@@ -477,6 +479,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     VisibleSelection dragCaret = m_page->dragCaretController()->caretPosition();
     m_page->dragCaretController()->clear();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
+    RefPtr<Element> rootEditableElement = innerFrame->selection()->rootEditableElement();
 
     // For range to be null a WebKit client must have done something bad while
     // manually controlling drag behaviour
@@ -517,6 +520,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
             applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text),  ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
+    }
+
+    if (rootEditableElement) {
+        if (Frame* frame = rootEditableElement->document()->frame())
+            frame->eventHandler()->updateDragStateAfterEditDragIfNeeded(rootEditableElement.get());
     }
 
     return true;
