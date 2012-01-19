@@ -1,5 +1,19 @@
 2012-01-18  Raymond Liu  <raymond.liu@intel.com>
 
+        Remove some unused code in AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=76506
+
+        Reviewed by Kenneth Russell.
+
+        No new tests required.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon):
+        (WebCore::AudioContext::uninitialize):
+        * webaudio/AudioContext.h:
+
+2012-01-18  Raymond Liu  <raymond.liu@intel.com>
+
         Only create AudioBus with required number of channels for AudioNodeOutput
         https://bugs.webkit.org/show_bug.cgi?id=76417
 

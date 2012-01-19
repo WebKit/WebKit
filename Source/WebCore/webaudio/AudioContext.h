@@ -102,9 +102,6 @@ public:
     // Asynchronous audio file data decoding.
     void decodeAudioData(ArrayBuffer*, PassRefPtr<AudioBufferCallback>, PassRefPtr<AudioBufferCallback>, ExceptionCode& ec);
 
-    // Keep track of this buffer so we can release memory after the context is shut down...
-    void refBuffer(PassRefPtr<AudioBuffer> buffer);
-
     AudioListener* listener() { return m_listener.get(); }
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
@@ -125,9 +122,6 @@ public:
     PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize);
     PassRefPtr<AudioChannelSplitter> createChannelSplitter();
     PassRefPtr<AudioChannelMerger> createChannelMerger();
-
-    AudioBus* temporaryMonoBus() { return m_temporaryMonoBus.get(); }
-    AudioBus* temporaryStereoBus() { return m_temporaryStereoBus.get(); }
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);
@@ -255,9 +249,6 @@ private:
     RefPtr<AudioDestinationNode> m_destinationNode;
     RefPtr<AudioListener> m_listener;
 
-    // Only accessed in the main thread.
-    Vector<RefPtr<AudioBuffer> > m_allocatedBuffers;
-
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_finishedNodes;
 
@@ -276,9 +267,6 @@ private:
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
     void handleDirtyAudioNodeInputs();
     void handleDirtyAudioNodeOutputs();
-
-    OwnPtr<AudioBus> m_temporaryMonoBus;
-    OwnPtr<AudioBus> m_temporaryStereoBus;
 
     unsigned m_connectionCount;
 
