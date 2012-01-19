@@ -90,13 +90,13 @@ class TestExpectationsChecker(object):
     def _handle_error_message(self, lineno, message, confidence):
         pass
 
-    def check_test_expectations(self, expectations_str, tests=None, overrides=None):
+    def check_test_expectations(self, expectations_str, test_configuration, tests=None, overrides=None):
         err = None
         expectations = None
         try:
             expectations = test_expectations.TestExpectations(
                 port=self._port_obj, expectations=expectations_str, tests=tests,
-                test_config=self._port_obj.test_configuration(),
+                test_config=test_configuration,
                 is_lint_mode=True, overrides=overrides)
         except test_expectations.ParseError, error:
             err = error
@@ -118,8 +118,10 @@ class TestExpectationsChecker(object):
     def check(self, lines):
         overrides = self._port_obj.test_expectations_overrides()
         expectations = '\n'.join(lines)
-        self.check_test_expectations(expectations_str=expectations,
-                                     tests=None,
-                                     overrides=overrides)
+        for test_configuration in self._port_obj.all_test_configurations():
+            self.check_test_expectations(expectations_str=expectations,
+                                         test_configuration=test_configuration,
+                                         tests=None,
+                                         overrides=overrides)
         # Warn tabs in lines as well
         self.check_tabs(lines)
