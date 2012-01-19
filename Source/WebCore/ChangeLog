@@ -1,3 +1,10 @@
+2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed, inspector closure compilation fix.
+
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/TabbedEditorContainer.js:
+
 2012-01-19  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76644

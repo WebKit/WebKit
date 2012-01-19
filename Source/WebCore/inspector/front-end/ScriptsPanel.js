@@ -1088,7 +1088,7 @@ WebInspector.ScriptsPanel.FileSelector.prototype = {
 WebInspector.ScriptsPanel.EditorContainer = function() { }
 
 WebInspector.ScriptsPanel.EditorContainer.Events = {
-    FileSelected: "FileSelected"
+    EditorSelected: "EditorSelected"
 }
 
 WebInspector.ScriptsPanel.EditorContainer.prototype = {

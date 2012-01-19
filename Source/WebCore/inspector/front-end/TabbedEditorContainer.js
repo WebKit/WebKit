@@ -28,6 +28,7 @@
 
 /**
  * @implements {WebInspector.ScriptsPanel.EditorContainer}
+ * @extends {WebInspector.Object}
  * @constructor
  */
 WebInspector.TabbedEditorContainer = function()
