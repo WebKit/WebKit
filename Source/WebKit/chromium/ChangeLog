@@ -1,3 +1,9 @@
+2012-01-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, Roll DEPS to most recent LKGR (118291).
+
+        * DEPS:
+
 2012-01-18  Jer Noble  <jer.noble@apple.com>
 
         Make WebAudio API const-correct.
