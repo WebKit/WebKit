@@ -188,6 +188,9 @@ messages -> WebPage {
     DrawPagesToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
 #endif
 
+    # Media
+    SetMediaVolume(float volume)
+
     SetMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require

@@ -607,6 +607,8 @@ public:
     void setShouldSendEventsSynchronously(bool sync) { m_shouldSendEventsSynchronously = sync; };
 
     void printMainFrame();
+    
+    void setMediaVolume(float);
 
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
@@ -1002,6 +1004,8 @@ private:
     static WKPageDebugPaintFlags s_debugPaintFlags;
 
     bool m_shouldSendEventsSynchronously;
+    
+    float m_mediaVolume;
 
 #if PLATFORM(QT)
     WTF::HashSet<RefPtr<QtNetworkRequestData> > m_applicationSchemeRequests;

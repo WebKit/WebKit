@@ -438,6 +438,8 @@ public:
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
 #endif
 
+    void setMediaVolume(float);
+
     bool mainFrameHasCustomRepresentation() const;
 
     void didChangeScrollOffsetForMainFrame();

@@ -76,6 +76,8 @@ struct WebPageCreationParameters {
     bool canRunModal;
 
     float deviceScaleFactor;
+    
+    float mediaVolume;
 
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;

@@ -1,3 +1,30 @@
+2012-01-18  Ada Chan  <adachan@apple.com>
+
+        Need a WebKit2 API for setting media volume
+        https://bugs.webkit.org/show_bug.cgi?id=76560
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Encode the mediaVolume parameter.
+        (WebKit::WebPageCreationParameters::decode): Decode the mediaVolume parameter.
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMediaVolume): Call WebPageProxy::setMediaVolume().
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize new data member m_mediaVolume.
+        (WebKit::WebPageProxy::setMediaVolume): Bail if the volume hasn't changed. Update m_mediaVolume 
+        and bail if the page is no longer valid.  Otherwise, send a WebPage::SetMediaVolume message to 
+        the web process.
+        (WebKit::WebPageProxy::creationParameters): Add media volume to the creation parameters.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize media volume from the WebPageCreationParameters.
+        (WebKit::WebPage::setMediaVolume): Call Page::setMediaVolume().
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add the SetMediaVolume message.
+
 2012-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKit2 GTK+ API public headers are not installed

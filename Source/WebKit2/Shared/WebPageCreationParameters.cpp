@@ -55,6 +55,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(canRunBeforeUnloadConfirmPanel);
     encoder->encode(canRunModal);
     encoder->encode(deviceScaleFactor);
+    encoder->encode(mediaVolume);
 
 #if PLATFORM(MAC)
     encoder->encode(isSmartInsertDeleteEnabled);
@@ -110,6 +111,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.canRunModal))
         return false;
     if (!decoder->decode(parameters.deviceScaleFactor))
+        return false;
+    if (!decoder->decode(parameters.mediaVolume))
         return false;
 
 #if PLATFORM(MAC)

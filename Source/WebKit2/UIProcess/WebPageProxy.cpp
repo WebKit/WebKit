@@ -199,6 +199,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
+    , m_mediaVolume(1)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -2320,6 +2321,19 @@ void WebPageProxy::printMainFrame()
     printFrame(m_mainFrame->frameID());
 }
 
+void WebPageProxy::setMediaVolume(float volume)
+{
+    if (volume == m_mediaVolume)
+        return;
+    
+    m_mediaVolume = volume;
+    
+    if (!isValid())
+        return;
+    
+    process()->send(Messages::WebPage::SetMediaVolume(volume), m_pageID);    
+}
+
 #if PLATFORM(QT)
 void WebPageProxy::didChangeContentsSize(const IntSize& size)
 {
@@ -3242,6 +3256,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_uiClient.canRunModal();
     parameters.deviceScaleFactor = m_intrinsicDeviceScaleFactor;
+    parameters.mediaVolume = m_mediaVolume;
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;

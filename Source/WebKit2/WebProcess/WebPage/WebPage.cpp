@@ -271,6 +271,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
         restoreSession(parameters.sessionState);
 
     m_drawingArea->setPaintingEnabled(true);
+    
+    setMediaVolume(parameters.mediaVolume);
 
 #ifndef NDEBUG
     webPageCounter.increment();
@@ -2829,6 +2831,11 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
 #endif
+
+void WebPage::setMediaVolume(float volume)
+{
+    m_page->setMediaVolume(volume);
+}
 
 void WebPage::runModal()
 {

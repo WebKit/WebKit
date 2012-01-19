@@ -87,6 +87,8 @@ WK_EXPORT WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page);
 
 WK_EXPORT void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync);
 
+WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
+
 #ifdef __cplusplus
 }
 #endif

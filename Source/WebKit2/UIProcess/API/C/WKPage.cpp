@@ -661,3 +661,8 @@ void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
 {
     toImpl(page)->setShouldSendEventsSynchronously(sync);
 }
+
+void WKPageSetMediaVolume(WKPageRef page, float volume)
+{
+    toImpl(page)->setMediaVolume(volume);    
+}
