@@ -1,3 +1,12 @@
+2012-01-19  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed build fix for DEBUG: remove comparison of an unsigned variable with '>= 0' in ASSERT.
+
+        No new tests. (no functionality change)
+
+        * webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+
 2012-01-18  Li Yin  <li.yin@intel.com>
 
         [v8] Low efficiency of writing long string from web application to plugin.

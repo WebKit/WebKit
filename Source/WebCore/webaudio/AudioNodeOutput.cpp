@@ -47,7 +47,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     , m_isEnabled(true)
     , m_renderingFanOutCount(0)
 {
-    ASSERT(numberOfChannels >= 0 && numberOfChannels <= MaxNumberOfChannels);
+    ASSERT(numberOfChannels <= MaxNumberOfChannels);
 
     m_internalBus = adoptPtr(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
     m_actualDestinationBus = m_internalBus.get();
