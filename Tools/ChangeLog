@@ -1,3 +1,19 @@
+2012-01-19  Ben Wells  <benwells@chromium.org>
+
+        Add support for window.print to chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=76479
+
+        When used in a test window.print goes into print mode and then
+        straight out again. This will allow the afterprint event to be
+        tested by having the afterprint event happen before the dump
+        happens.
+
+        Reviewed by Mihai Parparita.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::printPage):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2012-01-18  Enrica Casucci  <enrica@apple.com>
 
         editingAttributedStringFromRange in WebHTMLConverter does not handle NSUnderlineStyleAttributeName.

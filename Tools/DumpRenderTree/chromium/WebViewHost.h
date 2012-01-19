@@ -157,6 +157,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
     virtual WebKit::WebUserMediaClient* userMediaClient();
+    virtual void printPage(WebKit::WebFrame*);
 
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);
