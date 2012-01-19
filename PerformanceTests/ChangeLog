@@ -1,3 +1,15 @@
+2012-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should support Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=76594
+
+        Reviewed by Adam Barth.
+
+        Add Skipped list to be used by run-perf-tests as it can only runs tests in
+        Bindings, Parser, and inspector at the moment.
+
+        * Skipped: Added.
+
 2012-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: performance: restore 'log 300 messages into console' test.

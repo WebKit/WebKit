@@ -96,7 +96,9 @@ class PerfTestsRunner(object):
         def _is_test_file(filesystem, dirname, filename):
             return filename.endswith('.html')
 
-        return find_files.find(self._host.filesystem, self._base_path, paths=self._args, file_filter=_is_test_file)
+        skipped_directories = set(['.svn', 'resources'])
+        tests = find_files.find(self._host.filesystem, self._base_path, self._args, skipped_directories, _is_test_file)
+        return [test for test in tests if not self._port.skips_perf_test(self._port.relative_perf_test_filename(test))]
 
     def run(self):
         if self._options.help_printing:
@@ -113,7 +115,7 @@ class PerfTestsRunner(object):
         unexpected = -1
         try:
             tests = self._collect_tests()
-            unexpected = self._run_tests_set(tests, self._port)
+            unexpected = self._run_tests_set(sorted(list(tests)), self._port)
         finally:
             self._printer.cleanup()
 

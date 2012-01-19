@@ -1,3 +1,33 @@
+2012-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should support Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=76594
+
+        Reviewed by Adam Barth.
+
+        Add a support for Skipped list in run-perf-tests; also skip files in resources directories.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.perf_tests_dir):
+        (Port.skipped_perf_tests):
+        (Port.skips_perf_test):
+        (Port.relative_perf_test_filename):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.perf_tests_dir):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._expectations_from_skipped_files):
+        (WebKitPort):
+        (WebKitPort.skipped_layout_tests):
+        (WebKitPort.skipped_perf_tests):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner.run):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+        (test_collect_tests_with_skipped_list):
+        (test_collect_tests_with_skipped_list.add_file):
+
 2012-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         Fix path to chromium_src_dir introduced in previous change.

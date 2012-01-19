@@ -175,7 +175,7 @@ max 1120
 
     def test_run_test_set_with_json_output(self):
         buildbot_output = array_stream.ArrayStream()
-        runner = self.create_runner(buildbot_output, args=['--output-json-path=/test.checkout/output.json'])
+        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json'])
         runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
@@ -185,7 +185,7 @@ max 1120
         self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
         self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
 
-        self.assertEqual(json.loads(runner._host.filesystem.files['/test.checkout/output.json']), {
+        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
             "group_name:test_name": 42},
@@ -193,9 +193,9 @@ max 1120
 
     def test_run_test_set_with_json_source(self):
         buildbot_output = array_stream.ArrayStream()
-        runner = self.create_runner(buildbot_output, args=['--output-json-path=/test.checkout/output.json',
-            '--source-json-path=/test.checkout/source.json'])
-        runner._host.filesystem.files['/test.checkout/source.json'] = '{"key": "value"}'
+        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json',
+            '--source-json-path=/mock-checkout/source.json'])
+        runner._host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
         runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
@@ -205,7 +205,7 @@ max 1120
         self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
         self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
 
-        self.assertEqual(json.loads(runner._host.filesystem.files['/test.checkout/output.json']), {
+        self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
             "group_name:test_name": 42},
@@ -218,6 +218,23 @@ max 1120
         runner._host.filesystem.files[filename] = 'a content'
         tests = runner._collect_tests()
         self.assertEqual(len(tests), 1)
+
+    def test_collect_tests_with_skipped_list(self):
+        runner = self.create_runner()
+
+        def add_file(dirname, filename, content=True):
+            dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
+            runner._host.filesystem.maybe_make_directory(dirname)
+            runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content
+
+        add_file('inspector', 'test1.html')
+        add_file('inspector', 'unsupported_test1.html')
+        add_file('inspector', 'test2.html')
+        add_file('inspector/resources', 'resource_file.html')
+        add_file('unsupported', 'unsupported_test2.html')
+        runner._port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
+        tests = [runner._port.relative_perf_test_filename(test) for test in runner._collect_tests()]
+        self.assertEqual(sorted(tests), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_parse_args(self):
         runner = self.create_runner()

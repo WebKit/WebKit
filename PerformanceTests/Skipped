@@ -1,0 +1,8 @@
+# Not enabled by default on some ports
+Mutation
+
+# Do not conform to WebKit or Chromium perf test styles
+Layout
+PageLoad
+SunSpider
+XSSAuditor

@@ -351,9 +351,9 @@ class WebKitPort(Port):
             search_paths.update([self._wk2_port_name(), "wk2"])
         return search_paths
 
-    def _expectations_from_skipped_files(self):
+    def _expectations_from_skipped_files(self, skipped_file_paths):
         tests_to_skip = []
-        for search_path in self._skipped_file_search_paths():
+        for search_path in skipped_file_paths:
             filename = self._filesystem.join(self._webkit_baseline_path(search_path), "Skipped")
             if not self._filesystem.exists(filename):
                 _log.debug("Skipped does not exist: %s" % filename)
@@ -372,12 +372,17 @@ class WebKitPort(Port):
             expectations = self._filesystem.read_text_file(expectations_path)
         return expectations
 
+    @memoized
     def skipped_layout_tests(self):
         # Use a set to allow duplicates
-        tests_to_skip = set(self._expectations_from_skipped_files())
+        tests_to_skip = set(self._expectations_from_skipped_files(self._skipped_file_search_paths()))
         tests_to_skip.update(self._tests_for_other_platforms())
         tests_to_skip.update(self._skipped_tests_for_unsupported_features())
         return tests_to_skip
+
+    @memoized
+    def skipped_perf_tests(self):
+        return self._expectations_from_skipped_files([self.perf_tests_dir()])
 
     def skipped_tests(self):
         return self.skipped_layout_tests()

@@ -223,8 +223,10 @@ layer at (0,0) size 800x34
 
 if sys.platform == 'win32':
     LAYOUT_TEST_DIR = 'c:/test.checkout/LayoutTests'
+    PERF_TEST_DIR = 'c:/test.checkout/PerformanceTests'
 else:
     LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
+    PERF_TEST_DIR = '/test.checkout/PerformanceTests'
 
 
 # Here we synthesize an in-memory filesystem from the test list
@@ -383,6 +385,9 @@ class TestPort(Port):
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR
+
+    def perf_tests_dir(self):
+        return PERF_TEST_DIR
 
     def webkit_base(self):
         return '/test.checkout'

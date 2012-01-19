@@ -564,10 +564,17 @@ class Port(object):
         """Return the absolute path to the top of the LayoutTests directory."""
         return self.path_from_webkit_base('LayoutTests')
 
+    def perf_tests_dir(self):
+        """Return the absolute path to the top of the PerformanceTests directory."""
+        return self.path_from_webkit_base('PerformanceTests')
+
     def webkit_base(self):
         return self._filesystem.abspath(self.path_from_webkit_base('.'))
 
     def skipped_layout_tests(self):
+        return []
+
+    def skipped_perf_tests(self):
         return []
 
     def skipped_tests(self):
@@ -581,6 +588,15 @@ class Port(object):
             if test_or_category == test_name:
                 return True
             category = self._filesystem.join(self.layout_tests_dir(), test_or_category)
+            if self._filesystem.isdir(category) and test_name.startswith(test_or_category):
+                return True
+        return False
+
+    def skips_perf_test(self, test_name):
+        for test_or_category in self.skipped_perf_tests():
+            if test_or_category == test_name:
+                return True
+            category = self._filesystem.join(self.perf_tests_dir(), test_or_category)
             if self._filesystem.isdir(category) and test_name.startswith(test_or_category):
                 return True
         return False
@@ -653,6 +669,10 @@ class Port(object):
         # filenames with backslashes in them.
         assert filename.startswith(self.layout_tests_dir()), "%s did not start with %s" % (filename, self.layout_tests_dir())
         return filename[len(self.layout_tests_dir()) + 1:]
+
+    def relative_perf_test_filename(self, filename):
+        assert filename.startswith(self.perf_tests_dir()), "%s did not start with %s" % (filename, self.perf_tests_dir())
+        return filename[len(self.perf_tests_dir()) + 1:]
 
     def abspath_for_test(self, test_name):
         """Returns the full path to the file for a given test name. This is the
