@@ -52,7 +52,7 @@
                         'chromium_src_dir': '<(source_dir)/WebKit/chromium',
                     },{
                         # WebKit is checked out in src/chromium/third_party/WebKit
-                        'chromium_src_dir': '<(tools_dir)/../..',
+                        'chromium_src_dir': '<(tools_dir)/../../..',
                     }],
                 ],
                 'ahem_path': '<(tools_dir)/DumpRenderTree/qt/fonts/AHEM____.TTF',

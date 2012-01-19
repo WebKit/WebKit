@@ -1,3 +1,11 @@
+2012-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix path to chromium_src_dir introduced in previous change.
+
+        Unreviewed, build fix.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         Need infrastructure to test Content-Disposition filename encoding support
