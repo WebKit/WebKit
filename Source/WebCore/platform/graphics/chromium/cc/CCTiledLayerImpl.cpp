@@ -51,8 +51,13 @@ public:
 
     Platform3DObject textureId() const { return m_textureId; }
     void setTextureId(Platform3DObject textureId) { m_textureId = textureId; }
+
+    const IntRect& opaqueRect() const { return m_opaqueRect; }
+    void setOpaqueRect(const IntRect& opaqueRect) { m_opaqueRect = opaqueRect; }
+
 private:
     Platform3DObject m_textureId;
+    IntRect m_opaqueRect;
 };
 
 CCTiledLayerImpl::CCTiledLayerImpl(int id)
@@ -159,7 +164,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState
             bool bottomEdgeAA = j == m_tiler->numTilesY() - 1 && useAA;
 
             const GC3Dint textureFilter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
-            quadList.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tile->textureId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
+            quadList.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tile->opaqueRect(), tile->textureId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
 
             if (hasDebugBorders()) {
                 Color color(debugBorderColor().red(), debugBorderColor().green(), debugBorderColor().blue(), debugTileBorderAlpha);
@@ -178,14 +183,15 @@ void CCTiledLayerImpl::setTilingData(const CCLayerTilingData& tiler)
     *m_tiler = tiler;
 }
 
-void CCTiledLayerImpl::syncTextureId(int i, int j, Platform3DObject textureId)
+void CCTiledLayerImpl::pushTileProperties(int i, int j, Platform3DObject textureId, const IntRect& opaqueRect)
 {
     DrawableTile* tile = tileAt(i, j);
     if (!tile)
         tile = createTile(i, j);
     tile->setTextureId(textureId);
+    tile->setOpaqueRect(opaqueRect);
 }
 
-}
+} // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

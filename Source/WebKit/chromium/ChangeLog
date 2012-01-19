@@ -1,3 +1,23 @@
+2012-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use region reported painted opaque for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=76015
+
+        Reviewed by James Robinson.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::TestDrawQuad::TestDrawQuad):
+        (WebCore::TestDrawQuad::create):
+        (WebCore::setQuads):
+        (WebCore::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (WebCore::createLayer):
+        (WebCore::TEST):
+        (WebCore::getQuads):
+        (WebCore::coverageVisibleRectOnTileBoundaries):
+        (WebCore::coverageVisibleRectIntersectsTiles):
+        (WebCore::coverageVisibleRectIntersectsBounds):
+
 2012-01-18  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Fix InjectIDBKeyTest.SubProperty test failure

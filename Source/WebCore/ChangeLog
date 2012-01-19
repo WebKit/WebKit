@@ -1,3 +1,31 @@
+2012-01-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use region reported painted opaque for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=76015
+
+        Reviewed by James Robinson.
+
+        New unit tests in CCQuadCullerTest.cpp and CCTiledLayerImplTest.cpp
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::opaqueRect):
+        (WebCore::CCDrawQuad::needsBlending):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp:
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::DrawableTile::opaqueRect):
+        (WebCore::DrawableTile::setOpaqueRect):
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        (WebCore::CCTiledLayerImpl::pushTileProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+
 2012-01-18  Victoria Kirst  <vrk@chromium.org>
 
         HTMLMediaElement should fire 'progress' event before 'idle' if it was previously loading

@@ -35,7 +35,7 @@ namespace WebCore {
 class CCTileDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCTileDrawQuad);
 public:
-    static PassOwnPtr<CCTileDrawQuad> create(const CCSharedQuadState*, const IntRect& quadRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
+    static PassOwnPtr<CCTileDrawQuad> create(const CCSharedQuadState*, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
 
     Platform3DObject textureId() const { return m_textureId; }
     IntPoint textureOffset() const { return m_textureOffset; }
@@ -51,7 +51,7 @@ public:
     bool isAntialiased() const { return leftEdgeAA() || topEdgeAA() || rightEdgeAA() || bottomEdgeAA(); }
 
 private:
-    CCTileDrawQuad(const CCSharedQuadState*, const IntRect& quadRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
+    CCTileDrawQuad(const CCSharedQuadState*, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
 
     Platform3DObject m_textureId;
     IntPoint m_textureOffset;
