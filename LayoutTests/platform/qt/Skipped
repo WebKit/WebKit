@@ -2592,7 +2592,6 @@ http/tests/misc/iframe-invalid-source-crash.html
 
 # [Qt] REGRESSION(r105310): Two inspector tests fails
 # https://bugs.webkit.org/show_bug.cgi?id=76566
-http/tests/inspector/console-resource-errors.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 
 # Needs custom policy delegate enhancement to log downloads
