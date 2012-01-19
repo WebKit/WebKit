@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#ifndef HeapBlock_h
+#define HeapBlock_h
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
-#include <wtf/Vector.h>
+#include <wtf/DoublyLinkedList.h>
+#include <wtf/PageAllocationAligned.h>
 
 namespace JSC {
 
-class JSCell;
-class DFGCodeBlocks;
-class Heap;
-
-class ConservativeRoots {
+class HeapBlock : public DoublyLinkedListNode<HeapBlock> {
 public:
-    ConservativeRoots(const MarkedBlockSet*, BumpSpace*);
-    ~ConservativeRoots();
+    HeapBlock(PageAllocationAligned& allocation)
+        : DoublyLinkedListNode<HeapBlock>()
+        , m_prev(0)
+        , m_next(0)
+        , m_allocation(allocation)
+    {
+        ASSERT(allocation);
+    }
 
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, DFGCodeBlocks&);
-    
-    size_t size();
-    JSCell** roots();
-
-private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    BumpSpace* m_bumpSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
+    HeapBlock* m_prev;
+    HeapBlock* m_next;
+    PageAllocationAligned m_allocation;
 };
-
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
-}
 
 } // namespace JSC
 
-#endif // ConservativeRoots_h
+#endif    

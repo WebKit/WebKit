@@ -1,3 +1,185 @@
+2012-01-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Implement a new allocator for backing stores
+        https://bugs.webkit.org/show_bug.cgi?id=75181
+
+        Reviewed by Filip Pizlo.
+
+        We want to move away from using fastMalloc for the backing stores for 
+        some of our objects (e.g. JSArray, JSObject, JSString, etc).  These backing 
+        stores have a nice property in that they only have a single owner (i.e. a 
+        single pointer to them at any one time).  One way that we can take advantage 
+        of this property is to implement a simple bump allocator/copying collector, 
+        which will run alongside our normal mark/sweep collector, that only needs to 
+        update the single owner pointer rather than having to redirect an arbitrary 
+        number of pointers in from-space to to-space.
+
+        This plan can give us a number of benefits. We can beat fastMalloc in terms 
+        of both performance and memory usage, we can track how much memory we're using 
+        far more accurately than our rough estimation now through the use of 
+        reportExtraMemoryCost, and we can allocate arbitrary size objects (as opposed 
+        to being limited to size classes like we have been historically). This is also 
+        another step toward moving away from lazy destruction, which will improve our memory footprint.
+
+        We start by creating said allocator and moving the ArrayStorage for JSArray 
+        to use it rather than fastMalloc.
+
+        The design of the collector is as follows:
+        Allocation:
+        -The collector allocates 64KB chunks from the OS to use for object allocation.
+        -Each chunk contains an offset, a flag indicating if the block has been pinned, 
+         and a payload, along with next and prev pointers so that they can be put in DoublyLinkedLists.
+        -Any allocation greater than 64KB gets its own separate oversize block, which 
+         is managed separately from the rest.
+        -If the allocator receives a request for more than the remaining amount in the 
+         current block, it grabs a fresh block.
+        -Grabbing a fresh block means grabbing one off of the global free list (which is now 
+         shared between the mark/sweep allocator and the bump allocator) if there is one. 
+         If there isn't a new one we do one of two things: allocate a new block from the OS 
+         if we're not ready for a GC yet, or run a GC and then try again. If we still don't 
+         have enough space after the GC, we allocate a new block from the OS.
+
+        Garbage collection:
+        -At the start of garbage collection during conservative stack scanning, if we encounter 
+         what appears to be a pointer to a bump-allocated block of memory, we pin that block so 
+         that it will not be copied for this round of collection.
+        -We also pin any oversize blocks that we encounter, which effectively doubles as a 
+         "mark bit" for that block. Any oversize blocks that aren't pinned at the end of copying 
+         are given back to the OS.
+        -Marking threads are now also responsible for copying bump-allocated objects to newSpace
+        -Each marking thread has a private 64KB block into which it copies bump-allocated objects that it encounters.
+        -When that block fills up, the marking thread gives it back to the allocator and requests a new one.
+        -When all marking has concluded, each thread gives back its copy block, even if it isn't full.
+        -At the conclusion of copying (which is done by the end of the marking phase), we un-pin 
+         any pinned blocks and give any blocks left in from-space to the global free list.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/AllocationSpace.cpp:
+        (JSC::AllocationSpace::allocateSlowCase):
+        (JSC::AllocationSpace::allocateBlock):
+        (JSC::AllocationSpace::freeBlocks):
+        * heap/AllocationSpace.h:
+        (JSC::AllocationSpace::waterMark):
+        * heap/BumpBlock.h: Added.
+        (JSC::BumpBlock::BumpBlock):
+        * heap/BumpSpace.cpp: Added.
+        (JSC::BumpSpace::tryAllocateSlowCase):
+        * heap/BumpSpace.h: Added.
+        (JSC::BumpSpace::isInCopyPhase):
+        (JSC::BumpSpace::totalMemoryAllocated):
+        (JSC::BumpSpace::totalMemoryUtilized):
+        * heap/BumpSpaceInlineMethods.h: Added.
+        (JSC::BumpSpace::BumpSpace):
+        (JSC::BumpSpace::init):
+        (JSC::BumpSpace::contains):
+        (JSC::BumpSpace::pin):
+        (JSC::BumpSpace::startedCopying):
+        (JSC::BumpSpace::doneCopying):
+        (JSC::BumpSpace::doneFillingBlock):
+        (JSC::BumpSpace::recycleBlock):
+        (JSC::BumpSpace::getFreshBlock):
+        (JSC::BumpSpace::borrowBlock):
+        (JSC::BumpSpace::addNewBlock):
+        (JSC::BumpSpace::allocateNewBlock):
+        (JSC::BumpSpace::fitsInBlock):
+        (JSC::BumpSpace::fitsInCurrentBlock):
+        (JSC::BumpSpace::tryAllocate):
+        (JSC::BumpSpace::tryAllocateOversize):
+        (JSC::BumpSpace::allocateFromBlock):
+        (JSC::BumpSpace::tryReallocate):
+        (JSC::BumpSpace::tryReallocateOversize):
+        (JSC::BumpSpace::isOversize):
+        (JSC::BumpSpace::isPinned):
+        (JSC::BumpSpace::oversizeBlockFor):
+        (JSC::BumpSpace::blockFor):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::add):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::blockFreeingThreadMain):
+        (JSC::Heap::reportExtraMemoryCostSlowCase):
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect):
+        (JSC::Heap::releaseFreeBlocks):
+        * heap/Heap.h:
+        (JSC::Heap::waterMark):
+        (JSC::Heap::highWaterMark):
+        (JSC::Heap::setHighWaterMark):
+        (JSC::Heap::tryAllocateStorage):
+        (JSC::Heap::tryReallocateStorage):
+        * heap/HeapBlock.h: Added.
+        (JSC::HeapBlock::HeapBlock):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::startCopying):
+        (JSC::SlotVisitor::allocateNewSpace):
+        (JSC::SlotVisitor::copy):
+        (JSC::SlotVisitor::copyAndAppend):
+        (JSC::SlotVisitor::doneCopying):
+        * heap/MarkStack.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::recycle):
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::SizeClass::resetAllocator):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::SlotVisitor):
+        * heap/TinyBloomFilter.h:
+        (JSC::TinyBloomFilter::reset):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::finishCreation):
+        (JSC::JSArray::tryFinishCreationUninitialized):
+        (JSC::JSArray::~JSArray):
+        (JSC::JSArray::enterSparseMode):
+        (JSC::JSArray::defineOwnNumericProperty):
+        (JSC::JSArray::setLengthWritable):
+        (JSC::JSArray::getOwnPropertySlotByIndex):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::deletePropertyByIndex):
+        (JSC::JSArray::getOwnPropertyNames):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::unshiftCount):
+        (JSC::JSArray::visitChildren):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::compactForSorting):
+        (JSC::JSArray::subclassData):
+        (JSC::JSArray::setSubclassData):
+        (JSC::JSArray::checkConsistency):
+        * runtime/JSArray.h:
+        (JSC::JSArray::inSparseMode):
+        (JSC::JSArray::isLengthWritable):
+        * wtf/CheckedBoolean.h: Added.
+        (CheckedBoolean::CheckedBoolean):
+        (CheckedBoolean::~CheckedBoolean):
+        (CheckedBoolean::operator bool):
+        * wtf/DoublyLinkedList.h:
+        (WTF::::push):
+        * wtf/StdLibExtras.h:
+        (WTF::isPointerAligned):
+
 2012-01-19  Joi Sigurdsson  <joi@chromium.org>
 
         Enable use of precompiled headers in Chromium port on Windows.

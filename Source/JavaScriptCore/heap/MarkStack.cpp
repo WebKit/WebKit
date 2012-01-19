@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MarkStack.h"
 
+#include "BumpSpace.h"
+#include "BumpSpaceInlineMethods.h"
 #include "ConservativeRoots.h"
 #include "Heap.h"
 #include "Options.h"
@@ -233,6 +235,7 @@ void* MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
 
 MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     : m_globalData(globalData)
+    , m_bumpSpace(&globalData->heap.m_storageSpace)
     , m_sharedMarkStack(m_segmentAllocator)
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
@@ -337,7 +340,7 @@ void SlotVisitor::donateSlow()
 void SlotVisitor::drain()
 {
     ASSERT(m_isInParallelMode);
-    
+   
 #if ENABLE(PARALLEL_GC)
     if (Options::numberOfGCMarkers > 1) {
         while (!m_stack.isEmpty()) {
@@ -398,8 +401,11 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 // for us to do.
                 while (true) {
                     // Did we reach termination?
-                    if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty())
+                    if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty()) {
+                        // Let any sleeping slaves know it's time for them to give their private BumpBlocks back
+                        m_shared.m_markingCondition.broadcast();
                         return;
+                    }
                     
                     // Is there work to be done?
                     if (!m_shared.m_sharedMarkStack.isEmpty())
@@ -415,14 +421,19 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty())
                     m_shared.m_markingCondition.broadcast();
                 
-                while (m_shared.m_sharedMarkStack.isEmpty() && !m_shared.m_parallelMarkersShouldExit)
+                while (m_shared.m_sharedMarkStack.isEmpty() && !m_shared.m_parallelMarkersShouldExit) {
+                    if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty())
+                        doneCopying();
                     m_shared.m_markingCondition.wait(m_shared.m_markingLock);
+                }
                 
                 // Is the VM exiting? If so, exit this thread.
-                if (m_shared.m_parallelMarkersShouldExit)
+                if (m_shared.m_parallelMarkersShouldExit) {
+                    doneCopying();
                     return;
+                }
             }
-            
+           
             m_stack.stealSomeCellsFrom(m_shared.m_sharedMarkStack);
             m_shared.m_numberOfActiveParallelMarkers++;
         }
@@ -443,6 +454,79 @@ void MarkStack::mergeOpaqueRoots()
             m_shared.m_opaqueRoots.add(*iter);
     }
     m_opaqueRoots.clear();
+}
+
+void SlotVisitor::startCopying()
+{
+    ASSERT(!m_copyBlock);
+    if (!m_shared.m_bumpSpace->borrowBlock(&m_copyBlock))
+        CRASH();
+}    
+
+void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
+{
+    if (BumpSpace::isOversize(bytes)) {
+        m_shared.m_bumpSpace->pin(BumpSpace::oversizeBlockFor(ptr));
+        return 0;
+    }
+
+    if (m_shared.m_bumpSpace->isPinned(ptr))
+        return 0;
+
+    // The only time it's possible to have a null copy block is if we have just started copying.
+    if (!m_copyBlock)
+        startCopying();
+
+    if (!BumpSpace::fitsInBlock(m_copyBlock, bytes)) {
+        // We don't need to lock across these two calls because the master thread won't 
+        // call doneCopying() because this thread is considered active.
+        m_shared.m_bumpSpace->doneFillingBlock(m_copyBlock);
+        if (!m_shared.m_bumpSpace->borrowBlock(&m_copyBlock))
+            CRASH();
+    }
+    return BumpSpace::allocateFromBlock(m_copyBlock, bytes);
+}
+
+void SlotVisitor::copy(void** ptr, size_t bytes)
+{
+    void* newPtr = 0;
+    if (!(newPtr = allocateNewSpace(*ptr, bytes)))
+        return;
+
+    memcpy(newPtr, *ptr, bytes);
+    *ptr = newPtr;
+}
+
+void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsigned length)
+{
+    void* oldPtr = *ptr;
+    void* newPtr = allocateNewSpace(oldPtr, bytes);
+    if (newPtr) {
+        size_t jsValuesOffset = static_cast<size_t>(reinterpret_cast<char*>(values) - static_cast<char*>(oldPtr));
+
+        JSValue* newValues = reinterpret_cast<JSValue*>(static_cast<char*>(newPtr) + jsValuesOffset);
+        for (unsigned i = 0; i < length; i++) {
+            JSValue& value = values[i];
+            newValues[i] = value;
+            if (!value)
+                continue;
+            internalAppend(value);
+        }
+
+        memcpy(newPtr, oldPtr, jsValuesOffset);
+        *ptr = newPtr;
+    } else
+        append(values, length);
+}
+    
+void SlotVisitor::doneCopying()
+{
+    if (!m_copyBlock)
+        return;
+
+    m_shared.m_bumpSpace->doneFillingBlock(m_copyBlock);
+
+    m_copyBlock = 0;
 }
 
 void SlotVisitor::harvestWeakReferences()

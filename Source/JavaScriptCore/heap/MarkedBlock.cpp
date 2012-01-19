@@ -40,9 +40,9 @@ MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize)
     return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize);
 }
 
-MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, size_t cellSize)
+MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, Heap* heap, size_t cellSize)
 {
-    return new (NotNull, block) MarkedBlock(block->m_allocation, block->m_heap, cellSize);
+    return new (NotNull, block) MarkedBlock(block->m_allocation, heap, cellSize);
 }
 
 void MarkedBlock::destroy(MarkedBlock* block)
@@ -50,13 +50,14 @@ void MarkedBlock::destroy(MarkedBlock* block)
     block->m_allocation.deallocate();
 }
 
-MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
-    : m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
+MarkedBlock::MarkedBlock(PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
+    : HeapBlock(allocation)
+    , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
     , m_state(New) // All cells start out unmarked.
-    , m_allocation(allocation)
     , m_heap(heap)
 {
+    ASSERT(heap);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#include "config.h"
+#include "BumpSpace.h"
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
-#include <wtf/Vector.h>
+#include "BumpSpaceInlineMethods.h"
 
 namespace JSC {
 
-class JSCell;
-class DFGCodeBlocks;
-class Heap;
-
-class ConservativeRoots {
-public:
-    ConservativeRoots(const MarkedBlockSet*, BumpSpace*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, DFGCodeBlocks&);
-    
-    size_t size();
-    JSCell** roots();
-
-private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    BumpSpace* m_bumpSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
-};
-
-inline size_t ConservativeRoots::size()
+CheckedBoolean BumpSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
 {
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
+    if (isOversize(bytes))
+        return tryAllocateOversize(bytes, outPtr);
+    
+    m_totalMemoryUtilized += static_cast<size_t>(static_cast<char*>(m_currentBlock->m_offset) - m_currentBlock->m_payload);
+    if (!addNewBlock()) {
+        *outPtr = 0;
+        return false;
+    }
+    m_toSpaceFilter.add(reinterpret_cast<Bits>(m_currentBlock));
+    m_toSpaceSet.add(m_currentBlock);
+    *outPtr = allocateFromBlock(m_currentBlock, bytes);
+    return true;
 }
 
 } // namespace JSC
-
-#endif // ConservativeRoots_h

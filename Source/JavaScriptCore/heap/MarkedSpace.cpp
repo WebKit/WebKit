@@ -33,7 +33,6 @@ class Structure;
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_waterMark(0)
     , m_nurseryWaterMark(0)
-    , m_highWaterMark(0)
     , m_heap(heap)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep)

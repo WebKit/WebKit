@@ -1,3 +1,16 @@
+2012-01-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Implement a new allocator for backing stores
+        https://bugs.webkit.org/show_bug.cgi?id=75181
+
+        Reviewed by Filip Pizlo.
+
+        No new tests.
+
+        Added forwarding header for new CheckedBoolean used in the bump allocator.
+
+        * ForwardingHeaders/wtf/CheckedBoolean.h: Added.
+
 2012-01-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in CompositeEditCommand::ensureComposition

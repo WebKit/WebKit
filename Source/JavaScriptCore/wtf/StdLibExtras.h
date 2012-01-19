@@ -107,6 +107,13 @@ TypePtr reinterpret_cast_ptr(const void* ptr)
 
 namespace WTF {
 
+static const size_t KB = 1024;
+
+inline bool isPointerAligned(void* p)
+{
+    return !((intptr_t)(p) & (sizeof(char*) - 1));
+}
+
 /*
  * C++'s idea of a reinterpret_cast lacks sufficient cojones.
  */
@@ -283,6 +290,8 @@ inline void* operator new(size_t, NotNullTag, void* location)
     return location;
 }
 
+using WTF::KB;
+using WTF::isPointerAligned;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::safeCast;

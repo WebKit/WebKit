@@ -21,6 +21,8 @@
 #include "config.h"
 #include "Heap.h"
 
+#include "BumpSpace.h"
+#include "BumpSpaceInlineMethods.h"
 #include "CodeBlock.h"
 #include "ConservativeRoots.h"
 #include "GCActivityCallback.h"
@@ -311,8 +313,11 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
     , m_lastFullGCSize(0)
+    , m_waterMark(0)
+    , m_highWaterMark(m_minBytesPerCycle)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
+    , m_storageSpace(this)
     , m_blockFreeingThreadShouldQuit(false)
     , m_extraCost(0)
     , m_markListSet(0)
@@ -324,12 +329,12 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
 {
-    m_objectSpace.setHighWaterMark(m_minBytesPerCycle);
     (*m_activityCallback)();
     m_numberOfFreeBlocks = 0;
     m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
     
     ASSERT(m_blockFreeingThread);
+    m_storageSpace.init();
 }
 
 Heap::~Heap()
@@ -433,7 +438,7 @@ void Heap::blockFreeingThreadMain()
                 if (m_numberOfFreeBlocks <= desiredNumberOfFreeBlocks)
                     block = 0;
                 else {
-                    block = m_freeBlocks.removeHead();
+                    block = static_cast<MarkedBlock*>(m_freeBlocks.removeHead());
                     ASSERT(block);
                     m_numberOfFreeBlocks--;
                 }
@@ -460,7 +465,7 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_objectSpace.highWaterMark() / 2)
+    if (m_extraCost > maxExtraCost && m_extraCost > highWaterMark() / 2)
         collectAllGarbage();
     m_extraCost += cost;
 }
@@ -509,7 +514,7 @@ void Heap::popTempSortVector(Vector<ValueStringPair>* tempVector)
     ASSERT_UNUSED(tempVector, tempVector == m_tempSortingVectors.last());
     m_tempSortingVectors.removeLast();
 }
-    
+
 void Heap::markTempSortVectors(HeapRootVisitor& heapRootVisitor)
 {
     typedef Vector<Vector<ValueStringPair>* > VectorOfValueStringVectors;
@@ -547,7 +552,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     if (m_operationInProgress != NoOperation)
         CRASH();
     m_operationInProgress = Collection;
-    ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
+    ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
     registerFile().gatherConservativeRoots(registerFileRoots);
     size_t registerFileRootCount = registerFileRoots.size();
     JSCell** registerRoots = registerFileRoots.roots();
@@ -573,13 +578,13 @@ void Heap::markRoots(bool fullGC)
     
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
-    ConservativeRoots machineThreadRoots(&m_objectSpace.blocks());
+    ConservativeRoots machineThreadRoots(&m_objectSpace.blocks(), &m_storageSpace);
     {
         GCPHASE(GatherConservativeRoots);
         m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
     }
 
-    ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
+    ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
     m_dfgCodeBlocks.clearMarks();
     {
         GCPHASE(GatherRegisterFileRoots);
@@ -597,6 +602,7 @@ void Heap::markRoots(bool fullGC)
         clearMarks();
     }
 
+    m_storageSpace.startedCopying();
     SlotVisitor& visitor = m_slotVisitor;
     HeapRootVisitor heapRootVisitor(visitor);
 
@@ -700,8 +706,10 @@ void Heap::markRoots(bool fullGC)
     }
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
 
+    visitor.doneCopying();
     visitor.reset();
     m_sharedData.reset();
+    m_storageSpace.doneCopying();
 
     m_operationInProgress = NoOperation;
 }
@@ -822,11 +830,11 @@ void Heap::collect(SweepToggle sweepToggle)
     // water mark to be proportional to the current size of the heap. The exact
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t newSize = size();
+    size_t newSize = size() + m_storageSpace.totalMemoryUtilized();
     size_t proportionalBytes = 2 * newSize;
     if (fullGC) {
         m_lastFullGCSize = newSize;
-        m_objectSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
+        setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
     }
     JAVASCRIPTCORE_GC_END();
 
@@ -887,7 +895,7 @@ void Heap::releaseFreeBlocks()
             if (!m_numberOfFreeBlocks)
                 block = 0;
             else {
-                block = m_freeBlocks.removeHead();
+                block = static_cast<MarkedBlock*>(m_freeBlocks.removeHead());
                 ASSERT(block);
                 m_numberOfFreeBlocks--;
             }

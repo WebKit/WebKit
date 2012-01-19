@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#ifndef BumpBlock_h
+#define BumpBlock_h
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
-#include <wtf/Vector.h>
+#include "HeapBlock.h"
 
 namespace JSC {
 
-class JSCell;
-class DFGCodeBlocks;
-class Heap;
+class BumpSpace;
 
-class ConservativeRoots {
+class BumpBlock : public HeapBlock {
+    friend class BumpSpace;
 public:
-    ConservativeRoots(const MarkedBlockSet*, BumpSpace*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, DFGCodeBlocks&);
-    
-    size_t size();
-    JSCell** roots();
+    BumpBlock(PageAllocationAligned& allocation)
+        : HeapBlock(allocation)
+        , m_offset(m_payload)
+        , m_isPinned(false)
+    {
+    }
 
 private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    BumpSpace* m_bumpSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
+    void* m_offset;
+    uintptr_t m_isPinned;
+    char m_payload[1];
 };
-
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
-}
 
 } // namespace JSC
 
-#endif // ConservativeRoots_h
+#endif

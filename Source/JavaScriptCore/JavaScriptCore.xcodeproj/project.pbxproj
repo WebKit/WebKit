@@ -710,6 +710,12 @@
 		C22C531313FAF6EF00B7DC0D /* strtod.cc in Sources */ = {isa = PBXBuildFile; fileRef = C22C52B913FAF6EF00B7DC0D /* strtod.cc */; };
 		C22C531413FAF6EF00B7DC0D /* strtod.h in Headers */ = {isa = PBXBuildFile; fileRef = C22C52BA13FAF6EF00B7DC0D /* strtod.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C22C531513FAF6EF00B7DC0D /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = C22C52BB13FAF6EF00B7DC0D /* utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C240305514B404E60079EB64 /* BumpSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C240305314B404C90079EB64 /* BumpSpace.cpp */; };
+		C2C8D02D14A3C6E000578E65 /* BumpSpaceInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02B14A3C6B200578E65 /* BumpSpaceInlineMethods.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2C8D03014A3CEFC00578E65 /* BumpBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02E14A3CEFC00578E65 /* BumpBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2D9CA1314BCC04600304B46 /* CheckedBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = C2D9CA1214BCC04600304B46 /* CheckedBoolean.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2EAA3FA149A835E00FCE112 /* BumpSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EAA3F8149A830800FCE112 /* BumpSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2EE59A013FC973F009CEAFE /* DecimalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EE599E13FC972A009CEAFE /* DecimalNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2EE59A113FC9768009CEAFE /* DecimalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2EE599D13FC972A009CEAFE /* DecimalNumber.cpp */; };
 		D7A46A4F1338FFEA00ED695C /* DynamicAnnotations.h in Headers */ = {isa = PBXBuildFile; fileRef = D75AF59612F8CB9500FC0ADF /* DynamicAnnotations.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1475,6 +1481,12 @@
 		C22C52B913FAF6EF00B7DC0D /* strtod.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strtod.cc; sourceTree = "<group>"; };
 		C22C52BA13FAF6EF00B7DC0D /* strtod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strtod.h; sourceTree = "<group>"; };
 		C22C52BB13FAF6EF00B7DC0D /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		C240305314B404C90079EB64 /* BumpSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BumpSpace.cpp; sourceTree = "<group>"; };
+		C2C8D02B14A3C6B200578E65 /* BumpSpaceInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpSpaceInlineMethods.h; sourceTree = "<group>"; };
+		C2C8D02E14A3CEFC00578E65 /* BumpBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpBlock.h; sourceTree = "<group>"; };
+		C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapBlock.h; sourceTree = "<group>"; };
+		C2D9CA1214BCC04600304B46 /* CheckedBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedBoolean.h; sourceTree = "<group>"; };
+		C2EAA3F8149A830800FCE112 /* BumpSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BumpSpace.h; sourceTree = "<group>"; };
 		C2EE599D13FC972A009CEAFE /* DecimalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecimalNumber.cpp; sourceTree = "<group>"; };
 		C2EE599E13FC972A009CEAFE /* DecimalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecimalNumber.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
@@ -1745,6 +1757,10 @@
 			children = (
 				A70456AE1427FB030037DA68 /* AllocationSpace.cpp */,
 				A70456AF1427FB150037DA68 /* AllocationSpace.h */,
+				C2C8D02E14A3CEFC00578E65 /* BumpBlock.h */,
+				C240305314B404C90079EB64 /* BumpSpace.cpp */,
+				C2EAA3F8149A830800FCE112 /* BumpSpace.h */,
+				C2C8D02B14A3C6B200578E65 /* BumpSpaceInlineMethods.h */,
 				A7521E121429169A003C8D0C /* CardSet.h */,
 				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
@@ -1758,6 +1774,7 @@
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
 				14BA7A9513AADFF8005B7C2C /* Heap.cpp */,
 				14BA7A9613AADFF8005B7C2C /* Heap.h */,
+				C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */,
 				14F97446138C853E00DA1C67 /* HeapRootVisitor.h */,
 				0F431736146BAC65007E3890 /* ListableHandler.h */,
 				142E3130134FF0A600AFADB5 /* Local.h */,
@@ -2083,6 +2100,7 @@
 				96DD73780F9DA3100027FBCC /* VMTags.h */,
 				86D08D5111793613006E5ED0 /* WTFThreadData.cpp */,
 				86D08D5211793613006E5ED0 /* WTFThreadData.h */,
+				C2D9CA1214BCC04600304B46 /* CheckedBoolean.h */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -2613,6 +2631,7 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				A73BE169148420520091204B /* ArrayBuffer.h in Headers */,
+				C2D9CA1314BCC04600304B46 /* CheckedBoolean.h in Headers */,
 				A73BE16B148420520091204B /* ArrayBufferView.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
@@ -2639,7 +2658,10 @@
 				E4D8CEFB12FC439600BC9F5A /* BloomFilter.h in Headers */,
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */,
+				C2C8D03014A3CEFC00578E65 /* BumpBlock.h in Headers */,
 				86676D5211FED9BC004B6863 /* BumpPointerAllocator.h in Headers */,
+				C2EAA3FA149A835E00FCE112 /* BumpSpace.h in Headers */,
+				C2C8D02D14A3C6E000578E65 /* BumpSpaceInlineMethods.h in Headers */,
 				A7A1F7AD0F252B3C00E184E2 /* ByteArray.h in Headers */,
 				969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */,
 				C22C52F613FAF6EF00B7DC0D /* cached-powers.h in Headers */,
@@ -2751,6 +2773,7 @@
 				BC18C40D0E16F5CD00B34460 /* HashTable.h in Headers */,
 				BC18C40E0E16F5CD00B34460 /* HashTraits.h in Headers */,
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
+				C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				7186A6EC13100BA5004479E1 /* HexNumber.h in Headers */,
 				BC18C40F0E16F5CD00B34460 /* Identifier.h in Headers */,
@@ -3373,6 +3396,7 @@
 				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,
 				14280864107EC11A0013E7B2 /* BooleanObject.cpp in Sources */,
 				14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */,
+				C240305514B404E60079EB64 /* BumpSpace.cpp in Sources */,
 				A7A1F7AC0F252B3C00E184E2 /* ByteArray.cpp in Sources */,
 				148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */,
 				C22C52F513FAF6EF00B7DC0D /* cached-powers.cc in Sources */,

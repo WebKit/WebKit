@@ -29,8 +29,6 @@
 
 #include "Heap.h"
 
-#define COLLECT_ON_EVERY_ALLOCATION 0
-
 namespace JSC {
 
 inline void* AllocationSpace::tryAllocate(MarkedSpace::SizeClass& sizeClass)
@@ -59,7 +57,7 @@ void* AllocationSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
 #if ENABLE(GGC)
          m_markedSpace.nurseryWaterMark() < m_heap->m_minBytesPerCycle
 #else
-         m_markedSpace.waterMark() < m_markedSpace.highWaterMark()
+         m_heap->waterMark() < m_heap->highWaterMark()
 #endif
          ) || !m_heap->m_isSafeToCollect)
         allocationEffort = AllocationMustSucceed;
@@ -81,7 +79,7 @@ void* AllocationSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
     if (result)
         return result;
     
-    ASSERT(m_markedSpace.waterMark() < m_markedSpace.highWaterMark());
+    ASSERT(m_heap->waterMark() < m_heap->highWaterMark());
     
     m_markedSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
     
@@ -90,21 +88,21 @@ void* AllocationSpace::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
     return result;
 }
 
-MarkedBlock* AllocationSpace::allocateBlock(size_t cellSize, AllocationSpace::AllocationEffort allocationEffort)
+MarkedBlock* AllocationSpace::allocateBlock(size_t cellSize, AllocationEffort allocationEffort)
 {
     MarkedBlock* block;
     
     {
         MutexLocker locker(m_heap->m_freeBlockLock);
         if (m_heap->m_numberOfFreeBlocks) {
-            block = m_heap->m_freeBlocks.removeHead();
+            block = static_cast<MarkedBlock*>(m_heap->m_freeBlocks.removeHead());
             ASSERT(block);
             m_heap->m_numberOfFreeBlocks--;
         } else
             block = 0;
     }
     if (block)
-        block = MarkedBlock::recycle(block, cellSize);
+        block = MarkedBlock::recycle(block, m_heap, cellSize);
     else if (allocationEffort == AllocationCanFail)
         return 0;
     else
@@ -119,7 +117,7 @@ void AllocationSpace::freeBlocks(MarkedBlock* head)
 {
     MarkedBlock* next;
     for (MarkedBlock* block = head; block; block = next) {
-        next = block->next();
+        next = static_cast<MarkedBlock*>(block->next());
         
         m_blocks.remove(block);
         block->sweep();

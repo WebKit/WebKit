@@ -70,6 +70,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGThunks.cpp
 
     heap/AllocationSpace.cpp
+    heap/BumpSpace.cpp
     heap/DFGCodeBlocks.cpp
     heap/Heap.cpp
     heap/HandleHeap.cpp

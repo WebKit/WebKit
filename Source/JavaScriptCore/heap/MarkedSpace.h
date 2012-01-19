@@ -54,7 +54,7 @@ public:
 
         MarkedBlock::FreeCell* firstFreeCell;
         MarkedBlock* currentBlock;
-        DoublyLinkedList<MarkedBlock> blockList;
+        DoublyLinkedList<HeapBlock> blockList;
         size_t cellSize;
     };
 
@@ -71,9 +71,7 @@ public:
     void canonicalizeCellLivenessData();
 
     size_t waterMark();
-    size_t highWaterMark();
     size_t nurseryWaterMark();
-    void setHighWaterMark(size_t);
 
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&); // Safe to remove the current item while iterating.
     template<typename Functor> typename Functor::ReturnType forEachBlock();
@@ -93,7 +91,6 @@ private:
     FixedArray<SizeClass, impreciseCount> m_impreciseSizeClasses;
     size_t m_waterMark;
     size_t m_nurseryWaterMark;
-    size_t m_highWaterMark;
     Heap* m_heap;
 };
 
@@ -102,19 +99,9 @@ inline size_t MarkedSpace::waterMark()
     return m_waterMark;
 }
 
-inline size_t MarkedSpace::highWaterMark()
-{
-    return m_highWaterMark;
-}
-
 inline size_t MarkedSpace::nurseryWaterMark()
 {
     return m_nurseryWaterMark;
-}
-
-inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
-{
-    m_highWaterMark = highWaterMark;
 }
 
 inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
@@ -129,7 +116,7 @@ inline void* MarkedSpace::allocate(SizeClass& sizeClass)
 {
     MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
     if (!firstFreeCell) {
-        for (MarkedBlock*& block = sizeClass.currentBlock; block; block = block->next()) {
+        for (MarkedBlock*& block = sizeClass.currentBlock; block; block = static_cast<MarkedBlock*>(block->next())) {
             firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
             if (firstFreeCell)
                 break;
@@ -152,19 +139,19 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
 {
     for (size_t i = 0; i < preciseCount; ++i) {
         SizeClass& sizeClass = m_preciseSizeClasses[i];
-        MarkedBlock* next;
-        for (MarkedBlock* block = sizeClass.blockList.head(); block; block = next) {
+        HeapBlock* next;
+        for (HeapBlock* block = sizeClass.blockList.head(); block; block = next) {
             next = block->next();
-            functor(block);
+            functor(static_cast<MarkedBlock*>(block));
         }
     }
 
     for (size_t i = 0; i < impreciseCount; ++i) {
         SizeClass& sizeClass = m_impreciseSizeClasses[i];
-        MarkedBlock* next;
-        for (MarkedBlock* block = sizeClass.blockList.head(); block; block = next) {
+        HeapBlock* next;
+        for (HeapBlock* block = sizeClass.blockList.head(); block; block = next) {
             next = block->next();
-            functor(block);
+            functor(static_cast<MarkedBlock*>(block));
         }
     }
 
@@ -186,7 +173,7 @@ inline MarkedSpace::SizeClass::SizeClass()
 
 inline void MarkedSpace::SizeClass::resetAllocator()
 {
-    currentBlock = blockList.head();
+    currentBlock = static_cast<MarkedBlock*>(blockList.head());
 }
 
 inline void MarkedSpace::SizeClass::zapFreeList()

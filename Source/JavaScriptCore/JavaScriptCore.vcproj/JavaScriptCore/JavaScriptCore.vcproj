@@ -1974,6 +1974,22 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\BumpBlock.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\BumpSpace.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\BumpSpace.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\BumpSpaceInlineMethods.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\ConservativeRoots.cpp"
                                     >
                             </File>
@@ -2023,6 +2039,10 @@
                             </File>
                             <File
                                     RelativePath="..\..\heap\Heap.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\HeapBlock.h"
                                     >
                             </File>
                             <File

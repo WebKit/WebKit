@@ -23,6 +23,7 @@
 #define MarkedBlock_h
 
 #include "CardSet.h"
+#include "HeapBlock.h"
 
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
@@ -50,7 +51,6 @@ namespace JSC {
 
     typedef uintptr_t Bits;
 
-    static const size_t KB = 1024;
     static const size_t MB = 1024 * 1024;
     
     bool isZapped(const JSCell*);
@@ -63,14 +63,14 @@ namespace JSC {
     // size is equal to the difference between the cell size and the object
     // size.
 
-    class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
+    class MarkedBlock : public HeapBlock {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
     public:
         // Ensure natural alignment for native types whilst recognizing that the smallest
         // object the heap will commonly allocate is four words.
         static const size_t atomSize = 4 * sizeof(void*);
         static const size_t atomShift = 5;
-        static const size_t blockSize = 16 * KB;
+        static const size_t blockSize = 64 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
@@ -90,7 +90,7 @@ namespace JSC {
         };
 
         static MarkedBlock* create(Heap*, size_t cellSize);
-        static MarkedBlock* recycle(MarkedBlock*, size_t cellSize);
+        static MarkedBlock* recycle(MarkedBlock*, Heap*, size_t cellSize);
         static void destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -162,7 +162,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize);
+        MarkedBlock(PageAllocationAligned&, Heap*, size_t cellSize);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);
@@ -180,10 +180,7 @@ namespace JSC {
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
 #endif
         BlockState m_state;
-        PageAllocationAligned m_allocation;
         Heap* m_heap;
-        MarkedBlock* m_prev;
-        MarkedBlock* m_next;
     };
 
     inline size_t MarkedBlock::firstAtom()

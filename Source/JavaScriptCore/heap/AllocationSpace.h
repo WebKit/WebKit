@@ -48,8 +48,7 @@ public:
     
     MarkedBlockSet& blocks() { return m_blocks; }
     MarkedSpace::SizeClass& sizeClassFor(size_t bytes) { return m_markedSpace.sizeClassFor(bytes); }
-    void setHighWaterMark(size_t bytes) { m_markedSpace.setHighWaterMark(bytes); }
-    size_t highWaterMark() { return m_markedSpace.highWaterMark(); }
+    size_t waterMark() { return m_markedSpace.waterMark(); }
 
 #if ENABLE(GGC)
     void gatherDirtyCells(MarkedBlock::DirtyCellVector&);
@@ -68,8 +67,8 @@ public:
     void shrink();
     
 private:
-    enum AllocationEffort { AllocationMustSucceed, AllocationCanFail };
-    
+    enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
+
     void* allocate(MarkedSpace::SizeClass&);
     void* tryAllocate(MarkedSpace::SizeClass&);
     JS_EXPORT_PRIVATE void* allocateSlowCase(MarkedSpace::SizeClass&);

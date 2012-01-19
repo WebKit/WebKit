@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,60 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#ifndef CheckedBoolean_h
+#define CheckedBoolean_h
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
-#include <wtf/Vector.h>
+#include <wtf/Assertions.h>
 
-namespace JSC {
-
-class JSCell;
-class DFGCodeBlocks;
-class Heap;
-
-class ConservativeRoots {
+class CheckedBoolean {
 public:
-    ConservativeRoots(const MarkedBlockSet*, BumpSpace*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, DFGCodeBlocks&);
+    CheckedBoolean(bool value)
+    : m_value(value)
+#if !ASSERT_DISABLED
+    , m_checked(false)
+#endif
+    {
+    }
     
-    size_t size();
-    JSCell** roots();
-
+    ~CheckedBoolean()
+    {
+        ASSERT(m_checked);
+    }
+    
+    operator bool()
+    {
+#if !ASSERT_DISABLED
+        m_checked = true;
+#endif
+        return m_value;
+    }
+    
 private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    BumpSpace* m_bumpSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
+    bool m_value;
+#if !ASSERT_DISABLED
+    bool m_checked;
+#endif
 };
 
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
-}
-
-} // namespace JSC
-
-#endif // ConservativeRoots_h
+#endif

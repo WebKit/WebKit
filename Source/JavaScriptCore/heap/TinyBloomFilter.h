@@ -36,6 +36,7 @@ public:
 
     void add(Bits);
     bool ruleOut(Bits) const; // True for 0.
+    void reset();
 
 private:
     Bits m_bits;
@@ -60,6 +61,11 @@ inline bool TinyBloomFilter::ruleOut(Bits bits) const
         return true;
 
     return false;
+}
+
+inline void TinyBloomFilter::reset()
+{
+    m_bits = 0;
 }
 
 } // namespace JSC

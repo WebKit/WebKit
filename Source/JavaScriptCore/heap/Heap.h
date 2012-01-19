@@ -31,12 +31,16 @@
 #include "MarkedSpace.h"
 #include "SlotVisitor.h"
 #include "WriteBarrierSupport.h"
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
+#define COLLECT_ON_EVERY_ALLOCATION 0
+
 namespace JSC {
 
+    class BumpSpace;
     class CodeBlock;
     class GCActivityCallback;
     class GlobalCodeBlock;
@@ -57,7 +61,7 @@ namespace JSC {
     typedef HashCountedSet<const char*> TypeCountSet;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
-    
+
     // Heap size hint.
     enum HeapSize { SmallHeap, LargeHeap };
 
@@ -65,6 +69,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
         friend class JIT;
+        friend class MarkStackThreadSharedData;
         static Heap* heap(JSValue); // 0 for immediate values
         static Heap* heap(JSCell*);
 
@@ -92,6 +97,8 @@ namespace JSC {
         
         MarkedSpace::SizeClass& sizeClassForObject(size_t bytes) { return m_objectSpace.sizeClassFor(bytes); }
         void* allocate(size_t);
+        CheckedBoolean tryAllocateStorage(size_t, void**);
+        CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
 
         typedef void (*Finalizer)(JSCell*);
         JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
@@ -131,8 +138,13 @@ namespace JSC {
     private:
         friend class MarkedBlock;
         friend class AllocationSpace;
+        friend class BumpSpace;
         friend class SlotVisitor;
         friend class CodeBlock;
+
+        size_t waterMark();
+        size_t highWaterMark();
+        void setHighWaterMark(size_t);
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -175,11 +187,14 @@ namespace JSC {
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         size_t m_lastFullGCSize;
+        size_t m_waterMark;
+        size_t m_highWaterMark;
         
         OperationInProgress m_operationInProgress;
         AllocationSpace m_objectSpace;
+        BumpSpace m_storageSpace;
 
-        DoublyLinkedList<MarkedBlock> m_freeBlocks;
+        DoublyLinkedList<HeapBlock> m_freeBlocks;
         size_t m_numberOfFreeBlocks;
         
         ThreadIdentifier m_blockFreeingThread;
@@ -246,6 +261,21 @@ namespace JSC {
         MarkedBlock::blockFor(cell)->setMarked(cell);
     }
 
+    inline size_t Heap::waterMark()
+    {
+        return m_objectSpace.waterMark() + m_storageSpace.totalMemoryUtilized();
+    }
+
+    inline size_t Heap::highWaterMark()
+    {
+        return m_highWaterMark;
+    }
+
+    inline void Heap::setHighWaterMark(size_t newHighWaterMark)
+    {
+        m_highWaterMark = newHighWaterMark;
+    }
+
 #if ENABLE(GGC)
     inline uint8_t* Heap::addressOfCardFor(JSCell* cell)
     {
@@ -307,6 +337,16 @@ namespace JSC {
     {
         ASSERT(isValidAllocation(bytes));
         return m_objectSpace.allocate(bytes);
+    }
+    
+    inline CheckedBoolean Heap::tryAllocateStorage(size_t bytes, void** outPtr)
+    {
+        return m_storageSpace.tryAllocate(bytes, outPtr);
+    }
+    
+    inline CheckedBoolean Heap::tryReallocateStorage(void** ptr, size_t oldSize, size_t newSize)
+    {
+        return m_storageSpace.tryReallocate(ptr, oldSize, newSize);
     }
 
 } // namespace JSC

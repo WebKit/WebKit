@@ -172,6 +172,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
 	Source/JavaScriptCore/heap/AllocationSpace.cpp \
 	Source/JavaScriptCore/heap/AllocationSpace.h \
+    Source/JavaScriptCore/heap/BumpBlock.h \
+    Source/JavaScriptCore/heap/BumpSpace.cpp \
+    Source/JavaScriptCore/heap/BumpSpace.h \
+    Source/JavaScriptCore/heap/BumpSpaceInlineMethods.h \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
@@ -180,6 +184,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleHeap.cpp \
 	Source/JavaScriptCore/heap/HandleHeap.h \
+    Source/JavaScriptCore/heap/HeapBlock.h \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
@@ -533,6 +538,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/ByteArray.cpp \
 	Source/JavaScriptCore/wtf/ByteArray.h \
 	Source/JavaScriptCore/wtf/CheckedArithmetic.h \
+    Source/JavaScriptCore/wtf/CheckedBoolean.h \
 	Source/JavaScriptCore/wtf/Compiler.h \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.h \
