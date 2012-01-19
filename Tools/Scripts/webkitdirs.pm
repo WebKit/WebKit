@@ -2160,6 +2160,10 @@ sub buildQMakeProjects
     my $command = "$make $makeargs";
     $command =~ s/\s+$//;
 
+    # FIXME: Until the bots use update-webkit instead of raw SVN, we
+    # need to force the build-hint to 'incremental' :(
+    $buildHint = "incremental";
+
     if ($clean) {
         $command = "$command distclean";
     } elsif ($buildHint =~ /^incremental$/) {

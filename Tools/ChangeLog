@@ -1,5 +1,14 @@
 2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Do full incremental builds until bots use update-webkit
+
+        Rubber-stamped by Simon Hausmann.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
+2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Fix the Qt build
 
         Unreviewed build fix.
