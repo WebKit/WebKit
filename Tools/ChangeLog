@@ -1,3 +1,19 @@
+2012-01-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Need infrastructure to test Content-Disposition filename encoding support
+        https://bugs.webkit.org/show_bug.cgi?id=76572
+        <rdar://problem/6421825>
+
+        Reviewed by Sam Weinig.
+
+        Made policy delegate log suggested file name when resource has Content-Disposition: attachment.
+
+        WebKitTestRunner does not have a policy delegate yet, bug 42546.
+
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (dispositionTypeFromContentDispositionHeader):
+        (-[PolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+
 2012-01-18  Ojan Vafai  <ojan@chromium.org>
 
         Fix tests from http://trac.webkit.org/changeset/105332.

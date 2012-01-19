@@ -501,6 +501,7 @@ editing/execCommand/enabling-and-selection-2.html
 
 # Needs custom policy delegate enhancement in DRT
 http/tests/navigation/post-goback-repost-policy.html
+http/tests/download
 
 # Needs scheduleAsynchronousClick method for EventSender
 fast/events/popup-blocking-click-in-iframe.html

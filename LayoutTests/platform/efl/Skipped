@@ -442,6 +442,7 @@ fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/loader/reload-policy-delegate.html
+http/tests/download
 
 # EFL's LayoutTestController does not implement setScrollbarPolicy
 fast/overflow/scrollbar-restored-and-then-locked.html

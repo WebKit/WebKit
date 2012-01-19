@@ -3919,3 +3919,6 @@ BUGWK76446 : svg/custom/pointer-events-text.svg = TEXT
 
 // RenderSVGRoot now reports a correct size.
 BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT
+
+// Need to implement file name logging.
+BUGWK76572 : http/tests/download = FAIL

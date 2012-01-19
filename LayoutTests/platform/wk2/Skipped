@@ -581,6 +581,7 @@ fast/loader/reload-policy-delegate.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
+http/tests/download
 
 # WebKitTestRunner needs layoutTestController.setDashboardCompatibilityMode
 # <https://bugs.webkit.org/show_bug.cgi?id=42547>

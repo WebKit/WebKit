@@ -32,6 +32,7 @@
 #import "DumpRenderTree.h"
 #import "LayoutTestController.h"
 #import <WebKit/DOMElement.h>
+#import <WebKit/WebFrame.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
 
@@ -98,6 +99,33 @@
 {
     NSString *message = [NSString stringWithFormat:@"Policy delegate: unable to implement policy with error domain '%@', error code %d, in frame '%@'", [error domain], [error code], [frame name]];
     printf("%s\n", [message UTF8String]);
+}
+
+static NSString *dispositionTypeFromContentDispositionHeader(NSString *header)
+{
+    NSMutableString *result = [[[[header componentsSeparatedByString:@";"] objectAtIndex:0] mutableCopy] autorelease];
+    if (result)
+        CFStringTrimWhitespace((CFMutableStringRef)result);
+    return result;
+}
+
+- (void)webView:(WebView *)c decidePolicyForMIMEType:(NSString *)type
+                                 request:(NSURLRequest *)request
+                                   frame:(WebFrame *)frame
+                            decisionListener:(id<WebPolicyDecisionListener>)listener
+{
+    NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *)[[frame provisionalDataSource] response];
+    if (![HTTPResponse isKindOfClass:[NSHTTPURLResponse class]])
+        HTTPResponse = nil;
+
+    NSString *dispositionType = dispositionTypeFromContentDispositionHeader([[HTTPResponse allHeaderFields] objectForKey:@"Content-Disposition"]);
+    if (dispositionType && [dispositionType compare:@"attachment" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+        printf("Policy delegate: resource is an attachment, suggested file name '%s'\n", [[HTTPResponse suggestedFilename] UTF8String]);
+        [listener ignore];
+        return;
+    }
+
+    [listener use];
 }
 
 - (void)setPermissive:(BOOL)permissive
