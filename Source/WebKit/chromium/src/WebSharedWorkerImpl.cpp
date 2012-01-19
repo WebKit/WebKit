@@ -361,12 +361,18 @@ void WebSharedWorkerImpl::connectTask(ScriptExecutionContext* context, PassOwnPt
     workerContext->dispatchEvent(createConnectEvent(port));
 }
 
-void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long)
+void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long cacheId)
+{
+    startWorkerContext(url, name, userAgent, sourceCode, "", WebContentSecurityPolicyTypeReportOnly, cacheId);
+}
+
+void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString& name, const WebString& userAgent, const WebString& sourceCode, const WebString& contentSecurityPolicy, WebContentSecurityPolicyType policyType, long long)
 {
     initializeLoader(url);
     WorkerThreadStartMode startMode = m_pauseWorkerContextOnStart ? PauseWorkerContextOnStart : DontPauseWorkerContextOnStart;
-    // FIXME: pass content-security-policy directives into shared worker.
-    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, sourceCode, *this, *this, startMode, "", ContentSecurityPolicy::ReportOnly));
+    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicy,
+                                               static_cast<WebCore::ContentSecurityPolicy::HeaderType>(policyType)));
+
     workerThread()->start();
 }
 

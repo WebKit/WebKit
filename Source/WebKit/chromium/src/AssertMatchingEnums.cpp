@@ -37,6 +37,7 @@
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
 #include "AsyncFileSystem.h"
+#include "ContentSecurityPolicy.h"
 #include "DocumentMarker.h"
 #include "EditorInsertAction.h"
 #include "ExceptionCode.h"
@@ -68,6 +69,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebApplicationCacheHost.h"
+#include "WebContentSecurityPolicy.h"
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
 #include "WebFileError.h"
@@ -494,3 +496,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyAlways, SecurityPolicy::ReferrerPo
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyDefault, SecurityPolicy::ReferrerPolicyDefault);
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyNever, SecurityPolicy::ReferrerPolicyNever);
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyOrigin, SecurityPolicy::ReferrerPolicyOrigin);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebContentSecurityPolicyTypeReportOnly, ContentSecurityPolicy::ReportOnly);
+COMPILE_ASSERT_MATCHING_ENUM(WebContentSecurityPolicyTypeEnforcePolicy, ContentSecurityPolicy::EnforcePolicy);

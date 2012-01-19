@@ -34,6 +34,7 @@
 
 #include "SharedWorkerRepository.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -42,13 +43,14 @@
 #include "PlatformMessagePortChannel.h"
 #include "ScriptExecutionContext.h"
 #include "SharedWorker.h"
+#include "WebContentSecurityPolicy.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebMessagePortChannel.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerRepository.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "WorkerScriptLoader.h"
@@ -168,7 +170,10 @@ void SharedWorkerScriptLoader::notifyFinished()
     } else {
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         // Pass the script off to the worker, then send a connect event.
-        m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader->script(), m_responseAppCacheID);
+        m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader->script(),
+                                        m_worker->scriptExecutionContext()->contentSecurityPolicy()->policy(),
+                                        static_cast<WebKit::WebContentSecurityPolicyType>(m_worker->scriptExecutionContext()->contentSecurityPolicy()->headerType()),
+                                        m_responseAppCacheID);
         sendConnect();
     }
 }

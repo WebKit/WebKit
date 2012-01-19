@@ -31,6 +31,7 @@
 #ifndef WebSharedWorker_h
 #define WebSharedWorker_h
 
+#include "WebContentSecurityPolicy.h"
 #include "platform/WebCommon.h"
 
 namespace WebCore {
@@ -57,11 +58,25 @@ public:
     // FIXME(atwilson): Remove this when we move the initial script loading into the worker process.
     virtual bool isStarted() = 0;
 
+    // API is transitioning from first form to the second. This function must stay virtual for now to prevent breaking chrome on webkit roll.
+    // DEPRECATED
     virtual void startWorkerContext(const WebURL& scriptURL,
                                     const WebString& name,
                                     const WebString& userAgent,
                                     const WebString& sourceCode,
                                     long long scriptResourceAppCacheID) = 0;
+
+    // Chromium will need to fallback to this method to avoid breaking during the next webkit roll.
+    // It will become a pure virtual method once the chromium side is updated.
+    virtual void startWorkerContext(const WebURL& scriptURL,
+                                    const WebString& name,
+                                    const WebString& userAgent,
+                                    const WebString& sourceCode,
+                                    const WebString& contentSecurityPolicy,
+                                    WebContentSecurityPolicyType,
+                                    long long scriptResourceAppCacheID) {
+        startWorkerContext(scriptURL, name, userAgent, sourceCode, scriptResourceAppCacheID);
+    }
 
     class ConnectListener {
     public:
