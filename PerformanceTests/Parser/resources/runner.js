@@ -74,6 +74,8 @@ function runLoop()
     } else {
         logStatistics(times);
         window.doneFunction();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 }
 
@@ -100,4 +102,9 @@ function start(runCount, runFunction, loopsPerRun, doneFunction) {
 
     log("Running " + runCount + " times");
     runLoop();
+}
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
 }

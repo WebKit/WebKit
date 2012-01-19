@@ -391,8 +391,8 @@ class ChromiumPort(Port):
 
 # FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
 class ChromiumDriver(Driver):
-    def __init__(self, port, worker_number, pixel_tests):
-        Driver.__init__(self, port, worker_number, pixel_tests)
+    def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
+        Driver.__init__(self, port, worker_number, pixel_tests, no_timeout)
         self._proc = None
         self._image_path = None
         if self._pixel_tests:
@@ -406,6 +406,8 @@ class ChromiumDriver(Driver):
         # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?
         if self._port.get_option('js_flags') is not None:
             cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
+        if self._no_timeout:
+            cmd.append("--no-timeout")
 
         # FIXME: We should be able to build this list using only an array of
         # option names, the options (optparse.Values) object, and the orignal

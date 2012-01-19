@@ -1,3 +1,38 @@
+2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some perf tests time out when ran by run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=76612
+
+        Reviewed by Dirk Pranke and Eric Seidel.
+
+        Always pass --no-timeout to DumpRenderTree from run-perf-tests.
+        Otherwise some tests such as Parser/xml-parser.html will timeout.
+
+        --no-timeout option is currently supported by Chromium and Mac ports.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.create_driver):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.__init__):
+        (ChromiumDriver._wrapper_options):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.__init__):
+        (DriverProxy.__init__):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver.cmd_line):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_read_binary_block):
+        (WebKitDriverTest):
+        (WebKitDriverTest.test_no_timeout):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run.RecordingTestDriver.__init__):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._run_tests_set):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner):
+
 2012-01-19  Ben Wells  <benwells@chromium.org>
 
         Add support for window.print to chromium DRT

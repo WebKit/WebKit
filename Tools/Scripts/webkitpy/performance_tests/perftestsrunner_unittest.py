@@ -108,7 +108,7 @@ max 1120
 
         options, parsed_args = PerfTestsRunner._parse_args(args)
         test_port = TestPort(host=MockHost(), options=options)
-        test_port.create_driver = lambda worker_number=None: MainTest.TestDriver()
+        test_port.create_driver = lambda worker_number=None, no_timeout=False: MainTest.TestDriver()
 
         runner = PerfTestsRunner(regular_output, buildbot_output, args=args, port=test_port)
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')

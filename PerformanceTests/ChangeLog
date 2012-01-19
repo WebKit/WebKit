@@ -1,3 +1,21 @@
+2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some perf tests time out when ran by run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=76612
+
+        Reviewed by Dirk Pranke and Eric Seidel.
+
+        Replace all images in html5.html by geenbox.png to avoid accessing whatwg.org when
+        running the parser tests. Also call dumpAsText, waitUntilDone, and notifyDone automatically
+        inside runner.js to avoid having to call them in individual tests.
+
+        * Bindings/event-target-wrapper.html: Removed calls to layoutTestController methods since
+        they are now called by runner.js automatically.
+        * Parser/resources/greenbox.png: Copied from LayoutTests/fast/css/resources/greenbox.png.
+        * Parser/resources/html5.html:
+        * Parser/resources/runner.js:
+        (runLoop):
+
 2012-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should support Skipped list

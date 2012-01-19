@@ -18,18 +18,10 @@ link.addEventListener('click', function(event) {
         for (var x = 0; x < kIteratonsPerTest; x++) {
             e.target;
         }
-    }, 10, function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    });
+    }, 10);
 
     return false;
 }, false);
-
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-}
 
 if (window.eventSender) {
     eventSender.mouseMoveTo(link.offsetLeft + 5, link.offsetTop + 5);

@@ -79,7 +79,7 @@ class PerfTestsRunner(object):
                                 help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
             optparse.make_option("--build-directory",
                                  help="Path to the directory under which build files are kept (should not include configuration)"),
-            optparse.make_option("--time-out-ms", default=30000,
+            optparse.make_option("--time-out-ms", default=600 * 1000,
                                  help="Set the timeout for each test"),
             optparse.make_option("--output-json-path",
                                  help="Filename of the JSON file that summaries the results"),
@@ -171,7 +171,7 @@ class PerfTestsRunner(object):
                 driver.stop()
                 driver = None
             if not driver:
-                driver = port.create_driver(worker_number=1)
+                driver = port.create_driver(worker_number=1, no_timeout=True)
 
             relative_test_path = self._host.filesystem.relpath(test, self._base_path)
             self._printer.write('Running %s (%d of %d)' % (relative_test_path, expected + unexpected + 1, len(tests)))

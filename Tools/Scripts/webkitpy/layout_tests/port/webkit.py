@@ -448,8 +448,8 @@ class WebKitPort(Port):
 class WebKitDriver(Driver):
     """WebKit implementation of the DumpRenderTree/WebKitTestRunner interface."""
 
-    def __init__(self, port, worker_number, pixel_tests):
-        Driver.__init__(self, port, worker_number, pixel_tests)
+    def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
+        Driver.__init__(self, port, worker_number, pixel_tests, no_timeout)
         self._driver_tempdir = port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         # WebKitTestRunner can report back subprocess crashes by printing
         # "#CRASHED - PROCESSNAME".  Since those can happen at any time
@@ -481,6 +481,8 @@ class WebKitDriver(Driver):
             cmd.append('--complex-text')
         if self._port.get_option('threaded'):
             cmd.append('--threaded')
+        if self._no_timeout:
+            cmd.append('--no-timeout')
         # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))

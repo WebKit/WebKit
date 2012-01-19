@@ -63,7 +63,7 @@ class DriverOutput(object):
 class Driver(object):
     """Abstract interface for the DumpRenderTree interface."""
 
-    def __init__(self, port, worker_number, pixel_tests):
+    def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         """Initialize a Driver to subsequently run tests.
 
         Typically this routine will spawn DumpRenderTree in a config
@@ -75,6 +75,7 @@ class Driver(object):
         self._port = port
         self._worker_number = worker_number
         self._pixel_tests = pixel_tests
+        self._no_timeout = no_timeout
 
     def run_test(self, driver_input):
         """Run a single test and return the results.
@@ -142,12 +143,12 @@ class DriverProxy(object):
     one without. This allows us to handle plain text tests and ref tests with a
     single driver."""
 
-    def __init__(self, port, worker_number, driver_instance_constructor, pixel_tests):
-        self._driver = driver_instance_constructor(port, worker_number, pixel_tests)
+    def __init__(self, port, worker_number, driver_instance_constructor, pixel_tests, no_timeout):
+        self._driver = driver_instance_constructor(port, worker_number, pixel_tests, no_timeout)
         if pixel_tests:
             self._reftest_driver = self._driver
         else:
-            self._reftest_driver = driver_instance_constructor(port, worker_number, pixel_tests=True)
+            self._reftest_driver = driver_instance_constructor(port, worker_number, pixel_tests, no_timeout)
 
     def is_http_test(self, test_name):
         return self._driver.is_http_test(test_name)
