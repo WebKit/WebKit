@@ -184,6 +184,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_fullscreen(settings, TRUE);
     g_assert(webkit_settings_get_enable_fullscreen(settings));
 
+    // Print backgrounds is enabled by default
+    g_assert(webkit_settings_get_print_backgrounds(settings));
+    webkit_settings_set_print_backgrounds(settings, FALSE);
+    g_assert(!webkit_settings_get_print_backgrounds(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 
