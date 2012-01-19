@@ -892,6 +892,11 @@ BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMAGE
 
+// Failing after a Skia roll. To be fixed when WK71820 goes in. Marking flakey to make
+// it simpler to commit WK71820.
+BUGWK71820 : svg/custom/path-moveto-only-rendering.svg = PASS IMAGE+TEXT
+BUGWK71820 : svg/custom/subpaths-moveto-only-rendering.svg = PASS TEXT
+
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 
