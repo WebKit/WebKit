@@ -44,6 +44,13 @@ using namespace std;
 
 namespace WebCore {
 
+struct SameSizeAsBorderValue {
+    Color m_color;
+    unsigned m_width;
+};
+
+COMPILE_ASSERT(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), BorderValue_should_not_grow);
+
 struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
     unsigned m_bitfields;
 

@@ -545,16 +545,16 @@ public:
     LengthSize borderBottomRightRadius() const { return surround->border.bottomRight(); }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
-    unsigned short borderLeftWidth() const { return surround->border.borderLeftWidth(); }
+    unsigned borderLeftWidth() const { return surround->border.borderLeftWidth(); }
     EBorderStyle borderLeftStyle() const { return surround->border.left().style(); }
     bool borderLeftIsTransparent() const { return surround->border.left().isTransparent(); }
-    unsigned short borderRightWidth() const { return surround->border.borderRightWidth(); }
+    unsigned borderRightWidth() const { return surround->border.borderRightWidth(); }
     EBorderStyle borderRightStyle() const { return surround->border.right().style(); }
     bool borderRightIsTransparent() const { return surround->border.right().isTransparent(); }
-    unsigned short borderTopWidth() const { return surround->border.borderTopWidth(); }
+    unsigned borderTopWidth() const { return surround->border.borderTopWidth(); }
     EBorderStyle borderTopStyle() const { return surround->border.top().style(); }
     bool borderTopIsTransparent() const { return surround->border.top().isTransparent(); }
-    unsigned short borderBottomWidth() const { return surround->border.borderBottomWidth(); }
+    unsigned borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle borderBottomStyle() const { return surround->border.bottom().style(); }
     bool borderBottomIsTransparent() const { return surround->border.bottom().isTransparent(); }
     
@@ -1043,16 +1043,16 @@ public:
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect,
         LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
 
-    void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.m_left.m_width, v) }
+    void setBorderLeftWidth(unsigned v) { SET_VAR(surround, border.m_left.m_width, v) }
     void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.m_left.m_style, v) }
     void setBorderLeftColor(const Color& v) { SET_VAR(surround, border.m_left.m_color, v) }
-    void setBorderRightWidth(unsigned short v) { SET_VAR(surround, border.m_right.m_width, v) }
+    void setBorderRightWidth(unsigned v) { SET_VAR(surround, border.m_right.m_width, v) }
     void setBorderRightStyle(EBorderStyle v) { SET_VAR(surround, border.m_right.m_style, v) }
     void setBorderRightColor(const Color& v) { SET_VAR(surround, border.m_right.m_color, v) }
-    void setBorderTopWidth(unsigned short v) { SET_VAR(surround, border.m_top.m_width, v) }
+    void setBorderTopWidth(unsigned v) { SET_VAR(surround, border.m_top.m_width, v) }
     void setBorderTopStyle(EBorderStyle v) { SET_VAR(surround, border.m_top.m_style, v) }
     void setBorderTopColor(const Color& v) { SET_VAR(surround, border.m_top.m_color, v) }
-    void setBorderBottomWidth(unsigned short v) { SET_VAR(surround, border.m_bottom.m_width, v) }
+    void setBorderBottomWidth(unsigned v) { SET_VAR(surround, border.m_bottom.m_width, v) }
     void setBorderBottomStyle(EBorderStyle v) { SET_VAR(surround, border.m_bottom.m_style, v) }
     void setBorderBottomColor(const Color& v) { SET_VAR(surround, border.m_bottom.m_color, v) }
 
@@ -1513,7 +1513,9 @@ public:
     static ECursor initialCursor() { return CURSOR_AUTO; }
     static Color initialColor() { return Color::black; }
     static StyleImage* initialListStyleImage() { return 0; }
-    static unsigned short initialBorderWidth() { return 3; }
+    static unsigned initialBorderWidth() { return 3; }
+    static unsigned short initialColumnRuleWidth() { return 3; }
+    static unsigned short initialOutlineWidth() { return 3; }
     static int initialLetterWordSpacing() { return 0; }
     static Length initialSize() { return Length(); }
     static Length initialMinSize() { return Length(0, Fixed); }

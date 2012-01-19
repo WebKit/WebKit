@@ -111,26 +111,26 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             // Border
             LengthBox borderBox(style->borderTopWidth(), style->borderRightWidth(), style->borderBottomWidth(), style->borderLeftWidth());
             borderBox = m_theme->controlBorder(part, style->font(), borderBox, style->effectiveZoom());
-            if (borderBox.top().value() != style->borderTopWidth()) {
+            if (borderBox.top().value() != static_cast<int>(style->borderTopWidth())) {
                 if (borderBox.top().value())
                     style->setBorderTopWidth(borderBox.top().value());
                 else
                     style->resetBorderTop();
             }
-            if (borderBox.right().value() != style->borderRightWidth()) {
+            if (borderBox.right().value() != static_cast<int>(style->borderRightWidth())) {
                 if (borderBox.right().value())
                     style->setBorderRightWidth(borderBox.right().value());
                 else
                     style->resetBorderRight();
             }
-            if (borderBox.bottom().value() != style->borderBottomWidth()) {
+            if (borderBox.bottom().value() != static_cast<int>(style->borderBottomWidth())) {
                 style->setBorderBottomWidth(borderBox.bottom().value());
                 if (borderBox.bottom().value())
                     style->setBorderBottomWidth(borderBox.bottom().value());
                 else
                     style->resetBorderBottom();
             }
-            if (borderBox.left().value() != style->borderLeftWidth()) {
+            if (borderBox.left().value() != static_cast<int>(style->borderLeftWidth())) {
                 style->setBorderLeftWidth(borderBox.left().value());
                 if (borderBox.left().value())
                     style->setBorderLeftWidth(borderBox.left().value());

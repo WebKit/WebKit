@@ -66,12 +66,12 @@ public:
     }
     
     const Color& color() const { return m_color; }
-    unsigned short width() const { return m_width; }
+    unsigned width() const { return m_width; }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
 
 protected:
     Color m_color;
-    unsigned m_width : 12;
+    unsigned m_width : 27;
     unsigned m_style : 4; // EBorderStyle
 
     // This is only used by OutlineValue but moved here to keep the bits packed.

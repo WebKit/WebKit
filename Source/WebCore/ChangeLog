@@ -1,3 +1,48 @@
+2012-01-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Strange Result for getComputedStyle on borderWidth set in em
+        https://bugs.webkit.org/show_bug.cgi?id=18294
+
+        Reviewed by Tony Chang.
+
+        BorderValue stores its width on a 12 bits unsigned. This patch 
+        increase it to 27. The patch also modify the way to set the 
+        width or to get it, we now use a unsigned rather than a short.
+
+        Test: fast/css/border-width-large.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::blend):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::borderLeftWidth):
+        (WebCore::BorderData::borderRightWidth):
+        (WebCore::BorderData::borderTopWidth):
+        (WebCore::BorderData::borderBottomWidth):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::width):
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::borderLeftWidth):
+        (WebCore::RenderStyleBitfields::borderRightWidth):
+        (WebCore::RenderStyleBitfields::borderTopWidth):
+        (WebCore::RenderStyleBitfields::borderBottomWidth):
+        (WebCore::RenderStyleBitfields::setBorderLeftWidth):
+        (WebCore::RenderStyleBitfields::setBorderRightWidth):
+        (WebCore::RenderStyleBitfields::setBorderTopWidth):
+        (WebCore::RenderStyleBitfields::setBorderBottomWidth):
+        (WebCore::RenderStyleBitfields::initialBorderWidth):
+        (WebCore::RenderStyleBitfields::initialColumnRuleWidth):
+        (WebCore::RenderStyleBitfields::initialOutlineWidth):
+
 2012-01-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Differentiate between SVG/CSS width/height attributes/properties

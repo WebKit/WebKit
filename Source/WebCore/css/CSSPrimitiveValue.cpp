@@ -360,6 +360,11 @@ template<> int CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle*
     return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
+template<> unsigned CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
+{
+    return roundForImpreciseConversion<unsigned, UINT_MAX, 0>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
+}
+
 template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
     // FIXME: Length.h no longer expects 28 bit integers, so these bounds should be INT_MAX and INT_MIN

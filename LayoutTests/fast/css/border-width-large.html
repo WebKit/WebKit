@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Test for WebKit bug 18294 : Strange Result for getComputedStyle on borderWidth set in em</title>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Test for WebKit bug <a href="https://bugs.webkit.org/show_bug.cgi?id=18294">18294</a> : Strange Result for getComputedStyle on borderWidth set in em</p>
+<div id="console"></div>
+
+<div id="tests_container">
+
+<div id="test" style="border-style:solid;font-size:100px;"></div>
+
+</div>
+
+<script>
+    var test = document.getElementById("test");
+
+    test.style.borderWidth = "120em 110em 100em 90.1em";
+    var computedStyle = window.getComputedStyle(test, null);
+    shouldBe("computedStyle.getPropertyValue('border-width')", "'12000px 11000px 10000px 9010px'");
+    shouldBe("computedStyle.getPropertyCSSValue('border-top-width').cssText","'12000px'");
+    shouldBe("computedStyle.getPropertyCSSValue('border-right-width').cssText","'11000px'");
+    shouldBe("computedStyle.getPropertyCSSValue('border-bottom-width').cssText","'10000px'");
+    shouldBe("computedStyle.getPropertyCSSValue('border-left-width').cssText","'9010px'");
+    // clean up after ourselves
+    var tests_container = document.getElementById("tests_container");
+    tests_container.parentNode.removeChild(tests_container);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

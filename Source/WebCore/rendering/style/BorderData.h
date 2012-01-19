@@ -60,28 +60,28 @@ public:
         return false;
     }
     
-    unsigned short borderLeftWidth() const
+    unsigned borderLeftWidth() const
     {
         if (!m_image.hasImage() && (m_left.style() == BNONE || m_left.style() == BHIDDEN))
             return 0; 
         return m_left.width();
     }
     
-    unsigned short borderRightWidth() const
+    unsigned borderRightWidth() const
     {
         if (!m_image.hasImage() && (m_right.style() == BNONE || m_right.style() == BHIDDEN))
             return 0;
         return m_right.width();
     }
     
-    unsigned short borderTopWidth() const
+    unsigned borderTopWidth() const
     {
         if (!m_image.hasImage() && (m_top.style() == BNONE || m_top.style() == BHIDDEN))
             return 0;
         return m_top.width();
     }
     
-    unsigned short borderBottomWidth() const
+    unsigned borderBottomWidth() const
     {
         if (!m_image.hasImage() && (m_bottom.style() == BNONE || m_bottom.style() == BHIDDEN))
             return 0;
