@@ -45,6 +45,7 @@ PASS createAttributeNS("http://www.w3.org/2000/xmlns/", "x:test"); binding names
 PASS createAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:test")
 PASS createAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:test")
 PASS createAttributeNS("http://www.w3.org/XML/1998/namespace", "x:test")
+PASS createAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns")
 PASS createAttributeNS("http://example.com/", "xmlns"); threw NAMESPACE_ERR
 PASS successfullyParsed is true
 

@@ -82,6 +82,7 @@ var allNSTests = [
    { args: ["http://www.w3.org/2000/xmlns/", "xmlns:test"] },
    { args: ["http://www.w3.org/XML/1998/namespace", "xml:test"] },
    { args: ["http://www.w3.org/XML/1998/namespace", "x:test"] },
+   { args: ["http://www.w3.org/2000/xmlns/", "xmlns"] }, // See http://www.w3.org/2000/xmlns/
    { args: ["http://example.com/", "xmlns"], code: 14 }, // from the createAttributeNS section
 ];
 

@@ -1448,16 +1448,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
 
     QualifiedName qName(prefix, localName, namespaceURI);
 
-    // Spec: DOM Level 2 Core: http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS
-    if (qName.prefix().isEmpty() && qName.localName() == xmlnsAtom) {
-        if (qName.namespaceURI() != XMLNSNames::xmlnsNamespaceURI) {
-            ec = NAMESPACE_ERR;
-            return;
-        }
-        // Note: The case of an "xmlns" qualified name with a namespace of
-        // xmlnsNamespaceURI is specifically allowed (See
-        // <http://www.w3.org/2000/xmlns/>).
-    } else if (document()->hasPrefixNamespaceMismatch(qName)) {
+    if (!Document::hasValidNamespaceForAttributes(qName)) {
         ec = NAMESPACE_ERR;
         return;
     }

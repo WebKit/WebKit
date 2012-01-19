@@ -1,3 +1,26 @@
+2012-01-19  Adam Barth  <abarth@webkit.org>
+
+        createAttributeNS should understand that "xmlns" is allowed in the http://www.w3.org/2000/xmlns/
+        https://bugs.webkit.org/show_bug.cgi?id=76579
+
+        Reviewed by Eric Seidel.
+
+        This patch cleans up a tiny corner case involving the (somewhat
+        magical) xmlns attribute that we uncovered when working on
+        setAttributeNS.
+
+        Tests: fast/dom/Document/createAttributeNS-namespace-err.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        (WebCore::Document::hasValidNamespaceForElements):
+        (WebCore::Document::hasValidNamespaceForAttributes):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::createAttributeNS):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNS):
+
 2012-01-19  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed build fix for DEBUG: remove comparison of an unsigned variable with '>= 0' in ASSERT.

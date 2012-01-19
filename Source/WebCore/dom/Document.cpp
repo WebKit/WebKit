@@ -833,7 +833,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         Element* oldElement = static_cast<Element*>(importedNode);
         // FIXME: The following check might be unnecessary. Is it possible that
         // oldElement has mismatched prefix/namespace?
-        if (hasPrefixNamespaceMismatch(oldElement->tagQName())) {
+        if (!hasValidNamespaceForElements(oldElement->tagQName())) {
             ec = NAMESPACE_ERR;
             return 0;
         }
@@ -948,22 +948,33 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     return source;
 }
 
-bool Document::hasPrefixNamespaceMismatch(const QualifiedName& qName)
+bool Document::hasValidNamespaceForElements(const QualifiedName& qName)
 {
     // These checks are from DOM Core Level 2, createElementNS
     // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS
     if (!qName.prefix().isEmpty() && qName.namespaceURI().isNull()) // createElementNS(null, "html:div")
-        return true;
+        return false;
     if (qName.prefix() == xmlAtom && qName.namespaceURI() != XMLNames::xmlNamespaceURI) // createElementNS("http://www.example.com", "xml:lang")
-        return true;
+        return false;
 
     // Required by DOM Level 3 Core and unspecified by DOM Level 2 Core:
     // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-DocCrElNS
     // createElementNS("http://www.w3.org/2000/xmlns/", "foo:bar"), createElementNS(null, "xmlns:bar")
     if ((qName.prefix() == xmlnsAtom && qName.namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || (qName.prefix() != xmlnsAtom && qName.namespaceURI() == XMLNSNames::xmlnsNamespaceURI))
-        return true;
+        return false;
 
-    return false;
+    return true;
+}
+
+bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
+{
+    // Spec: DOM Level 2 Core: http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS
+    if (qName.prefix().isEmpty() && qName.localName() == xmlnsAtom) {
+        // Note: The case of an "xmlns" qualified name with a namespace of
+        // xmlnsNamespaceURI is specifically allowed (See <http://www.w3.org/2000/xmlns/>).
+        return qName.namespaceURI() == XMLNSNames::xmlnsNamespaceURI;
+    }
+    return hasValidNamespaceForElements(qName);
 }
 
 // FIXME: This should really be in a possible ElementFactory class
@@ -1010,7 +1021,7 @@ PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const 
         return 0;
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    if (hasPrefixNamespaceMismatch(qName)) {
+    if (!hasValidNamespaceForElements(qName)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
@@ -4287,13 +4298,8 @@ PassRefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const S
         return 0;
 
     QualifiedName qName(prefix, localName, namespaceURI);
-    if (!shouldIgnoreNamespaceChecks && hasPrefixNamespaceMismatch(qName)) {
-        ec = NAMESPACE_ERR;
-        return 0;
-    }
 
-    // Spec: DOM Level 2 Core: http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS
-    if (!shouldIgnoreNamespaceChecks && qName.localName() == xmlnsAtom && qName.namespaceURI() != XMLNSNames::xmlnsNamespaceURI) {
+    if (!shouldIgnoreNamespaceChecks && !hasValidNamespaceForAttributes(qName)) {
         ec = NAMESPACE_ERR;
         return 0;
     }
