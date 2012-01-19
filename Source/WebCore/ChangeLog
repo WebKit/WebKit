@@ -1,3 +1,15 @@
+2012-01-18  Eric Seidel  <eric@webkit.org>
+
+        setAttributeNS should comply with the obscure rules of DOM2, just like createAttributeNS and createElementNS do
+        https://bugs.webkit.org/show_bug.cgi?id=76143
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/Element/setAttributeNS-namespace-err.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNS):
+
 2012-01-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105376.
