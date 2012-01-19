@@ -1,5 +1,16 @@
 2012-01-18  Ojan Vafai  <ojan@chromium.org>
 
+        Fix tests from http://trac.webkit.org/changeset/105332.
+
+        The code assumed that if you passed an options object with a configuration
+        attribute that it would have a valid value. A bunch of the testing mocks
+        do things like having a configuration value of None.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+
+2012-01-18  Ojan Vafai  <ojan@chromium.org>
+
         Shave 0.5 seconds off check-webkit-style runtime for test_expectations.txt
         https://bugs.webkit.org/show_bug.cgi?id=76576
 

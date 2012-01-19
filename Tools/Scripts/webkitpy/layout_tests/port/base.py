@@ -146,7 +146,7 @@ class Port(object):
         self._pretty_patch_path = self.path_from_webkit_base("Websites", "bugs.webkit.org", "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = None
 
-        if not options or not options.configuration:
+        if not hasattr(options, 'configuration') or not options.configuration:
             self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
         self._reftest_list = {}
