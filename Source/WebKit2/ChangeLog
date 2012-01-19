@@ -1,5 +1,12 @@
 2012-01-18  Jon Lee  <jonlee@apple.com>
 
+        Another build fix for r105364.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Missing #if.
+
+2012-01-18  Jon Lee  <jonlee@apple.com>
+
         Build fix for r105364. Unreviewed.
 
         * WebProcess/Notifications/WebNotificationManager.cpp: Wrap methods in #if ENABLE(NOTIFICATIONS)

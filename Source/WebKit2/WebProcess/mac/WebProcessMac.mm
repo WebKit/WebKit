@@ -253,7 +253,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
     
+#if ENABLE(NOTIFICATIONS)
     m_notificationManager.initialize(parameters.notificationPermissions);
+#endif
 
     // rdar://9118639 accessibilityFocusedUIElement in NSApplication defaults to use the keyWindow. Since there's
     // no window in WK2, NSApplication needs to use the focused page's focused element.
