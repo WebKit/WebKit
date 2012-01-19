@@ -29,96 +29,89 @@
 #
 
 {
-    # FIXME: Remove this conditional check once chromium's
-    # build/common.gypi is setting this flag to 0 by default. See
-    # https://bugs.webkit.org/show_bug.cgi?id=68463. 
-    'conditions': [
-        ['build_webkit_exes_from_webkit_gyp==0', {
-            'includes': [
-                'features.gypi',
-                'WebKit.gypi',
+    'includes': [
+        'features.gypi',
+        'WebKit.gypi',
+    ],
+    'variables': {
+        'conditions': [
+            # Location of the chromium src directory and target type is different
+            # if webkit is built inside chromium or as standalone project.
+            ['inside_chromium_build==0', {
+                # Webkit is being built outside of the full chromium project.
+                # e.g. via build-webkit --chromium
+                'chromium_src_dir': '../../WebKit/chromium',
+            },{
+                # WebKit is checked out in src/chromium/third_party/WebKit
+                'chromium_src_dir': '../../../../..',
+            }],
+        ],
+    },
+    'targets': [
+        {
+            'target_name': 'webkit_unit_tests',
+            'type': 'executable',
+            'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
+            'dependencies': [
+                'WebKit.gyp:webkit',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
+                '<(chromium_src_dir)/testing/gmock.gyp:gmock',
+                '<(chromium_src_dir)/base/base.gyp:base',
+                '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                '<(chromium_src_dir)/base/base.gyp:test_support_base',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_user_agent',
             ],
-            'variables': {
-                'conditions': [
-                    # Location of the chromium src directory and target type is different
-                    # if webkit is built inside chromium or as standalone project.
-                    ['inside_chromium_build==0', {
-                        # Webkit is being built outside of the full chromium project.
-                        # e.g. via build-webkit --chromium
-                        'chromium_src_dir': '../../WebKit/chromium',
-                    },{
-                        # WebKit is checked out in src/chromium/third_party/WebKit
-                        'chromium_src_dir': '../../../../..',
-                    }],
-                ],
-            },
-            'targets': [
-                {
-                    'target_name': 'webkit_unit_tests',
-                    'type': 'executable',
-                    'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
-                    'dependencies': [
-                        'WebKit.gyp:webkit',
-                        '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                        '<(chromium_src_dir)/testing/gtest.gyp:gtest',
-                        '<(chromium_src_dir)/testing/gmock.gyp:gmock',
-                        '<(chromium_src_dir)/base/base.gyp:base',
-                        '<(chromium_src_dir)/base/base.gyp:base_i18n',
-                        '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_user_agent',
+            'sources': [
+                'tests/RunAllTests.cpp',
+            ],
+            'include_dirs': [
+                'public',
+                'src',
+            ],
+            'conditions': [
+                ['inside_chromium_build==1 and component=="shared_library"', {
+                    'defines': [
+                        'WEBKIT_DLL_UNITTEST',
                     ],
+                }, {
                     'sources': [
-                        'tests/RunAllTests.cpp',
-                    ],
-                    'include_dirs': [
-                        'public',
-                        'src',
+                        '<@(webkit_unittest_files)',
                     ],
                     'conditions': [
-                        ['inside_chromium_build==1 and component=="shared_library"', {
-                            'defines': [
-                                'WEBKIT_DLL_UNITTEST',
+                        ['toolkit_uses_gtk == 1', {
+                            'include_dirs': [
+                                'public/gtk',
                             ],
-                        }, {
-                            'sources': [
-                                '<@(webkit_unittest_files)',
-                            ],
-                            'conditions': [
-                                ['toolkit_uses_gtk == 1', {
-                                    'include_dirs': [
-                                        'public/gtk',
-                                    ],
-                                    'variables': {
-                                    # FIXME: Enable warnings on other platforms.
-                                    'chromium_code': 1,
-                                    },
-                                }],
-                            ],
-                        }],
-                        ['inside_chromium_build==1 and OS=="win" and component!="shared_library"', {
-                            'configurations': {
-                                'Debug_Base': {
-                                    'msvs_settings': {
-                                        'VCLinkerTool': {
-                                            'LinkIncremental': '<(msvs_large_module_debug_link_mode)',
-                                        },
-                                    },
-                                },
+                            'variables': {
+                            # FIXME: Enable warnings on other platforms.
+                            'chromium_code': 1,
                             },
                         }],
                     ],
-                }                
-            ], # targets
-            'conditions': [
-                ['os_posix==1 and OS!="mac" and OS!="android" and gcc_version==46', {
-                    'target_defaults': {
-                        # Disable warnings about c++0x compatibility, as some names (such
-                        # as nullptr) conflict with upcoming c++0x types.
-                        'cflags_cc': ['-Wno-c++0x-compat'],
+                }],
+                ['inside_chromium_build==1 and OS=="win" and component!="shared_library"', {
+                    'configurations': {
+                        'Debug_Base': {
+                            'msvs_settings': {
+                                'VCLinkerTool': {
+                                    'LinkIncremental': '<(msvs_large_module_debug_link_mode)',
+                                },
+                            },
+                        },
                     },
                 }],
             ],
+        }                
+    ], # targets
+    'conditions': [
+        ['os_posix==1 and OS!="mac" and OS!="android" and gcc_version==46', {
+            'target_defaults': {
+                # Disable warnings about c++0x compatibility, as some names (such
+                # as nullptr) conflict with upcoming c++0x types.
+                'cflags_cc': ['-Wno-c++0x-compat'],
+            },
         }],
     ],
 }
