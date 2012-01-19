@@ -311,15 +311,16 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
 
     // If our z-index changes value or our visibility changes,
     // we need to dirty our stacking context's z-order list.
-    if (style() && newStyle) {
+    RenderStyle* oldStyle = style();
+    if (oldStyle && newStyle) {
         if (parent()) {
             // Do a repaint with the old style first, e.g., for example if we go from
             // having an outline to not having an outline.
             if (diff == StyleDifferenceRepaintLayer) {
                 layer()->repaintIncludingDescendants();
-                if (!(style()->clip() == newStyle->clip()))
+                if (!(oldStyle->clip() == newStyle->clip()))
                     layer()->clearClipRectsIncludingDescendants();
-            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < style()->outlineSize())
+            } else if (diff == StyleDifferenceRepaint || newStyle->outlineSize() < oldStyle->outlineSize())
                 repaint();
         }
         
@@ -327,13 +328,13 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
             // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
             // end up being destroyed.
             if (hasLayer()) {
-                if (style()->position() != newStyle->position() ||
-                    style()->zIndex() != newStyle->zIndex() ||
-                    style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                    !(style()->clip() == newStyle->clip()) ||
-                    style()->hasClip() != newStyle->hasClip() ||
-                    style()->opacity() != newStyle->opacity() ||
-                    style()->transform() != newStyle->transform())
+                if (oldStyle->position() != newStyle->position()
+                    || oldStyle->zIndex() != newStyle->zIndex()
+                    || oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex()
+                    || !(oldStyle->clip() == newStyle->clip())
+                    || oldStyle->hasClip() != newStyle->hasClip()
+                    || oldStyle->opacity() != newStyle->opacity()
+                    || oldStyle->transform() != newStyle->transform())
                 layer()->repaintIncludingDescendants();
             } else if (newStyle->hasTransform() || newStyle->opacity() < 1) {
                 // If we don't have a layer yet, but we are going to get one because of transform or opacity,
@@ -342,11 +343,12 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
             }
         }
 
-        if (hasLayer() && (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() ||
-                           style()->zIndex() != newStyle->zIndex() ||
-                           style()->visibility() != newStyle->visibility())) {
+        if (hasLayer()
+            && (oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex()
+                || oldStyle->zIndex() != newStyle->zIndex()
+                || oldStyle->visibility() != newStyle->visibility())) {
             layer()->dirtyStackingContextZOrderLists();
-            if (style()->hasAutoZIndex() != newStyle->hasAutoZIndex() || style()->visibility() != newStyle->visibility())
+            if (oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex() || oldStyle->visibility() != newStyle->visibility())
                 layer()->dirtyZOrderLists();
         }
     }
@@ -392,10 +394,11 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
 {
     // Set the appropriate bits for a box model object.  Since all bits are cleared in styleWillChange,
     // we only check for bits that could possibly be set to true.
-    setHasBoxDecorations(hasBackground() || style()->hasBorder() || style()->hasAppearance() || style()->boxShadow());
-    setInline(style()->isDisplayInlineType());
-    setRelPositioned(style()->position() == RelativePosition);
-    setHorizontalWritingMode(style()->isHorizontalWritingMode());
+    RenderStyle* styleToUse = style();
+    setHasBoxDecorations(hasBackground() || styleToUse->hasBorder() || styleToUse->hasAppearance() || styleToUse->boxShadow());
+    setInline(styleToUse->isDisplayInlineType());
+    setRelPositioned(styleToUse->position() == RelativePosition);
+    setHorizontalWritingMode(styleToUse->isHorizontalWritingMode());
 }
 
 LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const

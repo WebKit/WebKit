@@ -96,22 +96,23 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
     // Whether or not we can collapse our own margins with our children.  We don't do this
     // if we had any border/padding (obviously), if we're the root or HTML elements, or if
     // we're positioned, floating, a table cell.
+    RenderStyle* blockStyle = block->style();
     m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned()
         && !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable()
-        && !block->isWritingModeRoot() && block->style()->hasAutoColumnCount() && block->style()->hasAutoColumnWidth()
-        && !block->style()->columnSpan();
+        && !block->isWritingModeRoot() && blockStyle->hasAutoColumnCount() && blockStyle->hasAutoColumnWidth()
+        && !blockStyle->columnSpan();
 
-    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && (beforeBorderPadding == 0) && block->style()->marginBeforeCollapse() != MSEPARATE;
+    m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && !beforeBorderPadding && blockStyle->marginBeforeCollapse() != MSEPARATE;
 
     // If any height other than auto is specified in CSS, then we don't collapse our bottom
     // margins with our children's margins.  To do otherwise would be to risk odd visual
     // effects when the children overflow out of the parent block and yet still collapse
     // with it.  We also don't collapse if we have any bottom border/padding.
     m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && (afterBorderPadding == 0) &&
-        (block->style()->logicalHeight().isAuto() && block->style()->logicalHeight().value() == 0) && block->style()->marginAfterCollapse() != MSEPARATE;
+        (blockStyle->logicalHeight().isAuto() && !blockStyle->logicalHeight().value()) && blockStyle->marginAfterCollapse() != MSEPARATE;
     
-    m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginBeforeCollapse() == MDISCARD || 
-        block->style()->marginAfterCollapse() == MDISCARD;
+    m_quirkContainer = block->isTableCell() || block->isBody() || blockStyle->marginBeforeCollapse() == MDISCARD
+        || blockStyle->marginAfterCollapse() == MDISCARD;
 
     m_positiveMargin = m_canCollapseMarginBeforeWithChildren ? block->maxPositiveMarginBefore() : 0;
     m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block->maxNegativeMarginBefore() : 0;
@@ -209,16 +210,17 @@ void RenderBlock::willBeDestroyed()
 
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
-    s_canPropagateFloatIntoSibling = style() ? !isFloatingOrPositioned() && !avoidsFloats() : false;
+    RenderStyle* oldStyle = style();
+    s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrPositioned() && !avoidsFloats() : false;
 
     setReplaced(newStyle->isDisplayInlineType());
     
-    if (style() && parent() && diff == StyleDifferenceLayout && style()->position() != newStyle->position()) {
+    if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle->position()) {
         if (newStyle->position() == StaticPosition)
             // Clear our positioned objects list. Our absolutely positioned descendants will be
             // inserted into our containing block's positioned objects list during layout.
             removePositionedObjects(0);
-        else if (style()->position() == StaticPosition) {
+        else if (oldStyle->position() == StaticPosition) {
             // Remove our absolutely positioned descendants from their current containing block.
             // They will be inserted into our positioned objects list during layout.
             RenderObject* cb = parent();
@@ -1249,7 +1251,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     }
 
     RenderView* renderView = view();
-    LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
+    RenderStyle* styleToUse = style();
+    LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
     
     if (inRenderFlowThread()) {
         // Regions changing widths can force us to relayout our children.
@@ -1281,8 +1284,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (!isCell) {
         initMaxMarginValues();
         
-        setMarginBeforeQuirk(style()->marginBefore().quirk());
-        setMarginAfterQuirk(style()->marginAfter().quirk());
+        setMarginBeforeQuirk(styleToUse->marginBefore().quirk());
+        setMarginAfterQuirk(styleToUse->marginAfter().quirk());
 
         Node* n = node();
         if (n && n->hasTagName(formTag) && static_cast<HTMLFormElement*>(n)->isMalformed()) {
@@ -1296,9 +1299,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     // For overflow:scroll blocks, ensure we have both scrollbars in place always.
     if (scrollsOverflow()) {
-        if (style()->overflowX() == OSCROLL)
+        if (styleToUse->overflowX() == OSCROLL)
             layer()->setHasHorizontalScrollbar(true);
-        if (style()->overflowY() == OSCROLL)
+        if (styleToUse->overflowY() == OSCROLL)
             layer()->setHasVerticalScrollbar(true);
     }
 
@@ -1363,7 +1366,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     // FIXME: This repaint logic should be moved into a separate helper function!
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
-    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
+    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (styleToUse->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
         // FIXME: We could tighten up the left and right invalidation points if we let layoutInlineChildren fill them in based off the particular lines
         // it had to lay out.  We wouldn't need the hasOverflowClip() hack in that case either.
         LayoutUnit repaintLogicalLeft = logicalLeftVisualOverflow();
@@ -2018,7 +2021,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
-        if (relayoutChildren || ((child->style()->logicalHeight().isPercent() || child->style()->logicalMinHeight().isPercent() || child->style()->logicalMaxHeight().isPercent()) && !isRenderView()))
+        RenderStyle* childStyle = child->style();
+        if (relayoutChildren || ((childStyle->logicalHeight().isPercent() || childStyle->logicalMinHeight().isPercent() || childStyle->logicalMaxHeight().isPercent()) && !isRenderView()))
             child->setChildNeedsLayout(true, false);
 
         // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
@@ -2048,7 +2052,8 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     child->computeBlockDirectionMargins(this);
 
     // Do not allow a collapse if the margin-before-collapse style is set to SEPARATE.
-    if (child->style()->marginBeforeCollapse() == MSEPARATE) {
+    RenderStyle* childStyle = child->style();
+    if (childStyle->marginBeforeCollapse() == MSEPARATE) {
         marginInfo.setAtBeforeSideOfBlock(false);
         marginInfo.clearMargin();
     }
@@ -2144,7 +2149,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
 
     // Update our height now that the child has been placed in the correct position.
     setLogicalHeight(logicalHeight() + logicalHeightForChild(child));
-    if (child->style()->marginAfterCollapse() == MSEPARATE) {
+    if (childStyle->marginAfterCollapse() == MSEPARATE) {
         setLogicalHeight(logicalHeight() + marginAfterForChild(child));
         marginInfo.clearMargin();
     }
@@ -4942,8 +4947,9 @@ void RenderBlock::computePreferredLogicalWidths()
 
     updateFirstLetter();
 
-    if (!isTableCell() && style()->logicalWidth().isFixed() && style()->logicalWidth().value() > 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(style()->logicalWidth().value());
+    RenderStyle* styleToUse = style();
+    if (!isTableCell() && styleToUse->logicalWidth().isFixed() && styleToUse->logicalWidth().value() > 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(styleToUse->logicalWidth().value());
     else {
         m_minPreferredLogicalWidth = 0;
         m_maxPreferredLogicalWidth = 0;
@@ -4955,7 +4961,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
         m_maxPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-        if (!style()->autoWrap() && childrenInline()) {
+        if (!styleToUse->autoWrap() && childrenInline()) {
             m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
             
             // A horizontal marquee with inline children has no minimum width.
@@ -4964,7 +4970,7 @@ void RenderBlock::computePreferredLogicalWidths()
         }
 
         int scrollbarWidth = 0;
-        if (hasOverflowClip() && style()->overflowY() == OSCROLL) {
+        if (hasOverflowClip() && styleToUse->overflowY() == OSCROLL) {
             layer()->setHasVerticalScrollbar(true);
             scrollbarWidth = verticalScrollbarWidth();
             m_maxPreferredLogicalWidth += scrollbarWidth;
@@ -4981,14 +4987,14 @@ void RenderBlock::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth += scrollbarWidth;
     }
     
-    if (style()->logicalMinWidth().isFixed() && style()->logicalMinWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMinWidth().value()));
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMinWidth().value()));
+    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
     }
     
-    if (style()->logicalMaxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMaxWidth().value()));
-        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMaxWidth().value()));
+    if (styleToUse->logicalMaxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
     }
 
     LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
@@ -5071,13 +5077,13 @@ static int getBPMWidth(int childValue, Length cssUnit)
 
 static int getBorderPaddingMargin(const RenderBoxModelObject* child, bool endOfInline)
 {
-    RenderStyle* cstyle = child->style();
+    RenderStyle* childStyle = child->style();
     if (endOfInline)
-        return getBPMWidth(child->marginEnd(), cstyle->marginEnd()) + 
-               getBPMWidth(child->paddingEnd(), cstyle->paddingEnd()) +
+        return getBPMWidth(child->marginEnd(), childStyle->marginEnd()) +
+               getBPMWidth(child->paddingEnd(), childStyle->paddingEnd()) +
                child->borderEnd();
-    return getBPMWidth(child->marginStart(), cstyle->marginStart()) + 
-               getBPMWidth(child->paddingStart(), cstyle->paddingStart()) +
+    return getBPMWidth(child->marginStart(), childStyle->marginStart()) +
+               getBPMWidth(child->paddingStart(), childStyle->paddingStart()) +
                child->borderStart();
 }
 
@@ -5107,6 +5113,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     float inlineMax = 0;
     float inlineMin = 0;
 
+    RenderStyle* styleToUse = style();
     RenderBlock* containingBlock = this->containingBlock();
     LayoutUnit cw = containingBlock ? containingBlock->contentLogicalWidth() : 0;
 
@@ -5118,10 +5125,10 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific cirucumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !style()->logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !styleToUse->logicalWidth().isIntrinsicOrAuto();
 
     bool autoWrap, oldAutoWrap;
-    autoWrap = oldAutoWrap = style()->autoWrap();
+    autoWrap = oldAutoWrap = styleToUse->autoWrap();
 
     InlineMinMaxIterator childIterator(this);
     bool addedTextIndent = false; // Only gets added in once.
@@ -5166,7 +5173,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
             // values (if any of them are larger than our current min/max).  We then look at
             // the width of the last non-breakable run and use that to start a new line
             // (unless we end in whitespace).
-            RenderStyle* cstyle = child->style();
+            RenderStyle* childStyle = child->style();
             float childMin = 0;
             float childMax = 0;
 
@@ -5186,8 +5193,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 } else {
                     // Inline replaced elts add in their margins to their min/max values.
                     float margins = 0;
-                    Length startMargin = cstyle->marginStart();
-                    Length endMargin = cstyle->marginEnd();
+                    Length startMargin = childStyle->marginStart();
+                    Length endMargin = childStyle->marginEnd();
                     if (startMargin.isFixed())
                         margins += startMargin.value();
                     if (endMargin.isFixed())
@@ -5207,8 +5214,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
                     clearPreviousFloat = (prevFloat
-                        && ((prevFloat->style()->floating() == LeftFloat && (child->style()->clear() & CLEFT))
-                            || (prevFloat->style()->floating() == RightFloat && (child->style()->clear() & CRIGHT))));
+                        && ((prevFloat->style()->floating() == LeftFloat && (childStyle->clear() & CLEFT))
+                            || (prevFloat->style()->floating() == RightFloat && (childStyle->clear() & CRIGHT))));
                     prevFloat = child;
                 } else
                     clearPreviousFloat = false;
@@ -5229,7 +5236,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = style()->textIndent().calcMinValue(cw);
+                    ti = styleToUse->textIndent().calcMinValue(cw);
                     childMin += ti;
                     childMax += ti;
                 }
@@ -5300,7 +5307,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = style()->textIndent().calcMinValue(cw);
+                    ti = styleToUse->textIndent().calcMinValue(cw);
                     childMin+=ti; beginMin += ti;
                     childMax+=ti; beginMax += ti;
                 }
@@ -5358,7 +5365,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
         oldAutoWrap = autoWrap;
     }
 
-    if (style()->collapseWhiteSpace())
+    if (styleToUse->collapseWhiteSpace())
         stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
 
     updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
@@ -5370,7 +5377,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
 void RenderBlock::computeBlockPreferredLogicalWidths()
 {
-    bool nowrap = style()->whiteSpace() == NOWRAP;
+    RenderStyle* styleToUse = style();
+    bool nowrap = styleToUse->whiteSpace() == NOWRAP;
 
     RenderObject* child = firstChild();
     RenderBlock* containingBlock = this->containingBlock();
@@ -5382,13 +5390,14 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
             continue;
         }
 
+        RenderStyle* childStyle = child->style();
         if (child->isFloating() || (child->isBox() && toRenderBox(child)->avoidsFloats())) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
-            if (child->style()->clear() & CLEFT) {
+            if (childStyle->clear() & CLEFT) {
                 m_maxPreferredLogicalWidth = max(floatTotalWidth, m_maxPreferredLogicalWidth);
                 floatLeftWidth = 0;
             }
-            if (child->style()->clear() & CRIGHT) {
+            if (childStyle->clear() & CRIGHT) {
                 m_maxPreferredLogicalWidth = max(floatTotalWidth, m_maxPreferredLogicalWidth);
                 floatRightWidth = 0;
             }
@@ -5397,8 +5406,8 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        Length startMarginLength = child->style()->marginStartUsing(style());
-        Length endMarginLength = child->style()->marginEndUsing(style());
+        Length startMarginLength = childStyle->marginStartUsing(styleToUse);
+        Length endMarginLength = childStyle->marginEndUsing(styleToUse);
         LayoutUnit margin = 0;
         LayoutUnit marginStart = 0;
         LayoutUnit marginEnd = 0;
@@ -5435,7 +5444,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
                 // Determine a left and right max value based off whether or not the floats can fit in the
                 // margins of the object.  For negative margins, we will attempt to overlap the float if the negative margin
                 // is smaller than the float width.
-                bool ltr = containingBlock ? containingBlock->style()->isLeftToRightDirection() : style()->isLeftToRightDirection();
+                bool ltr = containingBlock ? containingBlock->style()->isLeftToRightDirection() : styleToUse->isLeftToRightDirection();
                 LayoutUnit marginLogicalLeft = ltr ? marginStart : marginEnd;
                 LayoutUnit marginLogicalRight = ltr ? marginEnd : marginStart;
                 LayoutUnit maxLeft = marginLogicalLeft > 0 ? max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
@@ -5449,7 +5458,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         }
         
         if (child->isFloating()) {
-            if (style()->floating() == LeftFloat)
+            if (styleToUse->floating() == LeftFloat)
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;

@@ -1,3 +1,48 @@
+2012-01-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Cache RenderStyle pointer as a method to avoid performance regression for region styling
+        https://bugs.webkit.org/show_bug.cgi?id=76265
+
+        Reviewed by David Hyatt.
+
+        No new tests since this is just refactoring.
+        When region styling was enabled in https://bugs.webkit.org/show_bug.cgi?id=71488,
+        it introduced a performance regression due to the change of RenderObject::style() method.
+        This patch tries to avoid a new performance regression when region styling will be enabled again.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthUsing):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        (WebCore::RenderBoxModelObject::updateBoxModelInfoFromStyle):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+
 2012-01-19  Kazuhiro Inaba  <kinaba@chromium.org>
 
         [Chromium] Random characters got rendered as empty boxes or with incorrect glyphs even when a font is present

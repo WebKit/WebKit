@@ -189,18 +189,19 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         m_knownToHaveNoOverflowAndNoFallbackFonts = false;
     }
 
+    RenderStyle* newStyle = style();
     bool needsResetText = false;
     if (!oldStyle) {
         updateNeedsTranscoding();
         needsResetText = m_needsTranscoding;
-    } else if (oldStyle->font().needsTranscoding() != style()->font().needsTranscoding() || (style()->font().needsTranscoding() && oldStyle->font().family().family() != style()->font().family().family())) {
+    } else if (oldStyle->font().needsTranscoding() != newStyle->font().needsTranscoding() || (newStyle->font().needsTranscoding() && oldStyle->font().family().family() != newStyle->font().family().family())) {
         updateNeedsTranscoding();
         needsResetText = true;
     }
 
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
-    if (needsResetText || oldTransform != style()->textTransform() || oldSecurity != style()->textSecurity()) {
+    if (needsResetText || oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()) {
         if (RefPtr<StringImpl> textToTransform = originalText())
             setText(textToTransform.release(), true);
     }
@@ -905,11 +906,12 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     m_hasBeginWS = false;
     m_hasEndWS = false;
 
-    const Font& f = style()->font(); // FIXME: This ignores first-line.
-    float wordSpacing = style()->wordSpacing();
+    RenderStyle* styleToUse = style();
+    const Font& f = styleToUse->font(); // FIXME: This ignores first-line.
+    float wordSpacing = styleToUse->wordSpacing();
     int len = textLength();
     const UChar* txt = characters();
-    LazyLineBreakIterator breakIterator(txt, len, style()->locale());
+    LazyLineBreakIterator breakIterator(txt, len, styleToUse->locale());
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -920,12 +922,12 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
-    float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(RenderBlock::constructTextRun(this, f, &space, 1, style())) : 0;
+    float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(RenderBlock::constructTextRun(this, f, &space, 1, styleToUse)) : 0;
 
     int firstGlyphLeftOverflow = -1;
 
-    bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
-    bool breakAll = (style()->wordBreak() == BreakAllWordBreak || style()->wordBreak() == BreakWordBreak) && style()->autoWrap();
+    bool breakNBSP = styleToUse->autoWrap() && styleToUse->nbspMode() == SPACE;
+    bool breakAll = (styleToUse->wordBreak() == BreakAllWordBreak || styleToUse->wordBreak() == BreakWordBreak) && styleToUse->autoWrap();
 
     for (int i = 0; i < len; i++) {
         UChar c = txt[i];
@@ -934,14 +936,14 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
         bool isNewline = false;
         if (c == '\n') {
-            if (style()->preserveNewline()) {
+            if (styleToUse->preserveNewline()) {
                 m_hasBreak = true;
                 isNewline = true;
                 isSpace = false;
             } else
                 isSpace = true;
         } else if (c == '\t') {
-            if (!style()->collapseWhiteSpace()) {
+            if (!styleToUse->collapseWhiteSpace()) {
                 m_hasTab = true;
                 isSpace = false;
             } else
@@ -954,7 +956,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
         if ((isSpace || isNewline) && i == len - 1)
             m_hasEndWS = true;
 
-        if (!ignoringSpaces && style()->collapseWhiteSpace() && previousCharacterIsSpace && isSpace)
+        if (!ignoringSpaces && styleToUse->collapseWhiteSpace() && previousCharacterIsSpace && isSpace)
             ignoringSpaces = true;
 
         if (ignoringSpaces && !isSpace)
@@ -976,7 +978,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
         bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP);
         bool betweenWords = true;
         int j = i;
-        while (c != '\n' && !isSpaceAccordingToStyle(c, style()) && c != '\t' && c != softHyphen) {
+        while (c != '\n' && !isSpaceAccordingToStyle(c, styleToUse) && c != '\t' && c != softHyphen) {
             j++;
             if (j == len)
                 break;
@@ -991,7 +993,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
         int wordLen = j - i;
         if (wordLen) {
-            bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style());
+            bool isSpace = (j < len) && isSpaceAccordingToStyle(c, styleToUse);
             float w;
             if (wordTrailingSpaceWidth && isSpace)
                 w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow) - wordTrailingSpaceWidth;
@@ -1009,8 +1011,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 lastWordBoundary = j;
             }
 
-            bool isCollapsibleWhiteSpace = (j < len) && style()->isCollapsibleWhiteSpace(c);
-            if (j < len && style()->autoWrap())
+            bool isCollapsibleWhiteSpace = (j < len) && styleToUse->isCollapsibleWhiteSpace(c);
+            if (j < len && styleToUse->autoWrap())
                 m_hasBreakableChar = true;
 
             // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
@@ -1048,7 +1050,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
-                    if (!style()->autoWrap())
+                    if (!styleToUse->autoWrap())
                         m_beginMinWidth = currMaxWidth;
                 }
 
@@ -1056,7 +1058,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                TextRun run = RenderBlock::constructTextRun(this, f, txt + i, 1, style());
+                TextRun run = RenderBlock::constructTextRun(this, f, txt + i, 1, styleToUse);
                 run.setCharactersLength(len - i);
                 ASSERT(run.charactersLength() >= run.length());
 
@@ -1081,10 +1083,10 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     m_minWidth = max(currMinWidth, m_minWidth);
     m_maxWidth = max(currMaxWidth, m_maxWidth);
 
-    if (!style()->autoWrap())
+    if (!styleToUse->autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style()->whiteSpace() == PRE) {
+    if (styleToUse->whiteSpace() == PRE) {
         if (firstLine)
             m_beginMinWidth = m_maxWidth;
         m_endMinWidth = currMaxWidth;
