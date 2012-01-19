@@ -2641,6 +2641,7 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 BUGWK73952 GPU : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
+BUGBSALOMON GPU : fast/canvas/arc360.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite-fill-repaint.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
@@ -2705,7 +2706,7 @@ BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
+BUGWK54322 SNOWLEOPARD CPU : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
@@ -3433,7 +3434,6 @@ BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU : fast/canvas/set-colors.html = TE
 BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
-BUGWK68437 LEOPARD GPU : fast/canvas/arc360.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
