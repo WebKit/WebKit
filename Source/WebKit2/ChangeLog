@@ -1,5 +1,16 @@
 2012-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebKit2 GTK+ API public headers are not installed
+        https://bugs.webkit.org/show_bug.cgi?id=76626
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Rename webkit2gtk_headers as
+        libwebkit2gtkinclude_HEADERS to match libwebkit2gtkincludedir so
+        that headers are installed during make install.
+
+2012-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add print-backgrounds setting to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=76616
 

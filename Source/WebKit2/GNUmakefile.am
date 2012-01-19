@@ -78,7 +78,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
-webkit2gtk_headers = \
+libwebkit2gtkinclude_HEADERS = \
+	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
@@ -1073,7 +1074,7 @@ generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-head
 
 BUILT_SOURCES += generate-webkit2-forwarding-headers
 
-$(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(webkit2gtk_headers)
+$(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(libwebkit2gtkinclude_HEADERS)
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \
 	&& ln -n -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
 
@@ -1123,7 +1124,7 @@ webkit2gtk_built_headers_dir := $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2
 $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h: stamp-webkit2enumtypes
 	@true
 
-stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
+stamp-webkit2enumtypes: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.am
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
 	&& glib-mkenums \
 			--fhead "#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)\n" \
@@ -1139,7 +1140,7 @@ stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
 			--fprod "#include <webkit2/@basename@>\n\n" \
 			--eprod "#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n\n" \
 			--eprod "WEBKIT_API GType\n@enum_name@_get_type(void);\n\n" \
-		$(webkit2gtk_headers) | \
+		$(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' | \
 		sed 's,WEBKIT_TYPE_KIT,WEBKIT_TYPE,' \
 		> xgen-gth \
@@ -1147,7 +1148,7 @@ stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
 	&& rm -f xgen-gth \
 	&& echo timestamp > $(@F)
 
-$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
+$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.am
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
 	&& glib-mkenums \
 			--fhead "#include <config.h>\n" \
@@ -1164,7 +1165,7 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(webkit2gtk_heade
 			--vtail "        type = g_@type@_register_static(\"@EnumName@\", _@enum_name@_values);\n\n" \
 			--vtail "    return type;\n}\n\n" \
 			--ftail "}\n" \
-		$(webkit2gtk_headers) | \
+		$(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' \
 		> xgen-gtc \
 	&& cp xgen-gtc $@ \
