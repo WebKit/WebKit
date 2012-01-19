@@ -139,8 +139,12 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     return request.release();
 }
 
-void CachedResourceRequest::willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse&)
+void CachedResourceRequest::willSendRequest(SubresourceLoader* loader, ResourceRequest& req, const ResourceResponse&)
 {
+    if (!m_cachedResourceLoader->checkInsecureContent(m_resource->type(), req.url())) {
+        loader->cancel();
+        return;
+    }
     m_resource->setRequestedFromNetworkingLayer();
 }
 
