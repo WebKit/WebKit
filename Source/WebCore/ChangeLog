@@ -1,3 +1,12 @@
+2012-01-19  Robert Hogan  <robert@webkit.org>
+
+        Fix Debug build after r105433
+
+        Unreviewed, build fix.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::recalcCollapsedBorders):
+
 2012-01-19  Andreas Kling  <awesomekling@apple.com>
 
         CSSStyleSelector: Factor 'isCacheable' flag out of MatchedResult.

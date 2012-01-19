@@ -456,7 +456,7 @@ void RenderTable::recalcCollapsedBorders()
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
                 if (!cell->isTableCell())
                     continue;
-                ASSERT(cell->table() == this);
+                ASSERT(toRenderTableCell(cell)->table() == this);
                 toRenderTableCell(cell)->collectBorderValues(m_collapsedBorders);
             }
         }
