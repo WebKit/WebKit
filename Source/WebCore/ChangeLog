@@ -1,3 +1,27 @@
+2012-01-19  Andreas Kling  <awesomekling@apple.com>
+
+        CSSStyleSelector: Factor 'isCacheable' flag out of MatchedResult.
+        <http://webkit.org/b/76376>
+
+        Reviewed by Antti Koivisto.
+
+        Break up the MatchResult struct into MatchResult and MatchRanges. The matched
+        declaration cache only needs the ranges, so we save 4 bytes per entry.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::CSSStyleSelector::findFromMatchedDeclarationCache):
+        (WebCore::CSSStyleSelector::addToMatchedDeclarationCache):
+        (WebCore::CSSStyleSelector::applyMatchedDeclarations):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::MatchRanges::MatchRanges):
+        (WebCore::CSSStyleSelector::MatchResult::MatchResult):
+
 2012-01-19  Eric Carlson  <eric.carlson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75192

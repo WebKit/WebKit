@@ -258,14 +258,19 @@ private:
     void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
     void addMatchedDeclaration(CSSMutableStyleDeclaration*, unsigned linkMatchType = SelectorChecker::MatchAll);
 
-    struct MatchResult {
-        MatchResult() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1), isCacheable(true) { }
+    struct MatchRanges {
+        MatchRanges() : firstUARule(-1), lastUARule(-1), firstAuthorRule(-1), lastAuthorRule(-1), firstUserRule(-1), lastUserRule(-1) { }
         int firstUARule;
         int lastUARule;
         int firstAuthorRule;
         int lastAuthorRule;
         int firstUserRule;
         int lastUserRule;
+    };
+
+    struct MatchResult {
+        MatchResult() : isCacheable(true) { }
+        MatchRanges ranges;
         bool isCacheable;
     };
     void matchAllRules(MatchResult&);
@@ -374,7 +379,7 @@ private:
     static unsigned computeDeclarationHash(MatchedStyleDeclaration*, unsigned size);
     struct MatchedStyleDeclarationCacheItem {
         Vector<MatchedStyleDeclaration> matchedStyleDeclarations;
-        MatchResult matchResult;
+        MatchRanges ranges;
         RefPtr<RenderStyle> renderStyle;
         RefPtr<RenderStyle> parentRenderStyle;
     };
@@ -437,8 +442,8 @@ private:
     friend class CSSStyleApplyProperty;
     friend bool operator==(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
     friend bool operator!=(const MatchedStyleDeclaration&, const MatchedStyleDeclaration&);
-    friend bool operator==(const MatchResult&, const MatchResult&);
-    friend bool operator!=(const MatchResult&, const MatchResult&);
+    friend bool operator==(const MatchRanges&, const MatchRanges&);
+    friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
 
 } // namespace WebCore

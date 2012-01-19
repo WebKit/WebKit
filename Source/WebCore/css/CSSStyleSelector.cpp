@@ -831,7 +831,7 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
 
     // Now we check user sheet rules.
     if (m_matchAuthorAndUserStyles)
-        matchRules(m_userStyle.get(), result.firstUserRule, result.lastUserRule, false);
+        matchRules(m_userStyle.get(), result.ranges.firstUserRule, result.ranges.lastUserRule, false);
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
@@ -842,9 +842,9 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
                 if (!attribute->decl())
                     continue;
                 ASSERT(attribute->isMappedAttribute());
-                result.lastAuthorRule = m_matchedDecls.size();
-                if (result.firstAuthorRule == -1)
-                    result.firstAuthorRule = result.lastAuthorRule;
+                result.ranges.lastAuthorRule = m_matchedDecls.size();
+                if (result.ranges.firstAuthorRule == -1)
+                    result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
                 addMatchedDeclaration(attribute->decl());
             }
         }
@@ -857,9 +857,9 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
             m_styledElement->additionalAttributeStyleDecls(additionalAttributeStyleDecls);
             if (!additionalAttributeStyleDecls.isEmpty()) {
                 unsigned additionalDeclsSize = additionalAttributeStyleDecls.size();
-                if (result.firstAuthorRule == -1)
-                    result.firstAuthorRule = m_matchedDecls.size();
-                result.lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
+                if (result.ranges.firstAuthorRule == -1)
+                    result.ranges.firstAuthorRule = m_matchedDecls.size();
+                result.ranges.lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
                 for (unsigned i = 0; i < additionalDeclsSize; ++i)
                     addMatchedDeclaration(additionalAttributeStyleDecls[i]);
                 result.isCacheable = false;
@@ -875,15 +875,15 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
     
     // Check the rules in author sheets next.
     if (m_matchAuthorAndUserStyles)
-        matchRules(m_authorStyle.get(), result.firstAuthorRule, result.lastAuthorRule, false);
+        matchRules(m_authorStyle.get(), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, false);
 
     // Now check our inline style attribute.
     if (m_matchAuthorAndUserStyles && m_styledElement) {
         CSSMutableStyleDeclaration* inlineDecl = m_styledElement->inlineStyleDecl();
         if (inlineDecl) {
-            result.lastAuthorRule = m_matchedDecls.size();
-            if (result.firstAuthorRule == -1)
-                result.firstAuthorRule = result.lastAuthorRule;
+            result.ranges.lastAuthorRule = m_matchedDecls.size();
+            if (result.ranges.firstAuthorRule == -1)
+                result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
             addMatchedDeclaration(inlineDecl);
             result.isCacheable = false;
         }
@@ -1210,17 +1210,17 @@ void CSSStyleSelector::matchUARules(MatchResult& result)
         result.isCacheable = false;
     RuleSet* userAgentStyleSheet = m_medium->mediaTypeMatchSpecific("print")
         ? defaultPrintStyle : defaultStyle;
-    matchRules(userAgentStyleSheet, result.firstUARule, result.lastUARule, false);
+    matchRules(userAgentStyleSheet, result.ranges.firstUARule, result.ranges.lastUARule, false);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
     if (!m_checker.strictParsing())
-        matchRules(defaultQuirksStyle, result.firstUARule, result.lastUARule, false);
+        matchRules(defaultQuirksStyle, result.ranges.firstUARule, result.ranges.lastUARule, false);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
     if (m_checker.document()->isViewSource()) {
         if (!defaultViewSourceStyle)
             loadViewSourceStyle();
-        matchRules(defaultViewSourceStyle, result.firstUARule, result.lastUARule, false);
+        matchRules(defaultViewSourceStyle, result.ranges.firstUARule, result.ranges.lastUARule, false);
     }
 }
 
@@ -1490,8 +1490,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     matchUARules(matchResult);
 
     if (m_matchAuthorAndUserStyles) {
-        matchRules(m_userStyle.get(), matchResult.firstUserRule, matchResult.lastUserRule, false);
-        matchRules(m_authorStyle.get(), matchResult.firstAuthorRule, matchResult.lastAuthorRule, false);
+        matchRules(m_userStyle.get(), matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
+        matchRules(m_authorStyle.get(), matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, false);
     }
 
     if (m_matchedDecls.isEmpty())
@@ -1834,14 +1834,14 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
 
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles)
-            matchRules(m_userStyle.get(), dummy.firstUserRule, dummy.lastUserRule, rulesToInclude & EmptyCSSRules);
+            matchRules(m_userStyle.get(), dummy.ranges.firstUserRule, dummy.ranges.lastUserRule, rulesToInclude & EmptyCSSRules);
     }
 
     if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules)) {
         m_sameOriginOnly = !(rulesToInclude & CrossOriginCSSRules);
 
         // Check the rules in author sheets.
-        matchRules(m_authorStyle.get(), dummy.firstAuthorRule, dummy.lastAuthorRule, rulesToInclude & EmptyCSSRules);
+        matchRules(m_authorStyle.get(), dummy.ranges.firstAuthorRule, dummy.ranges.lastAuthorRule, rulesToInclude & EmptyCSSRules);
 
         m_sameOriginOnly = false;
     }
@@ -2332,18 +2332,17 @@ unsigned CSSStyleSelector::computeDeclarationHash(MatchedStyleDeclaration* decla
     return StringHasher::hashMemory(declarations, sizeof(MatchedStyleDeclaration) * size);
 }
 
-bool operator==(const CSSStyleSelector::MatchResult& a, const CSSStyleSelector::MatchResult& b)
+bool operator==(const CSSStyleSelector::MatchRanges& a, const CSSStyleSelector::MatchRanges& b)
 {
     return a.firstUARule == b.firstUARule
         && a.lastUARule == b.lastUARule
         && a.firstAuthorRule == b.firstAuthorRule
         && a.lastAuthorRule == b.lastAuthorRule
         && a.firstUserRule == b.firstUserRule
-        && a.lastUserRule == b.lastUserRule
-        && a.isCacheable == b.isCacheable;
+        && a.lastUserRule == b.lastUserRule;
 }
 
-bool operator!=(const CSSStyleSelector::MatchResult& a, const CSSStyleSelector::MatchResult& b)
+bool operator!=(const CSSStyleSelector::MatchRanges& a, const CSSStyleSelector::MatchRanges& b)
 {
     return !(a == b);
 }
@@ -2375,7 +2374,7 @@ const CSSStyleSelector::MatchedStyleDeclarationCacheItem* CSSStyleSelector::find
         if (m_matchedDecls[i] != cacheItem.matchedStyleDeclarations[i])
             return 0;
     }
-    if (cacheItem.matchResult != matchResult)
+    if (cacheItem.ranges != matchResult.ranges)
         return 0;
     return &cacheItem;
 }
@@ -2391,7 +2390,7 @@ void CSSStyleSelector::addToMatchedDeclarationCache(const RenderStyle* style, co
     ASSERT(hash);
     MatchedStyleDeclarationCacheItem cacheItem;
     cacheItem.matchedStyleDeclarations.append(m_matchedDecls);
-    cacheItem.matchResult = matchResult;
+    cacheItem.ranges = matchResult.ranges;
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     cacheItem.renderStyle = RenderStyle::clone(style);
@@ -2445,9 +2444,9 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
     // and (4) normal important.
     m_lineHeightValue = 0;
     applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1, applyInheritedOnly);
-    applyDeclarations<true>(true, matchResult.firstAuthorRule, matchResult.lastAuthorRule, applyInheritedOnly);
-    applyDeclarations<true>(true, matchResult.firstUserRule, matchResult.lastUserRule, applyInheritedOnly);
-    applyDeclarations<true>(true, matchResult.firstUARule, matchResult.lastUARule, applyInheritedOnly);
+    applyDeclarations<true>(true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
+    applyDeclarations<true>(true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
+    applyDeclarations<true>(true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
 
     if (cacheItem && cacheItem->renderStyle->effectiveZoom() != m_style->effectiveZoom()) {
         m_fontDirty = true;
@@ -2466,16 +2465,16 @@ void CSSStyleSelector::applyMatchedDeclarations(const MatchResult& matchResult)
         applyInheritedOnly = false;
 
     // Now do the normal priority UA properties.
-    applyDeclarations<false>(false, matchResult.firstUARule, matchResult.lastUARule, applyInheritedOnly);
+    applyDeclarations<false>(false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
     
     // Cache our border and background so that we can examine them later.
     cacheBorderAndBackground();
     
     // Now do the author and user normal priority properties and all the !important properties.
-    applyDeclarations<false>(false, matchResult.lastUARule + 1, m_matchedDecls.size() - 1, applyInheritedOnly);
-    applyDeclarations<false>(true, matchResult.firstAuthorRule, matchResult.lastAuthorRule, applyInheritedOnly);
-    applyDeclarations<false>(true, matchResult.firstUserRule, matchResult.lastUserRule, applyInheritedOnly);
-    applyDeclarations<false>(true, matchResult.firstUARule, matchResult.lastUARule, applyInheritedOnly);
+    applyDeclarations<false>(false, matchResult.ranges.lastUARule + 1, m_matchedDecls.size() - 1, applyInheritedOnly);
+    applyDeclarations<false>(true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
+    applyDeclarations<false>(true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
+    applyDeclarations<false>(true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
     
     loadPendingImages();
     
