@@ -398,22 +398,10 @@ void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
     m_webPage->send(Messages::LayerTreeHostProxy::RemoveTileForLayer(layerID, tileID));
 }
 
-void LayerTreeHostQt::setVisibleContentRectForLayer(int layerID, const WebCore::IntRect& rect)
-{
-    WebGraphicsLayer* layer = WebGraphicsLayer::layerByID(layerID);
-    if (!layer)
-        return;
-    FloatRect visibleRect(rect);
-    layer->setVisibleContentRect(rect);
-}
-
 void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float scale)
 {
-    WebGraphicsLayer* layer = toWebGraphicsLayer(m_rootLayer.get());
-    if (!layer)
-        return;
-    layer->setContentsScale(scale);
-    toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRect(rect);
+    if (m_rootLayer)
+        toWebGraphicsLayer(m_rootLayer.get())->setVisibleContentRectAndScale(rect, scale);
 }
 
 void LayerTreeHostQt::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)

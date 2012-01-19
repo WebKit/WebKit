@@ -66,7 +66,6 @@ public:
     void createDirectlyCompositedImage(int64_t, const WebKit::ShareableBitmap::Handle&);
     void destroyDirectlyCompositedImage(int64_t);
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void setVisibleContentsRectForLayer(WebLayerID, const WebCore::IntRect&);
     void updateViewport();
 #endif
 

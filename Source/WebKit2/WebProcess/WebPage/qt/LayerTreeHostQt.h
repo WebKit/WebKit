@@ -69,7 +69,6 @@ public:
     virtual void createTile(WebLayerID, int tileID, const UpdateInfo&);
     virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&);
     virtual void removeTile(WebLayerID, int tileID);
-    virtual void setVisibleContentRectForLayer(int layerID, const WebCore::IntRect&);
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;

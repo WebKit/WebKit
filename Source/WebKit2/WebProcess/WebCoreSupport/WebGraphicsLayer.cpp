@@ -25,6 +25,7 @@
 
 #include "Animation.h"
 #include "BackingStore.h"
+#include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -40,8 +41,6 @@
 using namespace WebKit;
 
 namespace WebCore {
-
-static const float gTileDimension = 1024.0;
 
 static HashMap<WebLayerID, WebGraphicsLayer*>& layerByIDMap()
 {
@@ -108,7 +107,7 @@ bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
         return false;
     for (int i = 0; i < children.size(); ++i) {
         WebGraphicsLayer* child = toWebGraphicsLayer(children[i]);
-        child->setContentsScale(m_contentsScale);
+        child->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
         child->notifyChange();
     }
     notifyChange();
@@ -118,7 +117,7 @@ bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
 void WebGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
-    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
+    toWebGraphicsLayer(layer)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -126,7 +125,7 @@ void WebGraphicsLayer::addChild(GraphicsLayer* layer)
 void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
-    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
+    toWebGraphicsLayer(layer)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -134,7 +133,7 @@ void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
-    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
+    toWebGraphicsLayer(layer)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -142,7 +141,7 @@ void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* siblin
 void WebGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
-    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
+    toWebGraphicsLayer(layer)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -154,7 +153,7 @@ bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newC
         return false;
     notifyChange();
     toWebGraphicsLayer(oldChild)->notifyChange();
-    toWebGraphicsLayer(newChild)->setContentsScale(m_contentsScale);
+    toWebGraphicsLayer(newChild)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(newChild)->notifyChange();
     return true;
 }
@@ -369,7 +368,7 @@ void WebGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
     WebGraphicsLayer* webGraphicsLayer = toWebGraphicsLayer(layer);
     webGraphicsLayer->setLayerTreeTileClient(layerTreeTileClient());
     webGraphicsLayer->setMaskTarget(this);
-    webGraphicsLayer->setContentsScale(m_contentsScale);
+    webGraphicsLayer->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     webGraphicsLayer->notifyChange();
     notifyChange();
 
@@ -406,9 +405,6 @@ WebLayerID WebGraphicsLayer::id() const
 
 void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
 {
-    for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->syncCompositingState(rect);
-
     if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
         mask->syncCompositingStateForThisLayerOnly();
 
@@ -416,6 +412,9 @@ void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
         replica->syncCompositingStateForThisLayerOnly();
 
     syncCompositingStateForThisLayerOnly();
+
+    for (size_t i = 0; i < children().size(); ++i)
+        children()[i]->syncCompositingState(rect);
 }
 
 WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
@@ -433,6 +432,7 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     if (!m_modified)
         return;
 
+    computeTransformedVisibleRect();
     m_layerInfo.name = name();
     m_layerInfo.anchorPoint = anchorPoint();
     m_layerInfo.backfaceVisible = backfaceVisibility();
@@ -473,27 +473,6 @@ void WebGraphicsLayer::tiledBackingStorePaintBegin()
 {
 }
 
-void WebGraphicsLayer::setContentsScale(float scale)
-{
-    for (size_t i = 0; i < children().size(); ++i) {
-        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
-        layer->setContentsScale(scale);
-    }
-
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
-        mask->setContentsScale(scale);
-
-    m_contentsScale = scale;
-    if (m_mainBackingStore && m_mainBackingStore->contentsScale() == scale)
-        return;
-
-    notifyChange();
-
-    m_previousBackingStore = m_mainBackingStore.release();
-    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
-    m_mainBackingStore->setContentsScale(scale);
-}
-
 void WebGraphicsLayer::setRootLayer(bool isRoot)
 {
     m_layerInfo.isRootLayer = isRoot;
@@ -505,13 +484,25 @@ void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& t
     m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
 }
 
-void WebGraphicsLayer::setVisibleContentRect(const IntRect& rect)
+void WebGraphicsLayer::setVisibleContentRectAndScale(const IntRect& pageVisibleRect, float scale)
 {
-    m_visibleContentRect = rect;
-    notifyChange();
-    m_mainBackingStore->adjustVisibleRect();
+    if (m_pageVisibleRect == pageVisibleRect && m_contentsScale == scale)
+        return;
+
+    m_pageVisibleRect = pageVisibleRect;
+    m_contentsScale = scale;
+
+    if (!m_mainBackingStore || m_mainBackingStore->contentsScale() != scale) {
+        m_previousBackingStore = m_mainBackingStore.release();
+        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+        m_mainBackingStore->setContentsScale(scale);
+    } else
+        m_mainBackingStore->adjustVisibleRect();
+
     if (maskLayer())
-        toWebGraphicsLayer(maskLayer())->setVisibleContentRect(rect);
+        toWebGraphicsLayer(maskLayer())->setVisibleContentRectAndScale(pageVisibleRect, scale);
+    for (size_t i = 0; i < children().size(); ++i)
+        toWebGraphicsLayer(children()[i])->setVisibleContentRectAndScale(pageVisibleRect, scale);
 }
 
 void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
@@ -544,7 +535,14 @@ IntRect WebGraphicsLayer::tiledBackingStoreContentsRect()
 
 IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
 {
-    return m_visibleContentRect;
+    // Non-invertible layers are not visible.
+    if (!m_layerTransform.combined().isInvertible())
+        return IntRect();
+
+    // Return a projection of the visible rect (surface coordinates) onto the layer's plane (layer coordinates).
+    // The resulting quad might be squewed and the visible rect is the bounding box of this quad,
+    // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
+    return m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_pageVisibleRect)));
 }
 
 Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
@@ -674,6 +672,20 @@ void WebGraphicsLayer::setLayerTreeTileClient(WebKit::WebLayerTreeTileClient* cl
     if (m_layerTreeTileClient)
         m_layerTreeTileClient->didDeleteLayer(id());
     m_layerTreeTileClient = client;
+}
+
+void WebGraphicsLayer::computeTransformedVisibleRect()
+{
+    // FIXME: Consider transform animations in the visible rect calculation.
+    m_layerTransform.setLocalTransform(transform());
+    m_layerTransform.setPosition(position());
+    m_layerTransform.setAnchorPoint(anchorPoint());
+    m_layerTransform.setSize(size());
+    m_layerTransform.setFlattening(!preserves3D());
+    m_layerTransform.setChildrenTransform(childrenTransform());
+    m_layerTransform.combineTransforms(parent() ? toWebGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
+    // The combined transform will be used in tiledBackingStoreVisibleRect.
+    m_mainBackingStore->adjustVisibleRect();
 }
 #endif
 

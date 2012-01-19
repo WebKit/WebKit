@@ -166,7 +166,6 @@ public:
     void setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, void* bits, BitmapTexture::PixelFormat);
     void setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture*);
     void clearAllDirectlyCompositedImageTiles();
-    bool collectVisibleContentsRects(NodeRectMap&, const FloatRect&);
     void purgeNodeTexturesRecursive();
 #endif
     void setID(int id) { m_id = id; }
@@ -286,7 +285,6 @@ private:
         bool needsReset: 1;
         bool mightHaveOverlaps : 1;
         bool needsRepaint;
-        IntRect visibleRect;
         float contentScale;
 #if USE(TILED_BACKING_STORE)
         TileOwnership tileOwnership;

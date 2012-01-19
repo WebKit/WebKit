@@ -47,8 +47,12 @@
 #include <QDeclarativeEngine>
 #include <QFileDialog>
 #include <QtQuick/QQuickCanvas>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntRect.h>
 #include <WKOpenPanelResultListener.h>
 #include <wtf/text/WTFString.h>
+
+using namespace WebCore;
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
@@ -133,6 +137,7 @@ void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
     interactionEngine.reset(0);
     pageView->d->eventHandler->setViewportInteractionEngine(0);
     enableMouseEvents();
+    updateDesktopViewportSize();
 }
 
 void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
@@ -143,7 +148,7 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
-    updateViewportSize();
+    updateTouchViewportSize();
 }
 
 void QQuickWebViewPrivate::loadDidCommit()
@@ -317,7 +322,19 @@ void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* d
     emit q->experimental()->downloadRequested(downloadItem);
 }
 
-void QQuickWebViewPrivate::updateViewportSize()
+void QQuickWebViewPrivate::updateDesktopViewportSize()
+{
+    Q_Q(QQuickWebView);
+    QSize viewportSize = q->boundingRect().size().toSize();
+    pageView->setWidth(viewportSize.width());
+    pageView->setHeight(viewportSize.height());
+    // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
+    // wether its fixed or not. We still need to tell the drawing area which part of it
+    // has to be rendered on tiles, and in desktop mode it's all of it.
+    webPageProxy->drawingArea()->setVisibleContentsRectAndScale(IntRect(IntPoint(), viewportSize), 1);
+}
+
+void QQuickWebViewPrivate::updateTouchViewportSize()
 {
     Q_Q(QQuickWebView);
     QSize viewportSize = q->boundingRect().size().toSize();
@@ -1000,11 +1017,10 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     Q_D(QQuickWebView);
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
-        if (d->pageView->usesTraditionalDesktopBehaviour()) {
-            d->pageView->setWidth(newGeometry.width());
-            d->pageView->setHeight(newGeometry.height());
-        } else
-            d->updateViewportSize();
+        if (d->pageView->usesTraditionalDesktopBehaviour())
+            d->updateDesktopViewportSize();
+        else
+            d->updateTouchViewportSize();
     }
 }
 

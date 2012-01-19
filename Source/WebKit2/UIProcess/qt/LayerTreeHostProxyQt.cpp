@@ -184,7 +184,6 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
 
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    IntRect viewportRect(viewport[0], viewport[1], viewport[2], viewport[3]);
     m_textureMapper->setViewportSize(IntSize(viewport[2], viewport[3]));
     node->setTextureMapper(m_textureMapper.get());
     m_textureMapper->beginPainting();
@@ -197,20 +196,6 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     }
 
     node->paint();
-
-    TextureMapperNode::NodeRectMap nodeVisualContentsRectMap;
-    if (node->collectVisibleContentsRects(nodeVisualContentsRectMap, viewportRect)) {
-        TextureMapperNode::NodeRectMap::iterator endIterator = nodeVisualContentsRectMap.end();
-        for (TextureMapperNode::NodeRectMap::iterator it = nodeVisualContentsRectMap.begin(); it != endIterator; ++it) {
-            WebLayerID layerID = it->first->id();
-            // avoid updating non-synced root layer
-            if (!layerID)
-                continue;
-            IntRect visibleRect = IntRect(it->second);
-            setVisibleContentsRectForLayer(layerID, visibleRect);
-        }
-    }
-
     m_textureMapper->endPainting();
 
     if (node->descendantsOrSelfHaveRunningAnimations()) {
@@ -227,11 +212,6 @@ void LayerTreeHostProxy::didFireViewportUpdateTimer(Timer<LayerTreeHostProxy>*)
 void LayerTreeHostProxy::updateViewport()
 {
     m_drawingAreaProxy->updateViewport();
-}
-
-void LayerTreeHostProxy::setVisibleContentsRectForLayer(WebLayerID layerID, const IntRect& rect)
-{
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectForLayer(layerID, rect), m_drawingAreaProxy->page()->pageID());
 }
 
 int LayerTreeHostProxy::remoteTileIDToNodeTileID(int tileID) const

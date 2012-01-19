@@ -25,6 +25,7 @@
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "LayerTransform.h"
 #include "RunLoop.h"
 #include "ShareableBitmap.h"
 #include "TiledBackingStore.h"
@@ -94,7 +95,7 @@ public:
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const FloatRect&);
     void setContentsNeedsDisplay();
-    void setVisibleContentRect(const IntRect&);
+    void setVisibleContentRectAndScale(const IntRect&, float scale);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
     virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
@@ -132,7 +133,6 @@ public:
 
     bool isReadyForTileBufferSwap() const;
     void updateTileBuffersRecursively();
-    void setContentsScale(float);
     void updateContentBuffers();
     void purgeBackingStores();
     void recreateBackingStoreIfNeeded();
@@ -143,7 +143,8 @@ private:
     RefPtr<Image> m_image;
     GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
-    IntRect m_visibleContentRect;
+    IntRect m_pageVisibleRect;
+    LayerTransform m_layerTransform;
     bool m_needsDisplay : 1;
     bool m_modified : 1;
     bool m_contentNeedsDisplay : 1;
@@ -153,6 +154,8 @@ private:
     void notifyChange();
 
 #if USE(TILED_BACKING_STORE)
+    void computeTransformedVisibleRect();
+
     WebKit::WebLayerTreeTileClient* m_layerTreeTileClient;
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;

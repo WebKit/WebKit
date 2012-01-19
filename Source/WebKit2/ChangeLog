@@ -1,3 +1,52 @@
+2012-01-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Handle the layers visible rect calculation on the web process.
+        https://bugs.webkit.org/show_bug.cgi?id=74720
+
+        Reviewed by Noam Rosenthal.
+
+        The layers now get their visible rect on the web process through the
+        root layer when the UI process call setVisibleContentRectAndScale,
+        previously only used for the non-composited content layer.
+        The rect is then carried down the layers in the tree which apply it the inverse
+        of their transform before handing it to their tiled backing store.
+
+        This ensures that new layers get a proper visible rect right on creation,
+        and also that simultaneous visible rect and scale changes are applied synchronously.
+
+        This patch also uses clampedBoundsOfProjectedQuad instead of mapRect
+        to transform the visible rect correctly for 3D transformed layers.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initializeDesktop):
+        (QQuickWebViewPrivate::initializeTouch):
+        (QQuickWebViewPrivate::updateDesktopViewportSize):
+        (QQuickWebViewPrivate::updateTouchViewportSize):
+        (QQuickWebView::geometryChanged):
+        Make sure that the visible rect is updated for the desktop view as well.
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/LayerTreeHostProxy.h:
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::setMaskLayer):
+        (WebCore::WebGraphicsLayer::syncCompositingState):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::WebGraphicsLayer::setVisibleContentRectAndScale):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::WebGraphicsLayer::computeTransformedVisibleRect):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/LayerTreeHost.messages.in:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setVisibleContentRectAndScale):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+
 2012-01-18  Jon Lee  <jonlee@apple.com>
 
         Another build fix for r105364.

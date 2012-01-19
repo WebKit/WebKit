@@ -157,53 +157,6 @@ void TextureMapperNode::computeTiles()
         m_ownedTiles.remove(tilesToRemove[i]);
 }
 
-#if USE(TILED_BACKING_STORE)
-static void clampRect(IntRect& rect, int dimension)
-{
-    rect.shiftXEdgeTo(rect.x() - rect.x() % dimension);
-    rect.shiftYEdgeTo(rect.y() - rect.y() % dimension);
-    rect.shiftMaxXEdgeTo(rect.maxX() - rect.x() % dimension + dimension);
-    rect.shiftMaxYEdgeTo(rect.maxY() - rect.y() % dimension + dimension);
-}
-
-bool TextureMapperNode::collectVisibleContentsRects(NodeRectMap& rectMap, const FloatRect& rootVisibleRect)
-{
-    if (!m_state.visible)
-        return false;
-
-    bool exists = false;
-
-    for (int i = 0; i < m_children.size(); ++i)
-        exists = m_children[i]->collectVisibleContentsRects(rectMap, rootVisibleRect) || exists;
-    if (m_state.maskLayer)
-        exists = m_state.maskLayer->collectVisibleContentsRects(rectMap, rootVisibleRect) || exists;
-    if (m_state.replicaLayer)
-        exists = m_state.replicaLayer->collectVisibleContentsRects(rectMap, rootVisibleRect) || exists;
-
-    // Non-invertible layers are not visible.
-    if (!m_transform.combined().isInvertible())
-        return exists;
-
-    static const int tilingThreshold = 256;
-
-    IntRect visibleContentsRect(0, 0, m_size.width(), m_size.height());
-    if (m_size.width() > tilingThreshold || m_size.height() > tilingThreshold) {
-        IntRect visibleRectInLocalCoordinates = enclosingIntRect(TransformationMatrix(m_transform.combined()).inverse().mapRect(rootVisibleRect));
-        if (!visibleRectInLocalCoordinates.isEmpty())
-            clampRect(visibleRectInLocalCoordinates, gTileDimension);
-        visibleContentsRect.intersect(visibleRectInLocalCoordinates);
-    }
-
-    if (visibleContentsRect.isEmpty() || visibleContentsRect == m_state.visibleRect)
-        return exists;
-
-    m_state.visibleRect = visibleContentsRect;
-    rectMap.add(this, m_state.visibleRect);
-
-    return true;
-}
-#endif
-
 bool TextureMapperNode::hasMoreThanOneTile() const
 {
     int tiles = 0;
@@ -231,7 +184,6 @@ bool TextureMapperNode::hasMoreThanOneTile() const
 
     return false;
 }
-
 
 void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
 {

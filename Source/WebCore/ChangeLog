@@ -1,3 +1,15 @@
+2012-01-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Handle the layers visible rect calculation on the web process.
+        https://bugs.webkit.org/show_bug.cgi?id=74720
+
+        Reviewed by Noam Rosenthal.
+
+        Remove all visible rect calculation related code from TextureMapperNode.
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        * platform/graphics/texmap/TextureMapperNode.h:
+
 2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Improve focus switching in scripts panel.

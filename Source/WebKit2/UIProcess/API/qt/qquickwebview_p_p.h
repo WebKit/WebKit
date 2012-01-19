@@ -77,7 +77,8 @@ public:
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
     void didChangeBackForwardList();
 
-    void updateViewportSize();
+    void updateDesktopViewportSize();
+    void updateTouchViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
     void updateVisibleContentRectAndScale();
