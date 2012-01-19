@@ -66,6 +66,7 @@ function selectRange(id, start, end, expectedText) {
 
         var absStartPos = toAbsoluteCoordinates(startPos, element);
         var absEndPos = toAbsoluteCoordinates(endPos, element);
+        absEndPos.x -= 1;
 
         // Move to selection origin and hold down mouse
         eventSender.mouseMoveTo(absStartPos.x, absStartPos.y);
