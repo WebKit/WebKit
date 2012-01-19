@@ -1,4 +1,4 @@
-[Worker] Tests using resolveLocalFileSystemSyncURL to obtain an Entry from a URL
+[Worker] Tests using webkitResolveLocalFileSystemSyncURL to obtain an Entry from a URL
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
