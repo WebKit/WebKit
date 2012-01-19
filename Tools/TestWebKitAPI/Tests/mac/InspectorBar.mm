@@ -56,13 +56,19 @@ TEST(WebKit1, InspectorBarTest)
     RetainPtr<InspectorBarController> inspectorBarController(AdoptNS, [InspectorBarController new]);
 
     webView.get().frameLoadDelegate = inspectorBarController.get();
-    [webView.get().mainFrame loadHTMLString:@"<body contenteditable style=\"color: green\">Lorem ipsum sit amet</body>" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [webView.get().mainFrame loadHTMLString:@"<body contenteditable style=\"color: green\"><u>Lorem ipsum sit amet</u></body>" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&didFinishLoad);
 
     DOMDocument *document = webView.get().mainFrameDocument;
     [[document body] focus];
     [webView.get() selectAll:nil];
+    
+    NSAttributedString *attrString = [(NSView <NSTextInput> *)[[[webView.get() mainFrame] frameView] documentView] attributedSubstringFromRange:NSMakeRange(0, 5)];
+    NSDictionary *attributes = [attrString attributesAtIndex:0 effectiveRange:0];
+    
+    EXPECT_TRUE([[attributes objectForKey:NSUnderlineStyleAttributeName] intValue] != 0);
+
     [webView.get() changeAttributes:inspectorBarController.get()];
     
     DOMNode *currentNode = [document body];
@@ -71,6 +77,7 @@ TEST(WebKit1, InspectorBarTest)
 
     DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)currentNode pseudoElement:nil];
     EXPECT_WK_STREQ(@"rgb(0, 0, 0)", [style color]);
+    
 }
 
 } // namespace TestWebKitAPI

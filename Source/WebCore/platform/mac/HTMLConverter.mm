@@ -1693,6 +1693,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
         if (!renderer)
             continue;
         RenderStyle* style = renderer->style();
+        if (style->textDecorationsInEffect() & UNDERLINE)
+            [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
         NSFont *font = style->font().primaryFont()->getNSFont();
         [attrs.get() setObject:font forKey:NSFontAttributeName];
         if (style->visitedDependentColor(CSSPropertyColor).alpha())

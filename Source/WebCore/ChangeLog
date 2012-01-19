@@ -1,3 +1,16 @@
+2012-01-18  Enrica Casucci  <enrica@apple.com>
+
+        editingAttributedStringFromRange in WebHTMLConverter does not handle NSUnderlineStyleAttributeName.
+        https://bugs.webkit.org/show_bug.cgi?id=76588
+        <rdar://problem/9325183>
+
+        Reviewed by Dan Bernstein.
+
+        Added TestWebKitAPI test.
+
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+
 2012-01-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement screen resolution emulation backend
