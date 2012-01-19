@@ -1,3 +1,20 @@
+2012-01-18  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r88886): Tabs restore blank when running Safari with a nightly build for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=76587
+        <rdar://problem/9739135>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        Change CurrentSessionStateDataVersion back to 2.
+
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeString):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::encodeString):
+        Backport the CoreIPC string encoding and decoding functions that were in place prior to r88886.
+
 2012-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add a flag telling plug-in if it can enter sandbox

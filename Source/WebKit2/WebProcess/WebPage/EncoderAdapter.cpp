@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -83,7 +84,24 @@ void EncoderAdapter::encodeDouble(double value)
 
 void EncoderAdapter::encodeString(const String& value)
 {
-    m_encoder->encode(value);
+    // This mimics the CoreIPC binary encoding of Strings prior to r88886.
+    // Whenever the CoreIPC binary encoding changes, we'll have to "undo" the changes here.
+    // FIXME: We shouldn't use the CoreIPC binary encoding format for history,
+    // and we should come up with a migration strategy so we can actually bump the version number
+    // without breaking encoding/decoding of the history tree.
+
+    // Special case the null string.
+    if (value.isNull()) {
+        m_encoder->encodeUInt32(std::numeric_limits<uint32_t>::max());
+        return;
+    }
+
+    uint32_t length = value.length();
+    m_encoder->encode(length);
+
+    uint64_t lengthInBytes = length * sizeof(UChar);
+    m_encoder->encode(lengthInBytes);
+    m_encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.characters()), length * sizeof(UChar), __alignof(UChar)); 
 }
 
 }

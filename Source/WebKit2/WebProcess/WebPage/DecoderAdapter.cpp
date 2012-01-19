@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -83,7 +84,43 @@ bool DecoderAdapter::decodeDouble(double& value)
 
 bool DecoderAdapter::decodeString(String& value)
 {
-    return m_decoder.decode(value);
+    // This mimics the CoreIPC binary encoding of Strings prior to r88886.
+    // Whenever the CoreIPC binary encoding changes, we'll have to "undo" the changes here.
+    // FIXME: We shouldn't use the CoreIPC binary encoding format for history,
+    // and we should come up with a migration strategy so we can actually bump the version number
+    // without breaking encoding/decoding of the history tree.
+
+    uint32_t length;
+    if (!m_decoder.decode(length))
+        return false;
+
+    if (length == std::numeric_limits<uint32_t>::max()) {
+        // This is the null string.
+        value = String();
+        return true;
+    }
+
+    uint64_t lengthInBytes;
+    if (!m_decoder.decode(lengthInBytes))
+        return false;
+
+    if (lengthInBytes % sizeof(UChar) || lengthInBytes / sizeof(UChar) != length) {
+        m_decoder.markInvalid();
+        return false;
+    }
+
+    if (!m_decoder.bufferIsLargeEnoughToContain<UChar>(length)) {
+        m_decoder.markInvalid();
+        return false;
+    }
+
+    UChar* buffer;
+    String string = String::createUninitialized(length, buffer);
+    if (!m_decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), __alignof(UChar)))
+        return false;
+
+    value = string;
+    return true;
 }
 
 }
