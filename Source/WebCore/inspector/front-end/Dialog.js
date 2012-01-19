@@ -100,7 +100,8 @@ WebInspector.Dialog.prototype = {
 
         this._delegate.willHide();
 
-        WebInspector.setCurrentFocusElement(this._previousFocusElement);
+        if (this._element.isSelfOrAncestor(document.activeElement))
+            WebInspector.setCurrentFocusElement(this._previousFocusElement);
         delete WebInspector.Dialog._instance;
         document.body.removeChild(this._glassPaneElement);
         window.removeEventListener("resize", this._windowResizeHandler, true);

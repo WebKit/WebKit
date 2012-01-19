@@ -1,5 +1,22 @@
 2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Improve focus switching in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=76628
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Dialog.js:
+        (WebInspector.Dialog.prototype._hide):
+        * inspector/front-end/FilteredItemSelectionDialog.js:
+        (WebInspector.FilteredItemSelectionDialog.prototype.onEnter):
+        (WebInspector.JavaScriptOutlineDialog.prototype.selectItem):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype.get defaultFocusedElement):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showSourceLine):
+
+2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Add isSelfOrAnsector and isSelfOrDescendant methods to utilities.
         https://bugs.webkit.org/show_bug.cgi?id=76618
 

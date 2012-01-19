@@ -81,7 +81,7 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     get defaultFocusedElement()
     {
-        return this._navigatorScriptsTreeElement
+        return this._navigatorScriptsTreeElement;
     },
 
     /**
@@ -128,7 +128,7 @@ WebInspector.ScriptsNavigator.prototype = {
         this._tabbedPane.selectTab(uiSourceCode.isContentScript ? WebInspector.ScriptsNavigator.ContentScriptsTab : WebInspector.ScriptsNavigator.ScriptsTab);
 
         var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
-        scriptTreeElement.revealAndSelect();
+        scriptTreeElement.revealAndSelect(true);
     },
 
     /**

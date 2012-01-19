@@ -108,6 +108,8 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
     onEnter: function()
     {
+        if (!this._selectedElement)
+            return;
         this._delegate.selectItem(this._elementIndexes.get(this._selectedElement));
     },
 
@@ -561,6 +563,7 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         var lineNumber = this._functionItems[itemIndex].line;
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
+        this._view.focus();
         delete WebInspector.JavaScriptOutlineDialog._instance;
     },
 

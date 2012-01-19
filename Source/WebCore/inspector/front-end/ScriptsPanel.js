@@ -477,6 +477,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._showAndRevealInFileSelector(uiSourceCode);
         if (typeof lineNumber === "number")
             sourceFrame.highlightLine(lineNumber);
+        sourceFrame.focus();
     },
 
     /**
