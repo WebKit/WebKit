@@ -1,3 +1,17 @@
+2012-01-19  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76577
+        
+        Fix crash when nested line grids are used. Make sure to bail out if no line grid
+        is found rather than crashing.
+
+        Reviewed by Dan Bernstein.
+
+        Added fast/line-grid/line-grid-nested.html.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::establishLineGrid):
+
 2012-01-18  Enrica Casucci  <enrica@apple.com>
 
         editingAttributedStringFromRange in WebHTMLConverter does not handle NSUnderlineStyleAttributeName.

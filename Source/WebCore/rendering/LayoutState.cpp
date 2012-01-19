@@ -228,6 +228,8 @@ void LayoutState::establishLineGrid(RenderBlock* block)
             if (currentState->m_currentLineGrid == currentGrid)
                 continue;
             currentGrid = currentState->m_currentLineGrid;
+            if (!currentGrid)
+                break;
             if (currentGrid->style()->lineGrid() == block->style()->lineGrid()) {
                 m_currentLineGrid = currentGrid;
                 m_currentLineGridOffset = currentState->m_currentLineGridOffset;
