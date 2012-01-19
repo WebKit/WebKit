@@ -1,3 +1,18 @@
+2012-01-16  Jer Noble  <jer.noble@apple.com>
+
+        Crash at WebCore::MediaControlRootElement::makeOpaque + 97
+        https://bugs.webkit.org/show_bug.cgi?id=76391
+
+        Reviewed by John Sullivan.
+
+        No new tests; Speculative fix for crash.
+
+        Crash report data suggests this crash is occurring as the document is being
+        closed.  Check the nullity of document()->page() before deref-ing.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::makeOpaque):
+
 2012-01-19  Ken Buchanan <kenrb@chromium.org>
 
         Layout Test fast/text/international/spaces-combined-in-vertical-text.html is failing
