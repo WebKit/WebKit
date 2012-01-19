@@ -492,12 +492,8 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
         return width;
     }
 
-    RenderBox* contentRenderer = embeddedContentBox();
-    bool hasRelativeWidth = contentRenderer ? contentRenderer->style()->width().isPercent() : m_imageResource->imageHasRelativeWidth();
-    bool hasRelativeHeight = contentRenderer ? contentRenderer->style()->height().isPercent() : m_imageResource->imageHasRelativeHeight();
-
     IntSize containerSize;
-    if (hasRelativeWidth || hasRelativeHeight) {
+    if (m_imageResource->imageHasRelativeWidth() || m_imageResource->imageHasRelativeHeight()) {
         // Propagate the containing block size to the image resource, otherwhise we can't compute our own intrinsic size, if it's relative.
         RenderObject* containingBlock = isPositioned() ? container() : this->containingBlock();
         if (containingBlock->isBox()) {
@@ -523,14 +519,16 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
     return RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
 }
 
-void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const
+void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, float& intrinsicRatio, bool& isPercentageIntrinsicSize) const
 {
     // Assure this method is never used for SVGImages.
     ASSERT(!embeddedContentBox());
     isPercentageIntrinsicSize = false;
     CachedImage* cachedImage = m_imageResource ? m_imageResource->cachedImage() : 0;
-    if (cachedImage && cachedImage->image())
-        intrinsicRatio = cachedImage->image()->size();
+    if (!cachedImage || !cachedImage->image())
+        return;
+    intrinsicSize = cachedImage->image()->size();
+    intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
 }
 
 bool RenderImage::needsPreferredWidthsRecalculation() const

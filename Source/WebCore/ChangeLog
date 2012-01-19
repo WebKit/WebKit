@@ -1,3 +1,62 @@
+2012-01-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Differentiate between SVG/CSS width/height attributes/properties
+        https://bugs.webkit.org/show_bug.cgi?id=76447
+
+        Reviewed by Antti Koivisto.
+
+        Remove a gazillion of hacks out of our SVG implementation, by correctly differentiating between the
+        SVG width/height attributes and the CSS width/height properties. They need to be treated independently
+        when handling the intrinsic size negotiation, according to both CSS 2.1 & SVG 1.1 2nd Edition specs.
+
+        Fixes several bugs in the LayoutTests/svg/custom/*object*sizing tests, we now match Opera perfectly. FF still has some bugs, and IE9 as well.
+
+        * css/svg.css: Remove hardcoded, width/height: 100% on <svg>.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeIntrinsicRatioInformation): Make 'intrinsicRatio' a float, and add 'intrinsicSize' as seperated FloatSize, to avoid confusion.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions): Add forgotton case for percentage intrinsic sizes, that lead to workarounds in other places, that can now be removed.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedLogicalWidth): Directly use imageHasRelativeWidth/Height(), it does differentiate between SVG/CSS width/height attributes/properties now.
+        (WebCore::RenderImage::computeIntrinsicRatioInformation): Adapt to 'intrinsicRatio' argument change.
+        * rendering/RenderImage.h: Ditto.
+        * rendering/RenderReplaced.cpp: Refactor existing code, break out firstContainingBlockWithLogicalWidth/hasReplacedLogicalWidth/hasReplacedLogicalHeight/hasAutoHeightOrContainingBlockWithAutoHeight.
+        (WebCore::firstContainingBlockWithLogicalWidth): Refactored.
+        (WebCore::RenderReplaced::hasReplacedLogicalWidth): Refactored, and exported, so SVGSVGElement::widthAttributeEstablishesViewport() can use it.
+        (WebCore::hasAutoHeightOrContainingBlockWithAutoHeight): Refactored.
+        (WebCore::RenderReplaced::hasReplacedLogicalHeight): Refactored, and exported, so SVGSVGElement::heightAttributeEstablishesViewport() can use it.
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth): Adapt to 'intrinsicRatio' changes ('intrinsicSize' is now decoupled from it). Refactor so that RenderSVGRoot can directly use it as well!
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight): Ditto.
+        * rendering/RenderReplaced.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation): Only determine the intrinsic size & ratio using the SVG width/height attributes, not the CSS width/height properties, as it's specified.
+        (WebCore::resolveLengthAttributeForSVG): Helper function for computeReplacedLogicalWidth/Height, that scales Length values that come from SVG width/height attributes.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): Finally remove home-brewn size computation logic - it can be fully shared with RenderReplaced now that we inherit from it.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Ditto.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGViewportContainer.h:
+        (WebCore::RenderSVGViewportContainer::viewport): Export viewport() for easier length resolution.
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport): Finally clean up this hell, and make it easy to understand. Only need to resolve lengths against either RenderSVGRoot or RenderSVGViewportContainer now.
+        * svg/SVGSVGElement.cpp: 
+        (WebCore::SVGSVGElement::viewport): Remove wrong code and disable this. Its not used, and we have no test coverage for it. Its current implementation didn't make any sense.
+        (WebCore::SVGSVGElement::parseMappedAttribute): Remove hacks mapping SVG width/height attributes to CSS properties.
+        (WebCore::SVGSVGElement::svgAttributeChanged): Ditto.
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform): Refactored.
+        (WebCore::SVGSVGElement::currentViewBoxRect): Ditto.
+        (WebCore::SVGSVGElement::currentViewportSize): Ditto.
+        (WebCore::SVGSVGElement::widthAttributeEstablishesViewport): Main logic determining if the SVG or CSS properties establish the viewport -  a direct transliteration from the spec.
+        (WebCore::SVGSVGElement::heightAttributeEstablishesViewport): Ditto.
+        (WebCore::SVGSVGElement::intrinsicWidth): Helper.
+        (WebCore::SVGSVGElement::intrinsicHeight): Ditto.
+        * svg/SVGSVGElement.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::size): Cleanup code.
+        (WebCore::SVGImage::hasRelativeWidth): Added, avoids hacks in RenderBoxModelObject.
+        (WebCore::SVGImage::hasRelativeHeight): Ditto.
+        (WebCore::SVGImage::computeIntrinsicDimensions): Make use of new SVGSVGElement::computeIntrinsicDimensions.
+        * svg/graphics/SVGImage.h:
+
 2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         drop event isn't fired for contentEditable in edit drag

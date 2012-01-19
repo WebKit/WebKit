@@ -140,9 +140,15 @@ IntSize SVGImage::size() const
 
     // Assure that a container size is always given for a non-identity zoom level.
     ASSERT(renderer->style()->effectiveZoom() == 1);
-    IntSize size = enclosingIntRect(rootElement->currentViewBoxRect(SVGSVGElement::CalculateViewBoxInHostDocument)).size();
-    if (!size.isEmpty())
-        return size;
+
+    FloatSize currentSize;
+    if (rootElement->intrinsicWidth().isFixed() && rootElement->intrinsicHeight().isFixed())
+        currentSize = rootElement->currentViewportSize();
+    else
+        currentSize = rootElement->currentViewBoxRect().size();
+
+    if (!currentSize.isEmpty())
+        return IntSize(static_cast<int>(ceilf(currentSize.width())), static_cast<int>(ceilf(currentSize.height())));
 
     // As last resort, use CSS default intrinsic size.
     return IntSize(300, 150);
@@ -251,6 +257,28 @@ RenderBox* SVGImage::embeddedContentBox() const
     return toRenderBox(rootElement->renderer());
 }
 
+bool SVGImage::hasRelativeWidth() const
+{
+    if (!m_page)
+        return false;
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
+    if (!rootElement)
+        return false;
+    return rootElement->intrinsicWidth().isPercent();
+}
+
+bool SVGImage::hasRelativeHeight() const
+{
+    if (!m_page)
+        return false;
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
+    if (!rootElement)
+        return false;
+    return rootElement->intrinsicHeight().isPercent();
+}
+
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (!m_page)
@@ -259,14 +287,15 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
     SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return;
-    RenderBox* renderer = toRenderBox(rootElement->renderer());
-    if (!renderer)
+
+    intrinsicWidth = rootElement->intrinsicWidth();
+    intrinsicHeight = rootElement->intrinsicHeight();
+    if (rootElement->preserveAspectRatio().align() == SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
         return;
 
-    intrinsicWidth = renderer->style()->width();
-    intrinsicHeight = renderer->style()->height();
-    if (rootElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-        intrinsicRatio = rootElement->currentViewBoxRect().size();
+    intrinsicRatio = rootElement->viewBox().size();
+    if (intrinsicRatio.isEmpty() && intrinsicWidth.isFixed() && intrinsicHeight.isFixed())
+        intrinsicRatio = FloatSize(intrinsicWidth.calcFloatValue(0), intrinsicHeight.calcFloatValue(0));
 }
 
 NativeImagePtr SVGImage::nativeImageForCurrentFrame()
