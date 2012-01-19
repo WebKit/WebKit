@@ -1,3 +1,29 @@
+2012-01-19  Adam Barth  <abarth@webkit.org>
+
+        PerformanceTests's runner.js shouldn't be Parser-specific
+        https://bugs.webkit.org/show_bug.cgi?id=76670
+
+        Reviewed by Ryosuke Niwa.
+
+        This runner script is used by a bunch of difference performance tests.
+        It shouldn't be in the Parser directory anymore.
+
+        * Bindings/event-target-wrapper.html:
+        * Mutation/append-child-deep.html:
+        * Mutation/append-child.html:
+        * Mutation/inner-html.html:
+        * Mutation/remove-child-deep.html:
+        * Mutation/remove-child.html:
+        * Parser/html-parser.html:
+        * Parser/html5-full-render.html:
+        * Parser/resources/runner.js: Removed.
+        * Parser/simple-url.html:
+        * Parser/tiny-innerHTML.html:
+        * Parser/url-parser.html:
+        * Parser/xml-parser.html:
+        * resources: Added.
+        * resources/runner.js: Copied from PerformanceTests/Parser/resources/runner.js.
+
 2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some perf tests time out when ran by run-perf-tests
