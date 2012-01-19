@@ -34,7 +34,7 @@ use File::Basename;
 use Getopt::Long;
 use webkitdirs;
 
-sub makeTestRelativePathToSharedSources;
+sub makePathToSharedSources;
 sub openTestInEditor;
 sub writeTestFile;
 
@@ -72,19 +72,23 @@ openTestInEditor();
 
 exit 0;
 
-sub makeTestRelativePathToSharedSources
+sub makePathToSharedSources
 {
     my $layoutTestsPath = getcwd();
     $testAbsolutePath =~ m/^$layoutTestsPath/ or die "Path $testAbsolutePath is not in LayoutTests directory.\n";
-    my $result = File::Spec->abs2rel("fast/js/resources/", dirname($testAbsolutePath));
-    return $result;
+    my $isHTTPTest = $testAbsolutePath =~ m/^$layoutTestsPath\/http/;
+    if ($isHTTPTest) {
+        return "/js-test-resources";
+    } else {
+        return File::Spec->abs2rel("fast/js/resources/", dirname($testAbsolutePath));
+    }
 }
 
 sub writeTestFile
 {
     die "Test $testAbsolutePath already exists.\n" if (-e $testAbsolutePath);
 
-    my $relativePathToSharedSources = makeTestRelativePathToSharedSources();
+    my $pathToSharedSources = makePathToSharedSources();
 
     open TEST, ">", ${testAbsolutePath} or die "Cannot create test file at $testAbsolutePath.\n";
     print TEST << "EOF";
@@ -92,7 +96,7 @@ sub writeTestFile
 <html>
 <head>
 <meta charset="utf-8">
-<script src="$relativePathToSharedSources/js-test-pre.js"></script>
+<script src="$pathToSharedSources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
@@ -102,7 +106,7 @@ description("TEST DESCRIPTION HERE");
 // Your test script here. Feel free to modify surrounding HTML code if necessary.
 
 </script>
-<script src="$relativePathToSharedSources/js-test-post.js"></script>
+<script src="$pathToSharedSources/js-test-post.js"></script>
 </body>
 </html>
 EOF

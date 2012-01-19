@@ -1,3 +1,14 @@
+2012-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        make-new-script-test should work with HTTP tests
+        https://bugs.webkit.org/show_bug.cgi?id=76603
+
+        Reviewed by Adam Roben.
+
+        * Scripts/make-new-script-test:
+        (makePathToSharedSources): Renamed from makeTestRelativePathToSharedSources(), since it
+        now also creates absolute paths for HTTP.
+
 2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some perf tests time out when ran by run-perf-tests
