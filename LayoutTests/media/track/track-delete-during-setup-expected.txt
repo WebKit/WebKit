@@ -1,0 +1,7 @@
+>
+
+EXPECTED (track1.readyState == '0') OK
+EXPECTED (track1.track.mode == '0') OK
+
+END OF TEST
+

@@ -1,3 +1,25 @@
+2012-01-19  Eric Carlson  <eric.carlson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75192
+
+        Reviewed by Darin Adler.
+
+        Notify the media element when tracks are added to and removed from a document instead of
+        a tree because we don't want to trigger loading unless a track element is in the document.
+
+        Test: media/track/track-delete-during-setup.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::trackWasRemoved): Renamed from trackWillBeRemoved because it is
+            now called after removal.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedIntoDocument): Was insertedIntoTree. Use this instead
+            because we care about when a track is inserted and removed from a document, not a tree.
+        (WebCore::HTMLTrackElement::removedFromDocument): Ditto.
+        * html/HTMLTrackElement.h:
+
 2012-01-18  Robert Hogan  <robert@webkit.org>
 
         Hit ASSERTION FAILED: table()->collapseBorders() on techcrunch.com

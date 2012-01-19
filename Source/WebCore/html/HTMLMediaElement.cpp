@@ -2300,7 +2300,7 @@ void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
         scheduleLoad(TextTrackResource);
 }
 
-void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
+void HTMLMediaElement::trackWasRemoved(HTMLTrackElement* trackElement)
 {
     ASSERT(trackElement->hasTagName(trackTag));
 
@@ -2310,7 +2310,7 @@ void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
 #if !LOG_DISABLED
     if (trackElement->hasTagName(trackTag)) {
         KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::trackWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
+        LOG(Media, "HTMLMediaElement::trackWasRemoved - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
 

@@ -1,0 +1,41 @@
+        >
+
+        <script src=../media-file.js></script>
+<script></script>
+<script></script>
+<script>setTimeout("try { var v = document.querySelector('video'); v.parentNode.removeChild(v); } catch(e) {}", 61);</script>
+<meta><script src=../video-test.js></script>
+        <script>
+
+            {
+            }
+
+            function metadataTrackLoaded()
+            {
+                track2 = document.createElement('track');
+                video.appendChild(track2);
+                setTimeout("endTest()", 100);
+            }
+
+            function canplaythrough()
+            {
+                track1.track.mode = TextTrack.HIDDEN;
+                setTimeout("endTest()", 100);
+            }
+
+            function start()
+            {
+                consoleWrite("<feOffset>");
+                findMediaElement();
+
+                track1 = document.querySelectorAll('track')[0]; 
+                testExpected("track1.readyState", HTMLTrackElement.NONE);
+                testExpected("track1.track.mode", TextTrack.DISABLED);
+
+                video.src = findMediaFile("video", "../content/test");
+                consoleWrite("");
+            }
+        </script>
+    <body onload="start()">
+<command><aside><kbd><video oncanplaythrough="canplaythrough()" > 
+            <track src="captions-webvtt/metadata.vtt" onload="metadataTrackLoaded()">

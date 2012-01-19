@@ -204,7 +204,7 @@ public:
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
     virtual void trackWasAdded(HTMLTrackElement*);
-    virtual void trackWillBeRemoved(HTMLTrackElement*);
+    virtual void trackWasRemoved(HTMLTrackElement*);
     
     void configureTextTrack(HTMLTrackElement*);
     void configureTextTracks();

@@ -78,8 +78,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void attributeChanged(Attribute*, bool preserveDecls);
 
-    virtual void insertedIntoTree(bool);
-    virtual void willRemove();
+    virtual void insertedIntoDocument() OVERRIDE;
+    virtual void removedFromDocument() OVERRIDE;
     virtual bool isURLAttribute(Attribute*) const;
 
 #if ENABLE(MICRODATA)
