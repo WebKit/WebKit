@@ -1,3 +1,31 @@
+2012-01-19  Andreas Kling  <awesomekling@apple.com>
+
+        DynamicNodeList: Simplify internal Caches object.
+        <http://webkit.org/b/76600>
+
+        Reviewed by Ryosuke Niwa.
+
+        Move m_caches from DynamicSubtreeNodeList and ChildNodeList up into DynamicNodeList.
+        Remove the inheritance from RefCounted and store it simply as "Caches m_caches"
+        This avoids one heap allocation per DynamicNodeList. Also reordered the Caches members
+        to pack slightly better on 64-bit.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        * dom/ChildNodeList.h:
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::invalidateCache):
+        * dom/Node.cpp:
+        (WebCore::NodeRareData::clearChildNodeListCache):
+
 2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TabbedPane closeAllTabs does not close all tabs.

@@ -3007,7 +3007,7 @@ void NodeRareData::createNodeLists(Node* node)
 void NodeRareData::clearChildNodeListCache()
 {
     if (m_childNodeList)
-        m_childNodeList->reset();
+        m_childNodeList->invalidateCache();
 }
 
 } // namespace WebCore

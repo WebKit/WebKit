@@ -41,14 +41,10 @@ namespace WebCore {
         virtual unsigned length() const;
         virtual Node* item(unsigned index) const;
 
-        void reset() { m_caches->reset(); }
-
     protected:
         ChildNodeList(PassRefPtr<Node> rootNode);
 
         virtual bool nodeMatches(Element*) const;
-
-        mutable RefPtr<DynamicNodeList::Caches> m_caches;
     };
 
 } // namespace WebCore

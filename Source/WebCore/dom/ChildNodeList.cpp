@@ -29,7 +29,6 @@ namespace WebCore {
 
 ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
     : DynamicNodeList(node)
-    , m_caches(Caches::create())
 {
 }
 
@@ -40,15 +39,15 @@ ChildNodeList::~ChildNodeList()
 
 unsigned ChildNodeList::length() const
 {
-    if (m_caches->isLengthCacheValid)
-        return m_caches->cachedLength;
+    if (m_caches.isLengthCacheValid)
+        return m_caches.cachedLength;
 
     unsigned len = 0;
     for (Node* n = node()->firstChild(); n; n = n->nextSibling())
         len++;
 
-    m_caches->cachedLength = len;
-    m_caches->isLengthCacheValid = true;
+    m_caches.cachedLength = len;
+    m_caches.isLengthCacheValid = true;
 
     return len;
 }
@@ -58,27 +57,27 @@ Node* ChildNodeList::item(unsigned index) const
     unsigned int pos = 0;
     Node* n = node()->firstChild();
 
-    if (m_caches->isItemCacheValid) {
-        if (index == m_caches->lastItemOffset)
-            return m_caches->lastItem;
+    if (m_caches.isItemCacheValid) {
+        if (index == m_caches.lastItemOffset)
+            return m_caches.lastItem;
         
-        int diff = index - m_caches->lastItemOffset;
+        int diff = index - m_caches.lastItemOffset;
         unsigned dist = abs(diff);
         if (dist < index) {
-            n = m_caches->lastItem;
-            pos = m_caches->lastItemOffset;
+            n = m_caches.lastItem;
+            pos = m_caches.lastItemOffset;
         }
     }
 
-    if (m_caches->isLengthCacheValid) {
-        if (index >= m_caches->cachedLength)
+    if (m_caches.isLengthCacheValid) {
+        if (index >= m_caches.cachedLength)
             return 0;
 
         int diff = index - pos;
         unsigned dist = abs(diff);
-        if (dist > m_caches->cachedLength - 1 - index) {
+        if (dist > m_caches.cachedLength - 1 - index) {
             n = node()->lastChild();
-            pos = m_caches->cachedLength - 1;
+            pos = m_caches.cachedLength - 1;
         }
     }
 
@@ -95,9 +94,9 @@ Node* ChildNodeList::item(unsigned index) const
     }
 
     if (n) {
-        m_caches->lastItem = n;
-        m_caches->lastItemOffset = pos;
-        m_caches->isItemCacheValid = true;
+        m_caches.lastItem = n;
+        m_caches.lastItemOffset = pos;
+        m_caches.isItemCacheValid = true;
         return n;
     }
 

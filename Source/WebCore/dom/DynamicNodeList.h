@@ -25,7 +25,6 @@
 #define DynamicNodeList_h
 
 #include "NodeList.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -36,18 +35,6 @@ class Node;
 
 class DynamicNodeList : public NodeList {
 public:
-    struct Caches : RefCounted<Caches> {
-        static PassRefPtr<Caches> create();
-        void reset();
-        
-        unsigned cachedLength;
-        Node* lastItem;
-        unsigned lastItemOffset;
-        bool isLengthCacheValid : 1;
-        bool isItemCacheValid : 1;
-    protected:
-        Caches();
-    };
     DynamicNodeList(PassRefPtr<Node> node)
         : m_node(node)
     { }
@@ -61,8 +48,28 @@ public:
     // Other methods (not part of DOM)
     Node* node() const { return m_node.get(); }
 
+    void invalidateCache() { m_caches.reset(); }
+
 protected:
     virtual bool nodeMatches(Element*) const = 0;
+
+    struct Caches {
+        Caches() { reset(); }
+        void reset()
+        {
+            lastItem = 0;
+            isLengthCacheValid = false;
+            isItemCacheValid = false;
+        }
+
+        Node* lastItem;
+        unsigned cachedLength;
+        unsigned lastItemOffset;
+        bool isLengthCacheValid : 1;
+        bool isItemCacheValid : 1;
+    };
+
+    mutable Caches m_caches;
     RefPtr<Node> m_node;
 
 private:
@@ -74,12 +81,10 @@ public:
     virtual ~DynamicSubtreeNodeList();
     virtual unsigned length() const OVERRIDE;
     virtual Node* item(unsigned index) const OVERRIDE;
-    void invalidateCache();
     Node* rootNode() const { return node(); }
 
 protected:
     DynamicSubtreeNodeList(PassRefPtr<Node> rootNode);
-    mutable RefPtr<Caches> m_caches;
 
 private:
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;

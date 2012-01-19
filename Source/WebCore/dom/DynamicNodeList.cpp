@@ -30,7 +30,6 @@ namespace WebCore {
 
 DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node)
     : DynamicNodeList(node)
-    , m_caches(Caches::create())
 {
     rootNode()->registerDynamicSubtreeNodeList(this);
 }
@@ -42,16 +41,16 @@ DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
 
 unsigned DynamicSubtreeNodeList::length() const
 {
-    if (m_caches->isLengthCacheValid)
-        return m_caches->cachedLength;
+    if (m_caches.isLengthCacheValid)
+        return m_caches.cachedLength;
 
     unsigned length = 0;
 
     for (Node* n = node()->firstChild(); n; n = n->traverseNextNode(rootNode()))
         length += n->isElementNode() && nodeMatches(static_cast<Element*>(n));
 
-    m_caches->cachedLength = length;
-    m_caches->isLengthCacheValid = true;
+    m_caches.cachedLength = length;
+    m_caches.isLengthCacheValid = true;
 
     return length;
 }
@@ -62,9 +61,9 @@ Node* DynamicSubtreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offs
     for (Node* n = start; n; n = n->traverseNextNode(rootNode())) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
-                m_caches->lastItem = n;
-                m_caches->lastItemOffset = offset;
-                m_caches->isItemCacheValid = true;
+                m_caches.lastItem = n;
+                m_caches.lastItemOffset = offset;
+                m_caches.isItemCacheValid = true;
                 return n;
             }
             --remainingOffset;
@@ -80,9 +79,9 @@ Node* DynamicSubtreeNodeList::itemBackwardsFromCurrent(Node* start, unsigned off
     for (Node* n = start; n; n = n->traversePreviousNode(rootNode())) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
-                m_caches->lastItem = n;
-                m_caches->lastItemOffset = offset;
-                m_caches->isItemCacheValid = true;
+                m_caches.lastItem = n;
+                m_caches.lastItemOffset = offset;
+                m_caches.isItemCacheValid = true;
                 return n;
             }
             ++remainingOffset;
@@ -96,12 +95,12 @@ Node* DynamicSubtreeNodeList::item(unsigned offset) const
 {
     int remainingOffset = offset;
     Node* start = node()->firstChild();
-    if (m_caches->isItemCacheValid) {
-        if (offset == m_caches->lastItemOffset)
-            return m_caches->lastItem;
-        else if (offset > m_caches->lastItemOffset || m_caches->lastItemOffset - offset < offset) {
-            start = m_caches->lastItem;
-            remainingOffset -= m_caches->lastItemOffset;
+    if (m_caches.isItemCacheValid) {
+        if (offset == m_caches.lastItemOffset)
+            return m_caches.lastItem;
+        if (offset > m_caches.lastItemOffset || m_caches.lastItemOffset - offset < offset) {
+            start = m_caches.lastItem;
+            remainingOffset -= m_caches.lastItemOffset;
         }
     }
 
@@ -130,30 +129,6 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     }
 
     return 0;
-}
-
-void DynamicSubtreeNodeList::invalidateCache()
-{
-    m_caches->reset();
-}
-
-DynamicSubtreeNodeList::Caches::Caches()
-    : lastItem(0)
-    , isLengthCacheValid(false)
-    , isItemCacheValid(false)
-{
-}
-
-PassRefPtr<DynamicSubtreeNodeList::Caches> DynamicSubtreeNodeList::Caches::create()
-{
-    return adoptRef(new Caches());
-}
-
-void DynamicSubtreeNodeList::Caches::reset()
-{
-    lastItem = 0;
-    isLengthCacheValid = false;
-    isItemCacheValid = false;     
 }
 
 } // namespace WebCore
