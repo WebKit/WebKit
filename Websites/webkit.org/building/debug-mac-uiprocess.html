@@ -1,0 +1,36 @@
+<?php
+    $title = "Debugging UIProcess on Mac OS X";
+    include("../header.inc");
+?>
+
+<div class="mac-instructions">
+<h2>Debugging UIProcess on Mac OS X</h2>
+<ol>
+<li><p>Open the WebKit2 Xcode project</p></li>
+</ol>
+<p>Note, the Xcode project file depends on the build location specified in the project itself. In Xcode 4, choose Xcode > Preferences > Locations, click Locations, click the Advanced button, and ensure that the build location is Locations Specified by Targets.</p>
+<ol start="2">
+<li><p>Set the project's build products location</p>
+<p>To find the WebKit you built, Xcode needs to know the build products location that <code>build-webkit</code> used. You can set the build products location in the project's build settings editor.</p>
+<img src="build-settings-tab-xcode4.png" alt="Build products location">
+</li>
+<li><p>Set the project's active scheme</p>
+<p>Xcode also needs to know the build configuration you used. You can set the active scheme from the workspace window.</p>
+<img src="active-scheme-xcode4.png" alt="Scheme pop-up menu">
+</li>
+<li><p>Add Safari to the project's active scheme</p>
+<p>Choose Edit Scheme from scheme pop-up menu. In the leftmost pane of the window, choose Run. In the Info pane, choose Other from the Executable pop-up menu. Then select /Applications/Safari.app.</p>
+<img src="custom-executable-xcode4.png" alt="Edit Scheme sheet">
+</li>
+<li><p>Launch the debugger</p>
+<p>In the workspace window, click the Run button.</p>
+<img src="run-xcode4.png" alt="Run button">
+</li>
+<li><p>See the <a href="http://developer.apple.com/library/mac/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/Debugging/Debugging.html#//apple_ref/doc/uid/TP40010215-CH3-SW1">Xcode Debugging Guide</a> for more information on using Xcode to debug software on Mac OS X.</p>
+</li>
+</ol>
+</div>
+
+<?php
+    include("../footer.inc");
+?>

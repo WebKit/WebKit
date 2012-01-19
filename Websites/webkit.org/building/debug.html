@@ -5,35 +5,24 @@
 
 <div class="mac-instructions">
 <h2>Debugging on Mac OS X</h2>
+<p>Safari 5.1 shipped
+<p>Each WebKit component -- JavaScriptCore, WebCore, and WebKit2 -- contains its own Xcode project that depends on the build location specified in the project itself. In Xcode 4, choose Xcode > Preferences > Locations, click Locations, click the Advanced button, and ensure that the build location is Locations Specified by Targets.</p>
+<h3>Debugging UIProcess</h3>
+<p>Follow the instructions on the <a href="debug-mac-uiprocess.html">debugging UIProcess</a> page.</p>
+<h3>Debugging WebProcess</h3>
 <ol>
+<li><p>Launch Safari</p>
+<p>Follow the instructions on <a href="run.html">Running WebKit</a> to launch Safari from the command line with the WebKit version you built. Alternatively you can <a href="debug-mac-uiprocess.html">use the WebKit2 Xcode project to launch Safari</a>.</p>
+</li>
 <li><p>Open a project</p>
-<p>Each WebKit component -- JavaScriptCore, WebCore, and WebKit -- contains its own Xcode project. Open the project belonging to the component you want to debug.</p>
-</li>
-<li><p>Set the project's build products location</p>
-<p>To find the WebKit you built, Xcode needs to know the build products location that <code>build-webkit</code> used. You can set the build products location from the project's Info window.</p>
-<img src="info-tab.png">
-</li>
-<li><p>Set the project's active build configuration</p>
-<p>Xcode also needs to know the build configuration you used. You can set the active build configuration from the project's Build window.</p>
-<img src="build-window.png">
-</li>
-<li><p>Add a custom executable to the project</p>
-<p>Choose any WebKit application you want to use for debugging. To use Safari, select /Applications/Safari.app.</p>
-<img src="custom-executable.png">
-</li>
-<li><p>Set the project's active executable</p>
-<p>You can set the active executable from the project's Build window. Choose the executable you just added.</p>
-</li>
-<li><p>Close and re-open the project</p>
-<p>This will force Xcode to discover generated source files, which output to your build products location, allowing you to set breakpoints in them.</p>
-</li>
-<li><p>Launch the debugger</p>
-<p>In the Debugger window, click the "Debug" button.</p>
-<img src="debug.png">
-</li>
-<li><p>See the <a href="http://developer.apple.com/documentation/DeveloperTools/Conceptual/XcodeDebugging/index.html">Xcode Debugging Guide</a> for more information on using Xcode to debug software on Mac OS X.</p>
+<p>Open the Xcode project belonging to the component -- WebCore or JavaScriptCore -- you want to debug.</p>
 </li>
 </ol>
+<li><p>Attach to WebProcess</p>
+<p>Choose Product > Attach to Process > WebProcess.</p>
+</li>
+<li><p>See the <a href="http://developer.apple.com/library/mac/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/Debugging/Debugging.html#//apple_ref/doc/uid/TP40010215-CH3-SW1">Xcode Debugging Guide</a> for more information on using Xcode to debug software on Mac OS X.</p>
+</li>
 </div>
 <div class="windows-instructions">
 <h2>Debugging on Windows</h2>

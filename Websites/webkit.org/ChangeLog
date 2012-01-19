@@ -1,3 +1,23 @@
+2012-01-19  Daniel Bates  <dbates@webkit.org>
+
+        Update Debugging on Mac OS X instructions for Safari 5.1/WebKit 2
+        https://bugs.webkit.org/show_bug.cgi?id=67102
+
+        Reviewed by Eric Seidel.
+
+        Add instructions for debugging UIProcess and WebProcess using Xcode 4.
+
+        * building/active-scheme-xcode4.png: Added.
+        * building/build-settings-tab-xcode4.png: Added.
+        * building/build-window.png: Removed.
+        * building/custom-executable-xcode4.png: Added.
+        * building/custom-executable.png: Removed.
+        * building/debug-mac-uiprocess.html: Added.
+        * building/debug.html:
+        * building/debug.png: Removed.
+        * building/info-tab.png: Removed.
+        * building/run-xcode4.png: Added.
+
 2012-01-11  Antti Koivisto  <antti@apple.com>
 
         Remove S60 reference from webkit.org
