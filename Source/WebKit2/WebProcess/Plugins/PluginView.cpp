@@ -712,16 +712,21 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    if (m_plugin->wantsWindowRelativeCoordinates()) {
-        // Get the frame rect in window coordinates.
-        IntRect rect = parent()->contentsToWindow(frameRect());
+    ASSERT(frame());
+    float pageScaleFactor = frame()->pageScaleFactor();
 
+    if (m_plugin->wantsWindowRelativeCoordinates()) {
+        IntPoint location = IntPoint(frameRect().x() * pageScaleFactor, frameRect().y() * pageScaleFactor);
+        
+        // Get the frame rect in window coordinates.
+        IntPoint locationInWindowCoordinates = parent()->contentsToWindow(location);
+        
+        IntPoint scaledLocationInWindowCoordinates = IntPoint(locationInWindowCoordinates.x() / pageScaleFactor, locationInWindowCoordinates.y() / pageScaleFactor);
+        IntRect rect = IntRect(scaledLocationInWindowCoordinates, frameRect().size());
+        
         // The clip rect isn't correct here.
         m_plugin->deprecatedGeometryDidChange(rect, rect);
     }
-
-    ASSERT(frame());
-    float pageScaleFactor = frame()->pageScaleFactor();
 
     IntPoint scaledFrameRectLocation(frameRect().location().x() * pageScaleFactor, frameRect().location().y() * pageScaleFactor);
     IntPoint scaledLocationInRootViewCoordinates(parent()->contentsToRootView(scaledFrameRectLocation));
