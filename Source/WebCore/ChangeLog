@@ -1,3 +1,26 @@
+2012-01-19  Kazuhiro Inaba  <kinaba@chromium.org>
+
+        [Chromium] Random characters got rendered as empty boxes or with incorrect glyphs even when a font is present
+        https://bugs.webkit.org/show_bug.cgi?id=76508
+
+        Reviewed by Kent Tamura.
+
+        Wrapped GetGlyphIndices() API calls so that when they failed we trigger font
+        loading outside the sandbox and retry the call.
+
+        No new auto tests since the bug involves the system's occasional cache behavior
+        and thus there's no reliable way to reproduce and test the situation.
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::getGlyphIndices):
+        GDI call wrapper ensuring fonts to be loaded.
+        (WebCore::initSpaceGlyph):
+        Changed to use the wrapper function.
+        (WebCore::fillBMPGlyphs):
+        Changed to use the wrapper function.
+        Introduced scoped HDC management by HWndDC.
+        (WebCore::GlyphPage::fill):
+
 2012-01-19  Adam Barth  <abarth@webkit.org>
 
         createAttributeNS should understand that "xmlns" is allowed in the http://www.w3.org/2000/xmlns/

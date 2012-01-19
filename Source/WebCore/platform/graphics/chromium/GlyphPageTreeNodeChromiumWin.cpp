@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (c) 2008, 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,7 @@
 
 #include "Font.h"
 #include "GlyphPageTreeNode.h"
+#include "HWndDC.h"
 #include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include "SystemInfo.h"
@@ -49,15 +50,27 @@ static void fillEmptyGlyphs(GlyphPage* page)
         page->setGlyphDataForIndex(i, 0, 0);
 }
 
-// Lazily initializes space glyph
-static Glyph initSpaceGlyph(HDC dc, Glyph* spaceGlyph)
+// Convert characters to glyph ids by GetGlyphIndices(), during which, we
+// ensure the font is loaded in memory to make it work in a sandboxed process.
+static bool getGlyphIndices(HFONT font, HDC dc, const UChar* characters, unsigned charactersLength, WORD* glyphBuffer, DWORD flag)
 {
-    if (*spaceGlyph)
-        return *spaceGlyph;
+    if (GetGlyphIndices(dc, characters, charactersLength, glyphBuffer, flag) != GDI_ERROR)
+        return true;
+    if (PlatformSupport::ensureFontLoaded(font)) {
+        if (GetGlyphIndices(dc, characters, charactersLength, glyphBuffer, flag) != GDI_ERROR)
+            return true;
+        // FIXME: Handle gracefully the error if this call also fails.
+        // See http://crbug.com/6401
+        LOG_ERROR("Unable to get the glyph indices after second attempt");
+    }
+    return false;
+}
 
+// Initializes space glyph
+static bool initSpaceGlyph(HFONT font, HDC dc, Glyph* spaceGlyph)
+{
     static wchar_t space = ' ';
-    GetGlyphIndices(dc, &space, 1, spaceGlyph, 0);
-    return *spaceGlyph;
+    return getGlyphIndices(font, dc, &space, 1, spaceGlyph, 0);
 }
 
 // Fills |length| glyphs starting at |offset| in a |page| in the Basic 
@@ -68,27 +81,25 @@ static bool fillBMPGlyphs(unsigned offset,
                           unsigned length,
                           UChar* buffer,
                           GlyphPage* page,
-                          const SimpleFontData* fontData,
-                          bool recurse)
+                          const SimpleFontData* fontData)
 {
-    HDC dc = GetDC((HWND)0);
+    HWndDC dc((HWND)0);
     HGDIOBJ oldFont = SelectObject(dc, fontData->platformData().hfont());
 
     TEXTMETRIC tm = {0};
     if (!GetTextMetrics(dc, &tm)) {
-        SelectObject(dc, oldFont);
-        ReleaseDC(0, dc);
+        if (PlatformSupport::ensureFontLoaded(fontData->platformData().hfont())) {
+            if (!GetTextMetrics(dc, &tm)) {
+                // FIXME: Handle gracefully the error if this call also fails.
+                // See http://crbug.com/6401
+                LOG_ERROR("Unable to get the text metrics after second attempt");
 
-        if (recurse) {
-            if (PlatformSupport::ensureFontLoaded(fontData->platformData().hfont()))
-                return fillBMPGlyphs(offset, length, buffer, page, fontData, false);
-
-            fillEmptyGlyphs(page);
-            return false;
+                SelectObject(dc, oldFont);
+                fillEmptyGlyphs(page);
+                return false;
+            }
         } else {
-            // FIXME: Handle gracefully the error if this call also fails.
-            // See http://crbug.com/6401
-            LOG_ERROR("Unable to get the text metrics after second attempt");
+            SelectObject(dc, oldFont);
             fillEmptyGlyphs(page);
             return false;
         }
@@ -128,7 +139,11 @@ static bool fillBMPGlyphs(unsigned offset,
     // Also according to Jungshik and Hironori's suggestion and modification
     // we treat turetype and raster Font as different way when windows version
     // is less than Vista.
-    GetGlyphIndices(dc, buffer, length, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+    if (!getGlyphIndices(fontData->platformData().hfont(), dc, buffer, length, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS)) {
+        SelectObject(dc, oldFont);
+        fillEmptyGlyphs(page);
+        return false;
+    }
 
     // Copy the output to the GlyphPage
     bool haveGlyphs = false;
@@ -138,6 +153,7 @@ static bool fillBMPGlyphs(unsigned offset,
         invalidGlyph = 0x1F;
 
     Glyph spaceGlyph = 0;  // Glyph for a space. Lazily filled.
+    bool spaceGlyphInitialized = false;
 
     for (unsigned i = 0; i < length; i++) {
         UChar c = buffer[i];
@@ -149,7 +165,12 @@ static bool fillBMPGlyphs(unsigned offset,
         if (Font::treatAsSpace(c)) {
             // Hard code the glyph indices for characters that should be
             // treated like spaces.
-            glyph = initSpaceGlyph(dc, &spaceGlyph);
+            if (!spaceGlyphInitialized) {
+                // If initSpaceGlyph fails, spaceGlyph stays 0 (= glyph is not present).
+                initSpaceGlyph(fontData->platformData().hfont(), dc, &spaceGlyph);
+                spaceGlyphInitialized = true;
+            }
+            glyph = spaceGlyph;
         } else if (glyph == invalidGlyph) {
             // WebKit expects both the glyph index and FontData
             // pointer to be 0 if the glyph is not present
@@ -161,7 +182,6 @@ static bool fillBMPGlyphs(unsigned offset,
     }
 
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
     return haveGlyphs;
 }
 
@@ -222,7 +242,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* characterBuffer,
     // FIXME: Add assertions to make sure that buffer is entirely in BMP
     // or entirely in non-BMP. 
     if (bufferLength == length)
-        return fillBMPGlyphs(offset, length, characterBuffer, this, fontData, true);
+        return fillBMPGlyphs(offset, length, characterBuffer, this, fontData);
 
     if (bufferLength == 2 * length) {
         // A non-BMP input buffer will be twice as long as output glyph buffer
