@@ -26,6 +26,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -330,6 +331,8 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->style()->setHeight(Length());
         containerRenderer->style()->setWidth(Length());
     }
+    if (HTMLElement* placeholder = inputElement()->placeholderElement())
+        placeholder->ensureInlineStyleDecl()->setProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
     setHasOverflowClip(false);
 }
 
@@ -490,6 +493,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
     textBlockStyle->setWordWrap(NormalWordWrap);
     textBlockStyle->setOverflowX(OHIDDEN);
     textBlockStyle->setOverflowY(OHIDDEN);
+    textBlockStyle->setTextOverflow(textShouldBeTruncated() ? TextOverflowEllipsis : TextOverflowClip);
 
     if (m_desiredInnerTextHeight >= 0)
         textBlockStyle->setHeight(Length(m_desiredInnerTextHeight, Fixed));
@@ -540,6 +544,12 @@ void RenderTextControlSingleLine::updateCancelButtonVisibility() const
 EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 {
     return (style()->visibility() == HIDDEN || inputElement()->value().isEmpty()) ? HIDDEN : VISIBLE;
+}
+
+bool RenderTextControlSingleLine::textShouldBeTruncated() const
+{
+    return document()->focusedNode() != node()
+        && style()->textOverflow() == TextOverflowEllipsis;
 }
 
 const AtomicString& RenderTextControlSingleLine::autosaveName() const

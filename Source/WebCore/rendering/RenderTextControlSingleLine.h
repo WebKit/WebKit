@@ -86,6 +86,7 @@ private:
     virtual RenderStyle* textBaseStyle() const;
 
     EVisibility visibilityForCancelButton() const;
+    bool textShouldBeTruncated() const;
     const AtomicString& autosaveName() const;
 
     // PopupMenuClient methods

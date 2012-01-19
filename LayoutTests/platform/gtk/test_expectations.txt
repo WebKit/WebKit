@@ -99,4 +99,7 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 // New test, needs image results added.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 
+// Needs baseline
+BUGWK76118 : fast/css/text-overflow-input.html = MISSING
+
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL

@@ -1,3 +1,26 @@
+2012-01-19  Jon Lee  <jonlee@apple.com>
+
+        Add text-overflow support that allows placeholder and value text to show an ellipsis when not focused
+        https://bugs.webkit.org/show_bug.cgi?id=76118
+        <rdar://problem/9271742>
+
+        Reviewed by Dan Bernstein.
+
+        Tests: fast/css/text-overflow-input-focus-placeholder-expected.html
+               fast/css/text-overflow-input-focus-placeholder.html
+               fast/css/text-overflow-input-focus-value-expected.html
+               fast/css/text-overflow-input-focus-value.html
+               fast/css/text-overflow-input.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange): When the style of the text control
+        changes, we update the text overflow property of the placeholder.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle): When the style of the text control
+        changes, we update the text overflow property of the inner text block.
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated): The text of the value and placeholder should
+        only contain the ellipsis if the input's text-overflow property is set to ellipsis, and the input is not focused.
+        * rendering/RenderTextControlSingleLine.h:
+
 2012-01-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implement a new allocator for backing stores

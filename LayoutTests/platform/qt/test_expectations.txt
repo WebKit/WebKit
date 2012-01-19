@@ -24,3 +24,6 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
+
+// Needs baseline
+BUGWK76118 : fast/css/text-overflow-input.html = MISSING

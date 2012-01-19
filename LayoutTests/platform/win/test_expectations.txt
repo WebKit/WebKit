@@ -125,3 +125,6 @@ BUGWK74888 : fast/repaint/table-section-repaint.html = TEXT
 
 // New test, needs image results added.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
+
+// Needs baseline
+BUGWK76118 : fast/css/text-overflow-input.html = MISSING
