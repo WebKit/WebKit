@@ -106,7 +106,7 @@ public:
     void preload(CachedResource::Type, const String& url, const String& charset, bool referencedFromBody);
     void checkForPendingPreloads();
     void printPreloadStats();
-    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
+    bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
     
 private:
     CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved, bool isPreload = false);
@@ -118,7 +118,7 @@ private:
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, bool forPreload, CachedResource* existingResource) const;
     
     void notifyLoadedFromMemoryCache(CachedResource*);
-    bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
+    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
 
     void loadDoneActionTimerFired(Timer<CachedResourceLoader>*);
 

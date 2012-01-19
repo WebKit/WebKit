@@ -141,7 +141,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
 
 void CachedResourceRequest::willSendRequest(SubresourceLoader* loader, ResourceRequest& req, const ResourceResponse&)
 {
-    if (!m_cachedResourceLoader->checkInsecureContent(m_resource->type(), req.url())) {
+    if (!m_cachedResourceLoader->canRequest(m_resource->type(), req.url())) {
         loader->cancel();
         return;
     }
