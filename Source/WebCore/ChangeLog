@@ -1,3 +1,17 @@
+2012-01-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for background-color in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=71488
+
+        Reviewed by David Hyatt.
+
+        This patch enables region styling again. The region styling tests were also added back. 
+        With the improvements from https://bugs.webkit.org/show_bug.cgi?id=76265, hopefully we will not see the same 3% regressions
+        in performance.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+
 2012-01-16  Jer Noble  <jer.noble@apple.com>
 
         Crash at WebCore::MediaControlRootElement::makeOpaque + 97
