@@ -2171,7 +2171,7 @@ sub buildQMakeProjects
 
     chdir ".." or die;
 
-    unlink($pathToBuildHint) || die "Could not delete $pathToBuildHint: $!" if $result eq 0;
+    unlink($pathToBuildHint) || die "Could not delete $pathToBuildHint: $!" if -e $pathToBuildHint && $result eq 0;
 
     return $result;
 }

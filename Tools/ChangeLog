@@ -1,5 +1,14 @@
 2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Fix the Qt build
+
+        Unreviewed build fix.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
+2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Make build-webkit always do safe incremental builds after update-webkit
 
         When building against Qt5 with GCC we would just run 'make' in the build dir,
