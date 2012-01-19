@@ -1894,9 +1894,10 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
             }
         } else if (object->isFloating())
             m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
-        else if (object->isText() && object->style()->hasTextCombine() && object->isCombineText()) {
+        else if (object->isText() && object->style()->hasTextCombine() && object->isCombineText() && !toRenderCombineText(object)->isCombined()) {
             toRenderCombineText(object)->combineText();
-            continue;
+            if (toRenderCombineText(object)->isCombined())
+                continue;
         }
         resolver.increment();
     }

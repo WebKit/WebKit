@@ -1,3 +1,21 @@
+2012-01-19  Ken Buchanan <kenrb@chromium.org>
+
+        Layout Test fast/text/international/spaces-combined-in-vertical-text.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=75787
+
+        Reviewed by Simon Fraser.
+
+        This is a tweak to my patch in r104322. On some platforms
+        RenderCombineText::combineText() can abort early during inline
+        iteration, causing this loop in skipLeadingWhitespace to spin,
+        hence the layout test timeouts. This patch accounts for that
+        condition and makes the loop iteration more robust.
+
+        No new test because this is fixing a failure on an existing test.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+
 2012-01-19  Jer Noble  <jer.noble@apple.com>
 
         HRTFPanner not rendering correctly on mac port
