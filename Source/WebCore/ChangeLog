@@ -1,3 +1,12 @@
+2012-01-19  Andreas Kling  <awesomekling@apple.com>
+
+        Unreviewed debug build fix.
+
+        Remove ASSERT that the cached match is cacheable (we don't store that flag anymore.)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::findFromMatchedDeclarationCache):
+
 2012-01-19  Robert Hogan  <robert@webkit.org>
 
         Fix Debug build after r105433

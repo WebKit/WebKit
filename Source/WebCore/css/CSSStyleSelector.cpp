@@ -2365,8 +2365,7 @@ const CSSStyleSelector::MatchedStyleDeclarationCacheItem* CSSStyleSelector::find
     if (it == m_matchedStyleDeclarationCache.end())
         return 0;
     MatchedStyleDeclarationCacheItem& cacheItem = it->second;
-    ASSERT(cacheItem.matchResult.isCacheable);
-    
+
     size_t size = m_matchedDecls.size();
     if (size != cacheItem.matchedStyleDeclarations.size())
         return 0;
