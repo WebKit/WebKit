@@ -1315,7 +1315,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyMaxWidth:            // <length> | <percentage> | none | inherit
     case CSSPropertyWebkitMaxLogicalWidth:
     case CSSPropertyWebkitMaxLogicalHeight:
-        if (id == CSSValueNone || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic) {
+        if (id == CSSValueNone) {
             validPrimitive = true;
             break;
         }
