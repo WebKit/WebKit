@@ -261,6 +261,10 @@ static void initializeSupportedImageMIMETypes()
         supportedImageMIMETypes->add(types[i]);
         supportedImageResourceMIMETypes->add(types[i]);
     }
+#if PLATFORM(BLACKBERRY)
+    supportedImageMIMETypes->add("image/pjpeg");
+    supportedImageResourceMIMETypes->add("image/pjpeg");
+#endif
 #endif
 }
 
