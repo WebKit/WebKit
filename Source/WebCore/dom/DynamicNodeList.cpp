@@ -132,11 +132,6 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     return 0;
 }
 
-bool DynamicSubtreeNodeList::isDynamicNodeList() const
-{
-    return true;
-}
-
 void DynamicSubtreeNodeList::invalidateCache()
 {
     m_caches->reset();

@@ -552,7 +552,13 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    return ChildNodeList::create(this, ensureRareData()->ensureChildNodeListCache());
+    NodeRareData* data = ensureRareData();
+    if (data->childNodeList())
+        return PassRefPtr<NodeList>(data->childNodeList());
+
+    RefPtr<ChildNodeList> list = ChildNodeList::create(this);
+    data->setChildNodeList(list.get());
+    return list.release();
 }
 
 Node *Node::lastDescendant() const
@@ -1072,6 +1078,12 @@ void Node::removeCachedLabelsNodeList(DynamicSubtreeNodeList* list)
     NodeListsNodeData* data = rareData()->nodeLists();
     ASSERT_UNUSED(list, list == data->m_labelsNodeListCache);
     data->m_labelsNodeListCache = 0;
+}
+
+void Node::removeCachedChildNodeList()
+{
+    ASSERT(rareData());
+    rareData()->setChildNodeList(0);
 }
 
 Node* Node::traverseNextNode(const Node* stayWithin) const
@@ -2935,13 +2947,8 @@ void NodeRareData::createNodeLists(Node* node)
 
 void NodeRareData::clearChildNodeListCache()
 {
-    if (!m_childNodeListCache)
-        return;
-
-    if (m_childNodeListCache->hasOneRef())
-        m_childNodeListCache.clear();
-    else
-        m_childNodeListCache->reset();
+    if (m_childNodeList)
+        m_childNodeList->reset();
 }
 
 } // namespace WebCore

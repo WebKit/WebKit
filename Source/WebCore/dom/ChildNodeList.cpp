@@ -27,10 +27,15 @@
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList(PassRefPtr<Node> node, DynamicNodeList::Caches* caches)
+ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
     : DynamicNodeList(node)
-    , m_caches(caches)
+    , m_caches(Caches::create())
 {
+}
+
+ChildNodeList::~ChildNodeList()
+{
+    node()->removeCachedChildNodeList();
 }
 
 unsigned ChildNodeList::length() const

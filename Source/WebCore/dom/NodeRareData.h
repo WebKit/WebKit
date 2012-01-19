@@ -95,6 +95,7 @@ class NodeRareData {
 public:    
     NodeRareData()
         : m_treeScope(0)
+        , m_childNodeList(0)
         , m_tabIndex(0)
         , m_tabIndexWasSetExplicitly(false)
         , m_isFocused(false)
@@ -132,12 +133,9 @@ public:
         return m_nodeLists.get();
     }
     void clearChildNodeListCache();
-    DynamicNodeList::Caches* ensureChildNodeListCache()
-    {
-        if (!m_childNodeListCache)
-            m_childNodeListCache = DynamicNodeList::Caches::create();
-        return m_childNodeListCache.get();
-    }
+
+    ChildNodeList* childNodeList() const { return m_childNodeList; }
+    void setChildNodeList(ChildNodeList* list) { m_childNodeList = list; }
 
     short tabIndex() const { return m_tabIndex; }
     void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
@@ -241,7 +239,7 @@ private:
 
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
-    RefPtr<DynamicNodeList::Caches> m_childNodeListCache;
+    ChildNodeList* m_childNodeList;
     OwnPtr<EventTargetData> m_eventTargetData;
     short m_tabIndex;
     bool m_tabIndexWasSetExplicitly : 1;

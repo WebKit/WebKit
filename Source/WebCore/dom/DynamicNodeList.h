@@ -64,6 +64,9 @@ public:
 protected:
     virtual bool nodeMatches(Element*) const = 0;
     RefPtr<Node> m_node;
+
+private:
+    virtual bool isDynamicNodeList() const OVERRIDE { return true; }
 };
 
 class DynamicSubtreeNodeList : public DynamicNodeList {
@@ -79,7 +82,6 @@ protected:
     mutable RefPtr<Caches> m_caches;
 
 private:
-    virtual bool isDynamicNodeList() const;
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
     Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
 };

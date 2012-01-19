@@ -553,6 +553,8 @@ public:
     void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
     void removeCachedLabelsNodeList(DynamicSubtreeNodeList*);
 
+    void removeCachedChildNodeList();
+
     PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
     PassRefPtr<NodeList> getElementsByName(const String& elementName);

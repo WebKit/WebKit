@@ -1,3 +1,67 @@
+2012-01-18  Andreas Kling  <awesomekling@apple.com>
+
+        Cache and reuse the NodeList returned by Node::childNodes().
+        <http://webkit.org/b/76591>
+
+        Reviewed by Ryosuke Niwa.
+
+        Instead of only caching the DynamicNodeList::Caches for .childNodes on NodeRareData,
+        cache the full ChildNodeList object. Lifetime management is left to wrappers who
+        invalidate the cached (raw) pointer via Node::removeCachedChildNodeList(), called
+        from ~ChildNodeList().
+
+        This is a slight behavior change, in that Node.childNodes === Node.childNodes will
+        now be true. This matches the behavior of both Firefox and Opera.
+
+        This reduces memory consumption by 192 kB (on 32-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>
+
+        Test: fast/dom/gc-9.html
+              fast/dom/node-childNodes-idempotence.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::childNodeList):
+        (WebCore::NodeRareData::setChildNodeList):
+
+            Only construct one ChildNodeList per Node and store it on NodeRareData for
+            retrieval across childNodes() calls.
+
+        * dom/ChildNodeList.h:
+        (WebCore::ChildNodeList::create):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+
+            Construct the Caches at creation instead of passing it to the constructor.
+
+        (WebCore::ChildNodeList::reset):
+
+            Added, resets the internal cache.
+
+        (WebCore::ChildNodeList::~ChildNodeList):
+
+            Call Node::removeCachedChildNodeList().
+
+        * dom/DynamicNodeList.cpp:
+        * dom/DynamicNodeList.h:
+
+            Have DynamicNodeList (and subclasses) respond "true" to isDynamicNodeList().
+            Previously only DynamicSubtreeNodeList (and subclasses) were doing this.
+            Without it, JSC may GC our ChildNodeLists prematurely (due to NodeList's
+            isReachableFromOpaqueRoots() implementation checking isDynamicNodeList().)
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        (WebCore::Node::removeCachedChildNodeList):
+
+            Added for ~ChildNodeList() to remove the pointer to itself from the Node.
+
+        (WebCore::NodeRareData::clearChildNodeListCache):
+
+            Call ChildNodeList::reset().
+
 2012-01-18  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r105366.
