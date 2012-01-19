@@ -22,3 +22,12 @@ function searchCancelButtonPosition(element) {
     pos.y = element.offsetTop + element.offsetHeight / 2;
     return pos;
 }
+
+function mouseMoveToIndexInListbox(index, listboxId) {
+    var listbox = document.getElementById(listboxId);
+    var itemHeight = Math.floor(listbox.offsetHeight / listbox.size);
+    var border = 1;
+    var y = border + index * itemHeight;
+    if (window.eventSender)
+        eventSender.mouseMoveTo(listbox.offsetLeft + border, listbox.offsetTop + y - window.pageYOffset);
+}

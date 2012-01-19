@@ -1,3 +1,24 @@
+2012-01-18  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r100111): A 'change' event does not fire when a mouse drag
+        occurs to switch elements in a listbox <select>
+        https://bugs.webkit.org/show_bug.cgi?id=76244
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/forms/select/listbox-drag-in-non-multiple.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        Do not update m_activeSelectionState for non-multiple <select>.
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Use setActiveSelection*Index() and updateListBoxSelection(true) instead
+        of updateSelectedState() because updateSelectedState() updates
+        m_lastOnChangeSelection and will prevent the mouseup handler from
+        dispatching 'change' event.
+        We should not call listBoxOnChange() in the mousemove handler in order
+        to align the behavior of IE and Firefox.
+
 2012-01-18  Eric Seidel  <eric@webkit.org>
 
         setAttributeNS should comply with the obscure rules of DOM2, just like createAttributeNS and createElementNS do

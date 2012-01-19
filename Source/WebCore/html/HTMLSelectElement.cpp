@@ -1157,7 +1157,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     if (clickedElement->hasTagName(optionTag)) {
         // Keep track of whether an active selection (like during drag
         // selection), should select or deselect.
-        if (toHTMLOptionElement(clickedElement)->selected() && multi)
+        if (toHTMLOptionElement(clickedElement)->selected() && multiSelect)
             m_activeSelectionState = false;
         if (!m_activeSelectionState)
             toHTMLOptionElement(clickedElement)->setSelectedState(false);
@@ -1225,8 +1225,11 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             if (m_multiple) {
                 setActiveSelectionEndIndex(listIndex);
                 updateListBoxSelection(false);
-            } else
-                updateSelectedState(listIndex, false, false);
+            } else {
+                setActiveSelectionAnchorIndex(listIndex);
+                setActiveSelectionEndIndex(listIndex);
+                updateListBoxSelection(true);
+            }
             event->setDefaultHandled();
         }
     } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document()->frame()->eventHandler()->autoscrollRenderer() != renderer()) {
