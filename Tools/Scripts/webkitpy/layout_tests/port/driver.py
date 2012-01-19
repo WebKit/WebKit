@@ -148,7 +148,7 @@ class DriverProxy(object):
         if pixel_tests:
             self._reftest_driver = self._driver
         else:
-            self._reftest_driver = driver_instance_constructor(port, worker_number, pixel_tests, no_timeout)
+            self._reftest_driver = driver_instance_constructor(port, worker_number, True, no_timeout)
 
     def is_http_test(self, test_name):
         return self._driver.is_http_test(test_name)

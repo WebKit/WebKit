@@ -1,3 +1,10 @@
+2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Revert an unintentional change to WebKitDriver in r105443.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverProxy.__init__):
+
 2012-01-19  Dirk Pranke  <dpranke@chromium.org>
 
         remove the duplicated build rules from WebKit.gyp, Tools.gyp
