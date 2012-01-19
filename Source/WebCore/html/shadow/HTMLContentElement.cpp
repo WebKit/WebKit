@@ -56,13 +56,18 @@ HTMLContentElement::~HTMLContentElement()
 
 void HTMLContentElement::attach()
 {
-    ASSERT(!firstChild()); // Currently doesn't support any light child.
-    HTMLElement::attach();
+    ShadowRoot* root = toShadowRoot(shadowTreeRootNode());
 
-    if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
+    // Before calling StyledElement::attach, selector must be calculated.
+    if (root) {
         ContentInclusionSelector* selector = root->ensureInclusions();
         selector->unselect(m_inclusions.get());
         selector->select(this, m_inclusions.get());
+    }
+
+    HTMLElement::attach();
+
+    if (root) {
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
             inclusion->content()->detach();
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())

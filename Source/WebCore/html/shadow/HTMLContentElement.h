@@ -31,6 +31,7 @@
 #ifndef HTMLContentElement_h
 #define HTMLContentElement_h
 
+#include "ContentInclusionSelector.h"
 #include "HTMLElement.h"
 #include <wtf/Forward.h>
 
@@ -59,6 +60,7 @@ public:
     void setSelect(const AtomicString&);
 
     const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
+    bool hasInclusion() const { return inclusions()->first(); }
 
 protected:
     HTMLContentElement(const QualifiedName&, Document*);

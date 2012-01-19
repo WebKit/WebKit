@@ -73,11 +73,20 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
                 m_phase = AttachContentForwarded;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_includer).parentNodeForRenderingAndStyle();
                 return;
-            } 
-                
+            }
+
             m_phase = AttachContentLight;
             m_parentNodeForRenderingAndStyle = parent;
             return;
+        }
+
+        if (parent->isContentElement()) {
+            HTMLContentElement* shadowContentElement = toHTMLContentElement(parent);
+            if (!shadowContentElement->hasInclusion()) {
+                m_phase = AttachContentFallback;
+                m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
+                return;
+            }
         }
     }
 
@@ -176,7 +185,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
 
     // Avoid an O(n^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
-    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached())
+    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached() && m_phase != AttachContentFallback)
         return 0;
 
     for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
@@ -191,6 +200,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
                 return first;
         }
     }
+
+    if (m_phase == AttachContentFallback)
+        return NodeRenderingContext(m_node->parentNode()).nextRenderer();
 
     return 0;
 }
@@ -224,6 +236,9 @@ RenderObject* NodeRenderingContext::previousRenderer() const
                 return last;
         }
     }
+
+    if (m_phase == AttachContentFallback)
+        return NodeRenderingContext(m_node->parentNode()).previousRenderer();
 
     return 0;
 }

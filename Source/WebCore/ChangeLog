@@ -1,3 +1,28 @@
+2012-01-18  Shinya Kawanaka  <shinyak@google.com>
+
+        ShadowContent query should be able to have fallback elements.
+        https://bugs.webkit.org/show_bug.cgi?id=75306
+
+        Reviewed by Hajime Morita.
+
+        When no elements are selected by a shadow content element selector query,
+        light children are selected as a fallback elements.
+
+        Test: fast/dom/shadow/shadow-contents-fallback.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+          Considers fallback phase. When no elements are chosen, the phase is set to 'fallback'.
+        (WebCore::NodeRenderingContext::nextRenderer):
+          Takes fallback phase into account.
+        (WebCore::NodeRenderingContext::previousRenderer): ditto.
+        * dom/NodeRenderingContext.h:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+          Calculates inclusions before attaching light children.
+        * html/shadow/HTMLContentElement.h:
+        (WebCore::HTMLContentElement::hasInclusion):
+
 2012-01-18  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r100111): A 'change' event does not fire when a mouse drag

@@ -79,6 +79,7 @@ private:
         AttachStraight,
         AttachContentLight,
         AttachContentForwarded,
+        AttachContentFallback,
     };
 
     TreeLocation m_location;
