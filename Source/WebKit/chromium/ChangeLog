@@ -1,3 +1,17 @@
+2012-01-18  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory
+        https://bugs.webkit.org/show_bug.cgi?id=76551
+
+        Reviewed by Darin Fisher.
+
+        * src/AssertMatchingEnums.cpp: Removed matching assertion for TypeExternal as it's no longer defined separately.
+        * src/AsyncFileSystemChromium.cpp: Added crackFileSystemURL() and toURL() implementation that
+        handle chrome-specific filesystem type (EXTERNAL) as well as regular TEMPORARY/PERSISTENT types.
+        (WebCore::AsyncFileSystem::crackFileSystemURL): Added.
+        (WebCore::AsyncFileSystemChromium::toURL): Added.
+        * src/AsyncFileSystemChromium.h:
+
 2012-01-18  Tom Sepez  <tsepez@chromium.org>
 
         Pass content-security-policy directive into shared workers.

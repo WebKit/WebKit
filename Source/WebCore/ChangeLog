@@ -1,3 +1,35 @@
+2012-01-18  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: Move chrome-specific filesystem type handling code (for FileSystem API) under chromium directory
+        https://bugs.webkit.org/show_bug.cgi?id=76551
+
+        Reviewed by Darin Fisher.
+
+        Moved the implementation of crackFileSystemURL() and toURL() from
+        WebCore/fileapi/DOMFileSystemBase into WebCore/platform/AsyncFileSystem
+        so that each platform can extend/implement their behavior if necessary.
+
+        No new tests since this patch has no functionality changes. (Existing
+        tests should pass)
+
+        * fileapi/DOMFileSystemBase.cpp: Moved the implementation of
+        crackFileSystemURL() to AsyncFileSystem
+        (WebCore::DOMFileSystemBase::crackFileSystemURL):
+        * fileapi/DOMFileSystemBase.h:
+        * fileapi/EntryBase.cpp: Moved the implementation of toURL() to AsyncFileSystem
+        (WebCore::EntryBase::toURL):
+        * page/DOMWindow.cpp: Removed chrome-specific type handling code.
+        (WebCore::DOMWindow::webkitRequestFileSystem):
+        * page/DOMWindow.h: Removed chrome-specific filesystem type
+        (EXTERNAL).
+        * platform/AsyncFileSystem.cpp: Added default implementation of toURL() and crackFileSystemURL()
+        (WebCore::AsyncFileSystem::toURL):
+        (WebCore::AsyncFileSystem::crackFileSystemURL):
+        * platform/AsyncFileSystem.h:
+        * workers/WorkerContext.cpp: Removed chrome-specific type handling code.
+        (WebCore::WorkerContext::webkitRequestFileSystem):
+        (WebCore::WorkerContext::webkitRequestFileSystemSync):
+
 2012-01-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Cache RenderStyle pointer as a method to avoid performance regression for region styling
@@ -1513,7 +1545,6 @@
 
         * platform/image-decoders/skia/ImageDecoderSkia.cpp:
         (WebCore::ImageFrame::setStatus):
-
 2012-01-17  Nate Chapin  <japhet@chromium.org>
 
         Ensure we don't cancel revalidation of a CachedResource

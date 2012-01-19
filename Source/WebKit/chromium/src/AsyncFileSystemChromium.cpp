@@ -34,6 +34,7 @@
 
 #include "AsyncFileSystemCallbacks.h"
 #include "AsyncFileWriterChromium.h"
+#include "SecurityOrigin.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
@@ -44,8 +45,46 @@
 
 namespace WebCore {
 
+namespace {
+
+// Chrome-specific FileSystem type.
+const char kExternalPathPrefix[] = "external";
+const size_t kExternalPathPrefixLength = sizeof(kExternalPathPrefix) - 1;
+
+}
+
 bool AsyncFileSystem::isAvailable()
 {
+    return true;
+}
+
+bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
+{
+    if (!url.protocolIs("filesystem"))
+        return false;
+
+    KURL originURL(ParsedURLString, url.path());
+    String path = decodeURLEscapeSequences(originURL.path());
+    if (path.isEmpty() || path[0] != '/')
+        return false;
+    path = path.substring(1);
+
+    if (path.startsWith(kTemporaryPathPrefix)) {
+        type = Temporary;
+        path = path.substring(kTemporaryPathPrefixLength);
+    } else if (path.startsWith(kPersistentPathPrefix)) {
+        type = Persistent;
+        path = path.substring(kPersistentPathPrefixLength);
+    } else if (path.startsWith(kExternalPathPrefix)) {
+        type = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeExternal);
+        path = path.substring(kExternalPathPrefixLength);
+    } else
+        return false;
+
+    if (path.isEmpty() || path[0] != '/')
+        return false;
+
+    filePath.swap(path);
     return true;
 }
 
@@ -59,6 +98,17 @@ AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, con
 
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
+}
+
+String AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath)
+{
+    ASSERT(!m_filesystemRootURL.isEmpty());
+    ASSERT(SecurityOrigin::create(m_filesystemRootURL)->toString() == originString);
+
+    KURL url = m_filesystemRootURL;
+    // Remove the extra leading slash.
+    url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
+    return url;
 }
 
 void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

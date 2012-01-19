@@ -370,7 +370,6 @@ namespace WebCore {
         enum FileSystemType {
             TEMPORARY,
             PERSISTENT,
-            EXTERNAL,
         };
         void webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>);
         void webkitResolveLocalFileSystemURL(const String&, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
