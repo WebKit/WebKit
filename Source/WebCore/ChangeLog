@@ -1,3 +1,20 @@
+2012-01-19  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Remove the setTimeout from the layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=76535
+
+        Reviewed by Tony Chang.
+
+        We had setTimeout on old tests because the snapshot picture was taken too early, before the shaders were loaded.
+        The problem was that the RenderLayer was notified that the shader was loaded only after the onload event was triggered,
+        so a simple setTimeout(0) would have fixed the issue, but better than that would be to to always call CachedResource::data 
+        in CachedShader::data, which notifies the load earlier (before onload).
+
+        No new tests, just removed the setTimeout from old ones.
+
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::data):
+
 2012-01-19  Min Qin  <qinmin@google.com>
 
         Improve touch handling performance by reusing the hitTest result

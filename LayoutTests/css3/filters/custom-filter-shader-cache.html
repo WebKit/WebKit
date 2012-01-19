@@ -13,11 +13,8 @@
             function runTest()
             {
                 // We need to run the tests after the downloading succeeded.
-                // Using a timer is not ideal, but there seems to be no better options.
-                setTimeout(function() {
-                    if (window.layoutTestController)
-                        window.layoutTestController.notifyDone();
-                }, 200);
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
             }
         </script>
         <style>
