@@ -125,6 +125,25 @@ v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, con
     return currentValue;
 }
 
+v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
+{
+    v8::Handle<v8::Value> currentValue(rootValue);
+
+    ASSERT(index <= keyPathElements.size());
+    for (size_t i = 0; i < index; ++i) {
+        v8::Handle<v8::Value> parentValue(currentValue);
+        const String& keyPathElement = keyPathElements[i];
+        if (!get(currentValue, keyPathElement)) {
+            v8::Handle<v8::Object> object = v8::Object::New();
+            if (!set(parentValue, keyPathElement, object))
+                return v8::Handle<v8::Value>();
+            currentValue = object;
+        }
+    }
+
+    return currentValue;
+}
+
 } // anonymous namespace
 
 PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<String>& keyPath)
@@ -144,7 +163,7 @@ PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDB
         return 0;
 
     v8::Handle<v8::Value> v8Value(value->deserialize());
-    v8::Handle<v8::Value> parent(getNthValueOnKeyPath(v8Value, keyPath, keyPath.size() - 1));
+    v8::Handle<v8::Value> parent(ensureNthValueOnKeyPath(v8Value, keyPath, keyPath.size() - 1));
     if (parent.IsEmpty())
         return 0;
 

@@ -1,3 +1,15 @@
+2012-01-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105376.
+        http://trac.webkit.org/changeset/105376
+        https://bugs.webkit.org/show_bug.cgi?id=76601
+
+        Roll 76493 back in after discussion with jsbell (Requested by
+        rolandsteiner on #webkit).
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoSerializedValue):
+
 2012-01-18  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Create a base-class CCAnimation to represent compositor animations
