@@ -73,7 +73,7 @@ public:
 
     static void initialize();
     static void cleanup();
-    void doFFT(float* data);
+    void doFFT(const float* data);
     void doInverseFFT(float* data);
     void multiply(const FFTFrame& frame); // multiplies ourself with frame : effectively operator*=()
 
@@ -88,7 +88,7 @@ public:
     // Interpolates from frame1 -> frame2 as x goes from 0.0 -> 1.0
     static PassOwnPtr<FFTFrame> createInterpolatedFrame(const FFTFrame& frame1, const FFTFrame& frame2, double x);
 
-    void doPaddedFFT(float* data, size_t dataSize); // zero-padding with dataSize <= fftSize
+    void doPaddedFFT(const float* data, size_t dataSize); // zero-padding with dataSize <= fftSize
     double extractAverageGroupDelay();
     void addConstantGroupDelay(double sampleFrameDelay);
 

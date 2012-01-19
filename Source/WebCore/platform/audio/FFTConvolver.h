@@ -46,7 +46,7 @@ public:
     // The input to output latency is equal to fftSize / 2
     //
     // Processing in-place is allowed...
-    void process(FFTFrame* fftKernel, float* sourceP, float* destP, size_t framesToProcess);
+    void process(FFTFrame* fftKernel, const float* sourceP, float* destP, size_t framesToProcess);
 
     void reset();
 

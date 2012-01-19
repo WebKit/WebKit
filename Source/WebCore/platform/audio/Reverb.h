@@ -45,7 +45,7 @@ public:
     // renderSliceSize is a rendering hint, so the FFTs can be optimized to not all occur at the same time (very bad when rendering on a real-time thread).
     Reverb(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads, bool normalize);
 
-    void process(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess);
+    void process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess);
     void reset();
 
     unsigned impulseResponseLength() const { return m_impulseResponseLength; }

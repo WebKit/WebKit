@@ -113,7 +113,7 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
     
     // Perform real-time analysis
     // FIXME : for now just use left channel (must mix if stereo source)
-    float* source = bus->channel(0)->data();
+    const float* source = bus->channel(0)->data();
 
     // The source has already been sanity checked with isBusGood above.
     

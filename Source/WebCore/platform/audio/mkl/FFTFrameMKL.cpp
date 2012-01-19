@@ -170,7 +170,7 @@ void FFTFrame::multiply(const FFTFrame& frame)
     }
 }
 
-void FFTFrame::doFFT(float* data)
+void FFTFrame::doFFT(const float* data)
 {
     // Compute Forward transform.
     MKL_LONG status = DftiComputeForward(m_handle, data, m_complexData.data());

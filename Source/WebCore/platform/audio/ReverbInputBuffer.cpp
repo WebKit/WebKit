@@ -40,7 +40,7 @@ ReverbInputBuffer::ReverbInputBuffer(size_t length)
 {
 }
 
-void ReverbInputBuffer::write(float* sourceP, size_t numberOfFrames)
+void ReverbInputBuffer::write(const float* sourceP, size_t numberOfFrames)
 {
     size_t bufferLength = m_buffer.size();
     bool isCopySafe = m_writeIndex + numberOfFrames <= bufferLength;

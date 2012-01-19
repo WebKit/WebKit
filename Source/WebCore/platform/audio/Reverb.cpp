@@ -130,7 +130,7 @@ void Reverb::initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize,
         m_tempBuffer = adoptPtr(new AudioBus(2, MaxFrameSize));
 }
 
-void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess)
+void Reverb::process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess)
 {
     // Do a fairly comprehensive sanity check.
     // If these conditions are satisfied, all of the source and destination pointers will be valid for the various matrixing cases.
@@ -148,7 +148,7 @@ void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t frame
     }
 
     AudioChannel* destinationChannelL = destinationBus->channel(0);
-    AudioChannel* sourceChannelL = sourceBus->channel(0);
+    const AudioChannel* sourceChannelL = sourceBus->channel(0);
 
     // Handle input -> output matrixing...
     size_t numInputChannels = sourceBus->numberOfChannels();
@@ -157,7 +157,7 @@ void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t frame
 
     if (numInputChannels == 2 && numReverbChannels == 2 && numOutputChannels == 2) {
         // 2 -> 2 -> 2
-        AudioChannel* sourceChannelR = sourceBus->channel(1);
+        const AudioChannel* sourceChannelR = sourceBus->channel(1);
         AudioChannel* destinationChannelR = destinationBus->channel(1);
         m_convolvers[0]->process(sourceChannelL, destinationChannelL, framesToProcess);
         m_convolvers[1]->process(sourceChannelR, destinationChannelR, framesToProcess);
@@ -177,13 +177,13 @@ void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t frame
         ASSERT(isCopySafe);
         if (!isCopySafe)
             return;
-        memcpy(destinationChannelR->data(), destinationChannelL->data(), sizeof(float) * framesToProcess);
+        memcpy(destinationChannelR->mutableData(), destinationChannelL->data(), sizeof(float) * framesToProcess);
     } else if (numInputChannels == 1 && numReverbChannels == 1 && numOutputChannels == 1) {
         // 1 -> 1 -> 1
         m_convolvers[0]->process(sourceChannelL, destinationChannelL, framesToProcess);
     } else if (numInputChannels == 2 && numReverbChannels == 4 && numOutputChannels == 2) {
         // 2 -> 4 -> 2 ("True" stereo)
-        AudioChannel* sourceChannelR = sourceBus->channel(1);
+        const AudioChannel* sourceChannelR = sourceBus->channel(1);
         AudioChannel* destinationChannelR = destinationBus->channel(1);
 
         AudioChannel* tempChannelL = m_tempBuffer->channel(0);

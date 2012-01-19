@@ -56,7 +56,7 @@ void WaveShaperProcessor::setCurve(Float32Array* curve)
     m_curve = curve;
 }
 
-void WaveShaperProcessor::process(AudioBus* source, AudioBus* destination, size_t framesToProcess)
+void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination, size_t framesToProcess)
 {
     if (!isInitialized()) {
         destination->zero();
@@ -68,7 +68,7 @@ void WaveShaperProcessor::process(AudioBus* source, AudioBus* destination, size_
     if (m_processLock.tryLock()) {        
         // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
         for (unsigned i = 0; i < m_kernels.size(); ++i)
-            m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->data(), framesToProcess);
+            m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 
         m_processLock.unlock();
     } else {

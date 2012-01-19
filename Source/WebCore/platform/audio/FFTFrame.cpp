@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-void FFTFrame::doPaddedFFT(float* data, size_t dataSize)
+void FFTFrame::doPaddedFFT(const float* data, size_t dataSize)
 {
     // Zero-pad the impulse response
     AudioFloatArray paddedResponse(fftSize()); // zero-initialized

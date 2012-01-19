@@ -82,9 +82,9 @@ void DynamicsCompressorKernel::setPreDelayTime(float preDelayTime)
     }
 }
 
-void DynamicsCompressorKernel::process(float* sourceL,
+void DynamicsCompressorKernel::process(const float* sourceL,
                                        float* destinationL,
-                                       float* sourceR, /* stereo-linked */
+                                       const float* sourceR, /* stereo-linked */
                                        float* destinationR,
                                        unsigned framesToProcess,
 

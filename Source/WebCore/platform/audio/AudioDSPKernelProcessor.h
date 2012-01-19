@@ -59,7 +59,7 @@ public:
     // AudioProcessor methods
     virtual void initialize();
     virtual void uninitialize();
-    virtual void process(AudioBus* source, AudioBus* destination, size_t framesToProcess);
+    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess);
     virtual void reset();
     virtual void setNumberOfChannels(unsigned numberOfChannels);
 

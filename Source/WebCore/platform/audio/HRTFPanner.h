@@ -37,7 +37,7 @@ public:
     virtual ~HRTFPanner();
 
     // Panner
-    virtual void pan(double azimuth, double elevation, AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess);
+    virtual void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess);
     virtual void reset();
 
     size_t fftSize() { return fftSizeForSampleRate(m_sampleRate); }

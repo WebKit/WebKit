@@ -47,7 +47,7 @@ FFTConvolver::FFTConvolver(size_t fftSize)
 {
 }
 
-void FFTConvolver::process(FFTFrame* fftKernel, float* sourceP, float* destP, size_t framesToProcess)
+void FFTConvolver::process(FFTFrame* fftKernel, const float* sourceP, float* destP, size_t framesToProcess)
 {
     // FIXME: make so framesToProcess is not required to fit evenly into fftSize/2
 

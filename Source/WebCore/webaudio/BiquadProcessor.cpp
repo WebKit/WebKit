@@ -114,7 +114,7 @@ void BiquadProcessor::checkForDirtyCoefficients()
     }
 }
 
-void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t framesToProcess)
+void BiquadProcessor::process(const AudioBus* source, AudioBus* destination, size_t framesToProcess)
 {
     if (!isInitialized()) {
         destination->zero();
@@ -125,7 +125,7 @@ void BiquadProcessor::process(AudioBus* source, AudioBus* destination, size_t fr
             
     // For each channel of our input, process using the corresponding BiquadDSPKernel into the output channel.
     for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->data(), framesToProcess);
+        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
 void BiquadProcessor::setType(FilterType type)

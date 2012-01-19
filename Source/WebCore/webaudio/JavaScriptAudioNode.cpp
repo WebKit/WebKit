@@ -161,10 +161,10 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     if (!channelsAreGood)
         return;
 
-    float* sourceL = inputBus->channel(0)->data();
-    float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : 0;
-    float* destinationL = outputBus->channel(0)->data();
-    float* destinationR = outputBus->channel(1)->data();
+    const float* sourceL = inputBus->channel(0)->data();
+    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : 0;
+    float* destinationL = outputBus->channel(0)->mutableData();
+    float* destinationR = outputBus->channel(1)->mutableData();
 
     // Copy from the input to the input buffer.  See "buffersAreGood" check above for safety.
     size_t bytesToCopy = sizeof(float) * framesToProcess;

@@ -127,7 +127,7 @@ public:
         memset(this->data() + start, 0, sizeof(T) * (end - start));
     }
 
-    void copyToRange(T* sourceData, unsigned start, unsigned end)
+    void copyToRange(const T* sourceData, unsigned start, unsigned end)
     {
         bool isSafe = (start <= end) && (end <= this->size());
         ASSERT(isSafe);

@@ -38,9 +38,9 @@ public:
     DynamicsCompressorKernel(float sampleRate);
 
     // Performs stereo-linked compression.
-    void process(float *sourceL,
+    void process(const float *sourceL,
                  float *destinationL,
-                 float *sourceR,
+                 const float *sourceR,
                  float *destinationR,
                  unsigned framesToProcess,
 

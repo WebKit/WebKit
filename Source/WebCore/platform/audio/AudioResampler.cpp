@@ -103,7 +103,7 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
     // Now that we have the source data, resample each channel into the destination bus.
     // FIXME: optimize for the common stereo case where it's faster to process both left/right channels in the same inner loop.
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        float* destination = destinationBus->channel(i)->data();
+        float* destination = destinationBus->channel(i)->mutableData();
         m_kernels[i]->process(destination, framesToProcess);
     }
 }

@@ -115,10 +115,10 @@ void DynamicsCompressor::setEmphasisParameters(float gain, float anchorFreq, flo
     setEmphasisStageParameters(3, gain, anchorFreq / (filterStageRatio * filterStageRatio * filterStageRatio));
 }
 
-void DynamicsCompressor::process(AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess)
+void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess)
 {
-    float* sourceL = sourceBus->channel(0)->data();
-    float* sourceR;
+    const float* sourceL = sourceBus->channel(0)->data();
+    const float* sourceR;
 
     if (sourceBus->numberOfChannels() > 1)
         sourceR = sourceBus->channel(1)->data();
@@ -127,8 +127,8 @@ void DynamicsCompressor::process(AudioBus* sourceBus, AudioBus* destinationBus, 
 
     ASSERT(destinationBus->numberOfChannels() == 2);
 
-    float* destinationL = destinationBus->channel(0)->data();
-    float* destinationR = destinationBus->channel(1)->data();
+    float* destinationL = destinationBus->channel(0)->mutableData();
+    float* destinationR = destinationBus->channel(1)->mutableData();
 
     float filterStageGain = parameterValue(ParamFilterStageGain);
     float filterStageRatio = parameterValue(ParamFilterStageRatio);

@@ -130,6 +130,11 @@ AudioChannel* AudioBus::channelByType(unsigned channelType)
     return 0;
 }
 
+const AudioChannel* AudioBus::channelByType(unsigned type) const
+{
+    return const_cast<AudioBus*>(this)->channelByType(type);
+}
+
 // Returns true if the channel count and frame-size match.
 bool AudioBus::topologyMatches(const AudioBus& bus) const
 {
@@ -143,7 +148,7 @@ bool AudioBus::topologyMatches(const AudioBus& bus) const
     return true;
 }
 
-PassOwnPtr<AudioBus> AudioBus::createBufferFromRange(AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame)
+PassOwnPtr<AudioBus> AudioBus::createBufferFromRange(const AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame)
 {
     size_t numberOfSourceFrames = sourceBuffer->length();
     unsigned numberOfChannels = sourceBuffer->numberOfChannels();
@@ -345,8 +350,8 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, float* l
     const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
     const float* sourceR = numberOfSourceChannels > 1 ? sourceBusSafe.channelByType(ChannelRight)->data() : 0;
 
-    float* destinationL = channelByType(ChannelLeft)->data();
-    float* destinationR = numberOfDestinationChannels > 1 ? channelByType(ChannelRight)->data() : 0;
+    float* destinationL = channelByType(ChannelLeft)->mutableData();
+    float* destinationR = numberOfDestinationChannels > 1 ? channelByType(ChannelRight)->mutableData() : 0;
 
     const float DezipperRate = 0.005f;
     int framesToProcess = length();
@@ -437,7 +442,7 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
         if (sourceBus.numberOfChannels() == numberOfChannels())
             source = sourceBus.channel(channelIndex)->data();
-        float* destination = channel(channelIndex)->data();
+        float* destination = channel(channelIndex)->mutableData();
         vmul(source, 1, gainValues, 1, destination, 1, numberOfGainValues);
     }
 }
@@ -452,7 +457,7 @@ void AudioBus::sumWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, fl
     processWithGainFrom(sourceBus, lastMixGain, targetGain, true);
 }
 
-PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus, bool mixToMono, double newSampleRate)
+PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBus, bool mixToMono, double newSampleRate)
 {
     // sourceBus's sample-rate must be known.
     ASSERT(sourceBus && sourceBus->sampleRate());
@@ -476,7 +481,7 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
     }
     
     // First, mix to mono (if necessary) then sample-rate convert.
-    AudioBus* resamplerSourceBus;
+    const AudioBus* resamplerSourceBus;
     OwnPtr<AudioBus> mixedMonoBus;
     if (mixToMono) {
         mixedMonoBus = AudioBus::createByMixingToMono(sourceBus);
@@ -497,8 +502,8 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
 
     // Sample-rate convert each channel.
     for (unsigned i = 0; i < numberOfDestinationChannels; ++i) {
-        float* source = resamplerSourceBus->channel(i)->data();
-        float* destination = destinationBus->channel(i)->data();
+        const float* source = resamplerSourceBus->channel(i)->data();
+        float* destination = destinationBus->channel(i)->mutableData();
 
         SincResampler resampler(sampleRateRatio);
         resampler.process(source, destination, sourceLength);
@@ -508,7 +513,7 @@ PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus,
     return destinationBus.release();
 }
 
-PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
+PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(const AudioBus* sourceBus)
 {
     switch (sourceBus->numberOfChannels()) {
     case 1:
@@ -519,9 +524,9 @@ PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
             unsigned n = sourceBus->length();
             OwnPtr<AudioBus> destinationBus(adoptPtr(new AudioBus(1, n)));
 
-            float* sourceL = sourceBus->channel(0)->data();
-            float* sourceR = sourceBus->channel(1)->data();
-            float* destination = destinationBus->channel(0)->data();
+            const float* sourceL = sourceBus->channel(0)->data();
+            const float* sourceR = sourceBus->channel(1)->data();
+            float* destination = destinationBus->channel(0)->mutableData();
         
             // Do the mono mixdown.
             for (unsigned i = 0; i < n; ++i)

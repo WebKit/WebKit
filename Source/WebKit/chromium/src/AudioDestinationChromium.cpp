@@ -160,8 +160,8 @@ void AudioDestinationChromium::FIFO::consume(AudioBus* destination, size_t frame
     size_t numberOfChannels = m_fifoAudioBus.numberOfChannels();
 
     for (size_t channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-        float* destinationData = destination->channel(channelIndex)->data();
-        float* sourceData = m_fifoAudioBus.channel(channelIndex)->data();
+        float* destinationData = destination->channel(channelIndex)->mutableData();
+        const float* sourceData = m_fifoAudioBus.channel(channelIndex)->data();
 
         bool isCopyGood = ((m_readIndex < m_fifoLength)
                            && (m_readIndex + part1Length) <= m_fifoLength
@@ -219,8 +219,8 @@ void AudioDestinationChromium::FIFO::fillBuffer(size_t numberOfFrames)
         size_t numberOfChannels = m_fifoAudioBus.numberOfChannels();
         
         for (size_t channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-            float* destination = m_fifoAudioBus.channel(channelIndex)->data();
-            float* source = m_tempBus.channel(channelIndex)->data();
+            float* destination = m_fifoAudioBus.channel(channelIndex)->mutableData();
+            const float* source = m_tempBus.channel(channelIndex)->data();
 
             bool isCopyGood = (part1Length <= m_providerSize
                                && (part1Length + part2Length) <= m_providerSize

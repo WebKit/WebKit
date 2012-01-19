@@ -77,7 +77,7 @@ public:
         // Copy the channel data from what we received from m_multiChannelProvider.
         ASSERT(m_currentChannel <= m_numberOfChannels);
         if (m_currentChannel < m_numberOfChannels) {
-            memcpy(bus->channel(0)->data(), m_multiChannelBus->channel(m_currentChannel)->data(), sizeof(float) * framesToProcess);
+            memcpy(bus->channel(0)->mutableData(), m_multiChannelBus->channel(m_currentChannel)->data(), sizeof(float) * framesToProcess);
             ++m_currentChannel;
         }
     }
@@ -113,7 +113,7 @@ void MultiChannelResampler::process(AudioSourceProvider* provider, AudioBus* des
         // However, if it calls provideInput() for the first channel, then it will call it for the remaining
         // channels, since they all buffer in the same way and are processing the same number of frames.
         m_kernels[channelIndex]->process(&channelProvider,
-                                         destination->channel(channelIndex)->data(),
+                                         destination->channel(channelIndex)->mutableData(),
                                          framesToProcess);
     }
 }

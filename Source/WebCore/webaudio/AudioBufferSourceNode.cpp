@@ -142,7 +142,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             
             if (isSafe) {
                 for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
-                    memset(outputBus->channel(i)->data() + zeroStartFrame, 0, sizeof(float) * framesToZero);
+                    memset(outputBus->channel(i)->mutableData() + zeroStartFrame, 0, sizeof(float) * framesToZero);
             }
 
             m_isPlaying = false;
@@ -199,11 +199,11 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         return;
 
     // Get the destination pointers.
-    float* destinationL = bus->channel(0)->data();
+    float* destinationL = bus->channel(0)->mutableData();
     ASSERT(destinationL);
     if (!destinationL)
         return;
-    float* destinationR = (numberOfChannels < 2) ? 0 : bus->channel(1)->data();
+    float* destinationR = (numberOfChannels < 2) ? 0 : bus->channel(1)->mutableData();
     
     bool isStereo = destinationR;
     

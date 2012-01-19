@@ -41,7 +41,7 @@ public:
     // The realtime audio thread keeps writing samples here.
     // The assumption is that the buffer's length is evenly divisible by numberOfFrames (for nearly all cases this will be fine).
     // FIXME: remove numberOfFrames restriction...
-    void write(float* sourceP, size_t numberOfFrames);
+    void write(const float* sourceP, size_t numberOfFrames);
 
     // Background threads can call this to check if there's anything to read...
     size_t writeIndex() const { return m_writeIndex; }

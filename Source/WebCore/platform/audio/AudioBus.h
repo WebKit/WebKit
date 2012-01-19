@@ -71,6 +71,7 @@ public:
     AudioChannel* channel(unsigned channel) { return m_channels[channel].get(); }
     const AudioChannel* channel(unsigned channel) const { return const_cast<AudioBus*>(this)->m_channels[channel].get(); }
     AudioChannel* channelByType(unsigned type);
+    const AudioChannel* channelByType(unsigned type) const;
 
     // Number of sample-frames
     size_t length() const { return m_length; }
@@ -87,24 +88,24 @@ public:
 
     // Creates a new buffer from a range in the source buffer.
     // 0 may be returned if the range does not fit in the sourceBuffer
-    static PassOwnPtr<AudioBus> createBufferFromRange(AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame);
+    static PassOwnPtr<AudioBus> createBufferFromRange(const AudioBus* sourceBuffer, unsigned startFrame, unsigned endFrame);
 
 
     // Creates a new AudioBus by sample-rate converting sourceBus to the newSampleRate.
     // setSampleRate() must have been previously called on sourceBus.
     // Note: sample-rate conversion is already handled in the file-reading code for the mac port, so we don't need this.
-    static PassOwnPtr<AudioBus> createBySampleRateConverting(AudioBus* sourceBus, bool mixToMono, double newSampleRate);
+    static PassOwnPtr<AudioBus> createBySampleRateConverting(const AudioBus* sourceBus, bool mixToMono, double newSampleRate);
 
     // Creates a new AudioBus by mixing all the channels down to mono.
     // If sourceBus is already mono, then the returned AudioBus will simply be a copy.
-    static PassOwnPtr<AudioBus> createByMixingToMono(AudioBus* sourceBus);
+    static PassOwnPtr<AudioBus> createByMixingToMono(const AudioBus* sourceBus);
 
     // Scales all samples by the same amount.
     void scale(float scale);
 
     // Master gain for this bus - used with sumWithGainFrom() below
     void setGain(float gain) { m_busGain = gain; }
-    float gain() { return m_busGain; }
+    float gain() const { return m_busGain; }
 
     void reset() { m_isFirstTime = true; } // for de-zippering
 

@@ -64,7 +64,7 @@ public:
 
     DynamicsCompressor(bool isStereo, float sampleRate);
 
-    void process(AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess);
+    void process(const AudioBus* sourceBus, AudioBus* destinationBus, unsigned framesToProcess);
     void reset();
 
     float parameterValue(unsigned parameterID);

@@ -43,7 +43,7 @@ public:
     {
     }
 
-    void process(float *source, float *destination, unsigned framesToProcess);
+    void process(const float *source, float *destination, unsigned framesToProcess);
 
     // Reset filter state.
     void reset() { m_lastX = 0; m_lastY = 0; }

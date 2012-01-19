@@ -71,7 +71,7 @@ void AudioDSPKernelProcessor::uninitialize()
     m_initialized = false;
 }
 
-void AudioDSPKernelProcessor::process(AudioBus* source, AudioBus* destination, size_t framesToProcess)
+void AudioDSPKernelProcessor::process(const AudioBus* source, AudioBus* destination, size_t framesToProcess)
 {
     ASSERT(source && destination);
     if (!source || !destination)
@@ -88,7 +88,7 @@ void AudioDSPKernelProcessor::process(AudioBus* source, AudioBus* destination, s
         return;
         
     for (unsigned i = 0; i < m_kernels.size(); ++i)
-        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->data(), framesToProcess);
+        m_kernels[i]->process(source->channel(i)->data(), destination->channel(i)->mutableData(), framesToProcess);
 }
 
 // Resets filter state

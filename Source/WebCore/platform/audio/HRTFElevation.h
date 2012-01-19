@@ -60,7 +60,7 @@ public:
     HRTFKernelList* kernelListR() { return m_kernelListR.get(); }
 
     double elevationAngle() const { return m_elevationAngle; }
-    unsigned numberOfAzimuths() { return NumberOfTotalAzimuths; }
+    unsigned numberOfAzimuths() const { return NumberOfTotalAzimuths; }
     float sampleRate() const { return m_sampleRate; }
     
     // Returns the left and right kernels for the given azimuth index.

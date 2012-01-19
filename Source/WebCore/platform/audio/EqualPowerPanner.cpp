@@ -49,7 +49,7 @@ EqualPowerPanner::EqualPowerPanner(float sampleRate)
     m_smoothingConstant = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);
 }
 
-void EqualPowerPanner::pan(double azimuth, double /*elevation*/, AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
+void EqualPowerPanner::pan(double azimuth, double /*elevation*/, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
 {
     // FIXME: implement stereo sources
     bool isInputSafe = inputBus && inputBus->numberOfChannels() == 1 && framesToProcess <= inputBus->length();
@@ -62,10 +62,10 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, AudioBus* input
     if (!isOutputSafe)
         return;
 
-    AudioChannel* channel = inputBus->channel(0);
-    float* sourceP = channel->data();                               
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->data();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->data();
+    const AudioChannel* channel = inputBus->channel(0);
+    const float* sourceP = channel->data();                               
+    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
+    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
 
     if (!sourceP || !destinationL || !destinationR)
         return;

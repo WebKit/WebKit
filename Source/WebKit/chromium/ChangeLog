@@ -1,3 +1,19 @@
+2012-01-18  Jer Noble  <jer.noble@apple.com>
+
+        Make WebAudio API const-correct.
+        https://bugs.webkit.org/show_bug.cgi?id=76573
+
+        Reviewed by Daniel Bates.
+
+        The following functions were modified to use the renamed mutableData() accessor:
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::FIFO::fillBuffer):
+        (WebCore::AudioDestinationChromium::FIFO::consume):
+        * src/WebAudioData.cpp:
+        (WebCore::WebAudioBus::channelData):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput):
+
 2012-01-19  Joi Sigurdsson  <joi@chromium.org>
 
         Enable use of precompiled headers in Chromium port on Windows.

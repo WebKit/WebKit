@@ -111,7 +111,7 @@ int HRTFPanner::calculateDesiredAzimuthIndexAndBlend(double azimuth, double& azi
     return desiredAzimuthIndex;
 }
 
-void HRTFPanner::pan(double desiredAzimuth, double elevation, AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
+void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess)
 {
     unsigned numInputChannels = inputBus ? inputBus->numberOfChannels() : 0;
 
@@ -147,14 +147,14 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, AudioBus* inputBus
 
     // Normally, we'll just be dealing with mono sources.
     // If we have a stereo input, implement stereo panning with left source processed by left HRTF, and right source by right HRTF.
-    AudioChannel* inputChannelL = inputBus->channelByType(AudioBus::ChannelLeft);
-    AudioChannel* inputChannelR = numInputChannels > 1 ? inputBus->channelByType(AudioBus::ChannelRight) : 0;
+    const AudioChannel* inputChannelL = inputBus->channelByType(AudioBus::ChannelLeft);
+    const AudioChannel* inputChannelR = numInputChannels > 1 ? inputBus->channelByType(AudioBus::ChannelRight) : 0;
 
     // Get source and destination pointers.
-    float* sourceL = inputChannelL->data();
-    float* sourceR = numInputChannels > 1 ? inputChannelR->data() : sourceL;
-    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->data();
-    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->data();
+    const float* sourceL = inputChannelL->data();
+    const float* sourceR = numInputChannels > 1 ? inputChannelR->data() : sourceL;
+    float* destinationL = outputBus->channelByType(AudioBus::ChannelLeft)->mutableData();
+    float* destinationR = outputBus->channelByType(AudioBus::ChannelRight)->mutableData();
 
     double azimuthBlend;
     int desiredAzimuthIndex = calculateDesiredAzimuthIndexAndBlend(azimuth, azimuthBlend);
@@ -207,8 +207,8 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, AudioBus* inputBus
             
         // Calculate the source and destination pointers for the current segment.
         unsigned offset = segment * framesPerSegment;
-        float* segmentSourceL = sourceL + offset;
-        float* segmentSourceR = sourceR + offset;
+        const float* segmentSourceL = sourceL + offset;
+        const float* segmentSourceR = sourceR + offset;
         float* segmentDestinationL = destinationL + offset;
         float* segmentDestinationR = destinationR + offset;
 

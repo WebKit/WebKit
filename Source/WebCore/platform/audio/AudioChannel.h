@@ -73,7 +73,7 @@ public:
     size_t length() const { return m_length; }
 
     // Direct access to PCM sample data
-    float* data() { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
+    float* mutableData() { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
     const float* data() const { return m_rawPointer ? m_rawPointer : m_memBuffer->data(); }
 
     // Zeroes out all sample values in buffer.

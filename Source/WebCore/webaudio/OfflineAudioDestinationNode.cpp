@@ -140,7 +140,7 @@ void OfflineAudioDestinationNode::render()
         size_t framesAvailableToCopy = min(framesToProcess, renderQuantumSize);
         
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
-            float* source = m_renderBus->channel(channelIndex)->data();
+            const float* source = m_renderBus->channel(channelIndex)->data();
             float* destination = m_renderTarget->getChannelData(channelIndex)->data();
             memcpy(destination + n, source, sizeof(float) * framesAvailableToCopy);
         }

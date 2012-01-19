@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void ZeroPole::process(float *source, float *destination, unsigned framesToProcess)
+void ZeroPole::process(const float *source, float *destination, unsigned framesToProcess)
 {
     float zero = m_zero;
     float pole = m_pole;

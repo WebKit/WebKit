@@ -1,3 +1,126 @@
+2012-01-18  Jer Noble  <jer.noble@apple.com>
+
+        Make WebAudio API const-correct.
+        https://bugs.webkit.org/show_bug.cgi?id=76573
+
+        Reviewed by Daniel Bates.
+
+        No new tests; no net change in functionality, so covered by existing tests.
+
+        The non-const data() accessor was renamed mutableData() to expose const-correctness
+        bugs during compile time:
+        * platform/audio/AudioChannel.h:
+        (WebCore::AudioChannel::mutableData):
+
+        The following functions were made const correct:
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::copyToRange):
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::createBySampleRateConverting):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/FFTConvolver.cpp:
+        (WebCore::FFTConvolver::process):
+        * platform/audio/FFTConvolver.h:
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::doPaddedFFT):
+        (WebCore::FFTFrame::doFFT):
+        * platform/audio/FFTFrame.h:
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        (WebCore::ReverbConvolverStage::process):
+        * platform/audio/ReverbConvolverStage.h:
+        * platform/audio/ReverbInputBuffer.cpp:
+        (WebCore::ReverbInputBuffer::write):
+        * platform/audio/ReverbInputBuffer.h:
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::process):
+        * platform/audio/SincResampler.h:
+        * platform/audio/ZeroPole.cpp:
+        (WebCore::ZeroPole::process):
+        * platform/audio/ZeroPole.h:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::channelByType):
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::gain):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::process):
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioProcessor.h:
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::process):
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::process):
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):
+        * platform/audio/EqualPowerPanner.h:
+        * platform/audio/HRTFElevation.h:
+        (WebCore::HRTFElevation::numberOfAzimuths):
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::pan):
+        * platform/audio/HRTFPanner.h:
+        * platform/audio/Panner.h:
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::process):
+        * platform/audio/Reverb.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::process):
+        * platform/audio/ReverbConvolver.h:
+        * platform/audio/ffmpeg/FFTFrameFFMPEG.cpp:
+        (WebCore::FFTFrame::doFFT):
+        * platform/audio/mkl/FFTFrameMKL.cpp:
+        (WebCore::FFTFrame::doFFT):
+
+        The following functions were modified to use the renamed mutableData() accessor:
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::processWithGainFromMonoStereo):
+        (WebCore::AudioBus::copyWithSampleAccurateGainValuesFrom):
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::scale):
+        (WebCore::AudioChannel::copyFrom):
+        (WebCore::AudioChannel::copyFromRange):
+        (WebCore::AudioChannel::sumFrom):
+        * platform/audio/AudioDSPKernelProcessor.cpp:
+        (WebCore::AudioDSPKernelProcessor::process):
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::process):
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::process):
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::extractAverageGroupDelay):
+        (WebCore::HRTFKernel::HRTFKernel):
+        (WebCore::HRTFKernel::createImpulseResponse):
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::pan):
+        * platform/audio/MultiChannelResampler.cpp:
+        (WebCore::MultiChannelResampler::process):
+        * platform/audio/Reverb.cpp:
+        (WebCore::Reverb::process):
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        (WebCore::ReverbConvolver::process):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::doFFT):
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        * webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::process):
+        * webaudio/JavaScriptAudioNode.cpp:
+        (WebCore::JavaScriptAudioNode::process):
+        * webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::render):
+        * webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::writeInput):
+        * webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::process):
+
 2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed, inspector closure compilation fix.

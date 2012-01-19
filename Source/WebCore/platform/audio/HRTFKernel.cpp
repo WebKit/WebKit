@@ -50,7 +50,7 @@ static float extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTS
 {
     ASSERT(channel);
         
-    float* impulseP = channel->data();
+    float* impulseP = channel->mutableData();
     
     bool isSizeGood = channel->length() >= analysisFFTSize;
     ASSERT(isSizeGood);
@@ -78,7 +78,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate, 
     // Determine the leading delay (average group delay) for the response.
     m_frameDelay = extractAverageGroupDelay(channel, fftSize / 2);
 
-    float* impulseResponse = channel->data();
+    float* impulseResponse = channel->mutableData();
     size_t responseLength = channel->length();
 
     if (bassBoost) {
@@ -114,7 +114,7 @@ PassOwnPtr<AudioChannel> HRTFKernel::createImpulseResponse()
 
     // Add leading delay back in.
     fftFrame.addConstantGroupDelay(m_frameDelay);
-    fftFrame.doInverseFFT(channel->data());
+    fftFrame.doInverseFFT(channel->mutableData());
 
     return channel.release();
 }

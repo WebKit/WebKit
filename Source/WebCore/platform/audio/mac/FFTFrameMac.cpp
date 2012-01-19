@@ -127,7 +127,7 @@ void FFTFrame::multiply(const FFTFrame& frame)
     VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, halfSize);
 }
 
-void FFTFrame::doFFT(float* data)
+void FFTFrame::doFFT(const float* data)
 {
     vDSP_ctoz((DSPComplex*)data, 2, &m_frame, 1, m_FFTSize / 2);
     vDSP_fft_zrip(m_FFTSetup, &m_frame, 1, m_log2FFTSize, FFT_FORWARD);

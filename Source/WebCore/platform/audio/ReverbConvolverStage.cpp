@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-ReverbConvolverStage::ReverbConvolverStage(float* impulseResponse, size_t responseLength, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength,
+ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t responseLength, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength,
                                            size_t fftSize, size_t renderPhase, size_t renderSliceSize, ReverbAccumulationBuffer* accumulationBuffer)
     : m_fftKernel(fftSize)
     , m_accumulationBuffer(accumulationBuffer)
@@ -88,7 +88,7 @@ void ReverbConvolverStage::processInBackground(ReverbConvolver* convolver, size_
     process(source, framesToProcess);
 }
 
-void ReverbConvolverStage::process(float* source, size_t framesToProcess)
+void ReverbConvolverStage::process(const float* source, size_t framesToProcess)
 {
     ASSERT(source);
     if (!source)
@@ -96,7 +96,8 @@ void ReverbConvolverStage::process(float* source, size_t framesToProcess)
     
     // Deal with pre-delay stream : note special handling of zero delay.
 
-    float* preDelayedSource;
+    const float* preDelayedSource;
+    float* preDelayedDestination;
     float* temporaryBuffer;
     bool isTemporaryBufferSafe = false;
     if (m_preDelayLength > 0) {
@@ -108,10 +109,12 @@ void ReverbConvolverStage::process(float* source, size_t framesToProcess)
 
         isTemporaryBufferSafe = framesToProcess <= m_temporaryBuffer.size();
 
-        preDelayedSource = m_preDelayBuffer.data() + m_preReadWriteIndex;
+        preDelayedDestination = m_preDelayBuffer.data() + m_preReadWriteIndex;
+        preDelayedSource = preDelayedDestination;
         temporaryBuffer = m_temporaryBuffer.data();        
     } else {
         // Zero delay
+        preDelayedDestination = 0;
         preDelayedSource = source;
         temporaryBuffer = m_preDelayBuffer.data();
         
@@ -138,7 +141,7 @@ void ReverbConvolverStage::process(float* source, size_t framesToProcess)
 
     // Finally copy input to pre-delay.
     if (m_preDelayLength > 0) {
-        memcpy(preDelayedSource, source, sizeof(float) * framesToProcess);
+        memcpy(preDelayedDestination, source, sizeof(float) * framesToProcess);
         m_preReadWriteIndex += framesToProcess;
 
         ASSERT(m_preReadWriteIndex <= m_preDelayLength);

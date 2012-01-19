@@ -726,7 +726,7 @@ void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(AudioBus* b
     size_t n = bus->numberOfChannels();
     WebVector<float*> webAudioData(n);
     for (size_t i = 0; i < n; ++i)
-        webAudioData[i] = bus->channel(i)->data();
+        webAudioData[i] = bus->channel(i)->mutableData();
 
     m_webAudioSourceProvider->provideInput(webAudioData, framesToProcess);
 }

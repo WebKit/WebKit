@@ -135,6 +135,8 @@ void SincResampler::consumeSource(float* buffer, unsigned numberOfSourceFrames)
     
     // Wrap the provided buffer by an AudioBus for use by the source provider.
     AudioBus bus(1, numberOfSourceFrames, false);
+
+    // FIXME: Find a way to make the following const-correct:
     bus.setChannelMemory(0, buffer, numberOfSourceFrames);
     
     m_sourceProvider->provideInput(&bus, numberOfSourceFrames);
@@ -146,7 +148,7 @@ namespace {
 
 class BufferSourceProvider : public AudioSourceProvider {
 public:
-    BufferSourceProvider(float* source, size_t numberOfSourceFrames)
+    BufferSourceProvider(const float* source, size_t numberOfSourceFrames)
         : m_source(source)
         , m_sourceFramesAvailable(numberOfSourceFrames)
     {
@@ -159,7 +161,7 @@ public:
         if (!m_source || !bus)
             return;
             
-        float* buffer = bus->channel(0)->data();
+        float* buffer = bus->channel(0)->mutableData();
 
         // Clamp to number of frames available and zero-pad.
         size_t framesToCopy = min(m_sourceFramesAvailable, framesToProcess);
@@ -174,13 +176,13 @@ public:
     }
     
 private:
-    float* m_source;
+    const float* m_source;
     size_t m_sourceFramesAvailable;
 };
 
 } // namespace
 
-void SincResampler::process(float* source, float* destination, unsigned numberOfSourceFrames)
+void SincResampler::process(const float* source, float* destination, unsigned numberOfSourceFrames)
 {
     // Resample an in-memory buffer using an AudioSourceProvider.
     BufferSourceProvider sourceProvider(source, numberOfSourceFrames);

@@ -44,7 +44,7 @@ public:
     SincResampler(double scaleFactor, unsigned kernelSize = 32, unsigned numberOfKernelOffsets = 32);
     
     // Processes numberOfSourceFrames from source to produce numberOfSourceFrames / scaleFactor frames in destination.
-    void process(float* source, float* destination, unsigned numberOfSourceFrames);
+    void process(const float* source, float* destination, unsigned numberOfSourceFrames);
 
     // Process with input source callback function for streaming applications.
     void process(AudioSourceProvider*, float* destination, size_t framesToProcess);
@@ -71,7 +71,7 @@ protected:
     // Source is copied into this buffer for each processing pass.
     AudioFloatArray m_inputBuffer;
 
-    float* m_source;
+    const float* m_source;
     unsigned m_sourceFramesAvailable;
     
     // m_sourceProvider is used to provide the audio input stream to the resampler.

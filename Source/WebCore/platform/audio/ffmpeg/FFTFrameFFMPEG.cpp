@@ -135,7 +135,7 @@ void FFTFrame::multiply(const FFTFrame& frame)
     VectorMath::vsmul(imagP1, 1, &scale, imagP1, 1, halfSize);
 }
 
-void FFTFrame::doFFT(float* data)
+void FFTFrame::doFFT(const float* data)
 {
     // Copy since processing is in-place.
     float* p = m_complexData.data();

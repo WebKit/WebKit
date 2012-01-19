@@ -44,7 +44,7 @@ public:
 
     virtual PassOwnPtr<AudioDSPKernel> createKernel();
 
-    virtual void process(AudioBus* source, AudioBus* destination, size_t framesToProcess);
+    virtual void process(const AudioBus* source, AudioBus* destination, size_t framesToProcess);
 
     void setCurve(Float32Array*);
     Float32Array* curve() { return m_curve.get(); }
