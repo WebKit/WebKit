@@ -37,53 +37,9 @@ http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 
-# crashing tests after refactored Qt5
-fast/text/midword-break-before-surrogate-pair-2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.12_T3.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.2_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.11_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.12_T3.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.11_T1.html
-
-# flakey tests
-editing/deleting/5115601.html
-editing/deleting/whitespace-pre-1.html
-editing/execCommand/unlink.html
-editing/pasteboard/19644-1.html
-editing/pasteboard/paste-into-anchor-text.html
-editing/pasteboard/smart-paste-006.html
-editing/selection/select-out-of-floated-input.html
-fast/canvas/2d.fillText.gradient.html
-fast/canvas/canvas-strokeText-strokes-shadow.html
-fast/canvas/fillText-shadow.html
-fast/canvas/text-globalAlpha.html
-fast/dom/DeviceOrientation/add-listener-from-callback.html
-fast/text/offsetForPosition-complex-fallback.html
-http/tests/inspector/network/network-iframe-load-and-delete.html
-plugins/iframe-shims.html
-svg/animations/svglength-animation-px-to-exs.html
-svg/custom/font-face-not-in-document.svg
-svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html
-svg/dynamic-updates/SVGTextElement-dom-textLength-attr.html
-svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html
-svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html
-
 # timeout
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/forms/textfield-drag-into-disabled.html
-
-# flakey tests
-fast/events/frame-tab-focus.html
-fast/events/remove-child-onscroll.html
-fast/events/touch/multi-touch-grouped-targets.html
-fast/events/touch/touch-target-limited.html
-fast/events/touch/touch-target.html
-fast/profiler/constructor.html
-fast/spatial-navigation/snav-fully-aligned-horizontally.html
-fast/spatial-navigation/snav-iframe-no-scrollable-content.html
-fast/spatial-navigation/snav-media-elements.html
-fast/spatial-navigation/snav-offscreen-content.html
 
 # [Qt] fast/multicol/flipped-blocks-hit-test.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=71118
