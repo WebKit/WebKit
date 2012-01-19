@@ -38,19 +38,19 @@ function runTest() {
     if (window.accessibilityController)
         lowerTargetAccessibleObject.scrollToMakeVisible();
     var top = lowerTarget.offsetTop - container.offsetTop;
-    var minYOffset = top + lowerTarget.offsetHeight - container.offsetHeight;
-    var maxYOffset = top;
-    shouldBeGreaterThanOrEqual("container.scrollTop", "" + minYOffset);
-    shouldBeGreaterThanOrEqual("" + maxYOffset, "container.scrollTop");
+    window.minYOffset = top + lowerTarget.offsetHeight - container.offsetHeight;
+    window.maxYOffset = top;
+    shouldBe("container.scrollTop >= minYOffset", "true");
+    shouldBe("container.scrollTop <= maxYOffset", "true");
 
     // Scroll to make upper target visible and check.
     if (window.accessibilityController)
         upperTargetAccessibleObject.scrollToMakeVisible();
     top = upperTarget.offsetTop - container.offsetTop;
-    minYOffset = top + upperTarget.offsetHeight - container.offsetHeight;
-    maxYOffset = top;
-    shouldBeGreaterThanOrEqual("container.scrollTop", "" + minYOffset);
-    shouldBeGreaterThanOrEqual("" + maxYOffset, "container.scrollTop");
+    window.minYOffset = top + upperTarget.offsetHeight - container.offsetHeight;
+    window.maxYOffset = top;
+    shouldBe("container.scrollTop >= minYOffset", "true");
+    shouldBe("container.scrollTop <= maxYOffset", "true");
 
     finishJSTest();
 }

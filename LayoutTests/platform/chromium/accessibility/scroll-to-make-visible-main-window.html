@@ -34,18 +34,18 @@ function runTest() {
     // Scroll to make lower target visible and check.
     if (window.accessibilityController)
         lowerTargetAccessibleObject.scrollToMakeVisible();
-    var minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - window.innerHeight;
-    var maxYOffset = lowerTarget.offsetTop;
-    shouldBeGreaterThanOrEqual("window.pageYOffset", "" + minYOffset);
-    shouldBeGreaterThanOrEqual("" + maxYOffset, "window.pageYOffset");
+    window.minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - window.innerHeight;
+    window.maxYOffset = lowerTarget.offsetTop;
+    shouldBe("window.pageYOffset >= minYOffset", "true");
+    shouldBe("window.pageYOffset <= maxYOffset", "true");
 
     // Scroll to make upper target visible and check.
     if (window.accessibilityController)
         upperTargetAccessibleObject.scrollToMakeVisible();
-    minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - window.innerHeight;
-    maxYOffset = upperTarget.offsetTop;
-    shouldBeGreaterThanOrEqual("window.pageYOffset", "" + minYOffset);
-    shouldBeGreaterThanOrEqual("" + maxYOffset, "window.pageYOffset");
+    window.minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - window.innerHeight;
+    window.maxYOffset = upperTarget.offsetTop;
+    shouldBe("window.pageYOffset >= minYOffset", "true");
+    shouldBe("window.pageYOffset <= maxYOffset", "true");
 
     finishJSTest();
 }

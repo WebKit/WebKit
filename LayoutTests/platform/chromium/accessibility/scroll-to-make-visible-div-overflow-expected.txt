@@ -7,10 +7,10 @@ Upper Target
 5000-pixel box
 Lower Target
 PASS container.scrollTop is 0
-PASS container.scrollTop is >= 4952
-PASS 5030 is >= container.scrollTop
-PASS container.scrollTop is >= -76
-PASS 2 is >= container.scrollTop
+PASS container.scrollTop >= minYOffset is true
+PASS container.scrollTop <= maxYOffset is true
+PASS container.scrollTop >= minYOffset is true
+PASS container.scrollTop <= maxYOffset is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

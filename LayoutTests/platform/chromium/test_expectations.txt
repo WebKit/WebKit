@@ -3854,15 +3854,6 @@ BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 
 BUGWK76580 : media/media-document-audio-repaint.html = IMAGE PASS
 
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-div-overflow.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-main-window.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-iframe-nested.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-main-window.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-nested.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-global-point-iframe.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-with-subfocus.html = TEXT
-BUGWK73460 MAC : platform/chromium/accessibility/scroll-to-make-visible-iframe.html = TEXT
-
 BUGWK76562 : fast/canvas/webgl/drawingbuffer-test.html = TEXT
 
 BUGWK76446 : svg/text/select-x-list-4.svg = IMAGE+TEXT

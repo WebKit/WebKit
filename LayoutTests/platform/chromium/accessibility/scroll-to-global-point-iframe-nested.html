@@ -11,6 +11,11 @@
 
 <!-- The contents of this iframe, more nicely formatted:
  <body>
+   <style>
+     button {
+       border: 0;
+     }
+   </style>
    <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div>
    <div id='container' style='height: 100px; overflow: scroll'>
      <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div>
@@ -20,7 +25,7 @@
    <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div>
   </body>
  -->
-<iframe id="frame" src="data:text/html,<body><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><div id='container' style='height: 100px; overflow: scroll'><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><button id='target'>Target</button><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div></div><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div></body>"></iframe>
+<iframe id="frame" src="data:text/html,<body><style>button { border: 0; }</style><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><div id='container' style='height: 100px; overflow: scroll'><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div><button id='target'>Target</button><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div></div><div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div></body>"></iframe>
 
 <div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
 
