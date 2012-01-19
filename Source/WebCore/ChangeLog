@@ -1,3 +1,31 @@
+2012-01-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in CompositeEditCommand::ensureComposition
+        https://bugs.webkit.org/show_bug.cgi?id=76207
+
+        Reviewed by Chang Shu.
+
+        The crash was caused by TypingCommand not kept alive when new editing commands are executed
+        during adding more typings to the open last typing command since m_lastEditCommand is replaced
+        by the new command. Fixed the bug by keeping them alive a little longer with RefPtr.
+
+        Test: editing/execCommand/editing-command-while-executing-typing-command-crash.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::shouldStopBlinkingDueToTypingCommand):
+        (WebCore::FrameSelection::updateAppearance):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        (WebCore::TypingCommand::closeTyping):
+        * editing/TypingCommand.h:
+
 2012-01-19  Andreas Kling  <awesomekling@apple.com>
 
         Unreviewed debug build fix.

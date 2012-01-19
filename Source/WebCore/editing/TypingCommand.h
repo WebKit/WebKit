@@ -95,7 +95,7 @@ private:
     bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
-    static TypingCommand* lastTypingCommandIfStillOpenForTyping(Frame*);
+    static PassRefPtr<TypingCommand> lastTypingCommandIfStillOpenForTyping(Frame*);
 
     virtual void doApply();
     virtual EditAction editingAction() const;

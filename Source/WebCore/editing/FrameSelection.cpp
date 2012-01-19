@@ -1654,6 +1654,11 @@ bool FrameSelection::isFocusedAndActive() const
     return m_focused && m_frame->page() && m_frame->page()->focusController()->isActive();
 }
 
+inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
+{
+    return frame->editor()->lastEditCommand() && frame->editor()->lastEditCommand()->shouldStopCaretBlinking();
+}
+
 void FrameSelection::updateAppearance()
 {
 #if ENABLE(TEXT_CARET)
@@ -1661,13 +1666,10 @@ void FrameSelection::updateAppearance()
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
     bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing);
-    
-    CompositeEditCommand* lastEditCommand = m_frame ? m_frame->editor()->lastEditCommand() : 0;
-    bool shouldStopBlinkingDueToTypingCommand = lastEditCommand && lastEditCommand->shouldStopCaretBlinking();
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
-    if (caretRectChanged || !shouldBlink || shouldStopBlinkingDueToTypingCommand)
+    if (caretRectChanged || !shouldBlink || shouldStopBlinkingDueToTypingCommand(m_frame))
         m_caretBlinkTimer.stop();
 
     // Start blinking with a black caret. Be sure not to restart if we're
