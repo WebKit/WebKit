@@ -1,3 +1,20 @@
+2012-01-18  Raymond Liu  <raymond.liu@intel.com>
+
+        Only create AudioBus with required number of channels for AudioNodeOutput
+        https://bugs.webkit.org/show_bug.cgi?id=76417
+
+        Reviewed by Kenneth Russell.
+
+        No new tests required.
+
+        * webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        (WebCore::AudioNodeOutput::setNumberOfChannels):
+        (WebCore::AudioNodeOutput::updateInternalBus):
+        (WebCore::AudioNodeOutput::updateNumberOfChannels):
+        (WebCore::AudioNodeOutput::pull):
+        * webaudio/AudioNodeOutput.h:
+
 2012-01-18  Andreas Kling  <awesomekling@apple.com>
 
         Cache and reuse the NodeList returned by Node::childNodes().

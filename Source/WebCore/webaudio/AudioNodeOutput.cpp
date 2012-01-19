@@ -35,24 +35,29 @@
 
 namespace WebCore {
 
+// This is considering that 5.1 (6 channels) is the largest we'll ever deal with.
+// It can easily be increased to support more if the web audio specification is updated.
+const unsigned MaxNumberOfChannels = 6;
+
 AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     : m_node(node)
     , m_numberOfChannels(numberOfChannels)
     , m_desiredNumberOfChannels(numberOfChannels)
-    , m_internalOutputBus(0)
     , m_actualDestinationBus(0)
     , m_isEnabled(true)
     , m_renderingFanOutCount(0)
 {
-    m_monoInternalBus = adoptPtr(new AudioBus(1, AudioNode::ProcessingSizeInFrames));
-    m_stereoInternalBus = adoptPtr(new AudioBus(2, AudioNode::ProcessingSizeInFrames));
-    setInternalBus();
+    ASSERT(numberOfChannels >= 0 && numberOfChannels <= MaxNumberOfChannels);
+
+    m_internalBus = adoptPtr(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
+    m_actualDestinationBus = m_internalBus.get();
 }
 
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
 {
+    ASSERT(numberOfChannels <= MaxNumberOfChannels);
     ASSERT(context()->isGraphOwner());
-    
+
     m_desiredNumberOfChannels = numberOfChannels;
 
     if (context()->isAudioThread()) {
@@ -64,23 +69,15 @@ void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
     }
 }
 
-void AudioNodeOutput::setInternalBus()
+void AudioNodeOutput::updateInternalBus()
 {
-    switch (m_numberOfChannels) {
-    case 0:
-    case 1:
-        m_internalOutputBus = m_monoInternalBus.get();
-        break;
-    case 2:
-        m_internalOutputBus = m_stereoInternalBus.get();
-        break;
-    default:
-        // FIXME: later we can fully implement more than stereo, 5.1, etc.
-        ASSERT_NOT_REACHED();            
-    }
+    if (numberOfChannels() == m_internalBus->numberOfChannels())
+        return;
+
+    m_internalBus = adoptPtr(new AudioBus(numberOfChannels(), AudioNode::ProcessingSizeInFrames));
 
     // This may later be changed in pull() to point to an in-place bus with the same number of channels.
-    m_actualDestinationBus = m_internalOutputBus;
+    m_actualDestinationBus = m_internalBus.get();
 }
 
 void AudioNodeOutput::updateRenderingState()
@@ -95,7 +92,7 @@ void AudioNodeOutput::updateNumberOfChannels()
 
     if (m_numberOfChannels != m_desiredNumberOfChannels) {
         m_numberOfChannels = m_desiredNumberOfChannels;
-        setInternalBus();
+        updateInternalBus();
         propagateChannelCount();
     }
 }
@@ -128,7 +125,7 @@ AudioBus* AudioNodeOutput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     bool isInPlace = inPlaceBus && inPlaceBus->numberOfChannels() == numberOfChannels() && m_renderingFanOutCount == 1;
 
     // Setup the actual destination bus for processing when our node's process() method gets called in processIfNecessary() below.
-    m_actualDestinationBus = isInPlace ? inPlaceBus : m_internalOutputBus;
+    m_actualDestinationBus = isInPlace ? inPlaceBus : m_internalBus.get();
 
     node()->processIfNecessary(framesToProcess);
     return m_actualDestinationBus;

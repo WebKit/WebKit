@@ -93,9 +93,9 @@ private:
     void addInput(AudioNodeInput*);
     void removeInput(AudioNodeInput*);
 
-    // setInternalBus() sets m_internalOutputBus appropriately for the number of channels.
+    // updateInternalBus() updates m_internalBus appropriately for the number of channels.
     // It is called in the constructor or in the audio thread with the context's graph lock.
-    void setInternalBus();
+    void updateInternalBus();
 
     // Announce to any nodes we're connected to that we changed our channel count for its input.
     // It must be called in the audio thread with the context's graph lock.
@@ -110,11 +110,8 @@ private:
     unsigned m_numberOfChannels;
     unsigned m_desiredNumberOfChannels;
     
-    // m_internalOutputBus will point to either m_monoInternalBus or m_stereoInternalBus.
-    // It must only be changed in the audio thread (or constructor).
-    AudioBus* m_internalOutputBus;
-    OwnPtr<AudioBus> m_monoInternalBus;
-    OwnPtr<AudioBus> m_stereoInternalBus;
+    // m_internalBus must only be changed in the audio thread with the context's graph lock (or constructor).
+    OwnPtr<AudioBus> m_internalBus;
 
     // m_actualDestinationBus is set in pull() and will either point to one of our internal busses or to the in-place bus.
     // It must only be changed in the audio thread (or constructor).
