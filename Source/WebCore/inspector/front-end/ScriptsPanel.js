@@ -465,7 +465,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     showUISourceCode: function(uiSourceCode)
     {
-        this._showSourceLine(uiSourceCode, null);
+        this._showSourceLine(uiSourceCode);
     },
 
     /**

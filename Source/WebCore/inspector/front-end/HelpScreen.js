@@ -99,7 +99,7 @@ WebInspector.HelpScreen.prototype = {
     _onBlur: function(event)
     {
         // Pretend we're modal, grab focus back if we're still shown.
-        if (this._isShown && event.target !== this._element && !this._element.isAncestor(event.target))
+        if (this._isShown && !this._element.isSelfOrAncestor(event.target))
             WebInspector.setCurrentFocusElement(this._element);
     }
 }

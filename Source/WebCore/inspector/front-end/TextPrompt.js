@@ -126,8 +126,7 @@ WebInspector.TextPrompt.prototype = {
         this.proxyElement.parentElement.insertBefore(this._element, this.proxyElement);
         this.proxyElement.parentElement.removeChild(this.proxyElement);
         delete this._proxyElement;
-        if (this._element === WebInspector.currentFocusElement() || this._element.isAncestor(WebInspector.currentFocusElement()))
-            WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
+        WebInspector.restoreFocusFromElement(this._element);
     },
 
     get text()
@@ -585,7 +584,7 @@ WebInspector.TextPrompt.prototype = {
 
         var selectionRange = selection.getRangeAt(0);
         var node = selectionRange.startContainer;
-        if (node !== this._element && !node.isDescendant(this._element))
+        if (!node.isSelfOrDescendant(this._element))
             return false;
 
         if (node.nodeType === Node.TEXT_NODE && selectionRange.startOffset < node.nodeValue.length)

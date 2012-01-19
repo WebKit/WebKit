@@ -930,7 +930,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         var selection = window.getSelection();
         if (selection.rangeCount) {
             var commonAncestorContainer = selection.getRangeAt(0).commonAncestorContainer;
-            if (this._container === commonAncestorContainer || this._container.isAncestor(commonAncestorContainer))
+            if (this._container.isSelfOrAncestor(commonAncestorContainer))
                 return;
         }
 
@@ -1652,7 +1652,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (!lineRow)
             return;
 
-        if (lineRow.decorationsElement && (lineRow.decorationsElement === target || lineRow.decorationsElement.isAncestor(target))) {
+        if (lineRow.decorationsElement && lineRow.decorationsElement.isSelfOrAncestor(target)) {
             if (this._syncDecorationsForLineListener)
                 this._syncDecorationsForLineListener(lineRow.lineNumber);
             return;

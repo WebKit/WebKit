@@ -304,8 +304,7 @@ WebInspector.startEditing = function(element, config)
         if (pasteCallback)
             element.removeEventListener("paste", pasteEventListener, true);
 
-        if (element === WebInspector.currentFocusElement() || element.isAncestor(WebInspector.currentFocusElement()))
-            WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
+        WebInspector.restoreFocusFromElement(element);
     }
 
     /** @this {Element} */
@@ -622,6 +621,12 @@ WebInspector.setCurrentFocusElement = function(x)
         }
     } else if (WebInspector._previousFocusElement)
         WebInspector._previousFocusElement.blur();
+}
+
+WebInspector.restoreFocusFromElement = function(element)
+{
+    if (element && element.isSelfOrAncestor(WebInspector.currentFocusElement()))
+        WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());
 }
 
 WebInspector.setToolbarColors = function(backgroundColor, color)

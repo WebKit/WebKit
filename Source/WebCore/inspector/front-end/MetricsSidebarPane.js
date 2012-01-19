@@ -309,7 +309,7 @@ WebInspector.MetricsSidebarPane.prototype = {
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        if (selectionRange.commonAncestorContainer !== element && !selectionRange.commonAncestorContainer.isDescendant(element))
+        if (!selectionRange.commonAncestorContainer.isSelfOrDescendant(element))
             return;
 
         var originalValue = element.textContent;

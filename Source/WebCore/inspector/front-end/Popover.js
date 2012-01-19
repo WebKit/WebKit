@@ -204,7 +204,7 @@ WebInspector.PopoverHelper.prototype = {
     _mouseMove: function(event)
     {
         // Pretend that nothing has happened.
-        if (this._hoverElement === event.target || (this._hoverElement && this._hoverElement.isAncestor(event.target)))
+        if (event.target.isSelfOrDescendant(this._hoverElement))
             return;
 
         // User has 500ms (this._timeout / 2) to reach the popup.

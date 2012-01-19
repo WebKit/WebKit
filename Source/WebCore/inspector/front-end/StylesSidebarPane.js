@@ -2292,7 +2292,7 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             return false;
 
         var selectionRange = selection.getRangeAt(0);
-        if (selectionRange.commonAncestorContainer !== this._sidebarPane.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this._sidebarPane.valueElement))
+        if (!selectionRange.commonAncestorContainer.isSelfOrDescendant(this._sidebarPane.valueElement))
             return false;
 
         var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this._sidebarPane.valueElement);

@@ -1,3 +1,35 @@
+2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add isSelfOrAnsector and isSelfOrDescendant methods to utilities.
+        https://bugs.webkit.org/show_bug.cgi?id=76618
+
+        Added isSelfOrAncestor, isSelfOrDescendant and WebInspector.restoreFocusFromElement methods.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Drawer.js:
+        * inspector/front-end/HelpScreen.js:
+        (WebInspector.HelpScreen.prototype._onBlur):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown):
+        * inspector/front-end/Popover.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showUISourceCode):
+        * inspector/front-end/StylesSidebarPane.js:
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.detach):
+        (WebInspector.TextPrompt.prototype.isCaretAtEndOfPrompt):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype._updateSelectionOnStartEditing):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMUpdates):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.startEditing.cleanUpAfterEditing):
+        (WebInspector.restoreFocusFromElement):
+        * inspector/front-end/utilities.js:
+        (Element.prototype.isInsertionCaretInside):
+        ():
+
 2012-01-19  Andreas Kling  <awesomekling@apple.com>
 
         DynamicNodeList: Simplify internal Caches object.
