@@ -843,11 +843,6 @@ glyphs
 inline-box
 replaced
 
-// -webkit-line-grid-snap
-//none
-//baseline
-bounds
-
 // -webkit-font-feature-settings
 on
 off

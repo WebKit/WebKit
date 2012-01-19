@@ -460,7 +460,7 @@ enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
 
 enum ColumnAxis { HorizontalColumnAxis, VerticalColumnAxis, AutoColumnAxis };
 
-enum LineGridSnap { LineGridSnapNone, LineGridSnapBaseline, LineGridSnapBounds };
+enum LineGridSnap { LineGridSnapNone, LineGridSnapBaseline, LineGridSnapContain };
 
 enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowLeft, WrapFlowRight, WrapFlowMaximum, WrapFlowClear };
 

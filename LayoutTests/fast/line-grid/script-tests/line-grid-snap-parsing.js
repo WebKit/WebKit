@@ -33,7 +33,7 @@ function testInherited(parentValue) {
 
 shouldBeEqualToString('test("-webkit-line-grid-snap: none")', "none");
 shouldBeEqualToString('test("-webkit-line-grid-snap: baseline")', "baseline");
-shouldBeEqualToString('test("-webkit-line-grid-snap: bounds")', "bounds");
+shouldBeEqualToString('test("-webkit-line-grid-snap: contain")', "contain");
 shouldBeEqualToString('test("-webkit-line-grid-snap: ;")', "");
 shouldBeEqualToString('test("-webkit-line-grid-snap: 1")', "");
 shouldBeEqualToString('test("-webkit-line-grid-snap: 1.2")', "");
@@ -46,4 +46,4 @@ shouldBeEqualToString('testComputedStyle("12px")', "none");
 
 shouldBeEqualToString('testInherited("none")', "none");
 shouldBeEqualToString('testInherited("baseline")', "baseline");
-shouldBeEqualToString('testInherited("bounds")', "bounds");
+shouldBeEqualToString('testInherited("contain")', "contain");

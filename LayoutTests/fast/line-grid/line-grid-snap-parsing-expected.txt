@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS test("-webkit-line-grid-snap: none") is "none"
 PASS test("-webkit-line-grid-snap: baseline") is "baseline"
-PASS test("-webkit-line-grid-snap: bounds") is "bounds"
+PASS test("-webkit-line-grid-snap: contain") is "contain"
 PASS test("-webkit-line-grid-snap: ;") is ""
 PASS test("-webkit-line-grid-snap: 1") is ""
 PASS test("-webkit-line-grid-snap: 1.2") is ""
@@ -16,7 +16,7 @@ PASS testComputedStyle("") is "none"
 PASS testComputedStyle("12px") is "none"
 PASS testInherited("none") is "none"
 PASS testInherited("baseline") is "baseline"
-PASS testInherited("bounds") is "bounds"
+PASS testInherited("contain") is "contain"
 PASS successfullyParsed is true
 
 TEST COMPLETE

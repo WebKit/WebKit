@@ -1975,7 +1975,7 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
     case CSSPropertyWebkitLineGridSnap:
-        if (id == CSSValueNone || id == CSSValueBaseline || id == CSSValueBounds)
+        if (id == CSSValueNone || id == CSSValueBaseline || id == CSSValueContain)
             validPrimitive = true;
         break;
     case CSSPropertyWebkitLocale:

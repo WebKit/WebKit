@@ -1,3 +1,22 @@
+2012-01-19  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76644
+
+        Before landing support for centering, fix the keyword value to match the latest draft.
+        The new keyword is "contain" instead of "bounds."
+
+        Revised the existing parsing tests to reflect the updated value.
+
+        Reviewed by Dan Bernstein.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LineGridSnap):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyleConstants.h:
+
 2012-01-19  Joi Sigurdsson  <joi@chromium.org>
 
         Enable use of precompiled headers in Chromium port on Windows.

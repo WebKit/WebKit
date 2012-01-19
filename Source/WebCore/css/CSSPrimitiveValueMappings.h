@@ -3142,8 +3142,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineGridSnap gridSnap)
     case LineGridSnapBaseline:
         m_value.ident = CSSValueBaseline;
         break;
-    case LineGridSnapBounds:
-        m_value.ident = CSSValueBounds;
+    case LineGridSnapContain:
+        m_value.ident = CSSValueContain;
         break;
     }
 }
@@ -3155,8 +3155,8 @@ template<> inline CSSPrimitiveValue::operator LineGridSnap() const
         return LineGridSnapNone;
     case CSSValueBaseline:
         return LineGridSnapBaseline;
-    case CSSValueBounds:
-        return LineGridSnapBounds;
+    case CSSValueContain:
+        return LineGridSnapContain;
     default:
         ASSERT_NOT_REACHED();
         return LineGridSnapNone;
