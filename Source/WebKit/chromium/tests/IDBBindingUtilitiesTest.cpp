@@ -159,7 +159,7 @@ TEST(InjectIDBKeyTest, SubProperty)
     checkInjection(IDBKey::createArray(IDBKey::KeyArray()), SerializedScriptValue::create(object), "bar");
 
     checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.bar.baz");
-    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");
+    checkInjection(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");
 }
 
 } // namespace

@@ -1,3 +1,17 @@
+2012-01-18  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Fix InjectIDBKeyTest.SubProperty test failure
+        https://bugs.webkit.org/show_bug.cgi?id=76582
+
+        Correct the test, now that https://bugs.webkit.org/show_bug.cgi?id=76493
+        changes the semantics so that intermediate objects are created if possible
+        to satisfy autoIncrement keypaths.
+
+        Reviewed by James Robinson.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::TEST):
+
 2012-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] move Tools.gyp, switch build-webkit --chromium to All.gyp
