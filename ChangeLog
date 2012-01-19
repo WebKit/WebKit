@@ -1,3 +1,10 @@
+2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Martin Robinson.
+
+        * Source/autotools/symbols.filter: try to fix the 32 bits release
+        bot by also adding the symbol it generates
+
 2012-01-19  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make build-webkit always do safe incremental builds after update-webkit
