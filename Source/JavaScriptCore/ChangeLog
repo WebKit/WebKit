@@ -1,3 +1,24 @@
+2012-01-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Implicit creation of a regular expression should eagerly check for syntax errors
+        https://bugs.webkit.org/show_bug.cgi?id=76642
+
+        Reviewed by Oliver Hunt.
+        
+        This is a correctness fix and a slight optimization.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch): Check for syntax errors because that's the
+        correct behavior.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match): ASSERT that we aren't a syntax error. (One line
+        of code change, many lines of indentation change.)
+
+        Since we have no clients that try to match a RegExp that is a syntax error,
+        let's optimize out the check.
+
 2012-01-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implement a new allocator for backing stores

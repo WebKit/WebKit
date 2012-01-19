@@ -826,6 +826,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
         reg = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec), NoFlags);
+        if (!reg->isValid())
+            return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -876,6 +878,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
         reg = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec), NoFlags);
+        if (!reg->isValid())
+            return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
