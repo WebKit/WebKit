@@ -128,6 +128,8 @@ public:
     static void didProcessRule(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverride(Frame*, String*);
+    static void applyScreenWidthOverride(Frame*, long*);
+    static void applyScreenHeightOverride(Frame*, long*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoader(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page*, unsigned long identifier);
@@ -273,6 +275,8 @@ private:
     static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
+    static void applyScreenWidthOverrideImpl(InstrumentingAgents*, long*);
+    static void applyScreenHeightOverrideImpl(InstrumentingAgents*, long*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoaderImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InstrumentingAgents*, unsigned long identifier);
@@ -776,6 +780,24 @@ inline void InspectorInstrumentation::applyUserAgentOverride(Frame* frame, Strin
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         applyUserAgentOverrideImpl(instrumentingAgents, userAgent);
+#endif
+}
+
+inline void InspectorInstrumentation::applyScreenWidthOverride(Frame* frame, long* width)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        applyScreenWidthOverrideImpl(instrumentingAgents, width);
+#endif
+}
+
+inline void InspectorInstrumentation::applyScreenHeightOverride(Frame* frame, long* height)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        applyScreenHeightOverrideImpl(instrumentingAgents, height);
 #endif
 }
 

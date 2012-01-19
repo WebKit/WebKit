@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "InspectorInstrumentation.h"
 #include "PlatformScreen.h"
 #include "Widget.h"
 
@@ -61,14 +62,18 @@ unsigned Screen::height() const
 {
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenRect(m_frame->view()).height());
+    long height = static_cast<long>(screenRect(m_frame->view()).height());
+    InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
+    return static_cast<unsigned>(height);
 }
 
 unsigned Screen::width() const
 {
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenRect(m_frame->view()).width());
+    long width = static_cast<long>(screenRect(m_frame->view()).width());
+    InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
+    return static_cast<unsigned>(width);
 }
 
 unsigned Screen::colorDepth() const

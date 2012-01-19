@@ -1,3 +1,51 @@
+2012-01-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement screen resolution emulation backend
+        https://bugs.webkit.org/show_bug.cgi?id=76532
+
+        Reviewed by Pavel Feldman.
+
+        The emulation affects [min-|max-]device-(width|height) media queries, window.screen.(width|height),
+        and window.inner(Width|Height).
+
+        Test: inspector/styles/override-screen-size.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::device_heightMediaFeatureEval): Apply device-height override if necessary.
+        (WebCore::device_widthMediaFeatureEval): Apply device-width override if necessary.
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::startSelectorProfiler):
+        (WebCore::InspectorCSSAgent::stopSelectorProfilerImpl):
+        (WebCore::InspectorCSSAgent::willMatchRule):
+        (WebCore::InspectorCSSAgent::didMatchRule):
+        (WebCore::InspectorCSSAgent::willProcessRule):
+        (WebCore::InspectorCSSAgent::didProcessRule):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::applyScreenWidthOverrideImpl):
+        (WebCore::InspectorInstrumentation::applyScreenHeightOverrideImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::applyScreenWidthOverride):
+        (WebCore::InspectorInstrumentation::applyScreenHeightOverride):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::restore):
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::setScreenSizeOverride):
+        (WebCore::InspectorPageAgent::applyScreenWidthOverride):
+        (WebCore::InspectorPageAgent::applyScreenHeightOverride):
+        (WebCore::InspectorPageAgent::updateFrameViewFixedLayout):
+        (WebCore::InspectorPageAgent::clearFrameViewFixedLayout):
+        (WebCore::InspectorPageAgent::setFrameViewFixedLayout):
+        * inspector/InspectorPageAgent.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight): Apply height override if necessary.
+        (WebCore::DOMWindow::innerWidth): Apply width override if necessary.
+        * page/Screen.cpp:
+        (WebCore::Screen::height): Apply height override if necessary.
+        (WebCore::Screen::width): Apply width override if necessary.
+
 2012-01-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Handle the layers visible rect calculation on the web process.

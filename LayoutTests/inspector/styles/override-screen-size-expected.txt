@@ -1,0 +1,46 @@
+Tests that screen dimension overrides affect media rules, body dimensions, and window.screen.
+
+Override: 480x960
+Screen from page: 480x960
+Body from page: 480x960
+Main style:
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+media="screen" (override-screen-size.html)
+@media (max-device-height: 960px) and (max-device-width: 480px) (override-screen-size.html:9)
+#main  { (override-screen-size.html:10)
+background: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+Override: 960x480
+Screen from page: 960x480
+Body from page: 960x480
+Main style:
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+Override: 10000001x960 => ERROR
+Override: -1x960 => ERROR
+Override: 480x10000001 => ERROR
+Override: 480x-1 => ERROR
+Current dimensions:
+Screen from page: 960x480
+Body from page: 960x480
+Disable PageAgent:
+Screen size same as original - OK
+Enable PageAgent:
+Screen size same as original - OK
+

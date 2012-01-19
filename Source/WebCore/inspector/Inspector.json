@@ -308,6 +308,15 @@
                     { "name": "html", "type": "string", "description": "HTML content to set."  }
                 ],
                 "hidden": true
+            },
+            {
+                "name": "setScreenSizeOverride",
+                "description": "Overrides the values of window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and \"device-width\"/\"device-height\"-related CSS media query results",
+                "parameters": [
+                    { "name": "width", "type": "integer", "description": "Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override." },
+                    { "name": "height", "type": "integer", "description": "Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override." }
+                ],
+                "hidden": true
             }
         ],
         "events": [

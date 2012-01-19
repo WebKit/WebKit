@@ -1134,7 +1134,9 @@ int DOMWindow::innerHeight() const
     if (!view)
         return 0;
     
-    return static_cast<int>(view->visibleContentRect(/* includeScrollbars */ true).height() / m_frame->pageZoomFactor());
+    long height = view->visibleContentRect(/* includeScrollbars */ true).height();
+    InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
+    return static_cast<int>(height / m_frame->pageZoomFactor());
 }
 
 int DOMWindow::innerWidth() const
@@ -1146,7 +1148,9 @@ int DOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-    return static_cast<int>(view->visibleContentRect(/* includeScrollbars */ true).width() / m_frame->pageZoomFactor());
+    long width = view->visibleContentRect(/* includeScrollbars */ true).width();
+    InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
+    return static_cast<int>(width / m_frame->pageZoomFactor());
 }
 
 int DOMWindow::screenX() const

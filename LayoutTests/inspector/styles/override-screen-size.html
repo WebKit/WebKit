@@ -1,0 +1,200 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+@media (max-device-width: 478px) and (max-device-height: 959px) {
+    #main { background: red; }
+}
+
+@media (max-device-width: 480px) and (max-device-height: 960px) {
+    #main { background: green; }
+}
+
+@media (min-device-width: 481px) and (min-device-height: 961px) {
+    #main { background: yellow; }
+}
+
+body {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+}
+
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function getSizes()
+{
+    return JSON.stringify({
+        screen: window.screen.width + "x" + window.screen.height,
+        body: document.body.offsetWidth + "x" + document.body.offsetHeight
+    });
+}
+
+function test()
+{
+    var exceededDimension = 10000001;
+    var originalScreenSize;
+
+    function saveSizeCallback(jsonResult)
+    {
+        var value = JSON.parse(jsonResult.value);
+        originalScreenSize = value.screen;
+        if (!originalScreenSize || originalScreenSize.indexOf("x") === -1)
+            InspectorTest.addResult("Invalid original screen size: " + originalScreenSize + ". Expect runtime failures later on.");
+
+        InspectorTest.selectNodeAndWaitForStyles("main", step0);
+    }
+
+    InspectorTest.evaluateInPage("getSizes()", saveSizeCallback);
+
+
+    function step0()
+    {
+        overrideAndDumpData(480, 960, step1);
+    }
+
+    function step1()
+    {
+        function compareSizeCallback(jsonResult)
+        {
+            // Check that the screen size reported is the same as the original one.
+            var result = JSON.parse(jsonResult.value);
+            if (result.screen !== originalScreenSize)
+                InspectorTest.addResult("Original size " + originalScreenSize + " not restored, found: " + result.screen);
+            step2();
+        }
+
+        function overrideCallback()
+        {
+            InspectorTest.evaluateInPage("getSizes()", compareSizeCallback);
+        }
+
+        // Disable overrides.
+        PageAgent.setScreenSizeOverride(0, 0, overrideCallback);
+    }
+
+    function step2()
+    {
+        overrideAndDumpData(960, 480, step3);
+    }
+
+    function step3()
+    {
+        applyOverride(exceededDimension, 960, step4);
+    }
+
+    function step4()
+    {
+        applyOverride(-1, 960, step5);
+    }
+
+    function step5()
+    {
+        applyOverride(480, exceededDimension, step6);
+    }
+
+    function step6()
+    {
+        function callback()
+        {
+            InspectorTest.addResult("Current dimensions:");
+            getAndDumpSizes(step7);
+        }
+        applyOverride(480, -1, callback);
+    }
+
+    function step7()
+    {
+        function callback(jsonResult)
+        {
+            var value = JSON.parse(jsonResult.value);
+            if (value.screen !== originalScreenSize)
+                InspectorTest.addResult("Screen size not restored, actual: " + value.screen + ", expected: " + originalScreenSize);
+            else
+                InspectorTest.addResult("Screen size same as original - OK");
+            step8();
+        }
+
+        InspectorTest.addResult("Disable PageAgent:");
+        PageAgent.disable();
+        InspectorTest.evaluateInPage("getSizes()", callback);
+    }
+
+    function step8()
+    {
+        function callback(jsonResult)
+        {
+            var value = JSON.parse(jsonResult.value);
+            if (value.screen !== originalScreenSize)
+                InspectorTest.addResult("Screen size not restored, actual: " + value.screen + ", expected: " + originalScreenSize);
+            else
+                InspectorTest.addResult("Screen size same as original - OK");
+            InspectorTest.completeTest();
+        }
+
+        InspectorTest.addResult("Enable PageAgent:");
+        PageAgent.enable();
+        InspectorTest.evaluateInPage("getSizes()", callback);
+
+    }
+
+    function applyOverride(width, height, userCallback)
+    {
+        function callback(error)
+        {
+            if (error)
+                InspectorTest.addResult("Override: " + width + "x" + height + " => ERROR");
+            userCallback();
+        }
+        PageAgent.setScreenSizeOverride(width, height, callback);
+    }
+
+    function overrideAndDumpData(width, height, callback)
+    {
+        function selectCallback()
+        {
+            InspectorTest.addResult("Main style:");
+            InspectorTest.dumpSelectedElementStyles(true, false, true);
+            callback();
+        }
+
+        function applyCallback()
+        {
+            getAndDumpSizes(selectCallback);
+        }
+
+        InspectorTest.addResult("Override: " + width + "x" + height);
+        applyOverride(width, height, applyCallback);
+    }
+
+    function getAndDumpSizes(callback)
+    {
+        function getSizesCallback(jsonResult)
+        {
+            var result = JSON.parse(jsonResult.value);
+            InspectorTest.addResult("Screen from page: " + result.screen);
+            InspectorTest.addResult("Body from page: " + result.body);
+            callback();
+        }
+
+        InspectorTest.evaluateInPage("getSizes()", getSizesCallback);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that screen dimension overrides affect media rules, body dimensions, and window.screen.
+</p>
+
+<div id="main"></div>
+</body>
+</html>

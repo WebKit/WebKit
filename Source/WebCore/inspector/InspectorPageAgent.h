@@ -100,6 +100,7 @@ public:
     void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>&);
     void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>&);
     void setDocumentContent(ErrorString*, const String& frameId, const String& html);
+    void setScreenSizeOverride(ErrorString*, const int width, const int height);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
@@ -108,6 +109,8 @@ public:
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
     void loaderDetachedFromFrame(DocumentLoader*);
+    void applyScreenWidthOverride(long*);
+    void applyScreenHeightOverride(long*);
 
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);
@@ -125,6 +128,9 @@ public:
 
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
+    void updateFrameViewFixedLayout(int, int);
+    void setFrameViewFixedLayout(int, int);
+    void clearFrameViewFixedLayout();
 
     PassRefPtr<InspectorObject> buildObjectForFrame(Frame*);
     PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame*);
@@ -137,6 +143,8 @@ private:
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
+    OwnPtr<IntSize> m_originalFixedLayoutSize;
+    bool m_originalUseFixedLayout;
 };
 
 

@@ -235,6 +235,7 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
     , m_lastStyleId(1)
 {
     m_domAgent->setDOMListener(this);
+    m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 InspectorCSSAgent::~InspectorCSSAgent()
@@ -524,7 +525,6 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<Inspector
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)
 {
     m_currentSelectorProfile = adoptPtr(new SelectorProfile());
-    m_instrumentingAgents->setInspectorCSSAgent(this);
     m_state->setBoolean(CSSAgentState::isSelectorProfiling, true);
 }
 
@@ -538,7 +538,6 @@ void InspectorCSSAgent::stopSelectorProfilerImpl(ErrorString*, RefPtr<InspectorO
     if (!m_state->getBoolean(CSSAgentState::isSelectorProfiling))
         return;
     m_state->setBoolean(CSSAgentState::isSelectorProfiling, false);
-    m_instrumentingAgents->setInspectorCSSAgent(0);
     if (m_frontend && result)
         *result = m_currentSelectorProfile->toInspectorObject();
     m_currentSelectorProfile.clear();
@@ -546,22 +545,26 @@ void InspectorCSSAgent::stopSelectorProfilerImpl(ErrorString*, RefPtr<InspectorO
 
 void InspectorCSSAgent::willMatchRule(const CSSStyleRule* rule)
 {
-    m_currentSelectorProfile->startSelector(rule);
+    if (m_currentSelectorProfile)
+        m_currentSelectorProfile->startSelector(rule);
 }
 
 void InspectorCSSAgent::didMatchRule(bool matched)
 {
-    m_currentSelectorProfile->commitSelector(matched);
+    if (m_currentSelectorProfile)
+        m_currentSelectorProfile->commitSelector(matched);
 }
 
 void InspectorCSSAgent::willProcessRule(const CSSStyleRule* rule)
 {
-    m_currentSelectorProfile->startSelector(rule);
+    if (m_currentSelectorProfile)
+        m_currentSelectorProfile->startSelector(rule);
 }
 
 void InspectorCSSAgent::didProcessRule()
 {
-    m_currentSelectorProfile->commitSelectorTime();
+    if (m_currentSelectorProfile)
+        m_currentSelectorProfile->commitSelectorTime();
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)

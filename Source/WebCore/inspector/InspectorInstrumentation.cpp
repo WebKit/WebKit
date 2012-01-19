@@ -485,6 +485,18 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents* i
         resourceAgent->applyUserAgentOverride(userAgent);
 }
 
+void InspectorInstrumentation::applyScreenWidthOverrideImpl(InstrumentingAgents* instrumentingAgents, long* width)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->applyScreenWidthOverride(width);
+}
+
+void InspectorInstrumentation::applyScreenHeightOverrideImpl(InstrumentingAgents* instrumentingAgents, long* height)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->applyScreenHeightOverride(height);
+}
+
 void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())

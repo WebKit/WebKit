@@ -332,7 +332,9 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, F
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(sg.height()), length, op);
+        long height = sg.height();
+        InspectorInstrumentation::applyScreenHeightOverride(frame, &height);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(height), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
@@ -345,7 +347,9 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(sg.width()), length, op);
+        long width = sg.width();
+        InspectorInstrumentation::applyScreenWidthOverride(frame, &width);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(width), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
