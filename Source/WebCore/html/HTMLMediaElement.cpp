@@ -1273,14 +1273,12 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 
     if (state == MediaPlayer::Idle) {
         if (m_networkState > NETWORK_IDLE) {
-            m_progressEventTimer.stop();
-            if (hasMediaControls() && m_player->bytesLoaded() != m_previousProgress)
-                mediaControls()->bufferingProgressed();
-
+            changeNetworkStateFromLoadingToIdle();
             scheduleEvent(eventNames().suspendEvent);
             setShouldDelayLoadEvent(false);
+        } else {
+            m_networkState = NETWORK_IDLE;
         }
-        m_networkState = NETWORK_IDLE;
     }
 
     if (state == MediaPlayer::Loading) {
@@ -1290,21 +1288,25 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     }
 
     if (state == MediaPlayer::Loaded) {
-        if (m_networkState != NETWORK_IDLE) {
-            m_progressEventTimer.stop();
-            if (hasMediaControls() && m_player->bytesLoaded() != m_previousProgress)
-                mediaControls()->bufferingProgressed();
-
-            // Schedule one last progress event so we guarantee that at least one is fired
-            // for files that load very quickly.
-            scheduleEvent(eventNames().progressEvent);
-        }
-        m_networkState = NETWORK_IDLE;
+        if (m_networkState != NETWORK_IDLE)
+            changeNetworkStateFromLoadingToIdle();
         m_completelyLoaded = true;
     }
 
     if (hasMediaControls())
         mediaControls()->updateStatusDisplay();
+}
+
+void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
+{
+    m_progressEventTimer.stop();
+    if (hasMediaControls() && m_player->bytesLoaded() != m_previousProgress)
+        mediaControls()->bufferingProgressed();
+
+    // Schedule one last progress event so we guarantee that at least one is fired
+    // for files that load very quickly.
+    scheduleEvent(eventNames().progressEvent);
+    m_networkState = NETWORK_IDLE;
 }
 
 void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)

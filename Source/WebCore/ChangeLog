@@ -1,3 +1,22 @@
+2012-01-18  Victoria Kirst  <vrk@chromium.org>
+
+        HTMLMediaElement should fire 'progress' event before 'idle' if it was previously loading
+        https://bugs.webkit.org/show_bug.cgi?id=76568
+
+        Reviewed by Eric Carlson.
+
+        This fires a progress event when going from a non-empty state to idle,
+        for the same reason that a progress event is fired when going from a
+        non-idle state to loaded. Also consolidated logic in a single helper method.
+
+        No new tests because the decision of if/when a user agent sets the network state
+        to idle is up to the user agent in this scenario.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::changeNetworkStateFromLoadingToIdle):
+        * html/HTMLMediaElement.h:
+
 2012-01-18  Jon Lee  <jonlee@apple.com>
 
         [WK2] Sync call for notifications permissions causes flashes on gmail.com

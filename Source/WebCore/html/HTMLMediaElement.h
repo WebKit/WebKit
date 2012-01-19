@@ -450,6 +450,8 @@ private:
 
     virtual void* preDispatchEventHandler(Event*);
 
+    void changeNetworkStateFromLoadingToIdle();
+
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);
