@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>DOM L3 Core: Node Interface prefix property setter</title>
+</head>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('Test for the implementation of DOM Level 3 Core API on Node Interface: prefix setter. INVALID_CHARACTER_ERR: Raised if the specified prefix contains an illegal character according to the XML version in use specified in the Document.xmlVersion attribute.  <a href="http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-NodeNSPrefix">http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-NodeNSPrefix</a>');
+
+var prefixedElem = document.createElementNS("ns1", "pre1:foo");
+document.body.appendChild(prefixedElem);
+
+function test(prefix, expectedToThrow) {
+    prefixedElem.prefix = "before";
+    if (expectedToThrow) {
+        shouldThrow('prefixedElem.prefix = ' + prefix);
+        shouldBe('prefixedElem.prefix', '"before"');
+    } else {
+        shouldBe('prefixedElem.prefix = ' + prefix, prefix);
+        shouldBe('prefixedElem.prefix', prefix);
+    }
+}
+
+test('"."', true);
+test('"x."', false);
+test('"0a"', true);
+test('"a0"', false);
+test('"_0"', false);
+test('"\xD7"', true);
+test('"\xB7"', true);
+test('"aa"', false);
+test('"\\n"', true);
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

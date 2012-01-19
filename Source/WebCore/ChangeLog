@@ -1,3 +1,22 @@
+2012-01-18  Adam Barth  <abarth@webkit.org>
+
+        Assigning to Element.prefix should throw exception when using illegal characters
+        https://bugs.webkit.org/show_bug.cgi?id=76589
+
+        Reviewed by Eric Seidel.
+
+        This patch fixes a FIXME and implements the INVALID_CHARACTER_ERR
+        exception described in
+        http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-NodeNSPrefix
+
+        Tests: fast/dom/Element/prefix-setter-exception.html
+
+        * dom/Node.cpp:
+        (WebCore::isValidNameStartCharacter):
+        (WebCore::isValidNameCharacter):
+        (WebCore::hasInvalidValidNameCharacters):
+        (WebCore::Node::checkSetPrefix):
+
 2012-01-18  Shinya Kawanaka  <shinyak@google.com>
 
         ShadowContent query should be able to have fallback elements.

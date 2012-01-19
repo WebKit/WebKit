@@ -1,0 +1,27 @@
+Test for the implementation of DOM Level 3 Core API on Node Interface: prefix setter. INVALID_CHARACTER_ERR: Raised if the specified prefix contains an illegal character according to the XML version in use specified in the Document.xmlVersion attribute. http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-NodeNSPrefix
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS prefixedElem.prefix = "." threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS prefixedElem.prefix is "before"
+PASS prefixedElem.prefix = "x." is "x."
+PASS prefixedElem.prefix is "x."
+PASS prefixedElem.prefix = "0a" threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS prefixedElem.prefix is "before"
+PASS prefixedElem.prefix = "a0" is "a0"
+PASS prefixedElem.prefix is "a0"
+PASS prefixedElem.prefix = "_0" is "_0"
+PASS prefixedElem.prefix is "_0"
+PASS prefixedElem.prefix = "×" threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS prefixedElem.prefix is "before"
+PASS prefixedElem.prefix = "·" threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS prefixedElem.prefix is "before"
+PASS prefixedElem.prefix = "aa" is "aa"
+PASS prefixedElem.prefix is "aa"
+PASS prefixedElem.prefix = "\n" threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS prefixedElem.prefix is "before"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
