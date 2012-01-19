@@ -170,7 +170,7 @@ WebInspector.ScriptsNavigator.prototype = {
     scriptSelected: function(uiSourceCode)
     {
         this._lastSelectedUISourceCode = uiSourceCode;
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
     },
     
     /**

@@ -70,7 +70,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this.editorView.show(this.splitView.mainElement);
 
         this._fileSelector = new WebInspector.ScriptsNavigator(this._presentationModel);
-        this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, this._scriptSelected, this)
 
         this._fileSelector.show(this.editorView.sidebarElement);
 
@@ -83,13 +82,15 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this._editorContainer.show(this.editorView.mainElement);
     } else {
         this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector(this._presentationModel);
-        this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, this._scriptSelected, this);
-        this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, this._fileSelectorReleasedFocus, this);
         this._fileSelector.show(this.splitView.mainElement);
 
         this._editorContainer = new WebInspector.ScriptsPanel.SingleFileEditorContainer();
         this._editorContainer.show(this.splitView.mainElement);
     }
+    this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, this._fileSelected, this);
+    this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, this._fileSelectorReleasedFocus, this);
+    this._editorContainer.addEventListener(WebInspector.ScriptsPanel.EditorContainer.Events.EditorSelected, this._editorSelected, this);
+
     this.splitView.mainElement.appendChild(this.debugSidebarResizeWidgetElement);
 
     this.sidebarPanes = {};
@@ -270,11 +271,7 @@ WebInspector.ScriptsPanel.prototype = {
     _uiSourceCodeRemoved: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-
-        if (this._sourceFramesByUISourceCode.get(uiSourceCode)) {
-            this._sourceFramesByUISourceCode.get(uiSourceCode).detach();
-            this._sourceFramesByUISourceCode.remove(uiSourceCode);
-        }
+        this._removeSourceFrame(uiSourceCode);
     },
 
     /**
@@ -484,7 +481,7 @@ WebInspector.ScriptsPanel.prototype = {
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @return {WebInspector.SourceFrame}
      */
-    _showSourceFrame: function(uiSourceCode)
+    _showFile: function(uiSourceCode)
     {
         var sourceFrame = this._sourceFramesByUISourceCode.get(uiSourceCode) || this._createSourceFrame(uiSourceCode);
 
@@ -507,7 +504,7 @@ WebInspector.ScriptsPanel.prototype = {
             return null;
         
         this._fileSelector.revealUISourceCode(uiSourceCode);
-        return this._showSourceFrame(uiSourceCode);
+        return this._showFile(uiSourceCode);
     },
 
     requestVisibleScriptOutline: function()
@@ -658,10 +655,16 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateExecutionLine(this._presentationModel.executionLineLocation);
     },
 
-    _scriptSelected: function(event)
+    _editorSelected: function(event)
+    {
+        var sourceFrame = /** @type {WebInspector.SourceFrame} */ event.data;
+        this._fileSelector.revealUISourceCode(sourceFrame._uiSourceCode);
+    },
+
+    _fileSelected: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        this._showSourceFrame(uiSourceCode);
+        this._showFile(uiSourceCode);
     },
 
     _fileSelectorReleasedFocus: function(event)
@@ -1035,7 +1038,7 @@ WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 WebInspector.ScriptsPanel.FileSelector = function() { }
 
 WebInspector.ScriptsPanel.FileSelector.Events = {
-    ScriptSelected: "ScriptSelected",
+    FileSelected: "FileSelected",
     ReleasedFocusAfterSelection: "ReleasedFocusAfterSelection"
 }
 
@@ -1083,6 +1086,10 @@ WebInspector.ScriptsPanel.FileSelector.prototype = {
  * @interface
  */
 WebInspector.ScriptsPanel.EditorContainer = function() { }
+
+WebInspector.ScriptsPanel.EditorContainer.Events = {
+    FileSelected: "FileSelected"
+}
 
 WebInspector.ScriptsPanel.EditorContainer.prototype = {
     /**
@@ -1440,7 +1447,7 @@ WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
 
         var uiSourceCode = this._backForwardList[--this._currentBackForwardIndex];
         this._innerRevealUISourceCode(uiSourceCode, false);
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
     },
 
     _goForward: function()
@@ -1452,7 +1459,7 @@ WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
 
         var uiSourceCode = this._backForwardList[++this._currentBackForwardIndex];
         this._innerRevealUISourceCode(uiSourceCode, false);
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
     },
 
     /**
@@ -1465,7 +1472,7 @@ WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
 
         var uiSourceCode = this._filesSelectElement[this._filesSelectElement.selectedIndex]._uiSourceCode;
         this._innerRevealUISourceCode(uiSourceCode, true);
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, uiSourceCode);
         if (focusSource)
             this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, uiSourceCode);
     }
@@ -1559,6 +1566,5 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
         }
     }
 }
-
 
 WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.__proto__ = WebInspector.Object.prototype;

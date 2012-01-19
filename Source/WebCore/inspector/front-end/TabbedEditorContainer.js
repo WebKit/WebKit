@@ -37,6 +37,7 @@ WebInspector.TabbedEditorContainer = function()
     this._tabbedPane.element.id = "scripts-editor-container-tabbed-pane";
 
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
+    this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 
     this._titles = new Map();
     this._tooltips = new Map();
@@ -109,6 +110,15 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.remove(sourceFrame);
         this._titles.remove(sourceFrame);
         this._tooltips.remove(sourceFrame);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _tabSelected: function(event)
+    {
+        var sourceFrame = /** @type {WebInspector.UISourceCode} */ event.data.view;
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.EditorContainer.Events.EditorSelected, sourceFrame);
     },
 
     /**
@@ -200,3 +210,5 @@ WebInspector.TabbedEditorContainer.prototype = {
         return "tab_" + (WebInspector.TabbedEditorContainer._tabId++);
     }
 }
+
+WebInspector.TabbedEditorContainer.prototype.__proto__ = WebInspector.Object.prototype;

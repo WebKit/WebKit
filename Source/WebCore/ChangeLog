@@ -1,3 +1,29 @@
+2012-01-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Switching tabs in TabbedEditorContainer should reveal selected script in navigator.
+        https://bugs.webkit.org/show_bug.cgi?id=76636
+
+        Reviewed by Pavel Feldman.
+
+        Renamed FileSelector's ScriptSelected event into FileSelected, added EditorSelected
+        event to EditorContainer.
+        Renamed _showSourceFrame into _showFile.
+        Made _uiSourceCodeRemoved reuse _removeSourceFrame.
+
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype.scriptSelected):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+        (WebInspector.ScriptsPanel.prototype._showAndRevealInFileSelector):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.ScriptsPanel.prototype._fileSelected):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goBack):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goForward):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._filesSelectChanged):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype._tabSelected):
+
 2012-01-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for background-color in region styling
