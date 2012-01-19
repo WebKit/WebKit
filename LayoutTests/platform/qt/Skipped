@@ -379,6 +379,8 @@ fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
 fast/events/dropzone-004.html
+fast/events/moving-text-should-fire-drop-and-dragend-events.html
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #
@@ -2585,6 +2587,7 @@ svg/carto.net/combobox.svg
 
 # [Qt] DumpRenderTree converts "file:///" to a path differently
 # https://bugs.webkit.org/show_bug.cgi?id=76563
+http/tests/misc/drag-over-iframe-invalid-source-crash.html
 http/tests/misc/iframe-invalid-source-crash.html
 
 # [Qt] REGRESSION(r105310): Two inspector tests fails
