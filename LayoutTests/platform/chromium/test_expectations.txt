@@ -3875,7 +3875,7 @@ BUGWK76511 MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
 BUGWK76511 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = IMAGE+TEXT
 
 // Seems flaky - it depends on property dumping of JS internal fields in a specific order, which doesn't seem stable.
-BUGCR110537 : inspector/protocol/runtime-agent.html = PASS TEXT
+BUGCR110537 : inspector/protocol/runtime-agent.html = PASS TEXT TIMEOUT
 
 // SVG text layout optimizations: probably just need a rebaseline for chromium.
 // The MAC LINUX tests are disabled above for WIN (BUGCR99500).
