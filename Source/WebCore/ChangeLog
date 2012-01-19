@@ -1,3 +1,15 @@
+2012-01-19  Min Qin  <qinmin@google.com>
+
+        Improve touch handling performance by reusing the hitTest result
+        https://bugs.webkit.org/show_bug.cgi?id=75506
+
+        Reviewed by Adam Barth.
+
+        This is a performance optimization and should not cause behavior changes. Existing tests should cover it.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+
 2012-01-19  Jon Lee  <jonlee@apple.com>
 
         Add text-overflow support that allows placeholder and value text to show an ellipsis when not focused
