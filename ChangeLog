@@ -1,12 +1,19 @@
 2012-01-20  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed; Windows buildbot update failure fix.
+
+        * ../ManualTests/data-transfer-items-file-dragout.html: Removed the notion of test:lorem-text.html.
+        * ../ManualTests/resources/test:lorem-text.html: Removed as this doesn't work on Windows.
+
+2012-01-20  Kinuko Yasuda  <kinuko@chromium.org>
+
         Add DataTransferItems support for drag-and-drop'ed files and texts
         https://bugs.webkit.org/show_bug.cgi?id=76367
 
         Reviewed by Tony Chang.
 
         * ManualTests/data-transfer-items-file-dragout.html: Added.
-        * ManualTests/resources/test:lorem-text.html: Added.
+        * ManualTests/test:lorem-text.html: Added.
 
 2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
 
