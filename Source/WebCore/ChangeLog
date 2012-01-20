@@ -1,3 +1,32 @@
+2012-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Regression (r98735): Video chat moles in Gmail render incorrectly on Mac OS
+        https://bugs.webkit.org/show_bug.cgi?id=75682
+
+        Reviewed by James Robinson.
+        
+        RenderLayerBacking::isSimpleContainerCompositingLayer() gave incorret
+        results in the case where the layer itself was visibility:hidden, but
+        where it had visible, non-composited descendant layers.
+        
+        Fix by breaking RenderLayerBacking::hasVisibleNonCompositingDescendants()
+        into two methods, one that tests for renderers in this layer which
+        render stuff (and are thus affected by visibility on this layer), and
+        another which walks descendant, non-composited layers looking for those
+        which are visible.
+        
+        Removed an early return in the "renderObject->node()->isDocumentNode()"
+        clause, because we want to run the same code that we run for non-document
+        nodes.
+
+        Test: compositing/visibility/layer-visible-content.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::containsNonEmptyRenderers):
+        (WebCore::RenderLayerBacking::hasVisibleNonCompositingDescendantLayers):
+        * rendering/RenderLayerBacking.h:
+
 2012-01-19  Alexandre Elias  <aelias@google.com>
 
         [chromium] Draw gutter quads outside root content layer

@@ -816,7 +816,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         return true;
     
     if (renderObject->node() && renderObject->node()->isDocumentNode()) {
-        // Look to see if the root object has a non-simple backgound
+        // Look to see if the root object has a non-simple background
         RenderObject* rootObject = renderObject->document()->documentElement()->renderer();
         if (!rootObject)
             return false;
@@ -838,23 +838,19 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         
         if (hasBoxDecorationsOrBackgroundImage(style))
             return false;
-
-        // Check to see if all the body's children are compositing layers.
-        if (hasVisibleNonCompositingDescendants())
-            return false;
-        
-        return true;
     }
 
     // Check to see if all the renderer's children are compositing layers.
-    if (isVisible && hasVisibleNonCompositingDescendants())
+    if (isVisible && containsNonEmptyRenderers())
+        return false;
+        
+    if (hasVisibleNonCompositingDescendantLayers())
         return false;
     
     return true;
 }
 
-// Conservative test for having no rendered children.
-bool RenderLayerBacking::hasVisibleNonCompositingDescendants() const
+bool RenderLayerBacking::containsNonEmptyRenderers() const
 {
     // Some HTML can cause whitespace text nodes to have renderers, like:
     // <div>
@@ -870,7 +866,12 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendants() const
                 return true;
         }
     }
+    return false;
+}
 
+// Conservative test for having no rendered children.
+bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
+{
     if (Vector<RenderLayer*>* normalFlowList = m_owningLayer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {

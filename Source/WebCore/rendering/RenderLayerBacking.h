@@ -197,7 +197,8 @@ private:
     Color rendererBackgroundColor() const;
     void updateBackgroundColor();
 
-    bool hasVisibleNonCompositingDescendants() const;
+    bool containsNonEmptyRenderers() const;
+    bool hasVisibleNonCompositingDescendantLayers() const;
     
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
 
