@@ -1,3 +1,40 @@
+2012-01-20  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Trigger forcing accelerated compositing from the UI process side.
+        https://bugs.webkit.org/show_bug.cgi?id=76296
+
+        Reviewed by Noam Rosenthal.
+
+        Some messages can be sent from the web view to the LayerTreeHost before
+        accelerated compositing is entered on the web process and signaled back.
+        By letting the UI process decide if AC has to be forced, we can create
+        the LayerTreeHostProxy earlier to send messages to the web process while
+        AC is being entered there.
+
+        This patch also fixes the flow of DidRenderFrame and RenderNextFrame messages
+        by setting the m_waitingForUIProcess flag properly and only send the
+        RenderNextFrame once the painting thread on the UI process is ready to paint.
+
+        This fixes the first visible content rect message not being received when
+        loading pages from the disk.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::flushLayerChanges):
+        (WebKit::LayerTreeHostProxy::didRenderFrame):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::performScheduledLayerFlush):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformInitialize):
+
 2012-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105497.

@@ -240,15 +240,15 @@ void LayerTreeHostQt::didDeleteLayer(WebLayerID id)
 
 void LayerTreeHostQt::performScheduledLayerFlush()
 {
-    m_webPage->layoutIfNeeded();
-
-    if (!m_isValid)
-        return;
-
 #if USE(TILED_BACKING_STORE)
     if (m_isSuspended || m_waitingForUIProcess)
         return;
 #endif
+
+    m_webPage->layoutIfNeeded();
+
+    if (!m_isValid)
+        return;
 
     m_shouldSyncFrame = false;
     flushPendingLayerChanges();
@@ -261,6 +261,7 @@ void LayerTreeHostQt::performScheduledLayerFlush()
     }
 
     m_webPage->send(Messages::LayerTreeHostProxy::DidRenderFrame());
+    m_waitingForUIProcess = true;
 
     if (!m_notifyAfterScheduledLayerFlush)
         return;

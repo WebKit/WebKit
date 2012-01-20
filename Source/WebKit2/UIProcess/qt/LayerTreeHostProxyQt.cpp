@@ -431,6 +431,8 @@ void LayerTreeHostProxy::assignImageToLayer(GraphicsLayer* layer, int64_t imageI
 void LayerTreeHostProxy::flushLayerChanges()
 {
     m_rootLayer->syncCompositingState(FloatRect());
+    // The pending tiles state is on its way for the screen, tell the web process to render the next one.
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
 }
 
 void LayerTreeHostProxy::ensureRootLayer()
@@ -571,7 +573,6 @@ void LayerTreeHostProxy::syncCompositingLayerState(const WebLayerInfo& info)
 
 void LayerTreeHostProxy::didRenderFrame()
 {
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
     pushUpdateToQueue(FlushLayerChangesMessage::create());
     updateViewport();
 }

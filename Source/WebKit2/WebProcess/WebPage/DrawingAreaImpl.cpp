@@ -68,7 +68,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
-    if (webPage->corePage()->settings()->acceleratedDrawingEnabled())
+    if (webPage->corePage()->settings()->acceleratedDrawingEnabled() || webPage->corePage()->settings()->forceCompositingMode())
         m_alwaysUseCompositing = true;
         
     if (m_alwaysUseCompositing)
