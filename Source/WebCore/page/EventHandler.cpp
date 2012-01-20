@@ -2338,7 +2338,9 @@ bool EventHandler::sendContextMenuEventForKey()
         IntRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
 
         int x = rightAligned ? firstRect.maxX() : firstRect.x();
-        location = IntPoint(x, firstRect.maxY());
+        // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.
+        int y = firstRect.maxY() ? firstRect.maxY() - 1 : 0;
+        location = IntPoint(x, y);
     } else if (focusedNode) {
         RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
         if (!box)
