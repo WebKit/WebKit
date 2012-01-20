@@ -81,6 +81,7 @@ void Canvas2DLayerChromium::contentChanged()
     if (layerTreeHost())
         layerTreeHost()->startRateLimiter(m_context);
 
+    m_updateRect = FloatRect(FloatPoint(), contentBounds());
     setNeedsDisplay();
 }
 

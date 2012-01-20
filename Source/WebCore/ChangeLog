@@ -1,3 +1,13 @@
+2012-01-20  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb damage from accelerated canvas 2D.
+        https://bugs.webkit.org/show_bug.cgi?id=76728
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::contentChanged):
+
 2012-01-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTable::borderBefore
