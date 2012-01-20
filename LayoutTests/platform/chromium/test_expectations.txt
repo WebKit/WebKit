@@ -1445,12 +1445,6 @@ BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
-// To be rebaselined after skia rev. 3039 lands
-BUGCR110493 CPU : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGCR110493 CPU : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUGCR110493 CPU : fast/borders/border-image-rotate-transform.html = IMAGE
-BUGCR110493 CPU : svg/custom/focus-ring.svg = IMAGE
-
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
