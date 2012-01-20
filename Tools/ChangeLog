@@ -1,3 +1,15 @@
+2012-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Allow extra jhbuild modulesets
+        https://bugs.webkit.org/show_bug.cgi?id=76691
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/jhbuildrc: Extra modulesets and modules can be added in
+        JHBuild using the WEBKIT_EXTRA_MODULESETS and WEBKIT_EXTRA_MODULES
+        env variables respectively. Use comma-separated values. Example:
+        WEBKIT_EXTRA_MODULES=file:///path/to/module.set,file:///other/path.
+
 2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs

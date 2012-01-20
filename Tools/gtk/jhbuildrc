@@ -23,10 +23,17 @@ import common
 
 build_policy = 'updated'
 
-__module_file_path = os.path.join(__gtk_tools_directory, 'jhbuild.modules')
-moduleset = 'file://' + __module_file_path
+__moduleset_file_uri = 'file://' + os.path.join(__gtk_tools_directory, 'jhbuild.modules')
+__extra_modulesets = os.environ.get("WEBKIT_EXTRA_MODULESETS", "").split(",")
+moduleset = [ __moduleset_file_uri, ]
+if __extra_modulesets != ['']:
+    moduleset.extend(__extra_modulesets)
 
-modules = [ 'webkitgtk-testing-dependencies' ]
+__extra_modules = os.environ.get("WEBKIT_EXTRA_MODULES", "").split(",")
+modules = [ 'webkitgtk-testing-dependencies', ]
+if __extra_modules != ['']:
+    modules.extend(__extra_modules)
+
 checkoutroot = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Source'))
 prefix = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Root'))
 
