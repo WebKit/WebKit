@@ -30,9 +30,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
 #include "UpdateInfo.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
-#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
@@ -58,11 +56,6 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_isBackingStoreDiscardable(true)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
-#if USE(TEXTURE_MAPPER)
-    // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
-    if (webPageProxy->pageGroup()->preferences()->forceCompositingMode())
-        m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
-#endif
 }
 
 DrawingAreaProxyImpl::~DrawingAreaProxyImpl()

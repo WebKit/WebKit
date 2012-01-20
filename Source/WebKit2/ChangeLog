@@ -1,3 +1,24 @@
+2012-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105497.
+        http://trac.webkit.org/changeset/105497
+        https://bugs.webkit.org/show_bug.cgi?id=76696
+
+        Leaking in Qt layout tests and timing out in GTK API tests.
+        (Requested by jturcotte on #webkit).
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::platformInitialize):
+
 2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs

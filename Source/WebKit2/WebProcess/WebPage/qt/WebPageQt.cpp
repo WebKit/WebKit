@@ -90,6 +90,10 @@ namespace WebKit {
     
 void WebPage::platformInitialize()
 {
+    Settings* settings = m_page->settings();
+
+    // If accelerated compositing is enabled, we want to be in force-compositing mode, so that we don't switch between composited/non-composited state.
+    settings->setForceCompositingMode(true);
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
