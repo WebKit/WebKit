@@ -316,6 +316,7 @@ PASS WebKitAnimationEvent.toString() is '[object WebKitAnimationEventConstructor
 PASS WebKitCSSKeyframeRule.toString() is '[object WebKitCSSKeyframeRuleConstructor]'
 PASS WebKitCSSKeyframesRule.toString() is '[object WebKitCSSKeyframesRuleConstructor]'
 PASS WebKitCSSMatrix.toString() is '[object WebKitCSSMatrixConstructor]'
+PASS WebKitCSSRegionRule.toString() is '[object WebKitCSSRegionRuleConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
 PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'
 PASS WebKitTransitionEvent.toString() is '[object WebKitTransitionEventConstructor]'

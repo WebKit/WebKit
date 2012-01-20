@@ -467,6 +467,7 @@
 #include "JSWebKitCSSKeyframesRule.cpp"
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
+#include "JSWebKitCSSRegionRule.cpp"
 #include "JSWebKitMutationObserver.cpp"
 #include "JSWebKitNamedFlow.cpp"
 #include "JSWebKitPoint.cpp"

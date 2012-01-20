@@ -41,8 +41,10 @@
 #include "JSNode.h"
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"
+#include "JSWebKitCSSRegionRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
 
 using namespace JSC;
 
@@ -91,6 +93,9 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
             break;
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
+            break;
+        case CSSRule::WEBKIT_REGION_RULE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSRegionRule, rule);
             break;
         default:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSRule, rule);

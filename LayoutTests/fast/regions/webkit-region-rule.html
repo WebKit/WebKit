@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<style>
+  @-webkit-region #region1 {
+      #p1 { background-color: green; }
+      #p2 { background-color: lime; }
+  }
+  @-webkit-region #region2 {
+     p { background-color: blue; }
+  }
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests the WebKitCSSRegionRule interface.");
+
+if (window.WebKitCSSRegionRule)
+    testPassed("WebKitCSSRegionRule exists on Window object");
+else
+    testFailed("WebKitCSSRegionRule does not exist on Window object");
+
+if (window.CSSRule.WEBKIT_REGION_RULE)
+    testPassed("WEBKIT_REGION_RULE exists on Window.CSSRule object");
+else
+    testFailed("WEBKIT_REGION_RULE does not exist on Window.CSSRule object");
+
+var regionRule1 = document.styleSheets.item(0).cssRules.item(0);
+shouldBe("regionRule1.type", "window.CSSRule.WEBKIT_REGION_RULE");
+var regionRule1CSSRules = regionRule1.cssRules;
+shouldBe("regionRule1CSSRules.length", "2");
+shouldBe("regionRule1CSSRules.item(0).type", "window.CSSRule.STYLE_RULE");
+shouldBe("regionRule1CSSRules.item(0).cssText", "'#p1 { background-color: green; }'");
+shouldBe("regionRule1CSSRules.item(1).cssText", "'#p2 { background-color: lime; }'");
+
+var regionRule2 = document.styleSheets.item(0).cssRules.item(1);
+shouldBe("regionRule2.type", "window.CSSRule.WEBKIT_REGION_RULE");
+var regionRule2CSSRules = regionRule2.cssRules;
+shouldBe("regionRule2CSSRules.length", "1");
+shouldBe("regionRule2CSSRules.item(0).type", "window.CSSRule.STYLE_RULE");
+shouldBe("regionRule2CSSRules.item(0).cssText", "'p { background-color: blue; }'");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

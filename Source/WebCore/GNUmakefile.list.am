@@ -580,6 +580,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSKeyframesRule.h \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.cpp \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.h \
+	DerivedSources/WebCore/JSWebKitCSSRegionRule.cpp \
+	DerivedSources/WebCore/JSWebKitCSSRegionRule.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.h \
 	DerivedSources/WebCore/JSWebKitNamedFlow.cpp \
@@ -666,6 +668,7 @@ dom_binding_idls += \
 	$(WebCore)/css/WebKitCSSKeyframeRule.idl \
 	$(WebCore)/css/WebKitCSSKeyframesRule.idl \
 	$(WebCore)/css/WebKitCSSMatrix.idl \
+	$(WebCore)/css/WebKitCSSRegionRule.idl \
 	$(WebCore)/css/WebKitCSSTransformValue.idl \
 	$(WebCore)/dom/Attr.idl \
 	$(WebCore)/dom/BeforeLoadEvent.idl \

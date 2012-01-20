@@ -39,6 +39,7 @@
 #include "V8CSSStyleRule.h"
 #include "V8WebKitCSSKeyframeRule.h"
 #include "V8WebKitCSSKeyframesRule.h"
+#include "V8WebKitCSSRegionRule.h"
 
 namespace WebCore {
 
@@ -69,7 +70,7 @@ v8::Handle<v8::Value> toV8(CSSRule* impl)
     case CSSRule::WEBKIT_KEYFRAMES_RULE:
         return toV8(static_cast<WebKitCSSKeyframesRule*>(impl));
     case CSSRule::WEBKIT_REGION_RULE:
-        return V8CSSRule::wrap(impl);
+        return toV8(static_cast<WebKitCSSRegionRule*>(impl));
     }
     return V8CSSRule::wrap(impl);
 }

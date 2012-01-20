@@ -79,6 +79,7 @@ BINDING_IDLS = \
     $(WebCore)/css/WebKitCSSKeyframeRule.idl \
     $(WebCore)/css/WebKitCSSKeyframesRule.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
+    $(WebCore)/css/WebKitCSSRegionRule.idl \
     $(WebCore)/css/WebKitCSSTransformValue.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \

@@ -434,6 +434,7 @@ Never found StyleSheet
 Never found TextMetrics
 Never found WebKitCSSFilterValue
 Never found WebKitCSSMatrix
+Never found WebKitCSSRegionRule
 Never found WebKitCSSTransformValue
 Never found WebKitPoint
 Never found WebSocket

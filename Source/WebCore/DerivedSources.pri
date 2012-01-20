@@ -115,6 +115,7 @@ IDL_BINDINGS += \
     $$PWD/css/WebKitCSSKeyframeRule.idl \
     $$PWD/css/WebKitCSSKeyframesRule.idl \
     $$PWD/css/WebKitCSSMatrix.idl \
+    $$PWD/css/WebKitCSSRegionRule.idl \
     $$PWD/css/WebKitCSSTransformValue.idl \
     $$PWD/dom/Attr.idl \
     $$PWD/dom/BeforeLoadEvent.idl \

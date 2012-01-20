@@ -49,6 +49,7 @@
 #endif
 #import "DOMWebKitCSSKeyframeRule.h"
 #import "DOMWebKitCSSKeyframesRule.h"
+#import "DOMWebKitCSSRegionRule.h"
 #import "DOMWebKitCSSTransformValue.h"
 
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
@@ -90,7 +91,7 @@ Class kitClass(WebCore::CSSRule* impl)
         case DOM_WEBKIT_KEYFRAME_RULE:
             return [DOMWebKitCSSKeyframeRule class];
         case DOM_WEBKIT_REGION_RULE:
-            return [DOMCSSUnknownRule class];
+            return [DOMWebKitCSSRegionRule class];
     }
     ASSERT_NOT_REACHED();
     return nil;
