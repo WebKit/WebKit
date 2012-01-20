@@ -1,3 +1,9 @@
+2012-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll Chromium DEPS from 118291 to 118530.
+
+        * DEPS:
+
 2012-01-20  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Revert a couple of changes in fileapi/ that break tests in chromeos.
