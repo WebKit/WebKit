@@ -7,11 +7,12 @@
             if (!window.eventSender || !window.internals)
                 return;
             // Scale the page and resize the frames to verify hit testing on the frameset
-            window.internals.setPageScaleFactor(document, 0.5, 0, 0);
             var leftPanelWidth = window.innerWidth / 8;
-            eventSender.mouseMoveTo(window.innerWidth / 4, leftPanelWidth);
+            var panelHeight = window.innerHeight / 2;
+            window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+            eventSender.mouseMoveTo(panelHeight / 2, leftPanelWidth);
             eventSender.mouseDown();
-            eventSender.mouseMoveTo(window.innerWidth / 4, 2 * leftPanelWidth);
+            eventSender.mouseMoveTo(panelHeight / 2, 2 * leftPanelWidth);
             eventSender.mouseUp();
         }
         window.onload = init;

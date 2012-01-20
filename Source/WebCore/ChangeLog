@@ -1,3 +1,27 @@
+2012-01-20  Sami Kyostila  <skyostil@chromium.org>
+
+        window.innerWidth/Height should not include page scale
+        https://bugs.webkit.org/show_bug.cgi?id=76555
+
+        The DOM attributes window.innerWidth and window.innerHeight should be in
+        CSS pixels instead of device pixels. Currently the text zoom factor is
+        cancelled out when calculating these values, but the same also needs to
+        be done for the page scale.
+
+        There is an additional subtlety concerning frames/iframes since their
+        visible content rectangle is already in (unscaled) CSS pixels. By using
+        Frame::frameScaleFactor() we avoid unnecessarily cancelling out the page
+        scale factor in this case.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tests: fast/dom/iframe-inner-size-scaling.html
+               fast/dom/window-inner-size-scaling.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+
 2012-01-20  Kinuko Yasuda  <kinuko@chromium.org>
 
         Add DataTransferItems support for drag-and-drop'ed files and texts

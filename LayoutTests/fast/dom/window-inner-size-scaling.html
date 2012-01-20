@@ -1,0 +1,17 @@
+<html>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        description("This test ensures window.innerWidth/innerHeight return the size of the visual viewport in CSS pixels.");
+
+        var originalWidth = window.innerWidth;
+        var originalHeight = window.innerHeight;
+        var scale = 2;
+
+        if (window.internals)
+            window.internals.setPageScaleFactor(document, scale, 0, 0);
+
+        shouldBe("window.innerWidth", "Math.floor(originalWidth / scale)");
+        shouldBe("window.innerHeight", "Math.floor(originalHeight / scale)");
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</html>
