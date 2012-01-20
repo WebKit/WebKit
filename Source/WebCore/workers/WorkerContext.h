@@ -131,10 +131,6 @@ namespace WebCore {
         virtual bool isContextThread() const;
         virtual bool isJSExecutionForbidden() const;
 
-#if ENABLE(BLOB)
-        DOMURL* webkitURL() const;
-#endif
-
 #if ENABLE(FILE_SYSTEM)
         enum FileSystemType {
             TEMPORARY,

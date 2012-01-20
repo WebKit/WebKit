@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test instanceof functions and properties of webkitURL.");
+
+var url = new webkitURL;
+
+shouldBeTrue("'createObjectURL' in webkitURL");
+shouldBeTrue("'revokeObjectURL' in webkitURL");
+
+shouldBeUndefined("url.createObjectURL");
+shouldBeUndefined("url.revokeObjectURL");
+
+shouldBeDefined("window.webkitURL.createObjectURL");
+shouldBeDefined("window.webkitURL.revokeObjectURL");
+
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,41 @@
+2012-01-19  Kaustubh Atrawalkar  <kaustubh@motorola.com> & Erik Arvidsson  <arv@chromium.org>
+
+        Migrate createObjectURL & revokeObjectURL to static (Class) methods.
+        https://bugs.webkit.org/show_bug.cgi?id=74386
+
+        Reviewed by Adam Barth.
+
+        Test: fast/dom/DOMURL/check-instanceof-domurl-functions.html
+        Already Existing -
+            fast/files/revoke-blob-url.html
+            fast/dom/window-domurl-crash.html
+            fast/files/apply-blob-url-to-img.html
+            fast/files/create-blob-url-crash.html
+            fast/files/workers/inline-worker-via-blob-url.html
+
+        * html/DOMURL.cpp: Added HashMap for local static objects.
+        (WebCore::PublicURLManager::PublicURLManager):
+        (WebCore::PublicURLManager::contextDestroyed):
+        (WebCore::PublicURLManager::blobURLs):
+        (WebCore::PublicURLManager::streamURLs):
+        (WebCore::publicURLManagerMap):
+        (WebCore::publicURLManager):
+        (WebCore::publicBlobURLs):
+        (WebCore::publicStreamURLs):
+        (WebCore::DOMURL::createObjectURL): Changed to static.
+        (WebCore::DOMURL::revokeObjectURL): ditto.
+        * html/DOMURL.h:
+        (WebCore::DOMURL::create):
+        (WebCore::DOMURL::~DOMURL):
+        (WebCore::DOMURL::DOMURL):
+        * html/DOMURL.idl:
+        * page/DOMWindow.cpp: Removed object initialization for DOMURL.
+        * page/DOMWindow.h: ditto.
+        * page/DOMWindow.idl: ditto.
+        * workers/WorkerContext.cpp: ditto.
+        * workers/WorkerContext.h: ditto.
+        * workers/WorkerContext.idl: ditto.
+
 2012-01-20  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Shaders: Add a Settings flag to enable/disable CSS Shaders at runtime
