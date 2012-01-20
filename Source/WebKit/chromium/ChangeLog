@@ -1,3 +1,13 @@
+2012-01-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [chromium] add WebDevToolsFrontendClient::openInNewTab for upcoming WebCore change.
+        https://bugs.webkit.org/show_bug.cgi?id=76698
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::openInNewTab):
+
 2012-01-20  Hayato Ito  <hayato@chromium.org>
 
         Add ShadowRoot.idl which is enabled by newly introduced SHADOW_DOM flag.
