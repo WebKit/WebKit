@@ -1231,6 +1231,7 @@
             'dom/Range.idl',
             'dom/RangeException.idl',
             'dom/RequestAnimationFrameCallback.idl',
+            'dom/ShadowRoot.idl',
             'dom/StringCallback.idl',
             'dom/Text.idl',
             'dom/TextEvent.idl',

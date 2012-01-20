@@ -432,4 +432,23 @@ bool WebRuntimeFeatures::isGamepadEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableShadowDOM(bool enable)
+{
+#if ENABLE(SHADOW_DOM)
+    RuntimeEnabledFeatures::setShadowDOMEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isShadowDOMEnabled()
+{
+#if ENABLE(SHADOW_DOM)
+    return RuntimeEnabledFeatures::shadowDOMEnabled();
+#else
+    return false;
+#endif
+}
+
+
 } // namespace WebKit

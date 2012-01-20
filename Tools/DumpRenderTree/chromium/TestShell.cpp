@@ -127,6 +127,7 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableWebAudio(true); 
     WebRuntimeFeatures::enableVideoTrack(true);
     WebRuntimeFeatures::enableGamepad(true);
+    WebRuntimeFeatures::enableShadowDOM(true);
 
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));

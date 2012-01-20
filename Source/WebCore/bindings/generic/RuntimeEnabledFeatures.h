@@ -191,6 +191,11 @@ public:
     static void setWebkitVideoTrackEnabled(bool isEnabled) { isVideoTrackEnabled = isEnabled; }
 #endif
 
+#if ENABLE(SHADOW_DOM)
+    static bool shadowDOMEnabled() { return isShadowDOMEnabled; }
+    static void setShadowDOMEnabled(bool isEnabled) { isShadowDOMEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -246,6 +251,10 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     static bool isVideoTrackEnabled;
+#endif
+
+#if ENABLE(SHADOW_DOM)
+    static bool isShadowDOMEnabled;
 #endif
 };
 

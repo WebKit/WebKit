@@ -1,3 +1,18 @@
+2012-01-20  Hayato Ito  <hayato@chromium.org>
+
+        Add ShadowRoot.idl which is enabled by newly introduced SHADOW_DOM flag.
+        https://bugs.webkit.org/show_bug.cgi?id=76353
+
+        Reviewed by Hajime Morita.
+
+        Add ShadowRoot.idl, which is enabled only on chromium port since this is
+        under development feature.
+        ShadowRoot.idl contains minimum API so that we can test it.
+        Other APIs should be added on other changes so that we can isolate issues.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] GTK's DRT not to log events for already defunct objects

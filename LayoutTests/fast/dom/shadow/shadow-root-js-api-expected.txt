@@ -1,0 +1,10 @@
+Tests for ShadowRoot JS APIs. Can only run within DRT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowHost is shadowRoot.host
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

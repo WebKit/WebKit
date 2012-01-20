@@ -164,7 +164,7 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     return representation;
 }
 
-Node* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
 {
     if (!host) {
         ec = INVALID_ACCESS_ERR;
@@ -174,7 +174,7 @@ Node* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
     return host->ensureShadowRoot();
 }
 
-Node* Internals::shadowRoot(Element* host, ExceptionCode& ec)
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* host, ExceptionCode& ec)
 {
     if (!host) {
         ec = INVALID_ACCESS_ERR;

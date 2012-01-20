@@ -30,8 +30,14 @@ module window {
         DOMString elementRenderTreeAsText(in Element element) raises(DOMException);
         boolean isPreloaded(in Document document, in DOMString url);
 
+#if defined(ENABLE_SHADOW_DOM)
+        ShadowRoot ensureShadowRoot(in Element host) raises (DOMException);
+        ShadowRoot shadowRoot(in Element host) raises (DOMException);
+#else
         Node ensureShadowRoot(in Element host) raises (DOMException);
         Node shadowRoot(in Element host) raises (DOMException);
+#endif
+
         Element includerFor(in Node node) raises (DOMException);
         void removeShadowRoot(in Element host) raises (DOMException);
         DOMString shadowPseudoId(in Element element) raises (DOMException);

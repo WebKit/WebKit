@@ -349,6 +349,9 @@ fast/css-grid-layout
 # <style scoped> is not yet enabled. http://webkit.org/b/49142
 fast/css/style-scoped
 
+# ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow/shadow-root-js-api.html
+
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
 

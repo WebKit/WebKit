@@ -50,6 +50,8 @@ public:
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
 
+    Element* host() const { return shadowHost(); }
+
     ContentInclusionSelector* inclusions() const;
     ContentInclusionSelector* ensureInclusions();
 

@@ -121,6 +121,9 @@ public:
     WEBKIT_EXPORT static void enableGamepad(bool);
     WEBKIT_EXPORT static bool isGamepadEnabled();
 
+    WEBKIT_EXPORT static void enableShadowDOM(bool);
+    WEBKIT_EXPORT static bool isShadowDOMEnabled();
+
 private:
     WebRuntimeFeatures();
 };

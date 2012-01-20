@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+description("Tests for ShadowRoot JS APIs. Can only run within DRT");
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+var shadowHost = document.createElement('div');
+internals.ensureShadowRoot(shadowHost);
+var shadowRoot = internals.shadowRoot(shadowHost);
+shouldBe("shadowHost", "shadowRoot.host");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

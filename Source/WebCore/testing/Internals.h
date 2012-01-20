@@ -39,6 +39,7 @@ class Document;
 class Element;
 class Node;
 class Range;
+class ShadowRoot;
 
 typedef int ExceptionCode;
 
@@ -54,8 +55,13 @@ public:
 
     bool isPreloaded(Document*, const String& url);
 
-    Node* ensureShadowRoot(Element* host, ExceptionCode&);
-    Node* shadowRoot(Element* host, ExceptionCode&);
+#if ENABLE(SHADOW_DOM)
+    typedef ShadowRoot ShadowRootIfShadowDOMEnabledOrNode;
+#else
+    typedef Node ShadowRootIfShadowDOMEnabledOrNode;
+#endif
+    ShadowRootIfShadowDOMEnabledOrNode* ensureShadowRoot(Element* host, ExceptionCode&);
+    ShadowRootIfShadowDOMEnabledOrNode* shadowRoot(Element* host, ExceptionCode&);
     void removeShadowRoot(Element* host, ExceptionCode&);
     Element* includerFor(Node*, ExceptionCode&);
     String shadowPseudoId(Element*, ExceptionCode&);

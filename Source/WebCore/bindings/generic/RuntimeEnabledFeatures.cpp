@@ -180,4 +180,8 @@ bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 #endif
 
+#if ENABLE(SHADOW_DOM)
+bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
+#endif
+
 } // namespace WebCore
