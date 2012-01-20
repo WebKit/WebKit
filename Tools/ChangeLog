@@ -1,3 +1,11 @@
+2012-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        build-webkit: Don't spit out congratulations message on Ctrl+C
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/build-webkit:
+
 2012-01-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Allow extra jhbuild modulesets

@@ -599,13 +599,15 @@ if (isInspectorFrontend()) {
     exit exitStatus(copyInspectorFrontendFiles());
 }
 
+my $result = 0;
+
 if (isWx()) {
     $makeArgs .= " --port=wx";
 
     downloadWafIfNeeded();
     @options = split(/ /, $makeArgs);
     @projects = ();
-    my $result = buildWafProject('.', $clean, @options);
+    $result = buildWafProject('.', $clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
 
@@ -629,7 +631,7 @@ if (isChromium()) {
     # Chromium doesn't build by project directories.
     @projects = ();
     push @options, "--makeargs=" . $makeArgs if $makeArgs;
-    my $result = buildChromium($clean, @options);
+    $result = buildChromium($clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
 
@@ -657,14 +659,14 @@ if (isBlackBerry()) {
 
 if (isQt()) {
     @projects = (); # An empty projects list will build the default projects
-    my $result = buildQMakeProjects(\@projects, $clean, @options);
+    $result = buildQMakeProjects(\@projects, $clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
 
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
-    my $result = 0;
+    $result = 0;
 
     # For Gtk the WebKit project builds all others
     if (isGtk() && $dir ne "Source/WebKit") {
@@ -711,6 +713,9 @@ for my $dir (@projects) {
 
 # Don't report the "WebKit is now built" message after a clean operation.
 exit if $clean;
+
+# Don't report congrats message if build was interrupted by the user.
+exit if ($result & 127) == SIGINT;
 
 # Write out congratulations message.
 writeCongrats();
