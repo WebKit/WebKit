@@ -1,3 +1,49 @@
+2012-01-19  Kent Tamura  <tkent@chromium.org>
+
+        Change LocalizedNumber interface
+        https://bugs.webkit.org/show_bug.cgi?id=76613
+
+        Reviewed by Hajime Morita.
+
+        Change the functions of LocalizedNumber from:
+          double parseLocalizedNumber(const String&);
+          String formatLocalizedNumber(double, unsigned fractionDigits);
+        To:
+          String convertToLocalizedNumber(const String&, usnigned fractionDigits);
+          String convertFromLocalizedNumber(const String&);
+        in order that we can avoid conversion from/to a double value.
+
+        The fractionDigits argumetn of convertToLocalizedNumber() will be
+        removed in the future.  We need it because we'd like to recycle the old
+        functions to implement new functions for now and functions in
+        LocalizedNumber can't call functions in HTMLParserIdioms.cpp.
+
+        No new tests because the change doesn't make any behavior change.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::visibleValue):
+        Use convertToLocalizedNumber.
+        (WebCore::NumberInputType::convertFromVisibleValue):
+        Use convertFromLocalizedNumber.
+        (WebCore::NumberInputType::isAcceptableValue): ditto.
+        * platform/text/LocalizedNumber.h:
+        Remove parseLocalizedNumber and formatLocalizedNumber, and
+        introduce convertToLocalizedNumber and convertFromLocalizedNumber.
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::parseLocalizedNumber): Make this static.
+        (WebCore::formatLocalizedNumber): Make this static.
+        (WebCore::convertToLocalizedNumber): Implement this with formatLocalizedNumber.
+        (WebCore::convertFromLocalizedNumber): Implement this with parseLocalizedNumber.
+        * platform/text/LocalizedNumberNone.cpp:
+        (WebCore::convertToLocalizedNumber):
+        Implement this as a function returning the input string.
+        (WebCore::convertFromLocalizedNumber): ditto.
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::parseLocalizedNumber): Make this static.
+        (WebCore::formatLocalizedNumber): Make this static.
+        (WebCore::convertToLocalizedNumber): Implement this with formatLocalizedNumber.
+        (WebCore::convertFromLocalizedNumber): Implement this with parseLocalizedNumber.
+
 2012-01-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: problem with Ctrl - <arrows> shortcuts in Scripts panel

@@ -288,24 +288,24 @@ String NumberInputType::visibleValue() const
     String currentValue = element()->value();
     if (currentValue.isEmpty())
         return currentValue;
+    // FIXME: The following three lines should be removed when we
+    // remove the second argument of convertToLocalizedNumber().
     double doubleValue = numeric_limits<double>::quiet_NaN();
     unsigned decimalPlace;
     parseToDoubleForNumberTypeWithDecimalPlaces(currentValue, &doubleValue, &decimalPlace);
-    String localized = formatLocalizedNumber(doubleValue, decimalPlace);
-    return localized.isEmpty() ? currentValue : localized;
+    return convertToLocalizedNumber(currentValue, decimalPlace);
 }
 
 String NumberInputType::convertFromVisibleValue(const String& visibleValue) const
 {
     if (visibleValue.isEmpty())
         return visibleValue;
-    double parsedNumber = parseLocalizedNumber(visibleValue);
-    return isfinite(parsedNumber) ? serializeForNumberType(parsedNumber) : visibleValue;
+    return convertFromLocalizedNumber(visibleValue);
 }
 
 bool NumberInputType::isAcceptableValue(const String& proposedValue)
 {
-    return proposedValue.isEmpty() || isfinite(parseLocalizedNumber(proposedValue)) || parseToDoubleForNumberType(proposedValue, 0);
+    return proposedValue.isEmpty() || parseToDoubleForNumberType(convertFromLocalizedNumber(proposedValue), 0) || parseToDoubleForNumberType(proposedValue, 0);
 }
 
 String NumberInputType::sanitizeValue(const String& proposedValue) const

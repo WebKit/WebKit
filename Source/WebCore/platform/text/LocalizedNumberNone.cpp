@@ -37,14 +37,14 @@ using namespace std;
 
 namespace WebCore {
 
-double parseLocalizedNumber(const String&)
+String convertToLocalizedNumber(const String& canonicalNumberString, unsigned)
 {
-    return numeric_limits<double>::quiet_NaN();
+    return canonicalNumberString;
 }
 
-String formatLocalizedNumber(double, unsigned)
+String convertFromLocalizedNumber(const String& localizedNumberString)
 {
-    return String();
+    return localizedNumberString;
 }
 
 } // namespace WebCore

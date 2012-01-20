@@ -37,6 +37,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/dtoa.h>
 
 using namespace icu;
 using namespace std;
@@ -76,7 +77,7 @@ static NumberFormat* numberFormatterForDisplay()
     return formatter;
 }
 
-double parseLocalizedNumber(const String& numberString)
+static double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
@@ -94,7 +95,7 @@ double parseLocalizedNumber(const String& numberString)
     return U_SUCCESS(status) ? numericResult : numeric_limits<double>::quiet_NaN();
 }
 
-String formatLocalizedNumber(double number, unsigned fractionDigits)
+static String formatLocalizedNumber(double number, unsigned fractionDigits)
 {
     NumberFormat* formatter = numberFormatterForDisplay();
     if (!formatter)
@@ -103,6 +104,32 @@ String formatLocalizedNumber(double number, unsigned fractionDigits)
     formatter->setMaximumFractionDigits(clampToInteger(fractionDigits));
     formatter->format(number, result);
     return String(result.getBuffer(), result.length());
+}
+
+String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
+{
+    // FIXME: We should not do parse-then-format. It makes some
+    // problems such as removing leading zeros, changing trailing
+    // digits to zeros.
+    // FIXME: We should not use the fractionDigits argument.
+
+    double doubleValue = canonicalNumberString.toDouble();
+    // The input string must be valid.
+    return formatLocalizedNumber(doubleValue, fractionDigits);
+
+}
+
+String convertFromLocalizedNumber(const String& localizedNumberString)
+{
+    // FIXME: We should not do parse-then-format. It makes some
+    // problems such as removing leading zeros, changing trailing
+    // digits to zeros.
+
+    double doubleValue = parseLocalizedNumber(localizedNumberString);
+    if (!isfinite(doubleValue))
+        return localizedNumberString;
+    NumberToStringBuffer buffer;
+    return String(numberToString(doubleValue, buffer));
 }
 
 } // namespace WebCore

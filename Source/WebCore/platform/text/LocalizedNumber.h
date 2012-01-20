@@ -35,21 +35,20 @@
 
 namespace WebCore {
 
-// Parses a string representation of a floating point number localized
-// for the browser's current locale. If the input string is not valid
-// or an implementation doesn't support localized numbers, this
-// function returns NaN. This function doesn't need to support
-// scientific notation, NaN, +Infinity and -Infinity, and doesn't need
-// to support the standard representations of ECMAScript and HTML5.
-double parseLocalizedNumber(const String&);
+// Converts the specified number string to another number string
+// localized for the browser's current locale. The input string must
+// conform to HTML floating-point numbers, and is not empty. The
+// fractionDigits argument is deprecated. The function implementaion
+// should not use the argument.
+String convertToLocalizedNumber(const String&, unsigned fractionDigits);
 
-// Serializes the specified floating point number for the browser's
-// current locale.  If an implementation doesn't support localized
-// numbers or the input value is NaN or Infinitiy, the function should
-// return an empty string.
-// fractionDigits is the maximum length of the fractional parts of the
-// resultant string.
-String formatLocalizedNumber(double, unsigned fractionDigits);
+// Converts the specified localized number string to a number string
+// in the HTML floating-point number format. The input string is
+// provided by a end user, and might not be a number string. It's ok
+// that the function returns a string which is not conforms to the
+// HTML floating-point number format, callers of this function are
+// responsible to check the format of the resultant string.
+String convertFromLocalizedNumber(const String&);
 
 } // namespace WebCore
 

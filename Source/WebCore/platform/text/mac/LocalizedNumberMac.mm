@@ -33,7 +33,9 @@
 
 #import <Foundation/NSNumberFormatter.h>
 #import <limits>
+#import <wtf/dtoa.h>
 #import <wtf/MainThread.h>
+#import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 
@@ -70,7 +72,7 @@ static NSNumberFormatter *numberFormatterForDisplay()
     return formatter;
 }
 
-double parseLocalizedNumber(const String& numberString)
+static double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
@@ -80,12 +82,38 @@ double parseLocalizedNumber(const String& numberString)
     return [number doubleValue];
 }
 
-String formatLocalizedNumber(double inputNumber, unsigned fractionDigits)
+static String formatLocalizedNumber(double inputNumber, unsigned fractionDigits)
 {
     RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
     RetainPtr<NSNumberFormatter> formatter = numberFormatterForDisplay();
     [formatter.get() setMaximumFractionDigits:fractionDigits];
     return String([formatter.get() stringFromNumber:number.get()]);
+}
+
+String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
+{
+    // FIXME: We should not do parse-then-format. It makes some
+    // problems such as removing leading zeros, changing trailing
+    // digits to zeros.
+    // FIXME: We should not use the fractionDigits argument.
+
+    double doubleValue = canonicalNumberString.toDouble();
+    // The input string must be valid.
+    return formatLocalizedNumber(doubleValue, fractionDigits);
+
+}
+
+String convertFromLocalizedNumber(const String& localizedNumberString)
+{
+    // FIXME: We should not do parse-then-format. It makes some
+    // problems such as removing leading zeros, changing trailing
+    // digits to zeros.
+
+    double doubleValue = parseLocalizedNumber(localizedNumberString);
+    if (!isfinite(doubleValue))
+        return localizedNumberString;
+    NumberToStringBuffer buffer;
+    return String(numberToString(doubleValue, buffer));
 }
 
 } // namespace WebCore
