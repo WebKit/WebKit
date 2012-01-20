@@ -1,3 +1,14 @@
+2012-01-20  ChangSeok Oh  <shivamidow@gmail.com>
+
+        undefined reference to symbol eina_module_free
+        https://bugs.webkit.org/show_bug.cgi?id=76681
+
+        Reviewed by Martin Robinson.
+
+        eina_module_free has been used without including eina libraries after r104936.
+
+        * wtf/PlatformEfl.cmake: Add EINA_LIBRARIES.
+
 2012-01-19  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove an obsolete comment about features.gypi
