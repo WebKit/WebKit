@@ -275,6 +275,7 @@ private:
 
 inline RenderTableSection* RenderTable::topSection() const
 {
+    ASSERT(!needsSectionRecalc());
     if (m_head)
         return m_head;
     if (m_firstBody)

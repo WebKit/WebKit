@@ -936,15 +936,19 @@ void RenderTable::recalcBordersInRowDirection()
 
 LayoutUnit RenderTable::borderBefore() const
 {
-    if (collapseBorders())
+    if (collapseBorders()) {
+        recalcSectionsIfNeeded();
         return outerBorderBefore();
+    }
     return RenderBlock::borderBefore();
 }
 
 LayoutUnit RenderTable::borderAfter() const
 {
-    if (collapseBorders())
+    if (collapseBorders()) {
+        recalcSectionsIfNeeded();
         return outerBorderAfter();
+    }
     return RenderBlock::borderAfter();
 }
 
