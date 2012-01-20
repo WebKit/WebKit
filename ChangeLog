@@ -1,3 +1,15 @@
+2012-01-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Public API watch dog auto test.
+        https://bugs.webkit.org/show_bug.cgi?id=73922
+
+        Reviewed by Simon Hausmann.
+
+        This test aims to prevent unintended/unapproved
+        modifications to the public QML API.
+
+        * Source/tests.pri:
+
 2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Rubber-stamped by Martin Robinson.
