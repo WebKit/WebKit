@@ -669,8 +669,27 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
 void LayerRendererChromium::drawCanvasQuad(const CCCanvasDrawQuad* quad)
 {
-    CCLayerImpl* layer = quad->layer();
-    layer->draw(this);
+    ASSERT(CCProxy::isImplThread());
+    const CCCanvasLayerImpl::Program* program = canvasLayerProgram();
+    ASSERT(program && program->initialized());
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+
+    if (quad->hasAlpha() && !quad->premultipliedAlpha())
+        GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+
+    const IntSize& bounds = quad->quadRect().size();
+
+    GLC(context(), context()->useProgram(program->program()));
+    GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
+                                    program->vertexShader().matrixLocation(),
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
+
+    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 }
 
 void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)

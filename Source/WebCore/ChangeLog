@@ -1,3 +1,28 @@
+2012-01-20  Tim Dresser  <tdresser@chromium.org>
+
+        Refactor canvas drawing to be more data driven
+        https://bugs.webkit.org/show_bug.cgi?id=76635
+
+        CCCanvasLayerImpl no longer handles drawing itself, but produces a list of CCCanvasDrawQuads.
+        These quads are then drawn by LayerRendererChromium.
+
+        This is a refactor, so no new tests were added.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawCanvasQuad):
+        * platform/graphics/chromium/cc/CCCanvasDrawQuad.cpp:
+        (WebCore::CCCanvasDrawQuad::create):
+        (WebCore::CCCanvasDrawQuad::CCCanvasDrawQuad):
+        * platform/graphics/chromium/cc/CCCanvasDrawQuad.h:
+        (WebCore::CCCanvasDrawQuad::textureId):
+        (WebCore::CCCanvasDrawQuad::hasAlpha):
+        (WebCore::CCCanvasDrawQuad::premultipliedAlpha):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+
 2012-01-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in xsltParseGlobalVariable.

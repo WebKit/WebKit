@@ -44,8 +44,6 @@ public:
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
-    virtual void draw(LayerRendererChromium*);
-
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     unsigned textureId() const { return m_textureId; }

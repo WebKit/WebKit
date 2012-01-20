@@ -29,16 +29,17 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCCanvasDrawQuad> CCCanvasDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+PassOwnPtr<CCCanvasDrawQuad> CCCanvasDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool hasAlpha, bool premultipliedAlpha)
 {
-    return adoptPtr(new CCCanvasDrawQuad(sharedQuadState, quadRect, layer));
+    return adoptPtr(new CCCanvasDrawQuad(sharedQuadState, quadRect, textureId, hasAlpha, premultipliedAlpha));
 }
 
-CCCanvasDrawQuad::CCCanvasDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCLayerImpl* layer)
+CCCanvasDrawQuad::CCCanvasDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool hasAlpha, bool premultipliedAlpha)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::CanvasContent, quadRect)
-    , m_layer(layer)
+    , m_textureId(textureId)
+    , m_hasAlpha(hasAlpha)
+    , m_premultipliedAlpha(premultipliedAlpha)
 {
-    ASSERT(m_layer);
 }
 
 }

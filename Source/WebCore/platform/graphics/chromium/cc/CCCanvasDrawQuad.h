@@ -35,14 +35,18 @@ class CCLayerImpl;
 class CCCanvasDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCCanvasDrawQuad);
 public:
-    static PassOwnPtr<CCCanvasDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
+    static PassOwnPtr<CCCanvasDrawQuad> create(const CCSharedQuadState*, const IntRect&, unsigned texture_id, bool hasAlpha, bool premultipliedAlpha);
 
-    CCLayerImpl* layer() const { return m_layer; }
+    unsigned textureId() const { return  m_textureId; }
+    bool hasAlpha() const { return  m_hasAlpha; }
+    bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
 
 private:
-    CCCanvasDrawQuad(const CCSharedQuadState*, const IntRect&, CCLayerImpl*);
-
-    CCLayerImpl* m_layer;
+    CCCanvasDrawQuad(const CCSharedQuadState*, const IntRect&, unsigned texture_id, bool hasAlpha, bool premultipliedAlpha);
+    
+    unsigned m_textureId;
+    bool m_hasAlpha;
+    bool m_premultipliedAlpha;
 };
 
 }
