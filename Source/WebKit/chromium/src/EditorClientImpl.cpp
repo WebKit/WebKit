@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple, Inc.  All rights reserved.
- * Copyright (C) 2010 Google, Inc.  All rights reserved.
+ * Copyright (C) 2012 Google, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@
 #include "WebSpellCheckClient.h"
 #include "WebTextAffinity.h"
 #include "WebTextCheckingCompletionImpl.h"
+#include "WebTextCheckingResult.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 
@@ -763,6 +764,22 @@ void EditorClientImpl::checkGrammarOfString(const UChar*, int length,
         *badGrammarLocation = 0;
     if (badGrammarLength)
         *badGrammarLength = 0;
+}
+
+void EditorClientImpl::checkTextOfParagraph(const UChar* text, int length,
+                                            TextCheckingTypeMask mask,
+                                            WTF::Vector<TextCheckingResult>& results)
+{
+    if (!m_webView->spellCheckClient())
+        return;
+
+    WebTextCheckingTypeMask webMask = static_cast<WebTextCheckingTypeMask>(mask);
+    WebVector<WebTextCheckingResult> webResults;
+    m_webView->spellCheckClient()->checkTextOfParagraph(WebString(text, length), webMask, &webResults);
+
+    results.resize(webResults.size());
+    for (size_t i = 0; i < webResults.size(); ++i)
+        results[i] = webResults[i];
 }
 
 void EditorClientImpl::updateSpellingUIWithGrammarString(const String&,

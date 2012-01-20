@@ -470,6 +470,7 @@
                 'src/UserMediaClientImpl.cpp',
                 'src/WebTextCheckingCompletionImpl.h',
                 'src/WebTextCheckingCompletionImpl.cpp',
+                'src/WebTextCheckingResult.cpp',
                 'src/VideoFrameChromiumImpl.cpp',
                 'src/VideoFrameChromiumImpl.h',
                 'src/WebAccessibilityObject.cpp',

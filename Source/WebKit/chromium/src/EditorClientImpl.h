@@ -99,6 +99,8 @@ public:
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
     virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&,
         int* badGrammarLocation, int* badGrammarLength);
+    virtual void checkTextOfParagraph(const UChar*, int length, WebCore::TextCheckingTypeMask checkingTypes,
+        WTF::Vector<WebCore::TextCheckingResult>& results);
     virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
     virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&);
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);

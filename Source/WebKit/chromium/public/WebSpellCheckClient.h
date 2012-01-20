@@ -31,6 +31,7 @@
 #ifndef WebSpellCheckClient_h
 #define WebSpellCheckClient_h
 
+#include "WebTextCheckingType.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 
@@ -38,6 +39,7 @@ namespace WebKit {
 
 class WebString;
 class WebTextCheckingCompletion;
+struct WebTextCheckingResult;
 
 class WebSpellCheckClient {
 public:
@@ -51,6 +53,13 @@ public:
                             int& misspelledOffset,
                             int& misspelledLength,
                             WebVector<WebString>* optionalSuggestions) { }
+
+    // The client should perform spell-checking on the given text. This function will
+    // enumerate all misspellings at once.
+    virtual void checkTextOfParagraph(const WebString&,
+                                      WebTextCheckingTypeMask mask,
+                                      WebVector<WebTextCheckingResult>* results) { }
+
     // Requests asynchronous spelling and grammar checking, whose result should be
     // returned by passed completion object.
     virtual void requestCheckingOfText(const WebString&, WebTextCheckingCompletion*) { }
