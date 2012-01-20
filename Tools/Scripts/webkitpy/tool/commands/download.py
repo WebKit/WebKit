@@ -343,18 +343,20 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
 
         # We use the earliest revision for the bug info
         earliest_revision = revision_list[0]
-        commit_info = self._commit_info(earliest_revision)
-        cc_list = sorted([party.bugzilla_email()
-                          for party in commit_info.responsible_parties()
-                          if party.bugzilla_email()])
-        return {
+        state = {
             "revision": earliest_revision,
             "revision_list": revision_list,
-            "bug_id": commit_info.bug_id(),
-            # FIXME: We should used the list as the canonical representation.
-            "bug_cc": ",".join(cc_list),
             "reason": args[1],
         }
+        commit_info = self._commit_info(earliest_revision)
+        if commit_info:
+            state["bug_id"] = commit_info.bug_id()
+            cc_list = sorted([party.bugzilla_email()
+                            for party in commit_info.responsible_parties()
+                            if party.bugzilla_email()])
+            # FIXME: We should used the list as the canonical representation.
+            state["bug_cc"] = ",".join(cc_list)
+        return state
 
 
 class PrepareRollout(AbstractRolloutPrepCommand):
