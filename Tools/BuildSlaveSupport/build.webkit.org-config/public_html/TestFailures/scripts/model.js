@@ -142,6 +142,8 @@ model.latestRevisionWithNoBuildersInFlight = function()
     var revision = 0;
     Object.keys(model.state.resultsByBuilder).forEach(function(builderName) {
         var results = model.state.resultsByBuilder[builderName];
+        if (!results.revision)
+            return;
         var testedRevision = parseInt(results.revision);
         revision = revision ? Math.min(revision, testedRevision) : testedRevision;
     });
