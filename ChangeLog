@@ -1,3 +1,14 @@
+2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs
+        https://bugs.webkit.org/show_bug.cgi?id=72589
+
+        Reviewed by Martin Robinson.
+
+        New optional dependency for WK2's accessibility unit test: AT-SPI2.
+
+        * configure.ac: Check for AT-SPI2 when building with WK2 support.
+
 2012-01-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Public API watch dog auto test.

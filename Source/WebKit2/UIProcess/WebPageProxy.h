@@ -571,6 +571,10 @@ public:
     void setSmartInsertDeleteEnabled(bool);
 #endif
 
+#if PLATFORM(GTK)
+    String accessibilityPlugID() const { return m_accessibilityPlugID; }
+#endif
+
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<ComputedPagesCallback>);
@@ -750,6 +754,7 @@ private:
 
 #if PLATFORM(GTK)
     void getEditorCommandsForKeyEvent(const AtomicString&, Vector<String>&);
+    void bindAccessibilityTree(const String&);
 #endif
 #if PLATFORM(EFL)
     void getEditorCommandsForKeyEvent(Vector<String>&);
@@ -977,6 +982,10 @@ private:
 
 #if PLATFORM(MAC)
     bool m_isSmartInsertDeleteEnabled;
+#endif
+
+#if PLATFORM(GTK)
+    String m_accessibilityPlugID;
 #endif
 
     int64_t m_spellDocumentTag;

@@ -1,3 +1,83 @@
+2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs
+        https://bugs.webkit.org/show_bug.cgi?id=72589
+
+        Reviewed by Martin Robinson.
+
+        Expose the accessibility hierarchy in the multi-process
+        architecture of WK2 through AtkSocket and AtkPlug.
+
+        Make the WebView widget return an AtkSocket when calling to
+        gtk_widget_get_accessible().
+
+        * GNUmakefile.am: Add new files.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init):
+        (webkitWebViewBaseGetAccessible):
+        (webkit_web_view_base_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp: Added.
+        (webkitWebViewBaseAccessibleWidgetFinalize):
+        (webkitWebViewBaseAccessibleWidgetDestroyed):
+        (webkitWebViewBaseAccessibleInitialize):
+        (webkitWebViewBaseAccessibleRefStateSet):
+        (webkitWebViewBaseAccessibleGetIndexInParent):
+        (webkit_web_view_base_accessible_init):
+        (webkit_web_view_base_accessible_class_init):
+        (webkitWebViewBaseAccessibleNew):
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.h: Added.
+
+        Make the WebPage create an AtkPlug on its initialization and
+        sending the ID of that plug to the UI process, so it can embed the
+        plug in the socket.
+
+        Also, take care of all the needed wrapping around the WebCore's
+        accessibility objects, exposing them in the UI process's
+        accessibility hierarchy thanks to the socket-plug connection.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::accessibilityPlugID):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/gtk/WebPageAccessibilityObject.cpp: Added.
+        (accessibilityRootObjectWrapper):
+        (webPageAccessibilityObjectInitialize):
+        (webPageAccessibilityObjectGetIndexInParent):
+        (webPageAccessibilityObjectGetNChildren):
+        (webPageAccessibilityObjectRefChild):
+        (web_page_accessibility_object_init):
+        (web_page_accessibility_object_class_init):
+        (webPageAccessibilityObjectNew):
+        (webPageAccessibilityObjectRefresh):
+        * WebProcess/WebPage/gtk/WebPageAccessibilityObject.h: Added.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::updateAccessibilityTree):
+
+        New unit test for checking accessibility support in WK2GTK.
+
+        * UIProcess/API/gtk/tests/AccessibilityTestServer.cpp: Added.
+        (loadChangedCallback): Notify the parent process (the test)
+        when ready.
+        (main):
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestWebKitAccessibility.cpp: Added.
+        (stopTestServer):
+        (sigAbortHandler):
+        (testServerMonitorThreadFunc):
+        (startTestServerMonitor):
+        (startTestServer):
+        (checkAtspiAccessible):
+        (findTestServerApplication):
+        (testAtspiBasicHierarchy):
+        (beforeAll):
+        (afterAll):
+
 2012-01-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Public API watch dog auto test.

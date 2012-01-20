@@ -1,3 +1,25 @@
+2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Expose accessibility hierarchy in WebKit2 to ATK/AT-SPI based ATs
+        https://bugs.webkit.org/show_bug.cgi?id=72589
+
+        Reviewed by Martin Robinson.
+
+        Ensure the accessibility infrastructure is available when running
+        the unit tests, otherwise WK2's accessibility tests won't work.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner._lookup_atspi2_binary): New. Looks for the directory
+        where at-spi2's stuff is located (like at-spi-bus-launcher and
+        at-spi2-registryd).
+        (TestRunner.run): Initialize the accessibility infrastructure.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Add 'WebKitWebViewBaseAccessible.*'.
+
+        * gtk/jhbuild.modules: Added at-spi2-core and at-spi2-atk.
+
 2012-01-20  Hayato Ito  <hayato@chromium.org>
 
         Add ShadowRoot.idl which is enabled by newly introduced SHADOW_DOM flag.

@@ -25,7 +25,7 @@ class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=74717
-    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource"]
+    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource" ]
 
     def __init__(self):
         self._executive = Executive()
@@ -64,6 +64,19 @@ class TestRunner:
                 if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
                     self._tests.append(test_path)
 
+    def _lookup_atspi2_binary(self, jhbuild_path, filename):
+        exec_prefix = self._executive.run_command([jhbuild_path ,'pkg-config', '--variable=exec_prefix', 'atspi-2']).rstrip('\r\n')
+        paths_to_check = [ 'libexec',
+                           'lib/at-spi2-core',
+                           'lib32/at-spi2-core'
+                           'lib64/at-spi2-core' ]
+        for path in paths_to_check:
+            filepath = os.path.join(exec_prefix, path, filename)
+            if os.path.isfile(filepath):
+                return filepath
+
+        return None
+
     def run(self):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
@@ -78,11 +91,42 @@ class TestRunner:
             exit_status[0] = error.exit_code
 
         jhbuild_path = os.path.join(self._gtk_tools_directory, "run-with-jhbuild")
+
+        # Make sure there's no AT_SPI_BUS X's property previously set,
+        # otherwise the accessibility bus couldn't be properly launched.
+        self._executive.run_command(['xprop', '-root', '-remove', 'AT_SPI_BUS'], env=test_env)
+
+        # Make sure the accessibility bus is launched.
+        a11y_bus_launched = False
+        a11y_bus_launcher_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi-bus-launcher')
+        if a11y_bus_launcher_path:
+            try:
+                a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
+                a11y_bus_launched = True
+            except:
+                sys.stderr.write("Failed to launch the accessibility bus\n")
+                sys.stderr.flush()
+
+        a11y_registryd_running = False
+        a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
+        if a11y_registryd_path:
+            try:
+                a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
+                a11y_registryd_running = True
+            except:
+                sys.stderr.write("Failed to run the accessibility registry\n")
+                sys.stderr.flush()
+
         for test in self._tests:
             out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
                                               error_handler=_error_handler)
             sys.stdout.write(out)
             sys.stdout.flush()
+
+        if a11y_registryd_running:
+            a11y_registryd.kill()
+        if a11y_bus_launched:
+            a11y_bus_launcher.kill()
 
         if exit_status[0]:
             sys.stdout.write("Tests failed\n")

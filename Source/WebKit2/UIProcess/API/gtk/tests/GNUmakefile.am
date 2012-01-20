@@ -6,6 +6,13 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestBackForwardList
 
 noinst_PROGRAMS += $(TEST_PROGS)
+
+if HAVE_ATSPI2
+TEST_PROGS += Programs/WebKit2APITests/TestWebKitAccessibility
+
+noinst_PROGRAMS += Programs/WebKit2APITests/AccessibilityTestServer
+endif
+
 webkit2_tests_cppflags = \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
 	$(javascriptcore_cppflags) \
@@ -76,3 +83,16 @@ Programs_WebKit2APITests_TestBackForwardList_CPPFLAGS = $(webkit2_tests_cppflags
 Programs_WebKit2APITests_TestBackForwardList_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestBackForwardList_LDFLAGS = $(webkit2_tests_ldflags)
 
+if HAVE_ATSPI2
+Programs_WebKit2APITests_AccessibilityTestServer_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/AccessibilityTestServer.cpp
+Programs_WebKit2APITests_AccessibilityTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_AccessibilityTestServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_AccessibilityTestServer_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitAccessibility_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitAccessibility.cpp
+Programs_WebKit2APITests_TestWebKitAccessibility_CPPFLAGS = $(webkit2_tests_cppflags) $(ATSPI2_CFLAGS)
+Programs_WebKit2APITests_TestWebKitAccessibility_LDADD = $(webkit2_tests_ldadd) $(ATSPI2_LIBS)
+Programs_WebKit2APITests_TestWebKitAccessibility_LDFLAGS = $(webkit2_tests_ldflags)
+endif

@@ -546,6 +546,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBase.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBaseAccessible.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBasePrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.h \
@@ -891,6 +893,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/FindController.cpp \
 	Source/WebKit2/WebProcess/WebPage/FindController.h \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.h \
+	Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.cpp \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.h \

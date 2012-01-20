@@ -70,6 +70,7 @@
 
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
+#include "WebPageAccessibilityObject.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -397,6 +398,9 @@ public:
     void gestureWillBegin(const WebCore::IntPoint&, bool& canBeginPanning);
     void gestureDidScroll(const WebCore::IntSize&);
     void gestureDidEnd();
+
+#elif PLATFORM(GTK)
+    void updateAccessibilityTree();
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);
@@ -598,9 +602,9 @@ private:
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     void setTextForActivePopupMenu(int32_t index);
 
-#if PLATFORM(GTK)    
+#if PLATFORM(GTK)
     void failedToShowPopupMenu();
-#endif    
+#endif
 
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
@@ -677,6 +681,8 @@ private:
     HWND m_nativeWindow;
 
     RefPtr<WebCore::Node> m_gestureTargetNode;
+#elif PLATFORM(GTK)
+    WebPageAccessibilityObject* m_accessibilityObject;
 #endif
     
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;

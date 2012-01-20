@@ -62,6 +62,7 @@ def get_webkit2_options():
                          glob.glob(src_path('PageClientImpl.*')) + \
                          glob.glob(src_path('WebKitUIClient.*')) + \
                          glob.glob(src_path('WebKitWebLoaderClient.*')) + \
+                         glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('tests/*.h'))
     })
     return (common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc'), options)

@@ -49,6 +49,11 @@ void WebPageProxy::getEditorCommandsForKeyEvent(const AtomicString& eventType, V
     m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), eventType, commandsList);
 }
 
+void WebPageProxy::bindAccessibilityTree(const String& plugID)
+{
+    m_accessibilityPlugID = plugID;
+}
+
 void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
 {
     notImplemented();

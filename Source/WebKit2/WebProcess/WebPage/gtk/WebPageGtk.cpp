@@ -30,6 +30,8 @@
 
 #include "NotImplemented.h"
 #include "WebEvent.h"
+#include "WebPageAccessibilityObject.h"
+#include "WebPageProxyMessages.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -37,6 +39,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 using namespace WebCore;
 
@@ -44,7 +47,21 @@ namespace WebKit {
 
 void WebPage::platformInitialize()
 {
-    notImplemented();
+    // Create the accessible object (the plug) that will serve as the
+    // entry point to the Web process, and send a message to the UI
+    // process to connect the two worlds through the accessibility
+    // object there specifically placed for that purpose (the socket).
+    m_accessibilityObject = webPageAccessibilityObjectNew(this);
+    GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject)));
+    send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
+}
+
+void WebPage::updateAccessibilityTree()
+{
+    if (!m_accessibilityObject)
+        return;
+
+    webPageAccessibilityObjectRefresh(m_accessibilityObject);
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)

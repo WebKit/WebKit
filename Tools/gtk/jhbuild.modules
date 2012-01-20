@@ -14,6 +14,8 @@
       <dep package="glib-networking"/>
       <dep package="gnome-icon-theme"/>
       <dep package="libsoup"/>
+      <dep package="at-spi2-core"/>
+      <dep package="at-spi2-atk"/>
     </dependencies>
   </metamodule>
 
@@ -160,6 +162,29 @@
             hash="sha256:a7f0a8b17e91ac338fdbc01ac59a8738e9c1e201de492c070d43aacf291a8959"
             md5sum="40be1e5a6eae11181311a6fc432cf892">
     </branch>
+  </autotools>
+
+  <autotools id="at-spi2-core">
+    <branch module="pub/GNOME/sources/at-spi2-core/2.2/at-spi2-core-2.2.1.tar.xz" version="2.2.1"
+            repo="ftp.gnome.org"
+            hash="sha256:2a4129420decca3657e163a4dbb1a3cb28acafe32ea1292417fdd81084d48fac"
+            md5sum="183916373d6906ff6b220bd44d15ff97">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="at-spi2-atk">
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.2/at-spi2-atk-2.2.1.tar.xz" version="2.2.1"
+            repo="ftp.gnome.org"
+            hash="sha256:6677def34b16c9a28d6ad96473ea56a3c0e13aa968e584df004cd44c8691ea1a"
+            md5sum="19646097aca25a9c1b8ba7ab8d172916">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
   </autotools>
 
 </moduleset>

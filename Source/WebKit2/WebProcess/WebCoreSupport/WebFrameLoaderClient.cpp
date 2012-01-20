@@ -1372,6 +1372,11 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
         return;
 
     webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(webPage, m_frame, world);
+
+#if PLATFORM(GTK)
+    // Ensure the accessibility hierarchy is updated.
+    webPage->updateAccessibilityTree();
+#endif
 }
 
 void WebFrameLoaderClient::documentElementAvailable()

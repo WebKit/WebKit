@@ -288,6 +288,7 @@ ENCHANT_REQUIRED_VERSION=0.22
 LIBFFTW_REQUIRED_VERSION=3.2.2
 CLUTTER_REQUIRED_VERSION=1.8.2
 CLUTTER_GTK_REQUIRED_VERSION=1.0.2
+ATSPI2_REQUIRED_VERSION=2.2.1
 
 # Available modules
 #
@@ -1048,6 +1049,27 @@ if test "$enable_web_audio" = "yes"; then
     AC_SUBST([LIBFFTW_LIBS])
 fi
 
+if test "$with_accelerated_compositing" = "clutter"; then
+   PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)
+   PKG_CHECK_MODULES([CLUTTER_GTK],
+                     [clutter-gtk-1.0 >= $CLUTTER_GTK_REQUIRED_VERSION])
+
+   AC_SUBST(CLUTTER_CFLAGS)
+   AC_SUBST(CLUTTER_LIBS)
+   AC_SUBST(CLUTTER_GTK_CFLAGS)
+   AC_SUBST(CLUTTER_GTK_LIBS)
+fi
+
+# check if atspi2 is available (only needed for Webkit2 unit tests)
+if test "$enable_webkit2" = "yes"; then
+   PKG_CHECK_MODULES([ATSPI2],
+                     [atspi-2 >= $ATSPI2_REQUIRED_VERSION],
+                     [have_atspi2=yes], [have_atspi2=no])
+
+   AC_SUBST([ATSPI2_CFLAGS])
+   AC_SUBST([ATSPI2_LIBS])
+fi
+
 # check for code coverage support
 if test "$enable_coverage" = "yes"; then
    COVERAGE_CFLAGS="-MD"
@@ -1120,6 +1142,9 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
 # GStreamer feature conditional
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
+
+# ATSPI2 conditional
+AM_CONDITIONAL([HAVE_ATSPI2], [test "$have_atspi2" = "yes"])
 
 # Accelerated compositing conditional
 AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositing" = "cairo" || test "$with_accelerated_compositing" = "opengl" || test "$with_accelerated_compositing" = "clutter"])

@@ -189,6 +189,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_keyboardEventBeingInterpreted(0)
 #elif PLATFORM(WIN)
     , m_nativeWindow(parameters.nativeWindow)
+#elif PLATFORM(GTK)
+    , m_accessibilityObject(0)
 #endif
     , m_setCanStartMediaTimer(WebProcess::shared().runLoop(), this, &WebPage::setCanStartMediaTimerFired)
     , m_findController(this)

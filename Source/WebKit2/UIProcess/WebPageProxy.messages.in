@@ -147,6 +147,9 @@ messages -> WebPageProxy {
 #if PLATFORM(GTK)
     # Support for GTK+ platform keybindings
     GetEditorCommandsForKeyEvent(AtomicString eventType) -> (Vector<WTF::String> commandsList)
+
+    # Support for connecting the Accessibility worlds of the UI and the Web processes
+    BindAccessibilityTree(WTF::String plugID)
 #endif
 
     # BackForward messages
