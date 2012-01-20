@@ -1,3 +1,66 @@
+2012-01-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove CCLayerDelegate, add ContentLayerDelegate for painting
+        https://bugs.webkit.org/show_bug.cgi?id=76663
+
+        Reviewed by Kenneth Russell.
+
+        CCLayerDelegate used to be an interface with a half-dozen callbacks on it, but now it has only one call -
+        paintContents() - and that one call is only valid for one subclass of LayerChromium, ContentLayerChromium. This
+        removes the CCLayerDelegate pointer from LayerChromium and adds a ContentLayerDelegate for the paint call.
+
+        The majority of the code changes in this patch are removing the nil parameter from various places that construct
+        LayerChromium instances. Also tightens the type of GraphicsLayerChromium::m_layer to ContentLayerChromium.
+
+        Refactoring/removing dead code, so no new tests.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerChromium::create):
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerDelegate::~ContentLayerDelegate):
+        (WebCore::ContentLayerChromium::clearDelegate):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::platformLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::~GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        (WebCore::GraphicsLayerChromium::setContentsToMedia):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::create):
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::create):
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::create):
+        (WebCore::PluginLayerChromium::PluginLayerChromium):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::drawsContent):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::create):
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::create):
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2012-01-19  Greg Billock  <gbillock@google.com>
 
         [Coverity] Fix uninitialized constructor defects in .../html

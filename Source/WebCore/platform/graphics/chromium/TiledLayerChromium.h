@@ -62,7 +62,7 @@ public:
     void protectTileTextures(const IntRect& layerRect);
 
 protected:
-    explicit TiledLayerChromium(CCLayerDelegate*);
+    TiledLayerChromium();
 
     virtual void cleanupResources();
     void updateTileSizeAndTilingOption();

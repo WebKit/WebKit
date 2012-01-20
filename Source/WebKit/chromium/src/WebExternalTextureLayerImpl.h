@@ -31,14 +31,13 @@
 
 namespace WebKit {
 
-class WebExternalTextureLayerImpl : public WebCore::PluginLayerChromium, public WebCore::CCLayerDelegate {
+class WebExternalTextureLayerImpl : public WebCore::PluginLayerChromium {
 public:
     static PassRefPtr<WebExternalTextureLayerImpl> create();
 
 protected:
     WebExternalTextureLayerImpl();
     virtual ~WebExternalTextureLayerImpl();
-    virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
     virtual bool drawsContent() const;
 };
 

@@ -42,12 +42,20 @@ namespace WebCore {
 class LayerTilerChromium;
 class LayerTextureUpdater;
 
+class ContentLayerDelegate {
+public:
+    virtual ~ContentLayerDelegate() { }
+    virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
+};
+
 // A Layer that requires a GraphicsContext to render its contents.
 class ContentLayerChromium : public TiledLayerChromium {
 public:
-    static PassRefPtr<ContentLayerChromium> create(CCLayerDelegate*);
+    static PassRefPtr<ContentLayerChromium> create(ContentLayerDelegate*);
 
     virtual ~ContentLayerChromium();
+
+    void clearDelegate() { m_delegate = 0; }
 
     virtual void paintContentsIfDirty();
     virtual void idlePaintContentsIfDirty();
@@ -55,12 +63,13 @@ public:
     virtual void setOpaque(bool);
 
 protected:
-    explicit ContentLayerChromium(CCLayerDelegate*);
+    explicit ContentLayerChromium(ContentLayerDelegate*);
 
 private:
     virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 
+    ContentLayerDelegate* m_delegate;
     RefPtr<LayerTextureUpdater> m_textureUpdater;
 };
 

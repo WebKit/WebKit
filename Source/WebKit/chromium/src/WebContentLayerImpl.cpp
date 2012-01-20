@@ -52,7 +52,7 @@ WebContentLayerImpl::WebContentLayerImpl(WebContentLayerClient* contentClient)
 
 WebContentLayerImpl::~WebContentLayerImpl()
 {
-    setDelegate(0);
+    clearDelegate();
 }
 
 void WebContentLayerImpl::setDrawsContent(bool drawsContent)

@@ -1,3 +1,40 @@
+2012-01-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove CCLayerDelegate, add ContentLayerDelegate for painting
+        https://bugs.webkit.org/show_bug.cgi?id=76663
+
+        Reviewed by Kenneth Russell.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::~WebContentLayerImpl):
+        * src/WebContentLayerImpl.h:
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl):
+        * src/WebExternalTextureLayerImpl.h:
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        (WebKit::WebLayerImpl::~WebLayerImpl):
+        * src/WebLayerImpl.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::LayerChromiumWithForcedDrawsContent::LayerChromiumWithForcedDrawsContent):
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::ContentLayerChromiumWithUpdateTracking::create):
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        * tests/LayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        * tests/TreeSynchronizerTest.cpp:
+        (WebCore::MockLayerChromium::MockLayerChromium):
+        (WebCore::TEST):
+
 2012-01-19  Dirk Pranke  <dpranke@chromium.org>
 
         remove the duplicated build rules from WebKit.gyp, Tools.gyp

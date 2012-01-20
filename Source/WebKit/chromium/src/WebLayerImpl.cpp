@@ -36,7 +36,7 @@ PassRefPtr<WebLayerImpl> WebLayerImpl::create()
 }
 
 WebLayerImpl::WebLayerImpl()
-    : LayerChromium(this)
+    : LayerChromium()
 {
     // Make sure that this layer does not draw content. This way we don't have to override
     // the base class implementation of drawsContent().
@@ -45,7 +45,6 @@ WebLayerImpl::WebLayerImpl()
 
 WebLayerImpl::~WebLayerImpl()
 {
-    setDelegate(0);
 }
 
 void WebLayerImpl::paintContents(GraphicsContext&, const IntRect& clip)

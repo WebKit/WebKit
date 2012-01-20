@@ -395,7 +395,7 @@ void CCLayerTreeHostTest::doBeginTest()
     ASSERT(isMainThread());
     m_client = MockLayerTreeHostClient::create(this);
 
-    RefPtr<LayerChromium> rootLayer = LayerChromium::create(0);
+    RefPtr<LayerChromium> rootLayer = LayerChromium::create();
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
@@ -912,7 +912,7 @@ TEST_F(CCLayerTreeHostTestSetVisible, runMultiThread)
     runTest(true);
 }
 
-class TestOpacityChangeLayerDelegate : public CCLayerDelegate {
+class TestOpacityChangeLayerDelegate : public ContentLayerDelegate {
 public:
     TestOpacityChangeLayerDelegate(CCLayerTreeHostTest* test)
         : m_test(test)
@@ -933,7 +933,7 @@ private:
 
 class ContentLayerChromiumWithUpdateTracking : public ContentLayerChromium {
 public:
-    static PassRefPtr<ContentLayerChromiumWithUpdateTracking> create(CCLayerDelegate *delegate) { return adoptRef(new ContentLayerChromiumWithUpdateTracking(delegate)); }
+    static PassRefPtr<ContentLayerChromiumWithUpdateTracking> create(ContentLayerDelegate *delegate) { return adoptRef(new ContentLayerChromiumWithUpdateTracking(delegate)); }
 
     int paintContentsCount() { return m_paintContentsCount; }
     int idlePaintContentsCount() { return m_idlePaintContentsCount; }
@@ -961,7 +961,7 @@ public:
     }
 
 private:
-    explicit ContentLayerChromiumWithUpdateTracking(CCLayerDelegate *delegate)
+    explicit ContentLayerChromiumWithUpdateTracking(ContentLayerDelegate* delegate)
         : ContentLayerChromium(delegate)
         , m_paintContentsCount(0)
         , m_idlePaintContentsCount(0)

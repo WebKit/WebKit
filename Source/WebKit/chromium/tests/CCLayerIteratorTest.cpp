@@ -52,7 +52,7 @@ public:
 
 private:
     TestLayerChromium()
-        : LayerChromium(0)
+        : LayerChromium()
         , m_drawsContent(true)
     {
         setBounds(IntSize(100, 100));

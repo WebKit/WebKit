@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CanvasLayerChromium::CanvasLayerChromium(CCLayerDelegate* delegate)
-    : LayerChromium(delegate)
+CanvasLayerChromium::CanvasLayerChromium()
+    : LayerChromium()
 {
 }
 

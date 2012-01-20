@@ -49,14 +49,13 @@ using namespace std;
 
 static int s_nextLayerId = 1;
 
-PassRefPtr<LayerChromium> LayerChromium::create(CCLayerDelegate* delegate)
+PassRefPtr<LayerChromium> LayerChromium::create()
 {
-    return adoptRef(new LayerChromium(delegate));
+    return adoptRef(new LayerChromium());
 }
 
-LayerChromium::LayerChromium(CCLayerDelegate* delegate)
-    : m_delegate(delegate)
-    , m_needsDisplay(false)
+LayerChromium::LayerChromium()
+    : m_needsDisplay(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
     , m_scrollable(false)

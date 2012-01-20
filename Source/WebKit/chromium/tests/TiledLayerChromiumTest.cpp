@@ -96,7 +96,7 @@ public:
 class FakeTiledLayerChromium : public TiledLayerChromium {
 public:
     explicit FakeTiledLayerChromium(TextureManager* textureManager)
-        : TiledLayerChromium(0)
+        : TiledLayerChromium()
         , m_fakeTextureUpdater(adoptRef(new FakeLayerTextureUpdater))
         , m_textureManager(textureManager)
     {

@@ -71,8 +71,8 @@ private:
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
 
-TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
-    : LayerChromium(delegate)
+TiledLayerChromium::TiledLayerChromium()
+    : LayerChromium()
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
     , m_skipsIdlePaint(false)
@@ -154,7 +154,7 @@ void TiledLayerChromium::setBorderTexelOption(CCLayerTilingData::BorderTexelOpti
 
 bool TiledLayerChromium::drawsContent() const
 {
-    if (!LayerChromium::drawsContent() || !m_delegate)
+    if (!LayerChromium::drawsContent())
         return false;
 
     if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)

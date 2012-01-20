@@ -120,7 +120,7 @@ void WebMediaPlayerClientImpl::readyStateChanged()
     m_mediaPlayer->readyStateChanged();
 #if USE(ACCELERATED_COMPOSITING)
     if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer) {
-        m_videoLayer = VideoLayerChromium::create(0, this);
+        m_videoLayer = VideoLayerChromium::create(this);
         m_videoLayer->setOpaque(m_opaque);
     }
 #endif

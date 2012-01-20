@@ -48,7 +48,7 @@ namespace WebCore {
 class ContentLayerPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
 public:
-    static PassOwnPtr<ContentLayerPainter> create(CCLayerDelegate* delegate)
+    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate* delegate)
     {
         return adoptPtr(new ContentLayerPainter(delegate));
     }
@@ -65,21 +65,22 @@ public:
         PlatformSupport::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
     }
 private:
-    explicit ContentLayerPainter(CCLayerDelegate* delegate)
+    explicit ContentLayerPainter(ContentLayerDelegate* delegate)
         : m_delegate(delegate)
     {
     }
 
-    CCLayerDelegate* m_delegate;
+    ContentLayerDelegate* m_delegate;
 };
 
-PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(CCLayerDelegate* delegate)
+PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(ContentLayerDelegate* delegate)
 {
     return adoptRef(new ContentLayerChromium(delegate));
 }
 
-ContentLayerChromium::ContentLayerChromium(CCLayerDelegate* delegate)
-    : TiledLayerChromium(delegate)
+ContentLayerChromium::ContentLayerChromium(ContentLayerDelegate* delegate)
+    : TiledLayerChromium()
+    , m_delegate(delegate)
 {
 }
 

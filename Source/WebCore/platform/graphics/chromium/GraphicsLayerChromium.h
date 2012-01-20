@@ -33,6 +33,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "ContentLayerChromium.h"
 #include "LayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -41,7 +42,7 @@ namespace WebCore {
 
 class LayerChromium;
 
-class GraphicsLayerChromium : public GraphicsLayer, public CCLayerDelegate {
+class GraphicsLayerChromium : public GraphicsLayer, public ContentLayerDelegate {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -97,7 +98,7 @@ public:
     virtual void setDebugBorder(const Color&, float borderWidth);
     virtual void deviceOrPageScaleFactorChanged();
 
-    // The following functions implement the CCLayerDelegate interface.
+    // ContentLayerDelegate implementation.
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
 
     // Exposed for tests.
@@ -130,7 +131,7 @@ private:
 
     String m_nameBase;
 
-    RefPtr<LayerChromium> m_layer;
+    RefPtr<ContentLayerChromium> m_layer;
     RefPtr<LayerChromium> m_transformLayer;
     RefPtr<LayerChromium> m_contentsLayer;
 

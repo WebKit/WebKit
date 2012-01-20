@@ -36,7 +36,7 @@ namespace WebCore {
 // A Layer containing a the rendered output of a plugin instance.
 class PluginLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<PluginLayerChromium> create(CCLayerDelegate* = 0);
+    static PassRefPtr<PluginLayerChromium> create();
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
@@ -58,7 +58,7 @@ public:
     void invalidateRect(const FloatRect& dirtyRect);
 
 protected:
-    explicit PluginLayerChromium(CCLayerDelegate*);
+    PluginLayerChromium();
 
 private:
     unsigned m_textureId;

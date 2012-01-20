@@ -39,7 +39,7 @@ PassRefPtr<WebExternalTextureLayerImpl> WebExternalTextureLayerImpl::create()
 }
 
 WebExternalTextureLayerImpl::WebExternalTextureLayerImpl()
-    : PluginLayerChromium(this)
+    : PluginLayerChromium()
 {
     setFlipped(false);
     setIsDrawable(true);
@@ -47,16 +47,11 @@ WebExternalTextureLayerImpl::WebExternalTextureLayerImpl()
 
 WebExternalTextureLayerImpl::~WebExternalTextureLayerImpl()
 {
-    setDelegate(0);
 }
 
 bool WebExternalTextureLayerImpl::drawsContent() const
 {
     return !!textureId() && LayerChromium::drawsContent();
-}
-
-void WebExternalTextureLayerImpl::paintContents(GraphicsContext&, const IntRect&)
-{
 }
 
 } // namespace WebKit

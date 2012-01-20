@@ -82,17 +82,13 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 GraphicsLayerChromium::~GraphicsLayerChromium()
 {
     if (m_layer) {
-        m_layer->setDelegate(0);
+        m_layer->clearDelegate();
         m_layer->clearRenderSurface();
     }
-    if (m_contentsLayer) {
-        m_contentsLayer->setDelegate(0);
+    if (m_contentsLayer)
         m_contentsLayer->clearRenderSurface();
-    }
-    if (m_transformLayer) {
-        m_transformLayer->setDelegate(0);
+    if (m_transformLayer)
         m_transformLayer->clearRenderSurface();
-    }
 }
 
 void GraphicsLayerChromium::setName(const String& inName)
@@ -327,7 +323,7 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     bool childrenChanged = false;
     if (image) {
         if (!m_contentsLayer.get() || m_contentsLayerPurpose != ContentsLayerForImage) {
-            RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create(this);
+            RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create();
             setupContentsLayer(imageLayer.get());
             m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
@@ -353,7 +349,6 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 {
     bool childrenChanged = false;
     if (platformLayer) {
-        platformLayer->setDelegate(this);
         if (m_contentsLayer.get() != platformLayer) {
             setupContentsLayer(platformLayer);
             m_contentsLayerPurpose = ContentsLayerForCanvas;
@@ -383,7 +378,6 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
-        layer->setDelegate(this);
         layer->setNeedsDisplay();
         updateContentsRect();
     } else {
@@ -528,7 +522,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     if (m_preserves3D && !m_transformLayer) {
         // Create the transform layer.
-        m_transformLayer = LayerChromium::create(this);
+        m_transformLayer = LayerChromium::create();
         m_transformLayer->setPreserves3D(true);
 
         // Copy the position from this layer.

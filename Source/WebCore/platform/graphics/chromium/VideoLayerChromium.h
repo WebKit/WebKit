@@ -45,14 +45,13 @@ class VideoFrameProvider;
 class VideoLayerChromium : public LayerChromium {
 public:
 
-    static PassRefPtr<VideoLayerChromium> create(CCLayerDelegate* = 0,
-                                                 VideoFrameProvider* = 0);
+    static PassRefPtr<VideoLayerChromium> create(VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
 private:
-    VideoLayerChromium(CCLayerDelegate*, VideoFrameProvider*);
+    explicit VideoLayerChromium(VideoFrameProvider*);
 
     // This pointer is only for passing to CCVideoLayerImpl's constructor. It should never be dereferenced by this class.
     VideoFrameProvider* m_provider;

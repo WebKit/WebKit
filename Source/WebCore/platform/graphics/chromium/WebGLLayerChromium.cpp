@@ -42,13 +42,13 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(CCLayerDelegate* delegate)
+PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create()
 {
-    return adoptRef(new WebGLLayerChromium(delegate));
+    return adoptRef(new WebGLLayerChromium());
 }
 
-WebGLLayerChromium::WebGLLayerChromium(CCLayerDelegate* delegate)
-    : CanvasLayerChromium(delegate)
+WebGLLayerChromium::WebGLLayerChromium()
+    : CanvasLayerChromium()
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
     , m_textureId(0)

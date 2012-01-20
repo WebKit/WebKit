@@ -83,7 +83,7 @@ public:
     }
 private:
     MockLayerChromium(Vector<int>* ccLayerDestructionList)
-        : LayerChromium(0)
+        : LayerChromium()
         , m_ccLayerDestructionList(ccLayerDestructionList)
     {
     }
@@ -119,9 +119,9 @@ void expectTreesAreIdentical(LayerChromium* layer, CCLayerImpl* ccLayer)
 TEST(TreeSynchronizerTest, syncSimpleTreeFromEmpty)
 {
     DebugScopedSetImplThread impl;
-    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
-    layerTreeRoot->addChild(LayerChromium::create(0));
-    layerTreeRoot->addChild(LayerChromium::create(0));
+    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
+    layerTreeRoot->addChild(LayerChromium::create());
+    layerTreeRoot->addChild(LayerChromium::create());
 
     RefPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), 0);
 
@@ -158,9 +158,9 @@ TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
 TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)
 {
     DebugScopedSetImplThread impl;
-    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
-    layerTreeRoot->addChild(LayerChromium::create(0));
-    layerTreeRoot->addChild(LayerChromium::create(0));
+    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
+    layerTreeRoot->addChild(LayerChromium::create());
+    layerTreeRoot->addChild(LayerChromium::create());
 
     // Pick some random properties to set. The values are not important, we're just testing that at least some properties are making it through.
     FloatPoint rootPosition = FloatPoint(2.3, 7.4);
@@ -254,7 +254,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeThenDestroy)
     oldLayerTreeRoot->removeAllChildren();
 
     // Synchronize again. After the sync all CCLayerImpls from the old tree should be deleted.
-    RefPtr<LayerChromium> newLayerTreeRoot = LayerChromium::create(0);
+    RefPtr<LayerChromium> newLayerTreeRoot = LayerChromium::create();
     ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(newLayerTreeRoot.get(), ccLayerTreeRoot.release());
     expectTreesAreIdentical(newLayerTreeRoot.get(), ccLayerTreeRoot.get());
 
@@ -268,22 +268,22 @@ TEST(TreeSynchronizerTest, syncSimpleTreeThenDestroy)
 TEST(TreeSynchronizerTest, syncMaskReplicaAndReplicaMaskLayers)
 {
     DebugScopedSetImplThread impl;
-    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
-    layerTreeRoot->addChild(LayerChromium::create(0));
-    layerTreeRoot->addChild(LayerChromium::create(0));
-    layerTreeRoot->addChild(LayerChromium::create(0));
+    RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
+    layerTreeRoot->addChild(LayerChromium::create());
+    layerTreeRoot->addChild(LayerChromium::create());
+    layerTreeRoot->addChild(LayerChromium::create());
 
     // First child gets a mask layer.
-    RefPtr<LayerChromium> maskLayer = LayerChromium::create(0);
+    RefPtr<LayerChromium> maskLayer = LayerChromium::create();
     layerTreeRoot->children()[0]->setMaskLayer(maskLayer.get());
 
     // Second child gets a replica layer.
-    RefPtr<LayerChromium> replicaLayer = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaLayer = LayerChromium::create();
     layerTreeRoot->children()[1]->setReplicaLayer(replicaLayer.get());
 
     // Third child gets a replica layer with a mask layer.
-    RefPtr<LayerChromium> replicaLayerWithMask = LayerChromium::create(0);
-    RefPtr<LayerChromium> replicaMaskLayer = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaLayerWithMask = LayerChromium::create();
+    RefPtr<LayerChromium> replicaMaskLayer = LayerChromium::create();
     replicaLayerWithMask->setMaskLayer(replicaMaskLayer.get());
     layerTreeRoot->children()[2]->setReplicaLayer(replicaLayerWithMask.get());
 

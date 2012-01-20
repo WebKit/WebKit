@@ -44,7 +44,7 @@ public:
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
 protected:
-    explicit CanvasLayerChromium(CCLayerDelegate*);
+    CanvasLayerChromium();
 };
 
 }

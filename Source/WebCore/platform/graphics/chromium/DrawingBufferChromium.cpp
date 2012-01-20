@@ -143,7 +143,7 @@ void DrawingBuffer::publishToPlatformLayer()
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     if (!m_platformLayer) {
-        m_platformLayer = WebGLLayerChromium::create(0);
+        m_platformLayer = WebGLLayerChromium::create();
         m_platformLayer->setDrawingBuffer(this);
         m_platformLayer->setOpaque(!m_context->getContextAttributes().alpha);
     }

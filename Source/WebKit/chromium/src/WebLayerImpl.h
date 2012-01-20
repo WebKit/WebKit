@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class WebLayerImpl : public WebCore::LayerChromium, public WebCore::CCLayerDelegate {
+class WebLayerImpl : public WebCore::LayerChromium {
 public:
     static PassRefPtr<WebLayerImpl> create();
 

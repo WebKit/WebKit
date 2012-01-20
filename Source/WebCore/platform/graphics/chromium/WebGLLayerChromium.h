@@ -45,7 +45,7 @@ class WebGLLayerChromiumRateLimitTask;
 // A Layer containing a WebGL canvas
 class WebGLLayerChromium : public CanvasLayerChromium {
 public:
-    static PassRefPtr<WebGLLayerChromium> create(CCLayerDelegate* = 0);
+    static PassRefPtr<WebGLLayerChromium> create();
 
     virtual ~WebGLLayerChromium();
 
@@ -63,7 +63,7 @@ public:
     void setDrawingBuffer(DrawingBuffer*);
     DrawingBuffer* drawingBuffer() const { return m_drawingBuffer; }
 private:
-    explicit WebGLLayerChromium(CCLayerDelegate*);
+    WebGLLayerChromium();
     friend class WebGLLayerChromiumRateLimitTask;
 
     GraphicsContext3D* layerRendererContext();

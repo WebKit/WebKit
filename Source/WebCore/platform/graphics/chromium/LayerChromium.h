@@ -56,18 +56,12 @@ class CCLayerTreeHost;
 class CCTextureUpdater;
 class GraphicsContext3D;
 
-class CCLayerDelegate {
-public:
-    virtual ~CCLayerDelegate() { }
-    virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
-};
-
 // Base class for composited layers. Special layer types are derived from
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerTilerChromium;
 public:
-    static PassRefPtr<LayerChromium> create(CCLayerDelegate*);
+    static PassRefPtr<LayerChromium> create();
 
     virtual ~LayerChromium();
 
@@ -149,8 +143,6 @@ public:
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
-    void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
-
     void setIsDrawable(bool);
 
     void setReplicaLayer(LayerChromium*);
@@ -204,8 +196,7 @@ public:
     void cleanupResourcesRecursive();
 
 protected:
-    CCLayerDelegate* m_delegate;
-    explicit LayerChromium(CCLayerDelegate*);
+    LayerChromium();
 
     // This is called to clean up resources being held in the same context as
     // layerRendererContext(). Subclasses should override this method if they

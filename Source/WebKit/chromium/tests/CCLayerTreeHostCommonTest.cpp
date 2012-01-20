@@ -71,8 +71,8 @@ TransformationMatrix remove3DComponentOfMatrix(const TransformationMatrix& mat)
 
 class LayerChromiumWithForcedDrawsContent : public LayerChromium {
 public:
-    explicit LayerChromiumWithForcedDrawsContent(CCLayerDelegate* delegate)
-        : LayerChromium(delegate)
+    LayerChromiumWithForcedDrawsContent()
+        : LayerChromium()
     {
     }
 
@@ -86,9 +86,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForNoOpLayer)
     // screenSpaceTransform, and the hierarchy passed on to children
     // layers should also be identity transforms.
 
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> child = LayerChromium::create(0);
-    RefPtr<LayerChromium> grandChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild = LayerChromium::create();
     parent->createRenderSurface();
     parent->addChild(child);
     child->addChild(grandChild);
@@ -116,7 +116,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     // different position. When we initialize layers for testing here, we need to initialize that unintutive position value.
 
     TransformationMatrix identityMatrix;
-    RefPtr<LayerChromium> layer = LayerChromium::create(0);
+    RefPtr<LayerChromium> layer = LayerChromium::create();
     layer->createRenderSurface();
 
     // Case 1: setting the sublayer transform should not affect this layer's draw transform or screen-space transform.
@@ -181,9 +181,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 {
     TransformationMatrix identityMatrix;
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> child = LayerChromium::create(0);
-    RefPtr<LayerChromium> grandChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild = LayerChromium::create();
     parent->createRenderSurface();
     parent->addChild(child);
     child->addChild(grandChild);
@@ -263,9 +263,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
 {
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> child = LayerChromium::create(0);
-    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild = adoptRef(new LayerChromiumWithForcedDrawsContent());
     parent->createRenderSurface();
     parent->addChild(child);
     child->addChild(grandChild);
@@ -318,15 +318,15 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     //   - Sanity check on recursion: verify transforms of layers described w.r.t. a render surface that is described w.r.t. an ancestor render surface.
     //   - verifying that each layer has a reference to the correct renderSurface and targetRenderSurface values.
 
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create(0);
-    RefPtr<LayerChromium> renderSurface2 = LayerChromium::create(0);
-    RefPtr<LayerChromium> childOfRoot = LayerChromium::create(0);
-    RefPtr<LayerChromium> childOfRS1 = LayerChromium::create(0);
-    RefPtr<LayerChromium> childOfRS2 = LayerChromium::create(0);
-    RefPtr<LayerChromium> grandChildOfRoot = LayerChromium::create(0);
-    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS1 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
-    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS2 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface2 = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRoot = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRS1 = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRS2 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChildOfRoot = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
     parent->createRenderSurface();
     parent->addChild(renderSurface1);
     parent->addChild(childOfRoot);
@@ -454,9 +454,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
 
 TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
 {
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create(0);
-    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
     renderSurface1->setOpacity(0.9);
 
     const TransformationMatrix identityMatrix;
@@ -483,9 +483,9 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
 
 TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForTransparentChild)
 {
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create(0);
-    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
     renderSurface1->setOpacity(0);
 
     const TransformationMatrix identityMatrix;
@@ -526,12 +526,12 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     //
 
     const TransformationMatrix identityMatrix;
-    RefPtr<LayerChromium> parent = LayerChromium::create(0);
-    RefPtr<LayerChromium> child = LayerChromium::create(0);
-    RefPtr<LayerChromium> grandChild = LayerChromium::create(0);
-    RefPtr<LayerChromium> greatGrandChild = LayerChromium::create(0);
-    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode1 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
-    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode2 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> grandChild = LayerChromium::create();
+    RefPtr<LayerChromium> greatGrandChild = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
     parent->createRenderSurface();
     parent->addChild(child);
     child->addChild(grandChild);

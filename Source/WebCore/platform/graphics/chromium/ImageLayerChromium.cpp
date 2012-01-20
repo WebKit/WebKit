@@ -129,13 +129,13 @@ private:
     LayerTextureSubImage m_texSubImage;
 };
 
-PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(CCLayerDelegate* delegate)
+PassRefPtr<ImageLayerChromium> ImageLayerChromium::create()
 {
-    return adoptRef(new ImageLayerChromium(delegate));
+    return adoptRef(new ImageLayerChromium());
 }
 
-ImageLayerChromium::ImageLayerChromium(CCLayerDelegate* delegate)
-    : TiledLayerChromium(delegate)
+ImageLayerChromium::ImageLayerChromium()
+    : TiledLayerChromium()
     , m_imageForCurrentFrame(0)
 {
 }

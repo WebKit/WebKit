@@ -53,7 +53,7 @@ PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(GraphicsContext3
 }
 
 Canvas2DLayerChromium::Canvas2DLayerChromium(GraphicsContext3D* context, const IntSize& size)
-    : CanvasLayerChromium(0)
+    : CanvasLayerChromium()
     , m_context(context)
     , m_size(size)
     , m_backTextureId(0)

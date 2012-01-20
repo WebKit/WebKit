@@ -537,7 +537,7 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
     , m_element(element)
     , m_webPlugin(webPlugin)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_platformLayer(PluginLayerChromium::create(0))
+    , m_platformLayer(PluginLayerChromium::create())
 #endif
 {
 }
