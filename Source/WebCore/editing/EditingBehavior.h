@@ -67,6 +67,11 @@ public:
     // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
     bool shouldNavigateBackOnBackspace() const { return m_type != EditingUnixBehavior; }
 
+    // On Mac, selecting backwards by word/line from the middle of a word/line, and then going
+    // forward leaves the caret back in the middle with no selection, instead of directly selecting
+    // to the other end of the line/word (Unix/Windows behavior).
+    bool shouldExtendSelectionByWordOrLineAcrossCaret() const { return m_type != EditingMacBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };

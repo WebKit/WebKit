@@ -1,3 +1,25 @@
+2012-01-19  Pablo Flouret  <pablof@motorola.com>
+
+        Fix inconsistent text selection behavior with option-shift-left/right/up/down.
+        https://bugs.webkit.org/show_bug.cgi?id=75652
+
+        Reviewed by Enrica Casucci.
+
+        On Mac, selecting backwards by word, line or paragraph from the middle
+        of some text, and then going forward leaves the caret back in the middle
+        with no selection, instead of directly selecting to the other end of the
+        word/line/paragraph (Unix/Windows behavior). Fix this by adding a new
+        editing behavior to control whether the selection should go across the
+        initial position of the caret directly or not in situations like the one
+        outlined above.
+
+        Test: editing/selection/selection-extend-should-not-move-across-caret-on-mac.html
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldExtendSelectionByWordOrLineAcrossCaret):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify):
+
 2012-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Regression (r98735): Video chat moles in Gmail render incorrectly on Mac OS
