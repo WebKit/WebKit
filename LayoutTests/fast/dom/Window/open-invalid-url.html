@@ -1,0 +1,19 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+}
+
+var a = window.open("about:blank","moonshine")
+function mountainGoat() {
+        a.window.eval('setTimeout("alert(window.open(\'/\') ? \'FAIL\' : \'PASS\'); if (window.layoutTestController) layoutTestController.notifyDone()", 0)')
+}
+setTimeout("mountainGoat()", 0)
+</script>
+</body>
+</html>
