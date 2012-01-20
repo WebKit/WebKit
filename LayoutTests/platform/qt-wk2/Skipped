@@ -474,8 +474,8 @@ animations/animation-iteration-event-destroy-renderer.html
 animations/animation-matrix-negative-scale-unmatrix.html
 animations/animation-start-event-destroy-renderer.html
 animations/big-rotation.html
-animations/combo-transform-rotatescale.html
-animations/combo-transform-translatescale.html
+animations/combo-transform-rotate+scale.html
+animations/combo-transform-translate+scale.html
 animations/dynamic-stylesheet-loading.html
 animations/fill-mode-transform.html
 animations/keyframe-timing-functions-transform.html
