@@ -63,10 +63,10 @@ public:
 
     // Path prefixes that are used in the filesystem URLs (that can be obtained by toURL()).
     // http://www.w3.org/TR/file-system-api/#widl-Entry-toURL
-    static const char kPersistentPathPrefix[];
-    static const size_t kPersistentPathPrefixLength;
-    static const char kTemporaryPathPrefix[];
-    static const size_t kTemporaryPathPrefixLength;
+    static const char persistentPathPrefix[];
+    static const size_t persistentPathPrefixLength;
+    static const char temporaryPathPrefix[];
+    static const size_t temporaryPathPrefixLength;
 
     static bool crackFileSystemURL(const KURL&, AsyncFileSystem::Type&, String& filePath);
 

@@ -40,35 +40,10 @@
 
 namespace WebCore {
 
-const char AsyncFileSystem::kPersistentPathPrefix[] = "persistent";
-const size_t AsyncFileSystem::kPersistentPathPrefixLength = sizeof(AsyncFileSystem::kPersistentPathPrefix) - 1;
-const char AsyncFileSystem::kTemporaryPathPrefix[] = "temporary";
-const size_t AsyncFileSystem::kTemporaryPathPrefixLength = sizeof(AsyncFileSystem::kTemporaryPathPrefix) - 1;
-
-String AsyncFileSystem::toURL(const String& originString, const String& fullPath)
-{
-    StringBuilder result;
-    result.append("filesystem:");
-    result.append(originString);
-    result.append("/");
-    switch (type()) {
-    case Temporary:
-        result.append(kTemporaryPathPrefix);
-        break;
-    case Persistent:
-        result.append(kPersistentPathPrefix);
-        break;
-    }
-    result.append(fullPath);
-    return result.toString();
-}
-
-#if !PLATFORM(CHROMIUM)
-bool AsyncFileSystem::isAvailable()
-{
-    notImplemented();
-    return false;
-}
+const char AsyncFileSystem::persistentPathPrefix[] = "persistent";
+const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSystem::persistentPathPrefix) - 1;
+const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
+const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
 
 bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
 {
@@ -81,12 +56,12 @@ bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type&
         return false;
     path = path.substring(1);
 
-    if (path.startsWith(kTemporaryPathPrefix)) {
+    if (path.startsWith(temporaryPathPrefix)) {
         type = Temporary;
-        path = path.substring(kTemporaryPathPrefixLength);
-    } else if (path.startsWith(kPersistentPathPrefix)) {
+        path = path.substring(temporaryPathPrefixLength);
+    } else if (path.startsWith(persistentPathPrefix)) {
         type = Persistent;
-        path = path.substring(kPersistentPathPrefixLength);
+        path = path.substring(persistentPathPrefixLength);
     } else
         return false;
 
@@ -95,6 +70,31 @@ bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type&
 
     filePath.swap(path);
     return true;
+}
+
+String AsyncFileSystem::toURL(const String& originString, const String& fullPath)
+{
+    StringBuilder result;
+    result.append("filesystem:");
+    result.append(originString);
+    result.append("/");
+    switch (type()) {
+    case Temporary:
+        result.append(temporaryPathPrefix);
+        break;
+    case Persistent:
+        result.append(persistentPathPrefix);
+        break;
+    }
+    result.append(fullPath);
+    return result.toString();
+}
+
+#if !PLATFORM(CHROMIUM)
+bool AsyncFileSystem::isAvailable()
+{
+    notImplemented();
+    return false;
 }
 
 PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type, const String&)

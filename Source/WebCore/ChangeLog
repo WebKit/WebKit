@@ -1,3 +1,25 @@
+2012-01-19  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: make constant variable names in fileapi/ conform to WebKit's coding guideline
+        https://bugs.webkit.org/show_bug.cgi?id=76625
+
+        Reviewed by David Levin.
+
+        No new tests as this patch has no functional changes.
+
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::getIdentifier):
+        (WebCore::BlobURL::createBlobURL):
+        * fileapi/BlobURL.h:
+        * fileapi/FileWriter.cpp:
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::truncate):
+        * platform/AsyncFileSystem.cpp:
+        (WebCore::AsyncFileSystem::crackFileSystemURL):
+        (WebCore::AsyncFileSystem::toURL):
+        (WebCore::AsyncFileSystem::isAvailable):
+        * platform/AsyncFileSystem.h:
+
 2012-01-18  Sam Weinig  <sam@webkit.org>
 
         Move RunLoop to WebCore/platform
