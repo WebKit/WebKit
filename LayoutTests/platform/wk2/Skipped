@@ -716,6 +716,7 @@ editing/selection/move-by-word-visually-crash-test-textarea.html
 editing/selection/move-by-word-visually-crash-test-2.html
 editing/selection/move-by-word-visually-textarea.html
 editing/selection/programmatic-selection-on-mac-is-directionless.html
+editing/selection/selection-extend-should-not-move-across-caret-on-mac.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
 editing/execCommand/toggle-compound-styles.html

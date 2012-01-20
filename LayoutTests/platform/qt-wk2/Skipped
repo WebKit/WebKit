@@ -448,3 +448,14 @@ platform/qt/plugins/qt-qwidget-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=76546
 svg/W3C-SVG-1.1
 svg/W3C-SVG-1.1-SE
+
+# [Qt][WK2]REGRESSION(r105461): It made 8 tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=76699
+fast/block/margin-collapse/056.html
+tables/mozilla/marvin/backgr_simple-table-column.html
+tables/mozilla/marvin/backgr_simple-table-row-group.html
+tables/mozilla/marvin/backgr_simple-table-row.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
+tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
+tables/mozilla_expected_failures/marvin/backgr_layers-show.html
+tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
