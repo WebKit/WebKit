@@ -137,6 +137,17 @@ model.buildersInFlightForRevision = function(revision)
     return builders;
 };
 
+model.latestRevisionWithNoBuildersInFlight = function()
+{
+    var revision = 0;
+    Object.keys(model.state.resultsByBuilder).forEach(function(builderName) {
+        var results = model.state.resultsByBuilder[builderName];
+        var testedRevision = parseInt(results.revision);
+        revision = revision ? Math.min(revision, testedRevision) : testedRevision;
+    });
+    return revision;
+}
+
 model.updateResultsByBuilder = function(callback)
 {
     results.fetchResultsByBuilder(Object.keys(config.kBuilders), function(resultsByBuilder) {

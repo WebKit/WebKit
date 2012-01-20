@@ -26,6 +26,7 @@
 (function() {
 
 var g_info = null;
+var g_revisionHint = null;
 
 var g_updateTimerId = 0;
 var g_buildersFailing = null;
@@ -36,6 +37,9 @@ var g_losingTestCoverageBuilders = null;
 
 function update()
 {
+    if (g_revisionHint)
+        g_revisionHint.dismiss();
+
     // FIXME: This should be a button with a progress element.
     var numberOfTestsAnalyzed = 0;
     var updating = new ui.notifications.Info('Loading commit data ...');
@@ -45,6 +49,7 @@ function update()
     builders.buildersFailingStepRequredForTestCoverage(g_losingTestCoverageBuilders.update.bind(g_losingTestCoverageBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
+
         updating.update('Analyzing test failures ...');
 
         model.analyzeUnexpectedFailures(function(failureAnalysis) {
@@ -56,7 +61,11 @@ function update()
             else
                 $('#onebar').removeClass('partytime');
             g_unexpectedFailuresController.purge();
+
             updating.dismiss();
+
+            g_revisionHint = new ui.notifications.Info('Latest revision processed by every bot: ' + model.latestRevisionWithNoBuildersInFlight());
+            g_info.add(g_revisionHint);
         });
     });
 }

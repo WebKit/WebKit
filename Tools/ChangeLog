@@ -1,3 +1,17 @@
+2012-01-20  Adam Barth  <abarth@webkit.org>
+
+        Garden-o-matic should tell me which revisions have been checked by all the bots
+        https://bugs.webkit.org/show_bug.cgi?id=76722
+
+        Reviewed by Dimitri Glazkov.
+
+        This information helps me know when it's safe for me to roll a
+        candidate revision.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model_unittests.js:
+
 2012-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         build-webkit: Don't spit out congratulations message on Ctrl+C

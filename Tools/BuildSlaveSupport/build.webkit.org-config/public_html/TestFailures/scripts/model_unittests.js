@@ -239,4 +239,16 @@ test("buildersInFlightForRevision", 3, function() {
     model.state.resultsByBuilder = unmock;
 });
 
+test("latestRevisionWithNoBuildersInFlight", 1, function() {
+    var unmock = model.state.resultsByBuilder;
+    model.state.resultsByBuilder = {
+        'Mr. Beasley': {revision: '5'},
+        'Mr Dixon': {revision: '2'},
+        'Mr. Sabatini': {revision: '4'},
+        'Bob': {revision: '6'}
+    };
+    equals(model.latestRevisionWithNoBuildersInFlight(), 2);
+    model.state.resultsByBuilder = unmock;
+});
+
 })();
