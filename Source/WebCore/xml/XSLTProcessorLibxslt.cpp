@@ -307,6 +307,7 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String
     xsltStylesheetPtr sheet = xsltStylesheetPointer(m_stylesheet, m_stylesheetRootNode.get());
     if (!sheet) {
         setXSLTLoadCallBack(0, 0, 0);
+        m_stylesheet = 0;
         return false;
     }
     m_stylesheet->clearDocuments();

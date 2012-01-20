@@ -1,3 +1,19 @@
+2012-01-19  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in xsltParseGlobalVariable.
+        https://bugs.webkit.org/show_bug.cgi?id=75978
+
+        Reviewed by Andreas Kling.
+
+        The code missed to reset the stylesheet pointer after we fail
+        to compile the XSLT stylesheet. As a result, the stylesheet gets
+        reused with a removed document in the next transformToFragment call.
+
+        Test: fast/xsl/xslt-transform-to-fragment-crash.html
+
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::transformToString):
+
 2012-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION (r98852): apple.com navigation bar is broken under full-page zoom
