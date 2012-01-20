@@ -40,7 +40,6 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
-#import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
@@ -70,6 +69,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Region.h>
+#import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>

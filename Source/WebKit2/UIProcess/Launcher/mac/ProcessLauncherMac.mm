@@ -28,9 +28,9 @@
 
 #import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
-#import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/RunLoop.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>

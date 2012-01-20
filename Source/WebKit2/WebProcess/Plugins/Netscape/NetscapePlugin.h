@@ -28,10 +28,10 @@
 
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
-#include "RunLoop.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
@@ -291,7 +291,7 @@ private:
         bool m_repeat;
         TimerFunc m_timerFunc;
 
-        RunLoop::Timer<Timer> m_timer;
+        WebCore::RunLoop::Timer<Timer> m_timer;
     };
     typedef HashMap<unsigned, Timer*> TimerMap;
     TimerMap m_timers;
@@ -332,7 +332,7 @@ private:
 
     // FIXME: It's a bit wasteful to have one null event timer per plug-in.
     // We should investigate having one per window.
-    RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
+    WebCore::RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
 #endif
 #elif PLUGIN_ARCHITECTURE(WIN)

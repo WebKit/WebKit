@@ -29,11 +29,13 @@
 #include "WKBase.h"
 #include <Ecore.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebKit2/RunLoop.h>
+#include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
 #include <wtf/MainThread.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 

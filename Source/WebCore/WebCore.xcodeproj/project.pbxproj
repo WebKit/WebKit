@@ -4987,6 +4987,9 @@
 		BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */; };
 		BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */; };
 		BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC073BA90C399B1F000F5979 /* FloatConversion.h */; };
+		BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0B358214C4F9540055E22A /* RunLoopMac.mm */; };
+		BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B358514C4F9830055E22A /* RunLoop.cpp */; };
+		BC0B358814C4F9830055E22A /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B358614C4F9830055E22A /* RunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */; };
 		BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B36A20CD3C67C00AC7EB5 /* Console.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EE40C2641CD009E2349 /* BarInfo.cpp */; };
@@ -7232,7 +7235,6 @@
 		1ABFE7520CD968D000FE4834 /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
-		1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollableAreaClient.h; sourceTree = "<group>"; };
 		1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; };
 		1ACE53DE0A8D18810022947D /* JSDOMParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMParser.h; sourceTree = "<group>"; };
 		1ACE53E10A8D18E70022947D /* DOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMParser.cpp; sourceTree = "<group>"; };
@@ -11856,6 +11858,9 @@
 		BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessorLibxslt.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC073BA90C399B1F000F5979 /* FloatConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatConversion.h; sourceTree = "<group>"; };
+		BC0B358214C4F9540055E22A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
+		BC0B358514C4F9830055E22A /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
+		BC0B358614C4F9830055E22A /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		BC0B36A20CD3C67C00AC7EB5 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
 		BC0B36A30CD3C67C00AC7EB5 /* Console.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Console.idl; sourceTree = "<group>"; };
@@ -14945,6 +14950,7 @@
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
+				BC0B358214C4F9540055E22A /* RunLoopMac.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
@@ -19637,6 +19643,8 @@
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
 				7E33CD00127F340D00BE8F17 /* PurgePriority.h */,
+				BC0B358514C4F9830055E22A /* RunLoop.cpp */,
+				BC0B358614C4F9830055E22A /* RunLoop.h */,
 				1C63A2460F71646600C09D5A /* RunLoopTimer.h */,
 				293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */,
 				293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */,
@@ -19644,7 +19652,6 @@
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
 				BC8AE34C12EA096A00EB3AE6 /* ScrollableArea.cpp */,
 				BC8AE34D12EA096A00EB3AE6 /* ScrollableArea.h */,
-				1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */,
 				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
 				CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
@@ -24042,6 +24049,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				509CC9FB14C069ED00BBECBD /* CustomFilterParameter.h in Headers */,
 				50CC089A14C6E99C0017AB51 /* CustomFilterNumberParameter.h in Headers */,
+				BC0B358814C4F9830055E22A /* RunLoop.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26961,6 +26969,8 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */,
+				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,
+				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

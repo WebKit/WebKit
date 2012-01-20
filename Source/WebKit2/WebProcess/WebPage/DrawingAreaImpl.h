@@ -28,8 +28,8 @@
 
 #include "DrawingArea.h"
 #include "LayerTreeHost.h"
-#include "RunLoop.h"
 #include <WebCore/Region.h>
+#include <WebCore/RunLoop.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -131,8 +131,8 @@ private:
     bool m_isPaintingSuspended;
     bool m_alwaysUseCompositing;
 
-    RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
-    RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
+    WebCore::RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
+    WebCore::RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;

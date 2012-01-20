@@ -27,7 +27,7 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 #include <shlwapi.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,6 +42,8 @@ const LPCWSTR webKitDLLName = L"WebKit_debug.dll";
 #else
 const LPCWSTR webKitDLLName = L"WebKit.dll";
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 

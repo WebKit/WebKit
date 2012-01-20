@@ -29,9 +29,9 @@
 #import "CommandLine.h"
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
-#import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
+#import <WebCore/RunLoop.h>
 #import <WebKit2/WKView.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
@@ -43,8 +43,8 @@
 #import <stdio.h>
 #import <sysexits.h>
 #import <unistd.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/MainThread.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 

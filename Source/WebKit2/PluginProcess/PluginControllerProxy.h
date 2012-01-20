@@ -32,8 +32,8 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "PluginControllerProxyMessages.h"
-#include "RunLoop.h"
 #include "ShareableBitmap.h"
+#include <WebCore/RunLoop.h>
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(MAC)
@@ -167,14 +167,14 @@ private:
     WebCore::IntRect m_dirtyRect;
 
     // The paint timer, used for coalescing painting.
-    RunLoop::Timer<PluginControllerProxy> m_paintTimer;
+    WebCore::RunLoop::Timer<PluginControllerProxy> m_paintTimer;
     
     // A counter used to prevent the plug-in from being destroyed.
     unsigned m_pluginDestructionProtectCount;
 
     // A timer that we use to prevent destruction of the plug-in while plug-in
     // code is on the stack.
-    RunLoop::Timer<PluginControllerProxy> m_pluginDestroyTimer;
+    WebCore::RunLoop::Timer<PluginControllerProxy> m_pluginDestroyTimer;
 
     // Will point to the plug-in creation parameters of the plug-in we're currently initializing and will be null when we're done initializing.
     const PluginCreationParameters* m_pluginCreationParameters;

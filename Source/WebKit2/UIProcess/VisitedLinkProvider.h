@@ -26,9 +26,9 @@
 #ifndef VisitedLinkProvider_h
 #define VisitedLinkProvider_h
 
-#include "RunLoop.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 
@@ -58,7 +58,7 @@ private:
     VisitedLinkTable m_table;
 
     HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_pendingVisitedLinks;
-    RunLoop::Timer<VisitedLinkProvider> m_pendingVisitedLinksTimer;
+    WebCore::RunLoop::Timer<VisitedLinkProvider> m_pendingVisitedLinksTimer;
 };
 
 } // namespace WebKit

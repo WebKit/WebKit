@@ -27,7 +27,7 @@
 #define PageOverlay_h
 
 #include "APIObject.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -86,7 +86,7 @@ private:
     Client* m_client;
     WebPage* m_webPage;
 
-    RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
+    WebCore::RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
     double m_fadeAnimationStartTime;
     double m_fadeAnimationDuration;
 

@@ -27,8 +27,9 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "WKBase.h"
 #include <glib.h>
+
+namespace WebCore {
 
 RunLoop::RunLoop()
 {
@@ -132,3 +133,5 @@ bool RunLoop::TimerBase::isActive() const
 {
     return m_timerSource;
 }
+
+} // namespace WebCore

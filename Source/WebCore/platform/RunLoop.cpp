@@ -28,6 +28,8 @@
 
 #include <wtf/StdLibExtras.h>
 
+namespace WebCore {
+
 static RunLoop* s_mainRunLoop;
 
 void RunLoop::initializeMainRunLoop()
@@ -68,3 +70,5 @@ void RunLoop::dispatch(const Function<void()>& function)
 
     wakeUp();
 }
+
+} // namespace WebCore

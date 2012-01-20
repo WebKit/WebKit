@@ -29,7 +29,7 @@
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -116,7 +116,7 @@ private:
     bool m_isBackingStoreDiscardable;
     OwnPtr<BackingStore> m_backingStore;
 
-    RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+    WebCore::RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
 };
 
 } // namespace WebKit

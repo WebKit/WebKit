@@ -34,10 +34,11 @@
 #include "PluginCreationParameters.h"
 #include "PluginProcess.h"
 #include "PluginProcessConnectionMessages.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
+
+using namespace WebCore;
 
 namespace WebKit {
-
 
 class ConnectionStack {
 public:

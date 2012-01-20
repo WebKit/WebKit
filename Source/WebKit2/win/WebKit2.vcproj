@@ -3887,14 +3887,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Platform\RunLoop.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Platform\RunLoop.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Platform\SharedMemory.h"
 				>
 			</File>
@@ -3939,10 +3931,6 @@
 				>
 				<File
 					RelativePath="..\Platform\win\ModuleWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Platform\win\RunLoopWin.cpp"
 					>
 				</File>
 				<File

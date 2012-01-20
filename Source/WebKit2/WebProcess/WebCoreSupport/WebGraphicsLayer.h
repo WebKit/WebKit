@@ -26,7 +26,6 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "LayerTransform.h"
-#include "RunLoop.h"
 #include "ShareableBitmap.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
@@ -35,6 +34,7 @@
 #include "UpdateInfo.h"
 #include "WebLayerTreeInfo.h"
 #include "WebProcess.h"
+#include <WebCore/RunLoop.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 

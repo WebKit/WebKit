@@ -31,7 +31,6 @@
 #include "InjectedBundleMessageKinds.h"
 #include "Logging.h"
 #include "MutableDictionary.h"
-#include "RunLoop.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
@@ -58,6 +57,7 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>

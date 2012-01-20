@@ -26,11 +26,11 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "BinarySemaphore.h"
 #include <wtf/CurrentTime.h>
 
-using namespace CoreIPC;
 using namespace std;
+
+namespace WebCore {
 
 static const UINT PerformWorkMessage = WM_USER + 1;
 static const LPWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
@@ -177,3 +177,5 @@ bool RunLoop::TimerBase::isActive() const
 {
     return m_runLoop->m_activeTimers.contains(m_ID);
 }
+
+} // namespace WebCore

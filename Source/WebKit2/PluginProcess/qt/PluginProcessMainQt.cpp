@@ -30,8 +30,8 @@
 
 #include "CommandLine.h"
 #include "PluginProcess.h"
-#include "RunLoop.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
@@ -39,6 +39,8 @@
 #include <wtf/text/WTFString.h>
 
 #define SHOW_CRASH_REPORTER 1
+
+using namespace WebCore;
 
 namespace WebKit {
 

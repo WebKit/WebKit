@@ -31,7 +31,6 @@ HEADERS += \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
-    Platform/RunLoop.h \
     Platform/SharedMemory.h \
     Platform/WorkQueue.h \
     PluginProcess/PluginControllerProxy.h \
@@ -373,10 +372,8 @@ SOURCES += \
     Platform/CoreIPC/DataReference.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
-    Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \
-    Platform/qt/RunLoopQt.cpp \
     PluginProcess/PluginControllerProxy.cpp \
     PluginProcess/PluginProcess.cpp \
     PluginProcess/WebProcessConnection.cpp \

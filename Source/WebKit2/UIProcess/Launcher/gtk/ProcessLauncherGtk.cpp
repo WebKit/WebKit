@@ -28,18 +28,19 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
-#include "RunLoop.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/RunLoop.h>
 #include <errno.h>
 #include <locale.h>
-#if OS(LINUX)
-#include <sys/prctl.h>
-#endif
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GlibUtilities.h>
+
+#if OS(LINUX)
+#include <sys/prctl.h>
+#endif
 
 #ifdef SOCK_SEQPACKET
 #define SOCKET_TYPE SOCK_SEQPACKET

@@ -31,17 +31,19 @@
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
-#include "RunLoop.h"
 #include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
+#import <WebCore/RunLoop.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 

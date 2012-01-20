@@ -29,11 +29,12 @@
 #include "CoreIPCMessageKinds.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
 
 using namespace std;
+using namespace WebCore;
 
 namespace CoreIPC {
 

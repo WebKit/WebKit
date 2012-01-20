@@ -31,10 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Functional.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+
 #if PLATFORM(GTK)
 #include <wtf/gobject/GRefPtr.h>
 typedef struct _GSource GSource;
@@ -42,6 +42,8 @@ typedef struct _GMainLoop GMainLoop;
 typedef struct _GMainContext GMainContext;
 typedef int gboolean;
 #endif
+
+namespace WebCore {
 
 class RunLoop {
 public:
@@ -157,5 +159,7 @@ private:
     GMainLoop* m_runLoopMain;
 #endif
 };
+
+} // namespace WebCore
 
 #endif // RunLoop_h

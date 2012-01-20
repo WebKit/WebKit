@@ -30,6 +30,8 @@
 #include "WebConnectionMessageKinds.h"
 #include "WebProcess.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 PassRefPtr<WebConnectionToUIProcess> WebConnectionToUIProcess::create(WebProcess* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)

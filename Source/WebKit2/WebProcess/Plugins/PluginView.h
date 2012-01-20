@@ -29,13 +29,12 @@
 #include "NPRuntimeObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
-#include "RunLoop.h"
 #include "WebFrame.h"
-
 #include <WebCore/MediaCanStartListener.h>
+#include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/PluginViewBase.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/Deque.h>
 
 // FIXME: Eventually this should move to WebCore.
@@ -180,7 +179,7 @@ private:
 
     // Pending URLRequests that the plug-in has made.
     Deque<RefPtr<URLRequest> > m_pendingURLRequests;
-    RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
+    WebCore::RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
 
     // Pending frame loads that the plug-in has made.
     typedef HashMap<RefPtr<WebFrame>, RefPtr<URLRequest> > FrameLoadMap;

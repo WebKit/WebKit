@@ -50,7 +50,9 @@ class QSocketNotifier;
 #include "PlatformProcessIdentifier.h"
 #endif
 
+namespace WebCore {
 class RunLoop;
+}
 
 namespace CoreIPC {
 
@@ -118,8 +120,8 @@ public:
     typedef int Identifier;
 #endif
 
-    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, RunLoop* clientRunLoop);
-    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, RunLoop* clientRunLoop);
+    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WebCore::RunLoop* clientRunLoop);
+    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WebCore::RunLoop* clientRunLoop);
     ~Connection();
 
 #if OS(DARWIN)
@@ -207,7 +209,7 @@ public:
     typedef Message<ArgumentEncoder> OutgoingMessage;
 
 private:
-    Connection(Identifier, bool isServer, Client*, RunLoop* clientRunLoop);
+    Connection(Identifier, bool isServer, Client*, WebCore::RunLoop* clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
     
@@ -253,7 +255,7 @@ private:
 
     bool m_isConnected;
     WorkQueue m_connectionQueue;
-    RunLoop* m_clientRunLoop;
+    WebCore::RunLoop* m_clientRunLoop;
 
     Vector<QueueClient*> m_connectionQueueClients;
 

@@ -24,12 +24,12 @@
 #include "DrawingAreaProxy.h"
 #include "MessageQueue.h"
 #include "Region.h"
-#include "RunLoop.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/HashSet.h>
 
 #if USE(TEXTURE_MAPPER)
@@ -82,7 +82,7 @@ protected:
     virtual bool showRepaintCounter() const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
 
-    RunLoop::Timer<LayerTreeHostProxy> m_animationTimer;
+    WebCore::RunLoop::Timer<LayerTreeHostProxy> m_animationTimer;
     DrawingAreaProxy* m_drawingAreaProxy;
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;

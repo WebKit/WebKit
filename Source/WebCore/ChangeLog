@@ -1,3 +1,25 @@
+2012-01-18  Sam Weinig  <sam@webkit.org>
+
+        Move RunLoop to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=76471
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add newly moved files.
+
+        * platform/RunLoop.cpp: Moved from Source/WebKit2/Platform/RunLoop.cpp.
+        * platform/RunLoop.h: Moved from Source/WebKit2/Platform/RunLoop.h.
+        * platform/gtk/RunLoopGtk.cpp: Moved from Source/WebKit2/Platform/gtk/RunLoopGtk.cpp.
+        * platform/mac/RunLoopMac.mm: Moved from Source/WebKit2/Platform/mac/RunLoopMac.mm.
+        * platform/qt/RunLoopQt.cpp: Moved from Source/WebKit2/Platform/qt/RunLoopQt.cpp.
+        * platform/win/RunLoopWin.cpp: Moved from Source/WebKit2/Platform/win/RunLoopWin.cpp.
+        Move the files.
+
 2012-01-19  Pablo Flouret  <pablof@motorola.com>
 
         Fix inconsistent text selection behavior with option-shift-left/right/up/down.

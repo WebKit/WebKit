@@ -26,13 +26,13 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
-#include "RunLoop.h"
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/MainThread.h>
 
 #if ENABLE(THREADED_SCROLLING)

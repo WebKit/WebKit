@@ -27,11 +27,13 @@
 #include "PluginProcessMainGtk.h"
 
 #include "PluginProcess.h"
-#include <WebKit2/RunLoop.h>
+#include <WebCore/RunLoop.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 

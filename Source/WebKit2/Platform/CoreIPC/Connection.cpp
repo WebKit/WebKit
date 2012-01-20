@@ -28,10 +28,11 @@
 
 #include "BinarySemaphore.h"
 #include "CoreIPCMessageKinds.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
 
 using namespace std;
+using namespace WebCore;
 
 namespace CoreIPC {
 

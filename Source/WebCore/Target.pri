@@ -1128,6 +1128,7 @@ SOURCES += \
     platform/text/RegularExpression.cpp \
     platform/PlatformEvent.cpp \
     platform/RuntimeApplicationChecks.cpp \
+    platform/RunLoop.cpp \
     platform/SchemeRegistry.cpp \
     platform/ScrollableArea.cpp \
     platform/ScrollAnimator.cpp \
@@ -2802,6 +2803,7 @@ SOURCES += \
     platform/qt/DragImageQt.cpp \
     platform/qt/EventLoopQt.cpp \
     platform/qt/FileSystemQt.cpp \
+    platform/qt/RunLoopQt.cpp \
     platform/qt/SharedBufferQt.cpp \
     platform/qt/ThirdPartyCookiesQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \

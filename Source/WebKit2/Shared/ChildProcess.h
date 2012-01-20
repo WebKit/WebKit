@@ -27,7 +27,7 @@
 #define ChildProcess_h
 
 #include "Connection.h"
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
 
 namespace WebKit {
 
@@ -77,7 +77,7 @@ private:
     // after a given period of time.
     unsigned m_terminationCounter;
 
-    RunLoop::Timer<ChildProcess> m_terminationTimer;
+    WebCore::RunLoop::Timer<ChildProcess> m_terminationTimer;
 };
 
 } // namespace WebKit

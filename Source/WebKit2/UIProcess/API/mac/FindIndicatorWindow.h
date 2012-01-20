@@ -26,12 +26,12 @@
 #ifndef FindIndicatorWindow_h
 #define FindIndicatorWindow_h
 
+#import "WebKitSystemInterface.h"
+#import <WebCore/RunLoop.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#import "RunLoop.h"
-#import "WebKitSystemInterface.h"
 
 @class WKFindIndicatorWindowAnimation;
 @class WKView;
@@ -68,7 +68,7 @@ private:
     WKWindowBounceAnimationContextRef m_bounceAnimationContext;
     RetainPtr<WKFindIndicatorWindowAnimation> m_bounceAnimation;
 
-    RunLoop::Timer<FindIndicatorWindow> m_startFadeOutTimer;
+    WebCore::RunLoop::Timer<FindIndicatorWindow> m_startFadeOutTimer;
     RetainPtr<WKFindIndicatorWindowAnimation> m_fadeOutAnimation;
 };
 

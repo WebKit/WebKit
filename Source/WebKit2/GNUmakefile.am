@@ -210,15 +210,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
 	Source/WebKit2/Platform/gtk/LoggingGtk.cpp \
 	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
-	Source/WebKit2/Platform/gtk/RunLoopGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \
 	Source/WebKit2/Platform/Logging.cpp \
 	Source/WebKit2/Platform/Logging.h \
 	Source/WebKit2/Platform/Module.cpp \
 	Source/WebKit2/Platform/Module.h \
 	Source/WebKit2/Platform/PlatformProcessIdentifier.h \
-	Source/WebKit2/Platform/RunLoop.cpp \
-	Source/WebKit2/Platform/RunLoop.h \
 	Source/WebKit2/Platform/SharedMemory.h \
 	Source/WebKit2/Platform/unix/SharedMemoryUnix.cpp \
 	Source/WebKit2/Platform/WorkQueue.cpp \
@@ -1365,11 +1362,8 @@ Programs_WebKitPluginProcess_SOURCES = \
 	Source/WebKit2/Platform/Module.h \
 	Source/WebKit2/Platform/WorkQueue.cpp \
 	Source/WebKit2/Platform/WorkQueue.h \
-	Source/WebKit2/Platform/RunLoop.cpp \
-	Source/WebKit2/Platform/RunLoop.h \
 	Source/WebKit2/Platform/SharedMemory.h \
 	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
-	Source/WebKit2/Platform/gtk/RunLoopGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \
 	Source/WebKit2/Platform/unix/SharedMemoryUnix.cpp \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.cpp \

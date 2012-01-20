@@ -30,6 +30,8 @@
 #include "WebContextUserMessageCoders.h"
 #include "WebProcessProxy.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 PassRefPtr<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProcessProxy* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)

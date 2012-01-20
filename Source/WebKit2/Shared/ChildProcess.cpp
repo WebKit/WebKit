@@ -30,6 +30,8 @@
 #include <unistd.h>
 #endif
 
+using namespace WebCore;
+
 namespace WebKit {
 
 void ChildProcess::disableTermination()

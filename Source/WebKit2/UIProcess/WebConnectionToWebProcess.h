@@ -35,14 +35,14 @@ class WebProcessProxy;
 
 class WebConnectionToWebProcess : public WebConnection, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<WebConnectionToWebProcess> create(WebProcessProxy*, CoreIPC::Connection::Identifier, RunLoop*);
+    static PassRefPtr<WebConnectionToWebProcess> create(WebProcessProxy*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     CoreIPC::Connection* connection() { return m_connection.get(); }
 
     void invalidate();
 
 private:
-    WebConnectionToWebProcess(WebProcessProxy*, CoreIPC::Connection::Identifier, RunLoop*);
+    WebConnectionToWebProcess(WebProcessProxy*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     // WebConnection
     virtual void postMessage(const String&, APIObject*);

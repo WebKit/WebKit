@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ThreadLauncher.h"
 
-#include "RunLoop.h"
+#include <WebCore/RunLoop.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 

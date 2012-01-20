@@ -31,9 +31,8 @@
 #include "DrawingAreaProxy.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/RunLoop.h>
 #include <wtf/HashSet.h>
-
-#include "RunLoop.h"
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>

@@ -26,8 +26,8 @@
 #ifndef NetscapePluginStream_h
 #define NetscapePluginStream_h
 
-#include "RunLoop.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/RunLoop.h>
 #include <WebCore/npruntime_internal.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -36,7 +36,7 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-    class KURL;
+class KURL;
 }
 
 namespace WebKit {
@@ -103,7 +103,7 @@ private:
     CString m_mimeType;
     CString m_headers;
 
-    RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
+    WebCore::RunLoop::Timer<NetscapePluginStream> m_deliveryDataTimer;
     OwnPtr< Vector<uint8_t> > m_deliveryData;
     bool m_stopStreamWhenDoneDelivering;
 };

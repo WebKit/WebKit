@@ -26650,6 +26650,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\RunLoop.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\RunLoop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\RuntimeApplicationChecks.cpp"
 				>
 			</File>
@@ -27058,6 +27066,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\PopupMenuWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\RunLoopWin.cpp"
 					>
 				</File>
 				<File

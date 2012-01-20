@@ -3226,6 +3226,8 @@ webcore_sources += \
 	Source/WebCore/platform/PopupMenuStyle.h \
 	Source/WebCore/platform/PurgeableBuffer.h \
 	Source/WebCore/platform/PurgePriority.h \
+	Source/WebCore/platform/RunLoop.cpp \
+	Source/WebCore/platform/RunLoop.h \
 	Source/WebCore/platform/RuntimeApplicationChecks.cpp \
 	Source/WebCore/platform/RuntimeApplicationChecks.h \
 	Source/WebCore/platform/SchemeRegistry.cpp \
@@ -4501,6 +4503,7 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/RenderThemeGtk.h \
 	Source/WebCore/platform/gtk/RenderThemeGtk2.cpp \
 	Source/WebCore/platform/gtk/RenderThemeGtk3.cpp \
+	Source/WebCore/platform/gtk/RunLoopGtk.cpp \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk2.cpp \

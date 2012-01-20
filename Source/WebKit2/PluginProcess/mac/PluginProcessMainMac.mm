@@ -32,18 +32,20 @@
 #import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
-#import "RunLoop.h"
+#import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <mach/mach_error.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
+#import <stdio.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-#include <stdio.h>
 
 #define SHOW_CRASH_REPORTER 1
+
+using namespace WebCore;
 
 namespace WebKit {
 

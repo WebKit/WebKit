@@ -29,9 +29,12 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "ChildProcess.h"
-#include "RunLoop.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class RunLoop;
+}
 
 namespace WebKit {
 
@@ -44,7 +47,7 @@ class PluginProcess : ChildProcess {
 public:
     static PluginProcess& shared();
 
-    void initialize(CoreIPC::Connection::Identifier, RunLoop*);
+    void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
     void removeWebProcessConnection(WebProcessConnection* webProcessConnection);
 
     NetscapePluginModule* netscapePluginModule();

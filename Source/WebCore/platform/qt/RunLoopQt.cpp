@@ -27,15 +27,16 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include <QCoreApplication>
 #include <QAbstractEventDispatcher>
-#include <QObject>
+#include <QCoreApplication>
 #include <QMetaMethod>
 #include <QMetaObject>
+#include <QObject>
 #include <QTimerEvent>
 
-class RunLoop::TimerObject : public QObject
-{
+namespace WebCore {
+
+class RunLoop::TimerObject : public QObject {
     Q_OBJECT
 public:
     TimerObject(RunLoop* runLoop) : m_runLoop(runLoop)
@@ -161,3 +162,5 @@ bool RunLoop::TimerBase::isActive() const
 }
 
 #include "RunLoopQt.moc"
+
+} // namespace WebCore

@@ -27,8 +27,8 @@
 #include "config.h"
 #include "ThreadLauncher.h"
 
-#include "RunLoop.h"
 #include "WebProcess.h"
+#include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>

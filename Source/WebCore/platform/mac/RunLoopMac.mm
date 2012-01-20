@@ -26,6 +26,8 @@
 #import "config.h"
 #import "RunLoop.h"
 
+namespace WebCore {
+
 void RunLoop::performWork(void* context)
 {
     // Wrap main thread in an Autorelease pool.  Sending messages can call 
@@ -151,3 +153,5 @@ bool RunLoop::TimerBase::isActive() const
 {
     return m_timer && CFRunLoopTimerIsValid(m_timer);
 }
+
+} // namespace WebCore

@@ -679,7 +679,7 @@ private:
     RefPtr<WebCore::Node> m_gestureTargetNode;
 #endif
     
-    RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
+    WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
 
     HashMap<uint64_t, RefPtr<WebUndoStep> > m_undoStepMap;
 

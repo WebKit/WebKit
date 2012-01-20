@@ -40,7 +40,6 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
-#include "RunLoop.h"
 #include "SessionState.h"
 #include "ShareableBitmap.h"
 #include "WebBackForwardList.h"
@@ -104,6 +103,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RunLoop.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptValue.h>
 #include <WebCore/SerializedScriptValue.h>

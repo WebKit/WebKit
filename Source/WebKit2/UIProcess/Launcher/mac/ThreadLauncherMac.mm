@@ -26,12 +26,14 @@
 #import "config.h"
 #import "ThreadLauncher.h"
 
-#import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
 #import <runtime/InitializeThreading.h>
+#import <WebCore/RunLoop.h>
 #import <wtf/MainThread.h>
 #import <wtf/Threading.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 

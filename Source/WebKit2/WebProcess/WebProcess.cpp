@@ -31,7 +31,6 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
-#include "RunLoop.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
@@ -72,6 +71,7 @@
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/RunLoop.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>

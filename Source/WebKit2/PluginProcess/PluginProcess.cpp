@@ -36,6 +36,7 @@
 #include "PluginProcessCreationParameters.h"
 #include "WebProcessConnection.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RunLoop.h>
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include <errno.h>
@@ -54,6 +55,8 @@
 #endif
 #endif // SOCK_SEQPACKET
 #endif // USE(UNIX_DOMAIN_SOCKETS)
+
+using namespace WebCore;
 
 namespace WebKit {
 

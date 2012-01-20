@@ -1,3 +1,67 @@
+2012-01-18  Sam Weinig  <sam@webkit.org>
+
+        Move RunLoop to WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=76471
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am:
+        * Platform/CoreIPC/Connection.cpp:
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        * Shared/ChildProcess.cpp:
+        * Shared/ChildProcess.h:
+        * Target.pri:
+        * UIProcess/API/mac/FindIndicatorWindow.h:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/Launcher/ThreadLauncher.cpp:
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/Launcher/mac/ThreadLauncherMac.mm:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp:
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        * UIProcess/Launcher/win/ThreadLauncherWin.cpp:
+        * UIProcess/LayerTreeHostProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/ResponsivenessTimer.cpp:
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        * UIProcess/WebConnectionToWebProcess.h:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/win/WebView.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        * WebProcess/WebConnectionToUIProcess.h:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        * WebProcess/WebPage/PageOverlay.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::runLoop):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        * WebProcess/win/WebProcessMainWin.cpp:
+        * win/WebKit2.vcproj:
+        Remove RunLoop code and update #includes.
+
 2012-01-18  Ada Chan  <adachan@apple.com>
 
         Need a WebKit2 API for setting media volume

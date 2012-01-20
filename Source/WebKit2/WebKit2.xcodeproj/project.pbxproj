@@ -465,7 +465,6 @@
 		B63403F914910D57001070B5 /* APIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63403F814910D57001070B5 /* APIObject.cpp */; };
 		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
 		B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = B878B614133428DC006888E9 /* CorrectionPanel.mm */; };
-		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
 		BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */; };
 		BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6010F4378D0058C15A /* WebChromeClient.h */; };
 		BC032D7710F4378D0058C15A /* WebContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6210F4378D0058C15A /* WebContextMenuClient.h */; };
@@ -559,8 +558,6 @@
 		BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */; };
 		BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2DFBA312A761A500E732A3 /* WebPreferencesCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2DFBA212A761A500E732A3 /* WebPreferencesCF.cpp */; };
-		BC2E6E871141971500A63B1E /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2E6E771141970C00A63B1E /* RunLoop.cpp */; };
-		BC2E6E881141971500A63B1E /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E781141970C00A63B1E /* RunLoop.h */; };
 		BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2E6E7D1141970C00A63B1E /* WorkQueue.cpp */; };
 		BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E7E1141970C00A63B1E /* WorkQueue.h */; };
 		BC3065C412592F8900E71278 /* WebProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3065C312592F8900E71278 /* WebProcessMac.mm */; };
@@ -1483,7 +1480,6 @@
 		B63403F814910D57001070B5 /* APIObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIObject.cpp; sourceTree = "<group>"; };
 		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
 		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
-		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
 		BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueMac.cpp; sourceTree = "<group>"; };
 		BC032D6010F4378D0058C15A /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		BC032D6210F4378D0058C15A /* WebContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuClient.h; sourceTree = "<group>"; };
@@ -1583,8 +1579,6 @@
 		BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SameDocumentNavigationType.h; sourceTree = "<group>"; };
 		BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypes.h; sourceTree = "<group>"; };
 		BC2DFBA212A761A500E732A3 /* WebPreferencesCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesCF.cpp; path = cf/WebPreferencesCF.cpp; sourceTree = "<group>"; };
-		BC2E6E771141970C00A63B1E /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
-		BC2E6E781141970C00A63B1E /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		BC2E6E7D1141970C00A63B1E /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		BC2E6E7E1141970C00A63B1E /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		BC3065C312592F8900E71278 /* WebProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMac.mm; sourceTree = "<group>"; };
@@ -2260,7 +2254,6 @@
 				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
 				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				C0E3AA481209E45000A49D01 /* ModuleMac.mm */,
-				BC0092F5115837A300E0AE2A /* RunLoopMac.mm */,
 				1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */,
 				BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */,
 			);
@@ -3282,8 +3275,6 @@
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
 				C0E3AA441209E2BA00A49D01 /* Module.h */,
 				BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */,
-				BC2E6E771141970C00A63B1E /* RunLoop.cpp */,
-				BC2E6E781141970C00A63B1E /* RunLoop.h */,
 				1A24BED3120894D100FBB059 /* SharedMemory.h */,
 				BC2E6E7D1141970C00A63B1E /* WorkQueue.cpp */,
 				BC2E6E7E1141970C00A63B1E /* WorkQueue.h */,
@@ -3848,7 +3839,6 @@
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
 				BC597075116591D000551FCA /* ProcessModel.h in Headers */,
 				1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */,
-				BC2E6E881141971500A63B1E /* RunLoop.h in Headers */,
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
@@ -4581,8 +4571,6 @@
 				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				BC111B09112F5E3C00337BAB /* ResponsivenessTimer.cpp in Sources */,
-				BC2E6E871141971500A63B1E /* RunLoop.cpp in Sources */,
-				BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */,
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
 				51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */,
 				51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */,

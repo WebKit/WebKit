@@ -32,11 +32,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "RunLoop.h"
 #include "WKAPICast.h"
-#if USE(CG)
-#include "WKCACFViewWindow.h"
-#endif
 #include "WebContext.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
@@ -49,17 +45,20 @@
 #include <WebCore/DragSession.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
-#if USE(CG)
-#include <WebCore/GraphicsContextCG.h>
-#endif
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Region.h>
+#include <WebCore/RunLoop.h>
 #include <WebCore/SoftLinking.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <wtf/text/WTFString.h>
+
+#if USE(CG)
+#include "WKCACFViewWindow.h"
+#include <WebCore/GraphicsContextCG.h>
+#endif
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"

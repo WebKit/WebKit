@@ -25,9 +25,10 @@
  */
 
 #include "config.h"
-#include "RunLoop.h"
-#include <runtime/InitializeThreading.h>
+
 #include "WebProcess.h"
+#include <WebCore/RunLoop.h>
+#include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 
 #include <QApplication>

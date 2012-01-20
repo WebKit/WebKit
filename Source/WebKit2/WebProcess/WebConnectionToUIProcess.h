@@ -35,14 +35,14 @@ class WebProcess;
 
 class WebConnectionToUIProcess : public WebConnection, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*, CoreIPC::Connection::Identifier, RunLoop*);
+    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     CoreIPC::Connection* connection() { return m_connection.get(); }
 
     void invalidate();
 
 private:
-    WebConnectionToUIProcess(WebProcess*, CoreIPC::Connection::Identifier, RunLoop*);
+    WebConnectionToUIProcess(WebProcess*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     // WebConnection
     virtual void postMessage(const String&, APIObject*);
