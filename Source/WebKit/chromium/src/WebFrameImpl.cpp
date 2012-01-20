@@ -106,6 +106,7 @@
 #include "IconURL.h"
 #include "InspectorController.h"
 #include "KURL.h"
+#include "Node.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "painting/GraphicsContextBuilder.h"
@@ -133,6 +134,7 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SkiaUtils.h"
+#include "SpellChecker.h"
 #include "SubstituteData.h"
 #include "TextAffinity.h"
 #include "TextIterator.h"
@@ -1292,6 +1294,16 @@ void WebFrameImpl::enableContinuousSpellChecking(bool enable)
 bool WebFrameImpl::isContinuousSpellCheckingEnabled() const
 {
     return frame()->editor()->isContinuousSpellCheckingEnabled();
+}
+
+void WebFrameImpl::requestTextChecking(const WebElement& webElem)
+{
+    if (webElem.isNull())
+        return;
+
+    RefPtr<Range> rangeToCheck = rangeOfContents(const_cast<Element*>(webElem.constUnwrap<Element>()));
+
+    frame()->editor()->spellChecker()->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling | TextCheckingTypeGrammar, rangeToCheck, rangeToCheck));
 }
 
 bool WebFrameImpl::hasSelection() const

@@ -42,6 +42,7 @@
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
 #include "WebDocument.h"
+#include "WebElement.h"
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
 #include "platform/WebString.h"
@@ -205,6 +206,11 @@ void WebNode::simulateClick()
 WebNodeList WebNode::getElementsByTagName(const WebString& tag) const
 {
     return WebNodeList(m_private->getElementsByTagName(tag));
+}
+
+WebElement WebNode::rootEditableElement() const
+{
+    return WebElement(m_private->rootEditableElement());
 }
 
 bool WebNode::hasNonEmptyBoundingBox() const

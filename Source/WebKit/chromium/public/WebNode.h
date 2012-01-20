@@ -42,6 +42,7 @@ class WebDOMEvent;
 class WebDOMEventListener;
 class WebDOMEventListenerPrivate;
 class WebDocument;
+class WebElement;
 class WebFrame;
 class WebNodeList;
 
@@ -109,6 +110,7 @@ public:
     WEBKIT_EXPORT bool dispatchEvent(const WebDOMEvent&);
     WEBKIT_EXPORT void simulateClick();
     WEBKIT_EXPORT WebNodeList getElementsByTagName(const WebString&) const;
+    WEBKIT_EXPORT WebElement rootEditableElement() const;
 
     // Returns true if the node has a non-empty bounding box in layout.
     // This does not 100% guarantee the user can see it, but is pretty close.

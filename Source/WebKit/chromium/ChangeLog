@@ -1,3 +1,22 @@
+2012-01-20  Shinya Kawanaka  <shinyak@google.com>
+
+        [chromium] WebFrame should have an interface to invoke spellchecking in arbitrarily.
+        https://bugs.webkit.org/show_bug.cgi?id=73971
+
+        Reviewed by Darin Fisher.
+
+        This interface is necessary to recheck spelling of an arbitrary element.
+
+        * public/WebFrame.h:
+        * public/WebNode.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::requestTextChecking):
+          Requests spellchecking for the element having current selection.
+        * src/WebFrameImpl.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::rootEditableElement):
+          Takes a root editable element from Node.
+
 2012-01-19  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: make constant variable names in fileapi/ conform to WebKit's coding guideline
