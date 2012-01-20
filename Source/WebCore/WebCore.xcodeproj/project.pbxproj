@@ -3578,7 +3578,6 @@
 		A80A9425149F227100989291 /* JSDOMWindowWebSocketCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A9424149F227100989291 /* JSDOMWindowWebSocketCustom.cpp */; };
 		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
-		A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */; };
 		A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */; };
@@ -3610,7 +3609,6 @@
 		A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CDA0A1989CA007FB8C5 /* Counter.h */; };
 		A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */; };
 		A80E6D060A1989CA007FB8C5 /* CSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CDC0A1989CA007FB8C5 /* CSSRule.cpp */; };
-		A80E6D070A1989CA007FB8C5 /* CSSBorderImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */; };
 		A80E6D080A1989CA007FB8C5 /* CSSInitialValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CDE0A1989CA007FB8C5 /* CSSInitialValue.h */; };
 		A80E6D090A1989CA007FB8C5 /* CSSRuleList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CDF0A1989CA007FB8C5 /* CSSRuleList.cpp */; };
 		A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */; };
@@ -5708,6 +5706,8 @@
 		E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169825F1134636A00894115 /* ObjCRuntimeObject.mm */; };
 		E1698264113467F300894115 /* JavaRuntimeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1698263113467F300894115 /* JavaRuntimeObject.cpp */; };
 		E16982681134680700894115 /* JavaRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E16982671134680700894115 /* JavaRuntimeObject.h */; };
+		E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E16A84F714C85CCC002977DF /* CSSBorderImage.cpp */; };
+		E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E16A84F814C85CCC002977DF /* CSSBorderImage.h */; };
 		E17A4A1B0D97991D00FC10C6 /* DOMSVGAltGlyphElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAC0D974A00000541AE /* DOMSVGAltGlyphElement.h */; };
 		E17A4A1C0D97991D00FC10C6 /* DOMSVGAltGlyphElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 65AA6BAE0D974A00000541AE /* DOMSVGAltGlyphElementInternal.h */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
@@ -10409,7 +10409,6 @@
 		A80A9424149F227100989291 /* JSDOMWindowWebSocketCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowWebSocketCustom.cpp; sourceTree = "<group>"; };
 		A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivateCG.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
-		A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
 		A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceRule.cpp; sourceTree = "<group>"; };
 		A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShadowValue.h; sourceTree = "<group>"; };
@@ -10442,7 +10441,6 @@
 		A80E6CDA0A1989CA007FB8C5 /* Counter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Counter.h; sourceTree = "<group>"; };
 		A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPrimitiveValue.cpp; sourceTree = "<group>"; };
 		A80E6CDC0A1989CA007FB8C5 /* CSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRule.cpp; sourceTree = "<group>"; };
-		A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageValue.h; sourceTree = "<group>"; };
 		A80E6CDE0A1989CA007FB8C5 /* CSSInitialValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSInitialValue.h; sourceTree = "<group>"; };
 		A80E6CDF0A1989CA007FB8C5 /* CSSRuleList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRuleList.cpp; sourceTree = "<group>"; };
 		A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DashboardRegion.h; sourceTree = "<group>"; };
@@ -12646,6 +12644,8 @@
 		E169825F1134636A00894115 /* ObjCRuntimeObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCRuntimeObject.mm; sourceTree = "<group>"; };
 		E1698263113467F300894115 /* JavaRuntimeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaRuntimeObject.cpp; path = jsc/JavaRuntimeObject.cpp; sourceTree = "<group>"; };
 		E16982671134680700894115 /* JavaRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaRuntimeObject.h; path = jsc/JavaRuntimeObject.h; sourceTree = "<group>"; };
+		E16A84F714C85CCC002977DF /* CSSBorderImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImage.cpp; sourceTree = "<group>"; };
+		E16A84F814C85CCC002977DF /* CSSBorderImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBorderImage.h; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
@@ -19864,10 +19864,10 @@
 				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
 				CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */,
+				E16A84F714C85CCC002977DF /* CSSBorderImage.cpp */,
+				E16A84F814C85CCC002977DF /* CSSBorderImage.h */,
 				BC274B30140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp */,
 				BC274B2E140EBEB200EADFA6 /* CSSBorderImageSliceValue.h */,
-				A80E6CBB0A1989CA007FB8C5 /* CSSBorderImageValue.cpp */,
-				A80E6CDD0A1989CA007FB8C5 /* CSSBorderImageValue.h */,
 				BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */,
 				BC6049CB0DB560C200204739 /* CSSCanvasValue.h */,
 				E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */,
@@ -21191,8 +21191,8 @@
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
+				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
-				A80E6D070A1989CA007FB8C5 /* CSSBorderImageValue.h in Headers */,
 				BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */,
 				A80E6CF90A1989CA007FB8C5 /* CSSCharsetRule.h in Headers */,
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
@@ -24589,8 +24589,8 @@
 				E16980491133644700894115 /* CRuntimeObject.cpp in Sources */,
 				975CA28A130365F800E99AD9 /* Crypto.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
+				E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
-				A80E6CE50A1989CA007FB8C5 /* CSSBorderImageValue.cpp in Sources */,
 				BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */,
 				E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */,
 				BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */,

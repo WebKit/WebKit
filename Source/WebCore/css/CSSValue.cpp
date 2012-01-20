@@ -28,7 +28,6 @@
 #include "CSSValue.h"
 
 #include "CSSAspectRatioValue.h"
-#include "CSSBorderImageValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
@@ -89,8 +88,6 @@ void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const CSSStyleSh
         static_cast<CSSPrimitiveValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (isValueList())
         static_cast<CSSValueList*>(this)->addSubresourceStyleURLs(urls, styleSheet);
-    else if (classType() == BorderImageClass)
-        static_cast<CSSBorderImageValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (classType() == FontFaceSrcClass)
         static_cast<CSSFontFaceSrcValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
     else if (classType() == ReflectClass)
@@ -102,8 +99,6 @@ String CSSValue::cssText() const
     switch (classType()) {
     case AspectRatioClass:
         return static_cast<const CSSAspectRatioValue*>(this)->customCssText();
-    case BorderImageClass:
-        return static_cast<const CSSBorderImageValue*>(this)->customCssText();
     case BorderImageSliceClass:
         return static_cast<const CSSBorderImageSliceValue*>(this)->customCssText();
     case CanvasClass:
@@ -178,9 +173,6 @@ void CSSValue::destroy()
     switch (classType()) {
     case AspectRatioClass:
         delete static_cast<CSSAspectRatioValue*>(this);
-        return;
-    case BorderImageClass:
-        delete static_cast<CSSBorderImageValue*>(this);
         return;
     case BorderImageSliceClass:
         delete static_cast<CSSBorderImageSliceValue*>(this);

@@ -26,7 +26,7 @@
 
 #include "AnimationController.h"
 #include "CSSAspectRatioValue.h"
-#include "CSSBorderImageValue.h"
+#include "CSSBorderImage.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
@@ -501,7 +501,7 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
     // Create the repeat rules.
     RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, cssValuePool);
 
-    return CSSBorderImageValue::create(imageValue.release(), imageSlices.release(), borderSlices.release(), outset.release(), repeat);
+    return createBorderImageValue(imageValue, imageSlices, borderSlices, outset, repeat);
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSValuePool* cssValuePool)

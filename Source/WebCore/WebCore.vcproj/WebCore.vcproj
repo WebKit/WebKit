@@ -32622,7 +32622,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSBorderImageValue.cpp"
+				RelativePath="..\css\CSSBorderImage.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -32674,7 +32674,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\css\CSSBorderImageValue.h"
+				RelativePath="..\css\CSSBorderImage.h"
 				>
 			</File>
 			<File

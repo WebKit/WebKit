@@ -392,7 +392,7 @@ v8 {
 SOURCES += \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
-    css/CSSBorderImageValue.cpp \
+    css/CSSBorderImage.cpp \
     css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
@@ -1504,7 +1504,7 @@ v8 {
 HEADERS += \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
-    css/CSSBorderImageValue.h \
+    css/CSSBorderImage.h \
     css/CSSCanvasValue.h \
     css/CSSCharsetRule.h \
     css/CSSComputedStyleDeclaration.h \

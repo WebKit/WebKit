@@ -60,7 +60,6 @@ public:
     bool isValueList() const { return m_classType >= ValueListClass; }
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
-    bool isBorderImageValue() const { return m_classType == BorderImageClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
     bool isFontFamilyValue() const { return m_classType == FontFamilyClass; }
@@ -113,7 +112,6 @@ protected:
 
         // Other class types.
         AspectRatioClass,
-        BorderImageClass,
         BorderImageSliceClass,
         FontFeatureClass,
         FontClass,

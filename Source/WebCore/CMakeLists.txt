@@ -426,7 +426,7 @@ SET(WebCore_SOURCES
     bindings/generic/RuntimeEnabledFeatures.cpp
 
     css/CSSAspectRatioValue.cpp
-    css/CSSBorderImageValue.cpp
+    css/CSSBorderImage.cpp
     css/CSSBorderImageSliceValue.cpp
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp

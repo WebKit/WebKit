@@ -26,7 +26,7 @@
 #include "CSSParser.h"
 
 #include "CSSAspectRatioValue.h"
-#include "CSSBorderImageValue.h"
+#include "CSSBorderImage.h"
 #include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSCrossfadeValue.h"
@@ -5383,8 +5383,7 @@ struct BorderImageParseContext {
 
     PassRefPtr<CSSValue> commitBorderImage()
     {
-        // Make our new border image value now.
-        return CSSBorderImageValue::create(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
+        return createBorderImageValue(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
     }
 
     CSSValuePool* m_cssValuePool;

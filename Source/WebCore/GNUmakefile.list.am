@@ -1272,8 +1272,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSAspectRatioValue.h \
 	Source/WebCore/css/CSSBorderImageSliceValue.cpp \
 	Source/WebCore/css/CSSBorderImageSliceValue.h \
-	Source/WebCore/css/CSSBorderImageValue.cpp \
-	Source/WebCore/css/CSSBorderImageValue.h \
+	Source/WebCore/css/CSSBorderImage.cpp \
+	Source/WebCore/css/CSSBorderImage.h \
 	Source/WebCore/css/CSSCanvasValue.cpp \
 	Source/WebCore/css/CSSCanvasValue.h \
 	Source/WebCore/css/CSSCharsetRule.cpp \

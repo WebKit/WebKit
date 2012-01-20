@@ -33,7 +33,7 @@
 #include "ContentData.h"
 #include "Counter.h"
 #include "CounterContent.h"
-#include "CSSBorderImageValue.h"
+#include "CSSBorderImage.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
@@ -4319,11 +4319,11 @@ void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue
 void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
 {
     // If we're a primitive value, then we are "none" and don't need to alter the empty image at all.
-    if (!value || value->isPrimitiveValue() || !value->isBorderImageValue())
+    if (!value || value->isPrimitiveValue())
         return;
 
     // Retrieve the border image value.
-    CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
+    CSSValueList* borderImage = static_cast<CSSValueList*>(value);
 
     // Set the image (this kicks off the load).
     CSSPropertyID imageProperty;
@@ -4334,19 +4334,40 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     else
         imageProperty = property;
 
-    if (CSSValue* imageValue = borderImage->imageValue())
+    if (CSSValue* imageValue = borderImage->item(0))
         image.setImage(styleImage(imageProperty, imageValue));
 
-    // Map in the image slices.
-    mapNinePieceImageSlice(borderImage->m_imageSlice.get(), image);
+    if (borderImage->item(1)) {
+        if (borderImage->item(1)->cssValueType() != CSSValue::CSS_VALUE_LIST) {
+            // Map in the image slices.
+            if (borderImage->item(1)) {
+                if (borderImage->item(1)->isBorderImageSliceValue()) {
+                    mapNinePieceImageSlice(borderImage->item(1), image);
+                     if (borderImage->item(2))
+                        // Set the appropriate rules for stretch/round/repeat of the slices
+                        mapNinePieceImageRepeat(borderImage->item(2), image);
+                } else
+                    // Set the appropriate rules for stretch/round/repeat of the slices
+                    mapNinePieceImageRepeat(borderImage->item(1), image);
+            }
+        } else {
+            CSSValueList* slashList = static_cast<CSSValueList*>(borderImage->item(1));
+            // Map in the image slices.
+            if (slashList->item(0) && slashList->item(0)->isBorderImageSliceValue())
+                mapNinePieceImageSlice(slashList->item(0), image);
 
-    // Map in the border slices.
-    if (borderImage->m_borderSlice)
-        image.setBorderSlices(mapNinePieceImageQuad(borderImage->m_borderSlice.get()));
+            // Map in the border slices.
+            if (slashList->item(1))
+                image.setBorderSlices(mapNinePieceImageQuad(slashList->item(1)));
 
-    // Map in the outset.
-    if (borderImage->m_outset)
-        image.setOutset(mapNinePieceImageQuad(borderImage->m_outset.get()));
+            // Map in the outset.
+            if (slashList->item(2))
+                image.setOutset(mapNinePieceImageQuad(slashList->item(2)));
+
+            // Set the appropriate rules for stretch/round/repeat of the slices
+            mapNinePieceImageRepeat(borderImage->item(2), image);
+        }
+    }
 
     if (property == CSSPropertyWebkitBorderImage) {
         // We have to preserve the legacy behavior of -webkit-border-image and make the border slices
@@ -4361,9 +4382,6 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
         if (image.borderSlices().left().isFixed())
             style()->setBorderLeftWidth(image.borderSlices().left().value());
     }
-
-    // Set the appropriate rules for stretch/round/repeat of the slices
-    mapNinePieceImageRepeat(borderImage->m_repeat.get(), image);
 }
 
 void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& image)

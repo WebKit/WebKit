@@ -26,8 +26,8 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
  
 #include "CSSAspectRatioValue.cpp"
+#include "CSSBorderImage.cpp"
 #include "CSSBorderImageSliceValue.cpp"
-#include "CSSBorderImageValue.cpp"
 #include "CSSCanvasValue.cpp"
 #include "CSSCharsetRule.cpp"
 #include "CSSComputedStyleDeclaration.cpp"
