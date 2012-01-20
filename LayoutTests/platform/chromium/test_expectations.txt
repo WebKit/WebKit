@@ -4006,3 +4006,5 @@ BUG_CARYCLARK MAC : fast/dom/blur-contenteditable.html = IMAGE
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
+
+BUGWG76716 : compositing/visibility/layer-visible-content.html = IMAGE+TEXT
