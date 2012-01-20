@@ -1,3 +1,11 @@
+2012-01-20  Adam Barth  <abarth@webkit.org>
+
+        Another tiny tweak to the garden-o-matic CSS.  This makes things line
+        up slightly nicer when there aren't any failures.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        (#summary):
+
 2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should support --test-results-server option
