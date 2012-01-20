@@ -1,3 +1,11 @@
+2012-01-20  Adam Barth  <abarth@webkit.org>
+
+        The party time image overlaps real content!  This patch makes the
+        image centered vertically.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        (#onebar.partytime #summary):
+
 2012-01-19  Ojan Vafai  <ojan@chromium.org>
 
         Refactor TestExpectationsParser in preparation for caching the results
