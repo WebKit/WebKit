@@ -95,6 +95,12 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), false, wasFixed));
 }
 
+void RenderSVGInline::willBeDestroyed()
+{
+    SVGResourcesCache::clientDestroyed(this);
+    RenderInline::willBeDestroyed();
+}
+
 void RenderSVGInline::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (diff == StyleDifferenceLayout)

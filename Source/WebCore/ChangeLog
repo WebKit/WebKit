@@ -1,3 +1,20 @@
+2012-01-20  Tim Horton  <timothy_horton@apple.com>
+
+        Crash in RenderSVGResourceContainer::markAllClientsForInvalidation
+        https://bugs.webkit.org/show_bug.cgi?id=76606
+        <rdar://problem/10720970>
+
+        Reviewed by Dirk Schulze.
+
+        Notify SVGResourcesCache and superclass when RenderSVGInline is about
+        to be destroyed, preventing a crash.
+
+        Test: svg/custom/crash-inline-container-client.html
+
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::willBeDestroyed):
+        * rendering/svg/RenderSVGInline.h:
+
 2012-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         WebCore should not send invalid URLs to client createWindow methods.
