@@ -1,3 +1,32 @@
+2012-01-20  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Revert a couple of changes in fileapi/ that break tests in chromeos.
+        https://bugs.webkit.org/show_bug.cgi?id=76718
+
+        Reviewed by Darin Fisher.
+
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::getIdentifier):
+        (WebCore::BlobURL::createBlobURL):
+        * fileapi/BlobURL.h:
+        (WebCore::BlobURL::blobProtocol):
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::crackFileSystemURL):
+        * fileapi/DOMFileSystemBase.h:
+        * fileapi/EntryBase.cpp:
+        (WebCore::EntryBase::toURL):
+        * fileapi/FileWriter.cpp:
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::truncate):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitRequestFileSystem):
+        * page/DOMWindow.h:
+        * platform/AsyncFileSystem.cpp:
+        * platform/AsyncFileSystem.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::webkitRequestFileSystem):
+        (WebCore::WorkerContext::webkitRequestFileSystemSync):
+
 2012-01-20  Tim Dresser  <tdresser@chromium.org>
 
         Refactor canvas drawing to be more data driven
@@ -3076,6 +3105,7 @@
 
         * platform/image-decoders/skia/ImageDecoderSkia.cpp:
         (WebCore::ImageFrame::setStatus):
+
 2012-01-17  Nate Chapin  <japhet@chromium.org>
 
         Ensure we don't cancel revalidation of a CachedResource

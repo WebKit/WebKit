@@ -34,7 +34,6 @@
 
 #include "AsyncFileSystemCallbacks.h"
 #include "AsyncFileWriterChromium.h"
-#include "SecurityOrigin.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
@@ -44,14 +43,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-namespace {
-
-// Chrome-specific FileSystem type.
-const char externalPathPrefix[] = "external";
-const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
-
-}
 
 bool AsyncFileSystem::isAvailable()
 {
@@ -68,17 +59,6 @@ AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, con
 
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
-}
-
-String AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath)
-{
-    ASSERT(!m_filesystemRootURL.isEmpty());
-    ASSERT(SecurityOrigin::create(m_filesystemRootURL)->toString() == originString);
-
-    KURL url = m_filesystemRootURL;
-    // Remove the extra leading slash.
-    url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
-    return url;
 }
 
 void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

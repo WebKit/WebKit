@@ -1,3 +1,15 @@
+2012-01-20  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Revert a couple of changes in fileapi/ that break tests in chromeos.
+        https://bugs.webkit.org/show_bug.cgi?id=76718
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebFileSystem.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/AsyncFileSystemChromium.cpp:
+        * src/AsyncFileSystemChromium.h:
+
 2012-01-20  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Do not recompute viewport on same page navigation

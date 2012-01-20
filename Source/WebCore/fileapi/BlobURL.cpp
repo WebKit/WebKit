@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static const char blobProtocol[] = "blob";
+const char BlobURL::kBlobProtocol[] = "blob";
 
 KURL BlobURL::createPublicURL(SecurityOrigin* securityOrigin)
 {
@@ -54,7 +54,7 @@ KURL BlobURL::createInternalURL()
 
 String BlobURL::getIdentifier(const KURL& url)
 {
-    ASSERT(url.protocolIs(blobProtocol));
+    ASSERT(url.protocolIs(kBlobProtocol));
 
     unsigned startIndex = url.pathAfterLastSlash();
     return url.string().substring(startIndex);
@@ -65,7 +65,7 @@ KURL BlobURL::createBlobURL(const String& originString)
     ASSERT(!originString.isEmpty());
     if (originString == "null")
         return KURL();
-    String urlString = blobProtocol;
+    String urlString = kBlobProtocol;
     urlString += ":";
     urlString += encodeWithURLEscapeSequences(originString);
     urlString += "/";

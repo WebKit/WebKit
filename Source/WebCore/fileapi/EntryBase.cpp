@@ -39,6 +39,7 @@
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -55,7 +56,27 @@ EntryBase::~EntryBase()
 
 String EntryBase::toURL()
 {
-    return m_fileSystem->asyncFileSystem()->toURL(m_fileSystem->securityOrigin()->toString(), m_fullPath);
+    String originString = m_fileSystem->securityOrigin()->toString();
+    ASSERT(!originString.isEmpty());
+    if (originString == "null")
+        return String();
+    StringBuilder result;
+    result.append("filesystem:");
+    result.append(originString);
+    result.append("/");
+    switch (m_fileSystem->asyncFileSystem()->type()) {
+    case AsyncFileSystem::Temporary:
+        result.append(DOMFileSystemBase::kTemporaryPathPrefix);
+        break;
+    case AsyncFileSystem::Persistent:
+        result.append(DOMFileSystemBase::kPersistentPathPrefix);
+        break;
+    case AsyncFileSystem::External:
+        result.append(DOMFileSystemBase::kExternalPathPrefix);
+        break;
+    }
+    result.append(m_fullPath);
+    return result.toString();
 }
 
 } // namespace WebCore

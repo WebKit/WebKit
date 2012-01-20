@@ -51,9 +51,11 @@ public:
     static KURL createPublicURL(SecurityOrigin*);
     static KURL createInternalURL();
     static String getIdentifier(const KURL&);
+    static const char* blobProtocol() { return kBlobProtocol; }
 
 private:
     static KURL createBlobURL(const String& originString);
+    static const char kBlobProtocol[];
     BlobURL() { }
 };
 

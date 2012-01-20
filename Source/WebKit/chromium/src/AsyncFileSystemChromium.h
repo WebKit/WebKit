@@ -54,7 +54,6 @@ public:
 
     virtual ~AsyncFileSystemChromium();
 
-    virtual String toURL(const String& originString, const String& fullPath);
     virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);

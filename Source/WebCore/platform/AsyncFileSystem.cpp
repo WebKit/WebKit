@@ -36,59 +36,8 @@
 #include "AsyncFileSystemCallbacks.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-const char AsyncFileSystem::persistentPathPrefix[] = "persistent";
-const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSystem::persistentPathPrefix) - 1;
-const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
-const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
-
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
-{
-    if (!url.protocolIs("filesystem"))
-        return false;
-
-    KURL originURL(ParsedURLString, url.path());
-    String path = decodeURLEscapeSequences(originURL.path());
-    if (path.isEmpty() || path[0] != '/')
-        return false;
-    path = path.substring(1);
-
-    if (path.startsWith(temporaryPathPrefix)) {
-        type = Temporary;
-        path = path.substring(temporaryPathPrefixLength);
-    } else if (path.startsWith(persistentPathPrefix)) {
-        type = Persistent;
-        path = path.substring(persistentPathPrefixLength);
-    } else
-        return false;
-
-    if (path.isEmpty() || path[0] != '/')
-        return false;
-
-    filePath.swap(path);
-    return true;
-}
-
-String AsyncFileSystem::toURL(const String& originString, const String& fullPath)
-{
-    StringBuilder result;
-    result.append("filesystem:");
-    result.append(originString);
-    result.append("/");
-    switch (type()) {
-    case Temporary:
-        result.append(temporaryPathPrefix);
-        break;
-    case Persistent:
-        result.append(persistentPathPrefix);
-        break;
-    }
-    result.append(fullPath);
-    return result.toString();
-}
 
 #if !PLATFORM(CHROMIUM)
 bool AsyncFileSystem::isAvailable()

@@ -46,8 +46,6 @@ public:
     enum Type {
         TypeTemporary,
         TypePersistent,
-
-        // Chrome specific filesystem type (used by chromeos).
         TypeExternal,
     };
 

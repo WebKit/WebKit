@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static const int maxRecursionDepth = 3;
+static const int kMaxRecursionDepth = 3;
 
 FileWriter::FileWriter(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
@@ -103,7 +103,7 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
         setError(FileError::TYPE_MISMATCH_ERR, ec);
         return;
     }
-    if (m_recursionDepth > maxRecursionDepth) {
+    if (m_recursionDepth > kMaxRecursionDepth) {
         setError(FileError::SECURITY_ERR, ec);
         return;
     }
@@ -141,7 +141,7 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
         setError(FileError::INVALID_STATE_ERR, ec);
         return;
     }
-    if (m_recursionDepth > maxRecursionDepth) {
+    if (m_recursionDepth > kMaxRecursionDepth) {
         setError(FileError::SECURITY_ERR, ec);
         return;
     }
