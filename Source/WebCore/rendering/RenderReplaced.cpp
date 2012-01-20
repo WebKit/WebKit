@@ -284,17 +284,14 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), includeMaxWidth);
 
     RenderBox* contentRenderer = embeddedContentBox();
-    RenderStyle* contentRenderStyle = 0;
 
     // 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
     bool isPercentageIntrinsicSize = false;
     double intrinsicRatio = 0;
     FloatSize intrinsicSize;
-    if (contentRenderer) {
+    if (contentRenderer)
         contentRenderer->computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
-        contentRenderStyle = contentRenderer->style();
-        ASSERT(contentRenderStyle);
-    } else
+    else
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
 
     if (intrinsicRatio && !isHorizontalWritingMode())
@@ -366,17 +363,14 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
         return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
 
     RenderBox* contentRenderer = embeddedContentBox();
-    RenderStyle* contentRenderStyle = 0;
 
     // 10.6.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
     bool isPercentageIntrinsicSize = false;
     double intrinsicRatio = 0;
     FloatSize intrinsicSize;
-    if (contentRenderer) {
+    if (contentRenderer)
         contentRenderer->computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
-        contentRenderStyle = contentRenderer->style();
-        ASSERT(contentRenderStyle);
-    } else
+    else
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
 
     if (intrinsicRatio && !isHorizontalWritingMode())

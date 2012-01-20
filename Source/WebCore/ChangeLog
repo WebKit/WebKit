@@ -1,3 +1,14 @@
+2012-01-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Remove unused variable in RenderReplaced after r105513
+        https://bugs.webkit.org/show_bug.cgi?id=76742
+
+        Reviewed by Daniel Bates.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+
 2012-01-20  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb damage from accelerated canvas 2D.
