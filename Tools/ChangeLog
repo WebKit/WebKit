@@ -1,3 +1,15 @@
+2012-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] fast/url/degenerate-file-base.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=76619
+
+        Reviewed by Adam Roben.
+
+        A URL generated form local path for loading had an extra slash, making document.URL
+        incorrect in all WebKit2 tests (file://localhost//path/to/test.html).
+
+        * WebKitTestRunner/TestInvocation.cpp: (WTR::createWKURL):
+
 2012-01-18  Ojan Vafai  <ojan@chromium.org>
 
         check-webkit-style of the chromium test_expectations.txt file doesn't test all chromium ports
