@@ -1,3 +1,13 @@
+2012-01-20  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76444
+        
+        #if ENABLE(CSS_SHADERS) cannot appear in framework headers.
+        This breaks builds.
+
+        * WebView/WebPreferences.mm:
+        * WebView/WebPreferencesPrivate.h:
+
 2012-01-20  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Shaders: Add a Settings flag to enable/disable CSS Shaders at runtime

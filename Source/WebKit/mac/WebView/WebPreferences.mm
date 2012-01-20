@@ -1328,6 +1328,7 @@ static NSString *classIBCreatorID = nil;
 {
     return [self _boolValueForKey:WebKitCSSCustomFilterEnabledPreferenceKey];
 }
+
 - (void)setCSSCustomFilterEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitCSSCustomFilterEnabledPreferenceKey];
