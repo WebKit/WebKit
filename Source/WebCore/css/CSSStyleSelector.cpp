@@ -3682,8 +3682,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFilter: {
         HANDLE_INHERIT_AND_INITIAL(filter, Filter);
         FilterOperations operations;
-        createFilterOperations(value, style(), m_rootElementStyle, operations);
-        m_style->setFilter(operations);
+        if (createFilterOperations(value, style(), m_rootElementStyle, operations))
+            m_style->setFilter(operations);
         return;
     }
 #endif
@@ -5324,8 +5324,10 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
 #if ENABLE(CSS_SHADERS)
         if (operationType == FilterOperation::CUSTOM) {
             RefPtr<CustomFilterOperation> operation = createCustomFilterOperation(filterValue);
-            if (operation)
-                operations.operations().append(operation);
+            if (!operation)
+                return false;
+            
+            operations.operations().append(operation);
             continue;
         }
 #endif

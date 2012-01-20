@@ -1,3 +1,21 @@
+2012-01-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Add a Settings flag to enable/disable CSS Shaders at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=76444
+
+        Added private WebPreference property called "WebKitCSSCustomFilterEnabled".
+        
+        Reviewed by Nikolas Zimmermann.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences cssCustomFilterEnabled]):
+        (-[WebPreferences setCSSCustomFilterEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-01-17  Enrica Casucci  <enrica@apple.com>
 
         Missing NSForegroundColorAttributeName should be treated as black instead of transparent.

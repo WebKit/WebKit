@@ -172,6 +172,7 @@ Settings::Settings(Page* page)
     , m_canvasUsesAcceleratedDrawing(false)
     , m_acceleratedDrawingEnabled(false)
     , m_acceleratedFiltersEnabled(false)
+    , m_isCSSCustomFilterEnabled(false)
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)

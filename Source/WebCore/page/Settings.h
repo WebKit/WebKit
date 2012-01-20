@@ -307,6 +307,9 @@ namespace WebCore {
         void setAcceleratedFiltersEnabled(bool enabled) { m_acceleratedFiltersEnabled = enabled; }
         bool acceleratedFiltersEnabled() const { return m_acceleratedFiltersEnabled; }
 
+        void setCSSCustomFilterEnabled(bool enabled) { m_isCSSCustomFilterEnabled = enabled; }
+        bool isCSSCustomFilterEnabled() const { return m_isCSSCustomFilterEnabled; }
+
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
 
@@ -594,6 +597,7 @@ namespace WebCore {
         bool m_canvasUsesAcceleratedDrawing : 1;
         bool m_acceleratedDrawingEnabled : 1;
         bool m_acceleratedFiltersEnabled : 1;
+        bool m_isCSSCustomFilterEnabled : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
         bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;

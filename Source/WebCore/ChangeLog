@@ -1,3 +1,37 @@
+2012-01-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Add a Settings flag to enable/disable CSS Shaders at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=76444
+        
+        Added setCSSCustomFilterEnabled/isCSSCustomFilterEnabled that is false by default.
+        I've enabled it by default on Apple Mac, to make sure there's no behavior change. Anyway, CSS shaders need
+        WebGL enabled, so it ends up being disabled by default.
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: css3/filters/effect-custom-disabled.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFilter):
+            Do not parse the custom() function when shaders are disabled.
+            
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+            Do not overwrite the old style->filter() if parsing fails.
+            
+        (WebCore::CSSStyleSelector::createFilterOperations):
+            Do not continue if one custom() filter fails to parse.
+            
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setCSSCustomFilterEnabled):
+        (WebCore::Settings::isCSSCustomFilterEnabled):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::isCSSCustomFilterEnabled):
+        (WebCore::FilterEffectRenderer::build):
+            Avoid creating the filter when shaders are disabled. It may happen to get here if shaders were disabled between parsing and rendering.
+        
 2012-01-19  Shinya Kawanaka  <shinyak@google.com>
 
         Node::canHaveLightChildRendererWithShadow is not used anywhere.

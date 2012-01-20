@@ -73,6 +73,7 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderTheme.h"
+#include "Settings.h"
 #include "ShadowValue.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
@@ -6909,6 +6910,13 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 
 #if ENABLE(CSS_SHADERS)
             if (filterType == WebKitCSSFilterValue::CustomFilterOperation) {
+                // Make sure parsing fails if custom filters are disabled.
+                if (Document* document = findDocument()) {
+                    Settings* settings = document->settings();
+                    if (!settings || !settings->isCSSCustomFilterEnabled())
+                        return 0;
+                }
+                
                 RefPtr<WebKitCSSFilterValue> filterValue = parseCustomFilter(value);
                 if (!filterValue)
                     return 0;

@@ -94,6 +94,7 @@
 #define WebKitAcceleratedDrawingEnabledPreferenceKey @"WebKitAcceleratedDrawingEnabled"
 #define WebKitCanvasUsesAcceleratedDrawingPreferenceKey @"WebKitCanvasUsesAcceleratedDrawing"
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
+#define WebKitCSSCustomFilterEnabledPreferenceKey @"WebKitCSSCustomFilterEnabled"
 #define WebKitShowDebugBordersPreferenceKey @"WebKitShowDebugBorders"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"
 #define WebKitWebAudioEnabledPreferenceKey @"WebKitWebAudioEnabled"

@@ -1,3 +1,18 @@
+2012-01-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Add a Settings flag to enable/disable CSS Shaders at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=76444
+
+        Reviewed by Nikolas Zimmermann.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetCSSCustomFilterEnabled):
+        (WKPreferencesGetCSSCustomFilterEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-01-19  Sam Weinig  <sam@webkit.org>
 
         Replace improper #import with an #include.

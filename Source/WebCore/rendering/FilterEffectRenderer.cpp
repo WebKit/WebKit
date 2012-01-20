@@ -68,11 +68,11 @@ static inline void lastMatrixRow(Vector<float>& parameters)
     
     
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-static bool isWebGLEnabled(Document* document)
+static bool isCSSCustomFilterEnabled(Document* document)
 {
     // We only want to enable shaders if WebGL is also enabled on this platform.
     Settings* settings = document->settings();
-    return settings && settings->webGLEnabled();
+    return settings && settings->isCSSCustomFilterEnabled() && settings->webGLEnabled();
 }
 #endif
 
@@ -249,7 +249,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM: {
 #if ENABLE(WEBGL)
-            if (!isWebGLEnabled(document))
+            if (!isCSSCustomFilterEnabled(document))
                 continue;
             
             CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);

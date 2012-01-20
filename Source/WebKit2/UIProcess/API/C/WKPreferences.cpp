@@ -382,6 +382,16 @@ bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef preferen
     return toImpl(preferencesRef)->compositingRepaintCountersVisible();
 }
 
+void WKPreferencesSetCSSCustomFilterEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCSSCustomFilterEnabled(flag);
+}
+
+bool WKPreferencesGetCSSCustomFilterEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->cssCustomFilterEnabled();
+}
+
 void WKPreferencesSetWebGLEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebGLEnabled(flag);

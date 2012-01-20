@@ -1470,6 +1470,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
     settings->setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
+#if ENABLE(CSS_SHADERS)
+    settings->setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
+#endif
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
