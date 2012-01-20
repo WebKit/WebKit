@@ -76,11 +76,10 @@ class TestExpectationEditorTests(unittest.TestCase):
         unittest.TestCase.__init__(self, testFunc)
 
     def make_parsed_expectation_lines(self, in_string):
-        expectation_lines = TestExpectationParser.tokenize_list(in_string)
         parser = TestExpectationParser(self.test_port, self.full_test_list, allow_rebaseline_modifier=False)
+        expectation_lines = parser.parse(in_string)
         for expectation_line in expectation_lines:
             self.assertFalse(expectation_line.is_invalid())
-            parser.parse(expectation_line)
         return expectation_lines
 
     def assert_remove_roundtrip(self, in_string, test, expected_string, remove_flakes=False):

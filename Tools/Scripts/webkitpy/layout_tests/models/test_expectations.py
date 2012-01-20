@@ -199,7 +199,13 @@ class TestExpectationParser(object):
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
-    def parse(self, expectation_line):
+    def parse(self, expectations_string):
+        expectations = TestExpectationParser._tokenize_list(expectations_string)
+        for expectation_line in expectations:
+            self._parse_line(expectation_line)
+        return expectations
+
+    def _parse_line(self, expectation_line):
         if not expectation_line.name:
             return
 
@@ -288,7 +294,7 @@ class TestExpectationParser(object):
             expectation_line.matching_tests.append(expectation_line.path)
 
     @classmethod
-    def tokenize(cls, expectation_string, line_number=None):
+    def _tokenize(cls, expectation_string, line_number=None):
         """Tokenizes a line from test_expectations.txt and returns an unparsed TestExpectationLine instance.
 
         The format of a test expectation line is:
@@ -327,13 +333,13 @@ class TestExpectationParser(object):
         return expectation_line
 
     @classmethod
-    def tokenize_list(cls, expectations_string):
+    def _tokenize_list(cls, expectations_string):
         """Returns a list of TestExpectationLines, one for each line in expectations_string."""
         expectation_lines = []
         line_number = 0
         for line in expectations_string.split("\n"):
             line_number += 1
-            expectation_lines.append(cls.tokenize(line, line_number))
+            expectation_lines.append(cls._tokenize(line, line_number))
         return expectation_lines
 
     @classmethod
@@ -513,8 +519,6 @@ class TestExpectationsModel(object):
             self._remove_from_sets(test, self._modifier_to_tests)
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
-
-        self._test_to_expectation_line[test] = expectation_line
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -699,12 +703,12 @@ class TestExpectations(object):
         self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         self._skipped_tests_warnings = []
 
-        self._expectations = TestExpectationParser.tokenize_list(expectations)
+        self._expectations = self._parser.parse(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
         self._add_skipped_tests(port.skipped_tests())
 
         if overrides:
-            overrides_expectations = TestExpectationParser.tokenize_list(overrides)
+            overrides_expectations = self._parser.parse(overrides)
             self._add_expectations(overrides_expectations, overrides_allowed=True)
             self._expectations += overrides_expectations
 
@@ -826,7 +830,6 @@ class TestExpectations(object):
             if not expectation_line.expectations:
                 continue
 
-            self._parser.parse(expectation_line)
             if self._test_config in expectation_line.matching_configurations:
                 self._model.add_expectation_line(expectation_line, overrides_allowed)
 
@@ -838,6 +841,5 @@ class TestExpectations(object):
                 self._skipped_tests_warnings.append('The %s test from test_expectations.txt in line %d is also in Skipped!' %
                             (test.name, index))
         skipped_tests = '\n'.join(map(lambda test_path: 'BUG_SKIPPED SKIP : %s = FAIL' % test_path, tests_to_skip))
-        for test in TestExpectationParser.tokenize_list(skipped_tests):
-            self._parser.parse(test)
+        for test in self._parser.parse(skipped_tests):
             self._model.add_expectation_line(test, overrides_allowed=True)

@@ -400,51 +400,51 @@ class RebaseliningTest(Base):
 
 class TestExpectationParserTests(unittest.TestCase):
     def test_tokenize_blank(self):
-        expectation = TestExpectationParser.tokenize('')
+        expectation = TestExpectationParser._tokenize('')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, None)
         self.assertEqual(len(expectation.errors), 0)
 
     def test_tokenize_missing_colon(self):
-        expectation = TestExpectationParser.tokenize('Qux.')
+        expectation = TestExpectationParser._tokenize('Qux.')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(str(expectation.errors), '["Missing a \':\'"]')
 
     def test_tokenize_extra_colon(self):
-        expectation = TestExpectationParser.tokenize('FOO : : bar')
+        expectation = TestExpectationParser._tokenize('FOO : : bar')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(str(expectation.errors), '["Extraneous \':\'"]')
 
     def test_tokenize_empty_comment(self):
-        expectation = TestExpectationParser.tokenize('//')
+        expectation = TestExpectationParser._tokenize('//')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, '')
         self.assertEqual(len(expectation.errors), 0)
 
     def test_tokenize_comment(self):
-        expectation = TestExpectationParser.tokenize('//Qux.')
+        expectation = TestExpectationParser._tokenize('//Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(len(expectation.errors), 0)
 
     def test_tokenize_missing_equal(self):
-        expectation = TestExpectationParser.tokenize('FOO : bar')
+        expectation = TestExpectationParser._tokenize('FOO : bar')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(str(expectation.errors), "['Missing expectations\']")
 
     def test_tokenize_extra_equal(self):
-        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ = Qux.')
+        expectation = TestExpectationParser._tokenize('FOO : bar = BAZ = Qux.')
         self.assertEqual(expectation.is_malformed(), True)
         self.assertEqual(str(expectation.errors), '["Extraneous \'=\'"]')
 
     def test_tokenize_valid(self):
-        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ')
+        expectation = TestExpectationParser._tokenize('FOO : bar = BAZ')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, None)
         self.assertEqual(len(expectation.errors), 0)
 
     def test_tokenize_valid_with_comment(self):
-        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ //Qux.')
+        expectation = TestExpectationParser._tokenize('FOO : bar = BAZ //Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.modifiers), '[\'foo\']')
@@ -452,7 +452,7 @@ class TestExpectationParserTests(unittest.TestCase):
         self.assertEqual(len(expectation.errors), 0)
 
     def test_tokenize_valid_with_multiple_modifiers(self):
-        expectation = TestExpectationParser.tokenize('FOO1 FOO2 : bar = BAZ //Qux.')
+        expectation = TestExpectationParser._tokenize('FOO1 FOO2 : bar = BAZ //Qux.')
         self.assertEqual(expectation.is_malformed(), False)
         self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.modifiers), '[\'foo1\', \'foo2\']')
@@ -465,9 +465,9 @@ class TestExpectationParserTests(unittest.TestCase):
         test_port.test_exists = lambda test: True
         test_config = test_port.test_configuration()
         full_test_list = []
-        expectation_line = TestExpectationParser.tokenize('')
+        expectation_line = TestExpectationParser._tokenize('')
         parser = TestExpectationParser(test_port, full_test_list, allow_rebaseline_modifier=False)
-        parser.parse(expectation_line)
+        parser._parse_line(expectation_line)
         self.assertFalse(expectation_line.is_invalid())
 
 
@@ -480,13 +480,13 @@ class TestExpectationSerializerTests(unittest.TestCase):
         unittest.TestCase.__init__(self, testFunc)
 
     def assert_round_trip(self, in_string, expected_string=None):
-        expectation = TestExpectationParser.tokenize(in_string)
+        expectation = TestExpectationParser._tokenize(in_string)
         if expected_string is None:
             expected_string = in_string
         self.assertEqual(expected_string, self._serializer.to_string(expectation))
 
     def assert_list_round_trip(self, in_string, expected_string=None):
-        expectations = TestExpectationParser.tokenize_list(in_string)
+        expectations = TestExpectationParser._tokenize_list(in_string)
         if expected_string is None:
             expected_string = in_string
         self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations, self._converter))

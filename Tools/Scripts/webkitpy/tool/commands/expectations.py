@@ -37,9 +37,7 @@ class OptimizeExpectations(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
-        expectation_lines = TestExpectationParser.tokenize_list(port.test_expectations())
         parser = TestExpectationParser(port, [], allow_rebaseline_modifier=False)
-        for expectation_line in expectation_lines:
-            parser.parse(expectation_line)
+        expectation_lines = parser.parse(port.test_expectations())
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         tool.filesystem.write_text_file(port.path_to_test_expectations_file(), TestExpectationSerializer.list_to_string(expectation_lines, converter))
