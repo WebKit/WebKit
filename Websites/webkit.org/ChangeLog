@@ -1,3 +1,13 @@
+2012-01-20  Kent Tamura  <tkent@chromium.org>
+
+        Each style rule should have its own ID.
+        https://bugs.webkit.org/show_bug.cgi?id=76428
+
+        Reviewed by David Levin.
+
+        * coding/coding-style.html: Add an id attribute to each of li elements,
+        and add code to set title="#id-name" and to make li elements clickable.
+
 2012-01-19  Daniel Bates  <dbates@webkit.org>
 
         Remove "Safari 5.1 shipped" text from debugging instructions; move misplaced </ol>

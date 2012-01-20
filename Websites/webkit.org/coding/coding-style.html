@@ -23,12 +23,12 @@ END;
 ?>
 
 <h2>WebKit Coding Style Guidelines</h2>
-<h3>Indentation</h3>
+<h3 id="indentation">Indentation</h3>
 
 <ol>
-<li> Use spaces, not tabs. Tabs should only appear in files that require them for semantic meaning, like Makefiles.
+<li id="indentation-no-tabs"> Use spaces, not tabs. Tabs should only appear in files that require them for semantic meaning, like Makefiles.
 </li>
-<li> The indent size is 4 spaces.
+<li id="indentation-4-spaces"> The indent size is 4 spaces.
 <h4 class="right">Right:</h4>
 <pre class="code">
 int main()
@@ -45,7 +45,7 @@ int main()
 }
 </pre>
 </li>
-<li>The contents of an outermost <code>namespace</code> block (and any nested namespaces with the same scope)
+<li id="indentation-namespace">The contents of an outermost <code>namespace</code> block (and any nested namespaces with the same scope)
 should not be indented. The contents of other nested namespaces should be indented.
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -102,7 +102,7 @@ namespace WebCore {
 </pre>
 </li>
 
-<li>A case label should line up with its switch statement.  The case statement is indented.
+<li id="indentation-case-label">A case label should line up with its switch statement.  The case statement is indented.
 <h4 class="right">Right:</h4>
 <pre class="code">
 switch (condition) {
@@ -128,7 +128,7 @@ switch (condition) {
 </pre>
 </li>
 
-<li>Boolean expressions at the same nesting level that span multiple lines should
+<li id="indentation-wrap-bool-op">Boolean expressions at the same nesting level that span multiple lines should
 have their operators on the left side of the line instead of the right side.
 
 <h4 class="right">Right:</h4>
@@ -150,9 +150,9 @@ if (attr->name() == srcAttr ||
 
 </ol>
 
-<h3>Spacing</h3>
+<h3 id="spacing">Spacing</h3>
 <ol>
-<li>Do not place spaces around unary operators.
+<li id="spacing-unary-op">Do not place spaces around unary operators.
 <h4 class="right">Right:</h4>
 <pre class="code">
 i++;
@@ -164,7 +164,7 @@ i ++;
 </pre>
 </li>
 
-<li><em>Do</em> place spaces around binary and ternary operators.
+<li id="spacing-binary-ternary-op"><em>Do</em> place spaces around binary and ternary operators.
 <h4 class="right">Right:</h4>
 <pre class="code">
 y = m * x + b;
@@ -182,7 +182,7 @@ return condition ? 1:0;
 </pre>
 </li>
 
-<li>Do not place spaces before comma and semicolon.
+<li id="spacing-comma-semicolon">Do not place spaces before comma and semicolon.
 <h4 class="right">Right:</h4>
 <pre class="code">
 for (int i = 0; i &lt; 10; ++i)
@@ -200,7 +200,7 @@ f(a , b) ;
 </pre>
 </li>
 
-<li>Place spaces between control statements and their parentheses.
+<li id="spacing-control-paren">Place spaces between control statements and their parentheses.
 <h4 class="right">Right:</h4>
 <pre class="code">
 if (condition)
@@ -214,7 +214,7 @@ if(condition)
 </pre>
 </li>
 
-<li>Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
+<li id="spacing-function-paren">Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
 <h4 class="right">Right:</h4>
 <pre class="code">
 f(a, b);
@@ -228,9 +228,9 @@ f( a, b );
 </li>
 </ol>
 
-<h3>Line breaking</h3>
+<h3 id="linebreaking">Line breaking</h3>
 <ol>
-<li>Each statement should get its own line.
+<li id="linebreaking-multiple-statements">Each statement should get its own line.
 <h4 class="right">Right:</h4>
 <pre class="code">
 x++;
@@ -246,7 +246,7 @@ if (condition) doIt();
 </pre>
 </li>
 
-<li>An <code>else</code> statement should go on the same line as a preceding close brace if one is present,
+<li id="linebreaking-else-braces">An <code>else</code> statement should go on the same line as a preceding close brace if one is present,
 else it should line up with the <code>if</code> statement.
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -285,7 +285,7 @@ if (condition) doSomething(); else {
 </pre>
 </li>
 
-<li>An <code>else if</code> statement should be written as an <code>if</code> statement when the prior <code>if</code> concludes with a <code>return</code> statement.
+<li id="linebreaking-else-if">An <code>else if</code> statement should be written as an <code>if</code> statement when the prior <code>if</code> concludes with a <code>return</code> statement.
 <h4 class="right">Right:</h4>
 <pre class="code">
 if (condition) {
@@ -309,9 +309,9 @@ if (condition) {
 </li>
 </ol>
 
-<h3>Braces</h3>
+<h3 id="braces">Braces</h3>
 <ol>
-<li> Function definitions: place each brace on its own line.
+<li id="braces-function"> Function definitions: place each brace on its own line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -328,7 +328,7 @@ int main() {
 }
 </pre>
 </li>
-<li> Other braces: place the open brace on the line preceding the code block; place the close brace on its own line.
+<li id="braces-blocks"> Other braces: place the open brace on the line preceding the code block; place the close brace on its own line.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -352,7 +352,7 @@ class MyClass
     ...
 };
 </pre>
-<li>One-line control clauses should not use braces unless comments are included
+<li id="braces-one-line">One-line control clauses should not use braces unless comments are included
 or a single statement spans multiple lines.
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -386,7 +386,7 @@ if (condition)
 </pre>
 </li>
 
-<li>Control clauses without a body should use empty braces:
+<li id="braces-empty-block">Control clauses without a body should use empty braces:
 <h4 class="right">Right:</h4>
 <pre class="code">
 for ( ; current; current = current->next) { }
@@ -399,11 +399,13 @@ for ( ; current; current = current->next);
 </li>
 </ol>
 
-<h3>Null, false and 0</h3>
+<h3 id="zero">Null, false and 0</h3>
 <ol>
-<li>In C++, the null pointer value should be written as <code>0</code>. In C, it should be written as <code>NULL</code>. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use <code>nil</code> to represent a null Objective-C object.</li>
-<li>C++ and C <code>bool</code> values should be written as <code>true</code> and <code>false</code>. Objective-C <code>BOOL</code> values should be written as <code>YES</code> and <code>NO</code>.</li>
-<li>Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.<br>
+<li id="zero-null">In C++, the null pointer value should be written as <code>0</code>. In C, it should be written as <code>NULL</code>. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use <code>nil</code> to represent a null Objective-C object.</li>
+
+<li id="zero-bool">C++ and C <code>bool</code> values should be written as <code>true</code> and <code>false</code>. Objective-C <code>BOOL</code> values should be written as <code>YES</code> and <code>NO</code>.</li>
+
+<li id="zero-comparison">Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.<br>
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -429,12 +431,13 @@ if (count == 0)
     return;
 </pre>
 </li>
-<li>In Objective-C, instance variables are initialized to zero automatically. Don't add explicit initializations to nil or NO in an init method.</li>
+
+<li id="zero-objc-variables">In Objective-C, instance variables are initialized to zero automatically. Don't add explicit initializations to nil or NO in an init method.</li>
 </ol>
 
-<h3>Floating point literals</h3>
+<h3 id="float">Floating point literals</h3>
 <ol>
-<li>Unless required in order to force floating point math, do not append
+<li id="float-suffixes">Unless required in order to force floating point math, do not append
 <code>.0</code>, <code>.f</code> and <code>.0f</code> to floating point
 literals.
 
@@ -470,9 +473,9 @@ double frameDuration = 1 / framesPerSecond; // integer division
 </li>
 </ol>
 
-<h3>Names</h3>
+<h3 id="names">Names</h3>
 <ol>
-<li>Use CamelCase. Capitalize the first letter, including all letters in an acronym, in a class, struct, protocol, or namespace name. Lower-case the first letter, including all letters in an acronym, in a variable or function name.
+<li id="names-basic">Use CamelCase. Capitalize the first letter, including all letters in an acronym, in a class, struct, protocol, or namespace name. Lower-case the first letter, including all letters in an acronym, in a variable or function name.
 <h4 class="right">Right:</h4>
 <pre class="code">
 struct Data;
@@ -490,7 +493,7 @@ String MIMEType();
 </pre>
 </li>
 
-<li>Use full words, except in the rare case where an abbreviation would be more canonical and easier to understand.
+<li id="names-full-words">Use full words, except in the rare case where an abbreviation would be more canonical and easier to understand.
 <h4 class="right">Right:</h4>
 <pre class="code">
 size_t characterSize;
@@ -506,7 +509,7 @@ short tabulationIndex; // bizarre
 </pre>
 </li>
 
-<li>Data members in C++ classes should be private.  Static data members should be prefixed by "s_".  Other data members should be prefixed by "m_".
+<li id="names-data-members">Data members in C++ classes should be private.  Static data members should be prefixed by "s_".  Other data members should be prefixed by "m_".
 <h4 class="right">Right:</h4>
 <pre class="code">
 class String {
@@ -529,7 +532,7 @@ public:
 </pre>
 </li>
 
-<li>Prefix Objective-C instance variables with "_".
+<li id="names-objc-instance-variables">Prefix Objective-C instance variables with "_".
 <h4 class="right">Right:</h4>
 <pre class="code">
 @class String
@@ -547,7 +550,7 @@ public:
 </pre>
 </li>
 
-<li>Precede boolean values with words like "is" and "did".
+<li id="names-bool">Precede boolean values with words like "is" and "did".
 <h4 class="right">Right:</h4>
 <pre class="code">
 bool isValid;
@@ -561,7 +564,7 @@ bool sentData;
 </pre>
 </li>
 
-<li>Precede setters with the word "set". Use bare words for getters. Setter and getter names should match the names of the variables being set/gotten.
+<li id="names-setter-getter">Precede setters with the word "set". Use bare words for getters. Setter and getter names should match the names of the variables being set/gotten.
 <h4 class="right">Right:</h4>
 <pre class="code">
 void setCount(size_t); // sets m_count
@@ -575,7 +578,7 @@ size_t getCount();
 </pre>
 </li>
 
-<li>Precede getters that return values through out arguments with the word "get".</li>
+<li id="names-out-argument">Precede getters that return values through out arguments with the word "get".
 <h4 class="right">Right:</h4>
 <pre class="code">
 void getInlineBoxAndOffset(InlineBox*&amp;, int&amp; caretOffset) const;
@@ -585,8 +588,9 @@ void getInlineBoxAndOffset(InlineBox*&amp;, int&amp; caretOffset) const;
 <pre class="code">
 void inlineBoxAndOffset(InlineBox*&amp;, int&amp; caretOffset) const;
 </pre>
+</li>
 
-<li>Use descriptive verbs in function names.
+<li id="names-verb">Use descriptive verbs in function names.
 <h4 class="right">Right:</h4>
 <pre class="code">
 bool convertToASCII(short*, size_t);
@@ -598,7 +602,7 @@ bool toASCII(short*, size_t);
 </pre>
 </li>
 
-<li>Leave meaningless variable names out of function declarations. A good rule of thumb is if the parameter type name contains the parameter name (without trailing numbers or pluralization), then the parameter name isn't needed.  Usually, there should be a parameter name for bools, strings, and numerical types.
+<li id="names-variable-name-in-function-decl">Leave meaningless variable names out of function declarations. A good rule of thumb is if the parameter type name contains the parameter name (without trailing numbers or pluralization), then the parameter name isn't needed.  Usually, there should be a parameter name for bools, strings, and numerical types.
 <h4 class="right">Right:</h4>
 <pre class="code">
 void setCount(size_t);
@@ -614,7 +618,7 @@ void doSomething(ScriptExecutionContext* context);
 </pre>
 </li>
 
-<li>Prefer enums to bools on function parameters if callers are likely to be
+<li id="names-enum-to-bool">Prefer enums to bools on function parameters if callers are likely to be
 passing constants, since named constants are easier to read at the call
 site.  An exception to this rule is a setter function, where the name of the
 function already makes clear what the boolean is.
@@ -632,13 +636,17 @@ setResizable(NotResizable);
 </pre>
 </li>
 
-<li>Objective-C method names should follow the Cocoa naming guidelines &mdash;
+<li id="names-objc-methods">Objective-C method names should follow the Cocoa naming guidelines &mdash;
 they should read like a phrase and each piece of the selector should 
 start with a lowercase letter and use intercaps.</li>
-<li>Enum members should user InterCaps with an initial capital letter.</li>
-<li>Prefer const to #define. Prefer inline functions to macros.</li>
-<li>#defined constants should use all uppercase names with words separated by underscores.</li>
-<li> Macros that expand to function calls or other non-constant computation: these 
+
+<li id="names-enum-members">Enum members should user InterCaps with an initial capital letter.</li>
+
+<li id="names-const-to-define">Prefer const to #define. Prefer inline functions to macros.</li>
+
+<li id="names-define-constants">#defined constants should use all uppercase names with words separated by underscores.</li>
+
+<li id="names-define-non-const"> Macros that expand to function calls or other non-constant computation: these
 should be named like functions, and should have parentheses at the end, even if 
 they take no arguments (with the exception of some special macros like ASSERT). 
 Note that usually it is preferable to use an inline function in such cases instead of a macro.<br>
@@ -658,7 +666,8 @@ Note that usually it is preferable to use an inline function in such cases inste
         NSLocalizedString(@"Stop", @"Stop button title")
 </pre>
 </li>
-<li>#define, #ifdef "header guards" should be named exactly the same as the file (including case), replacing the '.' with a '_'.
+
+<li id="names-header-guards">#define, #ifdef "header guards" should be named exactly the same as the file (including case), replacing the '.' with a '_'.
 <h4 class="right">Right:</h4>
 <pre class="code">
 // HTMLDocument.h
@@ -675,11 +684,11 @@ Note that usually it is preferable to use an inline function in such cases inste
 </li>
 </ol>
 
-<h3>Other Punctuation</h3>
+<h3 id="punctuation">Other Punctuation</h3>
 
 <ol>
 
-<li>Constructors for C++ classes should initialize all of their members using C++ 
+<li id="punctuation-member-init">Constructors for C++ classes should initialize all of their members using C++ 
 initializer syntax.  Each member (and superclass) should be indented on a separate 
 line, with the colon or comma preceding the member on that line.
 
@@ -709,7 +718,7 @@ MyClass::MyClass(Document* doc) : MySuperClass()
 MyOtherClass::MyOtherClass() : MySuperClass() {}
 </pre>
 
-<li>Prefer index over iterator in Vector iterations for a terse, easier-to-read code.
+<li id="punctuation-vector-index">Prefer index over iterator in Vector iterations for a terse, easier-to-read code.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -726,14 +735,14 @@ for (Vector&lt;RefPtr&lt;FrameView&gt; &gt;::iterator it = frameViews.begin(); i
 </pre>
 </ol>
 
-<h3>Pointers and References</h3>
+<h3 id="pointers">Pointers and References</h3>
 
 <ol>
 
-<li>Pointer types in non-C++ code &mdash; Pointer types should be written with a space between the
+<li id="pointers-non-cpp">Pointer types in non-C++ code &mdash; Pointer types should be written with a space between the
 type and the * (so the * is adjacent to the following identifier if any).
 
-<li>Pointer and reference types in C++ code &mdash; Both pointer types and reference types
+<li id="pointers-cpp">Pointer and reference types in C++ code &mdash; Both pointer types and reference types
 should be written with no space between the type name and the * or &amp;.
 
 <h4 class="right">Right:</h4>
@@ -752,7 +761,7 @@ Image *SVGStyledElement::doSomething(PaintInfo &amp;paintInfo)
     const KCDashArray &amp;dashes = dashArray();
 </pre>
 
-<li>An out argument of a function should be passed by reference except rare cases where
+<li id="pointers-out-argument">An out argument of a function should be passed by reference except rare cases where
 it is optional in which case it should be passed by pointer.
 
 <h4 class="right">Right:</h4>
@@ -780,11 +789,11 @@ void MyClass::getSomeValue(OutArgumentType* outArgument) const
 
 </ol>
 
-<h3>#include Statements</h3>
+<h3 id="include">#include Statements</h3>
 
 <ol>
 
-<li>All implementation files must #include "config.h" first. Header
+<li id="include-config-h">All implementation files must #include "config.h" first. Header
 files should never include "config.h".
 
 <h4 class="right">Right:</h4>
@@ -805,13 +814,13 @@ files should never include "config.h".
 #include "Node.h"
 </pre>
 
-<li>All implementation files must #include the primary header second,
+<li id="include-primary">All implementation files must #include the primary header second,
 just after "config.h". So for example, Node.cpp should include Node.h first,
 before other files. This guarantees that each header's completeness is tested.
 This also assures that each header can be compiled without requiring any other
 header files be included first.
 
-<li>Other #include statements should be in sorted order (case sensitive, as
+<li id="include-others">Other #include statements should be in sorted order (case sensitive, as
 done by the command-line sort tool or the Xcode sort selection command).
 Don't bother to organize them in a logical order.
 
@@ -836,7 +845,7 @@ Don't bother to organize them in a logical order.
 #include "Attribute.h"
 </pre>
 
-<li>Includes of system headers must come after includes of other headers.
+<li id="include-system">Includes of system headers must come after includes of other headers.
 
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -864,11 +873,11 @@ Don't bother to organize them in a logical order.
 </li>
 </ol>
 
-<h3>"using" Statements</h3>
+<h3 id="using">"using" Statements</h3>
 
 <ol>
 
-<li>In header files, do not use "using" statements in namespace
+<li id="using-in-headers">In header files, do not use "using" statements in namespace
 (or global) scope.
 
 <h4 class="right">Right:</h4>
@@ -900,7 +909,7 @@ class VectorBuffer {
 </pre>
 </li>
 
-<li>In header files in the WTF sub-library, however, it is acceptable
+<li id="using-wtf">In header files in the WTF sub-library, however, it is acceptable
 to use "using" declarations at the end of the file to import one
 or more names in the WTF namespace into the global scope.
 
@@ -936,7 +945,7 @@ using WTF::PlacementNewAdopt;
 </pre>
 </li>
 
-<li>In C++ implementation files, do not use statements of the form
+<li id="using-in-cpp">In C++ implementation files, do not use statements of the form
 "using std::foo" to import names in the standard template library.
 Use "using namespace std" instead.
 
@@ -963,7 +972,7 @@ namespace WebCore {
 </pre>
 </li>
 
-<li>In implementation files, if a "using namespace" statement is
+<li id="using-nested-namespaces">In implementation files, if a "using namespace" statement is
 for a nested namespace whose parent namespace is defined in the file,
 put the statement inside that namespace definition.
 
@@ -990,7 +999,7 @@ namespace WebCore {
 </pre>
 </li>
 
-<li>In implementation files, put all other "using" statements
+<li id="using-position">In implementation files, put all other "using" statements
 at the beginning of the file, before any namespace definitions and
 after any "include" statements.
 
@@ -1019,10 +1028,10 @@ using namespace std;
 
 </ol>
 
-<h3>Classes</h3>
+<h3 id="classes">Classes</h3>
 
 <ol>
-<li>
+<li id="classes-explicit">
 Use a constructor to do an implicit conversion when the argument is reasonably thought of as a type conversion and the type conversion is fast. Otherwise, use the explicit keyword or a function returning the type. This only applies to single argument constructors.
 <h4 class="right">Right:</h4>
 <pre class="code">
@@ -1051,9 +1060,9 @@ public:
 </li>
 </ol>
 
-<h3>Comments</h3>
+<h3 id="comments">Comments</h3>
 <ol>
-<li>Use only <i>one</i> space before end of line comments and in between sentences in comments.
+<li id="comments-eol">Use only <i>one</i> space before end of line comments and in between sentences in comments.
 <h4 class="right">Right:</h4>
 <pre class="code">
 f(a, b); // This explains why the function call was done. This is another sentence.
@@ -1066,13 +1075,12 @@ double f; // This is another comment.  There are two spaces before this sentence
 </pre>
 </li>
 
-<li>
+<li id="comments-sentences">
 Make comments look like sentences by starting with a capital letter and ending with a period (punctation). One exception may be end of line comments like this "if (x == y) // false for NaN".
 </li>
 
-<li>
+<li id="comments-fixme">
 Use FIXME: (without attribution) to denote items that need to be addressed in the future.
-</li>
 <h4 class="right">Right:</h4>
 <pre class="code">
 drawJpg(); // FIXME: Make this code handle jpg in addition to the png support.
@@ -1086,6 +1094,27 @@ drawJpg(); // FIXME(joe): Make this code handle jpg in addition to the png suppo
 drawJpg(); // TODO: Make this code handle jpg in addition to the png support.
 </pre>
 </ol>
+</li>
+
+<script>
+(function() {
+    var listItems = document.getElementsByTagName('li');
+    var idsUsed = {};
+    for (var i = 0; i < listItems.length; ++i) {
+        var item = listItems[i];
+        if (!item.id)
+            continue;
+        item.setAttribute('title', '#' + listItems[i].id);
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', function(event) {
+            window.location.hash = event.currentTarget.title;
+        });
+        if (idsUsed[item.id])
+            alert('The id ' + item.id + ' is used more than once in this document.');
+        idsUsed[item.id] = 1;
+    }
+})();
+</script>
 
 <?php
     include("../footer.inc");
