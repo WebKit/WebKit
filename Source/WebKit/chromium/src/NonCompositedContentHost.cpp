@@ -45,6 +45,7 @@ NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPain
 #endif
     m_graphicsLayer->setDrawsContent(true);
     m_graphicsLayer->platformLayer()->setIsNonCompositedContent(true);
+    m_graphicsLayer->platformLayer()->setBackgroundCoversViewport(true);
     m_graphicsLayer->platformLayer()->setOpaque(true);
 }
 

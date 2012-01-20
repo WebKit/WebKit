@@ -112,6 +112,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDebugBorderWidth(arbitraryNumber));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDrawsContent(true));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundColor(Color::gray));
+    EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundCoversViewport(true));
 
     // Special case: check that sublayer transform changes all layer's descendants, but not the layer itself.
     root->resetAllChangeTrackingForSubtree();

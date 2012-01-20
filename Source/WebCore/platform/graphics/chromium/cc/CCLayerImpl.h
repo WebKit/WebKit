@@ -97,6 +97,9 @@ public:
     void setBackgroundColor(const Color&);
     Color backgroundColor() const { return m_backgroundColor; }
 
+    void setBackgroundCoversViewport(bool);
+    bool backgroundCoversViewport() const { return m_backgroundCoversViewport; }
+
     void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
@@ -204,6 +207,8 @@ protected:
     // Transformation used to transform quads provided in appendQuads.
     virtual TransformationMatrix quadTransform() const;
 
+    void appendGutterQuads(CCQuadList&, const CCSharedQuadState*);
+
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
     friend class TreeSynchronizer;
@@ -233,6 +238,7 @@ private:
     IntPoint m_scrollPosition;
     bool m_scrollable;
     Color m_backgroundColor;
+    bool m_backgroundCoversViewport;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;

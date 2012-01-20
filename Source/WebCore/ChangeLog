@@ -1,3 +1,32 @@
+2012-01-19  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Draw gutter quads outside root content layer
+        https://bugs.webkit.org/show_bug.cgi?id=76328
+
+        Reviewed by James Robinson.
+
+        Add new layer property "backgroundCoversViewport".  If the content
+        layers don't fully cover the render surface, this code calculates the
+        difference between the root clip rect and the root content layer and
+        draws up to four background-color quads in exactly the area that would
+        be undrawn.
+
+        Test: CCTiledLayerImplTest::backgroundCoversViewport
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setBackgroundCoversViewport):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::backgroundCoversViewport):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::setBackgroundCoversViewport):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::backgroundCoversViewport):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2012-01-19  Cary Clark  <caryclark@google.com>
 
         [Skia Mac] Match style of platform error underline for misspellings

@@ -61,6 +61,7 @@ LayerChromium::LayerChromium()
     , m_scrollable(false)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
+    , m_backgroundCoversViewport(false)
     , m_debugBorderWidth(0)
     , m_opacity(1.0)
     , m_anchorPointZ(0)
@@ -284,6 +285,14 @@ void LayerChromium::setBackgroundColor(const Color& backgroundColor)
     setNeedsCommit();
 }
 
+void LayerChromium::setBackgroundCoversViewport(bool backgroundCoversViewport)
+{
+    if (m_backgroundCoversViewport == backgroundCoversViewport)
+        return;
+    m_backgroundCoversViewport = backgroundCoversViewport;
+    setNeedsCommit();
+}
+
 void LayerChromium::setMasksToBounds(bool masksToBounds)
 {
     if (m_masksToBounds == masksToBounds)
@@ -415,6 +424,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setAnchorPoint(m_anchorPoint);
     layer->setAnchorPointZ(m_anchorPointZ);
     layer->setBackgroundColor(m_backgroundColor);
+    layer->setBackgroundCoversViewport(m_backgroundCoversViewport);
     layer->setBounds(m_bounds);
     layer->setContentBounds(contentBounds());
     layer->setDebugBorderColor(m_debugBorderColor);

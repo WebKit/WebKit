@@ -1,3 +1,26 @@
+2012-01-19  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Draw gutter quads outside root content layer
+        https://bugs.webkit.org/show_bug.cgi?id=76328
+
+        Reviewed by James Robinson.
+
+        Add new layer property "backgroundCoversViewport".  If the content
+        layers don't fully cover the render surface, this code calculates the
+        difference between the root clip rect and the root content layer and
+        draws up to four background-color quads in exactly the area that would
+        be undrawn.
+
+        Test: CCTiledLayerImplTest::backgroundCoversViewport
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/LayerChromiumTest.cpp:
+
 2012-01-19  Greg Billock  <gbillock@google.com>
 
         Web Intents chromium API modifications to track IntentRequest invocation method

@@ -252,5 +252,73 @@ TEST(CCTiledLayerImplTest, textureInfoForLayerNoBorders)
     }
 }
 
+TEST(CCTiledLayerImplTest, backgroundCoversViewport)
+{
+    DebugScopedSetImplThread scopedImplThread;
+
+    const IntSize tileSize(10, 10);
+    const int numTilesX = 2;
+    const int numTilesY = 2;
+    const unsigned numTiles = numTilesX * numTilesY;
+    const IntSize layerSize(tileSize.width() * numTilesX, tileSize.height() * numTilesY);
+    RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+    layer->setBackgroundColor(Color::gray);
+    layer->setBackgroundCoversViewport(true);
+
+    // No gutter rects
+    {
+        IntRect clipRect = IntRect(IntPoint(), layerSize);
+        layer->setClipRect(clipRect);
+        layer->setVisibleLayerRect(IntRect(IntPoint(), layerSize));
+
+        OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+
+        CCQuadList quads;
+        layer->appendQuads(quads, sharedQuadState.get());
+        EXPECT_EQ(quads.size(), numTiles);
+
+        for (size_t i = 0; i < quads.size(); ++i)
+            EXPECT_EQ(quads[i]->material(), CCDrawQuad::TiledContent);
+    }
+
+    // Empty visible content area (fullscreen gutter rect)
+    {
+        IntRect clipRect = IntRect(100, 100, 100, 100);
+        layer->setClipRect(clipRect);
+        layer->setVisibleLayerRect(IntRect());
+
+        OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+        CCQuadList quads;
+        layer->appendQuads(quads, sharedQuadState.get());
+
+        for (size_t i = 0; i < quads.size(); ++i)
+            EXPECT_EQ(quads[i]->material(), CCDrawQuad::SolidColor);
+
+        verifyQuadsExactlyCoverRect(quads, clipRect);
+    }
+
+    // Content area in middle of clip rect (four surrounding gutter rects)
+    {
+        IntRect clipRect = IntRect(-50, -50, 100, 100);
+        layer->setClipRect(clipRect);
+        layer->setVisibleLayerRect(IntRect(IntPoint(), layerSize));
+
+        OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+        CCQuadList quads;
+        layer->appendQuads(quads, sharedQuadState.get());
+
+        unsigned numContentTiles = 0, numGutterTiles = 0;
+        for (size_t i = 0; i < quads.size(); ++i) {
+            if (quads[i]->material() == CCDrawQuad::TiledContent)
+                numContentTiles++;
+            else if (quads[i]->material() == CCDrawQuad::SolidColor)
+                numGutterTiles++;
+        }
+        EXPECT_EQ(numContentTiles, numTiles);
+        EXPECT_GE(numGutterTiles, 4u);
+
+        verifyQuadsExactlyCoverRect(quads, clipRect);
+    }
+}
 
 } // namespace
