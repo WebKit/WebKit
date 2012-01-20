@@ -1,3 +1,21 @@
+2012-01-19  Cary Clark  <caryclark@google.com>
+
+        [Skia Mac] Match style of platform error underline for misspellings
+        https://bugs.webkit.org/show_bug.cgi?id=76556
+
+        Reviewed by Stephen White.
+
+        Add Darwin-specific code in Skia to draw the error underline so that
+        it matches the CoreGraphics style.
+
+        Many existing layout tests inadvertantly trigger the misspelling
+        underline by including the word 'foo' in an editable field. Those
+        tests are temporarily suppressed separately in an edit to
+        test_expectations.txt.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+
 2012-01-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] TextureMapper creates two many big intermediate surfaces

@@ -656,17 +656,40 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& pt, float width,
     // Create the pattern we'll use to draw the underline.
     static SkBitmap* misspellBitmap = 0;
     if (!misspellBitmap) {
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        // Match the artwork used by the Mac.
+        const int rowPixels = 4;
+        const int colPixels = 3;
+#else
         // We use a 2-pixel-high misspelling indicator because that seems to be
         // what WebKit is designed for, and how much room there is in a typical
         // page for it.
         const int rowPixels = 32;  // Must be multiple of 4 for pattern below.
         const int colPixels = 2;
+#endif
         misspellBitmap = new SkBitmap;
         misspellBitmap->setConfig(SkBitmap::kARGB_8888_Config,
                                    rowPixels, colPixels);
         misspellBitmap->allocPixels();
 
         misspellBitmap->eraseARGB(0, 0, 0, 0);
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        const uint32_t colors[] = { 0x2A2A0600, 0x57571000, // left half of 4x3
+                                    0xA8A81B00, 0xBFBF1F00,
+                                    0x70701200, 0xE0E02400 };
+        const uint32_t transparentColor = 0x00000000;
+
+        // Pattern: a b a   a b a
+        //          c d c   c d c
+        //          e f e   e f e
+        for (int x = 0; x < colPixels; ++x) {
+            uint32_t* row = misspellBitmap->getAddr32(0, x);
+            row[0] = colors[x * 2];
+            row[1] = colors[x * 2 + 1];
+            row[2] = colors[x * 2];
+            row[3] = transparentColor;
+        }
+#else
         const uint32_t lineColor = 0xFFFF0000;  // Opaque red.
         const uint32_t antiColor = 0x60600000;  // Semitransparent red.
 
@@ -692,11 +715,16 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& pt, float width,
                 break;
             }
         }
+#endif
     }
 
-    // Offset it vertically by 1 so that there's some space under the text.
     SkScalar originX = WebCoreFloatToSkScalar(pt.x());
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    SkScalar originY = WebCoreFloatToSkScalar(pt.y());
+#else
+    // Offset it vertically by 1 so that there's some space under the text.
     SkScalar originY = WebCoreFloatToSkScalar(pt.y()) + 1;
+#endif
 
     // Make a shader for the bitmap with an origin of the box we'll draw. This
     // shader is refcounted and will have an initial refcount of 1.
