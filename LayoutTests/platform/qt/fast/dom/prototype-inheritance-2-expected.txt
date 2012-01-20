@@ -240,6 +240,7 @@ Never found Clipboard
 Never found DOMParser
 Never found DOMSettableTokenList
 Never found DOMStringList
+Never found DOMURL
 Never found Document
 Never found DocumentFragment
 Never found DocumentType

@@ -315,6 +315,7 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
+FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object DOMURLConstructor].
 PASS successfullyParsed is true
 
 TEST COMPLETE
