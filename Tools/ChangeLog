@@ -1,5 +1,13 @@
 2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed build fix. Wrong variable being used as the cwd for git
+        remote update command.
+
+        * gtk/run-with-jhbuild:
+        (update_jhbuild):
+
+2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] ensure the jhbuild used by webkit is as up-to-date as needed
         https://bugs.webkit.org/show_bug.cgi?id=76585
 

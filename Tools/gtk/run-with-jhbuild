@@ -49,7 +49,7 @@ def jhbuild_at_expected_revision():
 
 
 def update_jhbuild():
-    process = subprocess.Popen(['git', 'remote', 'update', 'origin'], cwd=source_path)
+    process = subprocess.Popen(['git', 'remote', 'update', 'origin'], cwd=jhbuild_source_path)
     process.wait()
     if process.returncode != 0:
         raise Exception('jhbuild remote update origin failed with return code: %i' % process.returncode)
