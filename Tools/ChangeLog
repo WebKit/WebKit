@@ -1,3 +1,13 @@
+2012-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] DumpRenderTree converts "file:///" to a path differently
+        https://bugs.webkit.org/show_bug.cgi?id=76653
+
+        Reviewed by John Sullivan.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: (WTR::lastFileURLPathComponent):
+        Do print a slash if there are no path components.
+
 2012-01-19  Eric Seidel  <eric@webkit.org>
 
         webkit-patch cannot rollout patches without changelog/bug number

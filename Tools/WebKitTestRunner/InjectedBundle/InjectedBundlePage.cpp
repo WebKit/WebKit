@@ -838,7 +838,7 @@ static string lastFileURLPathComponent(const string& path)
     ASSERT(string::npos != pos);
 
     string tmpPath = path.substr(pos + 7);
-    if (tmpPath.empty())
+    if (tmpPath.length() < 2) // Keep the lone slash to avoid empty output.
         return tmpPath;
 
     // Remove the trailing delimiter
