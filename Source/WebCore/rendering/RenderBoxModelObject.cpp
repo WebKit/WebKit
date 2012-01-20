@@ -1123,11 +1123,10 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size());
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    IntSize containerSize = imageSize.isEmpty() ? borderImageRect.size() : imageSize;
-    styleImage->setContainerSizeForRenderer(this, containerSize, style->effectiveZoom());
+    styleImage->setContainerSizeForRenderer(this, imageSize, style->effectiveZoom());
 
-    int imageWidth = imageSize.width();
-    int imageHeight = imageSize.height();
+    int imageWidth = imageSize.width() / style->effectiveZoom();
+    int imageHeight = imageSize.height() / style->effectiveZoom();
 
     int topSlice = min<int>(imageHeight, ninePieceImage.imageSlices().top().calcValue(imageHeight));
     int rightSlice = min<int>(imageWidth, ninePieceImage.imageSlices().right().calcValue(imageWidth));

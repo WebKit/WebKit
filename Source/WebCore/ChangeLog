@@ -1,3 +1,18 @@
+2012-01-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION (r98852): apple.com navigation bar is broken under full-page zoom
+        https://bugs.webkit.org/show_bug.cgi?id=76249
+
+        Reviewed by Andreas Kling.
+
+        Fix regression with full-page zoom & border-image. paintNinePieceImage() expects local, unzoomed coordinates.
+        Restore the behaviour as it was before r98852, fixing the regression.
+
+        Test: fast/borders/scaled-border-image.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
 2012-01-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegion]Expose DOM interface for WebKitCSSRegionRule
