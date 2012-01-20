@@ -331,8 +331,9 @@ public:
 
     // Notifies the WebView that a load has been committed. isNewNavigation
     // will be true if a new session history item should be created for that
-    // load.
-    void didCommitLoad(bool* isNewNavigation);
+    // load. isNavigationWithinPage will be true if the navigation does
+    // not take the user away from the current page.
+    void didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPage);
 
     // Indicates two things:
     //   1) This view may have a new layout now.

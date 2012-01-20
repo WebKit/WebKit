@@ -2649,7 +2649,7 @@ void WebView::removeAllUserContent()
     pageGroup->removeAllUserContent();
 }
 
-void WebViewImpl::didCommitLoad(bool* isNewNavigation)
+void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPage)
 {
     if (isNewNavigation)
         *isNewNavigation = m_observedNewNavigation;
@@ -2660,6 +2660,8 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation)
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
+    if (!isNavigationWithinPage)
+        m_pageScaleFactorIsSet = false;
 }
 
 void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
@@ -2742,9 +2744,6 @@ void WebViewImpl::startDragging(const WebDragData& dragData,
 void WebViewImpl::observeNewNavigation()
 {
     m_observedNewNavigation = true;
-    // FIXME: We need to make sure that m_pageScaleFactorIsSet is not reset
-    // on same page navigations.
-    m_pageScaleFactorIsSet = false;
 #ifndef NDEBUG
     m_newNavigationLoader = m_page->mainFrame()->loader()->documentLoader();
 #endif

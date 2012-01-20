@@ -693,7 +693,7 @@ void FrameLoaderClientImpl::dispatchDidNavigateWithinPage()
     }
 
     bool isNewNavigation;
-    webView->didCommitLoad(&isNewNavigation);
+    webView->didCommitLoad(&isNewNavigation, true);
     if (m_webFrame->client())
         m_webFrame->client()->didNavigateWithinPage(m_webFrame, isNewNavigation);
 
@@ -805,7 +805,7 @@ void FrameLoaderClientImpl::dispatchDidCommitLoad()
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     bool isNewNavigation;
-    webview->didCommitLoad(&isNewNavigation);
+    webview->didCommitLoad(&isNewNavigation, false);
 
     if (m_webFrame->client())
         m_webFrame->client()->didCommitProvisionalLoad(m_webFrame, isNewNavigation);

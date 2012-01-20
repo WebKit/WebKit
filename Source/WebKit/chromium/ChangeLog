@@ -1,3 +1,25 @@
+2012-01-20  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Do not recompute viewport on same page navigation
+        https://bugs.webkit.org/show_bug.cgi?id=75576
+
+        Reviewed by Darin Fisher.
+
+        Added parameter isNavigationWithinPage to WebViewImpl::didCommitLoad
+        that indicates whether a same-page navigation has just occurred.
+
+        The page scale factor flag is reset only on navigation to a new page.
+        If the flag is not set, viewport and page scale will be recomputed on
+        layoutUpdated.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidNavigateWithinPage):
+        (WebKit::FrameLoaderClientImpl::dispatchDidCommitLoad):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::didCommitLoad):
+        (WebKit::WebViewImpl::observeNewNavigation):
+        * src/WebViewImpl.h:
+
 2012-01-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [chromium] add WebDevToolsFrontendClient::openInNewTab for upcoming WebCore change.
