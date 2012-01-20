@@ -53,7 +53,7 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        JS_EXPORT_PRIVATE int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
+        JS_EXPORT_PRIVATE int match(JSGlobalData&, const UString&, unsigned startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
         bool hasCode()

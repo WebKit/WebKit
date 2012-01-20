@@ -2477,6 +2477,14 @@ public:
     {
         generateEnter();
 
+        Jump hasInput = checkInput();
+        move(TrustedImm32(-1), returnRegister);
+        generateReturn();
+        hasInput.link(this);
+
+        for (unsigned i = 0; i < m_pattern.m_numSubpatterns + 1; ++i)
+            store32(TrustedImm32(-1), Address(output, (i << 1) * sizeof(int)));
+
         if (!m_pattern.m_body->m_hasFixedSize)
             store32(index, Address(output));
 

@@ -243,7 +243,7 @@ EXPORTS
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?lockCount@JSLock@JSC@@SAHXZ
-    ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVUString@2@HPAV?$Vector@H$0CA@@WTF@@@Z
+    ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVUString@2@IPAV?$Vector@H$0CA@@WTF@@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monotonicallyIncreasingTime@WTF@@YANXZ
     ?monthFromDayInYear@WTF@@YAHH_N@Z

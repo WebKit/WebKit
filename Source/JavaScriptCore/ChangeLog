@@ -1,3 +1,39 @@
+2012-01-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some regexp entry boilerplate code
+        https://bugs.webkit.org/show_bug.cgi?id=76687
+
+        Reviewed by Darin Adler.
+        
+        1% - 2% speedup on regexp tests, no change overall.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+            - ASSERT that our startIndex is non-negative, because anything less
+            would be uncivilized.
+            
+            - ASSERT that our input is not the null string for the same reason.
+
+            - No need to test for startOffset being past the end of the string,
+            since the regular expression engine will do this test for us.
+
+            - No need to initialize the output vector, since the regular expression
+            engine will fill it in for us.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::interpret):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+        
+            RegExp used to do these jobs for us, but now we do them for ourselves
+            because it's a better separation of concerns, and the JIT can do them
+            more efficiently than C++ code:
+
+            - Test for "past the end" before doing any matching -- otherwise
+            a* will match with zero length past the end of the string, which is wrong.
+
+            - Initialize the output vector before doing any matching.
+
 2012-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         Build fix for no-DFG configuration.
