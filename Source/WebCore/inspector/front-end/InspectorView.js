@@ -87,11 +87,9 @@ WebInspector.InspectorView.prototype = {
 
     _keyDown: function(event)
     {
-        var isInEditMode = event.target.enclosingNodeOrSelfWithClass("text-prompt") || WebInspector.isEditingAnyField();
-
         switch (event.keyIdentifier) {
             case "Left":
-                var isBackKey = !isInEditMode && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
+                var isBackKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isInEditMode(event);
                 if (isBackKey && this._canGoBackInHistory()) {
                     this._goBackInHistory();
                     event.preventDefault();
@@ -99,7 +97,7 @@ WebInspector.InspectorView.prototype = {
                 break;
 
             case "Right":
-                var isForwardKey = !isInEditMode && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
+                var isForwardKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isInEditMode(event);
                 if (isForwardKey && this._canGoForwardInHistory()) {
                     this._goForwardInHistory();
                     event.preventDefault();

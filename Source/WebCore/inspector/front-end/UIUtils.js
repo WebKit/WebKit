@@ -202,9 +202,15 @@ WebInspector.markBeingEdited = function(element, value)
     return true;
 }
 
-WebInspector.isEditingAnyField = function()
+WebInspector.isInEditMode = function(event)
 {
-    return !!WebInspector.__editingCount;
+    if (WebInspector.__editingCount > 0)
+        return true;
+    if (event.target.nodeName === "INPUT")
+        return true;
+    if (event.target.enclosingNodeOrSelfWithClass("text-prompt"))
+        return true;
+    return false;
 }
 
 /**

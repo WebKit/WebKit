@@ -86,6 +86,7 @@ WebInspector.TextViewer.prototype = {
         if (this._mainPanel.readOnly === readOnly)
             return;
         this._mainPanel.readOnly = readOnly;
+        WebInspector.markBeingEdited(this.element, !readOnly);
     },
 
     get readOnly()
@@ -330,6 +331,18 @@ WebInspector.TextViewer.prototype = {
             return false;
 
         return this._delegate.cancelEditing();
+    },
+
+    wasShown: function()
+    {
+        if (!this.readOnly)
+            WebInspector.markBeingEdited(this.element, true);
+    },
+
+    willHide: function()
+    {
+        if (!this.readOnly)
+            WebInspector.markBeingEdited(this.element, false);
     }
 }
 

@@ -624,12 +624,10 @@ WebInspector._registerShortcuts = function()
 
 WebInspector.documentKeyDown = function(event)
 {
-    var isInputElement = event.target.nodeName === "INPUT";
-    var isInEditMode = event.target.enclosingNodeOrSelfWithClass("text-prompt") || WebInspector.isEditingAnyField();
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms
 
     if (event.keyIdentifier === "F1" ||
-        (event.keyIdentifier === helpKey && event.shiftKey && (!isInEditMode && !isInputElement || event.metaKey))) {
+        (event.keyIdentifier === helpKey && event.shiftKey && (!WebInspector.isInEditMode(event) || event.metaKey))) {
         WebInspector.shortcutsScreen.show();
         event.stopPropagation();
         event.preventDefault();
@@ -659,23 +657,24 @@ WebInspector.documentKeyDown = function(event)
         return;
     }
 
-    if (WebInspector.isEditingAnyField())
-        return;
-
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
         case "U+001B": // Escape key
-            event.preventDefault();
-            this._escPressed();
+            if (event.target.hasStyleClass("text-prompt") || !WebInspector.isInEditMode(event)) {
+                event.preventDefault();
+                this._escPressed();
+            }
             break;
         case "U+0052": // R key
+            if (WebInspector.isInEditMode(event))
+                return;
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 PageAgent.reload(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
-            if (!isMac) {
+            if (!isMac && !WebInspector.isInEditMode(event)) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
                 event.preventDefault();
             }

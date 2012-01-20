@@ -1,3 +1,22 @@
+2012-01-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: problem with Ctrl - <arrows> shortcuts in Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=76622
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/InspectorView.js:
+        (WebInspector.InspectorView.prototype._keyDown):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.set readOnly):
+        (WebInspector.TextViewer.prototype._cancelEditing):
+        (WebInspector.TextViewer.prototype.wasShown):
+        (WebInspector.TextViewer.prototype.willHide):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.isInEditMode):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2012-01-19  Kaustubh Atrawalkar  <kaustubh@motorola.com> & Erik Arvidsson  <arv@chromium.org>
 
         Migrate createObjectURL & revokeObjectURL to static (Class) methods.
