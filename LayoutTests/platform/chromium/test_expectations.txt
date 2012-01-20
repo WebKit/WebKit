@@ -2709,7 +2709,6 @@ BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD CPU : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
@@ -3997,6 +3996,7 @@ BUG_CARYCLARK MAC : editing/style/create-block-for-style-009.html = IMAGE
 BUG_CARYCLARK MAC : editing/style/create-block-for-style-011.html = IMAGE
 BUG_CARYCLARK MAC : editing/style/create-block-for-style-012.html = IMAGE
 BUG_CARYCLARK MAC : editing/style/create-block-for-style-013.html = IMAGE
+BUG_CARYCLARK MAC : fast/dom/blur-contenteditable.html = IMAGE
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
