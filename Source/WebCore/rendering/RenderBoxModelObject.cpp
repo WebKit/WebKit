@@ -872,16 +872,22 @@ IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* imag
         Length intrinsicHeight;
         image->computeIntrinsicDimensions(this, intrinsicWidth, intrinsicHeight, intrinsicRatio);
 
+        // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
+        // that establishes the coordinate system for the 'background-position' property. 
+
         // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-        if (intrinsicWidth.isFixed())
-            resolvedWidth = static_cast<int>(ceilf(intrinsicWidth.value() * style()->effectiveZoom()));
-        if (intrinsicHeight.isFixed())
-            resolvedHeight = static_cast<int>(ceilf(intrinsicHeight.value() * style()->effectiveZoom()));
+        if (intrinsicWidth.isPercent() && intrinsicHeight.isPercent() && intrinsicRatio.isEmpty()) {
+            // Resolve width/height percentages against positioningAreaSize, only if no intrinsic ratio is provided.
+            resolvedWidth = static_cast<int>(round(positioningAreaSize.width() * intrinsicWidth.percent() / 100));
+            resolvedHeight = static_cast<int>(round(positioningAreaSize.height() * intrinsicHeight.percent() / 100));
+        } else {
+            if (intrinsicWidth.isFixed())
+                resolvedWidth = static_cast<int>(intrinsicWidth.value() * style()->effectiveZoom());
+            if (intrinsicHeight.isFixed())
+                resolvedHeight = static_cast<int>(intrinsicHeight.value() * style()->effectiveZoom());
+        }
     }
 
-    // Intrinsic dimensions expressed as percentages must be resolved relative to the dimensions of the rectangle
-    // that establishes the coordinate system for the 'background-position' property. SVG on the other hand
-    // _explicitely_ says that percentage values for the width/height attributes do NOT define intrinsic dimensions.
     if (resolvedWidth > 0 && resolvedHeight > 0)
         return IntSize(resolvedWidth, resolvedHeight);
 

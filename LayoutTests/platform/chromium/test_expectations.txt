@@ -3909,6 +3909,18 @@ BUGWK76446 : svg/custom/pointer-events-text.svg = TEXT
 // RenderSVGRoot now reports a correct size.
 BUGWK76646 : svg/foreignObject/text-tref-02-b.svg = TEXT
 
+// Slight changes in RenderReplaced extents.
+BUGWK76647 : svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
+BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml = IMAGE+TEXT
+BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml = IMAGE+TEXT
+BUGWK76647 : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
+BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
+BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml = IMAGE+TEXT
+BUGWK76647 : tables/mozilla/bugs/bug101674.html = IMAGE+TEXT
+BUGWK76647 : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
+BUGWK76647 : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
+BUGWK76647 : svg/zoom/page/zoom-background-images.html = IMAGE
+
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
 BUG_CARYCLARK MAC : editing/deleting/delete-3959464-fix.html = IMAGE

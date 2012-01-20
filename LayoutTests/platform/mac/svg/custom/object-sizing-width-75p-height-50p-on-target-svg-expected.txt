@@ -12,8 +12,8 @@ layer at (0,0) size 500x154 layerType: foreground only
             RenderView at (0,0) size 375x150
           layer at (0,0) size 281x75
             RenderSVGRoot {svg} at (0,0) size 281x75
-              RenderSVGRect {rect} at (0,0) size 281x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=281.25] [height=75.00]
-              RenderSVGRect {rect} at (14,3) size 254x69 [fill={[type=SOLID] [color=#008000]}] [x=14.06] [y=3.75] [width=253.13] [height=67.50]
+              RenderSVGRect {rect} at (0,0) size 281x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=281.00] [height=75.00]
+              RenderSVGRect {rect} at (14,3) size 253x69 [fill={[type=SOLID] [color=#008000]}] [x=14.05] [y=3.75] [width=252.90] [height=67.50]
 layer at (0,80) size 281x75
   RenderSVGRoot {svg} at (0,80) size 281x75
     RenderSVGRect {rect} at (0,80) size 281x75 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

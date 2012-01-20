@@ -60,7 +60,7 @@ public:
 protected:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual RenderBox* embeddedContentBox() const;
-    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
+    virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle*);
 

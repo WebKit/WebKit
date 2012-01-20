@@ -33,6 +33,7 @@ namespace WebCore {
 class RenderSVGViewportContainer : public RenderSVGContainer {
 public:
     explicit RenderSVGViewportContainer(SVGStyledElement*);
+    FloatRect viewport() const { return m_viewport; }
 
 private:
     virtual bool isSVGContainer() const { return true; }

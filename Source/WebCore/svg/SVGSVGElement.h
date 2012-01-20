@@ -73,12 +73,17 @@ public:
 
     SVGViewSpec* currentView() const;
 
-    enum CalculateViewBoxMode {
-        CalculateViewBoxInHostDocument,
-        CalculateViewBoxInCurrentDocument
+    enum ConsiderCSSMode {
+        RespectCSSProperties,
+        IgnoreCSSProperties
     };
 
-    FloatRect currentViewBoxRect(CalculateViewBoxMode = CalculateViewBoxInCurrentDocument) const;
+    // RenderSVGRoot wants to query the intrinsic size, by only examining the width/height attributes.
+    Length intrinsicWidth(ConsiderCSSMode = RespectCSSProperties) const;
+    Length intrinsicHeight(ConsiderCSSMode = RespectCSSProperties) const;
+    FloatSize currentViewportSize() const;
+    FloatRect currentViewBoxRect() const;
+
     float currentScale() const;
     void setCurrentScale(float scale);
 
@@ -124,6 +129,9 @@ public:
     bool isOutermostSVG() const;
 
     Element* getElementById(const AtomicString&) const;
+
+    bool widthAttributeEstablishesViewport() const;
+    bool heightAttributeEstablishesViewport() const;
 
 protected:
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;

@@ -29,6 +29,8 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "RenderPart.h"
+#include "RenderSVGRoot.h"
+#include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
@@ -274,65 +276,23 @@ bool SVGLengthContext::determineViewport(float& width, float& height) const
         return true;
     }
 
-    // Take size from outermost <svg> element.
-    Document* document = m_context->document();
-    if (document->documentElement() == m_context) {
-        if (m_context->isSVG()) {
-            Frame* frame = m_context->document() ? m_context->document()->frame() : 0;
-            if (!frame)
-                return false;
+    // SVGLengthContext should NEVER be used to resolve width/height values for <svg> elements,
+    // as they require special treatment, due the relationship with the CSS width/height properties.
+    ASSERT(m_context->document()->documentElement() != m_context);
 
-            // SVGs embedded through <object> resolve percentage values against the owner renderer in the host document.
-            if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
-                width = ownerRenderer->width();
-                height = ownerRenderer->height();
-                return true;
-            }
-        }
-
-        RenderView* view = toRenderView(document->renderer());
-        if (!view)
-            return false;
-
-        // Always resolve percentages against the unscaled viewport, as agreed across browsers.
-        float zoom = view->style()->effectiveZoom();
-        width = view->viewWidth();
-        height = view->viewHeight();
-        if (zoom != 1) {
-            width /= zoom;
-            height /= zoom;
-        }
-        return true;
-    }
-
-    // Take size from nearest viewport element (common case: inner <svg> elements)
+    // Take size from nearest viewport element.
     SVGElement* viewportElement = m_context->viewportElement();
-    if (viewportElement && viewportElement->isSVG()) {
-        const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
-        FloatRect viewBox = svg->currentViewBoxRect();
-        if (viewBox.isEmpty()) {
-            SVGLengthContext viewportContext(svg);
-            width = svg->width().value(viewportContext);
-            height = svg->height().value(viewportContext);
-        } else {
-            width = viewBox.width();
-            height = viewBox.height();
-        }
-
-        return true;
-    }
+    if (!viewportElement)
+        return false;
     
-    // Take size from enclosing non-SVG RenderBox (common case: inline SVG)
-    if (!m_context->parentNode() || m_context->parentNode()->isSVGElement())
-        return false;
+    ASSERT(viewportElement->isSVG());
+    const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
+    FloatSize viewportSize = svg->currentViewBoxRect().size();
+    if (viewportSize.isEmpty())
+        viewportSize = svg->currentViewportSize();
 
-    RenderObject* renderer = m_context->renderer();
-    if (!renderer || !renderer->isBox())
-        return false;
-
-    RenderBox* box = toRenderBox(renderer);
-    width = box->width();
-    height = box->height();
+    width = viewportSize.width();
+    height = viewportSize.height();
     return true;
 }
 
