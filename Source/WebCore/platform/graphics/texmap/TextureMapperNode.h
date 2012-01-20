@@ -44,15 +44,16 @@ class GraphicsLayerTextureMapper;
 class TextureMapperPaintOptions {
 public:
     BitmapTexture* surface;
-    TextureMapper* textureMapper;
-
+    BitmapTexture* mask;
     float opacity;
-    bool isSurface;
+    TransformationMatrix transform;
+    IntSize offset;
+    TextureMapper* textureMapper;
     TextureMapperPaintOptions()
         : surface(0)
-        , textureMapper(0)
+        , mask(0)
         , opacity(1)
-        , isSurface(false)
+        , textureMapper(0)
     { }
 };
 
@@ -178,8 +179,9 @@ private:
     void computeTransformsRecursive();
     void computeOverlapsIfNeeded();
     void computeTiles();
+    IntRect intermediateSurfaceRect(const TransformationMatrix&);
+    IntRect intermediateSurfaceRect();
     void swapContentsBuffers();
-    int countDescendantsWithContent() const;
     FloatRect targetRectForTileRect(const FloatRect& totalTargetRect, const FloatRect& tileRect) const;
     void invalidateViewport(const FloatRect&);
     void notifyChange(ChangeMask);
@@ -190,10 +192,10 @@ private:
 
     BitmapTexture* texture() { return m_ownedTiles.isEmpty() ? 0 : m_ownedTiles[0].texture.get(); }
 
-    void paintRecursive(TextureMapperPaintOptions);
-    bool paintReflection(const TextureMapperPaintOptions&, BitmapTexture* surface);
+    void paintRecursive(const TextureMapperPaintOptions&);
     void paintSelf(const TextureMapperPaintOptions&);
-    void paintSelfAndChildren(const TextureMapperPaintOptions&, TextureMapperPaintOptions& optionsForDescendants);
+    void paintSelfAndChildren(const TextureMapperPaintOptions&);
+    void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void renderContent(TextureMapper*, GraphicsLayer*);
 
     void syncAnimations(GraphicsLayerTextureMapper*);
@@ -203,7 +205,8 @@ private:
     void applyTransformAnimation(const TextureMapperAnimation&, const TransformOperations* start, const TransformOperations* end, double);
     bool hasOpacityAnimation() const;
     bool hasTransformAnimation() const;
-    bool hasMoreThanOneTile() const;
+    bool isVisible() const;
+    bool shouldPaintToIntermediateSurface() const;
 
     LayerTransform m_transform;
 

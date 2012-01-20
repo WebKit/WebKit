@@ -1,3 +1,37 @@
+2012-01-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] TextureMapper creates two many big intermediate surfaces
+        https://bugs.webkit.org/show_bug.cgi?id=76336
+
+        Reviewed by Simon Hausmann.
+
+        The following has been done to optimize surface allocation:
+        1. Instead of using a viewport-size surface, use a surface in the size of the layer's
+           bounding rect and apply the transform after the content has been rendered into it.
+        2. Avoid generating intermediate surface for occasions where they're not necessary,
+           such as nested reflections without opacity.
+        3. Releasing of textures from the pool is now implicit, based on refCount.
+        4. Do not use intermediate surfaces for preserve-3d layers. This is in alignment with
+           other ports.
+
+        Tests in LayoutTests/compositing/masks and LayoutTests/compositing/reflection cover this.
+
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::acquireTextureFromPool):
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::paintSelf):
+        (WebCore::TextureMapperNode::paintSelfAndChildren):
+        (WebCore::TextureMapperNode::intermediateSurfaceRect):
+        (WebCore::TextureMapperNode::shouldPaintToIntermediateSurface):
+        (WebCore::TextureMapperNode::isVisible):
+        (WebCore::TextureMapperNode::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperNode::paintRecursive):
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (WebCore::TextureMapperPaintOptions::TextureMapperPaintOptions):
+
 2012-01-19  Eric Seidel  <eric@webkit.org>
 
         Assertion failure in WebCore::HTMLFrameElementBase::insertedIntoDocument()

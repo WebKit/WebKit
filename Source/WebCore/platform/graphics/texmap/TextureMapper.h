@@ -126,7 +126,7 @@ public:
     virtual void beginPainting() { }
     virtual void endPainting() { }
 
-    virtual void releaseTextureToPool(BitmapTexture* surface);
+    // A surface is released implicitly when dereferenced.
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
 
 
