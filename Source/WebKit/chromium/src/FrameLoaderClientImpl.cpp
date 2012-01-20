@@ -66,6 +66,7 @@
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebIntentRequest.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
 #include <public/WebMimeRegistry.h>
@@ -1628,5 +1629,12 @@ bool FrameLoaderClientImpl::willCheckAndDispatchMessageEvent(
     return m_webFrame->client()->willCheckAndDispatchMessageEvent(
         m_webFrame, WebSecurityOrigin(target), WebDOMMessageEvent(event));
 }
+
+#if ENABLE(WEB_INTENTS)
+void FrameLoaderClientImpl::dispatchIntent(PassRefPtr<WebCore::IntentRequest> intentRequest)
+{
+    m_webFrame->client()->dispatchIntent(webFrame(), intentRequest);
+}
+#endif
 
 } // namespace WebKit

@@ -32,7 +32,10 @@
 #define WebIntent_h
 
 #include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
 #include "platform/WebString.h"
+
+namespace WebCore { class Intent; }
 
 namespace WebKit {
 
@@ -41,29 +44,33 @@ namespace WebKit {
 // See spec at http://www.chromium.org/developers/design-documents/webintentsapi
 class WebIntent {
 public:
-    ~WebIntent() { }
+    WebIntent() { }
+    WebIntent(const WebIntent& other) { assign(other); }
+    ~WebIntent() { reset(); }
+
+    WebIntent& operator=(const WebIntent& other)
+    {
+       assign(other);
+       return *this;
+    }
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT bool isNull() const;
+    WEBKIT_EXPORT bool equals(const WebIntent&) const;
+    WEBKIT_EXPORT void assign(const WebIntent&);
 
     WEBKIT_EXPORT WebString action() const;
-    WEBKIT_EXPORT void setAction(const WebString&);
-
     WEBKIT_EXPORT WebString type() const;
-    WEBKIT_EXPORT void setType(const WebString&);
-
     WEBKIT_EXPORT WebString data() const;
-    WEBKIT_EXPORT void setData(const WebString&);
 
+    // FIXME: delete this.
     WEBKIT_EXPORT int identifier() const;
-    WEBKIT_EXPORT void setIdentifier(int);
 
 #if WEBKIT_IMPLEMENTATION
-    WebIntent();
+    WebIntent(const WTF::PassRefPtr<WebCore::Intent>&);
 #endif
 
 private:
-    WebString m_action;
-    WebString m_type;
-    WebString m_data;
-    int m_identifier;
+    WebPrivatePtr<WebCore::Intent> m_private;
 };
 
 } // namespace WebKit

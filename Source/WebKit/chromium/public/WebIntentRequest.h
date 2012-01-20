@@ -28,83 +28,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebIntent.h"
+#ifndef WebIntentRequest_h
+#define WebIntentRequest_h
 
-#include "Intent.h"
-#include "SerializedScriptValue.h"
+#include "platform/WebCommon.h"
+#include "platform/WebPrivatePtr.h"
+#include "platform/WebString.h"
+
+namespace WebCore { class IntentRequest; }
 
 namespace WebKit {
 
-#if ENABLE(WEB_INTENTS)
-WebIntent::WebIntent(const PassRefPtr<WebCore::Intent>& intent)
-    : m_private(intent)
-{
-}
+class WebIntent;
+class WebSerializedScriptValue;
+
+// Holds data passed through a Web Intents invocation call from the Javascript
+// Intent object.
+// See spec at http://www.chromium.org/developers/design-documents/webintentsapi
+class WebIntentRequest {
+public:
+    WebIntentRequest() { }
+    WebIntentRequest(const WebIntentRequest& other) { assign(other); }
+    ~WebIntentRequest() { reset(); }
+
+    WebIntentRequest& operator=(const WebIntentRequest& other)
+    {
+       assign(other);
+       return *this;
+    }
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT bool isNull() const;
+    WEBKIT_EXPORT bool equals(const WebIntentRequest&) const;
+    WEBKIT_EXPORT void assign(const WebIntentRequest&);
+
+    WEBKIT_EXPORT void postResult(const WebSerializedScriptValue&);
+    WEBKIT_EXPORT void postFailure(const WebSerializedScriptValue&);
+
+    WEBKIT_EXPORT WebIntent intent() const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebIntentRequest(const WTF::PassRefPtr<WebCore::IntentRequest>&);
 #endif
 
-void WebIntent::reset()
-{
-#if ENABLE(WEB_INTENTS)
-    m_private.reset();
-#endif
-}
-
-bool WebIntent::isNull() const
-{
-#if ENABLE(WEB_INTENTS)
-    return m_private.isNull();
-#else
-    return true;
-#endif
-}
-
-bool WebIntent::equals(const WebIntent& other) const
-{
-#if ENABLE(WEB_INTENTS)
-    return (m_private.get() == other.m_private.get());
-#else
-    return true;
-#endif
-}
-
-void WebIntent::assign(const WebIntent& other)
-{
-#if ENABLE(WEB_INTENTS)
-    m_private = other.m_private;
-#endif
-}
-
-WebString WebIntent::action() const
-{
-#if ENABLE(WEB_INTENTS)
-    return m_private->action();
-#else
-    return WebString();
-#endif
-}
-
-WebString WebIntent::type() const
-{
-#if ENABLE(WEB_INTENTS)
-    return m_private->type();
-#else
-    return WebString();
-#endif
-}
-
-WebString WebIntent::data() const
-{
-#if ENABLE(WEB_INTENTS)
-    return m_private->data()->toWireString();
-#else
-    return WebString();
-#endif
-}
-
-int WebIntent::identifier() const
-{
-    return 0;
-}
+private:
+    WebPrivatePtr<WebCore::IntentRequest> m_private;
+};
 
 } // namespace WebKit
+
+#endif // WebIntentRequest_h

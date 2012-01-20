@@ -29,28 +29,31 @@
  */
 
 #include "config.h"
-#include "WebIntent.h"
+#include "WebIntentRequest.h"
 
 #include "Intent.h"
+#include "IntentRequest.h"
 #include "SerializedScriptValue.h"
+#include "WebIntent.h"
+#include "platform/WebSerializedScriptValue.h"
 
 namespace WebKit {
 
 #if ENABLE(WEB_INTENTS)
-WebIntent::WebIntent(const PassRefPtr<WebCore::Intent>& intent)
-    : m_private(intent)
+WebIntentRequest::WebIntentRequest(const PassRefPtr<WebCore::IntentRequest>& intentRequest)
+    : m_private(intentRequest)
 {
 }
 #endif
 
-void WebIntent::reset()
+void WebIntentRequest::reset()
 {
 #if ENABLE(WEB_INTENTS)
     m_private.reset();
 #endif
 }
 
-bool WebIntent::isNull() const
+bool WebIntentRequest::isNull() const
 {
 #if ENABLE(WEB_INTENTS)
     return m_private.isNull();
@@ -59,7 +62,7 @@ bool WebIntent::isNull() const
 #endif
 }
 
-bool WebIntent::equals(const WebIntent& other) const
+bool WebIntentRequest::equals(const WebIntentRequest& other) const
 {
 #if ENABLE(WEB_INTENTS)
     return (m_private.get() == other.m_private.get());
@@ -68,43 +71,35 @@ bool WebIntent::equals(const WebIntent& other) const
 #endif
 }
 
-void WebIntent::assign(const WebIntent& other)
+void WebIntentRequest::assign(const WebIntentRequest& other)
 {
 #if ENABLE(WEB_INTENTS)
     m_private = other.m_private;
 #endif
 }
 
-WebString WebIntent::action() const
+WebIntent WebIntentRequest::intent() const
 {
 #if ENABLE(WEB_INTENTS)
-    return m_private->action();
+    return WebIntent(m_private->intent());
 #else
-    return WebString();
+    return WebIntent();
 #endif
 }
 
-WebString WebIntent::type() const
+void WebIntentRequest::postResult(const WebSerializedScriptValue& data)
 {
 #if ENABLE(WEB_INTENTS)
-    return m_private->type();
-#else
-    return WebString();
+    m_private->postResult(PassRefPtr<WebCore::SerializedScriptValue>(data).get());
 #endif
 }
 
-WebString WebIntent::data() const
+void WebIntentRequest::postFailure(const WebSerializedScriptValue& data)
 {
 #if ENABLE(WEB_INTENTS)
-    return m_private->data()->toWireString();
-#else
-    return WebString();
+    m_private->postFailure(PassRefPtr<WebCore::SerializedScriptValue>(data).get());
 #endif
 }
 
-int WebIntent::identifier() const
-{
-    return 0;
-}
 
 } // namespace WebKit

@@ -1,3 +1,20 @@
+2012-01-19  Greg Billock  <gbillock@google.com>
+
+        Web Intents chromium API modifications to track IntentRequest invocation method
+        https://bugs.webkit.org/show_bug.cgi?id=76014
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::dispatchIntent):
+        * public/WebIntent.h:
+        * public/WebIntentRequest.h: Added.
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchIntent):
+        * src/FrameLoaderClientImpl.h:
+        * src/WebIntent.cpp:
+        * src/WebIntentRequest.cpp: Added.
+
 2012-01-19  Michal Mocny  <mmocny@google.com>
 
         [chromium] Replace WGC3D visibility extension with resource_usage extension. [Part 1 of 3]

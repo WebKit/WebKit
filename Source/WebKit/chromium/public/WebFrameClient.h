@@ -55,8 +55,9 @@ class WebDataSource;
 class WebDOMEvent;
 class WebFormElement;
 class WebFrame;
-class WebIntentServiceInfo;
 class WebIntent;
+class WebIntentRequest;
+class WebIntentServiceInfo;
 class WebMediaPlayer;
 class WebMediaPlayerClient;
 class WebNode;
@@ -380,9 +381,9 @@ public:
     // Register a service to handle Web Intents.
     virtual void registerIntentService(WebFrame*, const WebIntentServiceInfo&) { }
 
-    // Start a Web Intents activity. Replies to this request should be sent to
-    // the WebFrame starting the activity.
-    virtual void dispatchIntent(WebFrame*, const WebIntent&) { }
+    // Start a Web Intents activity. The callee uses the |WebIntentRequest|
+    // object to coordinate replies to the intent invocation.
+    virtual void dispatchIntent(WebFrame*, const WebIntentRequest&) { }
 
     // Messages ------------------------------------------------------
 
