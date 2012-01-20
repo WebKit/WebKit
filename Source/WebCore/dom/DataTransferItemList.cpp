@@ -45,7 +45,7 @@ DataTransferItemList::DataTransferItemList(PassRefPtr<Clipboard> clipboard, Scri
 {
 }
 
-size_t DataTransferItemList::length() const
+size_t DataTransferItemList::length()
 {
     if (m_owner->policy() == ClipboardNumb)
         return 0;
@@ -91,12 +91,20 @@ void DataTransferItemList::add(const String& data, const String& type, Exception
     // Only one 'string' item with a given type is allowed in the collection.
     for (size_t i = 0; i < m_items.size(); ++i) {
         if (m_items[i]->type() == type && m_items[i]->kind() == DataTransferItem::kindString) {
-            ec = INVALID_STATE_ERR;
+            ec = NOT_SUPPORTED_ERR;
             return;
         }
     }
 
     m_items.append(DataTransferItem::create(m_owner, m_context, data, type));
+}
+
+void DataTransferItemList::add(PassRefPtr<File> file)
+{
+    if (m_owner->policy() != ClipboardWritable || !file)
+        return;
+
+    m_items.append(DataTransferItem::create(m_owner, m_context, file));
 }
 
 }

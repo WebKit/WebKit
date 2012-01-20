@@ -31,6 +31,7 @@
 #include "GCController.cpp"
 #include "JSArrayBufferCustom.cpp"
 #include "JSAttrCustom.cpp"
+#include "JSBlobCustom.cpp"
 #include "JSCDATASectionCustom.cpp"
 #include "JSCSSFontFaceRuleCustom.cpp"
 #include "JSCSSImportRuleCustom.cpp"

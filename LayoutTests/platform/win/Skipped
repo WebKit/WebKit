@@ -1300,6 +1300,8 @@ editing/pasteboard/onpaste-text-html-types.html
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
 editing/pasteboard/data-transfer-items-image-png.html
+editing/pasteboard/data-transfer-items-drag-drop-file.html
+editing/pasteboard/data-transfer-items-drag-drop-string.html
 
 # Custom MIME type support in DataTransfer not yet implemented.
 editing/pasteboard/clipboard-customData.html

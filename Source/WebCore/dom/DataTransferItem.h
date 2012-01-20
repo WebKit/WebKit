@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class Blob;
+class File;
 class StringCallback;
 class ScriptExecutionContext;
 
@@ -49,6 +50,7 @@ public:
     virtual ~DataTransferItem() { }
 
     static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+    static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, PassRefPtr<File>);
 
     static const char kindString[];
     static const char kindFile[];
@@ -64,6 +66,8 @@ protected:
     Clipboard* owner();
 
 private:
+    friend class DataTransferItemList;
+
     const RefPtr<Clipboard> m_owner;
     const String m_kind;
     const String m_type;

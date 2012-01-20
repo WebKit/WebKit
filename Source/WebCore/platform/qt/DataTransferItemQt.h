@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Clipboard;
+class File;
 class ScriptExecutionContext;
 
 class DataTransferItemQt : public DataTransferItem {
@@ -41,11 +42,6 @@ public:
     static PassRefPtr<DataTransferItemQt> createFromPasteboard(PassRefPtr<Clipboard> owner,
                                                                ScriptExecutionContext*,
                                                                const String&);
-    static PassRefPtr<DataTransferItemQt> create(PassRefPtr<Clipboard> owner,
-                                                 ScriptExecutionContext*,
-                                                 const String&,
-                                                 const String&);
-
     virtual void getAsString(PassRefPtr<StringCallback>);
     virtual PassRefPtr<Blob> getAsFile();
 
@@ -55,14 +51,21 @@ private:
         InternalSource
     };
 
+    friend class DataTransferItem;
+
     DataTransferItemQt(PassRefPtr<Clipboard> owner,
                        ScriptExecutionContext*,
                        DataSource,
                        const String&, const String&, const String&);
+    DataTransferItemQt(PassRefPtr<Clipboard> owner,
+                       ScriptExecutionContext*,
+                       DataSource,
+                       PassRefPtr<File>);
 
     ScriptExecutionContext* m_context;
     const DataSource m_dataSource;
     const String m_data;
+    RefPtr<File> m_file;
 };
 
 }

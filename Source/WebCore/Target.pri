@@ -78,6 +78,7 @@ v8 {
     SOURCES += \
         bindings/v8/custom/V8ArrayBufferCustom.cpp \
         bindings/v8/custom/V8ArrayBufferViewCustom.cpp \
+        bindings/v8/custom/V8BlobCustom.cpp \
         bindings/v8/custom/V8CustomXPathNSResolver.cpp \
         bindings/v8/custom/V8DataViewCustom.cpp \
         bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
@@ -236,6 +237,7 @@ v8 {
         bindings/js/GCController.cpp \
         bindings/js/JSArrayBufferCustom.cpp \
         bindings/js/JSAttrCustom.cpp \
+        bindings/js/JSBlobCustom.cpp \
         bindings/js/JSCDATASectionCustom.cpp \
         bindings/js/JSCSSFontFaceRuleCustom.cpp \
         bindings/js/JSCSSImportRuleCustom.cpp \

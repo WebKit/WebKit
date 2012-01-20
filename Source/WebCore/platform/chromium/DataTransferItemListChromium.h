@@ -40,7 +40,8 @@
 namespace WebCore {
 
 class Clipboard;
-class DataTransferItemChromium;
+class ClipboardChromium;
+class File;
 class ScriptExecutionContext;
 
 typedef int ExceptionCode;
@@ -49,12 +50,17 @@ class DataTransferItemListChromium : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
+    // DataTransferItemList overrides.
+    virtual size_t length();
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    virtual void deleteItem(unsigned long index, ExceptionCode&);
+    virtual void clear();
+    virtual void add(const String& data, const String& type, ExceptionCode&);
+    virtual void add(PassRefPtr<File>);
+
 private:
-    friend class ClipboardChromium;
-
     DataTransferItemListChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
-
-    virtual void addPasteboardItem(const String& type);
+    ClipboardChromium* clipboardChromium() const;
 };
 
 } // namespace WebCore
@@ -62,4 +68,3 @@ private:
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
 
 #endif // DataTransferItemListChromium_h
-

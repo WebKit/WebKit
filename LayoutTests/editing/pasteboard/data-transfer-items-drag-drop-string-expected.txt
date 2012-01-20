@@ -1,0 +1,16 @@
+This tests the basic functionality and properties of DataTransferItems for string data with drag and drop. This test requires DRT.
+Lorem ipsum 
+Drop text here if you test this manually
+Dragging text in source1: Lorem ipsum
+Verifying contents of DataTransferItems...
+items.length: 1
+items[0].kind: string
+items[0].type: text/plain
+PASS: "Lorem ipsum" == "Lorem ipsum"
+Dragging text in source2: http://example.com
+Verifying contents of DataTransferItems...
+items.length: 1
+items[0].kind: string
+items[0].type: text/plain
+PASS: "http://example.com" == "http://example.com"
+

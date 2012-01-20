@@ -12,10 +12,11 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
-    bindings/js/JSAttrCustom.cpp
     bindings/js/JSArrayBufferCustom.cpp
-    bindings/js/JSDataViewCustom.cpp
+    bindings/js/JSAttrCustom.cpp
+    bindings/js/JSBlobCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
+    bindings/js/JSDataViewCustom.cpp
     bindings/js/JSCSSFontFaceRuleCustom.cpp
     bindings/js/JSCSSImportRuleCustom.cpp
     bindings/js/JSCSSMediaRuleCustom.cpp

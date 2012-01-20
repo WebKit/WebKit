@@ -1006,6 +1006,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSArrayBufferCustom.cpp \
 	Source/WebCore/bindings/js/JSArrayBufferViewHelper.h \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
+	Source/WebCore/bindings/js/JSBlobCustom.cpp \
 	Source/WebCore/bindings/js/JSCDATASectionCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSImportRuleCustom.cpp \

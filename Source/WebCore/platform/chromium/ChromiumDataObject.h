@@ -85,10 +85,13 @@ public:
     KURL htmlBaseUrl() const { return m_htmlBaseUrl; }
     void setHtmlBaseUrl(const KURL& url) { m_htmlBaseUrl = url; }
 
-    // Used to handle files being dragged in.
+    // Used to handle files being dragged in and out.
     bool containsFilenames() const;
-    Vector<String> filenames() const { return m_filenames; }
+    const Vector<String>& filenames() const { return m_filenames; }
     void setFilenames(const Vector<String>& filenames) { m_filenames = filenames; }
+
+    // Used to handle files being dragged out.
+    void addFilename(const String& filename) { m_filenames.append(filename); }
 
     // Used to handle files (images) being dragged out.
     String fileExtension() const { return m_fileExtension; }

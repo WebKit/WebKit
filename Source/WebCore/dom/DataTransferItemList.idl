@@ -33,6 +33,7 @@ module core {
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
         HasIndexGetter,
+        GenerateNativeConverter,
 #if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,
 #endif
@@ -41,6 +42,7 @@ module core {
         DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index);
 
         void clear();
+        void add(in File file);
         void add(in [Optional=CallWithDefaultValue] DOMString data, 
                  in [Optional=CallWithDefaultValue] DOMString type) raises(DOMException);
     };

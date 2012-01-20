@@ -40,12 +40,13 @@
 namespace WebCore {
 
 class Clipboard;
+class ClipboardChromium;
+class File;
 class ScriptExecutionContext;
 
 class DataTransferItemChromium : public DataTransferItem {
 public:
     static PassRefPtr<DataTransferItemChromium> createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& type);
-    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
 
     virtual void getAsString(PassRefPtr<StringCallback>);
     virtual PassRefPtr<Blob> getAsFile();
@@ -56,11 +57,17 @@ private:
         InternalSource,
     };
 
+    friend class DataTransferItem;
+
     DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, const String& kind, const String& type, const String& data);
+    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, PassRefPtr<File>);
+
+    ClipboardChromium* clipboardChromium();
 
     ScriptExecutionContext* m_context;
     const DataSource m_source;
     const String m_data;
+    RefPtr<File> m_file;
 };
 
 } // namespace WebCore

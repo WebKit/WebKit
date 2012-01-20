@@ -33,6 +33,7 @@
 
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
+#include "DataTransferItemListChromium.h"
 #include "Pasteboard.h"
 #include "PlatformSupport.h"
 

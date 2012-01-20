@@ -1,3 +1,71 @@
+2012-01-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Add DataTransferItems support for drag-and-drop'ed files and texts
+        https://bugs.webkit.org/show_bug.cgi?id=76367
+
+        Reviewed by Tony Chang.
+
+        Per http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#the-datatransfer-interface
+        the new interface should also support drag-and-dropped files and texts in
+        addition to pasted texts/images.  The user apps should also be able to add
+        texts/files to the drag store by calling event.dataTransfer.items.add().
+
+        This patch adds drag-and-drop'ed items support in DataTransferItem and
+        DataTransferItemList so that they work for dropped files and texts (as well as
+        the copy-pasted texts/images).
+
+        This patch also adds customized toJS()/toV8() code to Blob/File javascript
+        binding so that the JS code can get either Blob or File underlying object
+        where the API returns Blob. This change is necessary since we return Blob
+        from DataTransferItem.getAsFile() for pasted images but want to return File
+        for dropped files.
+
+        Tests: editing/pasteboard/data-transfer-items-drag-drop-file.html
+               editing/pasteboard/data-transfer-items-drag-drop-string.html
+
+        * GNUmakefile.list.am: Added entries for the new {JS,V8}BlobCustom.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+        * bindings/js/JSBlobCustom.cpp: Added toJS custom code that returns File or
+        Blob depending on the return value of isFile().
+        (WebCore::toJS):
+        * bindings/v8/custom/V8BlobCustom.cpp: Added toV8 custom code.
+        (WebCore::toV8):
+        * dom/DataTransferItem.h: Added a new create() method which takes File.
+        * dom/DataTransferItemList.cpp: Added add(File) method.
+        (WebCore::DataTransferItemList::add):
+        * dom/DataTransferItemList.h: Ditto.
+        * dom/DataTransferItemList.idl: Ditto.
+        * fileapi/Blob.idl: Added CustomToJS for toJS/toV8.
+        * platform/chromium/ClipboardChromium.cpp: Added code for drag-and-drop'ed items.
+        (WebCore::ClipboardChromium::items): Revised.
+        (WebCore::ClipboardChromium::mayUpdateItems): Added.
+        (WebCore::ClipboardChromium::isStorageUpdated): Added.
+        * platform/chromium/ClipboardChromium.h:
+        * platform/chromium/DataTransferItemChromium.cpp: Added a new constructor that
+        takes File and updated getAsFile() to make it support dropped files.
+        (WebCore::DataTransferItem::create):
+        (WebCore::DataTransferItemChromium::DataTransferItemChromium):
+        (WebCore::DataTransferItemChromium::getAsFile):
+        * platform/chromium/DataTransferItemChromium.h:
+        * platform/chromium/DataTransferItemListChromium.cpp:
+        (WebCore::DataTransferItemListChromium::addInternalItem):
+        * platform/chromium/DataTransferItemListChromium.cpp: Added overrides implementation for m_item accessors to make them reflect the changes in the owner clipboard.
+        (WebCore::DataTransferItemListChromium::length):
+        (WebCore::DataTransferItemListChromium::item):
+        (WebCore::DataTransferItemListChromium::deleteItem):
+        (WebCore::DataTransferItemListChromium::clear):
+        (WebCore::DataTransferItemListChromium::add):
+        (WebCore::DataTransferItemListChromium::mayUpdateItems): Added.
+        * platform/qt/DataTransferItemQt.cpp: Added a new constructor that takes File and updated
+        getAsFile() to make it support dropped files.
+        (WebCore::DataTransferItem::create):
+        (WebCore::DataTransferItemQt::DataTransferItemQt):
+        (WebCore::DataTransferItemQt::getAsFile):
+        * platform/qt/DataTransferItemQt.h:
+
 2012-01-20  Alexis Menard  <alexis.menard@openbossa.org>
 
         remove CSSBorderImageValue

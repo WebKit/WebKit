@@ -31,10 +31,12 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
+#include "DataTransferItemChromium.h"
 #include "DataTransferItemListChromium.h"
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
+#include "File.h"
 #include "FileList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -48,7 +50,6 @@
 #include "ScriptExecutionContext.h"
 #include "markup.h"
 
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -79,6 +80,11 @@ ClipboardChromium::ClipboardChromium(ClipboardType clipboardType,
     , m_dataObject(dataObject)
     , m_frame(frame)
     , m_originalSequenceNumber(PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()))
+    , m_dragStorageUpdated(true)
+{
+}
+
+ClipboardChromium::~ClipboardChromium()
 {
 }
 
@@ -93,6 +99,7 @@ void ClipboardChromium::clearData(const String& type)
     if (policy() != ClipboardWritable || !m_dataObject)
         return;
 
+    m_dragStorageUpdated = true;
     m_dataObject->clearData(normalizeType(type));
 
     ASSERT_NOT_REACHED();
@@ -103,6 +110,7 @@ void ClipboardChromium::clearAllData()
     if (policy() != ClipboardWritable)
         return;
 
+    m_dragStorageUpdated = true;
     m_dataObject->clearAll();
 }
 
@@ -123,6 +131,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
     if (policy() != ClipboardWritable)
         return false;
 
+    m_dragStorageUpdated = true;
     return m_dataObject->setData(normalizeType(type), data);
 }
 
@@ -260,6 +269,7 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     if (!m_dataObject)
         return;
 
+    m_dragStorageUpdated = true;
     m_dataObject->setData(mimeTypeURL, url);
     m_dataObject->setUrlTitle(title);
 
@@ -275,6 +285,8 @@ void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
     if (!m_dataObject)
         return;
     ASSERT(!url.isEmpty());
+
+    m_dragStorageUpdated = true;
     m_dataObject->setData(mimeTypeURL, url);
     m_dataObject->setUrlTitle(title);
 
@@ -292,6 +304,7 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     if (!m_dataObject)
          return;
 
+    m_dragStorageUpdated = true;
     m_dataObject->setData(mimeTypeTextHTML, createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
     m_dataObject->setHtmlBaseUrl(frame->document()->url());
 
@@ -313,6 +326,8 @@ void ClipboardChromium::writePlainText(const String& text)
     replaceNewlinesWithWindowsStyleNewlines(str);
 #endif
     replaceNBSPWithSpace(str);
+
+    m_dragStorageUpdated = true;
     m_dataObject->setData(mimeTypeTextPlain, str);
 }
 
@@ -328,19 +343,58 @@ bool ClipboardChromium::hasData()
 #if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItemList> ClipboardChromium::items()
 {
-    RefPtr<DataTransferItemListChromium> items = DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
+    if (!m_dataObject || (policy() != ClipboardReadable && policy() != ClipboardWritable)) {
+        // Return an unassociated empty list.
+        return DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
+    }
 
-    if (!m_dataObject)
-        return items;
+    if (!m_itemList)
+        m_itemList = DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
+
+    return m_itemList;
+}
+
+// FIXME: integrate ChromiumDataObject and DataTransferItemList rather than holding them separately and keeping them synced.
+void ClipboardChromium::mayUpdateItems(Vector<RefPtr<DataTransferItem> >& items)
+{
+    if (!items.isEmpty() && !storageHasUpdated())
+        return;
+
+    items.clear();
+
+    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
 
     if (isForCopyAndPaste() && policy() == ClipboardReadable) {
         // Iterate through the types and add them.
         HashSet<String> types = m_dataObject->types();
         for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
-            items->addPasteboardItem(*it);
+            items.append(DataTransferItemChromium::createFromPasteboard(this, scriptExecutionContext, *it));
+        return;
     }
-    return items;
+
+    bool success = false;
+    String plainText = m_dataObject->getData(mimeTypeTextPlain, success);
+    if (success)
+        items.append(DataTransferItem::create(this, scriptExecutionContext, plainText, mimeTypeTextPlain));
+
+    success = false;
+    String htmlText = m_dataObject->getData(mimeTypeTextHTML, success);
+    if (success)
+        items.append(DataTransferItem::create(this, scriptExecutionContext, htmlText, mimeTypeTextHTML));
+
+    if (m_dataObject->containsFilenames()) {
+        const Vector<String>& filenames = m_dataObject->filenames();
+        for (Vector<String>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+            items.append(DataTransferItem::create(this, scriptExecutionContext, File::create(*it)));
+    }
+    m_dragStorageUpdated = false;
 }
+
+bool ClipboardChromium::storageHasUpdated() const
+{
+    return (isForCopyAndPaste() && platformClipboardChanged()) || (isForDragAndDrop() && m_dragStorageUpdated);
+}
+
 #endif
 
 } // namespace WebCore

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>This tests the basic functionality and properties of DataTransferItems for string data with drag and drop. This test requires DRT.</div>
+
+<input id="source1" value="Lorem ipsum">Lorem ipsum</input>
+<input id="source2" value="http://example.com"></input>
+<div id="destination" style="min-height:100px; border: solid 1px black">Drop text here if you test this manually</div>
+
+<div id="console"></div>
+
+<script>
+var testSources = [ 'source1', 'source2' ];
+var testIndex = 0;
+var expectedDroppedText = '';
+
+function log(text)
+{
+    var console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text));
+    console.appendChild(document.createElement('br'));
+}
+
+function test(expect, actual)
+{
+    log((expect == actual ? 'PASS' : 'FAIL') + ': "' + expect + '" == "' + actual + '"');
+}
+
+function startTest()
+{
+    var destination = document.getElementById('destination');
+    destination.addEventListener('dragover', handleDragOver, false);
+    destination.addEventListener('drop', handleDrop, false);
+
+    if (!window.layoutTestController)
+        return;
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+
+    runNextTest();
+}
+
+function runNextTest()
+{
+    if (testIndex == testSources.length) {
+        layoutTestController.notifyDone();
+        return;
+    }
+
+    var sourceId = testSources[testIndex++];
+    var source = document.getElementById(sourceId);
+    expectedDroppedText = source.value;
+    log('Dragging text in ' + sourceId + ': ' + source.value);
+
+    // Drag a text in the source element.
+    source.setSelectionRange(0, source.value.length);
+    x = source.offsetLeft + 10;
+    y = source.offsetTop + source.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+
+    // Drop it off to the destination field.
+    var destination = document.getElementById("destination");
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(destination.offsetLeft + 10, destination.offsetTop + destination.offsetHeight / 2);
+    eventSender.mouseUp();
+}
+
+function handleDragOver(e)
+{
+    e.stopPropagation();
+    e.preventDefault();
+}
+
+function handleDrop(e)
+{
+    e.stopPropagation();
+    e.preventDefault();
+
+    log('Verifying contents of DataTransferItems...');
+
+    var items = e.dataTransfer.items;
+    var remaining = items.length;
+
+    for (var i = 0; i < items.length; ++i) {
+        log('items.length: ' + items.length);
+        log('items[' + i + '].kind: ' + items[i].kind);
+        log('items[' + i + '].type: ' + items[i].type);
+
+        items[i].getAsString(function(data) {
+            test(expectedDroppedText, data);
+            if (--remaining == 0 && window.layoutTestController)
+                runNextTest();
+        });
+    }
+}
+
+startTest();
+
+</script>
+</body>
+</html>

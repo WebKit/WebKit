@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class Clipboard;
+class File;
 
 typedef int ExceptionCode;
 
@@ -47,11 +48,13 @@ class DataTransferItemList : public RefCounted<DataTransferItemList> {
 public:
     virtual ~DataTransferItemList() { }
 
-    virtual size_t length() const;
+    virtual size_t length();
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
     virtual void deleteItem(unsigned long index, ExceptionCode&);
     virtual void clear();
     virtual void add(const String& data, const String& type, ExceptionCode&);
+    virtual void add(PassRefPtr<File>);
 
 protected:
     DataTransferItemList(PassRefPtr<Clipboard>, ScriptExecutionContext*);
@@ -69,4 +72,3 @@ protected:
 #endif // ENABLE(DATA_TRANSFER_ITEMS)
 
 #endif // DataTransferItemList_h
-

@@ -1,6 +1,6 @@
 This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.
 Populating DataTransferItems...
-Caught exception "Error: INVALID_STATE_ERR: DOM Exception 11" as expected.
+Caught exception "Error: NOT_SUPPORTED_ERR: DOM Exception 9" as expected.
 Verifying contents of DataTransferItems...
 items.length: 2
 items[0].kind: string

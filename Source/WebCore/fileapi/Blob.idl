@@ -32,6 +32,7 @@ module html {
 
     interface [
         GenerateIsReachable=Impl,
+        CustomToJS,
         NoStaticTables
     ] Blob {
         readonly attribute unsigned long long size;

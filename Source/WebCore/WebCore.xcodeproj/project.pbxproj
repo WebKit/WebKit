@@ -2873,6 +2873,7 @@
 		892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */; };
 		892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */; };
 		892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */; };
+		8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */; };
 		893C47A71238908B002B3D86 /* FileCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A51238908B002B3D86 /* FileCallback.h */; };
 		893C47A81238908B002B3D86 /* FileWriterCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A61238908B002B3D86 /* FileWriterCallback.h */; };
 		893C47B71238A099002B3D86 /* JSFileCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 893C47B51238A099002B3D86 /* JSFileCallback.cpp */; };
@@ -9687,6 +9688,7 @@
 		892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoErrorCallback.h; sourceTree = "<group>"; };
 		892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoUsageCallback.cpp; sourceTree = "<group>"; };
 		892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoUsageCallback.h; sourceTree = "<group>"; };
+		8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobCustom.cpp; sourceTree = "<group>"; };
 		893C47A51238908B002B3D86 /* FileCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCallback.h; path = fileapi/FileCallback.h; sourceTree = "<group>"; };
 		893C47A61238908B002B3D86 /* FileWriterCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterCallback.h; path = fileapi/FileWriterCallback.h; sourceTree = "<group>"; };
 		893C47B51238A099002B3D86 /* JSFileCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileCallback.cpp; sourceTree = "<group>"; };
@@ -19129,6 +19131,7 @@
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */,
 				FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */,
+				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
 				93BA59B10F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp */,
@@ -24648,6 +24651,7 @@
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */,
+				50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */,
 				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
 				50D40611147D49DE00D30BB5 /* CustomFilterShader.cpp in Sources */,
 				5196116A0CAC56570010A80C /* Database.cpp in Sources */,
@@ -25458,6 +25462,7 @@
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
+				8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,
@@ -26414,6 +26419,8 @@
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,
 				A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */,
+				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,
+				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
@@ -26968,9 +26975,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */,
-				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,
-				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
