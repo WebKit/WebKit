@@ -896,6 +896,7 @@ BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMA
 // it simpler to commit WK71820.
 BUGWK71820 : svg/custom/path-moveto-only-rendering.svg = PASS IMAGE+TEXT
 BUGWK71820 : svg/custom/subpaths-moveto-only-rendering.svg = PASS TEXT
+BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = PASS IMAGE+TEXT
 
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
@@ -3300,8 +3301,6 @@ BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
 BUGWK70630 SNOWLEOPARD : fast/js/call-base-resolution.html = PASS TEXT CRASH
 BUGCR89474 LEOPARD WIN LINUX : fast/js/call-base-resolution.html = PASS TEXT
-
-BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
