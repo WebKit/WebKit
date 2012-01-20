@@ -7,6 +7,7 @@ PASS ctx.webkitLineDashOffset is 0
 PASS lineDash[0] is 15
 PASS lineDash[1] is 10
 PASS ctx.webkitLineDashOffset is 5
+PASS ctx.webkitLineDashOffset is 5
 PASS successfullyParsed is true
 
 TEST COMPLETE
