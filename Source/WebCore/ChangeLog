@@ -1,3 +1,19 @@
+2012-01-19  Shinya Kawanaka  <shinyak@google.com>
+
+        Node::canHaveLightChildRendererWithShadow is not used anywhere.
+        https://bugs.webkit.org/show_bug.cgi?id=76627
+
+        Reviewed by Darin Adler.
+
+        Since Node::canHaveLightChildRendererWithShadow is not overriden anywhere, and it returns always false.
+        We can remove it.
+
+        No new tests, because no change in behavior.
+
+        * dom/Node.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+
 2012-01-19  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: make constant variable names in fileapi/ conform to WebKit's coding guideline

@@ -224,7 +224,6 @@ public:
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootOrSVGShadowRootFlag) && !isSVGElement(); }
     virtual bool isContentElement() const { return false; }
-    virtual bool canHaveLightChildRendererWithShadow() const { return false; }
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.

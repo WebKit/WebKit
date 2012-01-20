@@ -280,8 +280,8 @@ bool NodeRenderingContext::shouldCreateRenderer() const
         // See https://bugs.webkit.org/show_bug.cgi?id=52423
         if (!parentRenderer->canHaveChildren())
             return false;
-    
-        if (m_visualParentShadowRoot && !m_parentNodeForRenderingAndStyle->canHaveLightChildRendererWithShadow())
+
+        if (m_visualParentShadowRoot)
             return false;
     }
 
