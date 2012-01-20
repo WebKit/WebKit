@@ -183,6 +183,13 @@ media/media-fullscreen-inline.html
 http/tests/media/video-play-progress.html
 http/tests/media/video-load-twice.html
 
+# Regression in performance
+# https://bugs.webkit.org/show_bug.cgi?id=74141
+fast/regions/region-style-block-background-color.html
+fast/regions/region-style-block-background-color2.html
+fast/regions/region-style-image-background-color.html
+fast/regions/region-style-inline-background-color.html
+
 # HiDPI tests have lower-level platform dependencies on Mac
 fast/hidpi
 

@@ -1110,9 +1110,7 @@ inline bool RenderObject::preservesNewline() const
 
 inline RenderStyle* RenderObject::style() const
 {
-    if (!inRenderFlowThread())
-        return m_style.get();
-    return styleInRegion();
+    return m_style.get();
 }
 
 inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
