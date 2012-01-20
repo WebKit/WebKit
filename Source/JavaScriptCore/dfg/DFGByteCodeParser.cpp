@@ -48,6 +48,7 @@ public:
         , m_graph(graph)
         , m_currentBlock(0)
         , m_currentIndex(0)
+        , m_currentProfilingIndex(0)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
         , m_constantNaN(UINT_MAX)
@@ -519,7 +520,7 @@ private:
     
     CodeOrigin currentCodeOrigin()
     {
-        return CodeOrigin(m_currentIndex, m_inlineStackTop->m_inlineCallFrame);
+        return CodeOrigin(m_currentIndex, m_inlineStackTop->m_inlineCallFrame, m_currentProfilingIndex - m_currentIndex);
     }
 
     // These methods create a node and add it to the graph. If nodes of this type are
@@ -574,8 +575,10 @@ private:
         Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
 
         PredictedType prediction = PredictNone;
-        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
-            prediction = getPrediction(m_graph.size(), m_currentIndex + OPCODE_LENGTH(op_call));
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+            m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call);
+            prediction = getPrediction();
+        }
         
         addVarArgChild(get(currentInstruction[1].u.operand));
         int argCount = currentInstruction[2].u.operand;
@@ -622,12 +625,12 @@ private:
     
     PredictedType getPredictionWithoutOSRExit()
     {
-        return getPredictionWithoutOSRExit(m_graph.size(), m_currentIndex);
+        return getPredictionWithoutOSRExit(m_graph.size(), m_currentProfilingIndex);
     }
     
     PredictedType getPrediction()
     {
-        return getPrediction(m_graph.size(), m_currentIndex);
+        return getPrediction(m_graph.size(), m_currentProfilingIndex);
     }
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
@@ -750,6 +753,8 @@ private:
     BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
+    // The bytecode index of the value profile of the current instruction being generated.
+    unsigned m_currentProfilingIndex;
 
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
@@ -945,7 +950,8 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
             resultOperand = putInstruction[1].u.operand;
             usesResult = true;
-            prediction = getPrediction(m_graph.size(), nextOffset);
+            m_currentProfilingIndex = nextOffset;
+            prediction = getPrediction();
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
         JSFunction* expectedFunction;
@@ -1067,13 +1073,16 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
+    unsigned oldProfilingIndex = m_currentProfilingIndex;
     m_currentIndex = 0;
+    m_currentProfilingIndex = 0;
 
     addToGraph(InlineStart);
     
     parseCodeBlock();
     
     m_currentIndex = oldIndex;
+    m_currentProfilingIndex = oldProfilingIndex;
     
     // If the inlined code created some new basic blocks, then we have linking to do.
     if (inlineStackEntry.m_callsiteBlockHead != m_graph.m_blocks.size() - 1) {
@@ -1331,6 +1340,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     }
 
     while (true) {
+        m_currentProfilingIndex = m_currentIndex;
+
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
             // Ordinarily we want to plant a jump. But refuse to do this if the block is
@@ -1703,6 +1714,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_method_check: {
+            m_currentProfilingIndex += OPCODE_LENGTH(op_method_check);
             Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
             
             PredictedType prediction = getPrediction();
@@ -2643,6 +2655,9 @@ bool ByteCodeParser::parse()
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     printf("Processing local variable phis.\n");
 #endif
+    
+    m_currentProfilingIndex = m_currentIndex;
+    
     processPhiStack<LocalPhiStack>();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     printf("Processing argument phis.\n");

@@ -668,6 +668,13 @@ void BytecodeGenerator::emitOpcode(OpcodeID opcodeID)
     m_lastOpcodeID = opcodeID;
 }
 
+ValueProfile* BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
+{
+    ValueProfile* result = m_codeBlock->addValueProfile(instructions().size());
+    emitOpcode(opcodeID);
+    return result;
+}
+
 void BytecodeGenerator::emitLoopHint()
 {
 #if ENABLE(DFG_JIT)
@@ -1245,9 +1252,10 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
     bool requiresDynamicChecks = false;
     if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) && !globalObject) {
         // We can't optimise at all :-(
-        emitOpcode(op_resolve);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return dst;
     }
     if (shouldAvoidResolveGlobal()) {
@@ -1267,21 +1275,23 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 #if ENABLE(INTERPRETER)
         m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
-        emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+        ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
         instructions().append(0);
         instructions().append(0);
         if (requiresDynamicChecks)
             instructions().append(depth);
+        instructions().append(profile);
         return dst;
     }
 
     if (requiresDynamicChecks) {
         // If we get here we have eval nested inside a |with| just give up
-        emitOpcode(op_resolve);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return dst;
     }
 
@@ -1292,10 +1302,11 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
 
     // In this case we are at least able to drop a few scope chains from the
     // lookup chain, although we still need to hash from then on.
-    emitOpcode(op_resolve_skip);
+    ValueProfile* profile = emitProfiledOpcode(op_resolve_skip);
     instructions().append(dst->index());
     instructions().append(addConstant(property));
     instructions().append(depth);
+    instructions().append(profile);
     return dst;
 }
 
@@ -1311,16 +1322,18 @@ RegisterID* BytecodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, i
                 return dst;
         }
 
-        emitOpcode(op_get_global_var);
+        ValueProfile* profile = emitProfiledOpcode(op_get_global_var);
         instructions().append(dst->index());
         instructions().append(index);
+        instructions().append(profile);
         return dst;
     }
 
-    emitOpcode(op_get_scoped_var);
+    ValueProfile* profile = emitProfiledOpcode(op_get_scoped_var);
     instructions().append(dst->index());
     instructions().append(index);
     instructions().append(depth);
+    instructions().append(profile);
     return dst;
 }
 
@@ -1348,10 +1361,11 @@ RegisterID* BytecodeGenerator::emitResolveBase(RegisterID* dst, const Identifier
     findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject);
     if (!globalObject || requiresDynamicChecks) {
         // We can't optimise at all :-(
-        emitOpcode(op_resolve_base);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
         instructions().append(false);
+        instructions().append(profile);
         return dst;
     }
 
@@ -1370,10 +1384,11 @@ RegisterID* BytecodeGenerator::emitResolveBaseForPut(RegisterID* dst, const Iden
     findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject);
     if (!globalObject || requiresDynamicChecks) {
         // We can't optimise at all :-(
-        emitOpcode(op_resolve_base);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_base);
         instructions().append(dst->index());
         instructions().append(addConstant(property));
         instructions().append(true);
+        instructions().append(profile);
         return dst;
     }
     
@@ -1393,10 +1408,11 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
     bool requiresDynamicChecks = false;
     if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) || !globalObject || requiresDynamicChecks) {
         // We can't optimise at all :-(
-        emitOpcode(op_resolve_with_base);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_with_base);
         instructions().append(baseDst->index());
         instructions().append(propDst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return baseDst;
     }
 
@@ -1411,9 +1427,10 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
         return baseDst;
     }
     if (shouldAvoidResolveGlobal()) {
-        emitOpcode(op_resolve);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
         instructions().append(propDst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return baseDst;
     }
 #if ENABLE(JIT)
@@ -1422,13 +1439,14 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
 #if ENABLE(INTERPRETER)
     m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
-    emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+    ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
     instructions().append(propDst->index());
     instructions().append(addConstant(property));
     instructions().append(0);
     instructions().append(0);
     if (requiresDynamicChecks)
         instructions().append(depth);
+    instructions().append(profile);
     return baseDst;
 }
 
@@ -1440,10 +1458,11 @@ RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, Register
     bool requiresDynamicChecks = false;
     if (!findScopedProperty(property, index, depth, false, requiresDynamicChecks, globalObject) || !globalObject || requiresDynamicChecks) {
         // We can't optimise at all :-(
-        emitOpcode(op_resolve_with_this);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve_with_this);
         instructions().append(baseDst->index());
         instructions().append(propDst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return baseDst;
     }
 
@@ -1458,9 +1477,10 @@ RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, Register
         return baseDst;
     }
     if (shouldAvoidResolveGlobal()) {
-        emitOpcode(op_resolve);
+        ValueProfile* profile = emitProfiledOpcode(op_resolve);
         instructions().append(propDst->index());
         instructions().append(addConstant(property));
+        instructions().append(profile);
         return baseDst;
     }
 #if ENABLE(JIT)
@@ -1469,13 +1489,14 @@ RegisterID* BytecodeGenerator::emitResolveWithThis(RegisterID* baseDst, Register
 #if ENABLE(INTERPRETER)
     m_codeBlock->addGlobalResolveInstruction(instructions().size());
 #endif
-    emitOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
+    ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
     instructions().append(propDst->index());
     instructions().append(addConstant(property));
     instructions().append(0);
     instructions().append(0);
     if (requiresDynamicChecks)
         instructions().append(depth);
+    instructions().append(profile);
     return baseDst;
 }
 
@@ -1490,7 +1511,7 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
 
-    emitOpcode(op_get_by_id);
+    ValueProfile* profile = emitProfiledOpcode(op_get_by_id);
     instructions().append(dst->index());
     instructions().append(base->index());
     instructions().append(addConstant(property));
@@ -1498,6 +1519,7 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
     instructions().append(0);
     instructions().append(0);
     instructions().append(0);
+    instructions().append(profile);
     return dst;
 }
 
@@ -1599,10 +1621,11 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
             return dst;
         }
     }
-    emitOpcode(op_get_by_val);
+    ValueProfile* profile = emitProfiledOpcode(op_get_by_val);
     instructions().append(dst->index());
     instructions().append(base->index());
     instructions().append(property->index());
+    instructions().append(profile);
     return dst;
 }
 
@@ -1824,8 +1847,9 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     instructions().append(0);
     instructions().append(0);
     if (dst != ignoredResult()) {
-        emitOpcode(op_call_put_result);
+        ValueProfile* profile = emitProfiledOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
+        instructions().append(profile);
     }
 
     if (m_shouldEmitProfileHooks) {
@@ -1853,8 +1877,9 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
     if (dst != ignoredResult()) {
-        emitOpcode(op_call_put_result);
+        ValueProfile* profile = emitProfiledOpcode(op_call_put_result);
         instructions().append(dst->index());
+        instructions().append(profile);
     }
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
@@ -1926,8 +1951,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(0);
     instructions().append(0);
     if (dst != ignoredResult()) {
-        emitOpcode(op_call_put_result);
+        ValueProfile* profile = emitProfiledOpcode(op_call_put_result);
         instructions().append(dst->index()); // dst
+        instructions().append(profile);
     }
 
     if (m_shouldEmitProfileHooks) {

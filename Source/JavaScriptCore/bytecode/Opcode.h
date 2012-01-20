@@ -95,38 +95,38 @@ namespace JSC {
         macro(op_is_function, 3) \
         macro(op_in, 4) \
         \
-        macro(op_resolve, 3) \
-        macro(op_resolve_skip, 4) \
-        macro(op_resolve_global, 5) \
-        macro(op_resolve_global_dynamic, 6) \
-        macro(op_get_scoped_var, 4) \
+        macro(op_resolve, 4) /* has value profiling */  \
+        macro(op_resolve_skip, 5) /* has value profiling */ \
+        macro(op_resolve_global, 6) /* has value profiling */ \
+        macro(op_resolve_global_dynamic, 7) /* has value profiling */ \
+        macro(op_get_scoped_var, 5) /* has value profiling */ \
         macro(op_put_scoped_var, 4) \
-        macro(op_get_global_var, 3) \
+        macro(op_get_global_var, 4) /* has value profiling */ \
         macro(op_put_global_var, 3) \
-        macro(op_resolve_base, 4) \
+        macro(op_resolve_base, 5) /* has value profiling */ \
         macro(op_ensure_property_exists, 3) \
-        macro(op_resolve_with_base, 4) \
-        macro(op_resolve_with_this, 4) \
-        macro(op_get_by_id, 8) \
-        macro(op_get_by_id_self, 8) \
-        macro(op_get_by_id_proto, 8) \
-        macro(op_get_by_id_chain, 8) \
-        macro(op_get_by_id_getter_self, 8) \
-        macro(op_get_by_id_getter_proto, 8) \
-        macro(op_get_by_id_getter_chain, 8) \
-        macro(op_get_by_id_custom_self, 8) \
-        macro(op_get_by_id_custom_proto, 8) \
-        macro(op_get_by_id_custom_chain, 8) \
-        macro(op_get_by_id_generic, 8) \
-        macro(op_get_array_length, 8) \
-        macro(op_get_string_length, 8) \
+        macro(op_resolve_with_base, 5) /* has value profiling */ \
+        macro(op_resolve_with_this, 5) /* has value profiling */ \
+        macro(op_get_by_id, 9) /* has value profiling */ \
+        macro(op_get_by_id_self, 9) /* has value profiling */ \
+        macro(op_get_by_id_proto, 9) /* has value profiling */ \
+        macro(op_get_by_id_chain, 9) /* has value profiling */ \
+        macro(op_get_by_id_getter_self, 9) /* has value profiling */ \
+        macro(op_get_by_id_getter_proto, 9) /* has value profiling */ \
+        macro(op_get_by_id_getter_chain, 9) /* has value profiling */ \
+        macro(op_get_by_id_custom_self, 9) /* has value profiling */ \
+        macro(op_get_by_id_custom_proto, 9) /* has value profiling */ \
+        macro(op_get_by_id_custom_chain, 9) /* has value profiling */ \
+        macro(op_get_by_id_generic, 9) /* has value profiling */ \
+        macro(op_get_array_length, 9) /* has value profiling */ \
+        macro(op_get_string_length, 9) /* has value profiling */ \
         macro(op_get_arguments_length, 4) \
         macro(op_put_by_id, 9) \
         macro(op_put_by_id_transition, 9) \
         macro(op_put_by_id_replace, 9) \
         macro(op_put_by_id_generic, 9) \
         macro(op_del_by_id, 4) \
-        macro(op_get_by_val, 4) \
+        macro(op_get_by_val, 5) /* has value profiling */ \
         macro(op_get_argument_by_val, 4) \
         macro(op_get_by_pname, 7) \
         macro(op_put_by_val, 4) \
@@ -170,7 +170,7 @@ namespace JSC {
         macro(op_tear_off_activation, 3) \
         macro(op_tear_off_arguments, 2) \
         macro(op_ret, 2) \
-        macro(op_call_put_result, 2) \
+        macro(op_call_put_result, 3) /* has value profiling */ \
         macro(op_ret_object_or_this, 3) \
         macro(op_method_check, 1) \
         \

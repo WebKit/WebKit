@@ -486,20 +486,16 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 #endif
 }
 
-inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
+inline void JIT::emitValueProfilingSite(unsigned bytecodeOffset)
 {
     if (!shouldEmitProfiling())
         return;
-    
-    ValueProfile* valueProfile;
-    if (siteKind == FirstProfilingSite)
-        valueProfile = m_codeBlock->addValueProfile(m_bytecodeOffset);
-    else {
-        ASSERT(siteKind == SubsequentProfilingSite);
-        valueProfile = m_codeBlock->valueProfileForBytecodeOffset(m_bytecodeOffset);
-    }
-    
-    emitValueProfilingSite(valueProfile);
+    emitValueProfilingSite(m_codeBlock->valueProfileForBytecodeOffset(bytecodeOffset));
+}
+
+inline void JIT::emitValueProfilingSite()
+{
+    emitValueProfilingSite(m_bytecodeOffset);
 }
 #endif
 

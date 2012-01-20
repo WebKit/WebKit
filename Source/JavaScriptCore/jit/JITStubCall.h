@@ -201,14 +201,14 @@ namespace JSC {
             return call;
         }
         
-        JIT::Call callWithValueProfiling(unsigned dst, JIT::ValueProfilingSiteKind kind)
+        JIT::Call callWithValueProfiling(unsigned dst)
         {
             ASSERT(m_returnType == Value || m_returnType == Cell);
             JIT::Call call = this->call();
             ASSERT(JIT::returnValueRegister == JIT::regT0);
             if (m_returnType == Cell)
                 m_jit->move(JIT::TrustedImm32(JSValue::CellTag), JIT::regT1);
-            m_jit->emitValueProfilingSite(kind);
+            m_jit->emitValueProfilingSite();
             if (m_returnType == Value)
                 m_jit->emitStore(dst, JIT::regT1, JIT::regT0);
             else
@@ -224,12 +224,12 @@ namespace JSC {
             return call;
         }
         
-        JIT::Call callWithValueProfiling(unsigned dst, JIT::ValueProfilingSiteKind kind)
+        JIT::Call callWithValueProfiling(unsigned dst)
         {
             ASSERT(m_returnType == VoidPtr || m_returnType == Cell);
             JIT::Call call = this->call();
             ASSERT(JIT::returnValueRegister == JIT::regT0);
-            m_jit->emitValueProfilingSite(kind);
+            m_jit->emitValueProfilingSite();
             m_jit->emitPutVirtualRegister(dst);
             return call;
         }

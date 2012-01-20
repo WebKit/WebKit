@@ -521,6 +521,11 @@ namespace JSC {
         {
             ValueProfile* result = WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
             ASSERT(result->m_bytecodeOffset != -1);
+            ASSERT(!hasInstructions()
+                   || instructions()[bytecodeOffset + opcodeLength(
+                           m_globalData->interpreter->getOpcodeID(
+                               instructions()[
+                                   bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
         }
         

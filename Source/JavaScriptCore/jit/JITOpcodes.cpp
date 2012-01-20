@@ -568,7 +568,7 @@ void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
@@ -599,7 +599,7 @@ void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
@@ -615,7 +615,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
@@ -636,7 +636,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT0);
     load32(Address(regT2, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT1);
     loadPtr(BaseIndex(regT0, regT1, ScalePtr), regT0);
-    emitValueProfilingSite(FirstProfilingSite);
+    emitValueProfilingSite();
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -652,7 +652,7 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
     stubCall.addArgument(regT0);
-    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite);
+    stubCall.callWithValueProfiling(dst);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -773,7 +773,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
@@ -781,7 +781,7 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -1563,7 +1563,7 @@ void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Ve
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
     stubCall.addArgument(regT0);
-    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite); // The first profiling site is in emit_op_resolve_global
+    stubCall.callWithValueProfiling(dst);
 }
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)

@@ -1,3 +1,117 @@
+2012-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecode instructions that may have value profiling should have a direct inline
+        link to the ValueProfile instance
+        https://bugs.webkit.org/show_bug.cgi?id=76682
+        <rdar://problem/10727689>
+
+        Reviewed by Sam Weinig.
+        
+        Each opcode that gets value profiled now has a link to its ValueProfile. This
+        required rationalizing the emission of value profiles for opcode combos, like
+        op_method_check/op_get_by_id and op_call/op_call_put_result. It only makes
+        sense for one of them to have a value profile link, and it makes most sense
+        for it to be the one that actually sets the result. The previous behavior was
+        to have op_method_check profile for op_get_by_id when they were used together,
+        but otherwise for op_get_by_id to have its own profiles. op_call already did
+        the right thing; all profiling was done by op_call_put_result.
+        
+        But rationalizing this code required breaking some of the natural boundaries
+        that the code had; for instance the code in DFG that emits a GetById in place
+        of both op_method_check and op_get_by_id must now know that it's the latter of
+        those that has the value profile, while the first of those constitutes the OSR
+        target. Hence each CodeOrigin must now have two bytecode indices - one for
+        OSR exit and one for profiling.
+        
+        Finally this change required some refiddling of our optimization heuristics,
+        because now all code blocks have "more instructions" due to the value profile
+        slots.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::bytecodeIndexForValueProfile):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitGetScopedVar):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor):
+        * jit/JIT.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_get_global_var):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_get_global_var):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::callWithValueProfiling):
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions):
+
 2012-01-20  ChangSeok Oh  <shivamidow@gmail.com>
 
         undefined reference to symbol eina_module_free

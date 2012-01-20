@@ -130,10 +130,10 @@ void setHeuristic(T& variable, const char* name, U value)
 
 void initializeOptions()
 {
-    SET(maximumOptimizationCandidateInstructionCount, 1000);
+    SET(maximumOptimizationCandidateInstructionCount, 1100);
     
-    SET(maximumFunctionForCallInlineCandidateInstructionCount, 150);
-    SET(maximumFunctionForConstructInlineCandidateInstructionCount, 80);
+    SET(maximumFunctionForCallInlineCandidateInstructionCount, 180);
+    SET(maximumFunctionForConstructInlineCandidateInstructionCount, 100);
     
     SET(maximumInliningDepth, 5);
 

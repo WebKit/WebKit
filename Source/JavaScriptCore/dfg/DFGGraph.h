@@ -223,8 +223,7 @@ public:
         
         Node& node = at(nodeIndex);
         
-        switch (node.op) {
-        case GetLocal: {
+        if (node.op == GetLocal) {
             if (!operandIsArgument(node.local()))
                 return 0;
             int argument = operandToArgument(node.local());
@@ -233,21 +232,10 @@ public:
             return profiledBlock->valueProfileForArgument(argument);
         }
         
-        // Nodes derives from calls need special handling because the value profile is
-        // associated with the op_call_put_result instruction.
-        case Call:
-        case Construct:
-        case ArrayPop:
-        case ArrayPush: {
-            ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
-            return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex + OPCODE_LENGTH(op_call));
-        }
-
-        default:
-            if (node.hasHeapPrediction())
-                return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndex);
-            return 0;
-        }
+        if (node.hasHeapPrediction())
+            return profiledBlock->valueProfileForBytecodeOffset(node.codeOrigin.bytecodeIndexForValueProfile());
+        
+        return 0;
     }
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;

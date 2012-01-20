@@ -660,7 +660,7 @@ void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
@@ -702,7 +702,7 @@ void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
@@ -718,7 +718,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[1].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
@@ -743,7 +743,7 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     load32(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT3);
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
-    emitValueProfilingSite(FirstProfilingSite);
+    emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + (dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global)), dst, regT1, regT0);
 }
@@ -759,7 +759,7 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
     JITStubCall stubCall(this, cti_op_resolve_global);
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(Imm32(currentIndex));
-    stubCall.callWithValueProfiling(dst, SubsequentProfilingSite);
+    stubCall.callWithValueProfiling(dst);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -1157,7 +1157,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
@@ -1165,7 +1165,7 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.callWithValueProfiling(currentInstruction[2].u.operand, FirstProfilingSite);
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_throw(Instruction* currentInstruction)

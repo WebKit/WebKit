@@ -409,6 +409,7 @@ namespace JSC {
 
     private:
         void emitOpcode(OpcodeID);
+        ValueProfile* emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         ALWAYS_INLINE void rewindBinaryOp();
