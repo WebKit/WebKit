@@ -2596,3 +2596,7 @@ http/tests/inspector/console-cross-origin-iframe-logging.html
 
 # Needs custom policy delegate enhancement to log downloads
 http/tests/download
+
+# ERROR: LayoutTestController::overridePreference() does not support the 'WebKitCSSCustomFilterEnabled' preference
+# https://bugs.webkit.org/show_bug.cgi?id=76444
+css3/filters/effect-custom-disabled.html
