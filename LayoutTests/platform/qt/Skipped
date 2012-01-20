@@ -871,13 +871,6 @@ svg/text/text-intro-05-t.svg
 svg/text/text-tselect-02-f.svg
 
 # ============================================================================= #
-# failing animations tests
-# ============================================================================= #
-# Needs expected results
-animations/animation-drt-api.html
-animations/animation-drt-api-multiple-keyframes.html
-
-# ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
 # REGRESSION (r53450) - skipped until fix
@@ -1733,12 +1726,6 @@ fast/forms/validation-message-on-textarea.html
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
-
-# [Qt] animations tests fails which uses suspend/resume
-# https://bugs.webkit.org/show_bug.cgi?id=43905
-animations/suspend-resume-animation.html
-animations/suspend-resume-animation-events.html
-animations/stop-animation-on-suspend.html
 
 # Assumes spesific metrics
 # See http://code.google.com/p/chromium/issues/detail?id=19897
