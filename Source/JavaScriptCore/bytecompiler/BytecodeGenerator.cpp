@@ -670,7 +670,11 @@ void BytecodeGenerator::emitOpcode(OpcodeID opcodeID)
 
 ValueProfile* BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 {
+#if ENABLE(VALUE_PROFILER)
     ValueProfile* result = m_codeBlock->addValueProfile(instructions().size());
+#else
+    ValueProfile* result = 0;
+#endif
     emitOpcode(opcodeID);
     return result;
 }

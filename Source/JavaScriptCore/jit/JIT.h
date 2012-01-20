@@ -340,6 +340,7 @@ namespace JSC {
         void emitValueProfilingSite(unsigned bytecodeOffset);
         void emitValueProfilingSite();
 #else
+        void emitValueProfilingSite(unsigned) { }
         void emitValueProfilingSite() { }
 #endif
 

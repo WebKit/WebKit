@@ -1,3 +1,13 @@
+2012-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Build fix for no-DFG configuration.
+        Needed for <rdar://problem/10727689>.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        * jit/JIT.h:
+        (JSC::JIT::emitValueProfilingSite):
+
 2012-01-19  Filip Pizlo  <fpizlo@apple.com>
 
         Bytecode instructions that may have value profiling should have a direct inline
