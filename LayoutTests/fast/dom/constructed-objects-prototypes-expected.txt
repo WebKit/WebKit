@@ -63,6 +63,8 @@ PASS (new inner.XPathEvaluator()).isInner is true
 PASS (new inner.XPathEvaluator()).constructor.isInner is true
 PASS (new inner.XSLTProcessor()).isInner is true
 PASS (new inner.XSLTProcessor()).constructor.isInner is true
+PASS (new inner.webkitURL()).isInner is true
+PASS (new inner.webkitURL()).constructor.isInner is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
