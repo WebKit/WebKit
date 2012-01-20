@@ -1,3 +1,16 @@
+2012-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        run-webkit-tests --lint-test-files crawls the whole LayoutTests subtree
+        https://bugs.webkit.org/show_bug.cgi?id=76748
+
+        Reviewed by Ryosuke Niwa.
+
+        It crawls the whole subtree and then doesn't use the data. Cutting this out
+        saves 4 seconds warm and 17 seconds cold on my Mac Pro.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+
 2012-01-20  Adam Barth  <abarth@webkit.org>
 
         Another tiny tweak to the garden-o-matic CSS.  This makes things line

@@ -64,6 +64,9 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         manager = Manager(port, options, printer)
         manager.print_config()
 
+        if options.lint_test_files:
+            return manager.lint()
+
         printer.print_update("Collecting tests ...")
         try:
             manager.collect_tests(args)
@@ -71,9 +74,6 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
             if e.errno == errno.ENOENT:
                 return -1
             raise
-
-        if options.lint_test_files:
-            return manager.lint()
 
         printer.print_update("Checking build ...")
         if not port.check_build(manager.needs_servers()):
