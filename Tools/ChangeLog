@@ -1,3 +1,28 @@
+2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] ensure the jhbuild used by webkit is as up-to-date as needed
+        https://bugs.webkit.org/show_bug.cgi?id=76585
+
+        Reviewed by Martin Robinson.
+
+        This allows us to specify a minimum version of jhbuild required,
+        while also providing stability against changes done to the master
+        branch, by letting us choose what is the exact version that will
+        be used.
+
+        * gtk/run-with-jhbuild: refactored for more hackability and easier
+        reading
+        (jhbuild_installed): checks whether jhbuild is installed
+        (jhbuild_cloned): checks whether jhbuild has been cloned
+        (jhbuild_at_expected_revision): checks whether jhbuild is at the
+        expected revision
+        (update_jhbuild): brings jhbuild to the expected revision
+        (clone_jhbuild): clones jhbuild
+        (install_jhbuild): build and installs jhbuild
+        (update_webkitgtk_libs): runs update-webkitgtk-libs
+        (ensure_jhbuild): high-level logic to decide whether and which of
+        the steps above are executed
+
 2012-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] DumpRenderTree converts "file:///" to a path differently
