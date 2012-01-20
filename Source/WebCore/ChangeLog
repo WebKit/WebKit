@@ -1,3 +1,17 @@
+2012-01-19  Eric Seidel  <eric@webkit.org>
+
+        Assertion failure in WebCore::HTMLFrameElementBase::insertedIntoDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=50312
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed the ASSERT and updated the comment.
+
+        Test: fast/frames/assert-on-insertedIntoDocument.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::insertedIntoDocument):
+
 2012-01-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove CCLayerDelegate, add ContentLayerDelegate for painting

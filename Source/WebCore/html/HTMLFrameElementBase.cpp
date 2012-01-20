@@ -201,16 +201,14 @@ void HTMLFrameElementBase::insertedIntoDocument()
     if (!document()->frame())
         return;
 
-    // Loads may cause synchronous javascript execution (e.g. beforeload or
-    // src=javascript), which could try to access the renderer before the normal
-    // parser machinery would call lazyAttach() and set us as needing style
-    // resolve.  Any code which expects this to be attached will resolve style
-    // before using renderer(), so this will make sure we attach in time.
-    // FIXME: Normally lazyAttach marks the renderer as attached(), but we don't
-    // want to do that here, as as callers expect to call attach() right after
-    // this and attach() will ASSERT(!attached())
-    ASSERT(!renderer()); // This recalc is unecessary if we already have a renderer.
-    lazyAttach(DoNotSetAttached);
+    // JavaScript in src=javascript: and beforeonload can access the renderer
+    // during attribute parsing *before* the normal parser machinery would
+    // attach the element. To support this, we lazyAttach here, but only
+    // if we don't already have a renderer (if we're inserted
+    // as part of a DocumentFragment, insertedIntoDocument from an earlier element
+    // could have forced a style resolve and already attached us).
+    if (!renderer())
+        lazyAttach(DoNotSetAttached);
     setNameAndOpenURL();
 }
 

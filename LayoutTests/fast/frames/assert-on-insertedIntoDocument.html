@@ -1,0 +1,14 @@
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var subtree = document.createElement('div');
+var styleElement = document.createElement('style');
+styleElement.textContent = "iframe { border: 3px solid blue; }";
+subtree.appendChild(styleElement);
+subtree.appendChild(document.createElement('iframe'));
+document.body.appendChild(subtree);
+</script>
+<div>PASS - this test did not ASSERT in debug mode.</div>
+</body>
