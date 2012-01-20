@@ -1,5 +1,13 @@
 2012-01-19  Daniel Bates  <dbates@webkit.org>
 
+        Remove "Safari 5.1 shipped" text from debugging instructions; move misplaced </ol>
+
+        Rubber-stamped by Sam Weinig.
+
+        * building/debug.html:
+
+2012-01-19  Daniel Bates  <dbates@webkit.org>
+
         Update Debugging on Mac OS X instructions for Safari 5.1/WebKit 2
         https://bugs.webkit.org/show_bug.cgi?id=67102
 
