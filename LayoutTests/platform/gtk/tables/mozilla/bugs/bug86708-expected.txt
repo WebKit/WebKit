@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 750x235 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 746x231
-          RenderTableRow {TR} at (0,0) size 746x211
-            RenderTableCell {TD} at (0,0) size 476x211 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 750x236 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 746x232
+          RenderTableRow {TR} at (0,0) size 746x212
+            RenderTableCell {TD} at (0,0) size 476x212 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 286x17 [color=#0000EE]
-                RenderImage {IMG} at (1,1) size 286x209
+                RenderImage {IMG} at (1,1) size 286x210
             RenderTableCell {TD} at (476,0) size 270x20 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
               RenderText {#text} at (1,1) size 170x17
                 text run at (1,1) width 170: "ROWSPAN =2 in this cell"
-          RenderTableRow {TR} at (0,211) size 746x20
-            RenderTableCell {TD} at (0,211) size 476x20 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,212) size 746x20
+            RenderTableCell {TD} at (0,212) size 476x20 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {P} at (1,1) size 474x18
                 RenderText {#text} at (0,0) size 302x17
                   text run at (0,0) width 302: "Hello, this text may appear on the image above"
