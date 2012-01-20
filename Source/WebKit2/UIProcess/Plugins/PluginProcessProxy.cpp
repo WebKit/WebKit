@@ -37,7 +37,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
-#import <WebCore/RunLoop.h>
+#include <WebCore/RunLoop.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"

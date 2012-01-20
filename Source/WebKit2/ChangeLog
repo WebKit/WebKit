@@ -1,3 +1,10 @@
+2012-01-19  Sam Weinig  <sam@webkit.org>
+
+        Replace improper #import with an #include.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        Fixes warnings.
+
 2012-01-18  Sam Weinig  <sam@webkit.org>
 
         Move RunLoop to WebCore/platform
