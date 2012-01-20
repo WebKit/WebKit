@@ -43,21 +43,26 @@ static guint childrenChangedListenerId = 0;
 static guint propertyChangedListenerId = 0;
 static guint visibleDataChangedListenerId = 0;
 
-static void printAccessibilityEvent(AtkObject* accessible, const gchar* signalName)
+static void printAccessibilityEvent(AtkObject* accessible, const gchar* signalName, const gchar* signalValue)
 {
-    // Sanity check.
-    if (!accessible || !ATK_IS_OBJECT(accessible) || !signalName)
+    // Do not handle state-change:defunct signals, as the AtkObject
+    // associated to them will not be valid at this point already.
+    if (!signalName || !g_strcmp0(signalName, "state-change:defunct"))
+        return;
+
+    if (!accessible || !ATK_IS_OBJECT(accessible))
         return;
 
     const gchar* objectName = atk_object_get_name(accessible);
-    guint objectRole = atk_object_get_role(accessible);
+    AtkRole objectRole = atk_object_get_role(accessible);
 
     // Try to always provide a name to be logged for the object.
     if (!objectName || *objectName == '\0')
         objectName = "(No name)";
 
+    GOwnPtr<gchar> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
     printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n",
-           signalName, objectName, objectRole);
+           signalNameAndValue.get(), objectName, objectRole);
 }
 
 static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
@@ -75,26 +80,25 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
 
     GSignalQuery signal_query;
     GOwnPtr<gchar> signalName;
+    GOwnPtr<gchar> signalValue;
 
     g_signal_query(signalHint->signal_id, &signal_query);
 
     if (!g_strcmp0(signal_query.signal_name, "state-change")) {
-        signalName.set(g_strdup_printf("state-change:%s = %d",
-                                       g_value_get_string(&paramValues[1]),
-                                       g_value_get_boolean(&paramValues[2])));
+        signalName.set(g_strdup_printf("state-change:%s", g_value_get_string(&paramValues[1])));
+        signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[2])));
     } else if (!g_strcmp0(signal_query.signal_name, "focus-event")) {
-        signalName.set(g_strdup_printf("focus-event = %d",
-                                       g_value_get_boolean(&paramValues[1])));
+        signalName.set(g_strdup("focus-event"));
+        signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
     } else if (!g_strcmp0(signal_query.signal_name, "children-changed")) {
-        signalName.set(g_strdup_printf("children-changed = %d",
-                                       g_value_get_uint(&paramValues[1])));
+        signalName.set(g_strdup("children-changed"));
+        signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
     } else if (!g_strcmp0(signal_query.signal_name, "property-change")) {
-        signalName.set(g_strdup_printf("property-change:%s",
-                                       g_quark_to_string(signalHint->detail)));
+        signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
     } else
         signalName.set(g_strdup(signal_query.signal_name));
 
-    printAccessibilityEvent(accessible, signalName.get());
+    printAccessibilityEvent(accessible, signalName.get(), signalValue.get());
 
     return TRUE;
 }

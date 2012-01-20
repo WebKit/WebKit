@@ -1,3 +1,18 @@
+2012-01-20  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] GTK's DRT not to log events for already defunct objects
+        https://bugs.webkit.org/show_bug.cgi?id=76620
+
+        Reviewed by Martin Robinson.
+
+        Do not log 'state-change:defunct' events.
+
+        * DumpRenderTree/gtk/AccessibilityCallbacks.cpp:
+        (printAccessibilityEvent): Early return if a
+        'state-change:defunct' signal is passed.
+        (axObjectEventListener): Pass the signal name and value in
+        separate parameters to printAccessibilityEvent.
+
 2012-01-19  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix. Wrong variable being used as the cwd for git
