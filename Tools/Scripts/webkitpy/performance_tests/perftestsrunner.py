@@ -38,6 +38,7 @@ import time
 
 from webkitpy.common import find_files
 from webkitpy.common.host import Host
+from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.layout_tests.port.driver import DriverInput
 from webkitpy.layout_tests.views import printing
 
@@ -47,6 +48,10 @@ _log = logging.getLogger(__name__)
 class PerfTestsRunner(object):
     _perf_tests_base_dir = 'PerformanceTests'
     _test_directories_for_chromium_style_tests = ['inspector']
+    _default_branch = 'webkit-trunk'
+    _EXIT_CODE_BAD_BUILD = -1
+    _EXIT_CODE_BAD_JSON = -2
+    _EXIT_CODE_FAILED_UPLOADING = -3
 
     def __init__(self, regular_output=sys.stderr, buildbot_output=sys.stdout, args=None, port=None):
         self._buildbot_output = buildbot_output
@@ -70,21 +75,27 @@ class PerfTestsRunner(object):
 
         perf_option_list = [
             optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
-                                 help='Set the configuration to Debug'),
+                help='Set the configuration to Debug'),
             optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
-                                 help='Set the configuration to Release'),
+                help='Set the configuration to Release'),
             optparse.make_option("--platform",
-                                 help="Specify port/platform being tested (i.e. chromium-mac)"),
+                help="Specify port/platform being tested (i.e. chromium-mac)"),
+            optparse.make_option("--builder-name",
+                help=("The name of the builder shown on the waterfall running this script e.g. google-mac-2.")),
+            optparse.make_option("--build-number",
+                help=("The build number of the builder running this script.")),
             optparse.make_option("--build", dest="build", action="store_true", default=True,
-                                help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
+                help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
             optparse.make_option("--build-directory",
-                                 help="Path to the directory under which build files are kept (should not include configuration)"),
+                help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=600 * 1000,
-                                 help="Set the timeout for each test"),
+                help="Set the timeout for each test"),
             optparse.make_option("--output-json-path",
-                                 help="Filename of the JSON file that summaries the results"),
+                help="Filename of the JSON file that summaries the results"),
             optparse.make_option("--source-json-path",
-                                 help="Path to a JSON file to be merged into the JSON file when --output-json-path is specified"),
+                help="Path to a JSON file to be merged into the JSON file when --output-json-path is present"),
+            optparse.make_option("--test-results-server",
+                help="Upload the generated JSON file to the specified server when --output-json-path is present"),
             ]
 
         option_list = (perf_option_list + print_options)
@@ -108,7 +119,7 @@ class PerfTestsRunner(object):
 
         if not self._port.check_build(needs_http=False):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
-            return -1
+            return self._EXIT_CODE_BAD_BUILD
 
         # We wrap any parts of the run that are slow or likely to raise exceptions
         # in a try/finally to ensure that we clean up the logging configuration.
@@ -119,34 +130,56 @@ class PerfTestsRunner(object):
         finally:
             self._printer.cleanup()
 
-        if not self._generate_json_if_specified(self._timestamp) and not unexpected:
-            return -2
+        options = self._options
+        if self._options.output_json_path:
+            # FIXME: Add --branch or auto-detect the branch we're in
+            test_results_server = options.test_results_server
+            branch = self._default_branch if test_results_server else None
+            build_number = int(options.build_number) if options.build_number else None
+            if not self._generate_json(self._timestamp, options.output_json_path, options.source_json_path,
+                branch, options.platform, options.builder_name, build_number) and not unexpected:
+                return self._EXIT_CODE_BAD_JSON
+            if test_results_server and not self._upload_json(test_results_server, options.output_json_path):
+                return self._EXIT_CODE_FAILED_UPLOADING
 
         return unexpected
 
-    def _generate_json_if_specified(self, timestamp):
-        output_json_path = self._options.output_json_path
-        if not output_json_path:
-            return True
-
+    def _generate_json(self, timestamp, output_json_path, source_json_path, branch, platform, builder_name, build_number):
         revision = self._host.scm().head_svn_revision()
         contents = {'timestamp': int(timestamp), 'revision': revision, 'results': self._results}
 
+        for key, value in {'branch': branch, 'platform': platform, 'builder-name': builder_name, 'build-number': build_number}.items():
+            if value:
+                contents[key] = value
+
         filesystem = self._host.filesystem
-        source_json_path = self._options.source_json_path
         if source_json_path:
             try:
                 source_json_file = filesystem.open_text_file_for_reading(source_json_path)
                 source_json = json.load(source_json_file)
-            except:
-                _log.error("Failed to parse %s" % source_json_path)
+                contents = dict(source_json.items() + contents.items())
+                succeeded = True
+            except IOError, error:
+                _log.error("Failed to read %s: %s" % (source_json_path, error))
+            except ValueError, error:
+                _log.error("Failed to parse %s: %s" % (source_json_path, error))
+            except TypeError, error:
+                _log.error("Failed to merge JSON files: %s" % error)
+            if not succeeded:
                 return False
-            if not isinstance(source_json, dict):
-                _log.error("The source JSON was not a dictionary")
-                return False
-            contents = dict(source_json.items() + contents.items())
 
         filesystem.write_text_file(output_json_path, json.dumps(contents))
+        return True
+
+    def _upload_json(self, test_results_server, json_path, file_uploader=FileUploader):
+        uploader = file_uploader("https://%s/api/test/report" % test_results_server, 120)
+        try:
+            uploader.upload_single_text_file(self._host.filesystem, 'application/json', json_path)
+        except Exception, error:
+            _log.error("Failed to upload JSON file in 120s: %s" % error)
+            return False
+
+        self._printer.write("JSON file uploaded.")
         return True
 
     def _print_status(self, tests, expected, unexpected):
@@ -167,7 +200,7 @@ class PerfTestsRunner(object):
 
         for test in tests:
             if driver_need_restart:
-                _log.debug("%s killing driver" % test)
+                _log.error("%s killing driver" % test)
                 driver.stop()
                 driver = None
             if not driver:

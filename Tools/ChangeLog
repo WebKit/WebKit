@@ -1,3 +1,39 @@
+2012-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should support --test-results-server option
+        https://bugs.webkit.org/show_bug.cgi?id=76680
+
+        Reviewed by Adam Barth.
+
+        Add --test-results-server, --builder-name, and --build-number options to run-perf-tests
+        to be used by perf bots. Also refactor file_uploader as needed.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.__init__):
+        (FileUploader.upload_single_file):
+        (FileUploader.upload_as_multipart_form_data):
+        (FileUploader):
+        (FileUploader._upload_data):
+        (FileUploader._upload_data.callback):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.upload_json_files):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._generate_json):
+        (PerfTestsRunner._upload_json):
+        (PerfTestsRunner._run_tests_set):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner):
+        (test_run_with_upload_json):
+        (test_run_with_upload_json.mock_upload_json):
+        (test_upload_json):
+        (test_upload_json.MockFileUploader):
+        (test_upload_json.MockFileUploader.__init__):
+        (test_upload_json.MockFileUploader.upload_single_file):
+        (test_parse_args):
+
 2012-01-20  Adam Barth  <abarth@webkit.org>
 
         The party time image overlaps real content!  This patch makes the

@@ -102,9 +102,9 @@ max 1120
         def stop(self):
             """do nothing"""
 
-    def create_runner(self, buildbot_output=None, args=[]):
+    def create_runner(self, buildbot_output=None, args=[], regular_output=None):
         buildbot_output = buildbot_output or array_stream.ArrayStream()
-        regular_output = array_stream.ArrayStream()
+        regular_output = regular_output or array_stream.ArrayStream()
 
         options, parsed_args = PerfTestsRunner._parse_args(args)
         test_port = TestPort(host=MockHost(), options=options)
@@ -212,6 +212,63 @@ max 1120
             "revision": 1234,
             "key": "value"})
 
+    def test_run_with_upload_json(self):
+        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
+        upload_json_is_called = [False]
+        upload_json_returns_true = True
+
+        def mock_upload_json(hostname, json_path):
+            self.assertEqual(hostname, 'some.host')
+            self.assertEqual(json_path, '/mock-checkout/output.json')
+            upload_json_is_called[0] = True
+            return upload_json_returns_true
+
+        runner._upload_json = mock_upload_json
+        runner._host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
+        runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
+        runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+        runner._timestamp = 123456789
+        self.assertEqual(runner.run(), 0)
+        self.assertEqual(upload_json_is_called[0], True)
+        generated_json = json.loads(runner._host.filesystem.files['/mock-checkout/output.json'])
+        self.assertEqual(generated_json['platform'], 'platform1')
+        self.assertEqual(generated_json['builder-name'], 'builder1')
+        self.assertEqual(generated_json['build-number'], 123)
+        upload_json_returns_true = False
+        self.assertEqual(runner.run(), -3)
+
+    def test_upload_json(self):
+        regular_output = array_stream.ArrayStream()
+        runner = self.create_runner(buildbot_output=regular_output)
+        runner._host.filesystem.files['/mock-checkout/some.json'] = 'some content'
+
+        called = []
+        upload_single_text_file_throws = False
+
+        class MockFileUploader:
+            def __init__(mock, url, timeout):
+                self.assertEqual(url, 'https://some.host/api/test/report')
+                self.assertTrue(isinstance(timeout, int) and timeout)
+                called.append('FileUploader')
+
+            def upload_single_text_file(mock, filesystem, content_type, filename):
+                self.assertEqual(filesystem, runner._host.filesystem)
+                self.assertEqual(content_type, 'application/json')
+                self.assertEqual(filename, 'some.json')
+                called.append('upload_single_text_file')
+                if upload_single_text_file_throws:
+                    raise "Some exception"
+
+        runner._upload_json('some.host', 'some.json', MockFileUploader)
+        self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
+
+        # Throwing an exception upload_single_text_file shouldn't blow up _upload_json
+        called = []
+        upload_single_text_file_throws = True
+        runner._upload_json('some.host', 'some.json', MockFileUploader)
+        self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
+
     def test_collect_tests(self):
         runner = self.create_runner()
         filename = runner._host.filesystem.join(runner._base_path, 'inspector', 'a_file.html')
@@ -242,20 +299,26 @@ max 1120
                 '--verbose',
                 '--build-directory=folder42',
                 '--platform=platform42',
+                '--builder-name', 'webkit-mac-1',
+                '--build-number=56',
                 '--time-out-ms=42',
                 '--output-json-path=a/output.json',
                 '--source-json-path=a/source.json',
+                '--test-results-server=somehost',
                 '--debug', 'an_arg'])
         self.assertEqual(options.build, True)
         self.assertEqual(options.verbose, True)
         self.assertEqual(options.help_printing, None)
         self.assertEqual(options.build_directory, 'folder42')
         self.assertEqual(options.platform, 'platform42')
+        self.assertEqual(options.builder_name, 'webkit-mac-1')
+        self.assertEqual(options.build_number, '56')
         self.assertEqual(options.time_out_ms, '42')
         self.assertEqual(options.configuration, 'Debug')
         self.assertEqual(options.print_options, None)
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.source_json_path, 'a/source.json')
+        self.assertEqual(options.test_results_server, 'somehost')
 
 
 if __name__ == '__main__':

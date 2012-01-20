@@ -321,11 +321,11 @@ class JSONResultsGeneratorBase(object):
             for file in json_files]
 
         url = "http://%s/testfile/upload" % self._test_results_server
-        uploader = FileUploader(url)
+        # Set uploading timeout in case appengine server is having problems.
+        # 120 seconds are more than enough to upload test results.
+        uploader = FileUploader(url, 120)
         try:
-            # Set uploading timeout in case appengine server is having problem.
-            # 120 seconds are more than enough to upload test results.
-            uploader.upload(attrs, files, 120)
+            uploader.upload_as_multipart_form_data(self._filesystem, files, attrs)
         except Exception, err:
             _log.error("Upload failed: %s" % err)
             return

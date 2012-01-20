@@ -84,31 +84,32 @@ def _encode_multipart_form_data(fields, files):
 
 
 class FileUploader(object):
-    def __init__(self, url):
+    def __init__(self, url, timeout_seconds):
         self._url = url
+        self._timeout_seconds = timeout_seconds
 
-    def _upload_files(self, attrs, file_objs):
-        # FIXME: We should use the same variable names for the formal and actual parameters.
-        content_type, data = _encode_multipart_form_data(attrs, file_objs)
-        headers = {
-            "Content-Type": content_type,
-        }
-        # FIXME: We should talk to the network via a Host object.
-        request = urllib2.Request(self._url, data, headers)
-        urllib2.urlopen(request)
+    def upload_single_text_file(self, filesystem, content_type, filename):
+        self._upload_data(content_type, filesystem.read_text_file(filename))
 
-    def upload(self, params, files, timeout_seconds):
+    def upload_as_multipart_form_data(self, filesystem, files, params, timeout_seconds):
         file_objs = []
         for filename, path in files:
             # FIXME: We should talk to the filesytem via a Host object.
-            with codecs.open(path, "rb") as file:
-                file_objs.append(('file', filename, file.read()))
+            file_objs.append(('file', filename, filesystem.read_text_file(filename)))
+
+        # FIXME: We should use the same variable names for the formal and actual parameters.
+        content_type, data = _encode_multipart_form_data(attrs, file_objs)
+        self._upload_data(content_type, data)
+
+    def _upload_data(self, content_type, data):
+        def callback():
+            request = urllib2.Request(self._url, data, {"Content-Type": content_type})
+            urllib2.urlopen(request)
 
         orig_timeout = socket.getdefaulttimeout()
         try:
             # FIXME: We shouldn't mutate global static state.
-            socket.setdefaulttimeout(timeout_seconds)
-            NetworkTransaction(timeout_seconds=timeout_seconds).run(
-                lambda: self._upload_files(params, file_objs))
+            socket.setdefaulttimeout(self._timeout_seconds)
+            NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
         finally:
             socket.setdefaulttimeout(orig_timeout)
