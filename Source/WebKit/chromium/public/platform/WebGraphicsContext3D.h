@@ -124,6 +124,13 @@ public:
         virtual ~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM() { }
     };
 
+    // Graphics Resource Usage
+    enum ResourceUsage {
+        RESOURCE_USAGE_FULL,
+        RESOURCE_USAGE_LESS,
+        RESOURCE_USAGE_NONE,
+    };
+
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
 
@@ -143,8 +150,10 @@ public:
     // Resizes the region into which this WebGraphicsContext3D is drawing.
     virtual void reshape(int width, int height) = 0;
 
-    // GL_CHROMIUM_setVisibility - Changes the visibility of the backbuffer
-    virtual void setVisibilityCHROMIUM(bool visible) = 0;
+    // GL_CHROMIUM_resource_usage - use/drop various resources, such as front/back buffers
+    // TODO(mmocny): remove visibility once chromium patch lands
+    virtual void setVisibilityCHROMIUM(bool visible) { }
+    virtual void setResourceUsageCHROMIUM(ResourceUsage) { }
 
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;

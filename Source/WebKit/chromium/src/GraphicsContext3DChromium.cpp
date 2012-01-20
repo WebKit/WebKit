@@ -891,14 +891,19 @@ bool GraphicsContext3DPrivate::isExtensionEnabled(const String& name)
     return m_enabledExtensions.contains(mappedName);
 }
 
+void GraphicsContext3DPrivate::setVisibilityCHROMIUM(bool visibility)
+{
+    // TODO(mmocny): remove visibility once chromium patch lands
+    m_impl->setVisibilityCHROMIUM(visibility);
+    m_impl->setResourceUsageCHROMIUM(visibility ? WebKit::WebGraphicsContext3D::RESOURCE_USAGE_FULL : WebKit::WebGraphicsContext3D::RESOURCE_USAGE_LESS);
+}
+
 DELEGATE_TO_IMPL_4(postSubBufferCHROMIUM, int, int, int, int)
 
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
-
-DELEGATE_TO_IMPL_1(setVisibilityCHROMIUM, bool);
 
 DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
