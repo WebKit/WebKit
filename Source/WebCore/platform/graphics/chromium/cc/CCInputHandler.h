@@ -43,7 +43,6 @@ class IntSize;
 class CCInputHandlerClient {
     WTF_MAKE_NONCOPYABLE(CCInputHandlerClient);
 public:
-    virtual double currentTimeMs() const = 0;
     virtual void setNeedsRedraw() = 0;
 
     enum ScrollStatus { ScrollFailed, ScrollStarted, ScrollIgnored };
@@ -73,6 +72,7 @@ public:
     virtual void startPageScaleAnimation(const IntSize& targetPosition,
                                          bool anchorPoint,
                                          float pageScale,
+                                         double startTimeMs,
                                          double durationMs) = 0;
 
 protected:

@@ -1,3 +1,19 @@
+2012-01-20  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Write unit tests for compositor-thread zooming
+        https://bugs.webkit.org/show_bug.cgi?id=71529
+
+        Reviewed by James Robinson.
+
+        Add unit tests for pinch zoom and page scale animation.  Includes
+        small cleanups in CCLayerTreeHostImpl for testability.
+
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::startPageScaleAnimation):
+        (WebCore::CCLayerTreeHostImpl::setViewportSize):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+
 2012-01-20  David Reveman  <reveman@chromium.org>
 
         [Chromium] Incremental texture updates are not atomic.

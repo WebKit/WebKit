@@ -74,6 +74,20 @@ public:
         ASSERT_EQ(timesEncountered, 1);
     }
 
+    void setupScrollAndContentsLayers(const IntSize& contentSize)
+    {
+        RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        root->setScrollable(true);
+        root->setScrollPosition(IntPoint(0, 0));
+        root->setMaxScrollPosition(contentSize);
+        RefPtr<CCLayerImpl> contents = CCLayerImpl::create(1);
+        contents->setDrawsContent(true);
+        contents->setBounds(contentSize);
+        contents->setContentBounds(contentSize);
+        root->addChild(contents);
+        m_hostImpl->setRootLayer(root);
+    }
+
 protected:
     DebugScopedSetImplThread m_alwaysImplThread;
     OwnPtr<CCLayerTreeHostImpl> m_hostImpl;
@@ -154,6 +168,112 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     m_hostImpl->scrollEnd();
     EXPECT_TRUE(m_didRequestRedraw);
     EXPECT_TRUE(m_didRequestCommit);
+}
+
+TEST_F(CCLayerTreeHostImplTest, pinchGesture)
+{
+    setupScrollAndContentsLayers(IntSize(100, 100));
+    m_hostImpl->setViewportSize(IntSize(50, 50));
+
+    CCLayerImpl* scrollLayer = m_hostImpl->scrollLayer();
+    ASSERT(scrollLayer);
+
+    const float minPageScale = 0.5, maxPageScale = 4;
+
+    // Basic pinch zoom in gesture
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+
+        float pageScaleDelta = 2;
+        m_hostImpl->pinchGestureBegin();
+        m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(50, 50));
+        m_hostImpl->pinchGestureEnd();
+        EXPECT_TRUE(m_didRequestRedraw);
+        EXPECT_TRUE(m_didRequestCommit);
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, pageScaleDelta);
+    }
+
+    // Zoom-in clamping
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+        float pageScaleDelta = 10;
+
+        m_hostImpl->pinchGestureBegin();
+        m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(50, 50));
+        m_hostImpl->pinchGestureEnd();
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, maxPageScale);
+    }
+
+    // Zoom-out clamping
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollPosition(IntPoint(50, 50));
+
+        float pageScaleDelta = 0.1;
+        m_hostImpl->pinchGestureBegin();
+        m_hostImpl->pinchGestureUpdate(pageScaleDelta, IntPoint(0, 0));
+        m_hostImpl->pinchGestureEnd();
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, minPageScale);
+
+        // Pushed to (0,0) via clamping against contents layer size.
+        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
+{
+    setupScrollAndContentsLayers(IntSize(100, 100));
+    m_hostImpl->setViewportSize(IntSize(50, 50));
+
+    CCLayerImpl* scrollLayer = m_hostImpl->scrollLayer();
+    ASSERT(scrollLayer);
+
+    const float minPageScale = 0.5, maxPageScale = 4;
+    const double startTimeMs = 1000;
+    const double durationMs = 100;
+
+    // Non-anchor zoom-in
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollPosition(IntPoint(50, 50));
+
+        m_hostImpl->startPageScaleAnimation(IntSize(0, 0), false, 2, startTimeMs, durationMs);
+        m_hostImpl->animate(startTimeMs + durationMs / 2);
+        EXPECT_TRUE(m_didRequestRedraw);
+        m_hostImpl->animate(startTimeMs + durationMs);
+        EXPECT_TRUE(m_didRequestCommit);
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, 2);
+        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+    }
+
+    // Anchor zoom-out
+    {
+        m_hostImpl->setPageScaleFactorAndLimits(1, minPageScale, maxPageScale);
+        scrollLayer->setPageScaleDelta(1);
+        scrollLayer->setScrollPosition(IntPoint(50, 50));
+
+        m_hostImpl->startPageScaleAnimation(IntSize(25, 25), true, minPageScale, startTimeMs, durationMs);
+        m_hostImpl->animate(startTimeMs + durationMs);
+        EXPECT_TRUE(m_didRequestRedraw);
+        EXPECT_TRUE(m_didRequestCommit);
+
+        OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+        EXPECT_EQ(scrollInfo->pageScaleDelta, minPageScale);
+        // Pushed to (0,0) via clamping against contents layer size.
+        expectContains(*scrollInfo.get(), scrollLayer->id(), IntSize(-50, -50));
+    }
 }
 
 class BlendStateTrackerContext: public FakeWebGraphicsContext3D {

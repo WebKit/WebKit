@@ -62,7 +62,6 @@ public:
     virtual ~CCLayerTreeHostImpl();
 
     // CCInputHandlerTarget implementation
-    virtual double currentTimeMs() const;
     virtual void setNeedsRedraw();
     virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&);
     virtual void scrollBy(const IntSize&);
@@ -113,7 +112,7 @@ public:
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }
 
-    void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double durationMs);
+    void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs);
 
     const CCSettings& settings() const { return m_settings; }
 

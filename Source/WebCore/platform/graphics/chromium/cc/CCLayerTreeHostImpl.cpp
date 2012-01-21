@@ -114,7 +114,7 @@ void CCLayerTreeHostImpl::animate(double frameBeginTimeMs)
     }
 }
 
-void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double durationMs)
+void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs)
 {
     if (!m_scrollLayerImpl)
         return;
@@ -125,7 +125,7 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     IntSize scaledContentSize = m_scrollLayerImpl->children()[0]->contentBounds();
     scaledContentSize.scale(m_pageScaleDelta);
 
-    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, currentTimeMs());
+    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, startTimeMs);
 
     if (anchorPoint) {
         IntSize windowAnchor(targetPosition);
@@ -368,7 +368,9 @@ void CCLayerTreeHostImpl::setViewportSize(const IntSize& viewportSize)
 
     m_viewportSize = viewportSize;
     updateMaxScrollPosition();
-    m_layerRenderer->viewportChanged();
+
+    if (m_layerRenderer)
+        m_layerRenderer->viewportChanged();
 }
 
 void CCLayerTreeHostImpl::setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale)
@@ -448,11 +450,6 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
     m_scrollLayerImpl->setMaxScrollPosition(maxScroll);
 
     // TODO(aelias): Also update sublayers.
-}
-
-double CCLayerTreeHostImpl::currentTimeMs() const
-{
-    return monotonicallyIncreasingTime() * 1000.0;
 }
 
 void CCLayerTreeHostImpl::setNeedsRedraw()
