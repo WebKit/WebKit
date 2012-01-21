@@ -1,3 +1,18 @@
+2012-01-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebKit2 remember the height of the Web Inspector when it is docked.
+
+        https://webkit.org/b/76769
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPreferencesStore.h: Added InspectorAttachedHeight.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::setAttachedWindowHeight): Call WebPreferencesStore::setInspectorAttachedHeight.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformAttach): Set the height of the inspector's WKView to inspectorAttachedHeight.
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight): Remove unneeded setNeedsDisplay: calls.
+
 2012-01-20  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Division by zero error in QtViewportInteractionEngine::setItemRectVisible

@@ -148,6 +148,7 @@ void WebInspectorProxy::detach()
 
 void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
+    inspectorPageGroup()->preferences()->setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 

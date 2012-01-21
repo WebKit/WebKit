@@ -129,6 +129,7 @@ namespace WebKit {
     macro(DeviceHeight, deviceHeight, UInt32, uint32_t, 854) \
     macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \
     macro(EditableLinkBehavior, editableLinkBehavior, UInt32, uint32_t, WebCore::EditableLinkNeverLive) \
+    macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
     \
 
 #if PLATFORM(WIN)

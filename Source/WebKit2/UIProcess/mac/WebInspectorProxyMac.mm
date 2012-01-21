@@ -32,7 +32,9 @@
 #import "WebContext.h"
 #import "WKInspectorMac.h"
 #import "WKViewPrivate.h"
+#import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import <WebKitSystemInterface.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
@@ -207,6 +209,10 @@ void WebInspectorProxy::platformAttach()
 
     [m_inspectorView.get() removeFromSuperview];
 
+    // The inspector view shares the width and the left starting point of the inspected view.
+    NSRect inspectedViewFrame = [inspectedView frame];
+    [m_inspectorView.get() setFrame:NSMakeRect(NSMinX(inspectedViewFrame), 0, NSWidth(inspectedViewFrame), inspectorPageGroup()->preferences()->inspectorAttachedHeight())];
+
     [[inspectedView superview] addSubview:m_inspectorView.get() positioned:NSWindowBelow relativeTo:inspectedView];
 
     [m_inspectorWindow.get() orderOut:nil];
@@ -249,9 +255,6 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
     [m_inspectorView.get() setFrame:NSMakeRect(NSMinX(inspectedViewFrame), 0.0, NSWidth(inspectedViewFrame), height)];
 
     inspectedViewFrameDidChange();
-
-    [m_inspectorView.get() setNeedsDisplay:YES];
-    [inspectedView setNeedsDisplay:YES];
 }
 
 String WebInspectorProxy::inspectorPageURL() const
