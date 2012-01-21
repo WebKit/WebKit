@@ -3365,20 +3365,20 @@ class LeakyPatternTest(CppStyleTestBase):
     def test_create_dc(self):
         self.assert_leaky_pattern_check(
             'HDC dc2 = ::CreateDC();',
-            'Use OwnPtr<HDC> when calling CreateDC to avoid potential '
+            'Use adoptPtr and OwnPtr<HDC> when calling CreateDC to avoid potential '
             'memory leaks.  [runtime/leaky_pattern] [5]')
 
         self.assert_leaky_pattern_check(
-            'OwnPtr<HDC> dc2 = adoptPtr(CreateDC());',
+            'adoptPtr(CreateDC());',
             '')
 
     def test_create_compatible_dc(self):
         self.assert_leaky_pattern_check(
             'HDC dc2 = CreateCompatibleDC(dc);',
-            'Use OwnPtr<HDC> when calling CreateCompatibleDC to avoid potential '
+            'Use adoptPtr and OwnPtr<HDC> when calling CreateCompatibleDC to avoid potential '
             'memory leaks.  [runtime/leaky_pattern] [5]')
         self.assert_leaky_pattern_check(
-            'OwnPtr<HDC> dc2 = adoptPtr(CreateCompatibleDC(dc));',
+            'adoptPtr(CreateCompatibleDC(dc));',
             '')
 
 

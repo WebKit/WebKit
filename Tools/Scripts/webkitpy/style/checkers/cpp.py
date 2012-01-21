@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+# Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
@@ -1680,10 +1680,10 @@ def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
               'memory leaks.' % matched_get_dc.group('function_name'))
 
     matched_create_dc = search(r'\b(?P<function_name>Create(Compatible)?DC)\s*\(', line)
-    matched_own_dc = search(r'\bOwnPtr\<HDC\>\s+', line)
+    matched_own_dc = search(r'\badoptPtr\b', line)
     if matched_create_dc and not matched_own_dc:
         error(line_number, 'runtime/leaky_pattern', 5,
-              'Use OwnPtr<HDC> when calling %s to avoid potential '
+              'Use adoptPtr and OwnPtr<HDC> when calling %s to avoid potential '
               'memory leaks.' % matched_create_dc.group('function_name'))
 
 
