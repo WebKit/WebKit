@@ -159,6 +159,9 @@ bailOut:
 
 void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRect)
 {
+    if (m_align == SVG_PRESERVEASPECTRATIO_NONE)
+        return;
+
     FloatSize imageSize = srcRect.size();
     float origDestWidth = destRect.width();
     float origDestHeight = destRect.height();

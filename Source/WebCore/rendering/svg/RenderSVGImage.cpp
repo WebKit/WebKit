@@ -131,8 +131,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
                 FloatRect srcRect(0, 0, image->width(), image->height());
 
                 SVGImageElement* imageElement = static_cast<SVGImageElement*>(node());
-                if (imageElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
-                    imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
+                imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
 
                 childPaintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
             }

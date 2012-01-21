@@ -1,3 +1,21 @@
+2012-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        <feImage> ignores preserveAspectRatio="none"
+        https://bugs.webkit.org/show_bug.cgi?id=76780
+
+        Reviewed by Antti Koivisto.
+
+        preserveAspectRatio="none" was ignored in SVGFEImage. It always called transformRect() w/o checking
+        whether it was supposed to transform the rect or not - move code from RenderSVGImage right into
+        transformRect(), to do nothing if preserveAspectRatio="none" was given.
+
+        Test: svg/filters/feImage-preserveAspectratio.svg
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::transformRect):
+
 2012-01-21  Jochen Eisinger  <jochen@chromium.org>
 
         history.replaceState should update the HistoryItem to use a GET method if previously non-GET (POST)
