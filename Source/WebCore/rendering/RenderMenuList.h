@@ -107,7 +107,7 @@ private:
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
-    virtual bool multiple();
+    virtual bool multiple() const;
 
     virtual bool hasLineIfEmpty() const { return true; }
 

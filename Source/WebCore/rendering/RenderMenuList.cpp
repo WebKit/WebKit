@@ -336,7 +336,7 @@ void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelectio
     toHTMLSelectElement(node())->listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
 }
 
-bool RenderMenuList::multiple()
+bool RenderMenuList::multiple() const
 {
     return toHTMLSelectElement(node())->multiple();
 }
