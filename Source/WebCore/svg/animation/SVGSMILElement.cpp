@@ -802,8 +802,14 @@ void SVGSMILElement::beginListChanged(SMILTime eventTime)
             m_intervalEnd = eventTime;
             resolveInterval(false, m_intervalBegin, m_intervalEnd);  
             ASSERT(!m_intervalBegin.isUnresolved());
-            if (m_intervalBegin != oldBegin)
+            if (m_intervalBegin != oldBegin) {
+                if (m_activeState == Active && m_intervalBegin > eventTime) {
+                    m_activeState = determineActiveState(eventTime);
+                    if (m_activeState != Active)
+                        endedActiveInterval();
+                }
                 notifyDependentsIntervalChanged(ExistingInterval);
+            }
         }
     }
     m_nextProgressTime = elapsed();

@@ -1,3 +1,18 @@
+2012-01-21  Stephen Chenney  <schenney@chromium.org>
+
+        REGRESSION (Safari 5.0.5 - ToT): crash in SVG test http://dev.w3.org/SVG/profiles/1.1F2/test/harness/htmlObjectApproved/animate-elem-39-t.html
+        https://bugs.webkit.org/show_bug.cgi?id=64671
+
+        Reviewed by Nikolas Zimmermann.
+
+        No new tests. This change is to fix crashes in existing tests.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::beginListChanged): If the new begin time is
+        later than the current end time, and the event time is also after then
+        end time (but we have not yet updated to that time) and the animation
+        is active, we need to make the animation inactive explicitly.
+
 2012-01-21  Benjamin Poulain  <bpoulain@apple.com>
 
         PopupMenuClient::multiple() should be const

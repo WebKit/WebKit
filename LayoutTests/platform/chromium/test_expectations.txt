@@ -904,8 +904,8 @@ BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
-BUGCR52692 LINUX WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
-BUGCR52692 BUGWK74788 LINUX WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT CRASH
+BUGCR52692 LINUX WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT
+BUGCR52692 BUGWK74788 LINUX WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT CRASH
 BUGCR52692 BUGWK74788 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-60-t.svg = PASS CRASH
 BUGWK74788 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS CRASH
 
@@ -952,7 +952,6 @@ BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 // Extended by BUGCR101797.
-// BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
@@ -3370,7 +3369,7 @@ BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
 BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
 
-BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
+BUGWK64671 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
