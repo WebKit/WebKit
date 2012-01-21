@@ -48,6 +48,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
@@ -97,6 +98,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

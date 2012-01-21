@@ -55,6 +55,7 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
@@ -76,6 +77,7 @@ using namespace WebCore;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }

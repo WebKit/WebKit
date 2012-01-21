@@ -1,3 +1,46 @@
+2012-01-20  Sam Weinig  <sam@webkit.org>
+
+        Make WebCore RunLoop work for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=76739
+
+        Reviewed by Anders Carlsson.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (+[CarbonWindowAdapter initialize]):
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]):
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem initialize]):
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]):
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase initialize]):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (+[WebHostedNetscapePluginView initialize]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        (+[WebNetscapePluginView initialize]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebUndoStep initialize]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]):
+        * WebView/WebDataSource.mm:
+        (+[WebDataSourcePrivate initialize]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]):
+        (+[WebHTMLView initialize]):
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]):
+        * WebView/WebTextIterator.mm:
+        (+[WebTextIteratorPrivate initialize]):
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+        * WebView/WebViewData.mm:
+        (+[WebViewPrivate initialize]):
+        Initialized the main run loop in addition to other initialization.
+
 2012-01-20  Simon Fraser  <simon.fraser@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76444

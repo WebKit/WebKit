@@ -46,6 +46,7 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/runtime_root.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
@@ -65,6 +66,7 @@ extern "C" {
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }

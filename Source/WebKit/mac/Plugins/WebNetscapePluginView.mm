@@ -67,6 +67,7 @@
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
 #import <WebCore/ProxyServer.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SoftLinking.h> 
@@ -194,6 +195,7 @@ typedef struct {
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }

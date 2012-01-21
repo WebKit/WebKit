@@ -1,3 +1,31 @@
+2012-01-20  Sam Weinig  <sam@webkit.org>
+
+        Make WebCore RunLoop work for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=76739
+
+        Reviewed by Anders Carlsson.
+
+        * platform/RunLoop.cpp:
+        Specialize RunLoop initialization for Mac, where it can happen on any thread.
+        
+        * platform/RunLoop.h:
+        Add RunLoop constructor that takes a CFRunLoopRef on the mac for initializing
+        the main thread.
+
+        * platform/mac/RunLoopMac.mm:
+        (WebCore::RunLoop::initializeMainRunLoop):
+        Add new implementation that can work from any thread (and multiple threads at the
+        same time if necessary).
+
+        (WebCore::RunLoop::current):
+        Treat the main thread specially, not storing it in thread specific data.
+
+        (WebCore::RunLoop::main):
+        Copy main accessor since it needs access to the file static.
+
+        (WebCore::RunLoop::RunLoop):
+        Add constructor which takes a CFRunLoopRef.
+
 2012-01-20  Tim Horton  <timothy_horton@apple.com>
 
         Crash in RenderSVGResourceContainer::markAllClientsForInvalidation

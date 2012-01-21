@@ -108,6 +108,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleFontData.h>
@@ -550,6 +551,7 @@ static NSCellStateValue kit(TriState state)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
     
     if (!oldSetCursorForMouseLocationIMP) {
@@ -2275,6 +2277,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

@@ -151,6 +151,7 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoadScheduler.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
@@ -2952,6 +2953,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     InitWebCoreSystemInterface();
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedInternalNotification object:nil];

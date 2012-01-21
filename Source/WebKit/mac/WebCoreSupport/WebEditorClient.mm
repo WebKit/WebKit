@@ -61,6 +61,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/SpellChecker.h>
 #import <WebCore/UndoStep.h>
 #import <WebCore/UserTypingGestureIndicator.h>
@@ -108,6 +109,7 @@ static const int InvalidCorrectionPanelTag = 0;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

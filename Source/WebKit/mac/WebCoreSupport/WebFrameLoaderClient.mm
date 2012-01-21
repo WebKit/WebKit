@@ -112,6 +112,7 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -1982,6 +1983,7 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

@@ -47,7 +47,8 @@ namespace WebCore {
 
 class RunLoop {
 public:
-    // Must be called from the main thread.
+    // Must be called from the main thread (except for the Mac platform, where it
+    // can be called from any thread).
     static void initializeMainRunLoop();
 
     static RunLoop* current();
@@ -141,6 +142,7 @@ private:
     typedef HashMap<uint64_t, TimerBase*> TimerMap;
     TimerMap m_activeTimers;
 #elif PLATFORM(MAC)
+    RunLoop(CFRunLoopRef);
     static void performWork(void*);
     CFRunLoopRef m_runLoop;
     CFRunLoopSourceRef m_runLoopSource;

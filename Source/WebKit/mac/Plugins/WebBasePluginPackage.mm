@@ -29,6 +29,7 @@
 #import <WebKit/WebBasePluginPackage.h>
 
 #import <algorithm>
+#import <WebCore/RunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -69,6 +70,7 @@ using namespace WebCore;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

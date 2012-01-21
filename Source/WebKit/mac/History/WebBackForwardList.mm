@@ -42,6 +42,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -104,6 +105,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

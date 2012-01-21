@@ -40,6 +40,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/ThreadCheck.h>
 #import <runtime/InitializeThreading.h>
@@ -94,6 +95,7 @@ static WebIconDatabaseClient* defaultClient()
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
 }
 
 + (WebIconDatabase *)sharedIconDatabase

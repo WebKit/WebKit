@@ -29,6 +29,7 @@
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
 #import <JavaScriptCore/Vector.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
@@ -49,6 +50,7 @@ using namespace WebCore;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+#if !PLATFORM(MAC)
+
 static RunLoop* s_mainRunLoop;
 
 void RunLoop::initializeMainRunLoop()
@@ -50,6 +52,8 @@ RunLoop* RunLoop::main()
     ASSERT(s_mainRunLoop);
     return s_mainRunLoop;
 }
+
+#endif
 
 void RunLoop::performWork()
 {

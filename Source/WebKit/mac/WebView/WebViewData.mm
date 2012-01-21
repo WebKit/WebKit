@@ -33,6 +33,7 @@
 #import "WebPreferenceKeysPrivate.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
+#import <WebCore/RunLoop.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
@@ -65,6 +66,7 @@ LayerFlushController::LayerFlushController(WebView* webView)
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

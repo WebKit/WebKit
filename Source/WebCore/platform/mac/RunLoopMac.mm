@@ -26,7 +26,34 @@
 #import "config.h"
 #import "RunLoop.h"
 
+#import <dispatch/dispatch.h>
+
 namespace WebCore {
+
+static RunLoop* s_mainRunLoop;
+
+void RunLoop::initializeMainRunLoop()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_mainRunLoop = new RunLoop(CFRunLoopGetMain());
+    });
+}
+
+RunLoop* RunLoop::current()
+{
+    if (pthread_main_np())
+        return RunLoop::main();
+
+    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop>, runLoopData, ());
+    return &*runLoopData;
+}
+
+RunLoop* RunLoop::main()
+{
+    ASSERT(s_mainRunLoop);
+    return s_mainRunLoop;
+}
 
 void RunLoop::performWork(void* context)
 {
@@ -42,6 +69,15 @@ void RunLoop::performWork(void* context)
 
 RunLoop::RunLoop()
     : m_runLoop(CFRunLoopGetCurrent())
+    , m_nestingLevel(0)
+{
+    CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
+    m_runLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
+    CFRunLoopAddSource(m_runLoop, m_runLoopSource, kCFRunLoopCommonModes);
+}
+
+RunLoop::RunLoop(CFRunLoopRef runLoop)
+    : m_runLoop(runLoop)
     , m_nestingLevel(0)
 {
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };

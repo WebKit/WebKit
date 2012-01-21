@@ -73,6 +73,7 @@
 #import <assert.h>
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/RunLoop.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 
@@ -271,6 +272,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
