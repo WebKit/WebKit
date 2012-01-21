@@ -2592,3 +2592,8 @@ http/tests/download
 # ERROR: LayoutTestController::overridePreference() does not support the 'WebKitCSSCustomFilterEnabled' preference
 # https://bugs.webkit.org/show_bug.cgi?id=76444
 css3/filters/effect-custom-disabled.html
+
+# [Qt] CSS3 hardware accelerated Brightness and contrast filters fails
+# https://bugs.webkit.org/show_bug.cgi?id=76785
+css3/filters/effect-brightness-hw.html
+css3/filters/effect-contrast-hw.html
