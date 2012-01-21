@@ -246,7 +246,8 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
         OP \
         GAIN_DEZIPPER \
     } \
-    gain = totalDesiredGain; \
+    if (!framesToDezipper) \
+        gain = totalDesiredGain; \
     OP##_V 
 
 #define STEREO_SUM \
