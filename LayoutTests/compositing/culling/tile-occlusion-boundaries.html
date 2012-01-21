@@ -1,0 +1,31 @@
+<html>
+<head>
+  <style>
+    .scaled { /* Ends up 255.5px by 255.5px */
+      position:relative;
+      left: 128; top: 128;
+      width:511px;
+      height:511px;
+      -webkit-transform: translateZ(0px) scale(0.5);
+    }
+    body { position:relative; }
+  </style>
+
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText(true);
+    }
+  </script>
+</head>
+
+<body style="margin:0; padding:0;">
+<!--
+   If the test passes you should see a solid green square with no blue on its edges.
+
+   The image sits such that it completely fills a tile in the white background layer. However some of the edge pixels of the box are only partially
+   filled, so they end up being blended with part of the pixel behind them. If culling treats them as opaque, then the background tile below is culled
+   inappropriately, and the edge pixels come out mixed with blue since the partial pixels behind were not filled.
+-->
+<img class="scaled green" src="../../fast/images/resources/green.jpg"></img>
+</body>
+</html>

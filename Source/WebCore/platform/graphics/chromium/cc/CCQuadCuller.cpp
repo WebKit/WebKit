@@ -35,6 +35,8 @@
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 
+using namespace std;
+
 namespace std {
 
 // Specialize for OwnPtr<CCDrawQuad> since Vector doesn't know how to reverse a Vector of OwnPtr<T> in general.
@@ -60,6 +62,18 @@ static bool regionContainsRect(const Region& region, const IntRect& rect)
     return rectRegion.isEmpty();
 }
 
+static IntRect enclosedIntRect(const FloatRect& rect)
+{
+    float x = ceilf(rect.x());
+    float y = ceilf(rect.y());
+    // A rect of width 0 should not become a rect of width -1.
+    float width = max<float>(floorf(rect.maxX()) - x, 0);
+    float height = max<float>(floorf(rect.maxY()) - y, 0);
+
+    return IntRect(clampToInteger(x), clampToInteger(y),
+                   clampToInteger(width), clampToInteger(height));
+}
+
 void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
 {
     if (!quadList.size())
@@ -77,8 +91,10 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
 
         bool keepQuad = !regionContainsRect(opaqueCoverageThusFar, quadRect);
 
-        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect())
-            opaqueCoverageThusFar.unite(Region(quadRect));
+        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect()) {
+            IntRect opaqueRect = enclosedIntRect(drawQuad->quadTransform().mapRect(FloatRect(drawQuad->quadRect())));
+            opaqueCoverageThusFar.unite(opaqueRect);
+        }
 
         if (keepQuad)
             culledList.append(quadList[i].release());

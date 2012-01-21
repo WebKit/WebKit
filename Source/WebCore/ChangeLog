@@ -1,3 +1,16 @@
+2012-01-20  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Partially filled pixels do not occlude pixels below them.
+        https://bugs.webkit.org/show_bug.cgi?id=76658
+
+        Reviewed by James Robinson.
+
+        Test: compositing/culling/tile-occlusion-boundaries.html
+
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::enclosedIntRect):
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+
 2012-01-20  Ami Fischman  <fischman@chromium.org>
 
         Small cleanup of {get,put}CurrentFrame for  WebMediaPlayerClientImpl/CCVideoLayerImpl.
