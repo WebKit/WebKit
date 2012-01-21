@@ -95,9 +95,6 @@ bool CCLayerTreeHost::initialize()
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
-    // Update m_settings based on partial update capability.
-    m_settings.partialTextureUpdates = m_settings.partialTextureUpdates && m_proxy->partialTextureUpdateCapability();
-
     m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
                                                       TextureManager::reclaimLimitBytes(viewportSize()),
                                                       m_proxy->layerRendererCapabilities().maxTextureSize);
@@ -168,7 +165,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
 void CCLayerTreeHost::commitComplete()
 {
-    m_deleteTextureAfterCommitList.clear();
     clearPendingUpdate();
     m_contentsTextureManager->unprotectAllTextures();
 }
@@ -516,11 +512,6 @@ void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)
         it->second->stop();
         m_rateLimiters.remove(it);
     }
-}
-
-void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> texture)
-{
-    m_deleteTextureAfterCommitList.append(texture);
 }
 
 }

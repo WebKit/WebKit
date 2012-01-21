@@ -43,7 +43,7 @@ public:
     virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
     virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
 
-protected:
+private:
     explicit CompositorFakeWebGraphicsContext3D(Attributes attrs)
     {
         m_attrs = attrs;

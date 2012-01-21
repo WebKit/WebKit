@@ -380,11 +380,6 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 tile = createTile(i, j);
 
-            // Do post commit deletion of current texture when partial texture
-            // updates are not used.
-            if (tile->isDirty() && layerTreeHost() && !layerTreeHost()->settings().partialTextureUpdates)
-                layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
-
             if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 tile->m_dirtyRect = m_tiler->tileRect(tile);
 

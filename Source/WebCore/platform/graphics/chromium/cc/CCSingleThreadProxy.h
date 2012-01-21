@@ -54,7 +54,6 @@ public:
     virtual void setVisible(bool);
     virtual void start();
     virtual void stop();
-    virtual bool partialTextureUpdateCapability() const { return true; }
 
     // CCLayerTreeHostImplClient implementation
     virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }

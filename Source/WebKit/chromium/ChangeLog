@@ -1,3 +1,16 @@
+2012-01-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105564.
+        http://trac.webkit.org/changeset/105564
+        https://bugs.webkit.org/show_bug.cgi?id=76792
+
+        Does not compile on Chromium Mac (Requested by abarth on
+        #webkit).
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        * tests/CompositorFakeWebGraphicsContext3D.h:
+
 2012-01-20  Alexandre Elias  <aelias@google.com>
 
         [chromium] Write unit tests for compositor-thread zooming

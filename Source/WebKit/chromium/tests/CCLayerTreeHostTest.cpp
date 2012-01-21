@@ -26,9 +26,9 @@
 
 #include "cc/CCLayerTreeHost.h"
 
-#include "CompositorFakeWebGraphicsContext3D.h"
+#include "CompositorFakeGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
-#include "GraphicsContext3DPrivate.h"
+#include "FakeWebGraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
@@ -40,7 +40,6 @@
 #include "cc/CCThreadTask.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebThread.h"
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 #include <wtf/MainThread.h>
@@ -131,52 +130,6 @@ private:
     TestHooks* m_testHooks;
 };
 
-class CompositorFakeWebGraphicsContext3DWithTextureTracking : public CompositorFakeWebGraphicsContext3D {
-public:
-    static PassOwnPtr<CompositorFakeWebGraphicsContext3DWithTextureTracking> create(Attributes attrs)
-    {
-        return adoptPtr(new CompositorFakeWebGraphicsContext3DWithTextureTracking(attrs));
-    }
-
-    virtual WebGLId createTexture()
-    {
-        WebGLId texture = m_textures.size() + 1;
-        m_textures.append(texture);
-        return texture;
-    }
-
-    virtual void deleteTexture(WebGLId texture)
-    {
-        for (size_t i = 0; i < m_textures.size(); i++) {
-            if (m_textures[i] == texture) {
-                m_textures.remove(i);
-                break;
-            }
-        }
-    }
-
-    virtual void bindTexture(WGC3Denum /* target */, WebGLId texture)
-    {
-        m_usedTextures.add(texture);
-    }
-
-    int numTextures() const { return static_cast<int>(m_textures.size()); }
-    int texture(int i) const { return m_textures[i]; }
-    void resetTextures() { m_textures.clear(); }
-
-    int numUsedTextures() const { return static_cast<int>(m_usedTextures.size()); }
-    bool usedTexture(int texture) const { return m_usedTextures.find(texture) != m_usedTextures.end(); }
-    void resetUsedTextures() { m_usedTextures.clear(); }
-
-private:
-    explicit CompositorFakeWebGraphicsContext3DWithTextureTracking(Attributes attrs) : CompositorFakeWebGraphicsContext3D(attrs)
-    {
-    }
-
-    Vector<WebGLId> m_textures;
-    HashSet<WebGLId> m_usedTextures;
-};
-
 // Implementation of CCLayerTreeHost callback interface.
 class MockLayerTreeHostClient : public CCLayerTreeHostClient {
 public:
@@ -202,15 +155,7 @@ public:
 
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
     {
-        GraphicsContext3D::Attributes attrs;
-        WebGraphicsContext3D::Attributes webAttrs;
-        webAttrs.alpha = attrs.alpha;
-
-        OwnPtr<WebGraphicsContext3D> webContext = CompositorFakeWebGraphicsContext3DWithTextureTracking::create(webAttrs);
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(
-            webContext.release(), attrs, 0,
-            GraphicsContext3D::RenderDirectlyToHostWindow,
-            GraphicsContext3DPrivate::ForUseOnAnotherThread);
+        return createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
     }
 
     virtual void didCommitAndDrawFrame()
@@ -1121,103 +1066,6 @@ private:
 TEST_F(CCLayerTreeHostTestSetViewportSize, runSingleThread)
 {
     runTest(false);
-}
-
-class MockContentLayerDelegate : public ContentLayerDelegate {
-public:
-    bool drawsContent() const { return true; }
-    MOCK_CONST_METHOD0(preserves3D, bool());
-    void paintContents(GraphicsContext&, const IntRect&) { }
-    void notifySyncRequired() { }
-};
-
-// Verify atomicity of commits and reuse of textures.
-class CCLayerTreeHostTestAtomicCommit : public CCLayerTreeHostTest {
-public:
-    CCLayerTreeHostTestAtomicCommit()
-        : m_updateCheckLayer(ContentLayerChromiumWithUpdateTracking::create(&m_delegate))
-        , m_numCommits(0)
-    {
-        // Make sure partial texture updates are turned off.
-        m_settings.partialTextureUpdates = false;
-    }
-
-    virtual void beginTest()
-    {
-        m_layerTreeHost->setRootLayer(m_updateCheckLayer);
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
-
-        postSetNeedsCommitToMainThread();
-        postSetNeedsRedrawToMainThread();
-    }
-
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
-    {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
-
-        switch (impl->frameNumber()) {
-        case 0:
-            // Number of textures should be one.
-            EXPECT_EQ(1, context->numTextures());
-            // Number of textures used for commit should be one.
-            EXPECT_EQ(1, context->numUsedTextures());
-            // Verify used texture is correct.
-            EXPECT_TRUE(context->usedTexture(context->texture(0)));
-
-            context->resetUsedTextures();
-            break;
-        case 1:
-            // Number of textures should be two as the first texture
-            // is used by impl thread and cannot by used for update.
-            EXPECT_EQ(2, context->numTextures());
-            // Number of textures used for commit should still be one.
-            EXPECT_EQ(1, context->numUsedTextures());
-            // First texture should not have been used.
-            EXPECT_FALSE(context->usedTexture(context->texture(0)));
-            // New texture should have been used.
-            EXPECT_TRUE(context->usedTexture(context->texture(1)));
-
-            context->resetUsedTextures();
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
-    {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
-
-        // Number of textures used for draw should always be one.
-        EXPECT_EQ(1, context->numUsedTextures());
-
-        if (impl->frameNumber() < 2) {
-            context->resetUsedTextures();
-            postSetNeedsAnimateAndCommitToMainThread();
-            postSetNeedsRedrawToMainThread();
-        } else
-            endTest();
-    }
-
-    virtual void layout()
-    {
-        m_updateCheckLayer->setNeedsDisplay();
-    }
-
-    virtual void afterTest()
-    {
-    }
-
-private:
-    MockContentLayerDelegate m_delegate;
-    RefPtr<ContentLayerChromiumWithUpdateTracking> m_updateCheckLayer;
-    int m_numCommits;
-};
-
-TEST_F(CCLayerTreeHostTestAtomicCommit, runMultiThread)
-{
-    runTest(true);
 }
 
 } // namespace
