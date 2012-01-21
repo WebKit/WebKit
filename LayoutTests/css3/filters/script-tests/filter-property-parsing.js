@@ -301,11 +301,6 @@ testFilterRule("Percentage value",
               ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
               ["brightness(50%)"]);
 
-testFilterRule("Percentage value > 1",
-              "brightness(150%)", 1, "brightness(150%)",
-              ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
-              ["brightness(150%)"]);
-
 testFilterRule("Float value converts to integer",
               "brightness(1.0)", 1, "brightness(1)",
               ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
@@ -320,11 +315,6 @@ testFilterRule("No values",
               "brightness()", 1, "brightness()",
               ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
               ["brightness()"]);
-
-testFilterRule("Value greater than one",
-              "brightness(2)", 1, "brightness(2)",
-              ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
-              ["brightness(2)"]);
 
 testFilterRule("Multiple values",
               "brightness(0.5) brightness(0.25)", 2, "brightness(0.5) brightness(0.25)",

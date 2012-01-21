@@ -6811,7 +6811,6 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
     case WebKitCSSFilterValue::SaturateFilterOperation:
     case WebKitCSSFilterValue::InvertFilterOperation:
     case WebKitCSSFilterValue::OpacityFilterOperation:
-    case WebKitCSSFilterValue::BrightnessFilterOperation:
     case WebKitCSSFilterValue::ContrastFilterOperation: {
         // One optional argument, 0-1 or 0%-100%, if missing use 100%.
         if (args->size() > 1)
@@ -6824,14 +6823,33 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
                 
             double amount = value->fValue;
             
-            // Saturate, Brightness and Contrast allow values over 100%.
+            // Saturate and Contrast allow values over 100%.
             if (filterType != WebKitCSSFilterValue::SaturateFilterOperation
-                && filterType != WebKitCSSFilterValue::BrightnessFilterOperation
                 && filterType != WebKitCSSFilterValue::ContrastFilterOperation) {
                 double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
                 if (amount > maxAllowed)
                     return 0;
             }
+
+            filterValue->append(cssValuePool()->createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
+        }
+        break;
+    }
+    case WebKitCSSFilterValue::BrightnessFilterOperation: {
+        // One optional argument, -1 to +1 or -100% to +100%, if missing use 0,
+        if (args->size() > 1)
+            return 0;
+
+        if (args->size()) {
+            CSSParserValue* value = args->current();
+            if (!validUnit(value, FNumber | FPercent, true))
+                return 0;
+                
+            double amount = value->fValue;
+            double minAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? -100.0 : -1.0;
+            double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
+            if (amount < minAllowed || amount > maxAllowed)
+                return 0;
 
             filterValue->append(cssValuePool()->createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
         }

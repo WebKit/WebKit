@@ -720,6 +720,8 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
     RetainPtr<NSMutableArray> array(AdoptNS, [[NSMutableArray alloc] init]);
     
     for (unsigned i = 0; i < filters.size(); ++i) {
+        String filterName = String::format("filter_%d", i);
+        
         const FilterOperation* filterOperation = filters.at(i);
         switch(filterOperation->getOperationType()) {
         case FilterOperation::DROP_SHADOW: {
@@ -744,7 +746,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             [caFilter setDefaults];
             [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputIntensity"];
             [caFilter setValue:[CIColor colorWithRed:1 green:1 blue:1] forKey:@"inputColor"];
-            [caFilter setName:@"grayscaleFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -762,7 +764,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             [caFilter setValue:[CIVector vectorWithX:WebCore::blend(0.0, 0.272, t) Y:WebCore::blend(0.0, 0.534, t) Z:WebCore::blend(1.0, 0.131, t) W:0] forKey:@"inputBVector"];
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
-            [caFilter setName:@"sepiaFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -771,7 +773,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
             [caFilter setDefaults];
             [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputSaturation"];
-            [caFilter setName:@"saturateFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -782,7 +784,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             
             // The CIHueAdjust value is in radians
             [caFilter setValue:[NSNumber numberWithFloat:op->amount() * M_PI * 2 / 360] forKey:@"inputAngle"];
-            [caFilter setName:@"hueRotateFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -798,7 +800,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:multiplier W:0] forKey:@"inputBVector"];
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
             [caFilter setValue:[CIVector vectorWithX:op->amount() Y:op->amount() Z:op->amount() W:0] forKey:@"inputBiasVector"];
-            [caFilter setName:@"invertFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -812,7 +814,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:1 W:0] forKey:@"inputBVector"];
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:op->amount()] forKey:@"inputAVector"];
             [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
-            [caFilter setName:@"opacityFilter"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -822,7 +824,25 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             CIFilter* caFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
             [caFilter setDefaults];
             [caFilter setValue:[NSNumber numberWithFloat:op->stdDeviation().calcFloatValue(0)] forKey:@"inputRadius"];
-            [caFilter setName:@"blurFilter"];
+            [caFilter setName:filterName];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::CONTRAST: {
+            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputContrast"];
+            [caFilter setName:filterName];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::BRIGHTNESS: {
+            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputBrightness"];
+            [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;
         }
@@ -850,9 +870,6 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations& filters)
         const FilterOperation* filterOperation = filters.at(i);
         switch(filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE:
-        case FilterOperation::GRAYSCALE:
-        case FilterOperation::BRIGHTNESS:
-        case FilterOperation::CONTRAST:
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM:
 #endif

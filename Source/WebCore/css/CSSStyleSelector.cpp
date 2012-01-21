@@ -5396,7 +5396,7 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         case WebKitCSSFilterValue::BrightnessFilterOperation:
         case WebKitCSSFilterValue::ContrastFilterOperation:
         case WebKitCSSFilterValue::OpacityFilterOperation: {
-            double amount = 1;
+            double amount = (filterValue->operationType() == WebKitCSSFilterValue::BrightnessFilterOperation) ? 0 : 1;
             if (filterValue->length() == 1) {
                 amount = firstValue->getDoubleValue();
                 if (firstValue->isPercentage())

@@ -238,11 +238,6 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(1)'
 
-Value greater than 1 : brightness(2)
-PASS filterStyle.length is 1
-PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
-PASS subRule.cssText is 'brightness(2)'
-
 Float value converts to integer : brightness(1.0)
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
@@ -256,7 +251,7 @@ PASS subRule.cssText is 'brightness(0)'
 No values : brightness()
 PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
-PASS subRule.cssText is 'brightness(1)'
+PASS subRule.cssText is 'brightness(0)'
 
 Multiple values : brightness(0.5) brightness(0.25)
 PASS filterStyle.length is 2
@@ -373,7 +368,7 @@ PASS subRule.cssText is 'opacity(0.9)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(5px)'
 
-Percentage values : grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%) brightness(130%) contrast(30%)
+Percentage values : grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%) brightness(60%) contrast(30%)
 PASS filterStyle.length is 7
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.5)'
@@ -386,7 +381,7 @@ PASS subRule.cssText is 'invert(0.2)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0.9)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
-PASS subRule.cssText is 'brightness(1.3)'
+PASS subRule.cssText is 'brightness(0.6)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0.3)'
 PASS successfullyParsed is true

@@ -214,12 +214,12 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative parameter : brightness(-0.5)
+Parameter out of bounds (negative) : brightness(-1.1)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative percent : brightness(-10%)
+Parameter out of bounds (positive) : brightness(101%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null

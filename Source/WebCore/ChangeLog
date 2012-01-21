@@ -1,3 +1,31 @@
+2012-01-20  Chris Marrin  <cmarrin@apple.com>
+
+        Implement hardware accelerated Brightness and contrast filters
+        https://bugs.webkit.org/show_bug.cgi?id=75521
+        https://bugs.webkit.org/show_bug.cgi?id=76719
+
+        Reviewed by Simon Fraser.
+
+        Implemented hardware accelerated brightness and contrast filters. This also fixes
+        the bug where grayscale filter was accidentally never getting hardware accelerated.
+        It also complies with proposed spec changes for the brightness filter to be additive 
+        rather than multiplicative, according to https://bugs.webkit.org/show_bug.cgi?id=76719. 
+        Had to make both fixes in the same patch because I had to change the allowed brightness
+        values for the hardware version, so I had to change the software version as well.
+
+        Tests: css3/filters/effect-brightness-hw.html
+               css3/filters/effect-contrast-hw.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBuiltinFilterArguments):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setFilters):
+        (PlatformCALayer::filtersCanBeComposited):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+
 2012-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         <feImage> ignores preserveAspectRatio="none"

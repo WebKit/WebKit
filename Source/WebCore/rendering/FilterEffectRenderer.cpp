@@ -216,7 +216,8 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
             ComponentTransferFunction transferFunction;
             transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
-            transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation->amount());
+            transferFunction.slope = 1;
+            transferFunction.intercept = narrowPrecisionToFloat(componentTransferOperation->amount());
 
             ComponentTransferFunction nullFunction;
             effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);

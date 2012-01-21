@@ -578,17 +578,6 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(50%)'
 
-Percentage value > 1 : brightness(150%)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(150%)'
-PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
-PASS filterRule.length is 1
-PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
-PASS subRule.cssText is 'brightness(150%)'
-
 Float value converts to integer : brightness(1.0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -621,17 +610,6 @@ PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness()'
-
-Value greater than one : brightness(2)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(2)'
-PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
-PASS filterRule.length is 1
-PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
-PASS subRule.cssText is 'brightness(2)'
 
 Multiple values : brightness(0.5) brightness(0.25)
 PASS cssRule.type is 1
