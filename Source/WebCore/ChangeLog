@@ -1,3 +1,27 @@
+2012-01-20  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Switch indexeddb to use supplemental IDL for DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=76723
+
+        Reviewed by Adam Barth.
+
+        No new tests required, all existing tests pass.
+
+        * Modules/indexeddb: Added.
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp: Added. webkitIndexedDB() method previously in DOMWindow.cpp
+        (WebCore::DOMWindowIndexedDatabase::DOMWindowIndexedDatabase):
+        (WebCore::DOMWindowIndexedDatabase::~DOMWindowIndexedDatabase):
+        (WebCore::DOMWindowIndexedDatabase::webkitIndexedDB):
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h: Added.
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl: Added. attributes previously in DOMWindow.idl
+        * WebCore.gyp/WebCore.gyp: add Modules/indexeddb/ directory
+        * WebCore.gypi: add Modules/indexeddb/*
+        * page/DOMWindow.cpp: remove webkitIndexedDB() method, add accessor methods for m_idbFactory
+        (WebCore::DOMWindow::getIDBFactory):
+        (WebCore::DOMWindow::setIDBFactory):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2012-01-20  David Levin  <levin@chromium.org>
 
         Allow isContextThread to be called while in ~ScriptExecutionContext.

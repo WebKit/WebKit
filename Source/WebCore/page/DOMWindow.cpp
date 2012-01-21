@@ -750,22 +750,9 @@ void DOMWindow::resetGeolocation()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IDBFactory* DOMWindow::webkitIndexedDB() const
+void DOMWindow::setIDBFactory(PassRefPtr<IDBFactory> idbFactory)
 {
-    Document* document = this->document();
-    if (!document)
-        return 0;
-
-    Page* page = document->page();
-    if (!page)
-        return 0;
-
-    if (!document->securityOrigin()->canAccessDatabase())
-        return 0;
-
-    if (!m_idbFactory && isCurrentlyDisplayedInFrame())
-        m_idbFactory = IDBFactory::create(page->group().idbFactory());
-    return m_idbFactory.get();
+    m_idbFactory = idbFactory;
 }
 #endif
 

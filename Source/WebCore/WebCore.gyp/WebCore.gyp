@@ -53,6 +53,7 @@
       '../..',
       '../Modules/gamepad',
       '../Modules/intents',
+      '../Modules/indexeddb',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',

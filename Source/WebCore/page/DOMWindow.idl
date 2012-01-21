@@ -172,20 +172,6 @@ module window {
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         readonly attribute [EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
-#if defined(ENABLE_INDEXED_DATABASE) && ENABLE_INDEXED_DATABASE
-        readonly attribute IDBFactory webkitIndexedDB;
-
-        attribute IDBCursorConstructor webkitIDBCursor;
-        attribute IDBDatabaseConstructor webkitIDBDatabase;
-        attribute IDBDatabaseErrorConstructor webkitIDBDatabaseError;
-        attribute IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
-        attribute IDBFactoryConstructor webkitIDBFactory;
-        attribute IDBIndexConstructor webkitIDBIndex;
-        attribute IDBKeyRangeConstructor webkitIDBKeyRange;
-        attribute IDBObjectStoreConstructor webkitIDBObjectStore;
-        attribute IDBRequestConstructor webkitIDBRequest;
-        attribute IDBTransactionConstructor webkitIDBTransaction;
-#endif
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         const unsigned short TEMPORARY = 0;
         const unsigned short PERSISTENT = 1;
