@@ -76,7 +76,8 @@ struct CCSettings {
             , showPlatformLayerTree(false)
             , refreshRate(0)
             , perTilePainting(false)
-            , partialSwapEnabled(false) { }
+            , partialSwapEnabled(false)
+            , partialTextureUpdates(true) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
@@ -85,6 +86,7 @@ struct CCSettings {
     double refreshRate;
     bool perTilePainting;
     bool partialSwapEnabled;
+    bool partialTextureUpdates;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
@@ -192,12 +194,15 @@ public:
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
 
+    void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
     bool initialize();
 
 private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
+    typedef Vector<OwnPtr<ManagedTexture> > TextureList;
 
     enum PaintType { PaintVisible, PaintIdle };
     static void paintContentsIfDirty(LayerChromium*, PaintType);
@@ -233,6 +238,8 @@ private:
     float m_pageScale;
     float m_minPageScale, m_maxPageScale;
     bool m_triggerIdlePaints;
+
+    TextureList m_deleteTextureAfterCommitList;
 };
 
 }

@@ -39,7 +39,14 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
+using namespace std;
 using namespace WTF;
+
+namespace {
+
+static const size_t textureUpdatesPerFrame = numeric_limits<size_t>::max();
+
+} // anonymous namespace
 
 namespace WebCore {
 
@@ -438,8 +445,7 @@ void CCThreadProxy::scheduledActionUpdateMoreResources()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionUpdateMoreResources", this, 0);
     ASSERT(m_currentTextureUpdaterOnImplThread);
-    static const int UpdatesPerFrame = 99999;
-    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), UpdatesPerFrame);
+    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), textureUpdatesPerFrame);
 }
 
 void CCThreadProxy::scheduledActionCommit()
@@ -563,6 +569,11 @@ void CCThreadProxy::layerTreeHostClosedOnImplThread(CCCompletionEvent* completio
     m_inputHandlerOnImplThread.clear();
     m_schedulerOnImplThread.clear();
     completion->signal();
+}
+
+bool CCThreadProxy::partialTextureUpdateCapability() const
+{
+    return textureUpdatesPerFrame == numeric_limits<size_t>::max();
 }
 
 } // namespace WebCore

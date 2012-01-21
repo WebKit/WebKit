@@ -1,3 +1,36 @@
+2012-01-20  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Incremental texture updates are not atomic.
+        https://bugs.webkit.org/show_bug.cgi?id=72672
+
+        Reviewed by James Robinson.
+
+        Use a new set of textures for each commit when incremental
+        texture updates are enabled.
+
+        This patch is tested by the following unit test:
+        - CCLayerTreeHostTestAtomicCommit.runMultiThread
+
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::ManagedTexture):
+        (WebCore::ManagedTexture::steal):
+        * platform/graphics/chromium/ManagedTexture.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::commitComplete):
+        (WebCore::CCLayerTreeHost::deleteTextureAfterCommit):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore::CCSingleThreadProxy::partialTextureUpdateCapability):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        (WebCore::CCThreadProxy::partialTextureUpdateCapability):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2012-01-20  Chris Rogers  <crogers@google.com>
 
         De-zippering incorrectly snaps to target gain
