@@ -1,3 +1,15 @@
+2012-01-20  David Levin  <levin@chromium.org>
+
+        Make OwnPtr<HDC> work for the Chromium Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=76738
+
+        Reviewed by Jian Li.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp: Added OwnPtrWin.cpp to the
+        Chromium Windows build.
+        * wtf/OwnPtrCommon.h: Changed from platform WIN to OS WIN for
+        OwnPtr<HDC> and similar constructs.
+
 2012-01-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some regexp entry boilerplate code

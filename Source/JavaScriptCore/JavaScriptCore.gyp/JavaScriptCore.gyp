@@ -172,6 +172,7 @@
             ['include', 'Thread(ing|Specific)Win\\.cpp$'],
             ['exclude', 'OSAllocatorPosix\\.cpp$'],
             ['include', 'OSAllocatorWin\\.cpp$'],
+            ['include', 'win/OwnPtrWin\\.cpp$'],
           ],
           'include_dirs!': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
