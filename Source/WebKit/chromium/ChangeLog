@@ -1,5 +1,11 @@
 2012-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Roll Chromium DEPS from 118291 to 118493.
+
+        * DEPS:
+
+2012-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert r105545. Something got broken about gclient/gyp but I can't figure out what.
 
         * DEPS:
