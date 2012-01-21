@@ -1773,7 +1773,7 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     String referrer = firstFrame->loader()->outgoingReferrer();
 
     KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, emptyString()) : firstFrame->document()->completeURL(urlString);
-    if (!completedURL.isValid()) {
+    if (!completedURL.isEmpty() && !completedURL.isValid()) {
         // Don't expose client code to invalid URLs.
         activeWindow->printErrorMessage("Unable to open a window with invalid URL '" + completedURL.string() + "'.\n");
         return 0;
