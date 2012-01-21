@@ -379,7 +379,7 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
 
     SVGDocumentExtensions* extensions = document->accessSVGExtensions();
     String resourceId = getIdAttribute();
-    if (!extensions->hasPendingResources(resourceId))
+    if (!extensions->hasPendingResource(resourceId))
         return;
 
     OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions->removePendingResource(resourceId));
@@ -463,7 +463,7 @@ void SVGStyledElement::setHasPendingResources()
 
 void SVGStyledElement::clearHasPendingResourcesIfPossible()
 {
-    if (!document()->accessSVGExtensions()->isElementInPendingResources(this))
+    if (!document()->accessSVGExtensions()->isElementPendingResources(this))
         ensureRareSVGData()->setHasPendingResources(false);
 }
 

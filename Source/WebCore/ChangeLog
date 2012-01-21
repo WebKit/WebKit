@@ -1,3 +1,35 @@
+2012-01-21  Florin Malita  <fmalita@google.com>
+
+        Null dereference in SVGDocumentExtensions::removePendingResource when updating <use>'s href
+        https://bugs.webkit.org/show_bug.cgi?id=69284
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test: svg/custom/use-crash-pending-resource.svg
+
+        The crash is caused by assumptions in SVGUseElement that xlink:href is the only
+        pending resource. This patch adds support for dealing with multiple pending resources.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::hasPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementPendingResources):
+        (WebCore::SVGDocumentExtensions::isElementPendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResourceForElement):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded):
+        (WebCore::SVGStyledElement::clearHasPendingResourcesIfPossible):
+        Renamed SVGDocumentExtensions::hasPendingResources -> Renamed SVGDocumentExtensions::hasPendingResource.
+        Renamed SVGDocumentExtensions::isElementInPendingResources -> SVGDocumentExtensions::isElementPendingResources.
+        Added support for querying and removing pending resources for a specific element.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::buildPendingResource):
+        Refactored to support multiple pending resources.
+
 2012-01-21  Stephen Chenney  <schenney@chromium.org>
 
         REGRESSION (Safari 5.0.5 - ToT): crash in SVG test http://dev.w3.org/SVG/profiles/1.1F2/test/harness/htmlObjectApproved/animate-elem-39-t.html

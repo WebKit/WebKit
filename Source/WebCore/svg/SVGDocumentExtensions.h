@@ -80,10 +80,12 @@ public:
     // which are referenced by any object in the SVG document, but do NOT exist yet.
     // For instance, dynamically build gradients / patterns / clippers...
     void addPendingResource(const AtomicString& id, SVGStyledElement*);
-    bool hasPendingResources(const AtomicString& id) const;
-    bool isElementInPendingResources(SVGStyledElement*) const;
+    bool hasPendingResource(const AtomicString& id) const;
+    bool isElementPendingResources(SVGStyledElement*) const;
+    bool isElementPendingResource(SVGStyledElement*, const AtomicString& id) const;
     void removeElementFromPendingResources(SVGStyledElement*);
     PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
+    void removePendingResourceForElement(const AtomicString& id, SVGStyledElement*);
 };
 
 }

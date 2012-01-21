@@ -218,7 +218,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
     element->setHasPendingResources();
 }
 
-bool SVGDocumentExtensions::hasPendingResources(const AtomicString& id) const
+bool SVGDocumentExtensions::hasPendingResource(const AtomicString& id) const
 {
     if (id.isEmpty())
         return false;
@@ -226,7 +226,7 @@ bool SVGDocumentExtensions::hasPendingResources(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-bool SVGDocumentExtensions::isElementInPendingResources(SVGStyledElement* element) const
+bool SVGDocumentExtensions::isElementPendingResources(SVGStyledElement* element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
@@ -242,6 +242,16 @@ bool SVGDocumentExtensions::isElementInPendingResources(SVGStyledElement* elemen
             return true;
     }
     return false;
+}
+
+bool SVGDocumentExtensions::isElementPendingResource(SVGStyledElement* element, const AtomicString& id) const
+{
+    ASSERT(element);
+
+    if (!hasPendingResource(id))
+        return false;
+
+    return m_pendingResources.get(id)->contains(element);
 }
 
 void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* element)
@@ -275,6 +285,19 @@ PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::rem
 {
     ASSERT(m_pendingResources.contains(id));
     return adoptPtr(m_pendingResources.take(id));
+}
+
+void SVGDocumentExtensions::removePendingResourceForElement(const AtomicString& id, SVGStyledElement* element)
+{
+    ASSERT(element);
+    ASSERT(m_pendingResources.contains(id));
+
+    SVGPendingElements* elements = m_pendingResources.get(id);
+    elements->remove(element);
+    if (elements->isEmpty())
+        removePendingResource(id);
+
+    element->clearHasPendingResourcesIfPossible();
 }
 
 }

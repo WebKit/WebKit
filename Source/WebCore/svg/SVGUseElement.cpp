@@ -198,18 +198,10 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        if (hasPendingResources()) {
-            OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(document()->accessSVGExtensions()->removePendingResource(m_resourceId));
-            ASSERT(!clients->isEmpty());
-
-            const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
-            for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
-                ASSERT((*it)->hasPendingResources());
-                (*it)->clearHasPendingResourcesIfPossible();
-            }
-
+        SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+        if (hasPendingResources() && extensions->isElementPendingResource(this, m_resourceId)) {
+            extensions->removePendingResourceForElement(m_resourceId, this);
             m_resourceId = String();
-            clearHasPendingResourcesIfPossible();
         }
 
         m_targetElementInstance = 0;
@@ -460,18 +452,17 @@ void SVGUseElement::buildPendingResource()
     String id;
     Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     ASSERT(!m_targetElementInstance);
+    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
 
     if (!targetElement) {
-        if (hasPendingResources() || id.isEmpty())
+        if ((hasPendingResources() && extensions->isElementPendingResource(this, id)) || id.isEmpty())
             return;
 
         m_resourceId = id;
-        ASSERT(!hasPendingResources());
-        document()->accessSVGExtensions()->addPendingResource(id, this);
+        extensions->addPendingResource(id, this);
         ASSERT(hasPendingResources());
         return;
     }
-
 
     if (hasPendingResources()) {
         ASSERT(!m_targetElementInstance);

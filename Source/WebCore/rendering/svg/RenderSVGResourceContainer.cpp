@@ -147,7 +147,7 @@ void RenderSVGResourceContainer::removeClient(RenderObject* client)
 void RenderSVGResourceContainer::registerResource()
 {
     SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
-    if (!extensions->hasPendingResources(m_id)) {
+    if (!extensions->hasPendingResource(m_id)) {
         extensions->addResource(m_id, this);
         return;
     }
