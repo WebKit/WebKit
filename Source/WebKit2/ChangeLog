@@ -1,3 +1,20 @@
+2012-01-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drag/drop of a file into a WebView on Windows needs to allow access to that file
+        https://bugs.webkit.org/show_bug.cgi?id=76753
+        <rdar://problem/10731719>
+        
+        The Windows drag/drop code path was missing the code to open a file read exception.
+
+        Added code to match the Mac version, while allowing directories and multiple files to
+        also be dragged (matching our previous behavior).
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::maybeCreateSandboxExtensionFromDragData): Added.
+        (WebKit::WebView::Drop): Add a universal read exception if we're dragging a file into a WebView to open it.
+
 2012-01-20  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Trigger forcing accelerated compositing from the UI process side.

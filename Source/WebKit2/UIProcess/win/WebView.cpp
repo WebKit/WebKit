@@ -44,6 +44,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DragSession.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
@@ -1707,6 +1708,18 @@ HRESULT STDMETHODCALLTYPE WebView::DragLeave()
     return S_OK;
 }
 
+static bool maybeCreateSandboxExtensionFromDragData(const DragData& dragData, SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    if (!dragData.containsFiles())
+        return false;
+
+    // Unlike on Mac, we allow multiple files and directories, since on Windows
+    // we have actions for those (open the first file, open a Windows Explorer window).
+
+    SandboxExtension::createHandle("\\", SandboxExtension::ReadOnly, sandboxExtensionHandle);
+    return true;
+}
+
 HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
     if (m_dropTargetHelper)
@@ -1719,6 +1732,9 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeySt
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
 
     SandboxExtension::Handle sandboxExtensionHandle;
+    bool createdExtension = maybeCreateSandboxExtensionFromDragData(data, sandboxExtensionHandle);
+    if (createdExtension)
+        m_page->process()->willAcquireUniversalFileReadSandboxExtension();
     m_page->performDrag(&data, String(), sandboxExtensionHandle);
     return S_OK;
 }
