@@ -851,6 +851,8 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
         m_currentItem->setURLString(urlString);
     m_currentItem->setTitle(title);
     m_currentItem->setStateObject(stateObject);
+    m_currentItem->setFormData(0);
+    m_currentItem->setFormContentType(String());
 
     Settings* settings = m_frame->settings();
     if (!settings || settings->privateBrowsingEnabled())

@@ -1,3 +1,16 @@
+2012-01-21  Jochen Eisinger  <jochen@chromium.org>
+
+        history.replaceState should update the HistoryItem to use a GET method if previously non-GET (POST)
+        https://bugs.webkit.org/show_bug.cgi?id=76721
+
+        Reviewed by Mihai Parparita.
+
+        Tests: http/tests/history/replacestate-post-to-get-2.html
+               http/tests/history/replacestate-post-to-get.html
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::replaceState):
+
 2012-01-21  Florin Malita  <fmalita@google.com>
 
         Null dereference in SVGDocumentExtensions::removePendingResource when updating <use>'s href

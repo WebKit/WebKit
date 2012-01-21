@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function test()
+{
+    if (sessionStorage["form"] != 1) {
+        sessionStorage["form"] = 1;
+        var form = document.getElementById("testForm");
+        setTimeout(function() { form.submit(); }, 0);
+    } else {
+        sessionStorage.removeItem("form");
+        history.go(1);
+    }
+}
+</script>
+</head>
+<body onload="test()">
+<form id="testForm" action="resources/replacestate-forward-back.php" method="POST">
+</form>
+</body>
+</html>
