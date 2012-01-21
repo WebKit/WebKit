@@ -1,3 +1,15 @@
+2012-01-20  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Division by zero error in QtViewportInteractionEngine::setItemRectVisible
+        https://bugs.webkit.org/show_bug.cgi?id=76674
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure that itemRect is not empty.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::setItemRectVisible):
+
 2012-01-20  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Alexey Proskuryakov.

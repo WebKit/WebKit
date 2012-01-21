@@ -173,6 +173,9 @@ qreal QtViewportInteractionEngine::outerBoundedCSSScale(qreal cssScale)
 
 void QtViewportInteractionEngine::setItemRectVisible(const QRectF& itemRect)
 {
+    if (itemRect.isEmpty())
+        return;
+
     ViewportUpdateDeferrer guard(this);
 
     qreal itemScale = m_viewport->width() / itemRect.width();
