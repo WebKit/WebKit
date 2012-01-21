@@ -1,3 +1,21 @@
+2012-01-20  David Levin  <levin@chromium.org>
+
+        Allow isContextThread to be called while in ~ScriptExecutionContext.
+        https://bugs.webkit.org/show_bug.cgi?id=76756
+
+        Reviewed by Adam Barth.
+
+        It is possible for objects to get torn down or get called from ~ScriptExecutionContext
+        and in turn call isContextThread. The resulting behavior is undefined. This change defines
+        the behavior. I don't know of any places that do this but I have a test that is rarely
+        failing due to isContextThread being false. This is my best guess as to why, and I
+        don't see a reason to try to avoid calling isContextThread at this point.
+
+        No new functionality exposed so no new tests.
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isContextThread):
+
 2012-01-20  Alexandre Elias  <aelias@google.com>
 
         [chromium] Write unit tests for compositor-thread zooming
