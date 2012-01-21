@@ -1,3 +1,14 @@
+2012-01-20  Ami Fischman  <fischman@chromium.org>
+
+        Small cleanup of {get,put}CurrentFrame for  WebMediaPlayerClientImpl/CCVideoLayerImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=76332
+
+        Reviewed by James Robinson.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+        (WebKit::WebMediaPlayerClientImpl::putCurrentFrame):
+
 2012-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll Chromium DEPS from 118291 to 118493.

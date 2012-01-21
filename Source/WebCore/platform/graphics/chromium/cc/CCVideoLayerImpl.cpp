@@ -126,11 +126,15 @@ void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
         return;
     GC3Denum format = convertVFCFormatToGC3DFormat(frame->format());
 
-    if (format == GraphicsContext3D::INVALID_VALUE)
+    if (format == GraphicsContext3D::INVALID_VALUE) {
+        m_provider->putCurrentFrame(frame);
         return;
+    }
 
-    if (!copyFrameToTextures(frame, format, layerRenderer))
+    if (!copyFrameToTextures(frame, format, layerRenderer)) {
+        m_provider->putCurrentFrame(frame);
         return;
+    }
 
     switch (format) {
     case GraphicsContext3D::LUMINANCE:
