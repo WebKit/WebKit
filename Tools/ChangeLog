@@ -1,3 +1,11 @@
+2012-01-20  Shawn Singh  <shawnsingh@chromium.org>
+
+        Changed my status in commiters.py
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-20  Ojan Vafai  <ojan@chromium.org>
 
         run-webkit-tests --lint-test-files crawls the whole LayoutTests subtree
