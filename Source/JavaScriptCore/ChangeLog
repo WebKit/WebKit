@@ -1,5 +1,18 @@
 2012-01-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Build fix for non-DFG platforms that error out on warn-unused-parameter.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/MethodCallLinkStatus.cpp:
+        (JSC::MethodCallLinkStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+
+2012-01-22  Filip Pizlo  <fpizlo@apple.com>
+
         Build fix for non-DFG platforms.
 
         * bytecode/CallLinkStatus.cpp:

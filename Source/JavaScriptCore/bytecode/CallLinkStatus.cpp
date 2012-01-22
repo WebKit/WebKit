@@ -32,6 +32,8 @@ namespace JSC {
 
 CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     return CallLinkStatus(
         profiledBlock->getCallLinkInfo(bytecodeIndex).lastSeenCallee.get(),

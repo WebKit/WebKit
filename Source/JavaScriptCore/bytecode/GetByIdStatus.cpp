@@ -32,6 +32,9 @@ namespace JSC {
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(ident);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     // First check if it makes either calls, in which case we want to be super careful, or
     // if it's not set at all, in which case we punt.

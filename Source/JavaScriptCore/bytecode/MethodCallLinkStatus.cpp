@@ -32,6 +32,8 @@ namespace JSC {
 
 MethodCallLinkStatus MethodCallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     MethodCallLinkInfo& methodCall = profiledBlock->getMethodCallLinkInfo(bytecodeIndex);
     
