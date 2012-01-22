@@ -79,6 +79,10 @@ public:
     virtual void start() = 0; // Must be called before using the proxy.
     virtual void stop() = 0; // Must be called before deleting the proxy.
 
+    // Whether sub-regions of textures can be updated or if complete texture
+    // updates are required.
+    virtual bool partialTextureUpdateCapability() const = 0;
+
     // Debug hooks
 #ifndef NDEBUG
     static bool isMainThread();

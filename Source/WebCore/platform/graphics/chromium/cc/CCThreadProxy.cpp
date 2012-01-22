@@ -41,6 +41,12 @@
 
 using namespace WTF;
 
+namespace {
+
+static const size_t textureUpdatesPerFrame = 0;
+
+} // anonymous namespace
+
 namespace WebCore {
 
 PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
@@ -438,8 +444,7 @@ void CCThreadProxy::scheduledActionUpdateMoreResources()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionUpdateMoreResources", this, 0);
     ASSERT(m_currentTextureUpdaterOnImplThread);
-    static const int UpdatesPerFrame = 99999;
-    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), UpdatesPerFrame);
+    m_currentTextureUpdaterOnImplThread->update(m_layerTreeHostImpl->context(), textureUpdatesPerFrame > 0 ? textureUpdatesPerFrame : 99999);
 }
 
 void CCThreadProxy::scheduledActionCommit()
@@ -563,6 +568,11 @@ void CCThreadProxy::layerTreeHostClosedOnImplThread(CCCompletionEvent* completio
     m_inputHandlerOnImplThread.clear();
     m_schedulerOnImplThread.clear();
     completion->signal();
+}
+
+bool CCThreadProxy::partialTextureUpdateCapability() const
+{
+    return !textureUpdatesPerFrame;
 }
 
 } // namespace WebCore

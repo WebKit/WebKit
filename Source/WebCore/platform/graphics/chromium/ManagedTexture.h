@@ -63,8 +63,13 @@ public:
     unsigned format() const { return m_format; }
     unsigned textureId() const { return m_textureId; }
 
+    // Steal token and textureId by instantiates a new texture using existing
+    // member variables.
+    PassOwnPtr<ManagedTexture> steal();
+
 private:
     explicit ManagedTexture(TextureManager*);
+    ManagedTexture(TextureManager*, TextureToken, IntSize, unsigned format, unsigned textureId);
 
     TextureManager* m_textureManager;
     TextureToken m_token;

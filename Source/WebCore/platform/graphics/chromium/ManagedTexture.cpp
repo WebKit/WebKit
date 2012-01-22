@@ -41,6 +41,15 @@ ManagedTexture::ManagedTexture(TextureManager* manager)
 {
 }
 
+ManagedTexture::ManagedTexture(TextureManager* manager, TextureToken token, IntSize size, unsigned format, unsigned textureId)
+    : m_textureManager(manager)
+    , m_token(token)
+    , m_size(size)
+    , m_format(format)
+    , m_textureId(textureId)
+{
+}
+
 ManagedTexture::~ManagedTexture()
 {
     if (m_token)
@@ -98,6 +107,17 @@ void ManagedTexture::framebufferTexture2D(GraphicsContext3D* context, TextureAll
     allocate(allocator);
     context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
 }
+
+PassOwnPtr<ManagedTexture> ManagedTexture::steal()
+{
+    OwnPtr<ManagedTexture> texture = adoptPtr(new ManagedTexture(m_textureManager, m_token, m_size, m_format, m_textureId));
+    m_token = 0;
+    m_size = IntSize();
+    m_format = 0;
+    m_textureId = 0;
+    return texture.release();
+}
+
 
 }
 
