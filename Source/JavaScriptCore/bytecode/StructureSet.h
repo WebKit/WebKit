@@ -23,12 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGStructureSet_h
-#define DFGStructureSet_h
-
-#include <wtf/Platform.h>
-
-#if ENABLE(DFG_JIT)
+#ifndef StructureSet_h
+#define StructureSet_h
 
 #include "PredictedType.h"
 #include <stdio.h>
@@ -39,8 +35,8 @@ namespace JSC {
 class Structure;
 
 namespace DFG {
-
 class StructureAbstractValue;
+}
 
 class StructureSet {
 public:
@@ -140,7 +136,6 @@ public:
         return true;
     }
     
-#ifndef NDEBUG
     void dump(FILE* out)
     {
         fprintf(out, "[");
@@ -151,16 +146,13 @@ public:
         }
         fprintf(out, "]");
     }
-#endif
     
 private:
-    friend class StructureAbstractValue;
+    friend class DFG::StructureAbstractValue;
     
     Vector<Structure*, 2> m_structures;
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGStructureSet_h
+#endif // StructureSet_h

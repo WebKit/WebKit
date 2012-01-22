@@ -1450,6 +1450,38 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\GetByIdStatus.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\PutByIdStatus.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CallLinkStatus.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\MethodCallLinkStatus.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\GetByIdStatus.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\PutByIdStatus.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CallLinkStatus.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\MethodCallLinkStatus.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\HandlerInfo.h"
 				>
 			</File>

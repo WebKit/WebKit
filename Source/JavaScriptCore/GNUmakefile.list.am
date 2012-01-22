@@ -83,6 +83,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
+	Source/JavaScriptCore/bytecode/CallLinkStatus.cpp \
+	Source/JavaScriptCore/bytecode/CallLinkStatus.h \
 	Source/JavaScriptCore/bytecode/CallReturnOffsetToBytecodeOffset.h \
 	Source/JavaScriptCore/bytecode/CodeType.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
@@ -93,6 +95,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
+	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
+	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
 	Source/JavaScriptCore/bytecode/GlobalResolveInfo.h \
 	Source/JavaScriptCore/bytecode/HandlerInfo.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
@@ -101,11 +105,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/LineInfo.h \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.h \
+	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.cpp \
+	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
 	Source/JavaScriptCore/bytecode/Opcode.h \
 	Source/JavaScriptCore/bytecode/PredictedType.cpp \
 	Source/JavaScriptCore/bytecode/PredictedType.h \
 	Source/JavaScriptCore/bytecode/PredictionTracker.h \
+	Source/JavaScriptCore/bytecode/PutByIdStatus.cpp \
+	Source/JavaScriptCore/bytecode/PutByIdStatus.h \
 	Source/JavaScriptCore/bytecode/SamplingTool.cpp \
 	Source/JavaScriptCore/bytecode/SamplingTool.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \

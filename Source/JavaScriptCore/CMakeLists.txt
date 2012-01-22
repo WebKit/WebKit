@@ -35,12 +35,16 @@ SET(JavaScriptCore_SOURCES
     API/OpaqueJSString.cpp
 
     bytecode/CallLinkInfo.cpp
+    bytecode/CallLinkStatus.cpp
     bytecode/CodeBlock.cpp
     bytecode/DFGExitProfile.cpp
+    bytecode/GetByIdStatus.cpp
     bytecode/JumpTable.cpp
     bytecode/MethodCallLinkInfo.cpp
+    bytecode/MethodCallLinkStatus.cpp
     bytecode/Opcode.cpp
     bytecode/PredictedType.cpp
+    bytecode/PutByIdStatus.cpp
     bytecode/SamplingTool.cpp
     bytecode/StructureStubInfo.cpp
     bytecode/ValueProfile.cpp

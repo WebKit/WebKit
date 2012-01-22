@@ -1,5 +1,108 @@
 2012-01-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not have code that directly decodes the states of old JIT inline
+        cache data structures
+        https://bugs.webkit.org/show_bug.cgi?id=76768
+
+        Reviewed by Sam Weinig.
+        
+        Introduced new classes (like GetByIdStatus) that encapsulate the set of things
+        that the DFG would like to know about property accesses and calls. Whereas it
+        previously got this information by directly decoding the data structures used
+        by the old JIT for inline caching, it now uses these classes, which do the work
+        for it. This should make it somewhat more straight forward to introduce new
+        ways of profiling the same information.
+        
+        Also hoisted StructureSet into bytecode/ from dfg/, because it's now used by
+        code in bytecode/.
+        
+        Making this work right involved carefully ensuring that the heuristics for
+        choosing how to handle property accesses was at least as good as what we had
+        before, since I completely restructured that code. Currently the performance
+        looks neutral. Since I rewrote the code I did change some things that I never
+        liked before, like previously if a put_bu_id had executed exactly once then
+        we'd compile it as if it had taken slow-path. Executing once is special because
+        then the inline cache is not baked in, so there is no information about how the
+        DFG should optimize the code. Now this is rationalized: if the put_by_id does
+        not offer enough information to be optimized (i.e. had executed 0 or 1 times)
+        then we turn it into a forced OSR exit (i.e. a patch point). However, get_by_id
+        still has the old behavior; I left it that way because I didn't want to make
+        too many changes at once.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkStatus.cpp: Added.
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CallLinkStatus.h: Added.
+        (JSC::CallLinkStatus::CallLinkStatus):
+        (JSC::CallLinkStatus::isSet):
+        (JSC::CallLinkStatus::operator!):
+        (JSC::CallLinkStatus::couldTakeSlowPath):
+        (JSC::CallLinkStatus::callTarget):
+        * bytecode/GetByIdStatus.cpp: Added.
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h: Added.
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::state):
+        (JSC::GetByIdStatus::isSet):
+        (JSC::GetByIdStatus::operator!):
+        (JSC::GetByIdStatus::isSimpleDirect):
+        (JSC::GetByIdStatus::takesSlowPath):
+        (JSC::GetByIdStatus::makesCalls):
+        (JSC::GetByIdStatus::structureSet):
+        (JSC::GetByIdStatus::offset):
+        * bytecode/MethodCallLinkStatus.cpp: Added.
+        (JSC::MethodCallLinkStatus::computeFor):
+        * bytecode/MethodCallLinkStatus.h: Added.
+        (JSC::MethodCallLinkStatus::MethodCallLinkStatus):
+        (JSC::MethodCallLinkStatus::isSet):
+        (JSC::MethodCallLinkStatus::operator!):
+        (JSC::MethodCallLinkStatus::needsPrototypeCheck):
+        (JSC::MethodCallLinkStatus::structure):
+        (JSC::MethodCallLinkStatus::prototypeStructure):
+        (JSC::MethodCallLinkStatus::function):
+        (JSC::MethodCallLinkStatus::prototype):
+        * bytecode/PutByIdStatus.cpp: Added.
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h: Added.
+        (JSC::PutByIdStatus::PutByIdStatus):
+        (JSC::PutByIdStatus::state):
+        (JSC::PutByIdStatus::isSet):
+        (JSC::PutByIdStatus::operator!):
+        (JSC::PutByIdStatus::isSimpleReplace):
+        (JSC::PutByIdStatus::isSimpleTransition):
+        (JSC::PutByIdStatus::takesSlowPath):
+        (JSC::PutByIdStatus::oldStructure):
+        (JSC::PutByIdStatus::newStructure):
+        (JSC::PutByIdStatus::structureChain):
+        (JSC::PutByIdStatus::offset):
+        * bytecode/StructureSet.h: Added.
+        (JSC::StructureSet::StructureSet):
+        (JSC::StructureSet::clear):
+        (JSC::StructureSet::add):
+        (JSC::StructureSet::addAll):
+        (JSC::StructureSet::remove):
+        (JSC::StructureSet::contains):
+        (JSC::StructureSet::isSubsetOf):
+        (JSC::StructureSet::isSupersetOf):
+        (JSC::StructureSet::size):
+        (JSC::StructureSet::at):
+        (JSC::StructureSet::operator[]):
+        (JSC::StructureSet::last):
+        (JSC::StructureSet::predictionFromStructures):
+        (JSC::StructureSet::operator==):
+        (JSC::StructureSet::dump):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGStructureSet.h: Removed.
+
+2012-01-20  Filip Pizlo  <fpizlo@apple.com>
+
         JIT compilation should not require ExecState
         https://bugs.webkit.org/show_bug.cgi?id=76729
         <rdar://problem/10731545>
