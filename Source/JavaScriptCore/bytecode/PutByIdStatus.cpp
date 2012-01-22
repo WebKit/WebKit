@@ -34,7 +34,7 @@ namespace JSC {
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
-#if ENABLE(JIT)
+#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
     

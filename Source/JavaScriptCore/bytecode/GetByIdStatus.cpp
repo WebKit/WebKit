@@ -32,7 +32,7 @@ namespace JSC {
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
-#if ENABLE(JIT)
+#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     // First check if it makes either calls, in which case we want to be super careful, or
     // if it's not set at all, in which case we punt.
     StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);

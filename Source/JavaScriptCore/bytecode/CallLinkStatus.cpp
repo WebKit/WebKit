@@ -32,7 +32,7 @@ namespace JSC {
 
 CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
-#if ENABLE(JIT)
+#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     return CallLinkStatus(
         profiledBlock->getCallLinkInfo(bytecodeIndex).lastSeenCallee.get(),
         profiledBlock->couldTakeSlowCase(bytecodeIndex));
