@@ -463,7 +463,6 @@ fast/html/tab-order.html
 # Missing delegates:
 # Need proper frame loader callbacks reporting
 # See https://bugs.webkit.org/show_bug.cgi?id=32170
-http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 fast/loader/file-protocol-fragment.html
 # Tests failing because of missing resource load delegate callbacks.
 fast/loader/main-document-url-for-non-http-loads.html
