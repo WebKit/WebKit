@@ -210,7 +210,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     }
 
 #if ENABLE(JIT)
-    if (!jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, jitType))
+    if (!jitCompileIfAppropriate(*globalData, m_evalCodeBlock, m_jitCodeForCall, jitType))
         return 0;
 #endif
 
@@ -336,7 +336,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     }
 
 #if ENABLE(JIT)
-    if (!jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, jitType))
+    if (!jitCompileIfAppropriate(*globalData, m_programCodeBlock, m_jitCodeForCall, jitType))
         return 0;
 #endif
 
@@ -504,7 +504,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType))
+    if (!jitCompileFunctionIfAppropriate(exec->globalData(), m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, jitType))
         return 0;
 #endif
 
@@ -546,7 +546,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
 
 #if ENABLE(JIT)
-    if (!jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType))
+    if (!jitCompileFunctionIfAppropriate(exec->globalData(), m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, jitType))
         return 0;
 #endif
 

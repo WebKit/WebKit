@@ -35,7 +35,7 @@
 namespace JSC { namespace DFG {
 
 enum CompileMode { CompileFunction, CompileOther };
-inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -47,17 +47,16 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     fprintf(stderr, "DFG compiling code block %p(%p), number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->instructionCount());
 #endif
     
-    JSGlobalData* globalData = &exec->globalData();
     Graph dfg;
-    if (!parse(dfg, globalData, codeBlock))
+    if (!parse(dfg, &globalData, codeBlock))
         return false;
     
     if (compileMode == CompileFunction)
         dfg.predictArgumentTypes(codeBlock);
     
-    propagate(dfg, globalData, codeBlock);
+    propagate(dfg, &globalData, codeBlock);
     
-    JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
+    JITCompiler dataFlowJIT(&globalData, dfg, codeBlock);
     if (compileMode == CompileFunction) {
         ASSERT(jitCodeWithArityCheck);
         
@@ -72,14 +71,14 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     return true;
 }
 
-bool tryCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode)
+bool tryCompile(JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode)
 {
-    return compile(CompileOther, exec, codeBlock, jitCode, 0);
+    return compile(CompileOther, globalData, codeBlock, jitCode, 0);
 }
 
-bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+bool tryCompileFunction(JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
-    return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck);
+    return compile(CompileFunction, globalData, codeBlock, jitCode, &jitCodeWithArityCheck);
 }
 
 } } // namespace JSC::DFG
