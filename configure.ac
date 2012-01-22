@@ -647,8 +647,8 @@ AC_MSG_RESULT([$enable_geolocation])
 AC_MSG_CHECKING([whether to enable MathML support])
 AC_ARG_ENABLE(mathml,
               AC_HELP_STRING([--enable-mathml],
-                             [enable support for MathML [default=no]]),
-              [],[enable_mathml="no"])
+                             [enable support for MathML [default=yes]]),
+              [],[enable_mathml="yes"])
 AC_MSG_RESULT([$enable_mathml])
 
 # check whether to enable SVG support
