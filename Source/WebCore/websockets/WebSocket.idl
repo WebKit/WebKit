@@ -39,7 +39,8 @@ module websockets {
         EventTarget,
         NoStaticTables
     ] WebSocket {
-        readonly attribute DOMString URL;
+        readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
+        readonly attribute DOMString url;
 
         // ready state
         const unsigned short CONNECTING = 0;

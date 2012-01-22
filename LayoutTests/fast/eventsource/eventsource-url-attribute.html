@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Both .URL and .url should work (for compatibility reasons).");
+
+var url = "http://localhost/";
+var source = new EventSource(url);
+
+shouldBeEqualToString("source.URL", url);
+shouldBeEqualToString("source.url", url);
+shouldBeTrue("source.URL === source.url");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

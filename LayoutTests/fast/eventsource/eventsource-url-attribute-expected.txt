@@ -1,0 +1,12 @@
+Both .URL and .url should work (for compatibility reasons).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS source.URL is "http://localhost/"
+PASS source.url is "http://localhost/"
+PASS source.URL === source.url is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
