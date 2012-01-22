@@ -1345,6 +1345,12 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     if (!coreObject->isAccessibilityRenderObject())
         return 0;
 
+    // We need to make sure we pass a valid object as reference.
+    if (coreObject->accessibilityIsIgnored())
+        coreObject = coreObject->parentObjectUnignored();
+    if (!coreObject)
+        return 0;
+
     int offset;
     if (!objectFocusedAndCaretOffsetUnignored(coreObject, offset))
         return 0;
@@ -2736,19 +2742,25 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
         return 0;
 
     // Look for the actual (not ignoring accessibility) selected object.
-    if (focusedObject->accessibilityIsIgnored())
-        focusedObject = focusedObject->parentObjectUnignored();
-    if (!focusedObject)
+    AccessibilityObject* firstUnignoredParent = focusedObject;
+    if (firstUnignoredParent->accessibilityIsIgnored())
+        firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
+    if (!firstUnignoredParent)
         return 0;
 
     // Don't ignore links if the offset is being requested for a link.
-    if (!referenceObject->isLink() && focusedObject->isLink())
-        focusedObject = focusedObject->parentObjectUnignored();
-    if (!focusedObject)
+    if (!referenceObject->isLink() && firstUnignoredParent->isLink())
+        firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
+    if (!firstUnignoredParent)
         return 0;
 
+    // The reference object must either coincide with the focused
+    // object being considered, or be a descendant of it.
+    if (referenceObject->isDescendantOfObject(firstUnignoredParent))
+        referenceObject = firstUnignoredParent;
+
     Node* startNode = 0;
-    if (focusedObject != referenceObject || focusedObject->isTextControl()) {
+    if (firstUnignoredParent != referenceObject || firstUnignoredParent->isTextControl()) {
         // We need to use the first child's node of the reference
         // object as the start point to calculate the caret offset
         // because we want it to be relative to the object of
@@ -2759,10 +2771,10 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
             startNode = axFirstChild->node();
     }
     if (!startNode)
-        startNode = focusedObject->node();
+        startNode = firstUnignoredParent->node();
 
-    VisiblePosition startPosition = VisiblePosition(firstPositionInNode(startNode), DOWNSTREAM);
-    VisiblePosition endPosition = focusedObject->selection().visibleEnd();
+    VisiblePosition startPosition = VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
+    VisiblePosition endPosition = firstUnignoredParent->selection().visibleEnd();
 
     if (startPosition == endPosition)
         offset = 0;
@@ -2774,7 +2786,7 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
         offset = TextIterator::rangeLength(range.get(), true);
     }
 
-    return focusedObject;
+    return firstUnignoredParent;
 }
 
 #endif // HAVE(ACCESSIBILITY)

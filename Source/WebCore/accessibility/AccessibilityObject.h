@@ -564,6 +564,8 @@ public:
     virtual AccessibilityObject* activeDescendant() const { return 0; }    
     virtual void handleActiveDescendantChanged() { }
     virtual void handleAriaExpandedChanged() { }
+    bool isDescendantOfObject(const AccessibilityObject*) const;
+    bool isAncestorOfObject(const AccessibilityObject*) const;
     
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     const AtomicString& getAttribute(const QualifiedName&) const;

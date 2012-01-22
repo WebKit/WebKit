@@ -1294,6 +1294,26 @@ AccessibilityOrientation AccessibilityObject::orientation() const
     return AccessibilityOrientationHorizontal;
 }    
 
+bool AccessibilityObject::isDescendantOfObject(const AccessibilityObject* axObject) const
+{
+    if (!axObject || !axObject->hasChildren())
+        return false;
+
+    for (const AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
+        if (parent == axObject)
+            return true;
+    }
+    return false;
+}
+
+bool AccessibilityObject::isAncestorOfObject(const AccessibilityObject* axObject) const
+{
+    if (!axObject)
+        return false;
+
+    return this == axObject || axObject->isDescendantOfObject(this);
+}
+
 typedef HashMap<String, AccessibilityRole, CaseFoldingHash> ARIARoleMap;
 
 struct RoleEntry {
