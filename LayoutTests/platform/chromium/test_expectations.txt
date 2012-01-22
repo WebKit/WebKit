@@ -3921,7 +3921,7 @@ BUGWK76647 : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
 BUGWK76647 : svg/zoom/page/zoom-background-images.html = IMAGE
 
 // Just needs a rebaseline.
-BUGWK76780 : svg/filters/feImage-preserveAspectRatio.svg = IMAGE+TEXT
+BUGWK76780 : svg/filters/feImage-preserveAspectratio.svg = IMAGE+TEXT
 
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
