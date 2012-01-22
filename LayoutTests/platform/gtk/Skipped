@@ -104,9 +104,6 @@ fast/dom/gc-10.html
 # https://bugs.webkit.org/show_bug.cgi?id=50744
 inspector/debugger/open-close-open.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=55135
-http/tests/incremental/slow-utf8-html.pl
-
 # [GTK] fast/workers/storage/use-same-database-in-page-and-workers.html fails an ASSERT
 # https://bugs.webkit.org/show_bug.cgi?id=56147 
 # Fails assertion: ASSERT(m_workerContext->hasOneRef());
