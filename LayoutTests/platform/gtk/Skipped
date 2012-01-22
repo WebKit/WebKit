@@ -1633,10 +1633,5 @@ fast/text/font-kerning.html
 # Needs custom policy delegate enhancement to log downloads
 http/tests/download
 
-# [GTK] DumpRenderTree converts "file:///" to a path differently
-# https://bugs.webkit.org/show_bug.cgi?id=76631
-http/tests/misc/drag-over-iframe-invalid-source-crash.html
-http/tests/misc/iframe-invalid-source-crash.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=76632
 fast/forms/implicit-submission.html

@@ -1,3 +1,16 @@
+2012-01-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] DumpRenderTree converts "file:///" to a path differently
+        https://bugs.webkit.org/show_bug.cgi?id=76631
+
+        Reviewed by Martin Robinson.
+
+        DumpRenderTree should print "/" as the last path component if the
+        path is a lone slash instead of empty output.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewConsoleMessage):
+
 2012-01-20  David Levin  <levin@chromium.org>
 
         The leaky DC check should use adoptPtr as a signal instead of OwnPtr to get less false positives.

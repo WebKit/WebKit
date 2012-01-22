@@ -842,7 +842,9 @@ static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message,
         gchar* filename = g_strrstr(uriScheme, G_DIR_SEPARATOR_S);
 
         if (filename) {
-            filename += strlen(G_DIR_SEPARATOR_S);
+            // If the path is a lone slash, keep it to avoid empty output.
+            if (strlen(filename) > 1)
+                filename += strlen(G_DIR_SEPARATOR_S);
             tempString = g_string_append_len(tempString, message, (uriScheme - message));
             tempString = g_string_append_len(tempString, filename, strlen(filename));
             testMessage = g_string_free(tempString, FALSE);
