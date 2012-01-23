@@ -250,6 +250,8 @@ WebInspector.HAREntry.prototype = {
      */
     get responseBodySize()
     {
+        if (this._resource.cached || this._resource.statusCode === 304)
+            return 0;
         return this._resource.transferSize - this._resource.responseHeadersSize
     },
 

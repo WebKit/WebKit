@@ -964,13 +964,13 @@ WebInspector.NetworkLogView.prototype = {
         var harArchive = {
             log: (new WebInspector.HARLog(this._resources)).build()
         };
-        InspectorFrontendHost.copyText(JSON.stringify(harArchive));
+        InspectorFrontendHost.copyText(JSON.stringify(harArchive, null, 2));
     },
 
     _copyResource: function(resource)
     {
         var har = (new WebInspector.HAREntry(resource)).build();
-        InspectorFrontendHost.copyText(JSON.stringify(har));
+        InspectorFrontendHost.copyText(JSON.stringify(har, null, 2));
     },
 
     _copyLocation: function(resource)
@@ -994,13 +994,13 @@ WebInspector.NetworkLogView.prototype = {
             log: (new WebInspector.HARLog(this._resources)).build()
         };
         
-        InspectorFrontendHost.saveAs(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive));
+        InspectorFrontendHost.saveAs(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2));
     },
 
     _exportResource: function(resource)
     {
         var har = (new WebInspector.HAREntry(resource)).build();
-        InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har));
+        InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har, null, 2));
     },
 
     _clearBrowserCache: function(event)

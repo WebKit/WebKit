@@ -41,9 +41,13 @@ console.trace = function() {}
 var JSON = {}
 /** @param {string} str */
 JSON.parse = function(str) {}
-/** @param {Object} obj */
-/** @return {string} */
-JSON.stringify = function(str) {}
+/**
+ * @param {Object} obj
+ * @param {Function=} replacer
+ * @param {number=} space
+ * @return {string}
+ */
+JSON.stringify = function(obj, replacer, space) {}
 
 /** @param {boolean=} param */
 Element.prototype.scrollIntoViewIfNeeded = function(param) {}

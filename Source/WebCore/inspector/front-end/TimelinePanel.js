@@ -1391,12 +1391,13 @@ WebInspector.TimelineModel.prototype = {
 
     _saveToFile: function()
     {
-        var records = ['[' + JSON.stringify(window.navigator.appVersion)];
+        var records = ['[' + JSON.stringify(new String(window.navigator.appVersion))];
         for (var i = 0; i < this._records.length; ++i)
             records.push(JSON.stringify(this._records[i]));
-            records[records.length - 1] = records[records.length - 1] + "]";
 
-        var now= new Date();
+        records[records.length - 1] = records[records.length - 1] + "]";
+
+        var now = new Date();
         var suggestedFileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
         InspectorFrontendHost.saveAs(suggestedFileName, records.join(",\n"));
     },
