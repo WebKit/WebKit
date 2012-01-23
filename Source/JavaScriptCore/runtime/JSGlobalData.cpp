@@ -162,8 +162,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #endif
 {
     interpreter = new Interpreter;
-    if (globalDataType == Default)
-        m_stack = wtfThreadData().stack();
 
     // Need to be careful to keep everything consistent here
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);

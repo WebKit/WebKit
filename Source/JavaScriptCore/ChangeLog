@@ -1,3 +1,24 @@
+2012-01-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove StackBounds from JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=76310
+
+        Reviewed by Sam Weinig.
+
+        Removed StackBounds and the stack() function from JSGlobalData since it no 
+        longer accessed any members of JSGlobalData.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+
 2012-01-23  Gavin Barraclough  <barraclough@apple.com>
 
         Implement a JIT-code aware sampling profiler for JSC

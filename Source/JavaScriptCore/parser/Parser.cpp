@@ -43,7 +43,7 @@ template <typename LexerType>
 Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode)
     : m_globalData(globalData)
     , m_source(&source)
-    , m_stack(globalData->stack())
+    , m_stack(wtfThreadData().stack())
     , m_error(false)
     , m_errorMessage("Parse error")
     , m_allowsIn(true)

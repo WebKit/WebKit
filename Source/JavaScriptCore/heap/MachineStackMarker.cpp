@@ -193,7 +193,7 @@ void MachineThreads::addCurrentThread()
         return;
 
     pthread_setspecific(m_threadSpecific, this);
-    Thread* thread = new Thread(getCurrentPlatformThread(), m_heap->globalData()->stack().origin());
+    Thread* thread = new Thread(getCurrentPlatformThread(), wtfThreadData().stack().origin());
 
     MutexLocker lock(m_registeredThreadsMutex);
 
@@ -257,7 +257,7 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     conservativeRoots.add(registersBegin, registersEnd);
 
     void* stackBegin = stackCurrent;
-    void* stackEnd = m_heap->globalData()->stack().origin();
+    void* stackEnd = wtfThreadData().stack().origin();
     swapIfBackwards(stackBegin, stackEnd);
     conservativeRoots.add(stackBegin, stackEnd);
 }
