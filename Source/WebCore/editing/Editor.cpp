@@ -1457,8 +1457,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         // We check the composition status and choose an appropriate composition event since this
         // function is used for three purposes:
         // 1. Starting a new composition.
-        //    Send a compositionstart event when this function creates a new composition node, i.e.
+        //    Send a compositionstart and a compositionupdate event when this function creates
+        //    a new composition node, i.e.
         //    m_compositionNode == 0 && !text.isEmpty().
+        //    Sending a compositionupdate event at this time ensures that at least one
+        //    compositionupdate event is dispatched.
         // 2. Updating the existing composition node.
         //    Send a compositionupdate event when this function updates the existing composition
         //    node, i.e. m_compositionNode != 0 && !text.isEmpty().
@@ -1469,8 +1472,10 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         if (!m_compositionNode) {
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
-            if (!text.isEmpty())
-                event = CompositionEvent::create(eventNames().compositionstartEvent, m_frame->domWindow(), text);
+            if (!text.isEmpty()) {
+                target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, m_frame->domWindow(), text));
+                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->domWindow(), text);
+            }
         } else {
             if (!text.isEmpty())
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->domWindow(), text);
