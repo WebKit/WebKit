@@ -78,36 +78,35 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     // PopupMenuClient methods
-    virtual String itemText(unsigned listIndex) const;
-    virtual String itemLabel(unsigned listIndex) const;
-    virtual String itemIcon(unsigned listIndex) const;
-    virtual String itemToolTip(unsigned listIndex) const;
-    virtual String itemAccessibilityText(unsigned listIndex) const;
-    virtual bool itemIsEnabled(unsigned listIndex) const;
-    virtual PopupMenuStyle itemStyle(unsigned listIndex) const;
-    virtual PopupMenuStyle menuStyle() const;
-    virtual int clientInsetLeft() const;
-    virtual int clientInsetRight() const;
-    virtual int clientPaddingLeft() const;
-    virtual int clientPaddingRight() const;
-    virtual int listSize() const;
-    virtual int selectedIndex() const;
-    virtual void popupDidHide();
-    virtual bool itemIsSeparator(unsigned listIndex) const;
-    virtual bool itemIsLabel(unsigned listIndex) const;
-    virtual bool itemIsSelected(unsigned listIndex) const;
-    virtual void setTextFromItem(unsigned listIndex);
-    virtual bool valueShouldChangeOnHotTrack() const { return true; }
-    virtual bool shouldPopOver() const { return !POPUP_MENU_PULLS_DOWN; }
-    virtual void valueChanged(unsigned listIndex, bool fireOnChange = true);
-    virtual void selectionChanged(unsigned, bool) {}
-    virtual void selectionCleared() {}
-    virtual FontSelector* fontSelector() const;
-    virtual HostWindow* hostWindow() const;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
-
-    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
-    virtual bool multiple() const;
+    virtual void valueChanged(unsigned listIndex, bool fireOnChange = true) OVERRIDE;
+    virtual void selectionChanged(unsigned, bool) OVERRIDE { }
+    virtual void selectionCleared() OVERRIDE { }
+    virtual String itemText(unsigned listIndex) const OVERRIDE;
+    virtual String itemLabel(unsigned listIndex) const OVERRIDE;
+    virtual String itemIcon(unsigned listIndex) const OVERRIDE;
+    virtual String itemToolTip(unsigned listIndex) const OVERRIDE;
+    virtual String itemAccessibilityText(unsigned listIndex) const OVERRIDE;
+    virtual bool itemIsEnabled(unsigned listIndex) const OVERRIDE;
+    virtual PopupMenuStyle itemStyle(unsigned listIndex) const OVERRIDE;
+    virtual PopupMenuStyle menuStyle() const OVERRIDE;
+    virtual int clientInsetLeft() const OVERRIDE;
+    virtual int clientInsetRight() const OVERRIDE;
+    virtual int clientPaddingLeft() const OVERRIDE;
+    virtual int clientPaddingRight() const OVERRIDE;
+    virtual int listSize() const OVERRIDE;
+    virtual int selectedIndex() const OVERRIDE;
+    virtual void popupDidHide() OVERRIDE;
+    virtual bool itemIsSeparator(unsigned listIndex) const OVERRIDE;
+    virtual bool itemIsLabel(unsigned listIndex) const OVERRIDE;
+    virtual bool itemIsSelected(unsigned listIndex) const OVERRIDE;
+    virtual bool shouldPopOver() const OVERRIDE { return !POPUP_MENU_PULLS_DOWN; }
+    virtual bool valueShouldChangeOnHotTrack() const OVERRIDE { return true; }
+    virtual void setTextFromItem(unsigned listIndex) OVERRIDE;
+    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) OVERRIDE;
+    virtual bool multiple() const OVERRIDE;
+    virtual FontSelector* fontSelector() const OVERRIDE;
+    virtual HostWindow* hostWindow() const OVERRIDE;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) OVERRIDE;
 
     virtual bool hasLineIfEmpty() const { return true; }
 

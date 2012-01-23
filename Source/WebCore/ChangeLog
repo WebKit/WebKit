@@ -1,3 +1,14 @@
+2012-01-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use OVERRIDE for PopupMenuClient's implementations
+        https://bugs.webkit.org/show_bug.cgi?id=76774
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderMenuList.h: Also sort the methods to the same
+        order as PopupMenuClient.
+        * rendering/RenderTextControlSingleLine.h:
+
 2012-01-23  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Basic enhancements to StringBuilder
