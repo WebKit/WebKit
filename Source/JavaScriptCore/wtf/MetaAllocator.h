@@ -45,8 +45,8 @@ namespace WTF {
 
 class MetaAllocator {
     WTF_MAKE_NONCOPYABLE(MetaAllocator);
+
 public:
-    
     WTF_EXPORT_PRIVATE MetaAllocator(size_t allocationGranule);
     
     virtual ~MetaAllocator();
@@ -101,8 +101,23 @@ private:
     
     friend class MetaAllocatorHandle;
     
-    typedef RedBlackTree<size_t, void*> Tree;
-    typedef Tree::Node FreeSpaceNode;
+    class FreeSpaceNode : public RedBlackTree<FreeSpaceNode, size_t>::Node {
+    public:
+        FreeSpaceNode(void* start, size_t sizeInBytes)
+            : m_start(start)
+            , m_sizeInBytes(sizeInBytes)
+        {
+        }
+
+        size_t key()
+        {
+            return m_sizeInBytes;
+        }
+
+        void* m_start;
+        size_t m_sizeInBytes;
+    };
+    typedef RedBlackTree<FreeSpaceNode, size_t> Tree;
     
     // Remove free space from the allocator. This is effectively
     // the allocate() function, except that it does not mark the
@@ -121,7 +136,7 @@ private:
     
     void incrementPageOccupancy(void* address, size_t sizeInBytes);
     void decrementPageOccupancy(void* address, size_t sizeInBytes);
-    
+
     // Utilities.
     
     size_t roundUp(size_t sizeInBytes);

@@ -1,3 +1,50 @@
+2012-01-23  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76855
+        Implement a JIT-code aware sampling profiler for JSC
+
+        Reviewed by Geoff Garen.
+
+        Step 2: generalize RedBlackTree. The profiler is going to want tio use
+        a RedBlackTree, allow this class to work with subclasses of
+        RedBlackTree::Node, Node should not need to know the names of the m_key
+        and m_value fields (the subclass can provide a key() accessor), and
+        RedBlackTree does not need to know anything about ValueType.
+
+        * JavaScriptCore.exp:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::findAndRemoveFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        (WTF::MetaAllocator::addFreeSpace):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::FreeSpaceNode::FreeSpaceNode):
+        (WTF::MetaAllocator::FreeSpaceNode::key):
+        * wtf/MetaAllocatorHandle.h:
+        (WTF::MetaAllocatorHandle::key):
+        * wtf/RedBlackTree.h:
+        (WTF::RedBlackTree::Node::successor):
+        (WTF::RedBlackTree::Node::predecessor):
+        (WTF::RedBlackTree::Node::parent):
+        (WTF::RedBlackTree::Node::setParent):
+        (WTF::RedBlackTree::Node::left):
+        (WTF::RedBlackTree::Node::setLeft):
+        (WTF::RedBlackTree::Node::right):
+        (WTF::RedBlackTree::Node::setRight):
+        (WTF::RedBlackTree::insert):
+        (WTF::RedBlackTree::remove):
+        (WTF::RedBlackTree::findExact):
+        (WTF::RedBlackTree::findLeastGreaterThanOrEqual):
+        (WTF::RedBlackTree::findGreatestLessThanOrEqual):
+        (WTF::RedBlackTree::first):
+        (WTF::RedBlackTree::last):
+        (WTF::RedBlackTree::size):
+        (WTF::RedBlackTree::treeMinimum):
+        (WTF::RedBlackTree::treeMaximum):
+        (WTF::RedBlackTree::treeInsert):
+        (WTF::RedBlackTree::leftRotate):
+        (WTF::RedBlackTree::rightRotate):
+        (WTF::RedBlackTree::removeFixup):
+
 2012-01-23  Andy Estes  <aestes@apple.com>
 
         Fix the build after r105635.

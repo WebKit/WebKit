@@ -41,7 +41,7 @@ namespace WTF {
 //   reference to this node.
 // - The key type must implement operator< and ==.
 
-template<typename KeyType, typename ValueType>
+template<class NodeType, typename KeyType>
 class RedBlackTree {
     WTF_MAKE_NONCOPYABLE(RedBlackTree);
 private:
@@ -55,18 +55,12 @@ public:
         friend class RedBlackTree;
         
     public:
-        Node(KeyType key, ValueType value)
-            : m_key(key)
-            , m_value(value)
-        {
-        }
-        
-        const Node* successor() const
+        const NodeType* successor() const
         {
             const Node* x = this;
             if (x->right())
                 return treeMinimum(x->right());
-            const Node* y = x->parent();
+            const NodeType* y = x->parent();
             while (y && x == y->right()) {
                 x = y;
                 y = y->parent();
@@ -74,12 +68,12 @@ public:
             return y;
         }
         
-        const Node* predecessor() const
+        const NodeType* predecessor() const
         {
             const Node* x = this;
             if (x->left())
                 return treeMaximum(x->left());
-            const Node* y = x->parent();
+            const NodeType* y = x->parent();
             while (y && x == y->left()) {
                 x = y;
                 y = y->parent();
@@ -87,18 +81,15 @@ public:
             return y;
         }
         
-        Node* successor()
+        NodeType* successor()
         {
-            return const_cast<Node*>(const_cast<const Node*>(this)->successor());
+            return const_cast<NodeType*>(const_cast<const Node*>(this)->successor());
         }
-    
-        Node* predecessor()
+
+        NodeType* predecessor()
         {
-            return const_cast<Node*>(const_cast<const Node*>(this)->predecessor());
+            return const_cast<NodeType*>(const_cast<const Node*>(this)->predecessor());
         }
-    
-        KeyType m_key;
-        ValueType m_value;
 
     private:
         void reset()
@@ -110,32 +101,32 @@ public:
         
         // NOTE: these methods should pack the parent and red into a single
         // word. But doing so appears to reveal a bug in the compiler.
-        Node* parent() const
+        NodeType* parent() const
         {
-            return reinterpret_cast<Node*>(m_parentAndRed & ~static_cast<uintptr_t>(1));
+            return reinterpret_cast<NodeType*>(m_parentAndRed & ~static_cast<uintptr_t>(1));
         }
         
-        void setParent(Node* newParent)
+        void setParent(NodeType* newParent)
         {
             m_parentAndRed = reinterpret_cast<uintptr_t>(newParent) | (m_parentAndRed & 1);
         }
         
-        Node* left() const
+        NodeType* left() const
         {
             return m_left;
         }
         
-        void setLeft(Node* node)
+        void setLeft(NodeType* node)
         {
             m_left = node;
         }
         
-        Node* right() const
+        NodeType* right() const
         {
             return m_right;
         }
         
-        void setRight(Node* node)
+        void setRight(NodeType* node)
         {
             m_right = node;
         }
@@ -155,17 +146,17 @@ public:
                 m_parentAndRed &= ~static_cast<uintptr_t>(1);
         }
         
-        Node* m_left;
-        Node* m_right;
+        NodeType* m_left;
+        NodeType* m_right;
         uintptr_t m_parentAndRed;
     };
-    
+
     RedBlackTree()
         : m_root(0)
     {
     }
     
-    void insert(Node* x)
+    void insert(NodeType* x)
     {
         x->reset();
         treeInsert(x);
@@ -173,7 +164,7 @@ public:
 
         while (x != m_root && x->parent()->color() == Red) {
             if (x->parent() == x->parent()->parent()->left()) {
-                Node* y = x->parent()->parent()->right();
+                NodeType* y = x->parent()->parent()->right();
                 if (y && y->color() == Red) {
                     // Case 1
                     x->parent()->setColor(Black);
@@ -193,7 +184,7 @@ public:
                 }
             } else {
                 // Same as "then" clause with "right" and "left" exchanged.
-                Node* y = x->parent()->parent()->left();
+                NodeType* y = x->parent()->parent()->left();
                 if (y && y->color() == Red) {
                     // Case 1
                     x->parent()->setColor(Black);
@@ -217,20 +208,20 @@ public:
         m_root->setColor(Black);
     }
 
-    Node* remove(Node* z)
+    NodeType* remove(NodeType* z)
     {
         ASSERT(z);
         ASSERT(z->parent() || z == m_root);
         
         // Y is the node to be unlinked from the tree.
-        Node* y;
+        NodeType* y;
         if (!z->left() || !z->right())
             y = z;
         else
             y = z->successor();
 
         // Y is guaranteed to be non-null at this point.
-        Node* x;
+        NodeType* x;
         if (y->left())
             x = y->left();
         else
@@ -238,7 +229,7 @@ public:
 
         // X is the child of y which might potentially replace y in
         // the tree. X might be null at this point.
-        Node* xParent;
+        NodeType* xParent;
         if (x) {
             x->setParent(y->parent());
             xParent = x->parent();
@@ -281,20 +272,20 @@ public:
         return z;
     }
     
-    Node* remove(const KeyType& key)
+    NodeType* remove(const KeyType& key)
     {
-        Node* result = findExact(key);
+        NodeType* result = findExact(key);
         if (!result)
             return 0;
         return remove(result);
     }
     
-    Node* findExact(const KeyType& key) const
+    NodeType* findExact(const KeyType& key) const
     {
-        for (Node* current = m_root; current;) {
-            if (current->m_key == key)
+        for (NodeType* current = m_root; current;) {
+            if (current->key() == key)
                 return current;
-            if (key < current->m_key)
+            if (key < current->key())
                 current = current->left();
             else
                 current = current->right();
@@ -302,13 +293,13 @@ public:
         return 0;
     }
     
-    Node* findLeastGreaterThanOrEqual(const KeyType& key) const
+    NodeType* findLeastGreaterThanOrEqual(const KeyType& key) const
     {
-        Node* best = 0;
-        for (Node* current = m_root; current;) {
-            if (current->m_key == key)
+        NodeType* best = 0;
+        for (NodeType* current = m_root; current;) {
+            if (current->key() == key)
                 return current;
-            if (current->m_key < key)
+            if (current->key() < key)
                 current = current->right();
             else {
                 best = current;
@@ -318,13 +309,13 @@ public:
         return best;
     }
     
-    Node* findGreatestLessThanOrEqual(const KeyType& key) const
+    NodeType* findGreatestLessThanOrEqual(const KeyType& key) const
     {
-        Node* best = 0;
-        for (Node* current = m_root; current;) {
-            if (current->m_key == key)
+        NodeType* best = 0;
+        for (NodeType* current = m_root; current;) {
+            if (current->key() == key)
                 return current;
-            if (current->m_key > key)
+            if (current->key() > key)
                 current = current->left();
             else {
                 best = current;
@@ -334,14 +325,14 @@ public:
         return best;
     }
     
-    Node* first() const
+    NodeType* first() const
     {
         if (!m_root)
             return 0;
         return treeMinimum(m_root);
     }
     
-    Node* last() const
+    NodeType* last() const
     {
         if (!m_root)
             return 0;
@@ -352,7 +343,7 @@ public:
     size_t size()
     {
         size_t result = 0;
-        for (Node* current = first(); current; current = current->successor())
+        for (NodeType* current = first(); current; current = current->successor())
             result++;
         return result;
     }
@@ -366,46 +357,46 @@ public:
 private:
     // Finds the minimum element in the sub-tree rooted at the given
     // node.
-    static Node* treeMinimum(Node* x)
+    static NodeType* treeMinimum(NodeType* x)
     {
         while (x->left())
             x = x->left();
         return x;
     }
     
-    static Node* treeMaximum(Node* x)
+    static NodeType* treeMaximum(NodeType* x)
     {
         while (x->right())
             x = x->right();
         return x;
     }
 
-    static const Node* treeMinimum(const Node* x)
+    static const NodeType* treeMinimum(const NodeType* x)
     {
         while (x->left())
             x = x->left();
         return x;
     }
     
-    static const Node* treeMaximum(const Node* x)
+    static const NodeType* treeMaximum(const NodeType* x)
     {
         while (x->right())
             x = x->right();
         return x;
     }
 
-    void treeInsert(Node* z)
+    void treeInsert(NodeType* z)
     {
         ASSERT(!z->left());
         ASSERT(!z->right());
         ASSERT(!z->parent());
         ASSERT(z->color() == Red);
         
-        Node* y = 0;
-        Node* x = m_root;
+        NodeType* y = 0;
+        NodeType* x = m_root;
         while (x) {
             y = x;
-            if (z->m_key < x->m_key)
+            if (z->key() < x->key())
                 x = x->left();
             else
                 x = x->right();
@@ -414,7 +405,7 @@ private:
         if (!y)
             m_root = z;
         else {
-            if (z->m_key < y->m_key)
+            if (z->key() < y->key())
                 y->setLeft(z);
             else
                 y->setRight(z);
@@ -427,10 +418,10 @@ private:
 
     // Left-rotates the subtree rooted at x.
     // Returns the new root of the subtree (x's right child).
-    Node* leftRotate(Node* x)
+    NodeType* leftRotate(NodeType* x)
     {
         // Set y.
-        Node* y = x->right();
+        NodeType* y = x->right();
 
         // Turn y's left subtree into x's right subtree.
         x->setRight(y->left());
@@ -457,10 +448,10 @@ private:
 
     // Right-rotates the subtree rooted at y.
     // Returns the new root of the subtree (y's left child).
-    Node* rightRotate(Node* y)
+    NodeType* rightRotate(NodeType* y)
     {
         // Set x.
-        Node* x = y->left();
+        NodeType* x = y->left();
 
         // Turn x's right subtree into y's left subtree.
         y->setLeft(x->right());
@@ -488,7 +479,7 @@ private:
     // Restores the red-black property to the tree after splicing out
     // a node. Note that x may be null, which is why xParent must be
     // supplied.
-    void removeFixup(Node* x, Node* xParent)
+    void removeFixup(NodeType* x, NodeType* xParent)
     {
         while (x != m_root && (!x || x->color() == Black)) {
             if (x == xParent->left()) {
@@ -496,7 +487,7 @@ private:
                 // The reason is not obvious from simply looking at
                 // the code; it comes about from the properties of the
                 // red-black tree.
-                Node* w = xParent->right();
+                NodeType* w = xParent->right();
                 ASSERT(w); // x's sibling should not be null.
                 if (w->color() == Red) {
                     // Case 1
@@ -536,7 +527,7 @@ private:
                 // The reason is not obvious from simply looking at
                 // the code; it comes about from the properties of the
                 // red-black tree.
-                Node* w = xParent->left();
+                NodeType* w = xParent->left();
                 ASSERT(w); // x's sibling should not be null.
                 if (w->color() == Red) {
                     // Case 1
@@ -574,7 +565,7 @@ private:
             x->setColor(Black);
     }
 
-    Node* m_root;
+    NodeType* m_root;
 };
 
 }
