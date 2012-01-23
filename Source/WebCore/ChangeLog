@@ -1,5 +1,18 @@
 2012-01-23  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: add touch events to the event listeners list.
+        https://bugs.webkit.org/show_bug.cgi?id=76830
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+
+2012-01-23  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: inspector close button is missing in the dock-to-right mode.
         https://bugs.webkit.org/show_bug.cgi?id=76829
 

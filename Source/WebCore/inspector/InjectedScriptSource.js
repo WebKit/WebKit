@@ -688,7 +688,7 @@ CommandLineAPIImpl.prototype = {
     _normalizeEventTypes: function(types)
     {
         if (typeof types === "undefined")
-            types = [ "mouse", "key", "control", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll", "search", "devicemotion", "deviceorientation" ];
+            types = [ "mouse", "key", "touch", "control", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll", "search", "devicemotion", "deviceorientation" ];
         else if (typeof types === "string")
             types = [ types ];
 
@@ -698,6 +698,8 @@ CommandLineAPIImpl.prototype = {
                 result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout", "mousewheel");
             else if (types[i] === "key")
                 result.splice(0, 0, "keydown", "keyup", "keypress", "textInput");
+            else if (types[i] === "touch")
+                result.splice(0, 0, "touchstart", "touchmove", "touchend", "touchcancel");
             else if (types[i] === "control")
                 result.splice(0, 0, "resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset");
             else
