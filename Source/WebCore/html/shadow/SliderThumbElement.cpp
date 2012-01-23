@@ -334,7 +334,7 @@ PassRefPtr<TrackLimiterElement> TrackLimiterElement::create(Document* document)
 {
     RefPtr<TrackLimiterElement> element = adoptRef(new TrackLimiterElement(document));
 
-    CSSInlineStyleDeclaration* style = element->ensureInlineStyleDecl();
+    CSSElementStyleDeclaration* style = element->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyVisibility, CSSValueHidden);
     style->setProperty(CSSPropertyPosition, CSSValueStatic);
 

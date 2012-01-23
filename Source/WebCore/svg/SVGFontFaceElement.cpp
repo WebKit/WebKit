@@ -46,37 +46,10 @@ namespace WebCore {
 
 using namespace SVGNames;
 
-// FIXME: This class is needed because CSSElementStyleDeclaration normally resolves
-//        the parentStyleSheet() to its document's elementSheet(). For SVG font-face
-//        elements however, we want the mappedElementSheet().
-//        With the planned refactoring to decouple WebKit's internal CSS structures
-//        from the CSSOM, the need for parent style sheet pointers, and thus also this
-//        class, goes away.
-class FontFaceStyleDeclaration : public CSSElementStyleDeclaration {
-public:
-    static PassRefPtr<FontFaceStyleDeclaration> create(SVGFontFaceElement* element)
-    {
-        return adoptRef(new FontFaceStyleDeclaration(element));
-    }
-
-    virtual ~FontFaceStyleDeclaration() { }
-
-    virtual CSSStyleSheet* styleSheet() const
-    {
-        return element()->document() ? element()->document()->mappedElementSheet() : 0;
-    }
-
-private:
-    FontFaceStyleDeclaration(SVGFontFaceElement* element)
-        : CSSElementStyleDeclaration(element, /* isInline */ false)
-    {
-    }
-};
-
 inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_fontFaceRule(CSSFontFaceRule::create())
-    , m_styleDeclaration(FontFaceStyleDeclaration::create(this))
+    , m_styleDeclaration(CSSElementStyleDeclaration::createForSVGFontFaceElement(this))
 {
     ASSERT(hasTagName(font_faceTag));
     m_styleDeclaration->setStrictParsing(true);

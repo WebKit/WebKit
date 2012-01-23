@@ -3014,7 +3014,6 @@
 		8CADF2AB135C7B36009EF43F /* LevelDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */; };
 		8CADF2AD135C7B36009EF43F /* LevelDBIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */; };
 		8CADF2AE135C7B36009EF43F /* LevelDBSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */; };
-		8CF7DDE4147ECF940041A6F2 /* CSSInlineStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CF7DDE1147E432D0041A6F2 /* CSSInlineStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
 		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
@@ -9838,7 +9837,6 @@
 		8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBDatabase.h; sourceTree = "<group>"; };
 		8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBIterator.h; sourceTree = "<group>"; };
 		8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBSlice.h; sourceTree = "<group>"; };
-		8CF7DDE1147E432D0041A6F2 /* CSSInlineStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSInlineStyleDeclaration.h; sourceTree = "<group>"; };
 		8F6756191288B17B0047ACA3 /* EventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventQueue.h; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
@@ -19930,7 +19928,6 @@
 				A80E6CD70A1989CA007FB8C5 /* CSSInheritedValue.h */,
 				A80E6CD80A1989CA007FB8C5 /* CSSInitialValue.cpp */,
 				A80E6CDE0A1989CA007FB8C5 /* CSSInitialValue.h */,
-				8CF7DDE1147E432D0041A6F2 /* CSSInlineStyleDeclaration.h */,
 				BC772E15133162C2001EC9CE /* CSSLineBoxContainValue.cpp */,
 				BC772E121331620C001EC9CE /* CSSLineBoxContainValue.h */,
 				A80E6CD20A1989CA007FB8C5 /* CSSMediaRule.cpp */,
@@ -21234,7 +21231,6 @@
 				A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */,
 				A80E6D010A1989CA007FB8C5 /* CSSInheritedValue.h in Headers */,
 				A80E6D080A1989CA007FB8C5 /* CSSInitialValue.h in Headers */,
-				8CF7DDE4147ECF940041A6F2 /* CSSInlineStyleDeclaration.h in Headers */,
 				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
 				A8C4A80909D563270003AC8D /* CSSMappedAttributeDeclaration.h in Headers */,
 				A80E6D030A1989CA007FB8C5 /* CSSMediaRule.h in Headers */,

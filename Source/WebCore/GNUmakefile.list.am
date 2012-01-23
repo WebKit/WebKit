@@ -1317,7 +1317,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSInheritedValue.h \
 	Source/WebCore/css/CSSInitialValue.cpp \
 	Source/WebCore/css/CSSInitialValue.h \
-	Source/WebCore/css/CSSInlineStyleDeclaration.h \
 	Source/WebCore/css/CSSLineBoxContainValue.cpp \
 	Source/WebCore/css/CSSLineBoxContainValue.h \
 	Source/WebCore/css/CSSMediaRule.cpp \

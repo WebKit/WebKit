@@ -119,7 +119,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
         hostY -= containerLocation.y() + container->borderTop();
     }
 
-    CSSInlineStyleDeclaration* style = bubble->ensureInlineStyleDecl();
+    CSSElementStyleDeclaration* style = bubble->ensureInlineStyleDecl();
     style->setProperty(CSSPropertyTop, hostY + hostRect.height(), CSSPrimitiveValue::CSS_PX);
     // The 'left' value of ::-webkit-validation-bubble-arrow.
     const int bubbleArrowTopOffset = 32;

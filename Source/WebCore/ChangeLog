@@ -1,3 +1,48 @@
+2012-01-23  Antti Koivisto  <antti@apple.com>
+
+        Eliminate CSSElementStyleDeclaration subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=76827
+
+        Reviewed by Andreas Kling.
+
+        CSSInlineStyleDeclaration and FontFaceStyleDeclaration serve no real purpose.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSElementStyleDeclaration.cpp:
+        (WebCore::CSSElementStyleDeclaration::createForSVGFontFaceElement):
+        (WebCore::CSSElementStyleDeclaration::styleSheet):
+        * css/CSSElementStyleDeclaration.h:
+        (WebCore::CSSElementStyleDeclaration::createInline):
+        (WebCore::toCSSElementStyleDeclaration):
+        * css/CSSInlineStyleDeclaration.h: Removed.
+        * css/CSSMutableStyleDeclaration.cpp:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::copyNonAttributeProperties):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::TrackLimiterElement::create):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+
 2012-01-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: annotate inspector's js so that it compiled.

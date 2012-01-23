@@ -26,15 +26,25 @@
 #include "config.h"
 #include "CSSElementStyleDeclaration.h"
 
+#include "SVGFontFaceElement.h"
 #include "StyledElement.h"
 
 namespace WebCore {
 
+PassRefPtr<CSSElementStyleDeclaration> CSSElementStyleDeclaration::createForSVGFontFaceElement(SVGFontFaceElement* element) 
+{ 
+    return adoptRef(new CSSElementStyleDeclaration(element, false)); 
+}
+
 CSSStyleSheet* CSSElementStyleDeclaration::styleSheet() const
 {
-    if (m_element && m_element->document())
-        return m_element->document()->elementSheet();
-    return 0;
+    if (!m_element)
+        return 0;
+    Document* document = m_element->document();
+    if (!document)
+        return 0;
+    // If this is not an inline declaration then it is an SVG font face declaration.
+    return m_isInlineStyleDeclaration ? document->elementSheet() : document->mappedElementSheet();
 }
 
 } // namespace WebCore

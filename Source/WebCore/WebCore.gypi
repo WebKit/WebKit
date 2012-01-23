@@ -491,7 +491,6 @@
             'css/CSSHelper.h',
             'css/CSSImageGeneratorValue.h',
             'css/CSSImageValue.h',
-            'css/CSSInlineStyleDeclaration.h',
             'css/CSSLineBoxContainValue.h',
             'css/CSSMutableStyleDeclaration.h',
             'css/CSSParserValues.h',

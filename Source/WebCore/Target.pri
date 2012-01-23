@@ -1527,7 +1527,6 @@ HEADERS += \
     css/CSSImportRule.h \
     css/CSSInheritedValue.h \
     css/CSSInitialValue.h \
-    css/CSSInlineStyleDeclaration.h \
     css/CSSMediaRule.h \
     css/CSSMutableStyleDeclaration.h \
     css/CSSOMUtils.h \

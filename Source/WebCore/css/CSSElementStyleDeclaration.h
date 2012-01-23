@@ -27,21 +27,24 @@
 #define CSSElementStyleDeclaration_h
 
 #include "CSSMutableStyleDeclaration.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class SVGFontFaceElement;
 class StyledElement;
-
-// Base class for CSSInlineStyleDeclaration and FontFaceStyleDeclaration (SVG).
 
 class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
 public:
+    static PassRefPtr<CSSElementStyleDeclaration> createInline(StyledElement* element) { return adoptRef(new CSSElementStyleDeclaration(element, true)); }
+    static PassRefPtr<CSSElementStyleDeclaration> createForSVGFontFaceElement(SVGFontFaceElement*);
+
     StyledElement* element() const { return m_element; }
     void clearElement() { m_element = 0; }
 
     virtual CSSStyleSheet* styleSheet() const;
 
-protected:
+private:
     CSSElementStyleDeclaration(StyledElement* element, bool isInline)
         : CSSMutableStyleDeclaration()
         , m_element(element)
@@ -55,6 +58,12 @@ protected:
 private:
     StyledElement* m_element;
 };
+
+inline CSSElementStyleDeclaration* toCSSElementStyleDeclaration(CSSMutableStyleDeclaration* decl)
+{
+    ASSERT(!decl || decl->isElementStyleDeclaration());
+    return static_cast<CSSElementStyleDeclaration*>(decl);
+}
 
 } // namespace WebCore
 

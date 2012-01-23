@@ -22,8 +22,8 @@
 #include "config.h"
 #include "CSSMutableStyleDeclaration.h"
 
+#include "CSSElementStyleDeclaration.h"
 #include "CSSImageValue.h"
-#include "CSSInlineStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
@@ -67,7 +67,7 @@ public:
         if (!s_currentDecl->isInlineStyleDeclaration())
             return;
 
-        CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
+        CSSElementStyleDeclaration* inlineDecl = toCSSElementStyleDeclaration(s_currentDecl);
         if (!inlineDecl->element())
             return;
 
@@ -97,7 +97,7 @@ public:
             return;
         }
 
-        CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
+        CSSElementStyleDeclaration* inlineDecl = toCSSElementStyleDeclaration(s_currentDecl);
         s_currentDecl = 0;
         s_shouldNotifyInspector = false;
         if (inlineDecl->element() && inlineDecl->element()->document())
