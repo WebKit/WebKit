@@ -225,13 +225,11 @@
                 "description": "Reloads given page optionally ignoring the cache."
             },
             {
-                "name": "open",
+                "name": "navigate",
                 "parameters": [
-                    { "name": "url", "type": "string", "description": "URL to open." },
-                    { "name": "newWindow", "optional": true, "type": "boolean", "description": "If true, opens given URL in a new window or tab." }
+                    { "name": "url", "type": "string", "description": "URL to navigate the page to." }
                 ],
-                "description": "Opens given URL either in the inspected page or in a new tab / window.",
-                "hidden": true
+                "description": "Navigates current page to the given URL."
             },
             {
                 "name": "getCookies",

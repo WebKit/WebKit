@@ -1,3 +1,33 @@
+2012-01-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: PageAgent.open() dosen't belong to the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=74790
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::openInNewTab):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._openInNewTab):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.openInNewTab):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype.ondblclick):
+        * inspector/front-end/inspector.js:
+        (WebInspector.openResource):
+
 2012-01-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: DetailedHeapSnapshot: Replace the list of retainers with the expandable tree (to get rid of cycles)

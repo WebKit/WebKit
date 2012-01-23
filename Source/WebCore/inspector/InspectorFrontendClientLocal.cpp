@@ -36,6 +36,8 @@
 #include "Chrome.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
@@ -46,6 +48,8 @@
 #include "ScriptObject.h"
 #include "Settings.h"
 #include "Timer.h"
+#include "UserGestureIndicator.h"
+#include "WindowFeatures.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -167,6 +171,26 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
+}
+
+void InspectorFrontendClientLocal::openInNewTab(const String& url)
+{
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    Page* page = m_inspectorController->inspectedPage();
+    Frame* mainFrame = page->mainFrame();
+    FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
+
+    bool created;
+    WindowFeatures windowFeatures;
+    Frame* frame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
+    if (!frame)
+        return;
+
+    frame->loader()->setOpener(mainFrame);
+    frame->page()->setOpenedByDOM();
+
+    // FIXME: Why does one use mainFrame and the other frame?
+    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)

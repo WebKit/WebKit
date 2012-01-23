@@ -1197,7 +1197,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     ondblclick: function(event)
     {
-        PageAgent.open(this._resource.url, true);
+        InspectorFrontendHost.openInNewTab(this._resource.url);
     },
 
     onattach: function()

@@ -66,6 +66,9 @@ public:
     virtual void requestDetachWindow();
     virtual void requestSetDockSide(const String&);
     virtual void changeAttachedWindowHeight(unsigned);
+
+    virtual void openInNewTab(const String& url);
+
     virtual bool canSaveAs();
     virtual void saveAs(const WTF::String& fileName, const WTF::String& content);
 

@@ -46,7 +46,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
@@ -61,10 +60,10 @@
 #include "Page.h"
 #include "RegularExpression.h"
 #include "ScriptObject.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "UserGestureIndicator.h"
-#include "WindowFeatures.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
@@ -349,28 +348,11 @@ void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCa
     m_page->mainFrame()->loader()->reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
-void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const inNewWindow)
+void InspectorPageAgent::navigate(ErrorString*, const String& url)
 {
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-
-    Frame* mainFrame = m_page->mainFrame();
-    Frame* frame;
-    if (inNewWindow && *inNewWindow) {
-        FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
-
-        bool created;
-        WindowFeatures windowFeatures;
-        frame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
-        if (!frame)
-            return;
-
-        frame->loader()->setOpener(mainFrame);
-        frame->page()->setOpenedByDOM();
-    } else
-        frame = mainFrame;
-
-    // FIXME: Why does one use mainFrame and the other frame?
-    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
+    Frame* frame = m_page->mainFrame();
+    frame->loader()->changeLocation(frame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie& cookie)

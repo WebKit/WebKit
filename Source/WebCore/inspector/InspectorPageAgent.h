@@ -92,7 +92,7 @@ public:
     void addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* result);
     void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
     void reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad);
-    void open(ErrorString*, const String& url, const bool* const inNewWindow);
+    void navigate(ErrorString*, const String& url);
     void getCookies(ErrorString*, RefPtr<InspectorArray>& cookies, WTF::String* cookiesString);
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
     void getResourceTree(ErrorString*, RefPtr<InspectorObject>&);

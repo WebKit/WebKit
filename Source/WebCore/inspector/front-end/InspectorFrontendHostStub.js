@@ -116,6 +116,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
+    openInNewTab: function(url)
+    {
+        window.open(url, "_blank");
+    },
+
     canSaveAs: function(fileName, content)
     {
         return true;

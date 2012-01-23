@@ -124,14 +124,19 @@ void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned)
     // Do nothing;
 }
 
-void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& content)
+void InspectorFrontendClientImpl::openInNewTab(const String& url)
 {
-    m_client->saveAs(fileName, content);
+    m_client->openInNewTab(url);
 }
 
 bool InspectorFrontendClientImpl::canSaveAs()
 {
     return true;
+}
+
+void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& content)
+{
+    m_client->saveAs(fileName, content);
 }
 
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)

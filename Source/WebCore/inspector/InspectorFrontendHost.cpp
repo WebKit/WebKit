@@ -220,6 +220,12 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+void InspectorFrontendHost::openInNewTab(const String& url)
+{
+    if (m_client)
+        m_client->openInNewTab(url);
+}
+
 bool InspectorFrontendHost::canSaveAs()
 {
     if (m_client)

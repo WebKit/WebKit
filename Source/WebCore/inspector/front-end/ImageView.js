@@ -139,7 +139,7 @@ WebInspector.ImageView.prototype = {
 
     _openInNewTab: function(event)
     {
-        PageAgent.open(this.resource.url, true);
+        InspectorFrontendHost.openInNewTab(this.resource.url);
     }
 }
 

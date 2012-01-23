@@ -586,7 +586,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
     } else
-        PageAgent.open(resourceURL, true);
+        InspectorFrontendHost.openInNewTab(resourceURL);
 }
 
 WebInspector.openRequestInNetworkPanel = function(resource)

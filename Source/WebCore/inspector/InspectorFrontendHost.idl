@@ -50,6 +50,7 @@ module core {
         DOMString hiddenPanels();
 
         void copyText(in DOMString text);
+        void openInNewTab(in DOMString url);
         boolean canSaveAs();
         void saveAs(in DOMString fileName, in DOMString content);
 

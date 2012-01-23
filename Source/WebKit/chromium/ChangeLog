@@ -1,3 +1,17 @@
+2012-01-20  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: PageAgent.open() dosen't belong to the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=74790
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::openInNewTab):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::openInNewTab):
+        (WebKit::InspectorFrontendClientImpl::saveAs):
+        * src/InspectorFrontendClientImpl.h:
+
 2012-01-21  David Reveman  <reveman@chromium.org>
 
         [Chromium] Incremental texture updates are not atomic.

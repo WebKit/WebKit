@@ -73,6 +73,7 @@ public:
     String hiddenPanels();
 
     void copyText(const String& text);
+    void openInNewTab(const String& url);
     bool canSaveAs();
     void saveAs(const String& fileName, const String& content);
 
