@@ -385,7 +385,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         lastStyledNode = node;
 
-        CSSElementStyleDeclaration* inlineStyleDecl = element->ensureInlineStyleDecl();
+        CSSMutableStyleDeclaration* inlineStyleDecl = element->ensureInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
         float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSSPropertyFontSize);
@@ -1376,7 +1376,7 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(EditingStyle* style, PassRefPtr<N
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            if (CSSElementStyleDeclaration* existingStyle = styleContainer->inlineStyleDecl())
+            if (CSSMutableStyleDeclaration* existingStyle = styleContainer->inlineStyleDecl())
                 setNodeAttribute(styleContainer, styleAttr, existingStyle->cssText() + styleChange.cssStyle());
             else
                 setNodeAttribute(styleContainer, styleAttr, styleChange.cssStyle());

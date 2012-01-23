@@ -25,7 +25,7 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
-#include "CSSElementStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -130,7 +130,7 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 void StyledElement::createInlineStyleDecl()
 {
     ASSERT(!m_inlineStyleDecl);
-    m_inlineStyleDecl = CSSElementStyleDeclaration::createInline(this);
+    m_inlineStyleDecl = CSSMutableStyleDeclaration::createInline(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
 }
 
@@ -138,7 +138,7 @@ void StyledElement::destroyInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         return;
-    m_inlineStyleDecl->clearElement();
+    m_inlineStyleDecl->clearParentElement();
     m_inlineStyleDecl = 0;
 }
 
@@ -240,7 +240,7 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
-CSSElementStyleDeclaration* StyledElement::ensureInlineStyleDecl()
+CSSMutableStyleDeclaration* StyledElement::ensureInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         createInlineStyleDecl();
@@ -431,7 +431,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
     if (!source->inlineStyleDecl())
         return;
 
-    CSSElementStyleDeclaration* inlineStyle = ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* inlineStyle = ensureInlineStyleDecl();
     inlineStyle->copyPropertiesFrom(*source->inlineStyleDecl());
     inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
 

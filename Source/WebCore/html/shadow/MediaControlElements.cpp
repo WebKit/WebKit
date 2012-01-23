@@ -175,7 +175,7 @@ void MediaControlPanelElement::endDrag()
 
 void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 {
-    CSSElementStyleDeclaration* style = ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* style = ensureInlineStyleDecl();
 
     double left = position.x();
     double top = position.y();
@@ -193,7 +193,7 @@ void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 
 void MediaControlPanelElement::resetPosition()
 {
-    CSSElementStyleDeclaration* style = ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* style = ensureInlineStyleDecl();
 
     style->removeProperty(CSSPropertyLeft);
     style->removeProperty(CSSPropertyTop);
@@ -211,7 +211,7 @@ void MediaControlPanelElement::makeOpaque()
 
     double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeInDuration() : 0;
 
-    CSSElementStyleDeclaration* style = ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* style = ensureInlineStyleDecl();
     style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
     style->setProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
     style->setProperty(CSSPropertyOpacity, 1.0, CSSPrimitiveValue::CSS_NUMBER);
@@ -224,7 +224,7 @@ void MediaControlPanelElement::makeTransparent()
     if (!m_opaque)
         return;
 
-    CSSElementStyleDeclaration* style = ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* style = ensureInlineStyleDecl();
     style->setProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
     style->setProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeOutDuration(), CSSPrimitiveValue::CSS_S);
     style->setProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);

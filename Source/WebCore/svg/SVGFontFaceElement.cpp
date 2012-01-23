@@ -49,7 +49,7 @@ using namespace SVGNames;
 inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_fontFaceRule(CSSFontFaceRule::create())
-    , m_styleDeclaration(CSSElementStyleDeclaration::createForSVGFontFaceElement(this))
+    , m_styleDeclaration(CSSMutableStyleDeclaration::createForSVGFontFaceElement(this))
 {
     ASSERT(hasTagName(font_faceTag));
     m_styleDeclaration->setStrictParsing(true);

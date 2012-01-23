@@ -21,7 +21,6 @@
 #include "config.h"
 #include "CSSStyleDeclaration.h"
 
-#include "CSSElementStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSProperty.h"
@@ -39,24 +38,42 @@ using namespace WTF;
 
 namespace WebCore {
 
-CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
-    : m_strictParsing(!parent || parent->useStrictParsing())
+CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parentRule)
+    : m_strictParsing(!parentRule || parentRule->useStrictParsing())
 #ifndef NDEBUG
     , m_iteratorCount(0)
 #endif
     , m_isElementStyleDeclaration(false)
     , m_isInlineStyleDeclaration(false)
-    , m_parentRule(parent)
+    , m_parent(parentRule)
+{
+}
+    
+CSSStyleDeclaration::CSSStyleDeclaration(StyledElement* parentElement, bool isInline)
+    : m_strictParsing(false)
+#ifndef NDEBUG
+    , m_iteratorCount(0)
+#endif
+    , m_isElementStyleDeclaration(true)
+    , m_isInlineStyleDeclaration(isInline)
+    , m_parent(parentElement)
 {
 }
 
 CSSStyleSheet* CSSStyleDeclaration::parentStyleSheet() const
 {
-    if (parentRule())
-        return parentRule()->parentStyleSheet();
-    if (isElementStyleDeclaration())
-        return static_cast<const CSSElementStyleDeclaration*>(this)->styleSheet();
-    return 0;
+    if (m_isElementStyleDeclaration) {
+        if (!m_parent.element)
+            return 0;
+        Document* document = m_parent.element->document();
+        if (!document)
+            return 0;
+        // If this is not an inline declaration then it is an SVG font face declaration.
+        return m_isInlineStyleDeclaration ? document->elementSheet() : document->mappedElementSheet();
+    }
+    if (!m_parent.rule)
+        return 0;
+    return m_parent.rule->parentStyleSheet();
 }
 
 PassRefPtr<CSSValue> CSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)

@@ -30,6 +30,7 @@ class CSSMutableStyleDeclaration;
 class CSSProperty;
 class CSSStyleSheet;
 class CSSValue;
+class StyledElement;
 
 typedef int ExceptionCode;
 
@@ -40,8 +41,11 @@ public:
 
     static bool isPropertyName(const String&);
 
-    CSSRule* parentRule() const { return m_parentRule; }
-    void clearParentRule() { m_parentRule = 0; }
+    CSSRule* parentRule() const { return m_isElementStyleDeclaration ? 0 : m_parent.rule; }
+    void clearParentRule() { ASSERT(!m_isElementStyleDeclaration); m_parent.rule = 0; }
+
+    StyledElement* parentElement() const { ASSERT(m_isElementStyleDeclaration); return m_parent.element; }
+    void clearParentElement() { ASSERT(m_isElementStyleDeclaration); m_parent.element = 0; }
 
     CSSStyleSheet* parentStyleSheet() const;
 
@@ -86,6 +90,7 @@ public:
 
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
+    CSSStyleDeclaration(StyledElement* parentElement, bool isInline);
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
@@ -97,13 +102,16 @@ protected:
 #ifndef NDEBUG
     unsigned m_iteratorCount : 4;
 #endif
-
-    // CSSElementStyleDeclaration bits:
     bool m_isElementStyleDeclaration : 1;
     bool m_isInlineStyleDeclaration : 1;
 
 private:
-    CSSRule* m_parentRule;
+    union Parent {
+        Parent(CSSRule* rule) : rule(rule) { }
+        Parent(StyledElement* element) : element(element) { }
+        CSSRule* rule;
+        StyledElement* element;
+    } m_parent;
 };
 
 } // namespace WebCore

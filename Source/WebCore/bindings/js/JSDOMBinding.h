@@ -22,8 +22,8 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
-#include "CSSElementStyleDeclaration.h"
 #include "CSSImportRule.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
@@ -210,7 +210,7 @@ enum ParameterMissingPolicy {
         if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
             return root(styleSheet);
         // A style declaration with an associated element should've returned a style sheet above.
-        ASSERT(!style->isElementStyleDeclaration() || !static_cast<CSSElementStyleDeclaration*>(style)->element());
+        ASSERT(!style->isElementStyleDeclaration() || !static_cast<CSSMutableStyleDeclaration*>(style)->parentElement());
         return style;
     }
 

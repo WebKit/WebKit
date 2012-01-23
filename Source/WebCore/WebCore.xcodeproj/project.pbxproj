@@ -3005,8 +3005,6 @@
 		8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */; };
 		8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */; };
 		8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */; };
-		8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */; };
-		8C1091991494FB1200B5D3FE /* CSSElementStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */; };
 		8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */; };
 		8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */; };
@@ -9828,8 +9826,6 @@
 		8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBTransaction.h; sourceTree = "<group>"; };
 		8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBWriteBatch.cpp; sourceTree = "<group>"; };
 		8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBWriteBatch.h; sourceTree = "<group>"; };
-		8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSElementStyleDeclaration.cpp; sourceTree = "<group>"; };
-		8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSElementStyleDeclaration.h; sourceTree = "<group>"; };
 		8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RuntimeEnabledFeatures.cpp; path = generic/RuntimeEnabledFeatures.cpp; sourceTree = "<group>"; };
 		8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RuntimeEnabledFeatures.h; path = generic/RuntimeEnabledFeatures.h; sourceTree = "<group>"; };
 		8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBComparator.h; sourceTree = "<group>"; };
@@ -19896,8 +19892,6 @@
 				2D8FEBDB143E3EF70072502B /* CSSCrossfadeValue.h */,
 				AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */,
 				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
-				8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */,
-				8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */,
 				5325E4D513A6C88B00404A36 /* CSSFlexValue.cpp */,
 				5325E4D613A6C88B00404A36 /* CSSFlexValue.h */,
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
@@ -21215,7 +21209,6 @@
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
-				8C1091991494FB1200B5D3FE /* CSSElementStyleDeclaration.h in Headers */,
 				5325E4D813A6C88B00404A36 /* CSSFlexValue.h in Headers */,
 				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
@@ -24615,7 +24608,6 @@
 				BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */,
 				2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */,
 				AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */,
-				8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */,
 				5325E4D713A6C88B00404A36 /* CSSFlexValue.cpp in Sources */,
 				BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */,
 				A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */,

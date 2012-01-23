@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class StyledElement;
+
 class CSSMutableStyleDeclarationConstIterator {
 public:
     CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current);
@@ -72,6 +74,14 @@ public:
     static PassRefPtr<CSSMutableStyleDeclaration> create(const Vector<CSSProperty>& properties)
     {
         return adoptRef(new CSSMutableStyleDeclaration(0, properties));
+    }
+    static PassRefPtr<CSSMutableStyleDeclaration> createInline(StyledElement* element)
+    { 
+        return adoptRef(new CSSMutableStyleDeclaration(element, true));
+    }
+    static PassRefPtr<CSSMutableStyleDeclaration> createForSVGFontFaceElement(StyledElement* element) 
+    { 
+        return adoptRef(new CSSMutableStyleDeclaration(element, false));
     }
 
     // Used by StyledElement::copyNonAttributeProperties().
@@ -128,15 +138,16 @@ public:
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
 
 protected:
-    CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration();
 
     void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
     String removeProperty(int propertyID, bool notifyChanged, bool returnText);
 
 private:
+    CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>&);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
+    CSSMutableStyleDeclaration(StyledElement*, bool isInline);
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 

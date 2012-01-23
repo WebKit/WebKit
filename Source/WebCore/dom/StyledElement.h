@@ -25,7 +25,7 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
-#include "CSSElementStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "Element.h"
 #include "MappedAttributeEntry.h"
 
@@ -59,8 +59,8 @@ public:
     virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&) { }
     void invalidateStyleAttribute();
 
-    CSSElementStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
-    CSSElementStyleDeclaration* ensureInlineStyleDecl();
+    CSSMutableStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
+    CSSMutableStyleDeclaration* ensureInlineStyleDecl();
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
     const SpaceSplitString& classNames() const;
@@ -93,7 +93,7 @@ private:
     void destroyInlineStyleDecl();
     virtual void updateStyleAttribute() const;
 
-    RefPtr<CSSElementStyleDeclaration> m_inlineStyleDecl;
+    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
 };
 
 inline const SpaceSplitString& StyledElement::classNames() const

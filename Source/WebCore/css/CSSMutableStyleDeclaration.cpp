@@ -22,7 +22,6 @@
 #include "config.h"
 #include "CSSMutableStyleDeclaration.h"
 
-#include "CSSElementStyleDeclaration.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyLonghand.h"
@@ -66,11 +65,8 @@ public:
 #if ENABLE(MUTATION_OBSERVERS)
         if (!s_currentDecl->isInlineStyleDeclaration())
             return;
-
-        CSSElementStyleDeclaration* inlineDecl = toCSSElementStyleDeclaration(s_currentDecl);
-        if (!inlineDecl->element())
+        if (!s_currentDecl->element())
             return;
-
         m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
         if (!m_mutationRecipients)
             return;
@@ -91,17 +87,14 @@ public:
             m_mutationRecipients->enqueueMutationRecord(m_mutation);
         s_shouldDeliver = false;
 #endif
-
         if (!s_shouldNotifyInspector) {
             s_currentDecl = 0;
             return;
         }
-
-        CSSElementStyleDeclaration* inlineDecl = toCSSElementStyleDeclaration(s_currentDecl);
+        if (s_currentDecl->isInlineStyleDeclaration() && s_currentDecl->parentElement() && s_currentDecl->parentElement()->document())
+            InspectorInstrumentation::didInvalidateStyleAttr(s_currentDecl->parentElement()->document(), s_currentDecl->parentElement());
         s_currentDecl = 0;
         s_shouldNotifyInspector = false;
-        if (inlineDecl->element() && inlineDecl->element()->document())
-            InspectorInstrumentation::didInvalidateStyleAttr(inlineDecl->element()->document(), inlineDecl->element());
     }
 
 #if ENABLE(MUTATION_OBSERVERS)
@@ -178,6 +171,11 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
         m_properties.append(*property);
         candidates.set(property->id(), important);
     }
+}
+
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(StyledElement* element, bool isInline) 
+    : CSSStyleDeclaration(element, isInline)
+{ 
 }
 
 CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
@@ -646,8 +644,8 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
 
 void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (isElementStyleDeclaration() && static_cast<CSSElementStyleDeclaration*>(this)->element()) {
-        StyledElement* element = static_cast<CSSElementStyleDeclaration*>(this)->element();
+    if (isElementStyleDeclaration() && parentElement()) {
+        StyledElement* element = parentElement();
         if (!isInlineStyleDeclaration())
             element->setNeedsStyleRecalc(FullStyleChange);
         else {

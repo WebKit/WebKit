@@ -1,3 +1,73 @@
+2012-01-23  Antti Koivisto  <antti@apple.com>
+
+        Eliminate CSSElementStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=76848
+
+        Reviewed by Andreas Kling.
+
+        CSSElementStyleDeclaration has little functionality. It can merge with CSSMutableStyleDeclaration simplifying the code.
+        
+        Having an element parent is mutually exclusive with having a css rule parent. We can keep them in a union. This also
+        shrinks all inline style declarations by one pointer.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::root):
+        * css/CSSAllInOne.cpp:
+        * css/CSSElementStyleDeclaration.cpp: Removed.
+        * css/CSSElementStyleDeclaration.h: Removed.
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setNeedsStyleRecalc):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::createInline):
+        (WebCore::CSSMutableStyleDeclaration::createForSVGFontFaceElement):
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::parentStyleSheet):
+        
+            Merge the CSSElementStyleDeclaration::styleSheet() logic here.
+        
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::parentRule):
+        (WebCore::CSSStyleDeclaration::clearParentRule):
+        (WebCore::CSSStyleDeclaration::parentElement):
+        (WebCore::CSSStyleDeclaration::clearParentElement):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+        
+            CSSStyleRule's style declaration can't have isElementStyleDeclaration set, the dead code can be removed.
+            This is asserted in setDeclaration() and again implicitly in the destructor (by clearParentRule()).
+        
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::copyNonAttributeProperties):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::resetPosition):
+        (WebCore::MediaControlPanelElement::makeOpaque):
+        (WebCore::MediaControlPanelElement::makeTransparent):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::TrackLimiterElement::create):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+
 2012-01-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Use OVERRIDE for PopupMenuClient's implementations
