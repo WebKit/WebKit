@@ -9,16 +9,6 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
-// Need rebaseline.
-BUGWK67408 : fast/forms/input-placeholder-visibility-1.html = FAIL
-BUGWK67408 : fast/forms/input-placeholder-visibility-3.html = FAIL
-BUGWK67408 : fast/forms/placeholder-position.html = FAIL
-BUGWK67408 : fast/forms/placeholder-pseudo-style.html = FAIL
-BUGWK67408 : fast/forms/search-styled.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-pseudo-style.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-visibility-1.html = FAIL
-BUGWK67408 : fast/forms/textarea-placeholder-visibility-2.html = FAIL
-
 // Flaky tests
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
@@ -90,6 +80,8 @@ BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TE
 
 BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
 
+BUGWK76385 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = PASS TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
@@ -98,8 +90,5 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 // New test, needs image results added.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
-
-// Needs baseline
-BUGWK76118 : fast/css/text-overflow-input.html = MISSING
 
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
