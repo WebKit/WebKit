@@ -5,6 +5,30 @@
 
         Reviewed by Martin Robinson.
 
+        Move common function returnString() from the wrapper and
+        hyperlink implementations to a new utility file.
+
+        * accessibility/gtk/WebKitAccessibleUtil.cpp: Added.
+        (returnString): Taken from WebKitAccessibleWrapperAtk.cpp and
+        WebKitAccessibleHyperlink.cpp
+        * accessibility/gtk/WebKitAccessibleUtil.h: Added.
+
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp: Remove local
+        implementation of returnString.
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Ditto.
+
+        Add new files to build files.
+
+        * GNUmakefile.list.am: Add WebKitAccessibleUtil.[h|cpp].
+        * WebCore.gypi: Ditto.
+
+2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
         Fix typo in class struct (parent class field had the wrong type),
         fix coding style issues and update date in headers.
 

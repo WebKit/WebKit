@@ -63,6 +63,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
+#include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 
@@ -90,14 +91,6 @@ static AccessibilityObject* fallbackObject()
     }
 
     return object;
-}
-
-// Used to provide const char* returns.
-static const char* returnString(const String& str)
-{
-    static CString returnedString;
-    returnedString = str.utf8();
-    return returnedString.data();
 }
 
 static AccessibilityObject* core(WebKitAccessible* accessible)

@@ -1768,6 +1768,8 @@
             'accessibility/gtk/AccessibilityObjectAtk.cpp',
             'accessibility/gtk/WebKitAccessibleHyperlink.cpp',
             'accessibility/gtk/WebKitAccessibleHyperlink.h',
+            'accessibility/gtk/WebKitAccessibleUtil.cpp',
+            'accessibility/gtk/WebKitAccessibleUtil.h',
             'accessibility/gtk/WebKitAccessibleWrapperAtk.cpp',
             'accessibility/gtk/WebKitAccessibleWrapperAtk.h',
             'accessibility/mac/AXObjectCacheMac.mm',

@@ -4424,6 +4424,8 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.h \
 	Source/WebCore/bindings/js/ScriptControllerGtk.cpp \

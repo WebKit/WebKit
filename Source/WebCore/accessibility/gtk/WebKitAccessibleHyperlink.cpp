@@ -30,6 +30,7 @@
 #include "RenderListMarker.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
 
@@ -51,14 +52,6 @@ enum {
 };
 
 static gpointer webkitAccessibleHyperlinkParentClass = 0;
-
-// Used to provide const char* returns.
-static const char* returnString(const String& str)
-{
-    static CString returnedString;
-    returnedString = str.utf8();
-    return returnedString.data();
-}
 
 static AccessibilityObject* core(WebKitAccessible* accessible)
 {
