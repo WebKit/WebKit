@@ -519,13 +519,6 @@ fast/dom/Window/window-resize.html
 # The background is not clipped in this test, as observed in the pixel output.
 fast/backgrounds/background-clip-text.html
 
-# These fast XMLHttpRequest tests fail because 3D_CANVAS is not enabled.
-fast/xmlhttprequest/xmlhttprequest-responsetype-abort.html
-fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
-fast/xmlhttprequest/xmlhttprequest-responsetype-document.html
-fast/xmlhttprequest/xmlhttprequest-responsetype-text.html
-http/tests/xmlhttprequest/send-array-buffer.html
-
 # Possible bug in eventSender.zoomPageOut() ? https://bugs.webkit.org/show_bug.cgi?id=30575
 fast/dom/elementFromPoint-relative-to-viewport.html
 
