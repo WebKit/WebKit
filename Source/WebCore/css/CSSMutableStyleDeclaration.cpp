@@ -65,14 +65,14 @@ public:
 #if ENABLE(MUTATION_OBSERVERS)
         if (!s_currentDecl->isInlineStyleDeclaration())
             return;
-        if (!s_currentDecl->element())
+        if (!s_currentDecl->parentElement())
             return;
-        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
+        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->parentElement(), HTMLNames::styleAttr);
         if (!m_mutationRecipients)
             return;
 
-        AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? inlineDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
-        m_mutation = MutationRecord::createAttributes(inlineDecl->element(), HTMLNames::styleAttr, oldValue);
+        AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr) : nullAtom;
+        m_mutation = MutationRecord::createAttributes(s_currentDecl->parentElement(), HTMLNames::styleAttr, oldValue);
 #endif
     }
 

@@ -1,3 +1,9 @@
+2012-01-23  Andreas Kling  <awesomekling@apple.com>
+
+        Unreviewed buildfix for ENABLE(MUTATION_OBSERVERS) following r105642.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+
 2012-01-23  Philip Rogers  <pdr@google.com>
 
         Update uniteIfNonZero to use isZero.
