@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (18,16) size 542x544
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
+    RenderSVGPath {circle} at (20,20) size 176x176 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [cx=25.00] [cy=25.00] [r=20.00]
+    RenderSVGRect {rect} at (320,16) size 288x288 [transform={m=((32.00,0.00)(0.00,32.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=10.00] [y=0.50] [width=5.00] [height=5.00]
+    RenderSVGPath {circle} at (18,318) size 180x180 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=LINEAR-GRADIENT] [id="gradient"]}] [fill={[type=SOLID] [color=#00000000]}] [cx=25.00] [cy=100.00] [r=20.00]
+    RenderSVGRect {rect} at (304,304) size 320x296 [transform={m=((32.00,0.00)(0.00,32.00)) t=(0.00,0.00)}] [stroke={[type=LINEAR-GRADIENT] [id="gradient"]}] [fill={[type=SOLID] [color=#00000000]}] [x=10.00] [y=10.00] [width=5.00] [height=5.00]

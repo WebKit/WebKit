@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,60) size 320x380
+    RenderSVGText {text} at (0,1) size 32x38 contains 1 chunk(s)
+      RenderSVGTSpan {tspan} at (0,0) size 29x14
+        RenderSVGInlineText {#text} at (0,0) size 16x14
+          chunk 1 text run 1 at (0.00,12.00) startOffset 0 endOffset 2 width 15.34: "PA"
+        RenderSVGInlineText {#text} at (15,0) size 14x14
+          chunk 1 text run 1 at (15.34,12.00) startOffset 0 endOffset 2 width 13.35: "SS"
+      RenderSVGInlineText {#text} at (28,0) size 3x14
+        chunk 1 text run 1 at (28.69,12.00) startOffset 0 endOffset 1 width 3.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 29x14
+        RenderSVGInlineText {#text} at (0,12) size 29x14
+          chunk 1 text run 1 at (0.00,24.00) startOffset 0 endOffset 4 width 28.69: "PASS"
+      RenderSVGInlineText {#text} at (28,12) size 3x14
+        chunk 1 text run 1 at (28.69,24.00) startOffset 0 endOffset 1 width 3.00: " "
+      RenderSVGTSpan {tspan} at (0,0) size 29x14
+        RenderSVGInlineText {#text} at (0,24) size 29x14
+          chunk 1 text run 1 at (0.00,36.00) startOffset 0 endOffset 4 width 28.69: "PASS"
+      RenderSVGInlineText {#text} at (0,0) size 0x0

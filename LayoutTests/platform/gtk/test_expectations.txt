@@ -85,6 +85,10 @@ BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
 
 BUGWK76385 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = PASS TEXT
 
+BUGWK76831 : svg/custom/junk-data.svg = PASS TEXT
+BUGWK76831 : svg/custom/missing-xlink.svg = PASS TEXT
+BUGWK76831 : svg/custom/use-font-face-crash.svg = PASS TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL

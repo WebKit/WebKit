@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,10) size 784x570
+      RenderBlock {DIV} at (10,0) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderBlock (anonymous) at (0,136) size 784x18
+        RenderText {#text} at (0,0) size 408x17
+          text run at (0,0) width 408: "This should look like the above, only scaled up by a factor of 2:"
+      RenderBlock {DIV} at (20,174) size 252x252 [border: (42px none #000000) (60px none #000000) (42px none #000000)]
