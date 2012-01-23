@@ -1,3 +1,13 @@
+2012-01-23  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r105640.
+        http://trac.webkit.org/changeset/105640
+        https://bugs.webkit.org/show_bug.cgi?id=76849
+
+        Broke the chromium build.
+
+        * DEPS:
+
 2012-01-23  Justin Novosad  <junov@chromium.org>
 
         rolling chromium DEPS to r118713
