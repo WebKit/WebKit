@@ -25,7 +25,7 @@ class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=74717
-    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource" ]
+    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource", "WebKit2APITests/TestWebKitAccessibility" ]
 
     def __init__(self):
         self._executive = Executive()
@@ -94,28 +94,38 @@ class TestRunner:
 
         # Make sure there's no AT_SPI_BUS X's property previously set,
         # otherwise the accessibility bus couldn't be properly launched.
-        self._executive.run_command(['xprop', '-root', '-remove', 'AT_SPI_BUS'], env=test_env)
+
+        # FIXME: Commenting this line while figuring out why this
+        # fails randomly in the GTK bots, making the API tests fail.
+        # https://bugs.webkit.org/show_bug.cgi?id=76817
+        # self._executive.run_command(['xprop', '-root', '-remove', 'AT_SPI_BUS'], env=test_env)
 
         # Make sure the accessibility bus is launched.
         a11y_bus_launched = False
-        a11y_bus_launcher_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi-bus-launcher')
-        if a11y_bus_launcher_path:
-            try:
-                a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
-                a11y_bus_launched = True
-            except:
-                sys.stderr.write("Failed to launch the accessibility bus\n")
-                sys.stderr.flush()
+        # FIXME: Commenting the next lines while figuring out why this
+        # fails randomly in the GTK bots, making the API tests fail.
+        # https://bugs.webkit.org/show_bug.cgi?id=76817
+        # a11y_bus_launcher_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi-bus-launcher')
+        # if a11y_bus_launcher_path:
+        #     try:
+        #         a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
+        #         a11y_bus_launched = True
+        #     except:
+        #         sys.stderr.write("Failed to launch the accessibility bus\n")
+        #         sys.stderr.flush()
 
         a11y_registryd_running = False
-        a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
-        if a11y_registryd_path:
-            try:
-                a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
-                a11y_registryd_running = True
-            except:
-                sys.stderr.write("Failed to run the accessibility registry\n")
-                sys.stderr.flush()
+        # FIXME: Commenting the next lines while figuring out why this
+        # fails randomly in the GTK bots, making the API tests fail.
+        # https://bugs.webkit.org/show_bug.cgi?id=76817
+        # a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
+        # if a11y_registryd_path:
+        #     try:
+        #         a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
+        #         a11y_registryd_running = True
+        #     except:
+        #         sys.stderr.write("Failed to run the accessibility registry\n")
+        #         sys.stderr.flush()
 
         for test in self._tests:
             out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
