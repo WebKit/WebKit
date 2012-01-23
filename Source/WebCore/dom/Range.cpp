@@ -589,14 +589,17 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
     // http://developer.mozilla.org/en/docs/DOM:range.intersectsNode
     // Returns a bool if the node intersects the range.
 
+    // Throw exception if the range is already detached.
+    if (!m_start.container()) {
+        ec = INVALID_STATE_ERR;
+        return false;
+    }
     if (!refNode) {
         ec = NOT_FOUND_ERR;
         return false;
     }
-    
-    if ((!m_start.container() && refNode->attached())
-            || (m_start.container() && !refNode->attached())
-            || refNode->document() != m_ownerDocument) {
+
+    if (!refNode->attached() || refNode->document() != m_ownerDocument) {
         // Firefox doesn't throw an exception for these cases; it returns false.
         return false;
     }

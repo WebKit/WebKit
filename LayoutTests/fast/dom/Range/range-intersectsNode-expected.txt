@@ -44,7 +44,7 @@ PASS intersects is true
 PASS intersects is true
 
 2.1 Detached Range, attached node
-PASS intersects is false
+PASS detachedRange.intersectsNode(document.getElementById('a1')) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 
 2.2 attached range, detached node
 PASS intersects is false

@@ -1,3 +1,17 @@
+2012-01-23  Joe Thomas  <joethomas@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75799
+        Calling intersectsNode on a detached range should throw.
+
+        INVALID_STATE_ERR exception should be thrown if intersectsNode is called on a detached Range.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/dom/Range/range-intersectsNode-exception.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::intersectsNode): Throwing INVALID_STATE_ERR exception if the range is detached.
+
 2012-01-23  Daniel Cheng  <dcheng@chromium.org>
 
         Convert DataTransferItem/DataTransferItemList back into an interface class
