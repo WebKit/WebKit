@@ -1271,6 +1271,9 @@ WebInspector.ElementsTreeElement.prototype = {
         this._editing = false;
 
         var treeOutline = this.treeOutline;
+        /**
+         * @param {Protocol.Error=} error
+         */
         function moveToNextAttributeIfNeeded(error)
         {
             if (error)

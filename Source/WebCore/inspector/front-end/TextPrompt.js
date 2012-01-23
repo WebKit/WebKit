@@ -1198,12 +1198,12 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
 
     upKeyPressed: function(event)
     {
-        return this._onPreviousItem(event);
+        return this._onPreviousItem(event, false);
     },
 
     downKeyPressed: function(event)
     {
-        return this._onNextItem(event);
+        return this._onNextItem(event, false);
     },
 
     pageUpKeyPressed: function(event)
