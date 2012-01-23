@@ -37,7 +37,7 @@ class StyledElement;
 class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
 public:
     static PassRefPtr<CSSElementStyleDeclaration> createInline(StyledElement* element) { return adoptRef(new CSSElementStyleDeclaration(element, true)); }
-    static PassRefPtr<CSSElementStyleDeclaration> createForSVGFontFaceElement(SVGFontFaceElement*);
+    static PassRefPtr<CSSElementStyleDeclaration> createForSVGFontFaceElement(StyledElement* element) { return adoptRef(new CSSElementStyleDeclaration(element, false)); }
 
     StyledElement* element() const { return m_element; }
     void clearElement() { m_element = 0; }

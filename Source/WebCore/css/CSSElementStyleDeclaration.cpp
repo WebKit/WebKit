@@ -26,15 +26,9 @@
 #include "config.h"
 #include "CSSElementStyleDeclaration.h"
 
-#include "SVGFontFaceElement.h"
 #include "StyledElement.h"
 
 namespace WebCore {
-
-PassRefPtr<CSSElementStyleDeclaration> CSSElementStyleDeclaration::createForSVGFontFaceElement(SVGFontFaceElement* element) 
-{ 
-    return adoptRef(new CSSElementStyleDeclaration(element, false)); 
-}
 
 CSSStyleSheet* CSSElementStyleDeclaration::styleSheet() const
 {

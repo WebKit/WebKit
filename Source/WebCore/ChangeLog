@@ -1,3 +1,13 @@
+2012-01-23  Antti Koivisto  <antti@apple.com>
+
+        Attempt to fix Qt build.
+    
+        Not reviewed.
+
+        * css/CSSElementStyleDeclaration.cpp:
+        * css/CSSElementStyleDeclaration.h:
+        (WebCore::CSSElementStyleDeclaration::createForSVGFontFaceElement):
+
 2012-01-23  Andreas Kling  <awesomekling@apple.com>
 
         Move m_rootEditableElementForSelectionOnMouseDown off of HTMLAnchorElement.
