@@ -75,6 +75,16 @@ TEST(StringBuilderTest, Append)
     builder1.append("XYZ");
     builder.append(builder1.characters(), builder1.length());
     expectBuilderContent("0123456789abcdefg#0123456789abcdefg#XYZ", builder);
+
+    StringBuilder builder2;
+    builder2.reserveCapacity(100);
+    builder2.append("xyz");
+    const UChar* characters = builder2.characters();
+    builder2.append("0123456789");
+    ASSERT_EQ(characters, builder2.characters());
+    builder2.toStringPreserveCapacity(); // Test after reifyString with buffer preserved.
+    builder2.append("abcd");
+    ASSERT_EQ(characters, builder2.characters());
 }
 
 TEST(StringBuilderTest, ToString)
@@ -114,7 +124,9 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
 {
     StringBuilder builder;
     builder.append("0123456789");
+    unsigned capacity = builder.capacity();
     String string = builder.toStringPreserveCapacity();
+    ASSERT_EQ(capacity, builder.capacity());
     ASSERT_EQ(String("0123456789"), string);
     ASSERT_EQ(string.impl(), builder.toStringPreserveCapacity().impl());
     ASSERT_EQ(string.characters(), builder.characters());
@@ -125,14 +137,18 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
 
     // Changing the StringBuilder should not affect the original result of toStringPreserveCapacity() in case the capacity is not changed.
     builder.reserveCapacity(200);
+    capacity = builder.capacity();
     string = builder.toStringPreserveCapacity();
+    ASSERT_EQ(capacity, builder.capacity());
     ASSERT_EQ(string.characters(), builder.characters());
     ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
     builder.append("ABC");
     ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyz"), string);
 
     // Changing the original result of toStringPreserveCapacity() should not affect the content of the StringBuilder.
+    capacity = builder.capacity();
     String string1 = builder.toStringPreserveCapacity();
+    ASSERT_EQ(capacity, builder.capacity());
     ASSERT_EQ(string1.characters(), builder.characters());
     ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
     string1.append("DEF");
@@ -140,7 +156,9 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
 
     // Resizing the StringBuilder should not affect the original result of toStringPreserveCapacity().
+    capacity = builder.capacity();
     string1 = builder.toStringPreserveCapacity();
+    ASSERT_EQ(capacity, builder.capacity());
     ASSERT_EQ(string.characters(), builder.characters());
     builder.resize(10);
     builder.append("###");
@@ -183,6 +201,77 @@ TEST(StringBuilderTest, Resize)
     expectBuilderContent("0123456", builder);
     builder.resize(0);
     expectEmpty(builder);
+}
+
+TEST(StringBuilderTest, Equal)
+{
+    StringBuilder builder1;
+    StringBuilder builder2;
+    ASSERT_TRUE(builder1 == builder2);
+    ASSERT_TRUE(equal(builder1, static_cast<LChar*>(0), 0));
+    ASSERT_TRUE(builder1 == String());
+    ASSERT_TRUE(String() == builder1);
+    ASSERT_TRUE(builder1 != String("abc"));
+
+    builder1.append("123");
+    builder1.reserveCapacity(32);
+    builder2.append("123");
+    builder1.reserveCapacity(64);
+    ASSERT_TRUE(builder1 == builder2);
+    ASSERT_TRUE(builder1 == String("123"));
+    ASSERT_TRUE(String("123") == builder1);
+
+    builder2.append("456");
+    ASSERT_TRUE(builder1 != builder2);
+    ASSERT_TRUE(builder2 != builder1);
+    ASSERT_TRUE(String("123") != builder2);
+    ASSERT_TRUE(builder2 != String("123"));
+    builder2.toString(); // Test after reifyString().
+    ASSERT_TRUE(builder1 != builder2);
+
+    builder2.resize(3);
+    ASSERT_TRUE(builder1 == builder2);
+
+    builder1.toString(); // Test after reifyString().
+    ASSERT_TRUE(builder1 == builder2);
+}
+
+TEST(StringBuilderTest, CanShrink)
+{
+    StringBuilder builder;
+    builder.reserveCapacity(256);
+    ASSERT_TRUE(builder.canShrink());
+    for (int i = 0; i < 256; i++)
+        builder.append('x');
+    ASSERT_EQ(builder.length(), builder.capacity());
+    ASSERT_FALSE(builder.canShrink());
+}
+
+TEST(StringBuilderTest, ToAtomicString)
+{
+    StringBuilder builder;
+    builder.append("123");
+    AtomicString atomicString = builder.toAtomicString();
+    ASSERT_EQ(String("123"), atomicString);
+
+    builder.reserveCapacity(256);
+    ASSERT_TRUE(builder.canShrink());
+    for (int i = builder.length(); i < 128; i++)
+        builder.append('x');
+    AtomicString atomicString1 = builder.toAtomicString();
+    ASSERT_EQ(128, atomicString1.length());
+    ASSERT_EQ('x', atomicString1[127]);
+
+    // Later change of builder should not affect the atomic string.
+    for (int i = builder.length(); i < 256; i++)
+        builder.append('x');
+    ASSERT_EQ(128, atomicString1.length());
+
+    ASSERT_FALSE(builder.canShrink());
+    String string = builder.toString();
+    AtomicString atomicString2 = builder.toAtomicString();
+    // They should share the same StringImpl.
+    ASSERT_EQ(atomicString2.impl(), string.impl());
 }
 
 } // namespace

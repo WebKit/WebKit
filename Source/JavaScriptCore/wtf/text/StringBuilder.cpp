@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +33,7 @@ namespace WTF {
 
 static const unsigned minimumCapacity = 16;
 
-void StringBuilder::reifyString()
+void StringBuilder::reifyString() const
 {
     // Check if the string already exists.
     if (!m_string.isNull()) {
@@ -68,6 +69,7 @@ void StringBuilder::resize(unsigned newSize)
 
     // If there is a buffer, we only need to duplicate it if it has more than one ref.
     if (m_buffer) {
+        m_string = String(); // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
         if (!m_buffer->hasOneRef()) {
             if (m_buffer->is8Bit())
                 allocateBuffer(m_buffer->characters8(), m_buffer->length());
@@ -75,7 +77,6 @@ void StringBuilder::resize(unsigned newSize)
                 allocateBuffer(m_buffer->characters16(), m_buffer->length());
         }
         m_length = newSize;
-        m_string = String();
         return;
     }
 
@@ -285,10 +286,15 @@ void StringBuilder::append(const LChar* characters, unsigned length)
     }
 }
 
+bool StringBuilder::canShrink() const
+{
+    // Only shrink the buffer if it's less than 80% full. Need to tune this heuristic!
+    return m_buffer && m_buffer->length() > (m_length + (m_length >> 2));
+}
+
 void StringBuilder::shrinkToFit()
 {
-    // If the buffer is at least 80% full, don't bother copying. Need to tune this heuristic!
-    if (m_buffer && m_buffer->length() > (m_length + (m_length >> 2))) {
+    if (canShrink()) {
         if (m_is8Bit)
             reallocateBuffer<LChar>(m_length);
         else

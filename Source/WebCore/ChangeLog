@@ -1,3 +1,21 @@
+2012-01-23  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Basic enhancements to StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67081
+
+        These changes are because we explicitly disallowed StringBuilder's
+        copy constructor and assignment operator, and the change of return
+        type of StringBuilder::toString().
+
+        Reviewed by Darin Adler.
+
+        No new tests. All layout tests and unit tests should run as before.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime):
+        * svg/SVGPathStringBuilder.h:
+        (WebCore::SVGPathStringBuilder::cleanup):
+
 2012-01-23  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add WebSolidColorLayer interface to draw non-textured color layers from Aura.

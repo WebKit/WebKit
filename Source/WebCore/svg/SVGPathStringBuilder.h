@@ -32,7 +32,7 @@ public:
     String result();
 
 private:
-    virtual void cleanup() { m_stringBuilder = StringBuilder(); }
+    virtual void cleanup() { m_stringBuilder.clear(); }
     virtual void incrementPathSegmentCount() { }
     virtual bool continueConsuming() { return true; }
 

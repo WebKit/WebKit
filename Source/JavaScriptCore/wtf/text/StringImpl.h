@@ -52,6 +52,7 @@ namespace WTF {
 struct CStringTranslator;
 struct HashAndCharactersTranslator;
 struct HashAndUTF8CharactersTranslator;
+struct SubstringTranslator;
 struct UCharBufferTranslator;
 
 enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
@@ -68,6 +69,7 @@ class StringImpl {
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
+    friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
 

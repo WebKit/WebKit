@@ -279,7 +279,7 @@ EXPORTS
     ?randomNumber@WTF@@YANXZ
     ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
     ?regExpFlags@JSC@@YA?AW4RegExpFlags@1@ABVUString@1@@Z
-    ?reifyString@StringBuilder@WTF@@AAEXXZ
+    ?reifyString@StringBuilder@WTF@@ABEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseExecutableMemory@JSGlobalData@JSC@@QAEXXZ
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z

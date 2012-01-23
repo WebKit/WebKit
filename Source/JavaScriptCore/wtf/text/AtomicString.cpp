@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -250,11 +251,52 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
+struct SubstringLocation {
+    StringImpl* baseString;
+    unsigned start;
+    unsigned length;
+};
+
+struct SubstringTranslator {
+    static unsigned hash(const SubstringLocation& buffer)
+    {
+        return StringHasher::computeHash(buffer.baseString->characters() + buffer.start, buffer.length);
+    }
+
+    static bool equal(StringImpl* const& string, const SubstringLocation& buffer)
+    {
+        return WTF::equal(string, buffer.baseString->characters() + buffer.start, buffer.length);
+    }
+
+    static void translate(StringImpl*& location, const SubstringLocation& buffer, unsigned hash)
+    {
+        location = StringImpl::create(buffer.baseString, buffer.start, buffer.length).leakRef();
+        location->setHash(hash);
+        location->setIsAtomic(true);
+    }
+};
+
+PassRefPtr<StringImpl> AtomicString::add(StringImpl* baseString, unsigned start, unsigned length)
+{
+    if (!baseString)
+        return 0;
+
+    if (!length || start >= baseString->length())
+        return StringImpl::empty();
+
+    unsigned maxLength = baseString->length() - start;
+    if (length >= maxLength) {
+        if (!start)
+            return add(baseString);
+        length = maxLength;
+    }
+
+    SubstringLocation buffer = { baseString, start, length };
+    return addToStringTable<SubstringLocation, SubstringTranslator>(buffer);
+}
+
 PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
 {
-    if (!r || r->isAtomic())
-        return r;
-
     if (!r->length())
         return StringImpl::empty();
 

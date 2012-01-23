@@ -1,3 +1,13 @@
+2012-01-23  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Basic enhancements to StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67081
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] run-gtk-tests randomly fails while running the xprop comand

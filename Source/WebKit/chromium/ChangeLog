@@ -1,3 +1,18 @@
+2012-01-23  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Basic enhancements to StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67081
+
+        This change is because we explicitly disallowed StringBuilder's
+        copy constructor and assignment operator.
+
+        Reviewed by Darin Adler.
+
+        No new tests. All layout tests and unit tests should run as before.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::encodeAndFlushBuffer):
+
 2012-01-23  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add WebSolidColorLayer interface to draw non-textured color layers from Aura.

@@ -283,7 +283,7 @@ void WebPageSerializerImpl::encodeAndFlushBuffer(
         return;
 
     String content = m_dataBuffer.toString();
-    m_dataBuffer = StringBuilder();
+    m_dataBuffer.clear();
 
     // Convert the unicode content to target encoding
     CString encodedContent = param->textEncoding.encode(
