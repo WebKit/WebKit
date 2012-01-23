@@ -1,3 +1,10 @@
+2012-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows python test build fix.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+
 2012-01-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] DumpRenderTree converts "file:///" to a path differently

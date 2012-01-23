@@ -65,7 +65,7 @@ class PerfTestsRunner(object):
         self._host._initialize_scm()
         self._printer = printing.Printer(self._port, self._options, regular_output, buildbot_output, configure_logging=False)
         self._webkit_base_dir_len = len(self._port.webkit_base())
-        self._base_path = self._host.filesystem.join(self._port.webkit_base(), self._perf_tests_base_dir)
+        self._base_path = self._port.perf_tests_dir()
         self._results = {}
         self._timestamp = time.time()
 
