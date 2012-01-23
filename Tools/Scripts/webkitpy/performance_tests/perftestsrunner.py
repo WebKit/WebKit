@@ -174,9 +174,16 @@ class PerfTestsRunner(object):
     def _upload_json(self, test_results_server, json_path, file_uploader=FileUploader):
         uploader = file_uploader("https://%s/api/test/report" % test_results_server, 120)
         try:
-            uploader.upload_single_text_file(self._host.filesystem, 'application/json', json_path)
+            response = uploader.upload_single_text_file(self._host.filesystem, 'application/json', json_path)
         except Exception, error:
             _log.error("Failed to upload JSON file in 120s: %s" % error)
+            return False
+
+        response_body = [line.strip('\n') for line in response]
+        if response_body != ['OK']:
+            _log.error("Uploaded JSON but got a bad response:")
+            for line in response_body:
+                _log.error(line)
             return False
 
         self._printer.write("JSON file uploaded.")

@@ -29,12 +29,14 @@
 
 """Unit tests for run_perf_tests."""
 
+import StringIO
 import json
 import unittest
 
 from webkitpy.common import array_stream
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.layout_tests.views import printing
@@ -240,11 +242,12 @@ max 1120
 
     def test_upload_json(self):
         regular_output = array_stream.ArrayStream()
-        runner = self.create_runner(buildbot_output=regular_output)
+        runner = self.create_runner(regular_output=regular_output)
         runner._host.filesystem.files['/mock-checkout/some.json'] = 'some content'
 
         called = []
         upload_single_text_file_throws = False
+        upload_single_text_file_return_value = StringIO.StringIO('OK')
 
         class MockFileUploader:
             def __init__(mock, url, timeout):
@@ -259,9 +262,17 @@ max 1120
                 called.append('upload_single_text_file')
                 if upload_single_text_file_throws:
                     raise "Some exception"
+                return upload_single_text_file_return_value
 
         runner._upload_json('some.host', 'some.json', MockFileUploader)
         self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
+
+        output = OutputCapture()
+        output.capture_output()
+        upload_single_text_file_return_value = StringIO.StringIO('Some error')
+        runner._upload_json('some.host', 'some.json', MockFileUploader)
+        _, _, logs = output.restore_output()
+        self.assertEqual(logs, 'Uploaded JSON but got a bad response:\nSome error\n')
 
         # Throwing an exception upload_single_text_file shouldn't blow up _upload_json
         called = []

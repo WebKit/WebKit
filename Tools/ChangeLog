@@ -1,3 +1,24 @@
+2012-01-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should report server-side errors
+        https://bugs.webkit.org/show_bug.cgi?id=76802
+
+        Reviewed by Tony Chang.
+
+        Report errors whenever server's response doesn't match "OK".
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.upload_single_text_file):
+        (FileUploader.upload_as_multipart_form_data):
+        (FileUploader._upload_data.callback):
+        (FileUploader):
+        (FileUploader._upload_data):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._upload_json):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_upload_json):
+        (test_upload_json.MockFileUploader.upload_single_text_file):
+
 2012-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests ignore Skipped list on chromium

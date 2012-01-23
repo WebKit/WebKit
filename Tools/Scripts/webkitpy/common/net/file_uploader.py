@@ -89,7 +89,7 @@ class FileUploader(object):
         self._timeout_seconds = timeout_seconds
 
     def upload_single_text_file(self, filesystem, content_type, filename):
-        self._upload_data(content_type, filesystem.read_text_file(filename))
+        return self._upload_data(content_type, filesystem.read_text_file(filename))
 
     def upload_as_multipart_form_data(self, filesystem, files, params, timeout_seconds):
         file_objs = []
@@ -99,17 +99,19 @@ class FileUploader(object):
 
         # FIXME: We should use the same variable names for the formal and actual parameters.
         content_type, data = _encode_multipart_form_data(attrs, file_objs)
-        self._upload_data(content_type, data)
+        return self._upload_data(content_type, data)
 
     def _upload_data(self, content_type, data):
         def callback():
             request = urllib2.Request(self._url, data, {"Content-Type": content_type})
-            urllib2.urlopen(request)
+            return urllib2.urlopen(request)
 
         orig_timeout = socket.getdefaulttimeout()
+        response = None
         try:
             # FIXME: We shouldn't mutate global static state.
             socket.setdefaulttimeout(self._timeout_seconds)
-            NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
+            response = NetworkTransaction(timeout_seconds=self._timeout_seconds).run(callback)
         finally:
             socket.setdefaulttimeout(orig_timeout)
+            return response
