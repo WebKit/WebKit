@@ -34,9 +34,10 @@
 WebInspector.NetworkLog = function()
 {
     this._resources = [];
-    this._mainResourceStartTime = null;
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._onMainFrameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoad, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._onDOMContentLoaded, this);
 }
 
 WebInspector.NetworkLog.prototype = {
@@ -49,28 +50,30 @@ WebInspector.NetworkLog.prototype = {
     },
 
     /**
-     * @return {?Date}
+     * @param {WebInspector.Resource} resource
+     * @return {WebInspector.PageLoad}
      */
-    get mainResourceStartTime()
+    pageLoadForResource: function(resource)
     {
-        return this._mainResourceStartTime;
+        return resource.__page;
     },
 
     /**
      * @param {WebInspector.Event} event
      */
-    _mainFrameNavigated: function(event)
+    _onMainFrameNavigated: function(event)
     {
         var mainFrame = /** type {WebInspector.ResourceTreeFrame} */ event.data;
-        this._mainResourceStartTime = null;
         // Preserve resources from the new session.
+        this._currentPageLoad = null;
         var oldResources = this._resources.splice(0, this._resources.length);
         for (var i = 0; i < oldResources.length; ++i) {
             var resource = oldResources[i];
             if (resource.loaderId === mainFrame.loaderId) {
-                if (!this._mainResourceStartTime && mainFrame.url === resource.url)
-                    this._mainResourceStartTime = resource.startTime;
+                if (!this._currentPageLoad)
+                    this._currentPageLoad = new WebInspector.PageLoad(resource);
                 this._resources.push(resource);
+                resource.__page = this._currentPageLoad;
             }
         }
     },
@@ -82,10 +85,43 @@ WebInspector.NetworkLog.prototype = {
     {
         var resource = /** @type {WebInspector.Resource} */ event.data;
         this._resources.push(resource);
-    }
+        resource.__page = this._currentPageLoad;
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onDOMContentLoaded: function(event)
+    {
+        if (this._currentPageLoad)
+            this._currentPageLoad.contentLoadTime = event.data;
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onLoad: function(event)
+    {
+        if (this._currentPageLoad)
+            this._currentPageLoad.loadTime = event.data;
+    },
+
 }
 
 /**
  * @type {WebInspector.NetworkLog}
  */
 WebInspector.networkLog = null;
+
+/**
+ * @constructor
+ * @param {WebInspector.Resource} mainResource
+ */
+WebInspector.PageLoad = function(mainResource)
+{
+    this.id = ++WebInspector.PageLoad._lastIdentifier;
+    this.url = mainResource.url;
+    this.startTime = mainResource.startTime;
+}
+
+WebInspector.PageLoad._lastIdentifier = 0;

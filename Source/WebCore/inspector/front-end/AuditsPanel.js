@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -61,8 +61,7 @@ WebInspector.AuditsPanel = function()
     for (var id in this.categoriesById)
         this._launcherView.addCategory(this.categoriesById[id]);
 
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, this._domContentLoadedEventFired, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._didMainResourceLoad, this);
 }
 
 WebInspector.AuditsPanel.prototype = {
@@ -74,27 +73,6 @@ WebInspector.AuditsPanel.prototype = {
     get statusBarItems()
     {
         return [this.clearResultsButton.element];
-    },
-
-    get mainResourceLoadTime()
-    {
-        return this._mainResourceLoadTime;
-    },
-
-    _onLoadEventFired: function(event)
-    {
-        this._mainResourceLoadTime = event.data;
-        this._didMainResourceLoad();
-    },
-
-    get mainResourceDOMContentTime()
-    {
-        return this._mainResourceDOMContentTime;
-    },
-
-    _domContentLoadedEventFired: function(event)
-    {
-        this._mainResourceDOMContentTime = event.data;
     },
 
     get categoriesById()

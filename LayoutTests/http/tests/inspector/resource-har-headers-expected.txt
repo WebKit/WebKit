@@ -19,7 +19,6 @@ Resource:{
     }
 }
 HAR:{
-    pageref : "http://example.com/inspector-test.js"
     startedDateTime : <object>
     time : <number>
     request : {

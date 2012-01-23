@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -49,8 +49,7 @@ WebInspector.HAREntry.prototype = {
      */
     build: function()
     {
-        return {
-            pageref: this._resource.documentURL,
+        var entry =  {
             startedDateTime: new Date(this._resource.startTime * 1000),
             time: WebInspector.HAREntry._toMilliseconds(this._resource.duration),
             request: this._buildRequest(),
@@ -58,6 +57,10 @@ WebInspector.HAREntry.prototype = {
             cache: { }, // Not supported yet.
             timings: this._buildTimings()
         };
+        var page = WebInspector.networkLog.pageLoadForResource(this._resource);
+        if (page)
+            entry.pageref = "page_" + page.id;
+        return entry;
     },
 
     /**
@@ -251,11 +254,11 @@ WebInspector.HAREntry.prototype = {
     },
 
     /**
-     * @return {number}
+     * @return {number|undefined}
      */
     get responseCompression()
     {
-        if (this._resource.cahced || this._resource.statusCode === 304)
+        if (this._resource.cached || this._resource.statusCode === 304)
             return;
         return this._resource.resourceSize - (this._resource.transferSize - this._resource.responseHeadersSize);
     }
@@ -303,24 +306,32 @@ WebInspector.HARLog.prototype = {
      */
     _buildPages: function()
     {
-        return [
-            {
-                startedDateTime: new Date(WebInspector.networkLog.mainResourceStartTime * 1000),
-                id: WebInspector.inspectedPageURL,
-                title: "",
-                pageTimings: this.buildMainResourceTimings()
-            }
-        ];
+        var seenIdentifiers = {};
+        var pages = [];
+        for (var i = 0; i < this._resources.length; ++i) {
+            var page = WebInspector.networkLog.pageLoadForResource(this._resources[i]);
+            if (!page || seenIdentifiers[page.id])
+                continue;
+            seenIdentifiers[page.id] = true;
+            pages.push(this._convertPage(page));
+        }
+        return pages;
     },
 
     /**
+     * @param {WebInspector.PageLoad} page
      * @return {Object}
      */
-    buildMainResourceTimings: function()
+    _convertPage: function(page)
     {
         return {
-             onContentLoad: this._pageEventTime(WebInspector.mainResourceDOMContentTime),
-             onLoad: this._pageEventTime(WebInspector.mainResourceLoadTime),
+            startedDateTime: new Date(page.startTime * 1000),
+            id: "page_" + page.id,
+            title: page.url, // We don't have actual page title here. URL is probably better than nothing.
+            pageTimings: {
+                onContentLoad: this._pageEventTime(page, page.contentLoadTime),
+                onLoad: this._pageEventTime(page, page.loadTime)
+            }
         }
     },
 
@@ -334,12 +345,13 @@ WebInspector.HARLog.prototype = {
     },
 
     /**
+     * @param {WebInspector.PageLoad} page
      * @param {number} time
      * @return {number}
      */
-    _pageEventTime: function(time)
+    _pageEventTime: function(page, time)
     {
-        var startTime = WebInspector.mainResourceStartTime;
+        var startTime = page.startTime;
         if (time === -1 || startTime === -1)
             return -1;
         return WebInspector.HAREntry._toMilliseconds(time - startTime);

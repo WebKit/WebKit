@@ -613,17 +613,11 @@ WebInspector.PageDispatcher.prototype = {
     domContentEventFired: function(time)
     {
         this._resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.DOMContentLoaded, time);
-
-        // FIXME: the only client is HAR, fix it there.
-        WebInspector.mainResourceDOMContentTime = time;
     },
 
     loadEventFired: function(time)
     {
         this._resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.OnLoad, time);
-
-        // FIXME: the only client is HAR, fix it there.
-        WebInspector.mainResourceLoadTime = time;
     },
 
     frameNavigated: function(frame)

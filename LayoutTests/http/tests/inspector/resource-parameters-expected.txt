@@ -3,7 +3,6 @@ Tests that resources panel shows form data parameters.
   
 
 {
-    pageref : "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2="
     startedDateTime : <plausible>
     time : <number>
     request : {

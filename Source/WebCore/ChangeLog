@@ -1,3 +1,49 @@
+2012-01-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: HAR pageref attributes are wrong and inconsistent with pages array
+        https://bugs.webkit.org/show_bug.cgi?id=76398
+
+        Reviewed by Pavel Feldman.
+
+        - introduce a notion of LoadPage;
+        - move page load times to LoadPage;
+        - associate network resources with LoadPage;
+        - export pages for all available resoruces to HAR, not just the last page;
+        - use page ids, not document URLs in HAR entries to refer to pages;
+        - use page URL as a title field of a HAR page;
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype.get responseCompression):
+        (WebInspector.HARLog.prototype._buildPages):
+        (WebInspector.HARLog.prototype._convertPage):
+        (WebInspector.HARLog.prototype._pageEventTime):
+        * inspector/front-end/NetworkLog.js:
+        (WebInspector.NetworkLog):
+        (WebInspector.NetworkLog.prototype._mainFrameNavigated):
+        (WebInspector.NetworkLog.prototype._onResourceStarted):
+        (WebInspector.Page):
+        (WebInspector.Page.prototype.get id):
+        (WebInspector.Page.prototype.get url):
+        (WebInspector.Page.prototype.get contentLoadTime):
+        (WebInspector.Page.prototype.set contentLoadTime):
+        (WebInspector.Page.prototype.get loadTime):
+        (WebInspector.Page.prototype.set loadTime):
+        (WebInspector.Page.prototype.get startTime):
+        (WebInspector.Page.prototype._bindResource):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.requestServedFromMemoryCache):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get page):
+        (WebInspector.Resource.prototype.set page):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeFrame):
+        (WebInspector.ResourceTreeFrame.prototype.get page):
+        (WebInspector.PageDispatcher.prototype.domContentEventFired):
+        (WebInspector.PageDispatcher.prototype.loadEventFired):
+
 2012-01-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] ATK text-caret-moved and text-selection-changed events not being emitted
