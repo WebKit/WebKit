@@ -1,3 +1,28 @@
+2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
+        Rename WebKitAccessible's public functions to follow WebKit's
+        coding style and update callers.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleNew): Renamed from webkit_accessible_new.
+        (webkitAccessibleGetAccessibilityObject): Likewise.
+        (webkitAccessibleDetach):Likewise.
+        (webkitAccessibleGetFocusedElement): Likewise.
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.h:
+
+        Update calls to WebKitAccessible's public functions.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::detachWrapper): Update call.
+        (WebCore::AXObjectCache::attachWrapper): Ditto.
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp:
+        (core): Update call.
+
 2012-01-19  Kenichi Ishibashi  <bashi@chromium.org>
 
         WebKit fails IETC composition event types

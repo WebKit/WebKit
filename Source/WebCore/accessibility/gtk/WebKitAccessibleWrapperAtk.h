@@ -51,13 +51,13 @@ struct _WebKitAccessibleClass {
 
 GType webkit_accessible_get_type(void) G_GNUC_CONST;
 
-WebKitAccessible* webkit_accessible_new(WebCore::AccessibilityObject*);
+WebKitAccessible* webkitAccessibleNew(WebCore::AccessibilityObject*);
 
-WebCore::AccessibilityObject* webkit_accessible_get_accessibility_object(WebKitAccessible*);
+WebCore::AccessibilityObject* webkitAccessibleGetAccessibilityObject(WebKitAccessible*);
 
-void webkit_accessible_detach(WebKitAccessible*);
+void webkitAccessibleDetach(WebKitAccessible*);
 
-AtkObject* webkit_accessible_get_focused_element(WebKitAccessible*);
+AtkObject* webkitAccessibleGetFocusedElement(WebKitAccessible*);
 
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
 

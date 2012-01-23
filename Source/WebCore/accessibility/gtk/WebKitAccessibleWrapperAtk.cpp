@@ -2680,7 +2680,7 @@ static GType getAccessibilityTypeFromObject(AccessibilityObject* coreObject)
     return type;
 }
 
-WebKitAccessible* webkit_accessible_new(AccessibilityObject* coreObject)
+WebKitAccessible* webkitAccessibleNew(AccessibilityObject* coreObject)
 {
     GType type = getAccessibilityTypeFromObject(coreObject);
     AtkObject* object = static_cast<AtkObject*>(g_object_new(type, 0));
@@ -2690,12 +2690,12 @@ WebKitAccessible* webkit_accessible_new(AccessibilityObject* coreObject)
     return WEBKIT_ACCESSIBLE(object);
 }
 
-AccessibilityObject* webkit_accessible_get_accessibility_object(WebKitAccessible* accessible)
+AccessibilityObject* webkitAccessibleGetAccessibilityObject(WebKitAccessible* accessible)
 {
     return accessible->m_object;
 }
 
-void webkit_accessible_detach(WebKitAccessible* accessible)
+void webkitAccessibleDetach(WebKitAccessible* accessible)
 {
     ASSERT(accessible->m_object);
 
@@ -2708,7 +2708,7 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
     accessible->m_object = fallbackObject();
 }
 
-AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible)
+AtkObject* webkitAccessibleGetFocusedElement(WebKitAccessible* accessible)
 {
     if (!accessible->m_object)
         return 0;

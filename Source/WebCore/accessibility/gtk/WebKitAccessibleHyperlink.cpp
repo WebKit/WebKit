@@ -65,7 +65,7 @@ static AccessibilityObject* core(WebKitAccessible* accessible)
     if (!accessible || !WEBKIT_IS_ACCESSIBLE(accessible))
         return 0;
 
-    return webkit_accessible_get_accessibility_object(accessible);
+    return webkitAccessibleGetAccessibilityObject(accessible);
 }
 
 static AccessibilityObject* core(WebKitAccessibleHyperlink* link)
