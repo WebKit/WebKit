@@ -119,9 +119,9 @@ void FloatRect::uniteEvenIfEmpty(const FloatRect& other)
 void FloatRect::uniteIfNonZero(const FloatRect& other)
 {
     // Handle empty special cases first.
-    if (!other.width() && !other.height())
+    if (other.isZero())
         return;
-    if (!width() && !height()) {
+    if (isZero()) {
         *this = other;
         return;
     }

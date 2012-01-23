@@ -190,8 +190,7 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* contain
             repaintBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
         }
 
-        if (isFirstChild)
-            isFirstChild = false;
+        isFirstChild = false;
     }
 }
 

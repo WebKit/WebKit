@@ -1,3 +1,23 @@
+2012-01-23  Philip Rogers  <pdr@google.com>
+
+        Update uniteIfNonZero to use isZero.
+        https://bugs.webkit.org/show_bug.cgi?id=76637
+
+        Reviewed by Darin Adler.
+
+        No new tests. (I found no existing codepath that would be affected by
+        this change but I think this change is still valuable in preventing
+        future bugs.)
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::uniteIfNonZero):
+
+        The following change is a minor followup to
+        https://bugs.webkit.org/show_bug.cgi?id=76177#c12 and is not directly
+        related to the rest of this patch.
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+
 2012-01-23  Antti Koivisto  <antti@apple.com>
 
         Eliminate CSSElementStyleDeclaration
