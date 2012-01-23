@@ -80,7 +80,7 @@ static void copyGstreamerBuffersToAudioChannel(GstBufferList* buffers, AudioChan
     gst_buffer_list_iterator_next_group(iter);
     GstBuffer* buffer = gst_buffer_list_iterator_merge_group(iter);
     if (buffer) {
-        memcpy(audioChannel->data(), reinterpret_cast<float*>(GST_BUFFER_DATA(buffer)), GST_BUFFER_SIZE(buffer));
+        memcpy(audioChannel->mutableData(), reinterpret_cast<float*>(GST_BUFFER_DATA(buffer)), GST_BUFFER_SIZE(buffer));
         gst_buffer_unref(buffer);
     }
 

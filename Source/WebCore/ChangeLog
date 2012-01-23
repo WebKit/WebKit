@@ -1,3 +1,17 @@
+2012-01-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fix WebAudio build after r105431
+        https://bugs.webkit.org/show_bug.cgi?id=76819
+
+        Reviewed by Martin Robinson.
+
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::copyGstreamerBuffersToAudioChannel): Use mutableData()
+        when copying.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcLoop): Drop constness when setting the buffer
+        data pointer.
+
 2012-01-23  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add touch events to the event listeners list.
