@@ -1768,6 +1768,8 @@
             'accessibility/gtk/AccessibilityObjectAtk.cpp',
             'accessibility/gtk/WebKitAccessibleHyperlink.cpp',
             'accessibility/gtk/WebKitAccessibleHyperlink.h',
+            'accessibility/gtk/WebKitAccessibleInterfaceAction.cpp',
+            'accessibility/gtk/WebKitAccessibleInterfaceAction.h',
             'accessibility/gtk/WebKitAccessibleUtil.cpp',
             'accessibility/gtk/WebKitAccessibleUtil.h',
             'accessibility/gtk/WebKitAccessibleWrapperAtk.cpp',

@@ -63,6 +63,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
+#include "WebKitAccessibleInterfaceAction.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -107,11 +108,6 @@ static AccessibilityObject* core(AtkObject* object)
         return 0;
 
     return core(WEBKIT_ACCESSIBLE(object));
-}
-
-static AccessibilityObject* core(AtkAction* action)
-{
-    return core(ATK_OBJECT(action));
 }
 
 static AccessibilityObject* core(AtkSelection* selection)
@@ -866,47 +862,6 @@ webkit_accessible_get_type(void)
     }
 
     return type_volatile;
-}
-
-static gboolean webkit_accessible_action_do_action(AtkAction* action, gint i)
-{
-    g_return_val_if_fail(!i, FALSE);
-    return core(action)->performDefaultAction();
-}
-
-static gint webkit_accessible_action_get_n_actions(AtkAction* action)
-{
-    return 1;
-}
-
-static const gchar* webkit_accessible_action_get_description(AtkAction* action, gint i)
-{
-    g_return_val_if_fail(!i, 0);
-    // TODO: Need a way to provide/localize action descriptions.
-    notImplemented();
-    return "";
-}
-
-static const gchar* webkit_accessible_action_get_keybinding(AtkAction* action, gint i)
-{
-    g_return_val_if_fail(!i, 0);
-    // FIXME: Construct a proper keybinding string.
-    return returnString(core(action)->accessKey().string());
-}
-
-static const gchar* webkit_accessible_action_get_name(AtkAction* action, gint i)
-{
-    g_return_val_if_fail(!i, 0);
-    return returnString(core(action)->actionVerb());
-}
-
-static void atk_action_interface_init(AtkActionIface* iface)
-{
-    iface->do_action = webkit_accessible_action_do_action;
-    iface->get_n_actions = webkit_accessible_action_get_n_actions;
-    iface->get_description = webkit_accessible_action_get_description;
-    iface->get_keybinding = webkit_accessible_action_get_keybinding;
-    iface->get_name = webkit_accessible_action_get_name;
 }
 
 // Selection (for controls)
@@ -2484,8 +2439,7 @@ static void atkValueInterfaceInit(AtkValueIface* iface)
 }
 
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
-    {(GInterfaceInitFunc)atk_action_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleActionInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atk_selection_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_editable_text_interface_init,

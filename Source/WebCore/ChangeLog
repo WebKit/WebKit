@@ -1,3 +1,31 @@
+2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
+        New files for the implementation of the AtkAction interface,
+        containing the related code from WebKitAccessibleWrapperAtk.cpp.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceAction.cpp: Added.
+        (core):
+        (webkitAccessibleActionInterfaceInit):
+        (webkitAccessibleActionDoAction):
+        (webkitAccessibleActionGetNActions):
+        (webkitAccessibleActionGetDescription):
+        (webkitAccessibleActionGetKeybinding):
+        (webkitAccessibleActionGetName):
+        * accessibility/gtk/WebKitAccessibleInterfaceAction.h: Added.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Remove code
+        related to the implementation of the AtkAction interface.
+
+        Add new files to build files.
+
+        * GNUmakefile.list.am: Add WebKitAccessibleInterfaceAction.[h|cpp].
+        * WebCore.gypi: Ditto.
+
 2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVG animation repaint issue with image and dynamic clipPath
