@@ -953,7 +953,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, propertyName, slot, offset, returnAddress);
 }
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !ENABLE(CODE_PROFILING)
 
 extern "C" {
 

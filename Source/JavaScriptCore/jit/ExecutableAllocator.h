@@ -113,7 +113,7 @@ public:
     static void dumpProfile() { }
 #endif
 
-    PassRefPtr<ExecutableMemoryHandle> allocate(JSGlobalData&, size_t sizeInBytes);
+    PassRefPtr<ExecutableMemoryHandle> allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID);
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     static void makeWritable(void* start, size_t size)
@@ -129,7 +129,6 @@ public:
     static void makeWritable(void*, size_t) {}
     static void makeExecutable(void*, size_t) {}
 #endif
-
 
 #if CPU(X86) || CPU(X86_64)
     static void cacheFlush(void*, size_t)

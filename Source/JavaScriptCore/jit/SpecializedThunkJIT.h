@@ -134,7 +134,7 @@ namespace JSC {
         
         MacroAssemblerCodeRef finalize(JSGlobalData& globalData, MacroAssemblerCodePtr fallback)
         {
-            LinkBuffer patchBuffer(globalData, this);
+            LinkBuffer patchBuffer(globalData, this, GLOBAL_THUNK_ID);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);

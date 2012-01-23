@@ -1,3 +1,77 @@
+2012-01-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Implement a JIT-code aware sampling profiler for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=76855
+
+        Rubber stanmped by Geoff Garen.
+
+        Mechanical change - pass CodeBlock through to the executable allocator,
+        such that we will be able to map ranges of JIT code back to their owner.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::executableCopy):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::executableCopy):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::linkCode):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::executableCopy):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::executableCopy):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::executableCopy):
+        (JSC::X86Assembler::X86InstructionFormatter::executableCopy):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+
 2012-01-23  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Basic enhancements to StringBuilder

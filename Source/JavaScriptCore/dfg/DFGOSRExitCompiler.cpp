@@ -62,7 +62,7 @@ void compileOSRExit(ExecState* exec)
         
         exitCompiler.compileExit(exit, recovery);
         
-        LinkBuffer patchBuffer(*globalData, &jit);
+        LinkBuffer patchBuffer(*globalData, &jit, codeBlock);
         exit.m_code = patchBuffer.finalizeCode();
 
 #if DFG_ENABLE(DEBUG_VERBOSE)

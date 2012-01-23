@@ -66,7 +66,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
     
     jit.jump(MacroAssembler::AbsoluteAddress(&globalData->osrExitJumpDestination));
     
-    LinkBuffer patchBuffer(*globalData, &jit);
+    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
     
     patchBuffer.link(functionCall, compileOSRExit);
     

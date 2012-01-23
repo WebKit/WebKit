@@ -1513,9 +1513,9 @@ public:
         return reinterpret_cast<void*>(readPCrelativeAddress((*instructionPtr & 0xff), instructionPtr));
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
     {
-        return m_buffer.executableCopy(globalData);
+        return m_buffer.executableCopy(globalData, ownerUID);
     }
 
     void prefix(uint16_t pre)

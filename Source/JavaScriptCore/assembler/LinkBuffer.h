@@ -31,6 +31,9 @@
 #define DUMP_LINK_STATISTICS 0
 #define DUMP_CODE 0
 
+#define GLOBAL_THUNK_ID reinterpret_cast<void*>(static_cast<intptr_t>(-1))
+#define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
+
 #include <MacroAssembler.h>
 #include <wtf/Noncopyable.h>
 
@@ -69,7 +72,7 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm)
+    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, void* ownerUID)
         : m_size(0)
         , m_code(0)
         , m_assembler(masm)
@@ -78,7 +81,7 @@ public:
         , m_completed(false)
 #endif
     {
-        linkCode();
+        linkCode(ownerUID);
     }
 
     ~LinkBuffer()
@@ -173,10 +176,7 @@ public:
         return applyOffset(label.m_label).m_offset;
     }
 
-    // Upon completion of all patching either 'finalizeCode()' or 'finalizeCodeAddendum()' should be called
-    // once to complete generation of the code.  'finalizeCode()' is suited to situations
-    // where the executable pool must also be retained, the lighter-weight 'finalizeCodeAddendum()' is
-    // suited to adding to an existing allocation.
+    // Upon completion of all patching 'finalizeCode()' should be called once to complete generation of the code.
     CodeRef finalizeCode()
     {
         performFinalization();
@@ -210,18 +210,17 @@ private:
         return src;
     }
     
-    // Keep this private! - the underlying code should only be obtained externally via 
-    // finalizeCode() or finalizeCodeAddendum().
+    // Keep this private! - the underlying code should only be obtained externally via finalizeCode().
     void* code()
     {
         return m_code;
     }
 
-    void linkCode()
+    void linkCode(void* ownerUID)
     {
         ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
-        m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData);
+        m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData, ownerUID);
         if (!m_executableMemory)
             return;
         m_code = m_executableMemory->start();
@@ -229,7 +228,7 @@ private:
         ASSERT(m_code);
 #else
         size_t initialSize = m_assembler->m_assembler.codeSize();
-        m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, initialSize);
+        m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, initialSize, ownerUID);
         if (!m_executableMemory)
             return;
         m_code = (uint8_t*)m_executableMemory->start();

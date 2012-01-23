@@ -110,8 +110,10 @@ bool ExecutableAllocator::underMemoryPressure()
     return false;
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes)
+PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID)
 {
+    UNUSED_PARAM(ownerUID);
+
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
     if (!result)
         CRASH();

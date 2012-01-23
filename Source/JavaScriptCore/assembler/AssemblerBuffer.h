@@ -129,12 +129,12 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
         {
             if (!m_index)
                 return 0;
 
-            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index);
+            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index, ownerUID);
 
             if (!result)
                 return 0;

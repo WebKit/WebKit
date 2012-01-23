@@ -211,7 +211,7 @@ void JITCompiler::compile(JITCode& entry)
     SpeculativeJIT speculative(*this);
     compileBody(speculative);
 
-    LinkBuffer linkBuffer(*m_globalData, this);
+    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock);
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
 
@@ -271,7 +271,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
 
     // === Link ===
-    LinkBuffer linkBuffer(*m_globalData, this);
+    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock);
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
     

@@ -679,7 +679,7 @@ namespace JSC {
             return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData&);
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData&, void* ownerUID);
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }

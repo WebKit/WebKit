@@ -114,8 +114,10 @@ bool ExecutableAllocator::underMemoryPressure()
     return statistics.bytesAllocated > statistics.bytesReserved / 2;
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData& globalData, size_t sizeInBytes)
+PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData& globalData, size_t sizeInBytes, void* ownerUID)
 {
+    UNUSED_PARAM(ownerUID);
+
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
     if (!result) {
         releaseExecutableMemory(globalData);

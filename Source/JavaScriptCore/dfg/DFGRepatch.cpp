@@ -150,7 +150,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
     
-    LinkBuffer patchBuffer(*globalData, &stubJit);
+    LinkBuffer patchBuffer(*globalData, &stubJit, exec->codeBlock());
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     
@@ -201,7 +201,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
         
-        LinkBuffer patchBuffer(*globalData, &stubJit);
+        LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock);
         
         linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
         
@@ -380,7 +380,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             isDirect = true;
         }
 
-        LinkBuffer patchBuffer(*globalData, &stubJit);
+        LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock);
         
         CodeLocationLabel lastProtoBegin;
         if (listIndex)
@@ -606,7 +606,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             } else
                 success = stubJit.jump();
             
-            LinkBuffer patchBuffer(*globalData, &stubJit);
+            LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock);
             patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
             if (needToRestoreScratch)
                 patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));

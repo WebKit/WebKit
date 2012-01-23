@@ -2505,7 +2505,7 @@ public:
         backtrack();
 
         // Link & finalize the code.
-        LinkBuffer linkBuffer(*globalData, this);
+        LinkBuffer linkBuffer(*globalData, this, REGEXP_CODE_ID);
         m_backtrackingState.linkDataLabels(linkBuffer);
         if (m_charSize == Char8)
             jitObject.set8BitCode(linkBuffer.finalizeCode());

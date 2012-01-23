@@ -193,7 +193,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this);
+    LinkBuffer patchBuffer(*m_globalData, this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -492,7 +492,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this);
+    LinkBuffer patchBuffer(*m_globalData, this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
     return patchBuffer.finalizeCode();

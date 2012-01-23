@@ -614,7 +614,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     ASSERT(m_jmpTable.isEmpty());
 
-    LinkBuffer patchBuffer(*m_globalData, this);
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
