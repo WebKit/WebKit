@@ -1,3 +1,30 @@
+2012-01-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: IndexedDBModel should keep track of requests sent to the backend.
+        https://bugs.webkit.org/show_bug.cgi?id=76705
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel):
+        (WebInspector.IndexedDBModel.prototype._frameDetached):
+        (WebInspector.IndexedDBModel.prototype._reset):
+        (WebInspector.IndexedDBModel.prototype._loadDatabaseNamesForFrame):
+        (WebInspector.IndexedDBRequestManager):
+        (WebInspector.IndexedDBRequestManager.prototype.requestDatabaseNamesForFrame.innerCallback):
+        (WebInspector.IndexedDBRequestManager.prototype.requestDatabaseNamesForFrame):
+        (WebInspector.IndexedDBRequestManager.prototype._databaseNamesLoaded):
+        (WebInspector.IndexedDBRequestManager.prototype._requestId):
+        (WebInspector.IndexedDBRequestManager.prototype._frameDetached):
+        (WebInspector.IndexedDBRequestManager.prototype._reset):
+        (WebInspector.IndexedDBRequestManager.DatabasesForFrameRequest):
+        (WebInspector.IndexedDBDispatcher):
+        (WebInspector.IndexedDBDispatcher.prototype.databaseNamesLoaded):
+
 2012-01-23  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Inspecting an element inside an iframe no longer works

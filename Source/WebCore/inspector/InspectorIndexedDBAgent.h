@@ -60,7 +60,7 @@ public:
     // Called from the front-end.
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void requestDatabaseNamesForFrame(ErrorString*, const String& frameId);
+    void requestDatabaseNamesForFrame(ErrorString*, int requestId, const String& frameId);
 private:
     InspectorIndexedDBAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);
 

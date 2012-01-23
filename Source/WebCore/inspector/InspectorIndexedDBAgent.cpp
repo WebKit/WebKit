@@ -52,7 +52,7 @@
 
 #include <wtf/Vector.h>
 
-using WebCore::TypeBuilder::IndexedDB::FrameWithDatabaseNames;
+using WebCore::TypeBuilder::IndexedDB::SecurityOriginWithDatabaseNames;
 
 namespace WebCore {
 
@@ -96,9 +96,9 @@ public:
 
 class GetDatabaseNamesCallback : public InspectorIDBCallback {
 public:
-    static PassRefPtr<GetDatabaseNamesCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, const String& frameId, const String& securityOrigin)
+    static PassRefPtr<GetDatabaseNamesCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, int requestId, const String& securityOrigin)
     {
-        return adoptRef(new GetDatabaseNamesCallback(frontendProvider, frameId, securityOrigin));
+        return adoptRef(new GetDatabaseNamesCallback(frontendProvider, requestId, securityOrigin));
     }
 
     virtual ~GetDatabaseNamesCallback() { }
@@ -112,21 +112,20 @@ public:
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
             databaseNames->pushString(databaseNamesList->item(i));
 
-        RefPtr<FrameWithDatabaseNames> result = FrameWithDatabaseNames::create()
-            .setFrameId(m_frameId)
+        RefPtr<SecurityOriginWithDatabaseNames> result = SecurityOriginWithDatabaseNames::create()
             .setSecurityOrigin(m_securityOrigin)
             .setDatabaseNames(databaseNames);
 
-        m_frontendProvider->frontend()->databaseNamesLoaded(result);
+        m_frontendProvider->frontend()->databaseNamesLoaded(m_requestId, result);
     }
 
 private:
-    GetDatabaseNamesCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, const String& frameId, const String& securityOrigin)
+    GetDatabaseNamesCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, int requestId, const String& securityOrigin)
         : m_frontendProvider(frontendProvider)
-        , m_frameId(frameId)
+        , m_requestId(requestId)
         , m_securityOrigin(securityOrigin) { }
     RefPtr<InspectorIndexedDBAgent::FrontendProvider> m_frontendProvider;
-    String m_frameId;
+    int m_requestId;
     String m_securityOrigin;
 };
 
@@ -172,7 +171,7 @@ void InspectorIndexedDBAgent::disable(ErrorString*)
     m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, false);
 }
 
-void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* error, const String& frameId)
+void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* error, int requestId, const String& frameId)
 {
     Frame* frame = m_pageAgent->frameForId(frameId);
     Document* document = frame ? frame->document() : 0;
@@ -184,7 +183,7 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* error, c
         return;
     }
 
-    RefPtr<GetDatabaseNamesCallback> callback = GetDatabaseNamesCallback::create(m_frontendProvider, frameId, document->securityOrigin()->toString());
+    RefPtr<GetDatabaseNamesCallback> callback = GetDatabaseNamesCallback::create(m_frontendProvider, requestId, document->securityOrigin()->toString());
     GroupSettings* groupSettings = document->page()->group().groupSettings();
     idbBackend->getDatabaseNames(callback.get(), document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
 }
