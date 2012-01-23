@@ -13,4 +13,8 @@ layer at (0,0) size 800x600
 layer at (13,47) size 187x18
   RenderBlock {DIV} at (3,3) size 187x18
     RenderBR {BR} at (1,0) size 0x17
+layer at (13,47) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 85x17
+      text run at (1,0) width 85: "Placeholder"
 caret: position 0 of child 0 {BR} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {DIV} of body

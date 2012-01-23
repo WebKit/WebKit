@@ -12,6 +12,6 @@ layer at (0,0) size 800x40
 layer at (39,14) size 104x12
   RenderBlock {DIV} at (0,0) size 104x12
 layer at (39,14) size 104x12
-  RenderBlock (relative positioned) {DIV} at (29,4) size 104x12 [color=#A9A9A9]
+  RenderBlock {DIV} at (29,4) size 104x12 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 88x12
       text run at (1,0) width 88: "Search for Events"

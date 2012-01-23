@@ -29,37 +29,37 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 187x18
   RenderBlock {DIV} at (3,3) size 187x18
-layer at (214,31) size 171x18
-  RenderBlock {DIV} at (0,0) size 171x18
-layer at (415,31) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (13,59) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18 [color=#545454]
-layer at (214,59) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (415,59) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
 layer at (13,31) size 187x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 187x18 [color=#640000]
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#640000]
     RenderText {#text} at (1,0) size 26x17
       text run at (1,0) width 26: "text"
 layer at (214,31) size 171x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 171x18 [color=#640000]
+  RenderBlock {DIV} at (0,0) size 171x18
+layer at (214,31) size 171x18
+  RenderBlock {DIV} at (3,3) size 171x18 [color=#640000]
     RenderText {#text} at (1,0) size 49x17
       text run at (1,0) width 49: "search"
 layer at (415,31) size 187x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 187x18 [color=#640000]
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (415,31) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#640000]
     RenderText {#text} at (1,0) size 69x17
       text run at (1,0) width 69: "password"
 layer at (13,59) size 187x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 187x18 [color=#640000]
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#545454]
+layer at (13,59) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#640000]
     RenderText {#text} at (1,0) size 90x17
       text run at (1,0) width 90: "disabled text"
 layer at (214,59) size 187x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 187x18 [color=#A9A9A9]
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (214,59) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 49x17
       text run at (1,0) width 49: "default"
 layer at (415,59) size 187x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 187x18 [color=#A9A9A9]
+  RenderBlock {DIV} at (3,3) size 187x18
+layer at (415,59) size 187x18
+  RenderBlock {DIV} at (3,3) size 187x18 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 113x17
       text run at (1,0) width 113: "default disabled"

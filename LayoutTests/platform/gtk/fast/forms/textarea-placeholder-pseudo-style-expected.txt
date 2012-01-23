@@ -16,28 +16,24 @@ layer at (0,0) size 800x600
 layer at (10,28) size 202x42 clip at (11,29) size 200x40
   RenderTextControl {TEXTAREA} at (2,20) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x18
+    RenderBlock {DIV} at (3,3) size 196x18 [color=#640000]
+      RenderText {#text} at (0,0) size 26x17
+        text run at (0,0) width 26: "text"
 layer at (220,28) size 202x42 clip at (221,29) size 200x40
   RenderTextControl {TEXTAREA} at (212,20) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x18 [color=#545454]
+    RenderBlock {DIV} at (3,3) size 196x18 [color=#640000]
+      RenderText {#text} at (0,0) size 90x17
+        text run at (0,0) width 90: "disabled text"
 layer at (430,28) size 202x42 clip at (431,29) size 200x40
   RenderTextControl {TEXTAREA} at (422,20) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x18
+    RenderBlock {DIV} at (3,3) size 196x18 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 49x17
+        text run at (0,0) width 49: "default"
 layer at (10,78) size 202x42 clip at (11,79) size 200x40
   RenderTextControl {TEXTAREA} at (2,70) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x18 [color=#545454]
-layer at (13,31) size 196x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 196x18 [color=#640000]
-    RenderText {#text} at (0,0) size 26x17
-      text run at (0,0) width 26: "text"
-layer at (223,31) size 196x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 196x18 [color=#640000]
-    RenderText {#text} at (0,0) size 90x17
-      text run at (0,0) width 90: "disabled text"
-layer at (433,31) size 196x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 196x18 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 49x17
-      text run at (0,0) width 49: "default"
-layer at (13,81) size 196x18
-  RenderBlock (relative positioned) {DIV} at (3,3) size 196x18 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 113x17
-      text run at (0,0) width 113: "default disabled"
+    RenderBlock {DIV} at (3,3) size 196x18 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 113x17
+        text run at (0,0) width 113: "default disabled"
