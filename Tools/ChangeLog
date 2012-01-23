@@ -1,3 +1,21 @@
+2012-01-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't warn about override and final being C++11 extensions
+
+        Clang will emit a warning when these extensions are used without passing
+        --std=c++11, but we use feature checking to decide if we have the right
+        extensions, so we can safely ignore these warnings. The XCode and Windows
+        project files have the same workaround.
+
+        The reason for adding the flag to QMAKE_OBJECTIVE_CFLAGS as well is that
+        we only have one extra compiler for Objective-C, which is also used for
+        Objective-C++ sources, so we have to pass the flag, even if it doesn't
+        make sense for Objective-C.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Change how build-webkit decides when to do full incremental builds

@@ -19,6 +19,12 @@ linux-g++* {
     }
 }
 
+# Don't warn about OVERRIDE and FINAL, since they are feature-checked anyways
+*clang:!contains(QMAKE_CXXFLAGS, -std=c++11) {
+    QMAKE_CXXFLAGS += -Wno-c++11-extensions
+    QMAKE_OBJECTIVE_CFLAGS += -Wno-c++11-extensions
+}
+
 contains(TEMPLATE, app): CONFIG += rpath
 
 load(default_post)
