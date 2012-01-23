@@ -28,8 +28,12 @@
 #include "AffineTransform.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "SVGFilter.h"
+#include "SVGImageBufferTools.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGURIReference.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -37,19 +41,37 @@ namespace WebCore {
 FEImage::FEImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
     : FilterEffect(filter)
     , m_image(image)
+    , m_document(0)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
-PassRefPtr<FEImage> FEImage::create(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+FEImage::FEImage(Filter* filter, Document* document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
+    : FilterEffect(filter)
+    , m_document(document)
+    , m_href(href)
+    , m_preserveAspectRatio(preserveAspectRatio)
+{
+}
+
+PassRefPtr<FEImage> FEImage::createWithImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
 {
     return adoptRef(new FEImage(filter, image, preserveAspectRatio));
 }
 
+PassRefPtr<FEImage> FEImage::createWithIRIReference(Filter* filter, Document* document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
+{
+    return adoptRef(new FEImage(filter, document, href, preserveAspectRatio));
+}
+
 void FEImage::determineAbsolutePaintRect()
 {
-    ASSERT(m_image);
-    FloatRect srcRect(FloatPoint(), m_image->size());
+    FloatRect srcRect;
+    if (m_image)
+        srcRect.setSize(m_image->size());
+    else if (RenderObject* renderer = referencedRenderer())
+        srcRect = static_cast<SVGFilter*>(filter())->absoluteTransform().mapRect(renderer->repaintRectInLocalCoordinates());
+
     FloatRect paintRect(m_absoluteSubregion);
     m_preserveAspectRatio.transformRect(paintRect, srcRect);
     if (clipsToBounds())
@@ -59,14 +81,36 @@ void FEImage::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
+RenderObject* FEImage::referencedRenderer() const
+{
+    if (!m_document)
+        return 0;
+    Element* hrefElement = SVGURIReference::targetElementFromIRIString(m_href, m_document);
+    if (!hrefElement || !hrefElement->isSVGElement())
+        return 0;
+    return hrefElement->renderer();
+}
+
 void FEImage::platformApplySoftware()
 {
-    if (!m_image.get())
+    RenderObject* renderer = referencedRenderer();
+    if (!m_image && !renderer)
         return;
 
     ImageBuffer* resultImage = createImageBufferResult();
     if (!resultImage)
         return;
+
+    if (renderer) {
+        const AffineTransform& absoluteTransform = static_cast<SVGFilter*>(filter())->absoluteTransform();
+        resultImage->context()->concatCTM(absoluteTransform);
+
+        AffineTransform contentTransformation;
+        SVGImageBufferTools::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
+
+        resultImage->context()->concatCTM(absoluteTransform.inverse());
+        return;
+    }
 
     FloatRect srcRect(FloatPoint(), m_image->size());
     FloatRect destRect(m_absoluteSubregion);
@@ -84,8 +128,11 @@ void FEImage::dump()
 
 TextStream& FEImage::externalRepresentation(TextStream& ts, int indent) const
 {
-    ASSERT(m_image);
-    IntSize imageSize = m_image->size();
+    IntSize imageSize;
+    if (m_image)
+        imageSize = m_image->size();
+    else if (RenderObject* renderer = referencedRenderer())
+        imageSize = enclosingIntRect(renderer->repaintRectInLocalCoordinates()).size();
     writeIndent(ts, indent);
     ts << "[feImage";
     FilterEffect::externalRepresentation(ts);

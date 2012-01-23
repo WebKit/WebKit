@@ -33,7 +33,6 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
-#include "SVGImageBufferTools.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 
@@ -183,27 +182,9 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* fil
     if (!m_cachedImage && !m_targetImage)
         requestImageResource();
 
-    if (!m_cachedImage && !m_targetImage) {
-        Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
-        if (!hrefElement || !hrefElement->isSVGElement())
-            return 0;
-
-        RenderObject* renderer = hrefElement->renderer();
-        if (!renderer)
-            return 0;
-
-        IntRect targetRect = enclosingIntRect(renderer->objectBoundingBox());
-
-        if (targetRect.isEmpty())
-            return 0;
-
-        m_targetImage = ImageBuffer::create(targetRect.size(), ColorSpaceLinearRGB);
-
-        AffineTransform contentTransformation;
-        SVGImageBufferTools::renderSubtreeToImageBuffer(m_targetImage.get(), renderer, contentTransformation);
-    }
-
-    return FEImage::create(filter, m_targetImage ? m_targetImage->copyImage(CopyBackingStore) : m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
+    if (!m_cachedImage && !m_targetImage)
+        return FEImage::createWithIRIReference(filter, document(), href(), preserveAspectRatio());
+    return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

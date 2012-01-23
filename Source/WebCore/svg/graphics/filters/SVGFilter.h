@@ -41,7 +41,7 @@ public:
     virtual FloatRect filterRegion() const { return m_absoluteFilterRegion; }
 
     virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const { return m_absoluteTransform.inverse().mapPoint(point); }
-    FloatRect mapLocalRectToAbsoluteRect(const FloatRect& rect) const { return m_absoluteTransform.mapRect(rect); }
+    const AffineTransform& absoluteTransform() const { return m_absoluteTransform; }
 
     virtual float applyHorizontalScale(float value) const;
     virtual float applyVerticalScale(float value) const;

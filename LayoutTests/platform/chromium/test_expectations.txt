@@ -3923,6 +3923,11 @@ BUGWK76647 : svg/zoom/page/zoom-background-images.html = IMAGE
 // Just needs a rebaseline.
 BUGWK76780 : svg/filters/feImage-preserveAspectratio.svg = IMAGE+TEXT
 
+// Just needs a rebaseline.
+BUGWK76800 : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE
+BUGWK76800 : svg/filters/feImage-reference-invalidation.svg = IMAGE
+BUGWK76800 : svg/filters/feImage-reference-svg-primitive.svg = IMAGE
+
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
 BUG_CARYCLARK MAC : editing/deleting/delete-3959464-fix.html = IMAGE

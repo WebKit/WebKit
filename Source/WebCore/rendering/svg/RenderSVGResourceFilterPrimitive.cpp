@@ -91,7 +91,7 @@ FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(Fi
         subregion.setHeight(uniteRect.height());
     effect->setFilterPrimitiveSubregion(subregion);
 
-    FloatRect absoluteSubregion = filter->mapLocalRectToAbsoluteRect(subregion);
+    FloatRect absoluteSubregion = filter->absoluteTransform().mapRect(subregion);
     FloatSize filterResolution = filter->filterResolution();
     absoluteSubregion.scale(filterResolution.width(), filterResolution.height());
 

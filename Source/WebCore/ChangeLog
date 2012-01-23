@@ -1,5 +1,38 @@
 2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        <feImage> has problems referencing local elements
+        https://bugs.webkit.org/show_bug.cgi?id=76800
+
+        Reviewed by Zoltan Herczeg.
+
+        <feImage> referencing local elements are currently rendered into an ImageBuffer
+        by SVGFEImageElement, using the local coordinates of the referenced renderer.
+
+        This approach is buggy and should be avoided, by moving the rendering fully
+        into SVGFEImage, which takes care of respecting the correct transformations.
+
+        This fixes <feImage> + local references, which currently breaks two tests in trunk.
+        Covered by existing tests.
+
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::createWithImage):
+        (WebCore::FEImage::createWithIRIReference):
+        (WebCore::FEImage::determineAbsolutePaintRect):
+        (WebCore::FEImage::referencedRenderer):
+        (WebCore::FEImage::platformApplySoftware):
+        (WebCore::FEImage::externalRepresentation):
+        * svg/graphics/filters/SVGFEImage.h:
+        (WebCore::FEImage::~FEImage):
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::absoluteTransform):
+
+2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix Mac build, by exporting a new symbol.
 
         * WebCore.exp.in:
