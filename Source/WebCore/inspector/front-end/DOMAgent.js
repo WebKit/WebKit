@@ -399,6 +399,10 @@ WebInspector.DOMNode.prototype = {
      */
     _setChildrenPayload: function(payloads)
     {
+        // We set children in the constructor.
+        if (this._contentDocument)
+            return;
+
         this.children = [];
         for (var i = 0; i < payloads.length; ++i) {
             var payload = payloads[i];

@@ -1,3 +1,21 @@
+2012-01-23  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Inspecting an element inside an iframe no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=76808
+
+        Reviewed by Timothy Hatcher.
+
+        Test: http/tests/inspector/inspect-element.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::innerParentNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.getChildNodes.mycallback):
+        (WebInspector.DOMNode.prototype.getChildNodes):
+        (WebInspector.DOMNode.prototype._setChildrenPayload):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._selectedNodeChanged):
+
 2012-01-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: response.bodySize in HAR is invalid (negative) for cached resources

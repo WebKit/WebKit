@@ -184,7 +184,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _selectedNodeChanged: function()
     {
-        this._eventSupport.dispatchEventToListeners(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged);
+        this._eventSupport.dispatchEventToListeners(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedDOMNode);
     },
 
     findTreeElement: function(node)

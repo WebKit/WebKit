@@ -1251,6 +1251,10 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
+    if (node->isDocumentNode()) {
+        Document* document = static_cast<Document*>(node);
+        return document->ownerElement();
+    }
     return node->parentNode();
 }
 
