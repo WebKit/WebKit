@@ -26,13 +26,14 @@
 
 #include "cc/CCTiledLayerImpl.h"
 
-#include "Region.h"
+#include "CCLayerTestCommon.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCTileDrawQuad.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace CCLayerTestCommon;
 
 namespace {
 
@@ -146,15 +147,6 @@ TEST(CCTiledLayerImplTest, checkerboarding)
     }
 }
 
-static bool completelyContains(const Region& container, const IntRect& rect)
-{
-    Region tester(rect);
-    Vector<IntRect> rects = container.rects();
-    for (size_t i = 0; i < rects.size(); ++i)
-        tester.subtract(rects[i]);
-    return tester.isEmpty();
-}
-
 static void getQuads(CCQuadList& quads, IntSize tileSize, const IntSize& layerSize, CCLayerTilingData::BorderTexelOption borderTexelOption, const IntRect& visibleLayerRect)
 {
     RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, borderTexelOption);
@@ -163,24 +155,6 @@ static void getQuads(CCQuadList& quads, IntSize tileSize, const IntSize& layerSi
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     layer->appendQuads(quads, sharedQuadState.get());
-}
-
-// Align with expected and actual output
-static const char* quadString = "    Quad: ";
-
-static void verifyQuadsExactlyCoverRect(const CCQuadList& quads, const IntRect& rect)
-{
-    Region remaining(rect);
-
-    for (size_t i = 0; i < quads.size(); ++i) {
-        CCDrawQuad* quad = quads[i].get();
-
-        EXPECT_TRUE(rect.contains(quad->quadRect())) << quadString << i;
-        EXPECT_TRUE(completelyContains(remaining, quad->quadRect())) << quadString << i;
-        remaining.subtract(Region(quad->quadRect()));
-    }
-
-    EXPECT_TRUE(remaining.isEmpty());
 }
 
 // Test with both border texels and without.

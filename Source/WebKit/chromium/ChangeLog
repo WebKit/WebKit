@@ -1,3 +1,30 @@
+2012-01-23  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add WebSolidColorLayer interface to draw non-textured color layers from Aura.
+        https://bugs.webkit.org/show_bug.cgi?id=75732
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/platform/WebSolidColorLayer.h: Added.
+        * src/WebSolidColorLayer.cpp: Added.
+        (WebKit::WebSolidColorLayer::create):
+        (WebKit::WebSolidColorLayer::WebSolidColorLayer):
+        (WebKit::WebSolidColorLayer::setBackgroundColor):
+        * src/WebSolidColorLayerImpl.cpp: Added.
+        (WebKit::WebSolidColorLayerImpl::create):
+        (WebKit::WebSolidColorLayerImpl::WebSolidColorLayerImpl):
+        (WebKit::WebSolidColorLayerImpl::~WebSolidColorLayerImpl):
+        * src/WebSolidColorLayerImpl.h: Added.
+        * tests/CCLayerTestCommon.cpp: Added.
+        (CCLayerTestCommon::completelyContains):
+        (CCLayerTestCommon::verifyQuadsExactlyCoverRect):
+        * tests/CCLayerTestCommon.h: Added.
+        * tests/CCSolidColorLayerImplTest.cpp: Added.
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+
 2012-01-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: PageAgent.open() dosen't belong to the protocol.
