@@ -1,3 +1,18 @@
+2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] run-gtk-tests randomly fails while running the xprop comand
+        https://bugs.webkit.org/show_bug.cgi?id=76817
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No need to use xprop to remove the AT_SPI_BUS property since
+        run-gtk-tests will always run new instances of Xvfb.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip TestWebKitAccessibility.
+        (TestRunner.run): Uncomment lines for launching the accessibility
+        bus and registry daemon, and remove lines for running xprop.
+
 2012-01-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't warn about override and final being C++11 extensions
