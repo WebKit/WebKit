@@ -1,3 +1,10 @@
+2012-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files, remove deleted files and
+        fix indentation.
+
 2012-01-22  Filip Pizlo  <fpizlo@apple.com>
 
         Build fix for non-DFG platforms that error out on warn-unused-parameter.
