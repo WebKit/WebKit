@@ -11,6 +11,7 @@ BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = C
 
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 BUGWK76815 DEBUG : editing/inserting/4960120-2.html = CRASH
+BUGWK76815 DEBUG : editing/execCommand/19455.html = CRASH
 
 // Flaky tests
 
