@@ -259,13 +259,13 @@ TEST(StringBuilderTest, ToAtomicString)
     for (int i = builder.length(); i < 128; i++)
         builder.append('x');
     AtomicString atomicString1 = builder.toAtomicString();
-    ASSERT_EQ(128, atomicString1.length());
+    ASSERT_EQ(128u, atomicString1.length());
     ASSERT_EQ('x', atomicString1[127]);
 
     // Later change of builder should not affect the atomic string.
     for (int i = builder.length(); i < 256; i++)
         builder.append('x');
-    ASSERT_EQ(128, atomicString1.length());
+    ASSERT_EQ(128u, atomicString1.length());
 
     ASSERT_FALSE(builder.canShrink());
     String string = builder.toString();

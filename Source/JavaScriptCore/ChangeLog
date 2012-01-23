@@ -1,3 +1,9 @@
+2012-01-23  Andy Estes  <aestes@apple.com>
+
+        Fix the build after r105635.
+
+        * JavaScriptCore.exp:
+
 2012-01-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove StackBounds from JSGlobalData
