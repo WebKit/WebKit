@@ -1,3 +1,28 @@
+2012-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests ignore Skipped list on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=76764
+
+        Reviewed by Dirk Pranke.
+
+        Move skipped_perf_tests from WebKit port to Base port so that Chromium port
+        can also find skipped list. Chromium port only uses test_expectations.txt for
+        layout tests but performacne tests don't use test_expectations.txt so Chromium port
+        also needs to use Skipped list.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._tests_from_skipped_file_contents):
+        (Port):
+        (Port._expectations_from_skipped_files):
+        (Port.skipped_perf_tests):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_skipped_perf_tests):
+        (PortTest.test_skipped_perf_tests.add_text_file):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._skipped_tests_for_unsupported_features):
+        (WebKitPort._skipped_file_search_paths):
+        (WebKitPort.skipped_layout_tests):
+
 2012-01-23  Andy Estes  <aestes@apple.com>
 
         Fix the build after r105635.

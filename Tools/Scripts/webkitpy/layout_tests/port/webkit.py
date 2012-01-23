@@ -322,16 +322,6 @@ class WebKitPort(Port):
         # Failed to get any runtime or symbol information, don't skip any tests.
         return []
 
-    def _tests_from_skipped_file_contents(self, skipped_file_contents):
-        tests_to_skip = []
-        for line in skipped_file_contents.split('\n'):
-            line = line.strip()
-            line = line.rstrip('/')  # Best to normalize directory names to not include the trailing slash.
-            if line.startswith('#') or not len(line):
-                continue
-            tests_to_skip.append(line)
-        return tests_to_skip
-
     def _wk2_port_name(self):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc.
         return "%s-wk2" % self.port_name
@@ -351,18 +341,6 @@ class WebKitPort(Port):
             search_paths.update([self._wk2_port_name(), "wk2"])
         return search_paths
 
-    def _expectations_from_skipped_files(self, skipped_file_paths):
-        tests_to_skip = []
-        for search_path in skipped_file_paths:
-            filename = self._filesystem.join(self._webkit_baseline_path(search_path), "Skipped")
-            if not self._filesystem.exists(filename):
-                _log.debug("Skipped does not exist: %s" % filename)
-                continue
-            _log.debug("Using Skipped file: %s" % filename)
-            skipped_file_contents = self._filesystem.read_text_file(filename)
-            tests_to_skip.extend(self._tests_from_skipped_file_contents(skipped_file_contents))
-        return tests_to_skip
-
     def test_expectations(self):
         # This allows ports to use a combination of test_expectations.txt files and Skipped lists.
         expectations = ''
@@ -379,10 +357,6 @@ class WebKitPort(Port):
         tests_to_skip.update(self._tests_for_other_platforms())
         tests_to_skip.update(self._skipped_tests_for_unsupported_features())
         return tests_to_skip
-
-    @memoized
-    def skipped_perf_tests(self):
-        return self._expectations_from_skipped_files([self.perf_tests_dir()])
 
     def skipped_tests(self):
         return self.skipped_layout_tests()

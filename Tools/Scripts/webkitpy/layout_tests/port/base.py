@@ -574,8 +574,31 @@ class Port(object):
     def skipped_layout_tests(self):
         return []
 
+    def _tests_from_skipped_file_contents(self, skipped_file_contents):
+        tests_to_skip = []
+        for line in skipped_file_contents.split('\n'):
+            line = line.strip()
+            line = line.rstrip('/')  # Best to normalize directory names to not include the trailing slash.
+            if line.startswith('#') or not len(line):
+                continue
+            tests_to_skip.append(line)
+        return tests_to_skip
+
+    def _expectations_from_skipped_files(self, skipped_file_paths):
+        tests_to_skip = []
+        for search_path in skipped_file_paths:
+            filename = self._filesystem.join(self._webkit_baseline_path(search_path), "Skipped")
+            if not self._filesystem.exists(filename):
+                _log.debug("Skipped does not exist: %s" % filename)
+                continue
+            _log.debug("Using Skipped file: %s" % filename)
+            skipped_file_contents = self._filesystem.read_text_file(filename)
+            tests_to_skip.extend(self._tests_from_skipped_file_contents(skipped_file_contents))
+        return tests_to_skip
+
+    @memoized
     def skipped_perf_tests(self):
-        return []
+        return self._expectations_from_skipped_files([self.perf_tests_dir()])
 
     def skipped_tests(self):
         return []
