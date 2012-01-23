@@ -1,3 +1,9 @@
+2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix Mac build, by exporting a new symbol.
+
+        * WebCore.exp.in:
+
 2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Refactor GTK's accessibilitity code to be more modular
