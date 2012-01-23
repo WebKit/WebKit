@@ -2070,14 +2070,9 @@ sub buildQMakeProjects
 
     my %defines = qtFeatureDefaults(\@buildArgs);
 
-    my $pathToBuildHint = File::Spec->catfile(sourceDir(), "Tools", "qmake", ".build-hint");
-    my $buildHint = "";
-    if (-e $pathToBuildHint && open(BUILDHINT, $pathToBuildHint)) {
-        chomp($buildHint = <BUILDHINT>);
-        close(BUILDHINT);
-    }
+    my $svnRevision = currentSVNRevision();
 
-    my $needsCleanBuild = 0;
+    my $buildHint = "";
 
     my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
     my $pathToOldDefinesFile = File::Spec->catfile($dir, "defaults.txt");
@@ -2085,39 +2080,55 @@ sub buildQMakeProjects
     # Ease transition to new build layout
     if (-e $pathToOldDefinesFile) {
         print "Old build layout detected";
-        $needsCleanBuild = 1;
+        $buildHint = "clean";
     } elsif (-e $pathToDefinesCache && open(DEFAULTS, $pathToDefinesCache)) {
         my %previousDefines;
         while (<DEFAULTS>) {
-            if ($_ =~ m/(\S+?)=(\S+?)/gi) {
+            if ($_ =~ m/(\S+)=(\S+)/gi) {
                 $previousDefines{$1} = $2;
             }
         }
         close (DEFAULTS);
 
+        $previousDefines{"SVN_REVISION"} = "unknown" if not exists $previousDefines{"SVN_REVISION"};
+
+        if ($svnRevision ne $previousDefines{"SVN_REVISION"}) {
+            print "Last built revision was " . $previousDefines{"SVN_REVISION"} .
+                ", now at revision $svnRevision. Full incremental build needed.\n";
+
+            $buildHint = "incremental";
+        }
+
+        # Don't confuse the should-we-clean heuristics below
+        delete($previousDefines{"SVN_REVISION"});
+
         my @uniqueDefineNames = keys %{ +{ map { $_, 1 } (keys %defines, keys %previousDefines) } };
         foreach my $define (@uniqueDefineNames) {
             if (! exists $previousDefines{$define}) {
                 print "Feature $define added";
-                $needsCleanBuild = 1;
+                $buildHint = "clean";
                 last;
             }
 
             if (! exists $defines{$define}) {
                 print "Feature $define removed";
-                $needsCleanBuild = 1;
+                $buildHint = "clean";
                 last;
             }
 
             if ($defines{$define} != $previousDefines{$define}) {
                 print "Feature $define changed ($previousDefines{$define} -> $defines{$define})";
-                $needsCleanBuild = 1;
+                $buildHint = "clean";
                 last;
             }
         }
+    } else {
+        # Missing build cache suggests we had a broken build after a clean,
+        # so we assume we have to do an incremental build just in case.
+        $buildHint = "incremental";
     }
 
-    if ($needsCleanBuild) {
+    if ($buildHint eq "clean") {
         print ", clean build needed!\n";
         # FIXME: This STDIN/STDOUT check does not work on the bots. Disable until it does.
         # if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
@@ -2131,13 +2142,6 @@ sub buildQMakeProjects
             qtFeatureDefaults(\@buildArgs);
         #}
     }
-
-    open(DEFAULTS, ">$pathToDefinesCache");
-    print DEFAULTS "# These defines were set when building WebKit last time\n";
-    foreach my $key (sort keys %defines) {
-        print DEFAULTS "$key=$defines{$key}\n";
-    }
-    close(DEFAULTS);
 
     my $result = 0;
 
@@ -2160,13 +2164,9 @@ sub buildQMakeProjects
     my $command = "$make $makeargs";
     $command =~ s/\s+$//;
 
-    # FIXME: Until the bots use update-webkit instead of raw SVN, we
-    # need to force the build-hint to 'incremental' :(
-    $buildHint = "incremental";
-
     if ($clean) {
         $command = "$command distclean";
-    } elsif ($buildHint =~ /^incremental$/) {
+    } elsif ($buildHint eq "incremental") {
         $command = "$command incremental";
     }
 
@@ -2175,7 +2175,38 @@ sub buildQMakeProjects
 
     chdir ".." or die;
 
-    unlink($pathToBuildHint) || die "Could not delete $pathToBuildHint: $!" if -e $pathToBuildHint && $result eq 0;
+    if ($result eq 0) {
+        $defines{"SVN_REVISION"} = $svnRevision;
+        open(DEFAULTS, ">$pathToDefinesCache");
+        print DEFAULTS "# These defines were set when building WebKit last time\n";
+        foreach my $key (sort keys %defines) {
+            print DEFAULTS "$key=$defines{$key}\n";
+        }
+        close(DEFAULTS);
+    } elsif ($buildHint eq "" && exitStatus($result)) {
+        my $exitCode = exitStatus($result);
+        my $failMessage = <<EOF;
+
+===== BUILD FAILED ======
+
+The build failed with exit code $exitCode. This may have been because you
+
+  - added an #include to a source/header
+  - added a Q_OBJECT macro to a class
+  - added a new resource to a qrc file
+
+as dependencies are not automatically re-computed for local developer builds.
+You may try computing dependencies manually by running 'make qmake' in:
+
+  $dir
+
+or passing --makeargs="qmake" to build-webkit.
+
+=========================
+
+EOF
+        print "$failMessage";
+    }
 
     return $result;
 }

@@ -1,3 +1,26 @@
+2012-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Change how build-webkit decides when to do full incremental builds
+
+        Instead of relying on update-webkit (which isn't run on the bots) to
+        decide when to do a full incremental build (make qmake), we let the
+        build-webkit script itself check the current SVN revision against the
+        previous build (by storing it in .webkit.config).
+
+        If the two differ we assume a full incremental build is needed, since
+        the new revisions might have introduced problematic things like new
+        Q_OBJECT macros. If not, we assume the developer is doing changes
+        locally, and revert to doing a plain 'make'.
+
+        In addition, when the build fails in the latter case, we inform the
+        developer of possible pitfalls and how to manually run 'make qmake'.
+
+        Reviewed by Ossy.
+
+        * Scripts/update-webkit:
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-01-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] run-gtk-tests randomly fails while running the xprop comand

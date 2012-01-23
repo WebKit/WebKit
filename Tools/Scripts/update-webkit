@@ -83,8 +83,6 @@ if ($useMake) {
 
 my $startTime = time();
 
-my $initialRevision = currentSVNRevision();
-
 my @svnOptions = ();
 push @svnOptions, '-q' if $quiet;
 
@@ -94,9 +92,6 @@ push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 print "Updating OpenSource\n" unless $quiet;
 runSvnUpdate() if isSVN();
 runGitUpdate() if isGit();
-
-# The update might have given us a new revision
-determineCurrentSVNRevision();
 
 if (-d "../Internal") {
     chdir("../Internal");
@@ -120,13 +115,6 @@ if (-d "../Internal") {
     if (isWinCairo()) {
         # WinCairo shares the auxiliary libs from the Apple port.
         system("perl", "Tools/Scripts/update-webkit-wincairo-libs") == 0 or die;
-    }
-} elsif (isQt()) {
-    if (currentSVNRevision() ne $initialRevision) {
-        my $hintFile = File::Spec->catfile(sourceDir(), "Tools", "qmake", ".build-hint");
-        open(HINTFILE, ">$hintFile") || die("Could not open $hintFile for writing!\n");
-        print HINTFILE "incremental\n";
-        close(HINTFILE);
     }
 }
 
