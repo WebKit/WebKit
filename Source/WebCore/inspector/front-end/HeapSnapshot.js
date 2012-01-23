@@ -1148,6 +1148,12 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter));
     },
 
+    createRetainingEdgesProvider: function(nodeIndex, filter)
+    {
+        var node = new WebInspector.HeapSnapshotNode(this, nodeIndex);
+        return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter), node.retainers);
+    },
+
     createNodesProvider: function(filter)
     {
         return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter));
@@ -1301,11 +1307,12 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator = fu
     return {fieldName1:fieldNames[0], ascending1:fieldNames[1], fieldName2:fieldNames[2], ascending2:fieldNames[3]};
 }
 
-WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter)
+WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter, iter)
 {
     this.snapshot = snapshot;
     var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex);
-    WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, new WebInspector.HeapSnapshotEdgeIterator(new WebInspector.HeapSnapshotEdge(snapshot, node.rawEdges)), filter);
+    var edgesIter = iter || new WebInspector.HeapSnapshotEdgeIterator(new WebInspector.HeapSnapshotEdge(snapshot, node.rawEdges));
+    WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, edgesIter, filter);
 }
 
 WebInspector.HeapSnapshotEdgesProvider.prototype = {

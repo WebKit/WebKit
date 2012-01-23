@@ -110,7 +110,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                         continue;
                     }
                 }
-                this.insertChild(this._createChildNode(item, provider), atIndex++);
+                this.insertChild(this._createChildNode(item, provider, this), atIndex++);
             }
             provider.instanceCount += items.length;
             if (part < howMany) {
@@ -335,7 +335,7 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge)
     this._referenceName = edge.name;
     this._referenceType = edge.type;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
-    this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex);
+    this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex, tree);
     this._updateHasChildren();
 }
 
@@ -345,15 +345,17 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
         return new WebInspector.HeapSnapshotObjectNode(this.dataGrid, this._isFromBaseSnapshot, item);
     },
 
-    _createProvider: function(snapshot, nodeIndex)
+    _createProvider: function(snapshot, nodeIndex, tree)
     {
         var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
-        return snapshot.createEdgesProvider(
-            nodeIndex,
-            "function(edge) {" +
+        var filter = "function(edge) {" +
             "    return !edge.isInvisible" +
             "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
-            "}");
+            "}";
+        if (tree.showRetainingEdges)
+            return snapshot.createRetainingEdgesProvider(nodeIndex, filter);
+        else
+            return snapshot.createEdgesProvider(nodeIndex, filter);
     },
 
     _childHashForEntity: function(edge)

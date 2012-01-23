@@ -325,6 +325,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return this.callFactoryMethod(null, "createEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
     },
 
+    createRetainingEdgesProvider: function(nodeIndex, filter)
+    {
+        return this.callFactoryMethod(null, "createRetainingEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
+    },
+
     createNodesProvider: function(filter)
     {
         return this.callFactoryMethod(null, "createNodesProvider", "WebInspector.HeapSnapshotProviderProxy", filter);
