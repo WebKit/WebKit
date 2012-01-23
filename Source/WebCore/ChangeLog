@@ -1,3 +1,29 @@
+2012-01-23  Andreas Kling  <awesomekling@apple.com>
+
+        Move m_rootEditableElementForSelectionOnMouseDown off of HTMLAnchorElement.
+        <http://webkit.org/b/76833>
+
+        Reviewed by Antti Koivisto.
+
+        Move HTMLAnchorElement::m_rootEditableElementForSelectionOnMouseDown to a rare
+        data-style hashmap, effectively shrinking HTMLAnchorElement by one CPU word.
+
+        The pointer is only used during interactive event handling, so it shouldn't have
+        any noticeable effects on web performance.
+
+        This reduces memory consumption by 256 kB (on 64-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::~HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::treatLinkAsLiveForEventType):
+        (WebCore::rootEditableElementMap):
+        (WebCore::HTMLAnchorElement::rootEditableElementForSelectionOnMouseDown):
+        (WebCore::HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown):
+        * html/HTMLAnchorElement.h:
+
 2012-01-23  Antti Koivisto  <antti@apple.com>
 
         Eliminate CSSElementStyleDeclaration subclasses

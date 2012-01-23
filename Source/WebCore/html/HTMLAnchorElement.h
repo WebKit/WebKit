@@ -58,6 +58,8 @@ public:
     static PassRefPtr<HTMLAnchorElement> create(Document*);
     static PassRefPtr<HTMLAnchorElement> create(const QualifiedName&, Document*);
 
+    virtual ~HTMLAnchorElement();
+
     KURL href() const;
     void setHref(const AtomicString&);
 
@@ -133,9 +135,13 @@ private:
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
 
-    RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
+    Element* rootEditableElementForSelectionOnMouseDown() const;
+    void setRootEditableElementForSelectionOnMouseDown(Element*);
+    void clearRootEditableElementForSelectionOnMouseDown();
+
+    bool m_hasRootEditableElementForSelectionOnMouseDown : 1;
     bool m_wasShiftKeyDownOnMouseDown : 1;
-    uint32_t m_linkRelations : 31;
+    uint32_t m_linkRelations : 30;
     mutable LinkHash m_cachedVisitedLinkHash;
 };
 
