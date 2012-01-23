@@ -53,7 +53,8 @@ PassRefPtr<DataTransferItemListChromium> DataTransferItemListChromium::create(Pa
 }
 
 DataTransferItemListChromium::DataTransferItemListChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : DataTransferItemList(owner, context)
+    : m_owner(owner)
+    , m_context(context)
 {
 }
 

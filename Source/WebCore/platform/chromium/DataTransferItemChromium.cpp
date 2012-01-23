@@ -53,40 +53,44 @@ PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromPastebo
     return adoptRef(new DataTransferItemChromium(owner, context, PasteboardSource, DataTransferItem::kindFile, type, ""));
 }
 
-PassRefPtr<DataTransferItem> DataTransferItem::create(PassRefPtr<Clipboard> owner,
-                                                      ScriptExecutionContext* context,
-                                                      const String& data,
-                                                      const String& type)
+PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::create(PassRefPtr<Clipboard> owner,
+                                                                      ScriptExecutionContext* context,
+                                                                      const String& data,
+                                                                      const String& type)
 {
     return adoptRef(new DataTransferItemChromium(owner, context, DataTransferItemChromium::InternalSource, kindString, type, data));
 }
 
-PassRefPtr<DataTransferItem> DataTransferItem::create(PassRefPtr<Clipboard> owner,
-                                                      ScriptExecutionContext* context,
-                                                      PassRefPtr<File> file)
+PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::create(PassRefPtr<Clipboard> owner,
+                                                                      ScriptExecutionContext* context,
+                                                                      PassRefPtr<File> file)
 {
     return adoptRef(new DataTransferItemChromium(owner, context, DataTransferItemChromium::InternalSource, file));
 }
 
 DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, DataSource source, const String& kind, const String& type, const String& data)
-    : DataTransferItem(owner, kind, type)
-    , m_context(context)
+    : m_context(context)
+    , m_owner(owner)
+    , m_kind(kind)
+    , m_type(type)
     , m_source(source)
     , m_data(data)
 {
 }
 
 DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, DataSource source, PassRefPtr<File> file)
-    : DataTransferItem(owner, DataTransferItem::kindFile, file.get() ? file->type() : String())
-    , m_context(context)
+    : m_context(context)
+    , m_owner(owner)
+    , m_kind(kindFile)
+    , m_type(file.get() ? file->type() : String())
     , m_source(source)
     , m_file(file)
 {
 }
 
-void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
+void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback) const
 {
-    if ((owner()->policy() != ClipboardReadable && owner()->policy() != ClipboardWritable)
+    if ((m_owner->policy() != ClipboardReadable && m_owner->policy() != ClipboardWritable)
         || kind() != kindString)
         return;
 
@@ -116,7 +120,7 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
     ASSERT_NOT_REACHED();
 }
 
-PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
+PassRefPtr<Blob> DataTransferItemChromium::getAsFile() const
 {
     if (kind() != kindFile || clipboardChromium()->storageHasUpdated())
         return 0;
@@ -146,9 +150,9 @@ PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
     return 0;
 }
 
-ClipboardChromium* DataTransferItemChromium::clipboardChromium()
+ClipboardChromium* DataTransferItemChromium::clipboardChromium() const
 {
-    return static_cast<ClipboardChromium*>(owner());
+    return static_cast<ClipboardChromium*>(m_owner.get());
 }
 
 } // namespace WebCore

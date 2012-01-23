@@ -4662,7 +4662,6 @@ dom_binding_idls += \
 webcore_sources += \
 	Source/WebCore/dom/DataTransferItem.cpp \
 	Source/WebCore/dom/DataTransferItem.h \
-	Source/WebCore/dom/DataTransferItemList.cpp \
 	Source/WebCore/dom/DataTransferItemList.h \
 	Source/WebCore/dom/StringCallback.cpp \
 	Source/WebCore/dom/StringCallback.h

@@ -31,43 +31,12 @@
 #include "config.h"
 #include "DataTransferItem.h"
 
-#include "Clipboard.h"
-
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
 namespace WebCore {
 
 const char DataTransferItem::kindString[] = "string";
 const char DataTransferItem::kindFile[] = "file";
-
-DataTransferItem::DataTransferItem(PassRefPtr<Clipboard> owner, const String& kind, const String& type)
-    : m_owner(owner)
-    , m_kind(kind)
-    , m_type(type)
-{
-}
-
-Clipboard* DataTransferItem::owner()
-{
-    return m_owner.get();
-}
-
-String DataTransferItem::kind() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return String();
-
-    return m_kind;
-}
-
-String DataTransferItem::type() const
-{
-    if (m_owner->policy() == ClipboardNumb)
-        return String();
-
-    return m_type;
-}
-
 
 } // namespace WebCore
 

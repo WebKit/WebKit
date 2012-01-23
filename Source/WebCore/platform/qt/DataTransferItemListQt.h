@@ -42,11 +42,24 @@ class DataTransferItemListQt : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListQt> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
+    virtual size_t length();
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    virtual void deleteItem(unsigned long index, ExceptionCode&);
+    virtual void clear();
+    virtual void add(const String& data, const String& type, ExceptionCode&);
+    virtual void add(PassRefPtr<File>);
+
+
     friend class ClipboardQt;
 private:
     DataTransferItemListQt(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
     virtual void addPasteboardItem(const String& type);
+
+    RefPtr<Clipboard> m_owner;
+    // Indirectly owned by our parent.
+    ScriptExecutionContext* m_context;
+    Vector<RefPtr<DataTransferItem> > m_items;
 };
 
 }

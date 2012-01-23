@@ -3014,7 +3014,6 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
         platform/qt/DataTransferItemListQt.h
     SOURCES += \
         dom/DataTransferItem.cpp \
-        dom/DataTransferItemList.cpp \
         dom/StringCallback.cpp \
         platform/qt/DataTransferItemQt.cpp \
         platform/qt/DataTransferItemListQt.cpp

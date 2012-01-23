@@ -1,3 +1,58 @@
+2012-01-23  Daniel Cheng  <dcheng@chromium.org>
+
+        Convert DataTransferItem/DataTransferItemList back into an interface class
+        https://bugs.webkit.org/show_bug.cgi?id=76856
+
+        When Qt implemented the DataTransferItemList, a lot of logic was moved into the shared
+        classes since Chromium/Qt happened to implement it the same way. Now that I want to do some
+        refactoring/cleanup work to better implement DataTransferItemList in Chromium, we won't
+        share the same data anymore so it doesn't make sense to keep that code in a common location.
+
+        Reviewed by David Levin.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransferItem.cpp:
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItemList.cpp: Removed.
+        * dom/DataTransferItemList.h:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::mayUpdateItems):
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::create):
+        (WebCore::DataTransferItemChromium::DataTransferItemChromium):
+        (WebCore::DataTransferItemChromium::getAsString):
+        (WebCore::DataTransferItemChromium::getAsFile):
+        (WebCore::DataTransferItemChromium::clipboardChromium):
+        * platform/chromium/DataTransferItemChromium.h:
+        (WebCore::DataTransferItemChromium::kind):
+        (WebCore::DataTransferItemChromium::type):
+        * platform/chromium/DataTransferItemListChromium.cpp:
+        (WebCore::DataTransferItemListChromium::DataTransferItemListChromium):
+        * platform/chromium/DataTransferItemListChromium.h:
+        * platform/qt/DataTransferItemListQt.cpp:
+        (WebCore::DataTransferItemListQt::DataTransferItemListQt):
+        (WebCore::DataTransferItemListQt::length):
+        (WebCore::DataTransferItemListQt::item):
+        (WebCore::DataTransferItemListQt::deleteItem):
+        (WebCore::DataTransferItemListQt::clear):
+        (WebCore::DataTransferItemListQt::add):
+        * platform/qt/DataTransferItemListQt.h:
+        * platform/qt/DataTransferItemQt.cpp:
+        (WebCore::DataTransferItemQt::create):
+        (WebCore::DataTransferItemQt::DataTransferItemQt):
+        (WebCore::DataTransferItemQt::getAsString):
+        (WebCore::DataTransferItemQt::getAsFile):
+        * platform/qt/DataTransferItemQt.h:
+        (WebCore::DataTransferItemQt::kind):
+        (WebCore::DataTransferItemQt::type):
+
 2012-01-23  Andreas Kling  <awesomekling@apple.com>
 
         Unreviewed buildfix for ENABLE(MUTATION_OBSERVERS) following r105642.

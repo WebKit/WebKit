@@ -1498,7 +1498,6 @@ IF (ENABLE_DATA_TRANSFER_ITEMS)
     )
     LIST(APPEND WebCore_SOURCES
         dom/DataTransferItem.cpp
-        dom/DataTransferItemList.cpp
         dom/StringCallback.cpp
     )
 ENDIF ()

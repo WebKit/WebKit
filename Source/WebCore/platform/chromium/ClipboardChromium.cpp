@@ -375,17 +375,17 @@ void ClipboardChromium::mayUpdateItems(Vector<RefPtr<DataTransferItem> >& items)
     bool success = false;
     String plainText = m_dataObject->getData(mimeTypeTextPlain, success);
     if (success)
-        items.append(DataTransferItem::create(this, scriptExecutionContext, plainText, mimeTypeTextPlain));
+        items.append(DataTransferItemChromium::create(this, scriptExecutionContext, plainText, mimeTypeTextPlain));
 
     success = false;
     String htmlText = m_dataObject->getData(mimeTypeTextHTML, success);
     if (success)
-        items.append(DataTransferItem::create(this, scriptExecutionContext, htmlText, mimeTypeTextHTML));
+        items.append(DataTransferItemChromium::create(this, scriptExecutionContext, htmlText, mimeTypeTextHTML));
 
     if (m_dataObject->containsFilenames()) {
         const Vector<String>& filenames = m_dataObject->filenames();
         for (Vector<String>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
-            items.append(DataTransferItem::create(this, scriptExecutionContext, File::create(*it)));
+            items.append(DataTransferItemChromium::create(this, scriptExecutionContext, File::create(*it)));
     }
     m_dragStorageUpdated = false;
 }

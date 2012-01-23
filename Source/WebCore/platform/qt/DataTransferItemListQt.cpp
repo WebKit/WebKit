@@ -40,8 +40,71 @@ PassRefPtr<DataTransferItemListQt> DataTransferItemListQt::create(PassRefPtr<Cli
 }
 
 DataTransferItemListQt::DataTransferItemListQt(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : DataTransferItemList(owner,  context)
+    : m_owner(clipboard)
+    , m_context(context)
 {
+}
+
+size_t DataTransferItemListQt::length()
+{
+    if (m_owner->policy() == ClipboardNumb)
+        return 0;
+
+    return m_items.size();
+}
+
+PassRefPtr<DataTransferItem> DataTransferItemListQt::item(unsigned long index)
+{
+    if (m_owner->policy() == ClipboardNumb || index >= length())
+        return 0;
+
+    return m_items[index];
+}
+
+void DataTransferItemListQt::deleteItem(unsigned long index, ExceptionCode& ec)
+{
+    if (m_owner->policy() != ClipboardWritable) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (index >= length())
+        return;
+
+    m_items.remove(index);
+}
+
+void DataTransferItemListQt::clear()
+{
+    if (m_owner->policy() != ClipboardWritable)
+        return;
+
+    m_items.clear();
+
+}
+
+void DataTransferItemListQt::add(const String& data, const String& type, ExceptionCode& ec)
+{
+    if (m_owner->policy() != ClipboardWritable)
+        return;
+
+    // Only one 'string' item with a given type is allowed in the collection.
+    for (size_t i = 0; i < m_items.size(); ++i) {
+        if (m_items[i]->type() == type && m_items[i]->kind() == DataTransferItem::kindString) {
+            ec = NOT_SUPPORTED_ERR;
+            return;
+        }
+    }
+
+    m_items.append(DataTransferItem::create(m_owner, m_context, data, type));
+}
+
+void DataTransferItemListQt::add(PassRefPtr<File> file)
+{
+    if (m_owner->policy() != ClipboardWritable || !file)
+        return;
+
+    m_items.append(DataTransferItem::create(m_owner, m_context, file));
 }
 
 void DataTransferItemListQt::addPasteboardItem(const String& type)

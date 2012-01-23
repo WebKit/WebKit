@@ -46,25 +46,32 @@ class ScriptExecutionContext;
 
 class DataTransferItemChromium : public DataTransferItem {
 public:
+    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, PassRefPtr<File>);
     static PassRefPtr<DataTransferItemChromium> createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& type);
 
-    virtual void getAsString(PassRefPtr<StringCallback>);
-    virtual PassRefPtr<Blob> getAsFile();
+    virtual String kind() const { return m_kind; }
+    virtual String type() const { return m_type; }
+    virtual void getAsString(PassRefPtr<StringCallback>) const;
+    virtual PassRefPtr<Blob> getAsFile() const;
 
 private:
+    friend class DataTransferItemListChromium;
+
     enum DataSource {
         PasteboardSource,
         InternalSource,
     };
 
-    friend class DataTransferItem;
-
     DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, const String& kind, const String& type, const String& data);
     DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, PassRefPtr<File>);
 
-    ClipboardChromium* clipboardChromium();
+    ClipboardChromium* clipboardChromium() const;
 
     ScriptExecutionContext* m_context;
+    const RefPtr<Clipboard> m_owner;
+    const String m_kind;
+    const String m_type;
     const DataSource m_source;
     const String m_data;
     RefPtr<File> m_file;

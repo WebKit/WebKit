@@ -39,19 +39,24 @@ class ScriptExecutionContext;
 
 class DataTransferItemQt : public DataTransferItem {
 public:
+    static PassRefPtr<DataTransferItemQt> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+    static PassRefPtr<DataTransferItemQt> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, PassRefPtr<File>);
     static PassRefPtr<DataTransferItemQt> createFromPasteboard(PassRefPtr<Clipboard> owner,
                                                                ScriptExecutionContext*,
                                                                const String&);
-    virtual void getAsString(PassRefPtr<StringCallback>);
-    virtual PassRefPtr<Blob> getAsFile();
+
+    virtual String kind() const { return m_kind; }
+    virtual String type() const { return m_type; }
+    virtual void getAsString(PassRefPtr<StringCallback>) const;
+    virtual PassRefPtr<Blob> getAsFile() const;
 
 private:
+    friend class DataTransferItemListQt;
+
     enum DataSource {
         PasteboardSource,
         InternalSource
     };
-
-    friend class DataTransferItem;
 
     DataTransferItemQt(PassRefPtr<Clipboard> owner,
                        ScriptExecutionContext*,
@@ -62,7 +67,10 @@ private:
                        DataSource,
                        PassRefPtr<File>);
 
+    const RefPtr<Clipboard> m_owner;
     ScriptExecutionContext* m_context;
+    const String m_kind;
+    const String m_type;
     const DataSource m_dataSource;
     const String m_data;
     RefPtr<File> m_file;

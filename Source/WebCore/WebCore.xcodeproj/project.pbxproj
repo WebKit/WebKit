@@ -1846,7 +1846,6 @@
 		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
 		77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */; };
 		77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */; };
-		781755861365A1B00093BE2E /* DataTransferItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 781755851365A1B00093BE2E /* DataTransferItemList.cpp */; };
 		79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79AC9216109945C80021266E /* JSCompositionEvent.cpp */; };
 		79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AC9217109945C80021266E /* JSCompositionEvent.h */; };
 		79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F2F59E1091939A000D87CB /* CompositionEvent.cpp */; };
@@ -8706,7 +8705,6 @@
 		77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESVertexArrayObject.h; sourceTree = "<group>"; };
 		77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
 		77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
-		781755851365A1B00093BE2E /* DataTransferItemList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItemList.cpp; sourceTree = "<group>"; };
 		79AC9216109945C80021266E /* JSCompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCompositionEvent.cpp; sourceTree = "<group>"; };
 		79AC9217109945C80021266E /* JSCompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCompositionEvent.h; sourceTree = "<group>"; };
 		79F2F59E1091939A000D87CB /* CompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositionEvent.cpp; sourceTree = "<group>"; };
@@ -20359,7 +20357,6 @@
 				815E6166132587AA00B622B0 /* DataTransferItem.cpp */,
 				81AC5997131636E60009A7E0 /* DataTransferItem.h */,
 				81AC5AE81316392E0009A7E0 /* DataTransferItem.idl */,
-				781755851365A1B00093BE2E /* DataTransferItemList.cpp */,
 				81AC5998131636E60009A7E0 /* DataTransferItemList.h */,
 				81AC5AE91316392E0009A7E0 /* DataTransferItemList.idl */,
 				A8C228A011D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp */,
@@ -24670,7 +24667,6 @@
 				1AD51A150CB59CD300953D11 /* DatabaseTracker.cpp in Sources */,
 				BC64641D11D7F416006455B0 /* DatasetDOMStringMap.cpp in Sources */,
 				815E6167132587AA00B622B0 /* DataTransferItem.cpp in Sources */,
-				781755861365A1B00093BE2E /* DataTransferItemList.cpp in Sources */,
 				2E97CCEA12939CB800C5C8FF /* DataView.cpp in Sources */,
 				A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */,
 				F55B3DB51251F12D003EF269 /* DateInputType.cpp in Sources */,

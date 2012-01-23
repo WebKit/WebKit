@@ -50,9 +50,9 @@ class DataTransferItemListChromium : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-    // DataTransferItemList overrides.
     virtual size_t length();
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
     virtual void deleteItem(unsigned long index, ExceptionCode&);
     virtual void clear();
     virtual void add(const String& data, const String& type, ExceptionCode&);
@@ -61,6 +61,11 @@ public:
 private:
     DataTransferItemListChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
     ClipboardChromium* clipboardChromium() const;
+
+    RefPtr<Clipboard> m_owner;
+    // Indirectly owned by our parent.
+    ScriptExecutionContext* m_context;
+    Vector<RefPtr<DataTransferItem> > m_items;
 };
 
 } // namespace WebCore

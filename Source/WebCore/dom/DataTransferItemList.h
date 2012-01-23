@@ -48,23 +48,12 @@ class DataTransferItemList : public RefCounted<DataTransferItemList> {
 public:
     virtual ~DataTransferItemList() { }
 
-    virtual size_t length();
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
-    // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
-    virtual void deleteItem(unsigned long index, ExceptionCode&);
-    virtual void clear();
-    virtual void add(const String& data, const String& type, ExceptionCode&);
-    virtual void add(PassRefPtr<File>);
-
-protected:
-    DataTransferItemList(PassRefPtr<Clipboard>, ScriptExecutionContext*);
-
-protected:
-    RefPtr<Clipboard> m_owner;
-    // Indirectly owned by our parent.
-    ScriptExecutionContext* m_context;
-    Vector<RefPtr<DataTransferItem> > m_items;
-
+    virtual size_t length() = 0;
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index) = 0;
+    virtual void deleteItem(unsigned long index, ExceptionCode&) = 0;
+    virtual void clear() = 0;
+    virtual void add(const String& data, const String& type, ExceptionCode&) = 0;
+    virtual void add(PassRefPtr<File>) = 0;
 };
 
 } // namespace WebCore

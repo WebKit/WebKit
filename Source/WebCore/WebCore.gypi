@@ -5356,7 +5356,6 @@
             'dom/DOMStringMap.h',
             'dom/DataTransferItem.cpp',
             'dom/DataTransferItem.h',
-            'dom/DataTransferItemList.cpp',
             'dom/DataTransferItemList.h',
             'dom/DatasetDOMStringMap.cpp',
             'dom/DatasetDOMStringMap.h',

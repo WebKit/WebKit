@@ -49,28 +49,14 @@ class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
     virtual ~DataTransferItem() { }
 
-    static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
-    static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, PassRefPtr<File>);
-
     static const char kindString[];
     static const char kindFile[];
 
-    String kind() const;
-    String type() const;
+    virtual String kind() const = 0;
+    virtual String type() const = 0;
 
-    virtual void getAsString(PassRefPtr<StringCallback>) = 0;
-    virtual PassRefPtr<Blob> getAsFile() = 0;
-
-protected:
-    DataTransferItem(PassRefPtr<Clipboard> owner, const String& kind, const String& type);
-    Clipboard* owner();
-
-private:
-    friend class DataTransferItemList;
-
-    const RefPtr<Clipboard> m_owner;
-    const String m_kind;
-    const String m_type;
+    virtual void getAsString(PassRefPtr<StringCallback>) const = 0;
+    virtual PassRefPtr<Blob> getAsFile() const = 0;
 };
 
 } // namespace WebCore
