@@ -21,13 +21,13 @@
 #include "AXObjectCache.h"
 
 #include "AccessibilityObject.h"
-#include "AccessibilityObjectWrapperAtk.h"
 #include "Document.h"
 #include "Element.h"
 #include "GOwnPtr.h"
 #include "HTMLSelectElement.h"
 #include "Range.h"
 #include "TextIterator.h"
+#include "WebKitAccessibleWrapperAtk.h"
 
 namespace WebCore {
 

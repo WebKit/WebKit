@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
+ * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,13 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef AccessibilityObjectWrapperAtk_h
-#define AccessibilityObjectWrapperAtk_h
+#ifndef WebKitAccessibleWrapperAtk_h
+#define WebKitAccessibleWrapperAtk_h
 
 #include <atk/atk.h>
 
 namespace WebCore {
-    class AccessibilityObject;
+class AccessibilityObject;
 }
 
 G_BEGIN_DECLS
@@ -39,29 +40,27 @@ G_BEGIN_DECLS
 typedef struct _WebKitAccessible                WebKitAccessible;
 typedef struct _WebKitAccessibleClass           WebKitAccessibleClass;
 
-struct _WebKitAccessible
-{
+struct _WebKitAccessible {
     AtkObject parent;
     WebCore::AccessibilityObject* m_object;
 };
 
-struct _WebKitAccessibleClass
-{
+struct _WebKitAccessibleClass {
     AtkObjectClass parent_class;
 };
 
-GType webkit_accessible_get_type (void) G_GNUC_CONST;
+GType webkit_accessible_get_type(void) G_GNUC_CONST;
 
-WebKitAccessible* webkit_accessible_new (WebCore::AccessibilityObject* core_object);
+WebKitAccessible* webkit_accessible_new(WebCore::AccessibilityObject*);
 
-WebCore::AccessibilityObject* webkit_accessible_get_accessibility_object (WebKitAccessible* accessible);
+WebCore::AccessibilityObject* webkit_accessible_get_accessibility_object(WebKitAccessible*);
 
-void webkit_accessible_detach (WebKitAccessible* accessible);
+void webkit_accessible_detach(WebKitAccessible*);
 
-AtkObject* webkit_accessible_get_focused_element(WebKitAccessible* accessible);
+AtkObject* webkit_accessible_get_focused_element(WebKitAccessible*);
 
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
 
 G_END_DECLS
 
-#endif // AccessibilityObjectWrapperAtk_h
+#endif // WebKitAccessibleWrapperAtk_h

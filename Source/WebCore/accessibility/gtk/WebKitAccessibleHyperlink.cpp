@@ -24,13 +24,13 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
-#include "AccessibilityObjectWrapperAtk.h"
 #include "NotImplemented.h"
 #include "Position.h"
 #include "Range.h"
 #include "RenderListMarker.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
 
 #include <atk/atk.h>

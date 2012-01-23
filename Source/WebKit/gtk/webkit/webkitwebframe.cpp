@@ -28,7 +28,6 @@
 #include "webkitwebframe.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
 #include "DOMObjectCache.h"
 #include "DocumentFragment.h"
@@ -55,6 +54,7 @@
 #include "ScriptController.h"
 #include "SubstituteData.h"
 #include "TextIterator.h"
+#include "WebKitAccessibleWrapperAtk.h"
 #include "markup.h"
 #include "webkit/WebKitDOMRangePrivate.h"
 #include "webkitenumtypes.h"

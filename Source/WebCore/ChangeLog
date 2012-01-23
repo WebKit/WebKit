@@ -1,3 +1,170 @@
+2012-01-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
+        Rename the file for the ATK AccessibilityObject wrapper to be more
+        coherent with the rest of the files in the same directory.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp.
+        (fallbackObject):
+        (returnString):
+        (core):
+        (webkit_accessible_get_name):
+        (webkit_accessible_get_description):
+        (setAtkRelationSetFromCoreObject):
+        (isRootObject):
+        (atkParentOfRootObject):
+        (webkit_accessible_get_parent):
+        (getNChildrenForTable):
+        (webkit_accessible_get_n_children):
+        (getChildForTable):
+        (webkit_accessible_ref_child):
+        (getIndexInParentForCellInRow):
+        (webkit_accessible_get_index_in_parent):
+        (addAttributeToSet):
+        (webkit_accessible_get_attributes):
+        (atkRole):
+        (webkit_accessible_get_role):
+        (selectionBelongsToObject):
+        (isTextWithCaret):
+        (setAtkStateSetFromCoreObject):
+        (webkit_accessible_ref_state_set):
+        (webkit_accessible_ref_relation_set):
+        (webkit_accessible_init):
+        (webkit_accessible_finalize):
+        (webkit_accessible_class_init):
+        (webkit_accessible_get_type):
+        (webkit_accessible_action_do_action):
+        (webkit_accessible_action_get_n_actions):
+        (webkit_accessible_action_get_description):
+        (webkit_accessible_action_get_keybinding):
+        (webkit_accessible_action_get_name):
+        (atk_action_interface_init):
+        (listObjectForSelection):
+        (optionFromList):
+        (optionFromSelection):
+        (webkit_accessible_selection_add_selection):
+        (webkit_accessible_selection_clear_selection):
+        (webkit_accessible_selection_ref_selection):
+        (webkit_accessible_selection_get_selection_count):
+        (webkit_accessible_selection_is_child_selected):
+        (webkit_accessible_selection_remove_selection):
+        (webkit_accessible_selection_select_all_selection):
+        (atk_selection_interface_init):
+        (utf8Substr):
+        (convertUniCharToUTF8):
+        (textForRenderer):
+        (textForObject):
+        (webkit_accessible_text_get_text):
+        (getGailTextUtilForAtk):
+        (getPangoLayoutForAtk):
+        (webkit_accessible_text_get_text_after_offset):
+        (webkit_accessible_text_get_text_at_offset):
+        (webkit_accessible_text_get_text_before_offset):
+        (webkit_accessible_text_get_character_at_offset):
+        (webkit_accessible_text_get_caret_offset):
+        (baselinePositionForRenderObject):
+        (getAttributeSetForAccessibilityObject):
+        (compareAttribute):
+        (attributeSetDifference):
+        (accessibilityObjectLength):
+        (getAccessibilityObjectForOffset):
+        (getRunAttributesFromAccesibilityObject):
+        (webkit_accessible_text_get_run_attributes):
+        (webkit_accessible_text_get_default_attributes):
+        (textExtents):
+        (webkit_accessible_text_get_character_extents):
+        (webkit_accessible_text_get_range_extents):
+        (webkit_accessible_text_get_character_count):
+        (webkit_accessible_text_get_offset_at_point):
+        (getSelectionOffsetsForObject):
+        (webkit_accessible_text_get_n_selections):
+        (webkit_accessible_text_get_selection):
+        (webkit_accessible_text_add_selection):
+        (webkit_accessible_text_set_selection):
+        (webkit_accessible_text_remove_selection):
+        (webkit_accessible_text_set_caret_offset):
+        (atk_text_interface_init):
+        (webkit_accessible_editable_text_set_run_attributes):
+        (webkit_accessible_editable_text_set_text_contents):
+        (webkit_accessible_editable_text_insert_text):
+        (webkit_accessible_editable_text_copy_text):
+        (webkit_accessible_editable_text_cut_text):
+        (webkit_accessible_editable_text_delete_text):
+        (webkit_accessible_editable_text_paste_text):
+        (atk_editable_text_interface_init):
+        (contentsToAtk):
+        (atkToContents):
+        (webkit_accessible_component_ref_accessible_at_point):
+        (webkit_accessible_component_get_extents):
+        (webkit_accessible_component_grab_focus):
+        (atk_component_interface_init):
+        (webkit_accessible_image_get_image_position):
+        (webkit_accessible_image_get_image_description):
+        (webkit_accessible_image_get_image_size):
+        (atk_image_interface_init):
+        (cell):
+        (cellIndex):
+        (cellAtIndex):
+        (webkit_accessible_table_ref_at):
+        (webkit_accessible_table_get_index_at):
+        (webkit_accessible_table_get_column_at_index):
+        (webkit_accessible_table_get_row_at_index):
+        (webkit_accessible_table_get_n_columns):
+        (webkit_accessible_table_get_n_rows):
+        (webkit_accessible_table_get_column_extent_at):
+        (webkit_accessible_table_get_row_extent_at):
+        (webkit_accessible_table_get_column_header):
+        (webkit_accessible_table_get_row_header):
+        (webkit_accessible_table_get_caption):
+        (webkit_accessible_table_get_column_description):
+        (webkit_accessible_table_get_row_description):
+        (atk_table_interface_init):
+        (webkitAccessibleHypertextGetLink):
+        (webkitAccessibleHypertextGetNLinks):
+        (webkitAccessibleHypertextGetLinkIndex):
+        (atkHypertextInterfaceInit):
+        (webkitAccessibleHyperlinkImplGetHyperlink):
+        (atkHyperlinkImplInterfaceInit):
+        (documentAttributeValue):
+        (webkit_accessible_document_get_attribute_value):
+        (webkit_accessible_document_get_attributes):
+        (webkit_accessible_document_get_locale):
+        (atk_document_interface_init):
+        (webkitAccessibleValueGetCurrentValue):
+        (webkitAccessibleValueGetMaximumValue):
+        (webkitAccessibleValueGetMinimumValue):
+        (webkitAccessibleValueSetCurrentValue):
+        (webkitAccessibleValueGetMinimumIncrement):
+        (atkValueInterfaceInit):
+        (GetAtkInterfaceTypeFromWAIType):
+        (getInterfaceMaskFromObject):
+        (getUniqueAccessibilityTypeName):
+        (getAccessibilityTypeFromObject):
+        (webkit_accessible_new):
+        (webkit_accessible_get_accessibility_object):
+        (webkit_accessible_detach):
+        (webkit_accessible_get_focused_element):
+        (objectFocusedAndCaretOffsetUnignored):
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.h: Renamed from
+        Source/WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.h.
+
+        Update the include for the AccessibilityObject wrapper header.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp: Update include.
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp: Ditto.
+        * accessibility/gtk/WebKitAccessibleHyperlink.h: Ditto.
+        * editing/gtk/FrameSelectionGtk.cpp:
+
+        Update filename for the ATK wrapper in build files.
+
+        * GNUmakefile.list.am: Updated.
+        * WebCore.gypi: Updated.
+
 2012-01-20  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: PageAgent.open() dosen't belong to the protocol.

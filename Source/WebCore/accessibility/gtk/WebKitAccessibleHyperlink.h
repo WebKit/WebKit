@@ -20,8 +20,6 @@
 #ifndef WebKitAccessibleHyperlink_h
 #define WebKitAccessibleHyperlink_h
 
-#include "AccessibilityObjectWrapperAtk.h"
-
 #include <atk/atk.h>
 
 namespace WebCore {

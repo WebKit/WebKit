@@ -20,10 +20,10 @@
 #include "config.h"
 #include "FrameSelection.h"
 
-#include "AccessibilityObjectWrapperAtk.h"
 #include "AXObjectCache.h"
 #include "Frame.h"
 #include "RefPtr.h"
+#include "WebKitAccessibleWrapperAtk.h"
 
 #include <gtk/gtk.h>
 

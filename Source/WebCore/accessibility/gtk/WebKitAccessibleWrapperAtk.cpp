@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2009 Igalia S.L.
  * Copyright (C) 2009 Jan Alonzo
+ * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "AccessibilityObjectWrapperAtk.h"
+#include "WebKitAccessibleWrapperAtk.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -48,11 +48,11 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GOwnPtr.h"
-#include "HostWindow.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
+#include "HostWindow.h"
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -166,7 +166,7 @@ static AccessibilityObject* core(AtkValue* value)
     return core(ATK_OBJECT(value));
 }
 
-static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, gint endOffset);
+static gchar* webkit_accessible_text_get_text(AtkText*, gint startOffset, gint endOffset);
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
@@ -546,17 +546,17 @@ static AtkRole atkRole(AccessibilityRole role)
     case MenuItemRole:
         return ATK_ROLE_MENU_ITEM;
     case ColumnRole:
-        //return ATK_ROLE_TABLE_COLUMN_HEADER; // Is this right?
+        // return ATK_ROLE_TABLE_COLUMN_HEADER; // Is this right?
         return ATK_ROLE_UNKNOWN; // Matches Mozilla
     case RowRole:
-        //return ATK_ROLE_TABLE_ROW_HEADER; // Is this right?
+        // return ATK_ROLE_TABLE_ROW_HEADER; // Is this right?
         return ATK_ROLE_LIST_ITEM; // Matches Mozilla
     case ToolbarRole:
         return ATK_ROLE_TOOL_BAR;
     case BusyIndicatorRole:
         return ATK_ROLE_PROGRESS_BAR; // Is this right?
     case ProgressIndicatorRole:
-        //return ATK_ROLE_SPIN_BUTTON; // Some confusion about this role in AccessibilityRenderObject.cpp
+        // return ATK_ROLE_SPIN_BUTTON; // Some confusion about this role in AccessibilityRenderObject.cpp
         return ATK_ROLE_PROGRESS_BAR;
     case WindowRole:
         return ATK_ROLE_WINDOW;
@@ -597,7 +597,7 @@ static AtkRole atkRole(AccessibilityRole role)
     case ListMarkerRole:
         return ATK_ROLE_TEXT;
     case WebAreaRole:
-        //return ATK_ROLE_HTML_CONTAINER; // Is this right?
+        // return ATK_ROLE_HTML_CONTAINER; // Is this right?
         return ATK_ROLE_DOCUMENT_FRAME;
     case HeadingRole:
         return ATK_ROLE_HEADING;
@@ -701,9 +701,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     // controls, so check explicitly for them. In addition, because
     // isReadOnly is false for listBoxOptions, we need to add one
     // more check so that we do not present them as being "editable".
-    if ((!coreObject->isReadOnly() ||
-        (coreObject->isControl() && coreObject->canSetValueAttribute())) &&
-        !isListBoxOption)
+    if ((!coreObject->isReadOnly()
+         || (coreObject->isControl() && coreObject->canSetValueAttribute()))
+        && !isListBoxOption)
         atk_state_set_add_state(stateSet, ATK_STATE_EDITABLE);
 
     // FIXME: Put both ENABLED and SENSITIVE together here for now
@@ -877,7 +877,7 @@ webkit_accessible_get_type(void)
 
 static gboolean webkit_accessible_action_do_action(AtkAction* action, gint i)
 {
-    g_return_val_if_fail(i == 0, FALSE);
+    g_return_val_if_fail(!i, FALSE);
     return core(action)->performDefaultAction();
 }
 
@@ -888,7 +888,7 @@ static gint webkit_accessible_action_get_n_actions(AtkAction* action)
 
 static const gchar* webkit_accessible_action_get_description(AtkAction* action, gint i)
 {
-    g_return_val_if_fail(i == 0, 0);
+    g_return_val_if_fail(!i, 0);
     // TODO: Need a way to provide/localize action descriptions.
     notImplemented();
     return "";
@@ -896,14 +896,14 @@ static const gchar* webkit_accessible_action_get_description(AtkAction* action, 
 
 static const gchar* webkit_accessible_action_get_keybinding(AtkAction* action, gint i)
 {
-    g_return_val_if_fail(i == 0, 0);
+    g_return_val_if_fail(!i, 0);
     // FIXME: Construct a proper keybinding string.
     return returnString(core(action)->accessKey().string());
 }
 
 static const gchar* webkit_accessible_action_get_name(AtkAction* action, gint i)
 {
-    g_return_val_if_fail(i == 0, 0);
+    g_return_val_if_fail(!i, 0);
     return returnString(core(action)->actionVerb());
 }
 
@@ -1021,7 +1021,7 @@ static gboolean webkit_accessible_selection_clear_selection(AtkSelection* select
         AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
         listBox->setSelectedChildren(selectedItems);
         listBox->selectedChildren(selectedItems);
-        return selectedItems.size() == 0;
+        return !selectedItems.size();
     }
     return false;
 }
@@ -1510,7 +1510,7 @@ static gint compareAttribute(const AtkAttribute* a, const AtkAttribute* b)
 }
 
 // Returns an AtkAttributeSet with the elements of a1 which are either
-// not present or different in a2.  Neither a1 nor a2 should be used
+// not present or different in a2. Neither a1 nor a2 should be used
 // after calling this function.
 static AtkAttributeSet* attributeSetDifference(AtkAttributeSet* a1, AtkAttributeSet* a2)
 {
@@ -1664,7 +1664,7 @@ static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoor
     AccessibilityObject* coreObject = core(text);
 
     IntRect extents = coreObject->doAXBoundsForRange(PlainTextRange(startOffset, rangeLength));
-    switch(coords) {
+    switch (coords) {
     case ATK_XY_SCREEN:
         if (Document* document = coreObject->document())
             extents = document->view()->contentsToScreen(extents);
@@ -1936,8 +1936,8 @@ static void webkit_accessible_editable_text_insert_text(AtkEditableText* text, c
 
     AccessibilityObject* coreObject = core(text);
     // FIXME: Not implemented in WebCore
-    //coreObject->setSelectedTextRange(PlainTextRange(*position, 0));
-    //coreObject->setSelectedText(String::fromUTF8(string));
+    // coreObject->setSelectedTextRange(PlainTextRange(*position, 0));
+    // coreObject->setSelectedText(String::fromUTF8(string));
 
     Document* document = coreObject->document();
     if (!document || !document->frame())
@@ -1964,8 +1964,8 @@ static void webkit_accessible_editable_text_delete_text(AtkEditableText* text, g
 {
     AccessibilityObject* coreObject = core(text);
     // FIXME: Not implemented in WebCore
-    //coreObject->setSelectedTextRange(PlainTextRange(start_pos, end_pos - start_pos));
-    //coreObject->setSelectedText(String());
+    // coreObject->setSelectedTextRange(PlainTextRange(start_pos, end_pos - start_pos));
+    // coreObject->setSelectedText(String());
 
     Document* document = coreObject->document();
     if (!document || !document->frame())
@@ -2149,7 +2149,7 @@ static gint webkit_accessible_table_get_index_at(AtkTable* table, gint row, gint
 static gint webkit_accessible_table_get_column_at_index(AtkTable* table, gint index)
 {
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
-    if (axCell){
+    if (axCell) {
         pair<int, int> columnRange;
         axCell->columnIndexRange(columnRange);
         return columnRange.first;
@@ -2160,7 +2160,7 @@ static gint webkit_accessible_table_get_column_at_index(AtkTable* table, gint in
 static gint webkit_accessible_table_get_row_at_index(AtkTable* table, gint index)
 {
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
-    if (axCell){
+    if (axCell) {
         pair<int, int> rowRange;
         axCell->rowIndexRange(rowRange);
         return rowRange.first;
@@ -2404,7 +2404,7 @@ static const gchar* webkit_accessible_document_get_attribute_value(AtkDocument* 
 static AtkAttributeSet* webkit_accessible_document_get_attributes(AtkDocument* document)
 {
     AtkAttributeSet* attributeSet = 0;
-    const gchar* attributes [] = {"DocType", "Encoding", "URI"};
+    const gchar* attributes[] = { "DocType", "Encoding", "URI" };
 
     for (unsigned i = 0; i < G_N_ELEMENTS(attributes); i++) {
         const gchar* value = documentAttributeValue(document, attributes[i]);

@@ -4421,11 +4421,11 @@ webcore_sources += \
 # WebCore files that use GTK/GDK or any other dependency that requires GTK+.
 webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp \
-	Source/WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp \
-	Source/WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.h \
 	Source/WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.h \
 	Source/WebCore/bindings/js/ScriptControllerGtk.cpp \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
