@@ -1,5 +1,40 @@
 2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        SVG animation repaint issue with image and dynamic clipPath
+        https://bugs.webkit.org/show_bug.cgi?id=76559
+
+        Reviewed by Zoltan Herczeg.
+
+        Based on patch by Kelly Norton <knorton@google.com>. I extended the patch
+        to correctly handle relative length resolution as well.
+
+        RenderSVGImage doesn't react on setNeedsBoundariesUpdate() calls
+        and thus fails to update its boundaries in some cases.
+
+        The logic is also inconsistent, compared to the other renderers.
+        Fix that properly, by reusing the method used in RenderSVGViewportContainer.
+        Call calculateImageViewport() immediately, after initializing the LayoutRepainter.
+        Previously we resolved the image viewport in RenderSVGImage::updateFromElement. This is
+        wrong, as it queries the frameRect() of the RenderSVGRoot in a state, where the renderer
+        still needs layout, leading to wrong results.
+
+        I turned Kellys manual testcase into a predictable test, see svg/repaint/image-with-clip-path.svg
+        Relative sized image handling is tested in svg/custom/relative-sized-image.xhtml now.
+
+        Tests: svg/custom/relative-sized-image.xhtml
+               svg/repaint/image-with-clip-path.svg
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        (WebCore::RenderSVGImage::updateImageViewport):
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::setNeedsBoundariesUpdate):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+
+2012-01-23  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         <feImage> has problems referencing local elements
         https://bugs.webkit.org/show_bug.cgi?id=76800
 

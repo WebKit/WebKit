@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="600">
+    <text y="-10">Bug 76559: All red should disappear</text>
+    <g id="g" transform="translate(0, 0)">
+        <defs>
+            <clipPath id="p">
+                <rect id="r" x="-10" y="-10" width="20" height="20" />
+            </clipPath>
+        </defs>
+        <image x="-30" y="-30" width="60" height="60" clip-path="url(#p)"
+            xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="/>
+    </g>
+<script>
+    var green = "data:image/gif;base64,R0lGODlhAQABAIAAAAD/AAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
+    var red = "data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
+
+    var r = document.querySelector('#r');
+    var g = document.querySelector('#g');
+    var i = document.querySelector('image');
+    var update = function(offset, size, img) {
+        r.setAttribute('x', -size / 2);
+        r.setAttribute('y', -size / 2);
+        r.setAttribute('width', size);
+        r.setAttribute('height', size);
+        g.setAttribute("transform","translate(" + offset + ",50)");
+        i.setAttributeNS('http://www.w3.org/1999/xlink', 'href', img);
+    };
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText(true);
+        layoutTestController.waitUntilDone();
+    }
+
+    setTimeout(function() {
+        update(50, 100, red);
+
+        setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.display();
+
+            update(200, 50, green);
+
+            setTimeout(function() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, 0);
+        }, 0);
+    }, 0);
+</script>
+</svg>

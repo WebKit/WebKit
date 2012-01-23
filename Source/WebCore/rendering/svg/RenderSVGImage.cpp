@@ -49,7 +49,7 @@ namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
     : RenderSVGModelObject(impl)
-    , m_updateCachedRepaintRect(true)
+    , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(RenderImageResource::create())
 {
@@ -61,24 +61,39 @@ RenderSVGImage::~RenderSVGImage()
     m_imageResource->shutdown();
 }
 
+bool RenderSVGImage::updateImageViewport()
+{
+    SVGImageElement* image = static_cast<SVGImageElement*>(node());
+    FloatRect oldBoundaries = m_objectBoundingBox;
+
+    SVGLengthContext lengthContext(image);
+    m_objectBoundingBox = FloatRect(image->x().value(lengthContext), image->y().value(lengthContext), image->width().value(lengthContext), image->height().value(lengthContext));
+
+    if (oldBoundaries == m_objectBoundingBox)
+        return false;
+
+    m_imageResource->setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
+    m_needsBoundariesUpdate = true;
+    return true;
+}
+
 void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_imageResource->setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
+    updateImageViewport();
 
-    bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_updateCachedRepaintRect;
+    bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_needsBoundariesUpdate;
     if (m_needsTransformUpdate) {
-        m_localTransform = image->animatedLocalTransform();
+        m_localTransform = static_cast<SVGImageElement*>(node())->animatedLocalTransform();
         m_needsTransformUpdate = false;
     }
 
-    if (m_updateCachedRepaintRect) {
+    if (m_needsBoundariesUpdate) {
         m_repaintBoundingBox = m_objectBoundingBox;
         SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
-        m_updateCachedRepaintRect = false;
+        m_needsBoundariesUpdate = false;
     }
 
     // Invalidate all resources of this client if our layout changed.
@@ -91,20 +106,6 @@ void RenderSVGImage::layout()
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
-}
-
-void RenderSVGImage::updateFromElement()
-{
-    SVGImageElement* image = static_cast<SVGImageElement*>(node());
-
-    FloatRect oldBoundaries = m_objectBoundingBox;
-    SVGLengthContext lengthContext(image);
-    m_objectBoundingBox = FloatRect(image->x().value(lengthContext), image->y().value(lengthContext), image->width().value(lengthContext), image->height().value(lengthContext));
-    if (m_objectBoundingBox != oldBoundaries) {
-        m_updateCachedRepaintRect = true;
-        setNeedsLayout(true);
-    }
-    RenderSVGModelObject::updateFromElement();
 }
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)

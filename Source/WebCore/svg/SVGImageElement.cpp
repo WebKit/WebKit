@@ -149,8 +149,8 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (isLengthAttribute) {
-        renderer->updateFromElement();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+        if (toRenderSVGImage(renderer)->updateImageViewport())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
 

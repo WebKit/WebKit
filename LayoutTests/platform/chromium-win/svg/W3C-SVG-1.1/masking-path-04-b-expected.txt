@@ -13,8 +13,8 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (55,29) size 353x122 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 353x122
             chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 353.00: "Clip Test"
-      RenderSVGContainer {g} at (45,170) size 358x121
-        RenderSVGImage {image} at (45,170) size 358x121
+      RenderSVGContainer {g} at (45,170) size 353x121
+        RenderSVGImage {image} at (45,170) size 353x121
           [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,169) size 353x122
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
