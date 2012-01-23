@@ -187,6 +187,11 @@ var WebInspector = {
             this._dockToggleButton.toggled = !x;
         }
 
+        if (x)
+            document.body.removeStyleClass("detached");
+        else
+            document.body.addStyleClass("detached");
+
         this._setCompactMode(x && !WebInspector.settings.dockToRight.get());
     },
 
@@ -198,13 +203,10 @@ var WebInspector = {
     _setCompactMode: function(x)
     {
         var body = document.body;
-        if (x) {
-            body.removeStyleClass("detached");
+        if (x)
             body.addStyleClass("compact");
-        } else {
+        else
             body.removeStyleClass("compact");
-            body.addStyleClass("detached");
-        }
 
         // This may be called before doLoadedDone, hence the bulk of inspector objects may
         // not be created yet.

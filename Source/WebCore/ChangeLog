@@ -1,3 +1,14 @@
+2012-01-23  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: inspector close button is missing in the dock-to-right mode.
+        https://bugs.webkit.org/show_bug.cgi?id=76829
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.set attached):
+        (WebInspector.get _setCompactMode):
+
 2012-01-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: IndexedDBModel should keep track of requests sent to the backend.
