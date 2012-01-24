@@ -1,3 +1,17 @@
+2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: incorrect highlight position when searching in console
+        https://bugs.webkit.org/show_bug.cgi?id=76837
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        (WebInspector.ConsoleMessageImpl.prototype.clearHighlight):
+        (WebInspector.ConsoleMessageImpl.prototype.highlightSearchResults):
+        (WebInspector.ConsoleMessageImpl.prototype._highlightSearchResultsInElement):
+        (WebInspector.ConsoleMessageImpl.prototype.matchesRegex):
+
 2012-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Show layer borders for scrollbar layers
