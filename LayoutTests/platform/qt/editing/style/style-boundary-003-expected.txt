@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -11,31 +11,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x175 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x65
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x170 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x62
+          RenderText {#text} at (0,0) size 77x32
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 660x31
-            text run at (0,33) width 660: "Style checks performed on boundaries between style changes."
-        RenderBlock {DIV} at (14,95) size 756x66
-          RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,32) size 660x30
+            text run at (0,32) width 660: "Style checks performed on boundaries between style changes."
+        RenderBlock {DIV} at (14,92) size 756x64
+          RenderText {#text} at (0,0) size 214x32
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,34) size 480x31
-            text run at (0,34) width 480: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 13x33
-            RenderText {#text} at (480,33) size 13x33
-              text run at (480,33) width 13: "a"
-          RenderText {#text} at (493,34) size 25x31
-            text run at (493,34) width 25: "bc"
-      RenderBlock {DIV} at (0,199) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 13x33
-            RenderText {#text} at (2,2) size 13x33
+          RenderText {#text} at (0,33) size 480x30
+            text run at (0,33) width 480: "Should see this content in the red box below: "
+          RenderInline {B} at (0,0) size 13x32
+            RenderText {#text} at (480,32) size 13x32
+              text run at (480,32) width 13: "a"
+          RenderText {#text} at (493,33) size 25x30
+            text run at (493,33) width 25: "bc"
+      RenderBlock {DIV} at (0,194) size 784x36
+        RenderBlock {DIV} at (0,0) size 784x36 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 13x32
+            RenderText {#text} at (2,2) size 13x32
               text run at (2,2) width 13: "a"
-          RenderText {#text} at (15,3) size 13x31
+          RenderText {#text} at (15,3) size 13x30
             text run at (15,3) width 13: "b"
-          RenderText {#text} at (28,3) size 12x31
+          RenderText {#text} at (28,3) size 12x30
             text run at (28,3) width 12: "c"
 caret: position 1 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body

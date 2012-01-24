@@ -1,3 +1,2 @@
-Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/canonicalform08
-Status	error
-Message	TypeError: Undefined value
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600

@@ -30,13 +30,9 @@
 # - Failing SVG tests
 # - failing animations tests
 # - Failing CSS Tests
-# - Failing dom/xhtml tests
 # - Failing editing/deleting tests
 # - Failing editing/selection tests.
 # - Failing editing/spelling tests
-# - failing editing/style tests
-# - failing undo tests
-# - failing unsupported-content tests
 # - failing fast tests
 # - failing fonts tests
 # - failing security tests
@@ -902,25 +898,6 @@ css2.1/20110323/inline-non-replaced-height-002.htm
 css2.1/20110323/inline-non-replaced-height-003.htm
 
 # ============================================================================= #
-# Failing dom/xhtml tests
-# ============================================================================= #
-dom/xhtml/level3/core/canonicalform08.xhtml
-dom/xhtml/level3/core/canonicalform09.xhtml
-dom/xhtml/level3/core/documentgetinputencoding03.xhtml
-dom/xhtml/level3/core/entitygetinputencoding02.xhtml
-dom/xhtml/level3/core/entitygetxmlversion02.xhtml
-dom/xhtml/level3/core/nodegetbaseuri05.xhtml
-dom/xhtml/level3/core/nodegetbaseuri07.xhtml
-dom/xhtml/level3/core/nodegetbaseuri09.xhtml
-dom/xhtml/level3/core/nodegetbaseuri10.xhtml
-dom/xhtml/level3/core/nodegetbaseuri11.xhtml
-dom/xhtml/level3/core/nodegetbaseuri15.xhtml
-dom/xhtml/level3/core/nodegetbaseuri17.xhtml
-dom/xhtml/level3/core/nodegetbaseuri18.xhtml
-dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
-dom/xhtml/level3/core/nodelookupprefix19.xhtml
-
-# ============================================================================= #
 # Failing editing/deleting tests
 # ============================================================================= #
 
@@ -935,9 +912,6 @@ editing/deleting/delete-tab-004.html
 # =========================================================================== #
 #       Failing editing/selection tests.                                      #
 # =========================================================================== #
-
-# This seems to pass now!
-editing/selection/extend-selection-after-double-click.html
 
 # -- fail with --platform mac --ignore-metrics
 editing/selection/doubleclick-beside-cr-span.html
@@ -1034,26 +1008,6 @@ editing/spelling/spellcheck-async-mutation.html
 # [Qt][GTK] editing/spelling/spellcheck-async.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73003
 editing/spelling/spellcheck-async.html
-
-# ============================================================================= #
-# failing editing/style tests
-# ============================================================================= #
-
-editing/style/style-3681552-fix-002.html
-editing/style/style-3681552-fix-001.html
-editing/style/typing-style-001.html
-editing/style/typing-style-002.html
-editing/style/style-boundary-002.html
-editing/style/style-boundary-003.html
-editing/style/style-boundary-005.html
-
-# ============================================================================= #
-# failing undo tests
-# ============================================================================= #
-
-# ============================================================================= #
-# failing unsupported-content tests
-# ============================================================================= #
 
 # ============================================================================= #
 # failing fast tests
@@ -2378,10 +2332,6 @@ css3/unicode-bidi-isolate-basic.html
 # https://bugs.webkit.org/show_bug.cgi?id=66588
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html
 
-# [Qt] One test failed after r95203
-# https://bugs.webkit.org/show_bug.cgi?id=68233
-editing/pasteboard/paste-noscript.html
-
 # Fails on non-Chromium bots
 # https://bugs.webkit.org/show_bug.cgi?id=68278
 http/tests/history/back-with-fragment-change.php
@@ -2409,9 +2359,6 @@ fast/text/line-initial-and-final-swashes.html
 # [Qt] Assertion fail in CSSPrimitiveValue ctor
 # https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
-
-# [Qt] Assertion fail in CSSPrimitiveValue ctor
-# https://bugs.webkit.org/show_bug.cgi?id=69933
 fast/borders/inline-mask-overlay-image-outset.html
 
 # fast/events/touch/page-scaled-touch-gesture-click.html is failing
@@ -2481,7 +2428,7 @@ editing/spelling/spelling-unified-emulation.html
 # https://bugs.webkit.org/show_bug.cgi?id=72252
 http/tests/misc/xslt-bad-import.html
 
-# [Qt] fast/dom/Window/window-postmessage-arrays.html fails after r100239
+# fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
 # https://bugs.webkit.org/show_bug.cgi?id=72363
 fast/dom/Window/window-postmessage-arrays.html
 

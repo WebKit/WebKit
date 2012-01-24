@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > DIV > BODY > HTML > #document to 2 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -24,7 +24,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > B > DIV > DIV > BODY > HTML > #document to 3 of #text > SPAN > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -32,39 +32,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x239 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x97
-          RenderText {#text} at (0,0) size 77x33
+      RenderBlock {DIV} at (0,0) size 784x230 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x92
+          RenderText {#text} at (0,0) size 77x32
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 678x63
-            text run at (0,33) width 678: "Pasting at style boundary does not crash or produce empty style"
-            text run at (0,65) width 86: "span(s)."
-        RenderBlock {DIV} at (14,127) size 756x98
-          RenderBlock (anonymous) at (0,0) size 756x65
-            RenderText {#text} at (0,0) size 214x33
+          RenderText {#text} at (0,32) size 678x60
+            text run at (0,32) width 678: "Pasting at style boundary does not crash or produce empty style"
+            text run at (0,62) width 86: "span(s)."
+        RenderBlock {DIV} at (14,122) size 756x94
+          RenderBlock (anonymous) at (0,0) size 756x62
+            RenderText {#text} at (0,0) size 214x32
               text run at (0,0) width 214: "Expected Results: "
             RenderBR {BR} at (214,24) size 0x0
-            RenderText {#text} at (0,33) size 480x31
-              text run at (0,33) width 480: "Should see this content in the red box below: "
-            RenderBR {BR} at (480,56) size 0x0
-          RenderBlock {DIV} at (0,65) size 756x33
-            RenderText {#text} at (0,1) size 151x31
+            RenderText {#text} at (0,32) size 480x30
+              text run at (0,32) width 480: "Should see this content in the red box below: "
+            RenderBR {BR} at (480,55) size 0x0
+          RenderBlock {DIV} at (0,62) size 756x32
+            RenderText {#text} at (0,1) size 151x30
               text run at (0,1) width 151: "one two three "
-            RenderInline {B} at (0,0) size 47x33
-              RenderText {#text} at (151,0) size 47x33
+            RenderInline {B} at (0,0) size 47x32
+              RenderText {#text} at (151,0) size 47x32
                 text run at (151,0) width 47: "four"
-            RenderText {#text} at (198,1) size 46x31
-              text run at (198,1) width 46: " one"
-      RenderBlock {DIV} at (0,263) size 784x24
-        RenderBlock {DIV} at (0,0) size 784x24 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 87x19
-            text run at (2,2) width 87: "one two three"
-          RenderInline {B} at (0,0) size 56x20
-            RenderText {#text} at (89,2) size 32x20
-              text run at (89,2) width 32: " four"
-            RenderInline {SPAN} at (0,0) size 24x19
-              RenderText {#text} at (121,2) size 24x19
-                text run at (121,2) width 24: "one"
-        RenderBlock (anonymous) at (0,24) size 784x0
-caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {B} of child 1 {DIV} of child 3 {DIV} of body
+            RenderText {#text} at (198,1) size 39x30
+              text run at (198,1) width 39: "one"
+      RenderBlock {DIV} at (0,254) size 784x25
+        RenderBlock {DIV} at (0,0) size 784x25 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 96x21
+            text run at (2,2) width 96: "one two three"
+          RenderInline {B} at (0,0) size 35x21
+            RenderText {#text} at (98,2) size 35x21
+              text run at (98,2) width 35: " four"
+          RenderText {#text} at (133,2) size 27x21
+            text run at (133,2) width 27: "one"
+        RenderBlock (anonymous) at (0,25) size 784x0
+          RenderText {#text} at (0,0) size 0x0
+caret: position 3 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body
