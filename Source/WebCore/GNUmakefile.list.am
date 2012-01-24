@@ -4439,6 +4439,8 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceImage.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.h \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceValue.cpp \

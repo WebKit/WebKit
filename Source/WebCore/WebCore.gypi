@@ -1361,6 +1361,8 @@
             'accessibility/gtk/WebKitAccessibleInterfaceImage.h',
             'accessibility/gtk/WebKitAccessibleInterfaceSelection.cpp',
             'accessibility/gtk/WebKitAccessibleInterfaceSelection.h',
+            'accessibility/gtk/WebKitAccessibleInterfaceTable.cpp',
+            'accessibility/gtk/WebKitAccessibleInterfaceTable.h',
             'accessibility/gtk/WebKitAccessibleInterfaceText.cpp',
             'accessibility/gtk/WebKitAccessibleInterfaceText.h',
             'accessibility/gtk/WebKitAccessibleInterfaceValue.cpp',

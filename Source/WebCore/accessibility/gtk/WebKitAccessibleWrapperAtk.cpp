@@ -71,6 +71,7 @@
 #include "WebKitAccessibleInterfaceHypertext.h"
 #include "WebKitAccessibleInterfaceImage.h"
 #include "WebKitAccessibleInterfaceSelection.h"
+#include "WebKitAccessibleInterfaceTable.h"
 #include "WebKitAccessibleInterfaceText.h"
 #include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
@@ -115,11 +116,6 @@ static AccessibilityObject* core(AtkObject* object)
         return 0;
 
     return core(WEBKIT_ACCESSIBLE(object));
-}
-
-static AccessibilityObject* core(AtkTable* table)
-{
-    return core(ATK_OBJECT(table));
 }
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
@@ -793,203 +789,6 @@ webkit_accessible_get_type(void)
     return type_volatile;
 }
 
-// Table
-
-static AccessibilityTableCell* cell(AtkTable* table, guint row, guint column)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject())
-        return static_cast<AccessibilityTable*>(accTable)->cellForColumnAndRow(column, row);
-    return 0;
-}
-
-static gint cellIndex(AccessibilityTableCell* axCell, AccessibilityTable* axTable)
-{
-    // Calculate the cell's index as if we had a traditional Gtk+ table in
-    // which cells are all direct children of the table, arranged row-first.
-    AccessibilityObject::AccessibilityChildrenVector allCells;
-    axTable->cells(allCells);
-    AccessibilityObject::AccessibilityChildrenVector::iterator position;
-    position = std::find(allCells.begin(), allCells.end(), axCell);
-    if (position == allCells.end())
-        return -1;
-    return position - allCells.begin();
-}
-
-static AccessibilityTableCell* cellAtIndex(AtkTable* table, gint index)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject()) {
-        AccessibilityObject::AccessibilityChildrenVector allCells;
-        static_cast<AccessibilityTable*>(accTable)->cells(allCells);
-        if (0 <= index && static_cast<unsigned>(index) < allCells.size()) {
-            AccessibilityObject* accCell = allCells.at(index).get();
-            return static_cast<AccessibilityTableCell*>(accCell);
-        }
-    }
-    return 0;
-}
-
-static AtkObject* webkit_accessible_table_ref_at(AtkTable* table, gint row, gint column)
-{
-    AccessibilityTableCell* axCell = cell(table, row, column);
-    if (!axCell)
-        return 0;
-    return axCell->wrapper();
-}
-
-static gint webkit_accessible_table_get_index_at(AtkTable* table, gint row, gint column)
-{
-    AccessibilityTableCell* axCell = cell(table, row, column);
-    AccessibilityTable* axTable = static_cast<AccessibilityTable*>(core(table));
-    return cellIndex(axCell, axTable);
-}
-
-static gint webkit_accessible_table_get_column_at_index(AtkTable* table, gint index)
-{
-    AccessibilityTableCell* axCell = cellAtIndex(table, index);
-    if (axCell) {
-        pair<int, int> columnRange;
-        axCell->columnIndexRange(columnRange);
-        return columnRange.first;
-    }
-    return -1;
-}
-
-static gint webkit_accessible_table_get_row_at_index(AtkTable* table, gint index)
-{
-    AccessibilityTableCell* axCell = cellAtIndex(table, index);
-    if (axCell) {
-        pair<int, int> rowRange;
-        axCell->rowIndexRange(rowRange);
-        return rowRange.first;
-    }
-    return -1;
-}
-
-static gint webkit_accessible_table_get_n_columns(AtkTable* table)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject())
-        return static_cast<AccessibilityTable*>(accTable)->columnCount();
-    return 0;
-}
-
-static gint webkit_accessible_table_get_n_rows(AtkTable* table)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject())
-        return static_cast<AccessibilityTable*>(accTable)->rowCount();
-    return 0;
-}
-
-static gint webkit_accessible_table_get_column_extent_at(AtkTable* table, gint row, gint column)
-{
-    AccessibilityTableCell* axCell = cell(table, row, column);
-    if (axCell) {
-        pair<int, int> columnRange;
-        axCell->columnIndexRange(columnRange);
-        return columnRange.second;
-    }
-    return 0;
-}
-
-static gint webkit_accessible_table_get_row_extent_at(AtkTable* table, gint row, gint column)
-{
-    AccessibilityTableCell* axCell = cell(table, row, column);
-    if (axCell) {
-        pair<int, int> rowRange;
-        axCell->rowIndexRange(rowRange);
-        return rowRange.second;
-    }
-    return 0;
-}
-
-static AtkObject* webkit_accessible_table_get_column_header(AtkTable* table, gint column)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject()) {
-        AccessibilityObject::AccessibilityChildrenVector allColumnHeaders;
-        static_cast<AccessibilityTable*>(accTable)->columnHeaders(allColumnHeaders);
-        unsigned columnCount = allColumnHeaders.size();
-        for (unsigned k = 0; k < columnCount; ++k) {
-            pair<int, int> columnRange;
-            AccessibilityTableCell* cell = static_cast<AccessibilityTableCell*>(allColumnHeaders.at(k).get());
-            cell->columnIndexRange(columnRange);
-            if (columnRange.first <= column && column < columnRange.first + columnRange.second)
-                return allColumnHeaders[k]->wrapper();
-        }
-    }
-    return 0;
-}
-
-static AtkObject* webkit_accessible_table_get_row_header(AtkTable* table, gint row)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject()) {
-        AccessibilityObject::AccessibilityChildrenVector allRowHeaders;
-        static_cast<AccessibilityTable*>(accTable)->rowHeaders(allRowHeaders);
-        unsigned rowCount = allRowHeaders.size();
-        for (unsigned k = 0; k < rowCount; ++k) {
-            pair<int, int> rowRange;
-            AccessibilityTableCell* cell = static_cast<AccessibilityTableCell*>(allRowHeaders.at(k).get());
-            cell->rowIndexRange(rowRange);
-            if (rowRange.first <= row && row < rowRange.first + rowRange.second)
-                return allRowHeaders[k]->wrapper();
-        }
-    }
-    return 0;
-}
-
-static AtkObject* webkit_accessible_table_get_caption(AtkTable* table)
-{
-    AccessibilityObject* accTable = core(table);
-    if (accTable->isAccessibilityRenderObject()) {
-        Node* node = accTable->node();
-        if (node && node->hasTagName(HTMLNames::tableTag)) {
-            HTMLTableCaptionElement* caption = static_cast<HTMLTableElement*>(node)->caption();
-            if (caption)
-                return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->node())->wrapper();
-        }
-    }
-    return 0;
-}
-
-static const gchar* webkit_accessible_table_get_column_description(AtkTable* table, gint column)
-{
-    AtkObject* columnHeader = atk_table_get_column_header(table, column);
-    if (columnHeader && ATK_IS_TEXT(columnHeader))
-        return webkitAccessibleTextGetText(ATK_TEXT(columnHeader), 0, -1);
-
-    return 0;
-}
-
-static const gchar* webkit_accessible_table_get_row_description(AtkTable* table, gint row)
-{
-    AtkObject* rowHeader = atk_table_get_row_header(table, row);
-    if (rowHeader && ATK_IS_TEXT(rowHeader))
-        return webkitAccessibleTextGetText(ATK_TEXT(rowHeader), 0, -1);
-
-    return 0;
-}
-
-static void atk_table_interface_init(AtkTableIface* iface)
-{
-    iface->ref_at = webkit_accessible_table_ref_at;
-    iface->get_index_at = webkit_accessible_table_get_index_at;
-    iface->get_column_at_index = webkit_accessible_table_get_column_at_index;
-    iface->get_row_at_index = webkit_accessible_table_get_row_at_index;
-    iface->get_n_columns = webkit_accessible_table_get_n_columns;
-    iface->get_n_rows = webkit_accessible_table_get_n_rows;
-    iface->get_column_extent_at = webkit_accessible_table_get_column_extent_at;
-    iface->get_row_extent_at = webkit_accessible_table_get_row_extent_at;
-    iface->get_column_header = webkit_accessible_table_get_column_header;
-    iface->get_row_header = webkit_accessible_table_get_row_header;
-    iface->get_caption = webkit_accessible_table_get_caption;
-    iface->get_column_description = webkit_accessible_table_get_column_description;
-    iface->get_row_description = webkit_accessible_table_get_row_description;
-}
-
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleActionInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleSelectionInterfaceInit), 0, 0},
@@ -997,8 +796,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTextInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleImageInterfaceInit), 0, 0},
-    {(GInterfaceInitFunc)atk_table_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleTableInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
