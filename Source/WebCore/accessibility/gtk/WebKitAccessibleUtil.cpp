@@ -34,6 +34,9 @@
 #include "AccessibilityObject.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "Node.h"
+#include "Range.h"
+#include "VisibleSelection.h"
 
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -80,4 +83,28 @@ const char* returnString(const String& str)
     static CString returnedString;
     returnedString = str.utf8();
     return returnedString.data();
+}
+
+bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection& selection)
+{
+    if (!coreObject || !coreObject->isAccessibilityRenderObject())
+        return false;
+
+    if (selection.isNone())
+        return false;
+
+    RefPtr<Range> range = selection.toNormalizedRange();
+    if (!range)
+        return false;
+
+    // We want to check that both the selection intersects the node
+    // AND that the selection is not just "touching" one of the
+    // boundaries for the selected node. We want to check whether the
+    // node is actually inside the region, at least partially.
+    Node* node = coreObject->node();
+    Node* lastDescendant = node->lastDescendant();
+    ExceptionCode ec = 0;
+    return (range->intersectsNode(node, ec)
+            && (range->endContainer() != node || range->endOffset())
+            && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
 }

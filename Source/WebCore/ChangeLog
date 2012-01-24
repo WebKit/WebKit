@@ -28,6 +28,71 @@
 
         Reviewed by Martin Robinson.
 
+        New files for the implementation of the AtkText interface,
+        containing the related code from WebKitAccessibleWrapperAtk.cpp.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp: Added.
+        (core):
+        (textForRenderer):
+        (textForObject):
+        (getGailTextUtilForAtk):
+        (getPangoLayoutForAtk):
+        (baselinePositionForRenderObject):
+        (getAttributeSetForAccessibilityObject):
+        (compareAttribute):
+        (attributeSetDifference):
+        (accessibilityObjectLength):
+        (getAccessibilityObjectForOffset):
+        (getRunAttributesFromAccesibilityObject):
+        (textExtents):
+        (getSelectionOffsetsForObject):
+        (webkitAccessibleTextInterfaceInit):
+        (webkitAccessibleTextGetText):
+        (webkitAccessibleTextGetTextAfterOffset):
+        (webkitAccessibleTextGetTextAtOffset):
+        (webkitAccessibleTextGetTextBeforeOffset):
+        (webkitAccessibleTextGetCharacterAtOffset):
+        (webkitAccessibleTextGetCaretOffset):
+        (webkitAccessibleTextGetRunAttributes):
+        (webkitAccessibleTextGetDefaultAttributes):
+        (webkitAccessibleTextGetCharacterExtents):
+        (webkitAccessibleTextGetRangeExtents):
+        (webkitAccessibleTextGetCharacterCount):
+        (webkitAccessibleTextGetOffsetAtPoint):
+        (webkitAccessibleTextGetNSelections):
+        (webkitAccessibleTextGetSelection):
+        (webkitAccessibleTextAddSelection):
+        (webkitAccessibleTextRemoveSelection):
+        (webkitAccessibleTextSetSelection):
+        (webkitAccessibleTextSetCaretOffset):
+        * accessibility/gtk/WebKitAccessibleInterfaceText.h: Added.
+
+        Move common function selectionBelongsToObject out from the wrapper
+        to the utility file, used from WebKitAccessibleInterfaceText.cpp.
+
+        * accessibility/gtk/WebKitAccessibleUtil.cpp:
+        (selectionBelongsToObject): Taken from WebKitAccessibleWrapperAtk.cpp.
+        * accessibility/gtk/WebKitAccessibleUtil.h:
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Remove local
+        implementation of selectionBelongsToObject, and the code related
+        to the implementation of the AtkText interface.
+        (webkit_accessible_get_name): Update call to the former function
+        webkit_accessible_text_get_text and use the new function name.
+        (webkit_accessible_table_get_column_description): Ditto.
+        (webkit_accessible_table_get_row_description): Ditto.
+
+        Add new files to build files.
+
+        * GNUmakefile.list.am: Add WebKitAccessibleInterfaceText.[h|cpp].
+        * WebCore.gypi: Ditto.
+
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
         New files for the implementation of the AtkValue interface,
         containing the related code from WebKitAccessibleWrapperAtk.cpp.
 
