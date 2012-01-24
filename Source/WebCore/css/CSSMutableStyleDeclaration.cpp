@@ -91,10 +91,12 @@ public:
             s_currentDecl = 0;
             return;
         }
-        if (s_currentDecl->isInlineStyleDeclaration() && s_currentDecl->parentElement() && s_currentDecl->parentElement()->document())
-            InspectorInstrumentation::didInvalidateStyleAttr(s_currentDecl->parentElement()->document(), s_currentDecl->parentElement());
+        // We have to clear internal state before calling Inspector's code.
+        CSSMutableStyleDeclaration* localCopyStyleDecl = s_currentDecl;
         s_currentDecl = 0;
         s_shouldNotifyInspector = false;
+        if (localCopyStyleDecl->isInlineStyleDeclaration() && localCopyStyleDecl->parentElement() && localCopyStyleDecl->parentElement()->document())
+            InspectorInstrumentation::didInvalidateStyleAttr(localCopyStyleDecl->parentElement()->document(), localCopyStyleDecl->parentElement());
     }
 
 #if ENABLE(MUTATION_OBSERVERS)
