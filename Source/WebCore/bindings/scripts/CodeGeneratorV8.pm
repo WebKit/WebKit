@@ -3799,11 +3799,8 @@ sub WriteData
     my $headerFileName = "$outputHeadersDir/$prefix$name.h";
     my $implFileName = "$outputDir/$prefix$name.cpp";
 
-    open(IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
-
-    # Write content to file.
-    print IMPL @implContentHeader;
-    print IMPL @implFixedHeader;
+    # Update a .cpp file if the contents are changed.
+    my $contents = join "", @implContentHeader, @implFixedHeader;
 
     my @includes = ();
     my %implIncludeConditions = ();
@@ -3826,30 +3823,28 @@ sub WriteData
         }
     }
     foreach my $include (sort @includes) {
-        print IMPL "#include $include\n";
+        $contents .= "#include $include\n";
     }
     foreach my $condition (sort keys %implIncludeConditions) {
-        print IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
+        $contents .= "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
         foreach my $include (sort @{$implIncludeConditions{$condition}}) {
-            print IMPL "#include $include\n";
+            $contents .= "#include $include\n";
         }
-        print IMPL "#endif\n";
+        $contents .= "#endif\n";
     }
 
-    print IMPL "\n";
-    print IMPL @implContentDecls;
-    print IMPL @implContent;
-    close(IMPL);
+    $contents .= "\n";
+    $contents .= join "", @implContentDecls, @implContent;
+    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
 
     %implIncludes = ();
     @implFixedHeader = ();
     @implContentDecls = ();
     @implContent = ();
 
-    # Write content to file.
-    open(HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
-    print HEADER @headerContent;
-    close(HEADER);
+    # Update a .h file if the contents are changed.
+    $contents = join "", @headerContent;
+    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
 
     @headerContent = ();
 }
