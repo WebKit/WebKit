@@ -1,3 +1,14 @@
+2012-01-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed build fix - r105646 broke this.
+
+        * TestWebKitAPI/Tests/WTF/RedBlackTree.cpp:
+        (TestWebKitAPI::TestNode::TestNode):
+        (TestWebKitAPI::TestNode::key):
+        (TestWebKitAPI::RedBlackTreeTest::assertEqual):
+        (TestWebKitAPI::RedBlackTreeTest::assertSameValuesForKey):
+        (TestWebKitAPI::RedBlackTreeTest::testDriver):
+
 2012-01-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105658.

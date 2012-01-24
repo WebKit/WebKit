@@ -34,7 +34,24 @@ using namespace WTF;
 
 namespace TestWebKitAPI {
 
-class RedBlackTreeTest: public testing::Test {
+class TestNode : public RedBlackTree<TestNode, char>::Node {
+public:
+    TestNode(char key, unsigned value)
+        : m_key(key)
+        , m_value(value)
+    {
+    }
+
+    char key()
+    {
+        return m_key
+    }
+
+    char m_key;
+    unsigned m_value;
+};
+
+class RedBlackTreeTest : public testing::Test {
 public:
     unsigned m_counter;
     
@@ -135,18 +152,18 @@ public:
     }
     
     // This deliberately passes a copy of the vector.
-    void assertEqual(RedBlackTree<char, unsigned>& asTree, PairVector asVector)
+    void assertEqual(RedBlackTree<TestNode, char>& asTree, PairVector asVector)
     {
-        for (RedBlackTree<char, unsigned>::Node* current = asTree.first(); current; current = current->successor())
+        for (TestNode* current = asTree.first(); current; current = current->successor())
             assertFoundAndRemove(asVector, current->m_key, current->m_value);
     }
     
-    void assertSameValuesForKey(RedBlackTree<char, unsigned>& asTree, RedBlackTree<char, unsigned>::Node* node, PairVector foundValues, char key)
+    void assertSameValuesForKey(RedBlackTree<TestNode, char>& asTree, TestNode* node, PairVector foundValues, char key)
     {
         if (node) {
             EXPECT_EQ(node->m_key, key);
             
-            RedBlackTree<char, unsigned>::Node* prevNode = node;
+            TestNode* prevNode = node;
             do {
                 node = prevNode;
                 prevNode = prevNode->predecessor();
@@ -176,7 +193,7 @@ public:
     void testDriver(const char* controlString)
     {
         PairVector asVector;
-        RedBlackTree<char, unsigned> asTree;
+        RedBlackTree<TestNode, char> asTree;
         
         for (const char* current = controlString; *current; current += 2) {
             char command = current[0];
@@ -188,14 +205,14 @@ public:
             
             switch (command) {
             case '+': {
-                RedBlackTree<char, unsigned>::Node* node = new RedBlackTree<char, unsigned>::Node(key, value);
+                TestNode* node = new TestNode(key, value);
                 asTree.insert(node);
                 asVector.append(Pair(key, value));
                 break;
             }
                 
             case '*': {
-                RedBlackTree<char, unsigned>::Node* node = asTree.findExact(key);
+                TestNode* node = asTree.findExact(key);
                 if (node)
                     EXPECT_EQ(node->m_key, key);
                 assertSameValuesForKey(asTree, node, findExact(asVector, key), key);
@@ -203,7 +220,7 @@ public:
             }
 
             case '@': {
-                RedBlackTree<char, unsigned>::Node* node = asTree.findLeastGreaterThanOrEqual(key);
+                TestNode* node = asTree.findLeastGreaterThanOrEqual(key);
                 if (node) {
                     EXPECT_TRUE(node->m_key >= key);
                     assertSameValuesForKey(asTree, node, findLeastGreaterThanOrEqual(asVector, key), node->m_key);
@@ -214,7 +231,7 @@ public:
                 
             case '!': {
                 while (true) {
-                    RedBlackTree<char, unsigned>::Node* node = asTree.remove(key);
+                    TestNode* node = asTree.remove(key);
                     if (node) {
                         EXPECT_EQ(node->m_key, key);
                         assertFoundAndRemove(asVector, node->m_key, node->m_value);
