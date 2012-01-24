@@ -266,11 +266,20 @@ void RenderTable::computeLogicalWidth()
     }
 }
 
-void RenderTable::adjustLogicalHeightForCaption(RenderBlock* caption)
+void RenderTable::layoutCaption(RenderTableCaption* caption)
 {
     IntRect captionRect(caption->x(), caption->y(), caption->width(), caption->height());
 
+    if (caption->needsLayout()) {
+        // The margins may not be available but ensure the caption is at least located beneath any previous sibling caption
+        // so that it does not mistakenly think any floats in the previous caption intrude into it.
+        caption->setLogicalLocation(IntPoint(caption->marginStart(), caption->marginBefore() + logicalHeight()));
+        // If RenderTableCaption ever gets a layout() function, use it here.
+        caption->layoutIfNeeded();
+    }
+    // Apply the margins to the location now that they are definitely available from layout
     caption->setLogicalLocation(IntPoint(caption->marginStart(), caption->marginBefore() + logicalHeight()));
+
     if (!selfNeedsLayout() && caption->checkForRepaintDuringLayout())
         caption->repaintDuringLayoutIfMoved(captionRect);
 
@@ -331,10 +340,6 @@ void RenderTable::layout()
         }
     }
 
-    // Only lay out one caption, since it's the only one we're going to end up painting.
-    for (unsigned i = 0; i < m_captions.size(); i++)
-        m_captions[i]->layoutIfNeeded();
-
     // If any table section moved vertically, we will just repaint everything from that
     // section down (it is quite unlikely that any of the following sections
     // did not shift).
@@ -346,7 +351,7 @@ void RenderTable::layout()
         for (unsigned i = 0; i < m_captions.size(); i++) {
             if (m_captions[i]->style()->captionSide() == CAPBOTTOM)
                 continue;
-            adjustLogicalHeightForCaption(m_captions[i]);
+            layoutCaption(m_captions[i]);
         }
         if (logicalHeight() != oldTableLogicalTop) {
             sectionMoved = true;
@@ -406,7 +411,7 @@ void RenderTable::layout()
     for (unsigned i = 0; i < m_captions.size(); i++) {
         if (m_captions[i]->style()->captionSide() != CAPBOTTOM)
             continue;
-        adjustLogicalHeightForCaption(m_captions[i]);
+        layoutCaption(m_captions[i]);
     }
 
     if (isPositioned())

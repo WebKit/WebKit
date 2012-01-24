@@ -1,3 +1,28 @@
+2012-01-22  Robert Hogan  <robert@webkit.org>
+
+        Incorrect positioning of floating pseudo-elements in table captions
+        https://bugs.webkit.org/show_bug.cgi?id=76664
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/table/caption-encloses-overhanging-float-expected.html
+               fast/table/caption-encloses-overhanging-float.html
+
+        Allow table captions to expand and enclose overhanging floats. When performing
+        layout on a caption ensure that its logical top is set so that it does not mistakenly
+        conclude that floats in a previous sibling are intruding into it when they're not.
+
+        Mostly diagnosed by Abhishek Arya.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats): add table captions to the list
+         that can enclosed overhanging floats.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layoutCaption): use the best available approximation of the caption's logical
+         top offset before laying it out.
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
         In CodeGeneratorV8.pm, overwrite the output .h/.cpp

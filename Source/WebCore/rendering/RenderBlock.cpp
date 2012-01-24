@@ -1515,7 +1515,7 @@ void RenderBlock::addVisualOverflowFromTheme()
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isDeprecatedFlexibleBox())
-           || hasColumns() || isTableCell() || isFieldset() || isWritingModeRoot() || isRoot();
+           || hasColumns() || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isRoot();
 }
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)

@@ -248,7 +248,7 @@ private:
 
     void recalcCollapsedBorders();
     void recalcSections() const;
-    void adjustLogicalHeightForCaption(RenderBlock*);
+    void layoutCaption(RenderTableCaption*);
 
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
