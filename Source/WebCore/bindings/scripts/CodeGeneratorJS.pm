@@ -3287,7 +3287,7 @@ sub WriteData
     # Write content to file.
     print HEADER @headerContentHeader;
 
-    my @includes = ();
+    @includes = ();
     foreach my $include (keys %headerIncludes) {
         $include = "\"$include\"" unless $include =~ /^["<]/; # "
         push @includes, $include;
