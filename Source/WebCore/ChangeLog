@@ -1,3 +1,16 @@
+2012-01-24  Tony Chang  <tony@chromium.org>
+
+        REGRESSION(r103245): can't scroll left/up using scrollbar controls of overflowing elements
+        https://bugs.webkit.org/show_bug.cgi?id=76317
+
+        Reviewed by Darin Adler.
+
+        Test: scrollbars/scroll-rtl-or-bt-layer.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Call scrollToOffsetWithoutAnimation since we're always
+        scrolling to the just computed offset.
+
 2012-01-24  Mark Rowe  <mrowe@apple.com>
 
         Fix all of the builds after r105812.

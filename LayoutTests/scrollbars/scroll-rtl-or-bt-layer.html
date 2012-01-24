@@ -1,0 +1,83 @@
+<html>
+<body>
+
+<p>This test requires DumpRenderTree.  To test manually, try to scroll the
+blue div to the left and the red div up using the scrollbar arrows or the
+mouse wheel.  The test passes if the divs scroll.</p>
+
+<div id='rtl' style="direction: rtl; width: 100px; overflow: auto; border: 1px solid blue;">
+01234567890123456789
+</div>
+
+<div id='bt' style="-webkit-writing-mode: horizontal-bt; height: 100px; overflow: auto; border: 1 px solid red;">
+aaa<br>
+bbb<br>
+ccc<br>
+ddd<br>
+eee<br>
+fff<br>
+ggg<br>
+hhh<br>
+iii<br>
+jjj<br>
+kkk
+</div>
+
+<div id="console"></div>
+
+<script>
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function centerMouseOn(elementId)
+{
+    var element = document.getElementById(elementId);
+    eventSender.mouseMoveTo(element.offsetLeft + element.offsetWidth / 2,
+        element.offsetTop + element.offsetHeight / 2);
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (!window.eventSender || !window.eventSender.mouseScrollBy) {
+        log("This test requires DumpRenderTree with eventSender.mouseScrollBy.");
+        return;
+    }
+
+    centerMouseOn("rtl");
+    var offsetBefore = document.getElementById("rtl").scrollLeft;
+    eventSender.mouseScrollBy(1, 0);
+    var offsetAfter = document.getElementById("rtl").scrollLeft;
+    if (offsetBefore > offsetAfter)
+        log("rtl: PASS");
+    else {
+        log("rtl: FAIL");
+        log("scrollLeft before: " + offsetBefore);
+        log("scrollLeft after: " + offsetAfter);
+    }
+
+    centerMouseOn("bt");
+    offsetBefore = document.getElementById("bt").scrollTop;
+    eventSender.mouseScrollBy(0, 1);
+    offsetAfter = document.getElementById("bt").scrollTop;
+    if (offsetBefore > offsetAfter)
+        log("bt: PASS");
+    else {
+        log("bt: FAIL");
+        log("scrollTop before: " + offsetBefore);
+        log("scrollTop after: " + offsetAfter);
+    }
+
+    document.body.removeChild(document.getElementById("rtl"));
+    document.body.removeChild(document.getElementById("bt"));
+}
+
+test();
+</script>
+
+</body>
+</html>
