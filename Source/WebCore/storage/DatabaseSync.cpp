@@ -50,7 +50,7 @@ namespace WebCore {
 PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* context, const String& name, const String& expectedVersion, const String& displayName,
                                                         unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
-    ASSERT(context->isContextThread() && 20);
+    ASSERT(context->isContextThread());
 
     if (!DatabaseTracker::tracker().canEstablishDatabase(context, name, displayName, estimatedSize)) {
         LOG(StorageAPI, "Database %s for origin %s not allowed to be established", name.ascii().data(), context->securityOrigin()->toString().ascii().data());
@@ -84,7 +84,7 @@ DatabaseSync::DatabaseSync(ScriptExecutionContext* context, const String& name, 
 
 DatabaseSync::~DatabaseSync()
 {
-    ASSERT(m_scriptExecutionContext->isContextThread() && 21);
+    ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (opened()) {
         DatabaseTracker::tracker().removeOpenDatabase(this);
@@ -94,7 +94,7 @@ DatabaseSync::~DatabaseSync()
 
 void DatabaseSync::changeVersion(const String& oldVersion, const String& newVersion, PassRefPtr<SQLTransactionSyncCallback> changeVersionCallback, ExceptionCode& ec)
 {
-    ASSERT(m_scriptExecutionContext->isContextThread() && 22);
+    ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (sqliteDatabase().transactionInProgress()) {
         reportChangeVersionResult(1, SQLException::DATABASE_ERR, 0);
@@ -160,7 +160,7 @@ void DatabaseSync::readTransaction(PassRefPtr<SQLTransactionSyncCallback> callba
 
 void DatabaseSync::runTransaction(PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly, ExceptionCode& ec)
 {
-    ASSERT(m_scriptExecutionContext->isContextThread() && 23);
+    ASSERT(m_scriptExecutionContext->isContextThread());
 
     if (sqliteDatabase().transactionInProgress()) {
         setLastErrorMessage("unable to start a transaction from within a transaction");
