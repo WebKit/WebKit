@@ -1091,7 +1091,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     if (!firstChild() && !documentBeingDestroyed()) {
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
-            lineBoxes()->deleteLineBoxes(renderArena());
+            deleteLineBoxTree();
     }
 }
 
