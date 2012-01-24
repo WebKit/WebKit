@@ -201,7 +201,7 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
+    template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, float multiplier = 1.0f, bool computingFontSize = false);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
@@ -301,7 +301,7 @@ private:
 
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
-    double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize);
+    double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, float multiplier, bool computingFontSize);
 
     union {
         int ident;
