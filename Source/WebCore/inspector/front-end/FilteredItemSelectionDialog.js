@@ -609,13 +609,11 @@ WebInspector.OpenResourceDialog = function(panel, presentationModel)
  * @param {WebInspector.ScriptsPanel} panel
  * @param {WebInspector.DebuggerPresentationModel} presentationModel
  */
-WebInspector.OpenResourceDialog.install = function(panel, presentationModel, viewGetter)
+WebInspector.OpenResourceDialog.install = function(panel, presentationModel, relativeToElement)
 {
     function showOpenResourceDialog()
     {
-         var view = viewGetter();
-         if (view)
-             WebInspector.OpenResourceDialog._show(panel, presentationModel, view.element);
+        WebInspector.OpenResourceDialog._show(panel, presentationModel, relativeToElement);
     }
 
     var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();

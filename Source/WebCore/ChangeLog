@@ -1,3 +1,14 @@
+2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: OpenResourceDialog should work when there are no open tabs in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=76907
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/FilteredItemSelectionDialog.js:
+        (WebInspector.OpenResourceDialog.install):
+        * inspector/front-end/ScriptsPanel.js:
+
 2012-01-24  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: put TypeBuilder namespace in a separate sources

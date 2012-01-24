@@ -43,7 +43,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
     WebInspector.JavaScriptOutlineDialog.install(this, viewGetter.bind(this));
-    WebInspector.OpenResourceDialog.install(this, this._presentationModel, viewGetter.bind(this));
 
     this.debugToolbar = this._createDebugToolbar();
 
@@ -80,12 +79,14 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
         this._editorContainer = new WebInspector.TabbedEditorContainer();
         this._editorContainer.show(this.editorView.mainElement);
+        WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.editorView.mainElement);
     } else {
         this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector(this._presentationModel);
         this._fileSelector.show(this.splitView.mainElement);
 
         this._editorContainer = new WebInspector.ScriptsPanel.SingleFileEditorContainer();
         this._editorContainer.show(this.splitView.mainElement);
+        WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.splitView.mainElement);
     }
     this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.FileSelected, this._fileSelected, this);
     this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, this._fileSelectorReleasedFocus, this);
