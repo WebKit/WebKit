@@ -95,7 +95,8 @@ class FileUploader(object):
         file_objs = []
         for filename, path in files:
             # FIXME: We should talk to the filesytem via a Host object.
-            file_objs.append(('file', filename, filesystem.read_text_file(filename)))
+            with codecs.open(path, "rb") as file:
+                file_objs.append(('file', filename, file.read()))
 
         # FIXME: We should use the same variable names for the formal and actual parameters.
         content_type, data = _encode_multipart_form_data(attrs, file_objs)
