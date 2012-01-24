@@ -430,6 +430,12 @@ public:
     void enableFixedLayoutMode(const CppArgumentList&, CppVariant*);
     void setFixedLayoutSize(const CppArgumentList&, CppVariant*);
 
+#if ENABLE(POINTER_LOCK)
+    void didLosePointerLock(const CppArgumentList&, CppVariant*);
+    void setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant*);
+    void setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant*);
+#endif
+
     void workerThreadCount(CppVariant*);
 
 public:

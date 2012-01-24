@@ -771,6 +771,57 @@ WebScreenInfo WebViewHost::screenInfo()
     return info;
 }
 
+#if ENABLE(POINTER_LOCK)
+bool WebViewHost::requestPointerLock()
+{
+    switch (m_pointerLockPlannedResult) {
+    case PointerLockWillSucceed:
+        postDelayedTask(new HostMethodTask(this, &WebViewHost::didAcquirePointerLock), 0);
+        return true;
+    case PointerLockWillFailAsync:
+        ASSERT(!m_pointerLocked);
+        postDelayedTask(new HostMethodTask(this, &WebViewHost::didNotAcquirePointerLock), 0);
+        return true;
+    case PointerLockWillFailSync:
+        ASSERT(!m_pointerLocked);
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+void WebViewHost::requestPointerUnlock()
+{
+    postDelayedTask(new HostMethodTask(this, &WebViewHost::didLosePointerLock), 0);
+}
+
+bool WebViewHost::isPointerLocked()
+{
+    return m_pointerLocked;
+}
+
+void WebViewHost::didAcquirePointerLock()
+{
+    m_pointerLocked = true;
+    webWidget()->didAcquirePointerLock();
+}
+
+void WebViewHost::didNotAcquirePointerLock()
+{
+    ASSERT(!m_pointerLocked);
+    m_pointerLocked = false;
+    webWidget()->didNotAcquirePointerLock();
+}
+
+void WebViewHost::didLosePointerLock()
+{
+    ASSERT(m_pointerLocked);
+    m_pointerLocked = false;
+    webWidget()->didLosePointerLock();
+}
+#endif
+
 void WebViewHost::show(WebNavigationPolicy)
 {
     m_hasWindow = true;
@@ -1302,6 +1353,10 @@ void WebViewHost::reset()
     m_requestReturnNull = false;
     m_isPainting = false;
     m_canvas.clear();
+#if ENABLE(POINTER_LOCK)
+    m_pointerLocked = false;
+    m_pointerLockPlannedResult = PointerLockWillSucceed;
+#endif
 
     m_navigationController = adoptPtr(new TestNavigationController(this));
 

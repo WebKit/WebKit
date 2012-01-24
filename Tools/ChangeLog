@@ -40,6 +40,36 @@
         * Scripts/webkitpy/common/net/file_uploader.py:
         (FileUploader.upload_as_multipart_form_data):
 
+2012-01-24  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Add Pointer Lock test hooks and mock implementation to DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=76411
+
+        Reviewed by Adam Barth.
+
+        Breaking up https://bugs.webkit.org/show_bug.cgi?id=75762
+        into a series of patches, this change adds a trivial
+        pointer lock implementation to the Chromium port's DumpRenderTree
+        and exposes LayoutTestController hooks to force failure conditions.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::didLosePointerLock):
+        (LayoutTestController::setPointerLockWillFailAsynchronously):
+        (LayoutTestController::setPointerLockWillFailSynchronously):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestPointerLock):
+        (WebViewHost::requestPointerUnlock):
+        (WebViewHost::isPointerLocked):
+        (WebViewHost::didCompletePointerLock):
+        (WebViewHost::didNotCompletePointerLock):
+        (WebViewHost::didLosePointerLock):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost::setPointerLockWillFailAsynchronously):
+        (WebViewHost::setPointerLockWillFailSynchronously):
+
 2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skip WK2 API test timing out on some GTK bots.

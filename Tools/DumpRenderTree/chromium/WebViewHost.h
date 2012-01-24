@@ -110,6 +110,12 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
 
     WebKit::WebSpeechInputControllerMock* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
 
+#if ENABLE(POINTER_LOCK)
+    void didLosePointerLock();
+    void setPointerLockWillFailAsynchronously() { m_pointerLockPlannedResult = PointerLockWillFailAsync; }
+    void setPointerLockWillFailSynchronously() { m_pointerLockPlannedResult = PointerLockWillFailSync; }
+#endif
+
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
 
@@ -180,6 +186,11 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebRect rootWindowRect();
     virtual WebKit::WebRect windowResizerRect();
     virtual WebKit::WebScreenInfo screenInfo();
+#if ENABLE(POINTER_LOCK)
+    virtual bool requestPointerLock();
+    virtual void requestPointerUnlock();
+    virtual bool isPointerLocked();
+#endif
 
     // WebKit::WebFrameClient
     virtual WebKit::WebPlugin* createPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
@@ -288,6 +299,11 @@ private:
     void resetScrollRect();
     void discardBackingStore();
 
+#if ENABLE(POINTER_LOCK)
+    void didAcquirePointerLock();
+    void didNotAcquirePointerLock();
+#endif
+
     WebKit::WebUserMediaClientMock* userMediaClientMock();
     webkit_support::MediaStreamUtil* mediaStreamUtil();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
@@ -378,6 +394,15 @@ private:
 
     TaskList m_taskList;
     Vector<WebKit::WebWidget*> m_popupmenus;
+
+#if ENABLE(POINTER_LOCK)
+    bool m_pointerLocked;
+    enum {
+        PointerLockWillSucceed,
+        PointerLockWillFailAsync,
+        PointerLockWillFailSync
+    } m_pointerLockPlannedResult;
+#endif
 };
 
 #endif // WebViewHost_h

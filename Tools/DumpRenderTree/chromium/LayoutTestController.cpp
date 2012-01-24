@@ -97,6 +97,9 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("clearAllDatabases", &LayoutTestController::clearAllDatabases);
     bindMethod("closeWebInspector", &LayoutTestController::closeWebInspector);
     bindMethod("counterValueForElementById", &LayoutTestController::counterValueForElementById);
+#if ENABLE(POINTER_LOCK)
+    bindMethod("didLosePointerLock", &LayoutTestController::didLosePointerLock);
+#endif
     bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
     bindMethod("display", &LayoutTestController::display);
     bindMethod("displayInvalidatedRegion", &LayoutTestController::displayInvalidatedRegion);
@@ -182,6 +185,10 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
     bindMethod("setPageVisibility", &LayoutTestController::setPageVisibility);
     bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
+#if ENABLE(POINTER_LOCK)
+    bindMethod("setPointerLockWillFailAsynchronously", &LayoutTestController::setPointerLockWillFailAsynchronously);
+    bindMethod("setPointerLockWillFailSynchronously", &LayoutTestController::setPointerLockWillFailSynchronously);
+#endif
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
     bindMethod("setPrinting", &LayoutTestController::setPrinting);
@@ -2178,3 +2185,23 @@ void LayoutTestController::setAudioData(const CppArgumentList& arguments, CppVar
 
     setShouldDumpAsAudio(true);
 }
+
+#if ENABLE(POINTER_LOCK)
+void LayoutTestController::didLosePointerLock(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->webViewHost()->didLosePointerLock();
+    result->setNull();
+}
+
+void LayoutTestController::setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->webViewHost()->setPointerLockWillFailAsynchronously();
+    result->setNull();
+}
+
+void LayoutTestController::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
+{
+    m_shell->webViewHost()->setPointerLockWillFailSynchronously();
+    result->setNull();
+}
+#endif
