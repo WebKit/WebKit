@@ -68,6 +68,7 @@
 #include "WebKitAccessibleInterfaceDocument.h"
 #include "WebKitAccessibleInterfaceEditableText.h"
 #include "WebKitAccessibleInterfaceHyperlinkImpl.h"
+#include "WebKitAccessibleInterfaceHypertext.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -130,11 +131,6 @@ static AccessibilityObject* core(AtkImage* image)
 static AccessibilityObject* core(AtkTable* table)
 {
     return core(ATK_OBJECT(table));
-}
-
-static AccessibilityObject* core(AtkHypertext* hypertext)
-{
-    return core(ATK_OBJECT(hypertext));
 }
 
 static AccessibilityObject* core(AtkValue* value)
@@ -2066,77 +2062,6 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
-static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)
-{
-    AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
-    if (index < 0 || static_cast<unsigned>(index) >= children.size())
-        return 0;
-
-    gint currentLink = -1;
-    for (unsigned i = 0; i < children.size(); i++) {
-        AccessibilityObject* coreChild = children.at(i).get();
-        if (!coreChild->accessibilityIsIgnored()) {
-            AtkObject* axObject = coreChild->wrapper();
-            if (!axObject || !ATK_IS_HYPERLINK_IMPL(axObject))
-                continue;
-
-            currentLink++;
-            if (index != currentLink)
-                continue;
-
-            return atk_hyperlink_impl_get_hyperlink(ATK_HYPERLINK_IMPL(axObject));
-        }
-    }
-
-    return 0;
-}
-
-static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
-{
-    AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
-    if (!children.size())
-        return 0;
-
-    gint linksFound = 0;
-    for (size_t i = 0; i < children.size(); i++) {
-        AccessibilityObject* coreChild = children.at(i).get();
-        if (!coreChild->accessibilityIsIgnored()) {
-            AtkObject* axObject = coreChild->wrapper();
-            if (axObject && ATK_IS_HYPERLINK_IMPL(axObject))
-                linksFound++;
-        }
-    }
-
-    return linksFound;
-}
-
-static gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charIndex)
-{
-    size_t linksCount = webkitAccessibleHypertextGetNLinks(hypertext);
-    if (!linksCount)
-        return -1;
-
-    for (size_t i = 0; i < linksCount; i++) {
-        AtkHyperlink* hyperlink = ATK_HYPERLINK(webkitAccessibleHypertextGetLink(hypertext, i));
-        gint startIndex = atk_hyperlink_get_start_index(hyperlink);
-        gint endIndex = atk_hyperlink_get_end_index(hyperlink);
-
-        // Check if the char index in the link's offset range
-        if (startIndex <= charIndex && charIndex < endIndex)
-            return i;
-    }
-
-    // Not found if reached
-    return -1;
-}
-
-static void atkHypertextInterfaceInit(AtkHypertextIface* iface)
-{
-    iface->get_link = webkitAccessibleHypertextGetLink;
-    iface->get_n_links = webkitAccessibleHypertextGetNLinks;
-    iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
-}
-
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
@@ -2205,8 +2130,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_table_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
-    {(GInterfaceInitFunc)atkHypertextInterfaceInit,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atkValueInterfaceInit,
