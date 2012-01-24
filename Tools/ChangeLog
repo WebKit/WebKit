@@ -1,3 +1,17 @@
+2012-01-24  Dirk Pranke  <dpranke@chromium.org>
+
+        r105674 broke check-webkit-style for chromium's test_expectations.
+
+        Unreviewed, build fix.
+        
+        We now need to pass in a platform name of 'chromium' if we want
+        the chromium port; options.chromium is no longer recognized. I
+        will follow this patch up with a separate patch that has a test,
+        but this at least fixes the build.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._determine_port_from_exepectations_path):
+
 2012-01-20  Ojan Vafai  <ojan@chromium.org>
 
         check-webkit-style of the chromium test_expectations.txt file takes too long

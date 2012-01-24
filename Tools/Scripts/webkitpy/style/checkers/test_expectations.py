@@ -49,15 +49,11 @@ class TestExpectationsChecker(object):
 
     def _determine_port_from_exepectations_path(self, host, expectations_path):
         try:
-            # I believe what this is trying to do is "when the port name is chromium,
-            # get the chromium-port for this platform".  Unclear why that's needed??
             port_name = expectations_path.split(host.filesystem.sep)[-2]
             if not port_name:
                 return None
 
             # Pass a configuration to avoid calling default_configuration() when initializing the port (takes 0.5 seconds on a Mac Pro!).
-            if port_name == "chromium":
-                return host.port_factory.get(options=DummyOptions(chromium=True, configuration="Release"))
             return host.port_factory.get(port_name, options=DummyOptions(configuration="Release"))
         except Exception, e:
             _log.warn("Exception while getting port for path %s" % expectations_path)
