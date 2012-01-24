@@ -1840,7 +1840,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setShowsToolTipOverTruncatedText(store.getBoolValueForKey(WebPreferencesKey::showsToolTipOverTruncatedTextKey()));
 
     settings->setAcceleratedCompositingEnabled(store.getBoolValueForKey(WebPreferencesKey::acceleratedCompositingEnabledKey()) && LayerTreeHost::supportsAcceleratedCompositing());
-    settings->setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
     settings->setAcceleratedDrawingEnabled(store.getBoolValueForKey(WebPreferencesKey::acceleratedDrawingEnabledKey()) && LayerTreeHost::supportsAcceleratedCompositing());
     settings->setCanvasUsesAcceleratedDrawing(store.getBoolValueForKey(WebPreferencesKey::canvasUsesAcceleratedDrawingKey()) && LayerTreeHost::supportsAcceleratedCompositing());
     settings->setShowDebugBorders(store.getBoolValueForKey(WebPreferencesKey::compositingBordersVisibleKey()));
@@ -1850,6 +1849,15 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setMediaPlaybackRequiresUserGesture(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackRequiresUserGestureKey()));
     settings->setMediaPlaybackAllowsInline(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsInlineKey()));
     settings->setMockScrollbarsEnabled(store.getBoolValueForKey(WebPreferencesKey::mockScrollbarsEnabledKey()));
+
+    // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
+    // is enabled on Mac so that scrollbars are always in their own layers.
+#if PLATFORM(MAC)
+    if (settings->acceleratedDrawingEnabled())
+        settings->setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
+    else
+#endif
+        settings->setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
 
 #if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));

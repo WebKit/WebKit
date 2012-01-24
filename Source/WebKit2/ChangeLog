@@ -1,3 +1,15 @@
+2012-01-24  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76928
+        Accelerated drawing should force compositing mode
+        -and corresponding-
+        <rdar://problem/10697417>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-01-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt.
