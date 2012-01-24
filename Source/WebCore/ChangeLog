@@ -1,3 +1,23 @@
+2012-01-16  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r102040): Wrong column widths when row has colspan and unwrappable text
+        https://bugs.webkit.org/show_bug.cgi?id=74874
+
+        Reviewed by Julien Chaffraix.
+
+        Tests: fast/css/min-width-with-spanned-cell-fixed.html
+               fast/css/min-width-with-spanned-cell.html
+
+        A cell with unwrappable text must be as wide as the text is long. If it is a colspan in a table whose
+        columns are all percent and the width of the span cell is wider than the cells it spans in any other 
+        row then it will squeeze those cells beyond the width required to display their contents.
+
+        To fix this ensure that the squeezing of cells within a span respects the minimum width determined by
+        their contents. The squeezing remains for fixed layout tables as per FF and Opera.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+
 2012-01-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Split the MediaStream track list into audio/video specific ones.

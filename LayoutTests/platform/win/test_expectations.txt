@@ -128,3 +128,7 @@ BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 
 // Needs baseline
 BUGWK76118 : fast/css/text-overflow-input.html = MISSING
+
+// Rebaseline required after bug 74874
+BUGWK74874 : fast/table/027.html = IMAGE+TEXT
+BUGWK74874 : fast/table/027-vertical.html = IMAGE+TEXT

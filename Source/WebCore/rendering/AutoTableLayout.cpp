@@ -400,7 +400,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                     ASSERT(m_layoutStruct[pos].logicalWidth.isPercent() || m_layoutStruct[pos].effectiveLogicalWidth.isPercent());
                     // |allColsArePercent| means that either the logicalWidth *or* the effectiveLogicalWidth are percents, handle both of them here.
                     float percent = m_layoutStruct[pos].logicalWidth.isPercent() ? m_layoutStruct[pos].logicalWidth.percent() : m_layoutStruct[pos].effectiveLogicalWidth.percent();
-                    m_layoutStruct[pos].effectiveMinLogicalWidth = percent * cellMinLogicalWidth / totalPercent;
+                    m_layoutStruct[pos].effectiveMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, static_cast<int>(percent * cellMinLogicalWidth / totalPercent));
                     m_layoutStruct[pos].effectiveMaxLogicalWidth = percent * cellMaxLogicalWidth / totalPercent;
                 }
             } else {

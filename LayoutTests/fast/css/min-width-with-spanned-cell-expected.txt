@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,8) size 784x34
+      RenderTable {TABLE} at (0,0) size 784x34
+        RenderTableSection {TBODY} at (0,0) size 784x34
+          RenderTableRow {TR} at (0,2) size 784x14
+            RenderTableCell {TD} at (2,2) size 146x14 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 144x12
+                text run at (1,1) width 144: "texttesttest"
+            RenderTableCell {TD} at (150,2) size 146x14 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 144x12
+                text run at (1,1) width 144: "texttesttest"
+            RenderTableCell {TD} at (298,8) size 484x2 [color=#333333] [bgcolor=#EEEEEE] [r=0 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,18) size 784x14
+            RenderTableCell {TD} at (2,18) size 780x14 [color=#333333] [bgcolor=#EEEEEE] [r=1 c=0 rs=1 cs=3]
+              RenderText {#text} at (1,1) size 312x12
+                text run at (1,1) width 312: "texttesttexttesttesttextte"

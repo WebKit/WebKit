@@ -1,12 +1,12 @@
-layer at (0,0) size 785x760
+layer at (0,0) size 785x772
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x760
-  RenderBlock {HTML} at (0,0) size 785x760
-    RenderBody {BODY} at (8,8) size 769x744
-      RenderTable {TABLE} at (0,0) size 372x744
-        RenderTableSection {TBODY} at (0,0) size 372x744
-          RenderTableRow {TR} at (0,0) size 28x744
-            RenderTableCell {TD} at (0,0) size 28x744 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=3]
+layer at (0,0) size 785x772
+  RenderBlock {HTML} at (0,0) size 785x772
+    RenderBody {BODY} at (8,8) size 769x756
+      RenderTable {TABLE} at (0,0) size 372x756
+        RenderTableSection {TBODY} at (0,0) size 372x756
+          RenderTableRow {TR} at (0,0) size 28x756
+            RenderTableCell {TD} at (0,0) size 28x756 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=3]
               RenderText {#text} at (4,4) size 19x224
                 text run at (4,4) width 137: "   Join Now   Sign In   "
                 text run at (4,141) width 87: "   Personalize: "
@@ -37,7 +37,7 @@ layer at (0,0) size 785x760
                 text run at (4,571) width 8: "  "
                 text run at (4,579) width 85: "   My Links:   "
                 text run at (4,664) width 78: "  Lite \x{2022} Email"
-          RenderTableRow {TR} at (0,28) size 344x744
+          RenderTableRow {TR} at (0,28) size 344x756
             RenderTableCell {TD} at (28,168) size 344x-128 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (28,208) size 344x328 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 336x320
@@ -68,6 +68,6 @@ layer at (0,0) size 785x760
                                 text run at (282,2) width 53: "think will"
                                 text run at (302,2) width 36: "work."
                             RenderTableCell {TD} at (2,351) size 324x-201 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (28,695) size 344x-110 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (28,695) size 344x-98 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (163,-155) size 18x212
               RenderText {#text} at (0,0) size 0x0

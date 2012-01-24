@@ -195,3 +195,7 @@ BUGWK74888 : fast/table/frame-and-rules.html = TEXT
 
 // New test, needs image results added.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
+
+// Rebaseline required after bug 74874
+BUGWK74874 : fast/table/027.html = TEXT
+BUGWK74874 : fast/table/027-vertical.html = TEXT
