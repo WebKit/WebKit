@@ -1,3 +1,23 @@
+2012-01-24  Enrica Casucci  <enrica@apple.com>
+
+        WebHTMLView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.
+        https://bugs.webkit.org/show_bug.cgi?id=76951
+        <rdar://problem/9325158>
+
+        The Inspector bar calls the typingAttributes methods on the clients that support it
+        to retrieve the set of attributes representing the style at the selection and uses
+        this information to update the state of the B, I and U buttons.
+        If this method is not supported, it defaults to the attributes of the previous
+        character position, reporting an incorrect state.
+        This occurs only when we have a caret selection.
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _styleForAttributeChange:]): Removed dead code.
+        (-[WebHTMLView _updateFontPanel]): Removed comment that doesn't apply anymore.
+        (-[WebHTMLView typingAttributes]): Added.
+
 2012-01-24  Benjamin Poulain  <bpoulain@apple.com>
 
         pageCacheSupportsPlugins should default to true on WebKit1

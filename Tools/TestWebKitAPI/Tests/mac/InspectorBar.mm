@@ -62,10 +62,15 @@ TEST(WebKit1, InspectorBarTest)
 
     DOMDocument *document = webView.get().mainFrameDocument;
     [[document body] focus];
-    [webView.get() selectAll:nil];
     
+    EXPECT_TRUE([[[[webView.get() mainFrame] frameView] documentView] respondsToSelector:@selector(typingAttributes)]);
+    NSDictionary *attributes = [(id)[[[webView.get() mainFrame] frameView] documentView] typingAttributes];
+    [(id)[[[webView.get() mainFrame] frameView] documentView] doCommandBySelector:@selector(bold:)];
+    EXPECT_FALSE([attributes isEqual:[(id)[[[webView.get() mainFrame] frameView] documentView] typingAttributes]]);
+    
+    [webView.get() selectAll:nil];
     NSAttributedString *attrString = [(NSView <NSTextInput> *)[[[webView.get() mainFrame] frameView] documentView] attributedSubstringFromRange:NSMakeRange(0, 5)];
-    NSDictionary *attributes = [attrString attributesAtIndex:0 effectiveRange:0];
+    attributes = [attrString attributesAtIndex:0 effectiveRange:0];
     
     EXPECT_TRUE([[attributes objectForKey:NSUnderlineStyleAttributeName] intValue] != 0);
 
@@ -77,7 +82,6 @@ TEST(WebKit1, InspectorBarTest)
 
     DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)currentNode pseudoElement:nil];
     EXPECT_WK_STREQ(@"rgb(0, 0, 0)", [style color]);
-    
 }
 
 } // namespace TestWebKitAPI

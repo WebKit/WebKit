@@ -1,3 +1,17 @@
+2012-01-24  Enrica Casucci  <enrica@apple.com>
+
+        WebHTMLView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.
+        https://bugs.webkit.org/show_bug.cgi?id=76951
+        <rdar://problem/9325158>
+
+        Added test to verify that WebHTMLView supports the typingAttributes method and that it
+        works as expected.
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/mac/InspectorBar.mm:
+        (TestWebKitAPI::TEST):
+
 2012-01-24  James Robinson  <jamesr@chromium.org>
 
         Put a space between the trac link and ellipsis in sheriffbot rollout message so it linkifies better in some IRC clients

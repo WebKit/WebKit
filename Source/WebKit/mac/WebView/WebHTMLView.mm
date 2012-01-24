@@ -4568,29 +4568,6 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     [shadow release];
 
-#if 0
-
-NSObliquenessAttributeName        /* float; skew to be applied to glyphs, default 0: no skew */
-    // font-style, but that is just an on-off switch
-
-NSExpansionAttributeName          /* float; log of expansion factor to be applied to glyphs, default 0: no expansion */
-    // font-stretch?
-
-NSKernAttributeName               /* float, amount to modify default kerning, if 0, kerning off */
-    // letter-spacing? probably not good enough
-
-NSUnderlineColorAttributeName     /* NSColor, default nil: same as foreground color */
-NSStrikethroughColorAttributeName /* NSColor, default nil: same as foreground color */
-    // text-decoration-color?
-
-NSLigatureAttributeName           /* int, default 1: default ligatures, 0: no ligatures, 2: all ligatures */
-NSBaselineOffsetAttributeName     /* float, in points; offset from baseline, default 0 */
-NSStrokeWidthAttributeName        /* float, in percent of font point size, default 0: no stroke; positive for stroke alone, negative for stroke and fill (a typical value for outlined text would be 3.0) */
-NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground color */
-    // need extensions?
-
-#endif
-    
     NSDictionary *a = [sender convertAttributes:oa];
     NSDictionary *b = [sender convertAttributes:ob];
 
@@ -5069,10 +5046,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     ASSERT(font != nil);
 
     [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:multipleFonts];
-
-    // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
-    // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
-    // not reflected in the font panel. Maybe someday this will change.
 }
 
 - (BOOL)_canSmartCopyOrDelete
@@ -5711,6 +5684,15 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
     return result;
+}
+
+- (NSDictionary *)typingAttributes
+{
+    Frame* coreFrame = core([self _frame]);
+    if (coreFrame)
+        return coreFrame->editor()->fontAttributesForSelectionStart();
+
+    return nil;
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
