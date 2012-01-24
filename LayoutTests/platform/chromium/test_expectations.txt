@@ -193,8 +193,6 @@ BUGWK74459 SKIP : fast/workers/worker-messageport-gc.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
 
-BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
-
 BUGCR108798 LINUX : fast/filesystem/workers/file-writer-events.html = CRASH PASS
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously

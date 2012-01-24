@@ -29,7 +29,7 @@ onmessage = function(event)
     sendXMLHttpRequest("POST", fileURL);
 
     log("Test that XMLHttpRequest GET fails after the blob URL is revoked.");
-    revokeObjectURL(fileURL);
+    webkitURL.revokeObjectURL(fileURL);
     sendXMLHttpRequest("GET", fileURL);
 
     log("DONE");
