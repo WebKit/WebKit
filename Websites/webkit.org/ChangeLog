@@ -1,3 +1,14 @@
+2012-01-23  Seo Sanghyeon  <sh4.seo@samsung.com>
+
+        website: Reword WEBKITOUTPUTDIR documentation on Building WebKit page
+        https://bugs.webkit.org/show_bug.cgi?id=76544
+
+        Reviewed by Darin Adler.
+
+        WEBKITOUTPUTDIR is not only for Windows.
+
+        * building/build.html:
+
 2012-01-20  Kent Tamura  <tkent@chromium.org>
 
         Each style rule should have its own ID.
