@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 562x18
+          text run at (0,0) width 562: "Test that media controls repaint correctly during paused states when new data is buffered."
+      RenderBlock (anonymous) at (0,34) size 784x240
+        RenderBR {BR} at (320,240) size 0x0
+layer at (8,42) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,42) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,257) size 320x25
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,215) size 320x25
+    RenderButton {INPUT} at (6,3) size 18x18
+    RenderButton {INPUT} at (32,4) size 16x16
+    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 216x15
+      RenderSlider {INPUT} at (45,2) size 126x13
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 126x13
+          RenderBlock {DIV} at (0,2) size 116x8
+          RenderBlock {DIV} at (116,2) size 10x8
+    RenderButton {INPUT} at (297,4) size 16x16
+    RenderButton {INPUT} at (267,6) size 14x12
+layer at (57,264) size 45x11
+  RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (9,0) size 26x11
+      RenderText {#text} at (0,0) size 26x11
+        text run at (0,0) width 26: "00:00"
+layer at (228,264) size 45x11
+  RenderDeprecatedFlexibleBox {DIV} at (171,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:06"
+layer at (102,266) size 10x8
+  RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
