@@ -1,0 +1,13 @@
+Tests calling getPropertyValue on computed margin styles involving CSS calc
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL getComputedStyle(document.getElementById('calc'), null).getPropertyValue('margin-left') should be 253px. Was 0px.
+FAIL getComputedStyle(document.getElementById('calc'), null).getPropertyValue('margin-top') should be 76px. Was 0px.
+FAIL getComputedStyle(document.getElementById('calc'), null).getPropertyValue('margin-right') should be 345px. Was 0px.
+FAIL getComputedStyle(document.getElementById('calc'), null).getPropertyValue('margin-bottom') should be 529px. Was 0px.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
