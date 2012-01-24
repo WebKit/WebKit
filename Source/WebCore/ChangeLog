@@ -1,3 +1,17 @@
+2012-01-24  Greg Billock  <gbillock@google.com>
+
+        Change dispatchIntent API to pure virtual in FrameLoaderClient.
+
+        The Windows compiler needs this to deal with the forward declaration
+        of WebCore::IntentRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=76940
+
+        Reviewed by Adam Barth.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchIntent):
+        * loader/FrameLoaderClient.h:
+
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
         CodeGeneratorJS.pm should overwrite the output .h/.cpp

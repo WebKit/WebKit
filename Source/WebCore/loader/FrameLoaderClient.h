@@ -328,7 +328,7 @@ namespace WebCore {
         virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
 
 #if ENABLE(WEB_INTENTS)
-        virtual void dispatchIntent(PassRefPtr<IntentRequest> intentRequest) { }
+        virtual void dispatchIntent(PassRefPtr<IntentRequest>) = 0;
 #endif
     };
 

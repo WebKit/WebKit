@@ -42,6 +42,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "InspectorClient.h"
+#include "IntentRequest.h"
 #include "PopupMenu.h"
 #include "ResourceError.h"
 #include "SearchPopupMenu.h"
@@ -407,6 +408,10 @@ public:
 #endif
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() { return PassRefPtr<FrameNetworkingContext>(); }
+
+#if ENABLE(WEB_INTENTS)
+    virtual void dispatchIntent(PassRefPtr<IntentRequest>) { }
+#endif
 };
 
 class EmptyTextCheckerClient : public TextCheckerClient {
