@@ -430,6 +430,8 @@ public:
     void enableFixedLayoutMode(const CppArgumentList&, CppVariant*);
     void setFixedLayoutSize(const CppArgumentList&, CppVariant*);
 
+    void workerThreadCount(CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

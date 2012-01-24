@@ -193,16 +193,6 @@ BUGWK74459 SKIP : fast/workers/worker-messageport-gc.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
 
-BUGWK74449 SKIP : fast/workers/dedicated-worker-lifecycle.html = TIMEOUT
-BUGWK74449 SKIP : fast/workers/worker-close-more.html = TIMEOUT
-BUGWK74449 SKIP : fast/workers/worker-lifecycle.html = TIMEOUT
-
-
-// Tests timing out because layoutTestController.workerThreadCount is not implemented in DRT
-BUGWK74653 SKIP : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TIMEOUT
-BUGWK74653 SKIP : http/tests/workers/terminate-during-sync-operation.html = TIMEOUT
-BUGWK74653 SKIP : fast/workers/storage/interrupt-database.html = TIMEOUT
-
 BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
 
 BUGCR108798 LINUX : fast/filesystem/workers/file-writer-events.html = CRASH PASS

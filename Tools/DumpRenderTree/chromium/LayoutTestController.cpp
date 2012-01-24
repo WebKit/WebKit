@@ -36,6 +36,7 @@
 #include "TestShell.h"
 #include "WebAnimationController.h"
 #include "WebBindings.h"
+#include "WebWorkerInfo.h"
 #include "WebConsoleMessage.h"
 #include "platform/WebData.h"
 #include "WebDeviceOrientation.h"
@@ -252,6 +253,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
+    bindProperty("workerThreadCount", &LayoutTestController::workerThreadCount);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -2105,6 +2107,11 @@ void LayoutTestController::setFixedLayoutSize(const CppArgumentList& arguments, 
     int width = arguments[0].toInt32();
     int height = arguments[1].toInt32();
     m_shell->webView()->setFixedLayoutSize(WebSize(width, height));
+}
+
+void LayoutTestController::workerThreadCount(CppVariant* result)
+{
+    result->set(static_cast<int>(WebWorkerInfo::dedicatedWorkerCount()));
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

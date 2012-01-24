@@ -1,3 +1,15 @@
+2012-01-23  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] Implement layoutTestController.workerThreadCount in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=74653.
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::workerThreadCount):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2012-01-23  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: make --chromium work like --qt
