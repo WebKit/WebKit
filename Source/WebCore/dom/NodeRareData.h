@@ -220,7 +220,7 @@ public:
     HTMLPropertiesCollection* properties(Node* node)
     {
         if (!m_properties)
-            m_properties = adoptPtr(HTMLPropertiesCollection::create(node));
+            m_properties = HTMLPropertiesCollection::create(node);
 
         return m_properties.get();
     }

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class MicroDataItemList : public DynamicNodeList {
+class MicroDataItemList : public DynamicSubtreeNodeList {
 public:
     static PassRefPtr<MicroDataItemList> create(PassRefPtr<Node> rootNode, const String& typeNames)
     {

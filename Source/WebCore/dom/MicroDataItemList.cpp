@@ -38,15 +38,15 @@ namespace WebCore {
 using namespace HTMLNames;
 
 MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames)
-    : DynamicNodeList(rootNode)
-    , m_typeNames(typeNames, m_rootNode->document()->inQuirksMode())
+    : DynamicSubtreeNodeList(rootNode)
+    , m_typeNames(typeNames, node()->document()->inQuirksMode())
     , m_originalTypeNames(typeNames)
 {
 }
 
 MicroDataItemList::~MicroDataItemList()
 {
-    m_rootNode->document()->removeCachedMicroDataItemList(this, m_originalTypeNames);
+    rootNode()->document()->removeCachedMicroDataItemList(this, m_originalTypeNames);
 }
 
 bool MicroDataItemList::nodeMatches(Element* testNode) const

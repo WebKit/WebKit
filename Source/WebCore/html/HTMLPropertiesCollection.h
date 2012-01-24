@@ -41,7 +41,7 @@ class DOMStringList;
 
 class HTMLPropertiesCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLPropertiesCollection> create(PassRefPtr<Node>);
+    static PassOwnPtr<HTMLPropertiesCollection> create(Node*);
     virtual ~HTMLPropertiesCollection();
 
     unsigned length() const OVERRIDE;
@@ -51,7 +51,7 @@ public:
     PassRefPtr<DOMStringList> names() const;
 
 private:
-    HTMLPropertiesCollection(PassRefPtr<Node>);
+    HTMLPropertiesCollection(Node*);
 
     void findPropetiesOfAnItem(Node* current) const;
 
