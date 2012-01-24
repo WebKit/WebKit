@@ -1,3 +1,9 @@
+2012-01-24  Dmitry Lomov  <dslomov@google.com>
+
+        Unreviewed: removing WebWorker.h again after r105684.
+
+        * WebKit.gyp:
+
 2012-01-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Split the MediaStream track list into audio/video specific ones.

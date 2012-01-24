@@ -268,7 +268,6 @@
                 'public/WebViewClient.h',
                 'public/WebWidget.h',
                 'public/WebWidgetClient.h',
-                'public/WebWorker.h',
                 'public/WebWorkerInfo.h',
                 'public/WebWorkerRunLoop.h',
                 'public/android/WebInputEventFactory.h',
