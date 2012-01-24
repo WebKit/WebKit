@@ -296,10 +296,10 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 
 static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
 {
+    // None of these need to be RefPtr because args and context are guaranteed
+    // to hold on to them.
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
-
-    DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
-    ASSERT(source->frame());
+    DOMWindow* source = V8Proxy::retrieveWindowForCallingContext();
 
     // This function has variable arguments and can be:
     // Per current spec:

@@ -169,6 +169,9 @@ namespace WebCore {
 
         // Returns the window object associated with a context.
         static DOMWindow* retrieveWindow(v8::Handle<v8::Context>);
+
+        static DOMWindow* retriveWindowForCallingCOntext();
+
         // Returns V8Proxy object of the currently executing context.
         static V8Proxy* retrieve();
         // Returns V8Proxy object associated with a frame.
@@ -211,6 +214,7 @@ namespace WebCore {
         // linking time.
         static Frame* retrieveFrameForEnteredContext();
         static Frame* retrieveFrameForCurrentContext();
+        static DOMWindow* retrieveWindowForCallingContext();
         static Frame* retrieveFrameForCallingContext();
 
         // Returns V8 Context of a frame. If none exists, creates
