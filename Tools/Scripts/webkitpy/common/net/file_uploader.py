@@ -91,7 +91,7 @@ class FileUploader(object):
     def upload_single_text_file(self, filesystem, content_type, filename):
         return self._upload_data(content_type, filesystem.read_text_file(filename))
 
-    def upload_as_multipart_form_data(self, filesystem, files, params, timeout_seconds):
+    def upload_as_multipart_form_data(self, filesystem, files, attrs):
         file_objs = []
         for filename, path in files:
             # FIXME: We should talk to the filesytem via a Host object.

@@ -1,3 +1,10 @@
+2012-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r105543.
+
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader.upload_as_multipart_form_data):
+
 2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skip WK2 API test timing out on some GTK bots.
