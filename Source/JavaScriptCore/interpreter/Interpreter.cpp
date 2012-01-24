@@ -2579,7 +2579,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         if (propName.getUInt32(i))
             callFrame->uncheckedR(dst) = jsBoolean(baseObj->hasProperty(callFrame, i));
         else {
-            Identifier property(callFrame, propName.toString(callFrame));
+            Identifier property(callFrame, propName.toString(callFrame)->value(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->uncheckedR(dst) = jsBoolean(baseObj->hasProperty(callFrame, property));
         }
@@ -3486,7 +3486,7 @@ skip_id_custom_self:
             NEXT_INSTRUCTION();
         }
         {
-            Identifier propertyName(callFrame, subscript.toString(callFrame));
+            Identifier propertyName(callFrame, subscript.toString(callFrame)->value(callFrame));
             result = baseValue.get(callFrame, propertyName);
         }
         CHECK_FOR_EXCEPTION();
@@ -3561,7 +3561,7 @@ skip_id_custom_self:
             else
                 result = baseValue.get(callFrame, i);
         } else {
-            Identifier property(callFrame, subscript.toString(callFrame));
+            Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             result = baseValue.get(callFrame, property);
         }
 
@@ -3608,7 +3608,7 @@ skip_id_custom_self:
             } else
                 baseValue.put(callFrame, i, callFrame->r(value).jsValue());
         } else {
-            Identifier property(callFrame, subscript.toString(callFrame));
+            Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             if (!globalData->exception) { // Don't put to an object if toString threw an exception.
                 PutPropertySlot slot(codeBlock->isStrictMode());
                 baseValue.put(callFrame, property, callFrame->r(value).jsValue(), slot);
@@ -3640,7 +3640,7 @@ skip_id_custom_self:
             result = baseObj->methodTable()->deletePropertyByIndex(baseObj, callFrame, i);
         else {
             CHECK_FOR_EXCEPTION();
-            Identifier property(callFrame, subscript.toString(callFrame));
+            Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             CHECK_FOR_EXCEPTION();
             result = baseObj->methodTable()->deleteProperty(baseObj, callFrame, property);
         }
@@ -4947,7 +4947,7 @@ skip_id_custom_self:
            original constructor, using constant message as the
            message string. The result is thrown.
         */
-        UString message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame);
+        UString message = callFrame->r(vPC[1].u.operand).jsValue().toString(callFrame)->value(callFrame);
         exceptionValue = JSValue(createReferenceError(callFrame, message));
         goto vm_throw;
     }
