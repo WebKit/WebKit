@@ -98,12 +98,12 @@ public:
         return m_webViewImpl->pageScaleFactor();
     }
 
-    virtual bool showDebugBorders() const
+    virtual bool showDebugBorders(const GraphicsLayer*) const
     {
         return m_webViewImpl->page()->settings()->showDebugBorders();
     }
 
-    virtual bool showRepaintCounter() const
+    virtual bool showRepaintCounter(const GraphicsLayer*) const
     {
         return m_webViewImpl->page()->settings()->showRepaintCounter();
     }

@@ -133,8 +133,8 @@ public:
     virtual float pageScaleFactor() const;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
 
-    virtual bool showDebugBorders() const;
-    virtual bool showRepaintCounter() const;
+    virtual bool showDebugBorders(const GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const GraphicsLayer*) const;
 
     LayoutRect contentsBox() const;
     

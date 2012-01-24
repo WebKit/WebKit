@@ -1,3 +1,22 @@
+2012-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Show layer borders for scrollbar layers
+        https://bugs.webkit.org/show_bug.cgi?id=76888
+
+        Reviewed by Beth Dakin.
+        
+        Update for new signatures of GraphicsLayerClient::showDebugBorders()
+        and GraphicsLayerClient::showRepaintCounter().
+
+        * UIProcess/LayerTreeHostProxy.h:
+        (WebKit::LayerTreeHostProxy::showDebugBorders):
+        (WebKit::LayerTreeHostProxy::showRepaintCounter):
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::showDebugBorders):
+        (WebKit::LayerTreeHostCA::showRepaintCounter):
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+
 2012-01-24  David Levin  <levin@chromium.org>
 
         [windows] Convert usage of GetDC to HWndDC Part 3.

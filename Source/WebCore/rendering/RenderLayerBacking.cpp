@@ -1179,12 +1179,12 @@ void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer*) const
     compositor()->didFlushChangesForLayer(m_owningLayer);
 }
 
-bool RenderLayerBacking::showDebugBorders() const
+bool RenderLayerBacking::showDebugBorders(const GraphicsLayer*) const
 {
     return compositor() ? compositor()->compositorShowDebugBorders() : false;
 }
 
-bool RenderLayerBacking::showRepaintCounter() const
+bool RenderLayerBacking::showRepaintCounter(const GraphicsLayer*) const
 {
     return compositor() ? compositor()->compositorShowRepaintCounter() : false;
 }

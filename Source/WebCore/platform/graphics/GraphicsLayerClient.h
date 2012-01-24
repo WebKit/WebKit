@@ -71,8 +71,8 @@ public:
     // Page scale factor.
     virtual float pageScaleFactor() const { return 1; }
 
-    virtual bool showDebugBorders() const = 0;
-    virtual bool showRepaintCounter() const = 0;
+    virtual bool showDebugBorders(const GraphicsLayer*) const = 0;
+    virtual bool showRepaintCounter(const GraphicsLayer*) const = 0;
 };
 
 } // namespace WebCore

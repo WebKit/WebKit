@@ -370,8 +370,8 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    bool showDebugBorders() const { return m_client ? m_client->showDebugBorders() : false; }
-    bool showRepaintCounter() const { return m_client ? m_client->showRepaintCounter() : false; }
+    bool showDebugBorders() const { return m_client ? m_client->showDebugBorders(this) : false; }
+    bool showRepaintCounter() const { return m_client ? m_client->showRepaintCounter(this) : false; }
     
     void updateDebugIndicators();
     

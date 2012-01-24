@@ -151,12 +151,12 @@ void NonCompositedContentHost::setShowDebugBorders(bool showDebugBorders)
     m_graphicsLayer->updateDebugIndicators();
 }
 
-bool NonCompositedContentHost::showDebugBorders() const
+bool NonCompositedContentHost::showDebugBorders(const WebCore::GraphicsLayer*) const
 {
     return m_showDebugBorders;
 }
 
-bool NonCompositedContentHost::showRepaintCounter() const
+bool NonCompositedContentHost::showRepaintCounter(const WebCore::GraphicsLayer*) const
 {
     return false;
 }

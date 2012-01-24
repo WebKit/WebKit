@@ -1623,6 +1623,22 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     }
 }
 
+bool RenderLayerCompositor::showDebugBorders(const GraphicsLayer* layer) const
+{
+    if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)
+        return m_showDebugBorders;
+
+    return false;
+}
+
+bool RenderLayerCompositor::showRepaintCounter(const GraphicsLayer* layer) const
+{
+    if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)
+        return m_showDebugBorders;
+
+    return false;
+}
+
 float RenderLayerCompositor::deviceScaleFactor() const
 {
     Frame* frame = m_renderView->frameView()->frame();

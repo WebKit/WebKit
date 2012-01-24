@@ -41,8 +41,8 @@ class MockGraphicsLayerClient : public GraphicsLayerClient {
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
     virtual void notifySyncRequired(const GraphicsLayer*) { }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) { }
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
+    virtual bool showDebugBorders(const GraphicsLayer*) const { return false; }
+    virtual bool showRepaintCounter(const GraphicsLayer*) const { return false; }
 };
 
 class TestImage : public Image {

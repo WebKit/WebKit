@@ -217,10 +217,8 @@ private:
     virtual void notifySyncRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const LayoutRect&);
 
-    // These calls return false always. They are saying that the layers associated with this client
-    // (the clipLayer and scrollLayer) should never show debugging info.
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
+    virtual bool showDebugBorders(const GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const GraphicsLayer*) const;
     
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer*) const;

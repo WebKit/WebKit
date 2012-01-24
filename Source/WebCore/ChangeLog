@@ -1,3 +1,29 @@
+2012-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Show layer borders for scrollbar layers
+        https://bugs.webkit.org/show_bug.cgi?id=76888
+
+        Reviewed by Beth Dakin.
+        
+        When compositing layer borders are showing, show the borders
+        for scrollbars layers. This reduces confusion about whether scrollbars
+        are rendering into their own layers.
+        
+        Requires a new parameter to two GraphicsLayerClient methods.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::showDebugBorders):
+        (WebCore::GraphicsLayer::showRepaintCounter):
+        * platform/graphics/GraphicsLayerClient.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::showDebugBorders):
+        (WebCore::RenderLayerBacking::showRepaintCounter):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::showDebugBorders):
+        (WebCore::RenderLayerCompositor::showRepaintCounter):
+        * rendering/RenderLayerCompositor.h:
+
 2012-01-24  David Levin  <levin@chromium.org>
 
         [windows] Convert usage of GetDC to HWndDC Part 3.

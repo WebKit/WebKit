@@ -6628,12 +6628,12 @@ void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, Grap
     context.restore();
 }
 
-bool WebView::showDebugBorders() const
+bool WebView::showDebugBorders(const GraphicsLayer*) const
 {
     return m_page->settings()->showDebugBorders();
 }
 
-bool WebView::showRepaintCounter() const
+bool WebView::showRepaintCounter(const GraphicsLayer*) const
 {
     return m_page->settings()->showRepaintCounter();
 }

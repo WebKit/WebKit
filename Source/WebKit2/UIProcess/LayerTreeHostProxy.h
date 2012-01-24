@@ -78,8 +78,8 @@ protected:
     // Reimplementations from WebCore::GraphicsLayerClient.
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double) { }
     virtual void notifySyncRequired(const WebCore::GraphicsLayer*) { }
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const { return false; }
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
 
     WebCore::RunLoop::Timer<LayerTreeHostProxy> m_animationTimer;
