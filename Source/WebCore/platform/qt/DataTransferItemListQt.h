@@ -42,7 +42,7 @@ class DataTransferItemListQt : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListQt> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-    virtual size_t length();
+    virtual size_t length() const;
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);
     virtual void deleteItem(unsigned long index, ExceptionCode&);
     virtual void clear();

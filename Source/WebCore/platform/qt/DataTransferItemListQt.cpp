@@ -45,7 +45,7 @@ DataTransferItemListQt::DataTransferItemListQt(PassRefPtr<Clipboard> owner, Scri
 {
 }
 
-size_t DataTransferItemListQt::length()
+size_t DataTransferItemListQt::length() const
 {
     if (m_owner->policy() == ClipboardNumb)
         return 0;

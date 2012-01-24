@@ -48,7 +48,7 @@ class DataTransferItemList : public RefCounted<DataTransferItemList> {
 public:
     virtual ~DataTransferItemList() { }
 
-    virtual size_t length() = 0;
+    virtual size_t length() const = 0;
     virtual PassRefPtr<DataTransferItem> item(unsigned long index) = 0;
     virtual void deleteItem(unsigned long index, ExceptionCode&) = 0;
     virtual void clear() = 0;

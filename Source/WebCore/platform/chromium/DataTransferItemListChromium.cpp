@@ -58,7 +58,7 @@ DataTransferItemListChromium::DataTransferItemListChromium(PassRefPtr<Clipboard>
 {
 }
 
-size_t DataTransferItemListChromium::length()
+size_t DataTransferItemListChromium::length() const
 {
     if (m_owner->policy() == ClipboardNumb)
         return 0;

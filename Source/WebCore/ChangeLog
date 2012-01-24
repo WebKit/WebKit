@@ -1,3 +1,25 @@
+2012-01-24  Daniel Cheng  <dcheng@chromium.org>
+
+        Make DataTransferItemList::length() const.
+        https://bugs.webkit.org/show_bug.cgi?id=76946
+
+        Just a const-correctness change.
+
+        Reviewed by Tony Chang.
+
+        No new tests since no functionality changed.
+
+        * dom/DataTransferItemList.h:
+        (DataTransferItemList):
+        * platform/chromium/DataTransferItemListChromium.cpp:
+        (WebCore::DataTransferItemListChromium::length):
+        * platform/chromium/DataTransferItemListChromium.h:
+        (DataTransferItemListChromium):
+        * platform/qt/DataTransferItemListQt.cpp:
+        (WebCore::DataTransferItemListQt::length):
+        * platform/qt/DataTransferItemListQt.h:
+        (DataTransferItemListQt):
+
 2012-01-24  Tony Chang  <tony@chromium.org>
 
         REGRESSION(r103245): can't scroll left/up using scrollbar controls of overflowing elements

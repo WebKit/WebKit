@@ -50,7 +50,7 @@ class DataTransferItemListChromium : public DataTransferItemList {
 public:
     static PassRefPtr<DataTransferItemListChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 
-    virtual size_t length();
+    virtual size_t length() const;
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);
     // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
     virtual void deleteItem(unsigned long index, ExceptionCode&);
@@ -65,7 +65,8 @@ private:
     RefPtr<Clipboard> m_owner;
     // Indirectly owned by our parent.
     ScriptExecutionContext* m_context;
-    Vector<RefPtr<DataTransferItem> > m_items;
+    // FIXME: m_items should not be mutable. This will be fixed by https://bugs.webkit.org/show_bug.cgi?id=76598
+    mutable Vector<RefPtr<DataTransferItem> > m_items;
 };
 
 } // namespace WebCore
