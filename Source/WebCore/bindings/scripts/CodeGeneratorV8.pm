@@ -32,7 +32,7 @@ use Digest::MD5;
 
 use constant FileNamePrefix => "V8";
 
-my ($codeGenerator, $IMPL, $HEADER);
+my ($codeGenerator);
 
 my $module = "";
 my $outputDir = "";
@@ -85,12 +85,10 @@ sub new
     return $reference;
 }
 
+# FIXME(haraken): finish() will be soon removed from all CodeGenerators.
 sub finish
 {
     my $object = shift;
-
-    # Commit changes!
-    $object->WriteData();
 }
 
 # Params: 'domClass' struct
@@ -109,15 +107,7 @@ sub GenerateInterface
         $object->GenerateImplementation($dataNode);
     }
 
-    my $name = $dataNode->name;
-
-    # Open files for writing
-    my $prefix = FileNamePrefix;
-    my $headerFileName = "$outputHeadersDir/$prefix$name.h";
-    my $implFileName = "$outputDir/$prefix$name.cpp";
-
-    open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
-    open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
+    $object->WriteData($dataNode);
 }
 
 # Params: 'idlDocument' struct
@@ -3807,63 +3797,67 @@ sub ReturnNativeToJSValue
 # Internal helper
 sub WriteData
 {
-    if (defined($IMPL)) {
-        # Write content to file.
-        print $IMPL @implContentHeader;
+    my $object = shift;
+    my $dataNode = shift;
 
-        print $IMPL @implFixedHeader;
+    my $name = $dataNode->name;
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputHeadersDir/$prefix$name.h";
+    my $implFileName = "$outputDir/$prefix$name.cpp";
 
-        my @includes = ();
-        my %implIncludeConditions = ();
-        foreach my $include (keys %implIncludes) {
-            my $condition = $implIncludes{$include};
-            my $checkType = $include;
-            $checkType =~ s/\.h//;
-            next if $codeGenerator->IsSVGAnimatedType($checkType);
+    open(IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
 
-            if ($include =~ /wtf/) {
-                $include = "\<$include\>";
-            } else {
-                $include = "\"$include\"";
-            }
+    # Write content to file.
+    print IMPL @implContentHeader;
+    print IMPL @implFixedHeader;
 
-            if ($condition eq 1) {
-                push @includes, $include;
-            } else {
-                push @{$implIncludeConditions{$condition}}, $include;
-            }
-        }
-        foreach my $include (sort @includes) {
-            print $IMPL "#include $include\n";
-        }
-        foreach my $condition (sort keys %implIncludeConditions) {
-            print $IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
-            foreach my $include (sort @{$implIncludeConditions{$condition}}) {
-                print $IMPL "#include $include\n";
-            }
-            print $IMPL "#endif\n";
+    my @includes = ();
+    my %implIncludeConditions = ();
+    foreach my $include (keys %implIncludes) {
+        my $condition = $implIncludes{$include};
+        my $checkType = $include;
+        $checkType =~ s/\.h//;
+        next if $codeGenerator->IsSVGAnimatedType($checkType);
+
+        if ($include =~ /wtf/) {
+            $include = "\<$include\>";
+        } else {
+            $include = "\"$include\"";
         }
 
-        print $IMPL "\n";
-        print $IMPL @implContentDecls;
-        print $IMPL @implContent;
-        close($IMPL);
-        undef($IMPL);
-
-        %implIncludes = ();
-        @implFixedHeader = ();
-        @implContentDecls = ();
-        @implContent = ();
+        if ($condition eq 1) {
+            push @includes, $include;
+        } else {
+            push @{$implIncludeConditions{$condition}}, $include;
+        }
+    }
+    foreach my $include (sort @includes) {
+        print IMPL "#include $include\n";
+    }
+    foreach my $condition (sort keys %implIncludeConditions) {
+        print IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
+        foreach my $include (sort @{$implIncludeConditions{$condition}}) {
+            print IMPL "#include $include\n";
+        }
+        print IMPL "#endif\n";
     }
 
-    if (defined($HEADER)) {
-        # Write content to file.
-        print $HEADER @headerContent;
-        close($HEADER);
-        undef($HEADER);
+    print IMPL "\n";
+    print IMPL @implContentDecls;
+    print IMPL @implContent;
+    close(IMPL);
 
-        @headerContent = ();
-    }
+    %implIncludes = ();
+    @implFixedHeader = ();
+    @implContentDecls = ();
+    @implContent = ();
+
+    # Write content to file.
+    open(HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
+    print HEADER @headerContent;
+    close(HEADER);
+
+    @headerContent = ();
 }
 
 sub GetVisibleInterfaceName
