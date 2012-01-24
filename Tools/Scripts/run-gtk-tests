@@ -25,7 +25,11 @@ class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
     # FIXME: https://bugs.webkit.org/show_bug.cgi?id=74717
-    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource" ]
+    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource",
+                # WebKit2APITests/TestDownloads is consistently timing
+                # out on the 32bit release and 64bit debug bots.
+                # https://bugs.webkit.org/show_bug.cgi?id=76910
+                "WebKit2APITests/TestDownloads" ]
 
     def __init__(self):
         self._executive = Executive()

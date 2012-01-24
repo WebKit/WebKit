@@ -1,3 +1,13 @@
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skip WK2 API test timing out on some GTK bots.
+
+        WebKit2APITests/TestDownloads is consistently timing out on the
+        32bit release and 64bit debug bots.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip WebKit2APITests/TestDownloads.
+
 2012-01-24  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Fix the build with the newes Qt5 hashes
