@@ -23,6 +23,7 @@
 
 #include "QtNetworkReplyData.h"
 #include "QtNetworkRequestData.h"
+#include "SharedMemory.h"
 #include "qwebkitglobal.h"
 #include <QNetworkAccessManager>
 #include <QObject>
@@ -57,16 +58,18 @@ public:
     QString data() const;
     void setData(const QString& data);
 
-    WTF::RefPtr<WebKit::QtNetworkRequestData> networkRequestData() const;
-    void setNetworkRequestData(WTF::RefPtr<WebKit::QtNetworkRequestData> data);
-    WTF::RefPtr<WebKit::QtNetworkReplyData> networkReplyData() const;
+    WebKit::QtRefCountedNetworkRequestData* networkRequestData() const;
+    void setNetworkRequestData(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData> data);
+    WebKit::QtRefCountedNetworkReplyData* networkReplyData() const;
 
 public Q_SLOTS:
     void send();
 
 private:
-    WTF::RefPtr<WebKit::QtNetworkRequestData> m_networkRequestData;
-    WTF::RefPtr<WebKit::QtNetworkReplyData> m_networkReplyData;
+    WTF::RefPtr<WebKit::QtRefCountedNetworkRequestData> m_networkRequestData;
+    WTF::RefPtr<WebKit::QtRefCountedNetworkReplyData> m_networkReplyData;
+    WTF::RefPtr<WebKit::SharedMemory> m_sharedMemory;
+    uint64_t m_dataLength;
 };
 
 QML_DECLARE_TYPE(QQuickNetworkReply)

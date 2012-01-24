@@ -36,6 +36,10 @@
 
 namespace WebKit {
 
+QtRefCountedNetworkRequestData::QtRefCountedNetworkRequestData(const QtNetworkRequestData& data)
+    : m_data(data)
+{ }
+
 QtNetworkRequestData::QtNetworkRequestData()
 { }
 
@@ -44,14 +48,6 @@ QtNetworkRequestData::QtNetworkRequestData(const QNetworkRequest& request, QNetw
     m_scheme = request.url().scheme();
     m_urlString = request.url().toString();
     m_replyUuid = QUuid::createUuid().toString();
-}
-
-QtNetworkRequestData::QtNetworkRequestData(const QtNetworkRequestData& origin)
-    : RefCounted<QtNetworkRequestData>(),
-    m_scheme(origin.m_scheme),
-    m_urlString(origin.m_urlString),
-    m_replyUuid(origin.m_replyUuid)
-{
 }
 
 void QtNetworkRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const

@@ -34,6 +34,7 @@
 #include "WebPreferences.h"
 
 #include "qquicknetworkreply_p.h"
+#include "qquicknetworkrequest_p.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p_p.h"
@@ -824,15 +825,17 @@ QDeclarativeListProperty<QQuickUrlSchemeDelegate> QQuickWebViewExperimental::sch
             QQuickWebViewExperimental::schemeDelegates_Clear);
 }
 
-void QQuickWebViewExperimental::invokeApplicationSchemeHandler(PassRefPtr<QtNetworkRequestData> request)
+void QQuickWebViewExperimental::invokeApplicationSchemeHandler(PassRefPtr<QtRefCountedNetworkRequestData> request)
 {
+    RefPtr<QtRefCountedNetworkRequestData> req = request;
     const QObjectList children = schemeParent->children();
     for (int index = 0; index < children.count(); index++) {
         QQuickUrlSchemeDelegate* delegate = qobject_cast<QQuickUrlSchemeDelegate*>(children.at(index));
         if (!delegate)
             continue;
-        if (!delegate->scheme().compare(QString(request->m_scheme), Qt::CaseInsensitive)) {
-            delegate->reply()->setNetworkRequestData(request);
+        if (!delegate->scheme().compare(QString(req->data().m_scheme), Qt::CaseInsensitive)) {
+            delegate->request()->setNetworkRequestData(req);
+            delegate->reply()->setNetworkRequestData(req);
             emit delegate->receivedRequest();
             return;
         }

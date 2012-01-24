@@ -1,3 +1,73 @@
+2012-01-24  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Application URL schemes cause asserts when using debug.
+        https://bugs.webkit.org/show_bug.cgi?id=76700
+
+        Instances of QtNetworkRequestData / QtNetworkReplyData are meant
+        to be used for transfering data over IPC. To allow transferring
+        instances of these classes over IPC they need to be copyable,
+        and it must be possible to create such instances on the stack.
+        Because classes that inherit from RefCounted always need to be
+        used in connection with RefPtr, QtNetworkRequestData and
+        QtNetworkReplyData cannot inherit directly from RefCounted.
+
+        Deleting an object that inherits from RefCounted, without
+        the proper sequence of ref()/deref() being called by it's
+        RefPtr, causes asserts when running a debug version.
+
+        Reviewed by Simon Hausmann.
+
+        * Shared/qt/QtNetworkReplyData.h:
+        (WebKit::QtRefCountedNetworkReplyData::data):
+        * Shared/qt/QtNetworkRequestData.cpp:
+        (WebKit::QtRefCountedNetworkRequestData::QtRefCountedNetworkRequestData):
+        * Shared/qt/QtNetworkRequestData.h:
+        (WebKit::QtRefCountedNetworkRequestData::data):
+        * Target.pri:
+        * UIProcess/API/qt/qquicknetworkreply.cpp:
+        (QQuickNetworkReply::QQuickNetworkReply):
+        (QQuickNetworkReply::contentType):
+        (QQuickNetworkReply::setContentType):
+        (QQuickNetworkReply::operation):
+        (QQuickNetworkReply::setOperation):
+        (QQuickNetworkReply::contentDisposition):
+        (QQuickNetworkReply::setContentDisposition):
+        (QQuickNetworkReply::location):
+        (QQuickNetworkReply::setLocation):
+        (QQuickNetworkReply::lastModified):
+        (QQuickNetworkReply::setLastModified):
+        (QQuickNetworkReply::cookie):
+        (QQuickNetworkReply::setCookie):
+        (QQuickNetworkReply::userAgent):
+        (QQuickNetworkReply::setUserAgent):
+        (QQuickNetworkReply::server):
+        (QQuickNetworkReply::setServer):
+        (QQuickNetworkReply::data):
+        (QQuickNetworkReply::setData):
+        (QQuickNetworkReply::send):
+        (QQuickNetworkReply::networkRequestData):
+        (QQuickNetworkReply::setNetworkRequestData):
+        (QQuickNetworkReply::networkReplyData):
+        * UIProcess/API/qt/qquicknetworkreply_p.h:
+        * UIProcess/API/qt/qquicknetworkrequest.cpp:
+        (QQuickNetworkRequest::QQuickNetworkRequest):
+        (QQuickNetworkRequest::setNetworkRequestData):
+        (QQuickNetworkRequest::url):
+        * UIProcess/API/qt/qquicknetworkrequest_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::invokeApplicationSchemeHandler):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::handleApplicationSchemeRequest):
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::resolveApplicationSchemeRequest):
+        (WebKit::WebPageProxy::sendApplicationSchemeReply):
+        * WebProcess/qt/QtNetworkReply.cpp:
+        (WebKit::QtNetworkReply::setData):
+        (WebKit::QtNetworkReply::readData):
+
 2012-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement DownloadClient in WebKit2 GTK+ API

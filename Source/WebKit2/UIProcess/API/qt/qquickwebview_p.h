@@ -44,7 +44,7 @@ class PlatformWebView;
 }
 
 namespace WebKit {
-class QtNetworkRequestData;
+class QtRefCountedNetworkRequestData;
 }
 
 namespace WTF {
@@ -250,7 +250,7 @@ public:
     static int schemeDelegates_Count(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
     static void schemeDelegates_Clear(QDeclarativeListProperty<QQuickUrlSchemeDelegate>*);
     QDeclarativeListProperty<QQuickUrlSchemeDelegate> schemeDelegates();
-    void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtNetworkRequestData>);
+    void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData>);
     void sendApplicationSchemeReply(QQuickNetworkReply*);
 
 public Q_SLOTS:

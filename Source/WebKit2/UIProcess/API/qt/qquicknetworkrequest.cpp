@@ -18,32 +18,31 @@
  *
  */
 
-#ifndef qquicknetworkrequest_p_h
-#define qquicknetworkrequest_p_h
+#include "config.h"
+#include "qquicknetworkrequest_p.h"
 
 #include "QtNetworkRequestData.h"
-#include "RefPtr.h"
-#include "qwebkitglobal.h"
-#include <QObject>
-#include <QtDeclarative/qdeclarativelist.h>
-#include <QtQuick/qquickitem.h>
+#include "qquickwebview_p.h"
 
-class QWEBKIT_EXPORT QQuickNetworkRequest : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QUrl url READ url)
+using namespace WebKit;
 
-public:
-    QQuickNetworkRequest(QObject* parent);
+QQuickNetworkRequest::QQuickNetworkRequest(QObject* parent)
+    : QObject(parent)
+{
+    Q_ASSERT(parent);
+}
 
-    void setNetworkRequestData(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData> data);
+void QQuickNetworkRequest::setNetworkRequestData(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData> data)
+{
+    m_networkRequestData = data;
+}
 
-    QUrl url() const;
+QUrl QQuickNetworkRequest::url() const
+{
+    if (m_networkRequestData)
+       return QUrl(m_networkRequestData->data().m_urlString);
+    return QUrl();
+}
 
-private:
-    WTF::RefPtr<WebKit::QtRefCountedNetworkRequestData> m_networkRequestData;
-};
-
-QML_DECLARE_TYPE(QQuickNetworkRequest)
-
-#endif // qquicknetworkrequest_p_h
+#include "moc_qquicknetworkrequest_p.cpp"
 

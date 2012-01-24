@@ -507,6 +507,7 @@ SOURCES += \
     UIProcess/API/qt/qquickwebview.cpp \
     UIProcess/API/qt/qwebiconimageprovider.cpp \
     UIProcess/API/qt/qquicknetworkreply.cpp \
+    UIProcess/API/qt/qquicknetworkrequest.cpp \
     UIProcess/API/qt/qquickurlschemedelegate.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/API/qt/qwebviewportinfo.cpp \

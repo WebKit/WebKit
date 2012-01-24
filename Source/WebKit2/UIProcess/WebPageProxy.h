@@ -1018,7 +1018,7 @@ private:
     float m_mediaVolume;
 
 #if PLATFORM(QT)
-    WTF::HashSet<RefPtr<QtNetworkRequestData> > m_applicationSchemeRequests;
+    WTF::HashSet<RefPtr<QtRefCountedNetworkRequestData> > m_applicationSchemeRequests;
 #endif
 };
 

@@ -50,6 +50,8 @@ QtNetworkReply::QtNetworkReply(const QNetworkRequest& req, QtNetworkAccessManage
 
 void QtNetworkReply::setData(const SharedMemory::Handle& handle, qint64 dataSize)
 {
+    if (handle.isNull())
+        return;
     m_sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
     if (!m_sharedMemory)
         return;
@@ -82,6 +84,9 @@ void QtNetworkReply::setReplyData(const QtNetworkReplyData& replyData)
 
 qint64 QtNetworkReply::readData(char* data, qint64 maxlen)
 {
+    if (!m_sharedMemory)
+        return 0;
+
     qint64 bytesRead = maxlen < m_bytesAvailable ? maxlen : m_bytesAvailable;
     if (qMemCopy(data, static_cast<char*>(m_sharedMemory->data()) + m_sharedMemorySize - m_bytesAvailable, bytesRead)) {
         m_bytesAvailable -= bytesRead;

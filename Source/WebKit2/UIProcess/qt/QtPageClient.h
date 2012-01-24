@@ -53,7 +53,7 @@ public:
     virtual void didRelaunchProcess();
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void handleDownloadRequest(DownloadProxy*);
-    virtual void handleApplicationSchemeRequest(PassRefPtr<QtNetworkRequestData>);
+    virtual void handleApplicationSchemeRequest(PassRefPtr<QtRefCountedNetworkRequestData>);
     virtual void handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password);
     virtual void handleCertificateVerificationRequest(const String& hostname, bool& ignoreErrors);
 

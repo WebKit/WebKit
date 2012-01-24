@@ -39,9 +39,7 @@ class ArgumentDecoder;
 
 namespace WebKit {
 
-struct QtNetworkReplyData : public WTF::RefCounted<QtNetworkReplyData> {
-    WTF_MAKE_NONCOPYABLE(QtNetworkReplyData);
-public:
+struct QtNetworkReplyData {
     QtNetworkReplyData();
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -62,6 +60,13 @@ public:
 
     SharedMemory::Handle m_dataHandle;
 };
+
+struct QtRefCountedNetworkReplyData : public WTF::RefCounted<QtRefCountedNetworkReplyData> {
+    QtNetworkReplyData& data() { return m_data; }
+private:
+    QtNetworkReplyData m_data;
+};
+
 
 } // namespace WebKit
 

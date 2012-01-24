@@ -100,11 +100,11 @@ void QtPageClient::handleDownloadRequest(DownloadProxy* download)
     QQuickWebViewPrivate::get(m_webView)->handleDownloadRequest(download);
 }
 
-void QtPageClient::handleApplicationSchemeRequest(PassRefPtr<QtNetworkRequestData> requestData)
+void QtPageClient::handleApplicationSchemeRequest(PassRefPtr<QtRefCountedNetworkRequestData> requestData)
 {
     if (!m_webView || !m_webView->experimental())
         return;
-    m_webView->experimental()->invokeApplicationSchemeHandler(requestData.get());
+    m_webView->experimental()->invokeApplicationSchemeHandler(requestData);
 }
 
 void QtPageClient::handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password)

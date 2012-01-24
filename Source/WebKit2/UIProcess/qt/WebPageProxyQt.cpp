@@ -87,17 +87,17 @@ void WebPageProxy::registerApplicationScheme(const String& scheme)
 
 void WebPageProxy::resolveApplicationSchemeRequest(QtNetworkRequestData request)
 {
-    RefPtr<QtNetworkRequestData> requestData = adoptRef(new QtNetworkRequestData(request));
+    RefPtr<QtRefCountedNetworkRequestData> requestData = adoptRef(new QtRefCountedNetworkRequestData(request));
     m_applicationSchemeRequests.add(requestData);
     static_cast<QtPageClient*>(m_pageClient)->handleApplicationSchemeRequest(requestData);
 }
 
 void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
 {
-    RefPtr<QtNetworkRequestData> requestData = reply->networkRequestData();
+    RefPtr<QtRefCountedNetworkRequestData> requestData = reply->networkRequestData();
     if (m_applicationSchemeRequests.contains(requestData)) {
-        RefPtr<QtNetworkReplyData> replyData = reply->networkReplyData();
-        process()->send(Messages::WebPage::ApplicationSchemeReply(*replyData), pageID());
+        RefPtr<QtRefCountedNetworkReplyData> replyData = reply->networkReplyData();
+        process()->send(Messages::WebPage::ApplicationSchemeReply(replyData->data()), pageID());
         m_applicationSchemeRequests.remove(requestData);
     }
 }

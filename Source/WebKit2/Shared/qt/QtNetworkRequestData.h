@@ -39,17 +39,22 @@ class QNetworkReply;
 
 namespace WebKit {
 
-struct QtNetworkRequestData : public WTF::RefCounted<QtNetworkRequestData> {
+struct QtNetworkRequestData {
     QtNetworkRequestData();
     QtNetworkRequestData(const QNetworkRequest&, QNetworkReply*);
-    QtNetworkRequestData(const QtNetworkRequestData&);
-
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, QtNetworkRequestData&);
 
     String m_scheme;
     String m_urlString;
     String m_replyUuid;
+};
+
+struct QtRefCountedNetworkRequestData : public WTF::RefCounted<QtRefCountedNetworkRequestData> {
+    QtRefCountedNetworkRequestData(const QtNetworkRequestData&);
+    QtNetworkRequestData& data() { return m_data; }
+private:
+    QtNetworkRequestData m_data;
 };
 
 } // namespace WebKit
