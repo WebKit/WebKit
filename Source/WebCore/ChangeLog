@@ -1,3 +1,10 @@
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed build fix for GTK after r105698.
+
+        * bindings/js/JSPeerConnectionCustom.cpp:
+        (WebCore::JSPeerConnectionConstructor::constructJSPeerConnection):
+
 2012-01-24  Kent Tamura  <tkent@chromium.org>
 
         Fix build erros on Mac by r105706.

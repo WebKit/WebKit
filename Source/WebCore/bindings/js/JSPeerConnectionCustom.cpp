@@ -48,7 +48,7 @@ EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnect
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
 
-    String serverConfiguration = ustringToString(exec->argument(0).toString(exec));
+    String serverConfiguration = ustringToString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(JSValue());
 
