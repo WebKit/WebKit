@@ -1,3 +1,26 @@
+2012-01-23  Ojan Vafai  <ojan@chromium.org>
+
+        Implement flex-pack:distribute
+        https://bugs.webkit.org/show_bug.cgi?id=76864
+
+        Reviewed by Tony Chang.
+
+        See http://dev.w3.org/csswg/css3-flexbox/#flex-pack.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexPack):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialPackingOffset):
+        (WebCore::packingSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2012-01-23  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSS clip property in CSSStyleApplyProperty.

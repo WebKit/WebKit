@@ -573,21 +573,27 @@ static bool hasPackingSpace(LayoutUnit availableFreeSpace, float totalPositiveFl
     return availableFreeSpace > 0 && !totalPositiveFlexibility;
 }
 
-static LayoutUnit initialPackingOffset(LayoutUnit availableFreeSpace, float totalPositiveFlexibility, EFlexPack flexPack)
+static LayoutUnit initialPackingOffset(LayoutUnit availableFreeSpace, float totalPositiveFlexibility, EFlexPack flexPack, size_t numberOfChildren)
 {
     if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility)) {
         if (flexPack == PackEnd)
             return availableFreeSpace;
         if (flexPack == PackCenter)
             return availableFreeSpace / 2;
+        if (flexPack == PackDistribute && numberOfChildren)
+            return availableFreeSpace / (2 * numberOfChildren);
     }
     return 0;
 }
 
 static LayoutUnit packingSpaceBetweenChildren(LayoutUnit availableFreeSpace, float totalPositiveFlexibility, EFlexPack flexPack, size_t numberOfChildren)
 {
-    if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && flexPack == PackJustify && numberOfChildren > 1)
-        return availableFreeSpace / (numberOfChildren - 1);
+    if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && numberOfChildren > 1) {
+        if (flexPack == PackJustify)
+            return availableFreeSpace / (numberOfChildren - 1);
+        if (flexPack == PackDistribute)
+            return availableFreeSpace / numberOfChildren;
+    }
     return 0;
 }
 
@@ -629,7 +635,7 @@ static EFlexAlign flexAlignForChild(RenderBox* child)
 void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack());
+    mainAxisOffset += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit totalMainExtent = mainAxisExtent();
@@ -692,7 +698,7 @@ void RenderFlexibleBox::layoutColumnReverse(FlexOrderIterator& iterator, const W
     // starting from the end of the flexbox. We also don't need to layout anything since we're
     // just moving the children to a new position.
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack());
+    mainAxisOffset -= initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     size_t i = 0;

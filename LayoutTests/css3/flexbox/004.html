@@ -60,6 +60,20 @@ if (window.layoutTestController)
   <div data-expected-width="100" data-offset-x="0" style="width: -webkit-flex(1 0 0); max-width: 100px;"></div>
 </div>
 
+<div class="flexbox" style="-webkit-flex-pack: distribute">
+  <div data-expected-width="100" data-offset-x="50" style="width: -webkit-flex(1 0 0); max-width: 100px;"></div>
+  <div data-expected-width="100" data-offset-x="250" style="width: 100px;"></div>
+  <div data-expected-width="100" data-offset-x="450" style="width: 100px;"></div>
+</div>
+
+<!-- If there's only one child, we pack center. -->
+<div class="flexbox" style="-webkit-flex-pack: distribute">
+  <div data-expected-width="100" data-offset-x="250" style="width: -webkit-flex(1 0 0); max-width: 100px;"></div>
+</div>
+
+<!-- Make sure we don't crash with no children. -->
+<div class="flexbox" style="-webkit-flex-pack: distribute"></div>
+
 <!-- margin:auto does nothing here. -->
 <div class="flexbox" style="-webkit-flex-pack: end">
   <div data-expected-width="100" data-offset-x="300" style="width: 100px;"></div>

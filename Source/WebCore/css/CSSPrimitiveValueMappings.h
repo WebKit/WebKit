@@ -1218,6 +1218,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
     case PackJustify:
         m_value.ident = CSSValueJustify;
         break;
+    case PackDistribute:
+        m_value.ident = CSSValueDistribute;
+        break;
     }
 }
 
@@ -1232,6 +1235,8 @@ template<> inline CSSPrimitiveValue::operator EFlexPack() const
         return PackCenter;
     case CSSValueJustify:
         return PackJustify;
+    case CSSValueDistribute:
+        return PackDistribute;
     default:
         ASSERT_NOT_REACHED();
         return PackStart;

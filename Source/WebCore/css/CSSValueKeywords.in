@@ -492,6 +492,13 @@ multiple
 // baseline
 // stretch
 
+// CSS_PROP_FLEX_PACK
+// start
+// end
+// center
+// justify
+distribute
+
 // CSS_PROP_FLEX_FLOW
 row
 row-reverse

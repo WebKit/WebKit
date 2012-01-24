@@ -49,7 +49,7 @@ public:
 
     int m_flexOrder;
 
-    unsigned m_flexPack : 2; // EFlexPack
+    unsigned m_flexPack : 3; // EFlexPack
     unsigned m_flexAlign : 3; // EFlexAlign
     unsigned m_flexItemAlign : 3; // EFlexAlign
     unsigned m_flexDirection : 2; // EFlexDirection
