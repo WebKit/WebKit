@@ -46,6 +46,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Region.h>
@@ -959,9 +960,8 @@ void WebView::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 void WebView::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)
 {
     static HBRUSH brush = createBrush(WebPageProxy::backingStoreUpdatesFlashColor().rgb()).leakPtr();
-    HDC dc = ::GetDC(m_window);
+    HWndDC dc(m_window);
     flashRects(dc, updateRects.data(), updateRects.size(), brush);
-    ::ReleaseDC(m_window, dc);
 }
 
 WebCore::IntSize WebView::viewSize()

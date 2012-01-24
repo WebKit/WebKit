@@ -1,3 +1,13 @@
+2012-01-23  David Levin  <levin@chromium.org>
+
+        [windows] Convert usages of GetDC to HWndDC Part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=76744
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::flashBackingStoreUpdates): Typical conversion.
+
 2012-01-21  Timothy Hatcher  <timothy@apple.com>
 
         Make WebKit2 remember the height of the Web Inspector when it is docked.

@@ -29,6 +29,7 @@
 #include "BitmapInfo.h"
 #include "CachedImage.h"
 #include "GraphicsContextCG.h"
+#include "HWndDC.h"
 #include "Image.h"
 #include "RetainPtr.h"
 
@@ -89,7 +90,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     IntSize srcSize = dragImageSize(image);
     IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
     HBITMAP hbmp = 0;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HDC dstDC = CreateCompatibleDC(dc);
     if (!dstDC)
         goto exit;
@@ -116,14 +117,13 @@ exit:
         hbmp = image;
     if (dstDC)
         DeleteDC(dstDC);
-    ReleaseDC(0, dc);
     return hbmp;
 }
     
 DragImageRef createDragImageFromImage(Image* img)
 {
     HBITMAP hbmp = 0;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HDC workingDC = CreateCompatibleDC(dc);
     CGContextRef drawContext = 0;
     if (!workingDC)
@@ -155,7 +155,6 @@ DragImageRef createDragImageFromImage(Image* img)
 exit:
     if (workingDC)
         DeleteDC(workingDC);
-    ReleaseDC(0, dc);
     return hbmp;
 }
     

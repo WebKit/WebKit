@@ -32,6 +32,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HWndDC.h"
 #include "HitTestResult.h"
 #include "Image.h"
 #include "KURL.h"
@@ -223,7 +224,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 
     clear();
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HDC compatibleDC = CreateCompatibleDC(0);
     HDC sourceDC = CreateCompatibleDC(0);
     OwnPtr<HBITMAP> resultBitmap = adoptPtr(CreateCompatibleBitmap(dc, image->width(), image->height()));
@@ -243,7 +244,6 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     SelectObject(compatibleDC, oldBitmap);
     DeleteDC(sourceDC);
     DeleteDC(compatibleDC);
-    ReleaseDC(0, dc);
 
     if (::OpenClipboard(m_owner)) {
         ::SetClipboardData(CF_BITMAP, resultBitmap.leakPtr());

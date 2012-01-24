@@ -28,6 +28,7 @@
 #include "Cursor.h"
 
 #include "BitmapInfo.h"
+#include "HWndDC.h"
 #include "Image.h"
 #include "IntPoint.h"
 #include "SystemInfo.h"
@@ -49,7 +50,7 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     static bool doAlpha = windowsVersion() >= WindowsXP;
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HDC workingDC = CreateCompatibleDC(dc);
     if (doAlpha) {
         OwnPtr<HBITMAP> hCursor = adoptPtr(CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
@@ -112,7 +113,6 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         DeleteDC(andMaskDC);
     }
     DeleteDC(workingDC);
-    ReleaseDC(0, dc);
 
     return impl.release();
 }

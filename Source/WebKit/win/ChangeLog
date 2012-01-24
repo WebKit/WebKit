@@ -1,3 +1,13 @@
+2012-01-23  David Levin  <levin@chromium.org>
+
+        [windows] Convert usages of GetDC to HWndDC Part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=76744
+
+        Reviewed by Adam Roben.
+
+        * WebIconDatabase.cpp:
+        (createDIB): Changed GetDC to HWndDC and removed ReleaseDC.
+
 2012-01-07  Andreas Kling  <awesomekling@apple.com>
 
         Windows build fix.

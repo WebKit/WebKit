@@ -33,6 +33,7 @@
 #include "FontSelector.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "HWndDC.h"
 #include "Image.h"
 #include "RetainPtr.h"
 #include "Settings.h"
@@ -183,18 +184,15 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* fra
     // We now know how big the image needs to be, so we create and
     // fill the background
     HBITMAP image = 0;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HDC workingDC = CreateCompatibleDC(dc);
-    if (!workingDC) {
-        ReleaseDC(0, dc);
+    if (!workingDC)
         return 0;
-    }
 
     PlatformGraphicsContext* contextRef;
     image = allocImage(workingDC, imageSize, &contextRef);
     if (!image) {
         DeleteDC(workingDC);
-        ReleaseDC(0, dc);
         return 0;
     }
         
@@ -225,7 +223,6 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* fra
 
     deallocContext(contextRef);
     DeleteDC(workingDC);
-    ReleaseDC(0, dc);
     return image;
 }
 

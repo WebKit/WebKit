@@ -30,6 +30,7 @@
 #include <winsock2.h>
 #include "FontCache.h"
 #include "Font.h"
+#include "HWndDC.h"
 #include "SimpleFontData.h"
 #include "UnicodeRange.h"
 #include <mlang.h>
@@ -189,7 +190,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
 {
     UChar character = characters[0];
     SimpleFontData* fontData = 0;
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
     HFONT primaryFont = font.primaryFont()->fontDataForCharacter(character)->platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
@@ -292,7 +293,6 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         DeleteObject(hfont);
     }
 
-    ReleaseDC(0, hdc);
     return fontData;
 }
 
@@ -447,7 +447,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
 
 static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool desiredItalic, int size, bool synthesizeItalic)
 {
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
@@ -458,8 +458,6 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
 
     MatchImprovingProcData matchData(desiredWeight, desiredItalic);
     EnumFontFamiliesEx(hdc, &logFont, matchImprovingEnumProc, reinterpret_cast<LPARAM>(&matchData), 0);
-
-    ReleaseDC(0, hdc);
 
     if (!matchData.m_hasMatched)
         return 0;
@@ -486,13 +484,12 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     if (!result)
         return 0;
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     SaveDC(dc);
     SelectObject(dc, result);
     WCHAR actualName[LF_FACESIZE];
     GetTextFace(dc, LF_FACESIZE, actualName);
     RestoreDC(dc, -1);
-    ReleaseDC(0, dc);
 
     if (wcsicmp(matchData.m_chosen.lfFaceName, actualName)) {
         DeleteObject(result);
@@ -534,7 +531,7 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
 }
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
@@ -546,8 +543,6 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     TraitsInFamilyProcData procData(familyName);
     EnumFontFamiliesEx(hdc, &logFont, traitsInFamilyEnumProc, reinterpret_cast<LPARAM>(&procData), 0);
     copyToVector(procData.m_traitsMasks, traitsMasks);
-
-    ReleaseDC(0, hdc);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

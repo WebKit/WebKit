@@ -33,6 +33,7 @@
 #include "FontCache.h"
 #include "FloatRect.h"
 #include "FontDescription.h"
+#include "HWndDC.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -55,7 +56,7 @@ void SimpleFontData::platformInit()
     m_isSystemFont = false;
 
     if (m_platformData.useGDI())
-       return initGDIFont();
+        return initGDIFont();
 
     CGFontRef font = m_platformData.cgFont();
     int iAscent = CGFontGetAscent(font);
@@ -68,14 +69,13 @@ void SimpleFontData::platformInit()
     float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     if (!isCustomFont()) {
-        HDC dc = GetDC(0);
+        HWndDC dc(0);
         HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
         int faceLength = GetTextFace(dc, 0, 0);
         Vector<WCHAR> faceName(faceLength);
         GetTextFace(dc, faceLength, faceName.data());
         m_isSystemFont = !wcscmp(faceName.data(), L"Lucida Grande");
         SelectObject(dc, oldFont);
-        ReleaseDC(0, dc);
 
         fAscent = ascentConsideringMacAscentHack(faceName.data(), fAscent, fDescent);
     }

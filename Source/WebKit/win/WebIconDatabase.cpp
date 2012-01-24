@@ -34,6 +34,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
 #include <WebCore/PlatformString.h>
@@ -284,11 +285,8 @@ HBITMAP createDIB(LPSIZE size)
 {
     BitmapInfo bmInfo = BitmapInfo::create(IntSize(*size));
 
-    HDC dc = GetDC(0);
-    HBITMAP result = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
-    ReleaseDC(0, dc);
-
-    return result;
+    HWndDC dc(0);
+    return CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
 }
 
 HBITMAP WebIconDatabase::getOrCreateSharedBitmap(LPSIZE size)

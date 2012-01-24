@@ -25,6 +25,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "HWndDC.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -51,7 +52,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     , m_syntheticOblique(oblique)
     , m_useGDI(useGDI)
 {
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
     SaveDC(hdc);
     
     SelectObject(hdc, font);
@@ -71,7 +72,6 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     }
 
     RestoreDC(hdc, -1);
-    ReleaseDC(0, hdc);
 }
 
 #ifndef NDEBUG

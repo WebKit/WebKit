@@ -1,3 +1,38 @@
+2012-01-23  David Levin  <levin@chromium.org>
+
+        [windows] Convert usages of GetDC to HWndDC Part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=76744
+
+        Reviewed by Adam Roben.
+
+        No new functionality so no new tests.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters): Changed GetDC to HWndDC
+        and removed ReleaseDC.
+        (WebCore::createGDIFont): Ditto.
+        (WebCore::FontCache::getTraitsInFamily): Ditto.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit): Ditto.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont): Ditto.
+        (WebCore::SimpleFontData::containsCharacters): Ditto.
+        (WebCore::SimpleFontData::determinePitch): Ditto.
+        (WebCore::SimpleFontData::boundsForGDIGlyph): Ditto.
+        (WebCore::SimpleFontData::widthForGDIGlyph): Ditto.
+        (WebCore::SimpleFontData::scriptFontProperties): Ditto.
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor): Ditto.
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::scaleDragImage): Ditto.
+        (WebCore::createDragImageFromImage): Ditto.
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage): Ditto.
+
 2012-01-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Scrollbars do not respect the has-backward-stepper and has-forward-stepper properties
