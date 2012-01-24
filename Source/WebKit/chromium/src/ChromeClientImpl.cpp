@@ -1018,4 +1018,21 @@ void ChromeClientImpl::numWheelEventHandlersChanged(unsigned numberOfWheelHandle
     m_webView->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
 }
 
+#if ENABLE(POINTER_LOCK)
+bool ChromeClientImpl::requestPointerLock()
+{
+    return m_webView->requestPointerLock();
+}
+
+void ChromeClientImpl::requestPointerUnlock()
+{
+    return m_webView->requestPointerUnlock();
+}
+
+bool ChromeClientImpl::isPointerLocked()
+{
+    return m_webView->isPointerLocked();
+}
+#endif
+
 } // namespace WebKit

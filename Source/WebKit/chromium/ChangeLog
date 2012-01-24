@@ -1,3 +1,37 @@
+2012-01-24  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Add WebKit API for Pointer Lock
+        https://bugs.webkit.org/show_bug.cgi?id=76410
+
+        Reviewed by Darin Fisher.
+
+        Breaking up https://bugs.webkit.org/show_bug.cgi?id=75762
+        into a series of patches, this stubs out the API.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::didCompletePointerLock):
+        (WebKit::WebWidget::didNotCompletePointerLock):
+        (WebKit::WebWidget::didLosePointerLock):
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::requestPointerLock):
+        (WebKit::WebWidgetClient::requestPointerUnlock):
+        (WebKit::WebWidgetClient::isPointerLocked):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::requestPointerLock):
+        (WebKit::ChromeClientImpl::requestPointerUnlock):
+        (WebKit::ChromeClientImpl::isPointerLocked):
+        * src/ChromeClientImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+        (WebKit::WebViewImpl::didCompletePointerLock):
+        (WebKit::WebViewImpl::didNotCompletePointerLock):
+        (WebKit::WebViewImpl::didLosePointerLock):
+        (WebKit::WebViewImpl::requestPointerLock):
+        (WebKit::WebViewImpl::requestPointerUnlock):
+        (WebKit::WebViewImpl::isPointerLocked):
+        (WebKit::WebViewImpl::pointerLockMouseEvent):
+        * src/WebViewImpl.h:
+
 2012-01-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

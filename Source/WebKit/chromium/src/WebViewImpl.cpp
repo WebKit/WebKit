@@ -1331,6 +1331,13 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
     m_currentInputEvent = &inputEvent;
 
+#if ENABLE(POINTER_LOCK)
+    if (isPointerLocked() && WebInputEvent::isMouseEventType(inputEvent.type)) {
+      pointerLockMouseEvent(inputEvent);
+      return true;
+    }
+#endif
+
     if (m_mouseCaptureNode && WebInputEvent::isMouseEventType(inputEvent.type)) {
         // Save m_mouseCaptureNode since mouseCaptureLost() will clear it.
         RefPtr<Node> node = m_mouseCaptureNode;
@@ -1740,6 +1747,21 @@ bool WebViewImpl::isAcceleratedCompositingActive() const
 #else
     return false;
 #endif
+}
+
+void WebViewImpl::didAcquirePointerLock()
+{
+    // FIXME: Implement when PointerLockController lands.
+}
+
+void WebViewImpl::didNotAcquirePointerLock()
+{
+    // FIXME: Implement when PointerLockController lands.
+}
+
+void WebViewImpl::didLosePointerLock()
+{
+    // FIXME: Implement when PointerLockController lands.
 }
 
 // WebView --------------------------------------------------------------------
@@ -3173,6 +3195,29 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
 void WebViewImpl::resetGestureRecognizer()
 {
     m_gestureRecognizer->reset();
+}
+#endif
+
+#if ENABLE(POINTER_LOCK)
+bool WebViewImpl::requestPointerLock()
+{
+    return m_client && m_client->requestPointerLock();
+}
+
+void WebViewImpl::requestPointerUnlock()
+{
+    if (m_client)
+        m_client->requestPointerUnlock();
+}
+
+bool WebViewImpl::isPointerLocked()
+{
+    return m_client && m_client->isPointerLocked();
+}
+
+void WebViewImpl::pointerLockMouseEvent(const WebInputEvent& event)
+{
+    // FIXME: Implement when PointerLockController lands.
 }
 #endif
 

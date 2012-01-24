@@ -205,6 +205,12 @@ public:
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     virtual void numWheelEventHandlersChanged(unsigned);
 
+#if ENABLE(POINTER_LOCK)
+    virtual bool requestPointerLock();
+    virtual void requestPointerUnlock();
+    virtual bool isPointerLocked();
+#endif
+
 private:
     void getPopupMenuInfo(WebCore::PopupContainer*, WebPopupMenuInfo*);
     void setCursor(const WebCursorInfo&);

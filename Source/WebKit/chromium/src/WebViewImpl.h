@@ -129,6 +129,9 @@ public:
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
     virtual void setTextDirection(WebTextDirection direction);
     virtual bool isAcceleratedCompositingActive() const;
+    virtual void didAcquirePointerLock();
+    virtual void didNotAcquirePointerLock();
+    virtual void didLosePointerLock();
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
@@ -469,6 +472,14 @@ public:
     bool hasHorizontalScrollbar();
     bool hasVerticalScrollbar();
 
+    // Pointer Lock calls allow a page to capture all mouse events and
+    // disable the system cursor.
+#if ENABLE(POINTER_LOCK)
+    virtual bool requestPointerLock();
+    virtual void requestPointerUnlock();
+    virtual bool isPointerLocked();
+#endif
+
 private:
     bool computePageScaleFactorLimits();
     float clampPageScaleFactorToLimits(float scale);
@@ -520,6 +531,10 @@ private:
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
     void updateLayerTreeViewport();
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    void pointerLockMouseEvent(const WebInputEvent&);
 #endif
 
     WebViewClient* m_client;
