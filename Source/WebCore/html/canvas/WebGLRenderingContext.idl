@@ -478,9 +478,11 @@ module html {
         [StrictTypeChecking] void         clearStencil(in long s);
         [StrictTypeChecking] void         colorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
         [StrictTypeChecking] void         compileShader(in WebGLShader shader) raises(DOMException);
-        
-        //void         compressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in unsigned long width, in unsigned long height, in long border, in unsigned long imageSize, const void* data);
-        //void         compressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long imageSize, const void* data);
+
+        [StrictTypeChecking] void         compressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat,
+                                                               in long width, in long height, in long border, in ArrayBufferView data);
+        [StrictTypeChecking] void         compressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                                                  in long width, in long height, in unsigned long format, in ArrayBufferView data);
         
         [StrictTypeChecking] void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in long width, in long height, in long border);
         [StrictTypeChecking] void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in long width, in long height);

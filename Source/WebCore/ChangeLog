@@ -1,3 +1,18 @@
+2012-01-24  Gregg Tavares  <gman@google.com>
+
+        Expose WebGL texture compression methods on WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=76763
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/compressed-tex-image.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::compressedTexImage2D):
+        (WebCore::WebGLRenderingContext::compressedTexSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2012-01-24  Kenichi Ishibashi  <bashi@chromium.org>
 
         [V8] Add Uint8ClampedArray support
