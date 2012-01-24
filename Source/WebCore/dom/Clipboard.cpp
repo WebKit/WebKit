@@ -211,10 +211,10 @@ String convertDragOperationToDropZoneOperation(DragOperation operation)
 bool Clipboard::hasDropZoneType(const String& keyword)
 {
     if (keyword.startsWith("file:"))
-        return hasFileOfType(keyword.substring(5));
-                             
+        return hasFileOfType(keyword.substring(5).lower());
+
     if (keyword.startsWith("string:"))
-        return hasStringOfType(keyword.substring(7));
+        return hasStringOfType(keyword.substring(7).lower());
 
     return false;
 }
