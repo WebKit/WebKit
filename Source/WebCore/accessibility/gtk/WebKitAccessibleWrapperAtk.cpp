@@ -64,6 +64,7 @@
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
 #include "WebKitAccessibleInterfaceAction.h"
+#include "WebKitAccessibleInterfaceComponent.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -123,11 +124,6 @@ static AccessibilityObject* core(AtkText* text)
 static AccessibilityObject* core(AtkEditableText* text)
 {
     return core(ATK_OBJECT(text));
-}
-
-static AccessibilityObject* core(AtkComponent* component)
-{
-    return core(ATK_OBJECT(component));
 }
 
 static AccessibilityObject* core(AtkImage* image)
@@ -1940,84 +1936,12 @@ static void atk_editable_text_interface_init(AtkEditableTextIface* iface)
     iface->paste_text = webkit_accessible_editable_text_paste_text;
 }
 
-static void contentsToAtk(AccessibilityObject* coreObject, AtkCoordType coordType, IntRect rect, gint* x, gint* y, gint* width = 0, gint* height = 0)
-{
-    FrameView* frameView = coreObject->documentFrameView();
-
-    if (frameView) {
-        switch (coordType) {
-        case ATK_XY_WINDOW:
-            rect = frameView->contentsToWindow(rect);
-            break;
-        case ATK_XY_SCREEN:
-            rect = frameView->contentsToScreen(rect);
-            break;
-        }
-    }
-
-    if (x)
-        *x = rect.x();
-    if (y)
-        *y = rect.y();
-    if (width)
-        *width = rect.width();
-    if (height)
-        *height = rect.height();
-}
-
-static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coordType, gint x, gint y)
-{
-    IntPoint pos(x, y);
-
-    FrameView* frameView = coreObject->documentFrameView();
-    if (frameView) {
-        switch (coordType) {
-        case ATK_XY_SCREEN:
-            return frameView->screenToContents(pos);
-        case ATK_XY_WINDOW:
-            return frameView->windowToContents(pos);
-        }
-    }
-
-    return pos;
-}
-
-static AtkObject* webkit_accessible_component_ref_accessible_at_point(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
-{
-    IntPoint pos = atkToContents(core(component), coordType, x, y);
-    
-    AccessibilityObject* target = core(component)->accessibilityHitTest(pos);
-    if (!target)
-        return 0;
-    g_object_ref(target->wrapper());
-    return target->wrapper();
-}
-
-static void webkit_accessible_component_get_extents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
-{
-    IntRect rect = core(component)->elementRect();
-    contentsToAtk(core(component), coordType, rect, x, y, width, height);
-}
-
-static gboolean webkit_accessible_component_grab_focus(AtkComponent* component)
-{
-    core(component)->setFocused(true);
-    return core(component)->isFocused();
-}
-
-static void atk_component_interface_init(AtkComponentIface* iface)
-{
-    iface->ref_accessible_at_point = webkit_accessible_component_ref_accessible_at_point;
-    iface->get_extents = webkit_accessible_component_get_extents;
-    iface->grab_focus = webkit_accessible_component_grab_focus;
-}
-
 // Image
 
 static void webkit_accessible_image_get_image_position(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
 {
     IntRect rect = core(image)->elementRect();
-    contentsToAtk(core(image), coordType, rect, x, y);
+    contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
 }
 
 static const gchar* webkit_accessible_image_get_image_description(AtkImage* image)
@@ -2446,8 +2370,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_text_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
-    {(GInterfaceInitFunc)atk_component_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atk_image_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_table_interface_init,

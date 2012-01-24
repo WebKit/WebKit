@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2009, 2010, 2012 Igalia S.L.
+ * Copyright (C) 2009, 2012 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,19 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAccessibleUtil_h
-#define WebKitAccessibleUtil_h
+#ifndef WebKitAccessibleInterfaceComponent_h
+#define WebKitAccessibleInterfaceComponent_h
 
 #include <atk/atk.h>
-#include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class AccessibilityObject;
-class IntRect;
-}
+void webkitAccessibleComponentInterfaceInit(AtkComponentIface*);
+AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent*, gint x, gint y, AtkCoordType);
+void webkitAccessibleComponentGetExtents(AtkComponent*, gint* x, gint* y, gint* width, gint* height, AtkCoordType);
+gboolean webkitAccessibleComponentGrabFocus(AtkComponent*);
 
-void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoordType, WebCore::IntRect, gint* x, gint* y, gint* width = 0, gint* height = 0);
-
-const char* returnString(const String&);
-
-#endif // WebKitAccessibleUtil_h
+#endif // WebKitAccessibleInterfaceComponent_h

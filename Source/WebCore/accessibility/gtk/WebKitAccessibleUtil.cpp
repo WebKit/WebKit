@@ -31,8 +31,39 @@
 #include "config.h"
 #include "WebKitAccessibleUtil.h"
 
+#include "AccessibilityObject.h"
+#include "FrameView.h"
+#include "IntRect.h"
+
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+
+using namespace WebCore;
+
+void contentsRelativeToAtkCoordinateType(AccessibilityObject* coreObject, AtkCoordType coordType, IntRect rect, gint* x, gint* y, gint* width, gint* height)
+{
+    FrameView* frameView = coreObject->documentFrameView();
+
+    if (frameView) {
+        switch (coordType) {
+        case ATK_XY_WINDOW:
+            rect = frameView->contentsToWindow(rect);
+            break;
+        case ATK_XY_SCREEN:
+            rect = frameView->contentsToScreen(rect);
+            break;
+        }
+    }
+
+    if (x)
+        *x = rect.x();
+    if (y)
+        *y = rect.y();
+    if (width)
+        *width = rect.width();
+    if (height)
+        *height = rect.height();
+}
 
 // Used to provide const char* returns.
 const char* returnString(const String& str)
