@@ -72,6 +72,8 @@ protected:
     int m_minThumbLength;
     gboolean m_troughUnderSteppers;
     gboolean m_hasForwardButtonStartPart;
+    gboolean m_hasForwardButtonEndPart;
+    gboolean m_hasBackButtonStartPart;
     gboolean m_hasBackButtonEndPart;
 };
 

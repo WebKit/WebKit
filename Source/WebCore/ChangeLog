@@ -1,3 +1,25 @@
+2012-01-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Scrollbars do not respect the has-backward-stepper and has-forward-stepper properties
+        https://bugs.webkit.org/show_bug.cgi?id=76747
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. Regressions are covered by existing tests, but testing
+        different GTK+ theme configurations is not possible yet.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::backButtonRect): If there is no back stepper, return an empty rect.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): If there is no forward stepper, return an empty rect.
+        (WebCore::ScrollbarThemeGtk::trackRect): Adjust track rect calculation to account for when there is
+        no steppers.
+        * platform/gtk/ScrollbarThemeGtk.h: New members describing whether there are primary steppers.
+        * platform/gtk/ScrollbarThemeGtk2.cpp:
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Look at the theme to determine if there
+        are primary foward and back steppers.
+        * platform/gtk/ScrollbarThemeGtk3.cpp:
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Ditto.
+
 2012-01-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r105396): drag state is not cleared after each drag

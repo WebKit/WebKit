@@ -58,6 +58,8 @@ void ScrollbarThemeGtk::updateThemeProperties()
                                 "stepper-size", &m_stepperSize,
                                 "stepper-spacing", &m_stepperSpacing,
                                 "trough-under-steppers", &m_troughUnderSteppers,
+                                "has-backward-stepper", &m_hasBackButtonStartPart,
+                                "has-forward-stepper", &m_hasForwardButtonEndPart,
                                 "has-secondary-backward-stepper", &m_hasBackButtonEndPart,
                                 "has-secondary-forward-stepper", &m_hasForwardButtonStartPart,
                                 NULL);

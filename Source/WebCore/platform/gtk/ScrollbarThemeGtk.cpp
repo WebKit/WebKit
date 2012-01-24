@@ -97,6 +97,8 @@ IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar* scrollbar, ScrollbarPart pa
 {
     if (part == BackButtonEndPart && !m_hasBackButtonEndPart)
         return IntRect();
+    if (part == BackButtonStartPart && !m_hasBackButtonStartPart)
+        return IntRect();
 
     int x = scrollbar->x() + m_troughBorderWidth;
     int y = scrollbar->y() + m_troughBorderWidth;
@@ -115,6 +117,8 @@ IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar* scrollbar, ScrollbarPart pa
 IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
 {
     if (part == ForwardButtonStartPart && !m_hasForwardButtonStartPart)
+        return IntRect();
+    if (part == ForwardButtonEndPart && !m_hasForwardButtonEndPart)
         return IntRect();
 
     IntSize size = buttonSize(scrollbar);
@@ -138,37 +142,42 @@ IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
 
 IntRect ScrollbarThemeGtk::trackRect(Scrollbar* scrollbar, bool)
 {
-    // The padding along the thumb movement axis (from outside to in)
-    // is the size of trough border plus the size of the stepper (button)
+    // The padding along the thumb movement axis includes the trough border
     // plus the size of stepper spacing (the space between the stepper and
     // the place where the thumb stops). There is often no stepper spacing.
-    int movementAxisPadding = m_troughBorderWidth + m_stepperSize + m_stepperSpacing;
+    int movementAxisPadding = m_troughBorderWidth + m_stepperSpacing;
 
     // The fatness of the scrollbar on the non-movement axis.
     int thickness = scrollbarThickness(scrollbar->controlSize());
 
-    int alternateButtonOffset = 0;
-    int alternateButtonWidth = 0;
+    int startButtonsOffset = 0;
+    int buttonsWidth = 0;
     if (m_hasForwardButtonStartPart) {
-        alternateButtonOffset += m_stepperSize;
-        alternateButtonWidth += m_stepperSize;
+        startButtonsOffset += m_stepperSize;
+        buttonsWidth += m_stepperSize;
+    }
+    if (m_hasBackButtonStartPart) {
+        startButtonsOffset += m_stepperSize;
+        buttonsWidth += m_stepperSize;
     }
     if (m_hasBackButtonEndPart)
-        alternateButtonWidth += m_stepperSize;
+        buttonsWidth += m_stepperSize;
+    if (m_hasForwardButtonEndPart)
+        buttonsWidth += m_stepperSize;
 
     if (scrollbar->orientation() == HorizontalScrollbar) {
         // Once the scrollbar becomes smaller than the natural size of the
         // two buttons, the track disappears.
         if (scrollbar->width() < 2 * thickness)
             return IntRect();
-        return IntRect(scrollbar->x() + movementAxisPadding + alternateButtonOffset, scrollbar->y(),
-                       scrollbar->width() - (2 * movementAxisPadding) - alternateButtonWidth, thickness);
+        return IntRect(scrollbar->x() + movementAxisPadding + startButtonsOffset, scrollbar->y(),
+                       scrollbar->width() - (2 * movementAxisPadding) - buttonsWidth, thickness);
     }
 
     if (scrollbar->height() < 2 * thickness)
         return IntRect();
-    return IntRect(scrollbar->x(), scrollbar->y() + movementAxisPadding + alternateButtonOffset,
-                   thickness, scrollbar->height() - (2 * movementAxisPadding) - alternateButtonWidth);
+    return IntRect(scrollbar->x(), scrollbar->y() + movementAxisPadding + startButtonsOffset,
+                   thickness, scrollbar->height() - (2 * movementAxisPadding) - buttonsWidth);
 }
 
 IntRect ScrollbarThemeGtk::thumbRect(Scrollbar* scrollbar, const IntRect& unconstrainedTrackRect)

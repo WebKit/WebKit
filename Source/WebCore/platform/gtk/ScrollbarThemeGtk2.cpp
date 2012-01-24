@@ -58,6 +58,8 @@ void ScrollbarThemeGtk::updateThemeProperties()
                          "trough_border", &m_troughBorderWidth,
                          "stepper-size", &m_stepperSize,
                          "trough-under-steppers", &m_troughUnderSteppers,
+                         "has-backward-stepper", &m_hasBackButtonStartPart,
+                         "has-forward-stepper", &m_hasForwardButtonEndPart,
                          "has-secondary-forward-stepper", &m_hasForwardButtonStartPart,
                          "has-secondary-backward-stepper", &m_hasBackButtonEndPart, NULL);
     m_minThumbLength = gtk_range_get_min_slider_size(GTK_RANGE(scrollbar));
