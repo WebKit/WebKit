@@ -1,3 +1,16 @@
+2012-01-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Use copying collector for out-of-line JSObject property storage
+        https://bugs.webkit.org/show_bug.cgi?id=76665
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren): Changed to use copyAndAppend whenever the property storage is out-of-line.
+        (JSC::JSObject::allocatePropertyStorage): Changed to use tryAllocateStorage/tryReallocateStorage as opposed to 
+        operator new.
+        * runtime/JSObject.h:
+
 2012-01-23  Brian Weinstein  <bweinstein@apple.com>
 
         More build fixing after r105646.

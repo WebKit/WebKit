@@ -24,6 +24,7 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "BumpSpaceInlineMethods.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "GetterSetter.h"
@@ -83,11 +84,6 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-void JSObject::finalize(JSCell* cell)
-{
-    delete [] jsCast<JSObject*>(cell)->m_propertyStorage.get();
-}
-
 void JSObject::destroy(JSCell* cell)
 {
     jsCast<JSObject*>(cell)->JSObject::~JSObject();
@@ -106,7 +102,13 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     PropertyStorage storage = thisObject->propertyStorage();
     size_t storageSize = thisObject->structure()->propertyStorageSize();
-    visitor.appendValues(storage, storageSize);
+    if (thisObject->isUsingInlineStorage())
+        visitor.appendValues(storage, storageSize);
+    else {
+        visitor.copyAndAppend(reinterpret_cast<void**>(&storage), thisObject->structure()->propertyStorageCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
+        thisObject->m_propertyStorage.set(storage, StorageBarrier::Unchecked);
+    }
+
     if (thisObject->m_inheritorID)
         visitor.append(&thisObject->m_inheritorID);
 
@@ -633,20 +635,23 @@ void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize,
 
     // It's important that this function not rely on structure(), since
     // we might be in the middle of a transition.
-    PropertyStorage newPropertyStorage = 0;
-    newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
 
     PropertyStorage oldPropertyStorage = m_propertyStorage.get();
+    PropertyStorage newPropertyStorage = 0;
+
+    if (isUsingInlineStorage()) {
+        if (!globalData.heap.tryAllocateStorage(sizeof(WriteBarrierBase<Unknown>) * newSize, reinterpret_cast<void**>(&newPropertyStorage)))
+            CRASH();
+
+        for (unsigned i = 0; i < oldSize; ++i)
+            newPropertyStorage[i] = oldPropertyStorage[i];
+    } else {
+        if (!globalData.heap.tryReallocateStorage(reinterpret_cast<void**>(&oldPropertyStorage), sizeof(WriteBarrierBase<Unknown>) * oldSize, sizeof(WriteBarrierBase<Unknown>) * newSize))
+            CRASH();
+        newPropertyStorage = oldPropertyStorage;
+    }
+
     ASSERT(newPropertyStorage);
-
-    for (unsigned i = 0; i < oldSize; ++i)
-       newPropertyStorage[i] = oldPropertyStorage[i];
-
-    if (isUsingInlineStorage())
-        Heap::heap(this)->addFinalizer(this, &finalize);
-    else
-        delete [] oldPropertyStorage;
-
     m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
