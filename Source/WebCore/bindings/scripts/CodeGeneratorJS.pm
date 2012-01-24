@@ -30,7 +30,7 @@ use strict;
 
 use constant FileNamePrefix => "JS";
 
-my ($codeGenerator, $IMPL, $HEADER, $DEPS);
+my ($codeGenerator);
 
 my $module = "";
 my $outputDir = "";
@@ -88,12 +88,10 @@ sub new
     return $reference;
 }
 
+# FIXME(haraken): finish() will be soon removed from all CodeGenerators.
 sub finish
 {
     my $object = shift;
-
-    # Commit changes!
-    $object->WriteData();
 }
 
 sub leftShift($$) {
@@ -119,22 +117,7 @@ sub GenerateInterface
         $object->GenerateImplementation($dataNode);
     }
 
-    my $name = $dataNode->name;
-
-    # Open files for writing
-    my $prefix = FileNamePrefix;
-    my $headerFileName = "$outputDir/$prefix$name.h";
-    my $implFileName = "$outputDir/$prefix$name.cpp";
-    my $depsFileName = "$outputDir/$prefix$name.dep";
-
-    # Remove old dependency file.
-    unlink($depsFileName);
-
-    open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
-    open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
-    if (@depsContent) {
-        open($DEPS, ">$depsFileName") || die "Couldn't open file $depsFileName";
-    }
+    $object->WriteData($dataNode);
 }
 
 sub GenerateAttributeEventListenerCall
@@ -3248,84 +3231,94 @@ sub GenerateHashValue
 # Internal helper
 sub WriteData
 {
-    if (defined($IMPL)) {
-        # Write content to file.
-        print $IMPL @implContentHeader;
+    my $object = shift;
+    my $dataNode = shift;
 
-        my @includes = ();
-        my %implIncludeConditions = ();
-        foreach my $include (keys %implIncludes) {
-            my $condition = $implIncludes{$include};
-            my $checkType = $include;
-            $checkType =~ s/\.h//;
-            next if $codeGenerator->IsSVGAnimatedType($checkType);
+    my $name = $dataNode->name;
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputDir/$prefix$name.h";
+    my $implFileName = "$outputDir/$prefix$name.cpp";
+    my $depsFileName = "$outputDir/$prefix$name.dep";
 
-            $include = "\"$include\"" unless $include =~ /^["<]/; # "
+    # Remove old dependency file.
+    unlink($depsFileName);
 
-            if ($condition eq 1) {
-                push @includes, $include;
-            } else {
-                push @{$implIncludeConditions{$condition}}, $include;
-            }
+    open(IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
+
+    # Write content to file.
+    print IMPL @implContentHeader;
+
+    my @includes = ();
+    my %implIncludeConditions = ();
+    foreach my $include (keys %implIncludes) {
+        my $condition = $implIncludes{$include};
+        my $checkType = $include;
+        $checkType =~ s/\.h//;
+        next if $codeGenerator->IsSVGAnimatedType($checkType);
+
+        $include = "\"$include\"" unless $include =~ /^["<]/; # "
+
+        if ($condition eq 1) {
+            push @includes, $include;
+        } else {
+            push @{$implIncludeConditions{$condition}}, $include;
         }
-        foreach my $include (sort @includes) {
-            print $IMPL "#include $include\n";
+    }
+    foreach my $include (sort @includes) {
+        print IMPL "#include $include\n";
+    }
+    foreach my $condition (sort keys %implIncludeConditions) {
+        print IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
+        foreach my $include (sort @{$implIncludeConditions{$condition}}) {
+            print IMPL "#include $include\n";
         }
-        foreach my $condition (sort keys %implIncludeConditions) {
-            print $IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
-            foreach my $include (sort @{$implIncludeConditions{$condition}}) {
-                print $IMPL "#include $include\n";
-            }
-            print $IMPL "#endif\n";
-        }
-
-        print $IMPL @implContent;
-        close($IMPL);
-        undef($IMPL);
-
-        @implContentHeader = ();
-        @implContent = ();
-        %implIncludes = ();
+        print IMPL "#endif\n";
     }
 
-    if (defined($HEADER)) {
-        # Write content to file.
-        print $HEADER @headerContentHeader;
+    print IMPL @implContent;
+    close(IMPL);
 
-        my @includes = ();
-        foreach my $include (keys %headerIncludes) {
-            $include = "\"$include\"" unless $include =~ /^["<]/; # "
-            push @includes, $include;
-        }
-        foreach my $include (sort @includes) {
-            print $HEADER "#include $include\n";
-        }
+    @implContentHeader = ();
+    @implContent = ();
+    %implIncludes = ();
 
-        print $HEADER @headerContent;
+    open(HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
 
-        @includes = ();
-        foreach my $include (keys %headerTrailingIncludes) {
-            $include = "\"$include\"" unless $include =~ /^["<]/; # "
-            push @includes, $include;
-        }
-        foreach my $include (sort @includes) {
-            print $HEADER "#include $include\n";
-        }
+    # Write content to file.
+    print HEADER @headerContentHeader;
 
-        close($HEADER);
-        undef($HEADER);
-
-        @headerContentHeader = ();
-        @headerContent = ();
-        %headerIncludes = ();
-        %headerTrailingIncludes = ();
+    my @includes = ();
+    foreach my $include (keys %headerIncludes) {
+        $include = "\"$include\"" unless $include =~ /^["<]/; # "
+        push @includes, $include;
+    }
+    foreach my $include (sort @includes) {
+        print HEADER "#include $include\n";
     }
 
-    if (defined($DEPS)) {
+    print HEADER @headerContent;
+
+    @includes = ();
+    foreach my $include (keys %headerTrailingIncludes) {
+        $include = "\"$include\"" unless $include =~ /^["<]/; # "
+        push @includes, $include;
+    }
+    foreach my $include (sort @includes) {
+        print HEADER "#include $include\n";
+    }
+
+    close(HEADER);
+
+    @headerContentHeader = ();
+    @headerContent = ();
+    %headerIncludes = ();
+    %headerTrailingIncludes = ();
+
+    if (@depsContent) {
+        open(DEPS, ">$depsFileName") || die "Couldn't open file $depsFileName";
         # Write dependency file.
-        print $DEPS @depsContent;
-        close($DEPS);
-        undef($DEPS);
+        print DEPS @depsContent;
+        close(DEPS);
 
         @depsContent = ();
     }

@@ -1,3 +1,31 @@
+2012-01-23  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Make finish() of CodeGeneratorJS.pm empty
+        https://bugs.webkit.org/show_bug.cgi?id=76846
+
+        Reviewed by Adam Barth.
+
+        This is one of steps to stop rebuilding .h/.cpp files generated
+        by unchanged IDLs (bug 76836).
+
+        As a refactoring, we are planning to remove finish() from all
+        CodeGenerators. In this bug, we make finish() of CodeGeneratorJS.pm
+        empty.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (finish): Made it empty. We will remove finish() after
+        making finish() of all CodeGenerators empty.
+        (GenerateInterface): Modified to call WriteData().
+        (WriteData): Simple code refactoring.
+        Removed if(defined $IMPL).
+        Removed if(defined $HEADER).
+        Removed if(defined $DEPS).
+        $IMPL -> IMPL.
+        $HEADER -> HEADER.
+        $DEPS -> DEPS.
+
 2012-01-23  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] updateRect is incorrect when contentBounds != bounds
