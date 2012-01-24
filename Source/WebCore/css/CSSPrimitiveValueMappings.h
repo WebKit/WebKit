@@ -36,6 +36,7 @@
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "GraphicsTypes.h"
+#include "Length.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
@@ -3671,6 +3672,21 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
         ASSERT_NOT_REACHED();
         return WrapThroughWrap;
     }
+}
+
+enum LengthConversion { UnsupportedConversion = 0, FixedConversion = 1, AutoConversion = 2, PercentConversion = 4, FractionConversion = 8};
+template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
+{
+    if ((supported & FixedConversion) && isLength())
+        return computeLength<Length>(style, rootStyle, multiplier, computingFontSize);
+    if ((supported & PercentConversion) && isPercentage())
+        return Length(getDoubleValue(), Percent);
+    if ((supported & FractionConversion) && isNumber())
+        return Length(getDoubleValue() * 100.0, Percent);
+    if ((supported & AutoConversion) && getIdent() == CSSValueAuto)
+        return Length(Auto);
+    ASSERT_NOT_REACHED();
+    return Length(Undefined);
 }
 
 #if ENABLE(SVG)

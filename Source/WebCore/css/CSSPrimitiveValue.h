@@ -203,6 +203,9 @@ public:
      */
     template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, float multiplier = 1.0f, bool computingFontSize = false);
 
+    // Converts to a Length, mapping various unit types appropriately.
+    template<int> Length convertToLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
+
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_primitiveUnitType = type; }
 

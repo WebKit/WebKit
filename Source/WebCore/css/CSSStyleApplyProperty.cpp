@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Pair.h"
+#include "Rect.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "Settings.h"
@@ -207,6 +208,51 @@ public:
             setValue(selector->style(), *primitiveValue);
         else if (valueType == ComputeLength)
             setValue(selector->style(), primitiveValue->computeLength<T>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()));
+    }
+
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
+};
+
+class ApplyPropertyClip {
+private:
+    static Length convertToLength(CSSStyleSelector* selector, CSSPrimitiveValue* value)
+    {
+        return value->convertToLength<FixedConversion | PercentConversion | FractionConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+    }
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        RenderStyle* parentStyle = selector->parentStyle();
+        if (!parentStyle->hasClip())
+            return applyInitialValue(selector);
+        selector->style()->setClip(parentStyle->clipTop(), parentStyle->clipRight(), parentStyle->clipBottom(), parentStyle->clipLeft());
+        selector->style()->setHasClip(true);
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        selector->style()->setClip(Length(), Length(), Length(), Length());
+        selector->style()->setHasClip(false);
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        if (Rect* rect = primitiveValue->getRectValue()) {
+            Length top = convertToLength(selector, rect->top());
+            Length right = convertToLength(selector, rect->right());
+            Length bottom = convertToLength(selector, rect->bottom());
+            Length left = convertToLength(selector, rect->left());
+            selector->style()->setClip(top, right, bottom, left);
+            selector->style()->setHasClip(true);
+        } else if (primitiveValue->getIdent() == CSSValueAuto) {
+            selector->style()->setClip(Length(), Length(), Length(), Length());
+            selector->style()->setHasClip(true);
+        }
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
@@ -1744,6 +1790,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyHandler(CSSPropertyLetterSpacing, ApplyPropertyComputeLength<int, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing, &RenderStyle::initialLetterWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyComputeLength<int, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialLetterWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
+
+    setPropertyHandler(CSSPropertyClip, ApplyPropertyClip::createHandler());
 
     setPropertyHandler(CSSPropertyCursor, ApplyPropertyCursor::createHandler());
 

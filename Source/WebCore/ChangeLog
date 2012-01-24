@@ -1,3 +1,28 @@
+2012-01-23  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS clip property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74913
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        This new function aims to provide a single call for converting many CSSPrimitiveValue
+        values to Lengths. It is templated to allow the caller to specify which conversions
+        are appropriate depending on the context in which the value is used.
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyClip::convertToLength):
+        (WebCore::ApplyPropertyClip::applyInheritValue):
+        (WebCore::ApplyPropertyClip::applyInitialValue):
+        (WebCore::ApplyPropertyClip::applyValue):
+        (WebCore::ApplyPropertyClip::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2012-01-23  Tom Sepez  <tsepez@chromium.org>
 
         decodeEscapeSequences() not correct for some encodings (GBK, Big5, ...).

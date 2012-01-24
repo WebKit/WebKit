@@ -2791,46 +2791,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyOrphans:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(orphans, Orphans)
         return;
-// rect
-    case CSSPropertyClip:
-    {
-        Length top;
-        Length right;
-        Length bottom;
-        Length left;
-        bool hasClip = true;
-        if (isInherit) {
-            if (m_parentStyle->hasClip()) {
-                top = m_parentStyle->clipTop();
-                right = m_parentStyle->clipRight();
-                bottom = m_parentStyle->clipBottom();
-                left = m_parentStyle->clipLeft();
-            } else {
-                hasClip = false;
-                top = right = bottom = left = Length();
-            }
-        } else if (isInitial) {
-            hasClip = false;
-            top = right = bottom = left = Length();
-        } else if (!primitiveValue) {
-            return;
-        } else if (primitiveValue->isRect()) {
-            Rect* rect = primitiveValue->getRectValue();
-            if (!rect)
-                return;
-            top = convertToIntLength(rect->top(), style(), m_rootElementStyle, zoomFactor);
-            right = convertToIntLength(rect->right(), style(), m_rootElementStyle, zoomFactor);
-            bottom = convertToIntLength(rect->bottom(), style(), m_rootElementStyle, zoomFactor);
-            left = convertToIntLength(rect->left(), style(), m_rootElementStyle, zoomFactor);
-        } else if (primitiveValue->getIdent() != CSSValueAuto) {
-            return;
-        }
-        m_style->setClip(top, right, bottom, left);
-        m_style->setHasClip(hasClip);
-
-        // rect, ident
-        return;
-    }
 
 // lists
     case CSSPropertyContent:
@@ -3767,6 +3727,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderSpacing:
     case CSSPropertyWebkitBorderHorizontalSpacing:
     case CSSPropertyWebkitBorderVerticalSpacing:
+    case CSSPropertyClip:
     case CSSPropertyCounterIncrement:
     case CSSPropertyCounterReset:
     case CSSPropertyLetterSpacing:
