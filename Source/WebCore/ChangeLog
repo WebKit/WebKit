@@ -1,3 +1,10 @@
+2012-01-23  Adam Barth  <abarth@webkit.org>
+
+        Fix a build break in a clean compile of the Chromium port (at least
+        reported by tbreisacher).
+
+        * css/CSSStyleDeclaration.cpp:
+
 2012-01-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] editing/deleting/5408255.html results are incorrect
