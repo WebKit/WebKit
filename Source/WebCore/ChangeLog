@@ -1,3 +1,19 @@
+2012-01-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in WebCore::RenderTableSection::rowLogicalHeightChanged
+        https://webkit.org/b/76842
+
+        Reviewed by Darin Adler.
+
+        Test: fast/table/crash-section-logical-height-changed-needsCellRecalc.html
+
+        The issue was that we would access our section's structure when it was dirty.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::rowLogicalHeightChanged):
+        Bail out if we need cells recalculation as our internal structure is not up-to-date
+        and we will recompute all the rows' heights as part of the recomputation anyway.
+
 2012-01-23  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Make finish() of CodeGeneratorJS.pm empty
