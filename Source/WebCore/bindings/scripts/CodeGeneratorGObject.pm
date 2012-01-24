@@ -51,9 +51,6 @@ sub new {
     bless($reference, $object);
 }
 
-sub finish {
-}
-
 my $licenceTemplate = << "EOF";
 /*
     This file is part of the WebKit open source project.

@@ -147,8 +147,6 @@ sub ProcessDocument
         print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateInterface($class, $defines);
     }
-
-    $codeGenerator->finish();
 }
 
 sub FileNamePrefix

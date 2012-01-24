@@ -88,12 +88,6 @@ sub new
     return $reference;
 }
 
-# FIXME(haraken): finish() will be soon removed from all CodeGenerators.
-sub finish
-{
-    my $object = shift;
-}
-
 sub leftShift($$) {
     my ($value, $distance) = @_;
     return (($value << $distance) & 0xFFFFFFFF);

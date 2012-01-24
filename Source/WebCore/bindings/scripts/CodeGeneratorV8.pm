@@ -85,12 +85,6 @@ sub new
     return $reference;
 }
 
-# FIXME(haraken): finish() will be soon removed from all CodeGenerators.
-sub finish
-{
-    my $object = shift;
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {

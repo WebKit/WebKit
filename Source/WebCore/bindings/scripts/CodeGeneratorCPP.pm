@@ -107,11 +107,6 @@ sub new
     return $reference;
 }
 
-sub finish
-{
-    my $object = shift;
-}
-
 # Params: 'domClass' struct
 sub GenerateInterface
 {
