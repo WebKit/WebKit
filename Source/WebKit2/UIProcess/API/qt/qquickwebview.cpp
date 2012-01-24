@@ -871,7 +871,6 @@ QQuickWebView::QQuickWebView(QQuickItem* parent)
 {
     Q_D(QQuickWebView);
     d->initialize();
-    d->initializeTouch(this);
 }
 
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)

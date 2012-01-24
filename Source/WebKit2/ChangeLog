@@ -1,3 +1,17 @@
+2012-01-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] QQuickWebView is initializing touch mode twice while being constructed
+        https://bugs.webkit.org/show_bug.cgi?id=76859
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removing d->initializeTouch() from QQuickWebView::QQuickWebView()
+        since in QQuickWebViewPrivate::initialize() there is a call for
+        setUseTraditionalDesktopBehaviour(false), which will call initializeTouch.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::QQuickWebView):
+
 2012-01-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][WK2] Make the LoadTracking and WebView test fixtures more flexible
