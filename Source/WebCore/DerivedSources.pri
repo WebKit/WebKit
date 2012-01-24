@@ -611,6 +611,7 @@ else: wrapperFactoryArg = --wrapperFactory
 
 mathmlnames.output = MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
+mathmlnames.depends = $$PWD/mathml/mathattrs.in
 mathmlnames.script = $$PWD/dom/make_names.pl
 mathmlnames.commands = perl -I$$PWD/bindings/scripts $$mathmlnames.script --tags $$PWD/mathml/mathtags.in --attrs $$PWD/mathml/mathattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory $$wrapperFactoryArg --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
 mathmlnames.extra_sources = MathMLElementFactory.cpp

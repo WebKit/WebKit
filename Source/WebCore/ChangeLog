@@ -1,3 +1,15 @@
+2012-01-24  Ádám Kallai  <Kallai.Adam@stud.u-szeged.hu>
+
+        [Qt] Incremental build problem.
+        https://bugs.webkit.org/show_bug.cgi?id=74687
+
+        It is necessary to set mathattrs.in dependency for generating MathMLNames.cpp file.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DerivedSources.pri:
+        I added missing depend.
+
 2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Refactor GTK's accessibilitity code to be more modular
