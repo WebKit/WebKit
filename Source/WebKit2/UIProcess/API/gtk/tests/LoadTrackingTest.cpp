@@ -165,3 +165,10 @@ void LoadTrackingTest::loadRequest(WebKitURIRequest* request)
     m_estimatedProgress = 0;
     WebViewTest::loadRequest(request);
 }
+
+void LoadTrackingTest::reload()
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    webkit_web_view_reload(m_webView);
+}

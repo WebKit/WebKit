@@ -43,6 +43,7 @@ public:
     void loadHtml(const char* html, const char* baseURI);
     void loadPlainText(const char* plainText);
     void loadRequest(WebKitURIRequest*);
+    void reload();
 
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
 

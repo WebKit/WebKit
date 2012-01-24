@@ -125,14 +125,14 @@ static void testWebViewTitle(LoadTrackingTest* test, gconstpointer)
 static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 {
     // Check that nothing happens when there's nothing to reload.
-    webkit_web_view_reload(test->m_webView);
+    test->reload();
     test->wait(0.25); // Wait for a quarter of a second.
 
     test->loadURI(kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);
 
-    webkit_web_view_reload(test->m_webView);
+    test->reload();
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);
 }

@@ -1,3 +1,18 @@
+2012-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix /webkit2/WebKitWebView/reload after r105688
+        https://bugs.webkit.org/show_bug.cgi?id=76898
+
+        Reviewed by Alejandro G. Castro.
+
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (LoadTrackingTest::reload): Add reload method that clears events
+        and initializes progress.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (testWebViewReload): Use LoadTrackingTest::reload() instead of
+        webkit_web_view_reload().
+
 2012-01-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Some qmake build files must include Qt5's "quick" module.
