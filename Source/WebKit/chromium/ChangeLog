@@ -1,3 +1,12 @@
+2012-01-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add <(SHARED_INTERMEDIATE_DIR)/webkit to include path of targets that depend on WebKit API so they pick up the copied headers in an onion build
+        https://bugs.webkit.org/show_bug.cgi?id=76879
+
+        Reviewed by Dirk Pranke.
+
+        * WebKit.gyp:
+
 2012-01-23  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r105640.

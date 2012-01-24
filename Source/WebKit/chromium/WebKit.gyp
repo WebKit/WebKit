@@ -768,6 +768,12 @@
                             },
                         }],
                     ],
+                }, { # else: inside_chromium_build==0
+                    'direct_dependent_settings': {
+                        'include_dirs': [
+                            '<(SHARED_INTERMEDIATE_DIR)/webkit', # in a chromium-inside-WebKit build, headers in the public WebKit API are copied beneath this directory so includes referencing third_party/WebKit work.
+                        ],
+                    },
                 }],
                 ['use_x11 == 1', {
                     'dependencies': [
