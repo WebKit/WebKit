@@ -1,3 +1,19 @@
+2011-01-24  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 105556
+
+    2012-01-20  Brady Eidson  <beidson@apple.com>
+
+            <rdar://problem/9328684> and https://bugs.webkit.org/show_bug.cgi?id=62764
+            Frequent crashes due to null frame below ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+
+            Reviewed by Sam Weinig.
+
+            No way to reproduce without special malloc debugging and that doesn't even reproduce on all platforms.  So still no test.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::detachFromFrame): Protect m_frame for the duration of this method.
+
 2011-01-18  Lucas Forschler  <lforschler@apple.com>
 
     Merge 95580
