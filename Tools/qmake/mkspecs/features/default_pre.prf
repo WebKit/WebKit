@@ -43,8 +43,17 @@ equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
 }
 
 # Make sure QMAKEPATH is set for recursive targets
-win32-msvc*: QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
-else: QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+win32* {
+    pwd = $$(PWD) # Normally empty for cmd.exe
+    is_building_under_cygwin = $$find(pwd, ^/)
+    !isEmpty(is_building_under_cygwin) {
+        QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+    } else {
+        QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
+    }
+} else {
+    QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+}
 
 # Default location of generated sources
 GENERATED_SOURCES_DESTDIR = generated

@@ -1,3 +1,16 @@
+2012-01-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Distinguish between Cygwin and cmd.exe in the way we set env variables
+
+        We can't use win32-msvc* to decide whether or not to use (set FOO=bar), as
+        building with MinGW inside cmd.exe will require the same construct. Instead
+        we assume that when the first character in PWD is a '/' we're running under
+        Cygwin, and use the normal unix way of setting environment variables.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-01-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Some qmake build files must include Qt5's "quick" module.
