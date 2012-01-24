@@ -88,7 +88,7 @@ EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestE
     if (!executionContext)
         return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
 
-    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec));
+    AtomicString eventType = ustringToAtomicString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

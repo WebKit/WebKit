@@ -1,3 +1,41 @@
+2012-01-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Updated bindings test expectations after my last patch.
+
+        Not reviewed.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionPostMessage):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::constructJSTestEventConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionAddEventListener):
+        (WebCore::jsTestEventTargetPrototypeFunctionRemoveEventListener):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::constructJSTestInterface):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjStringAttrWithGetterException):
+        (WebCore::setJSTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod12):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        * bindings/scripts/test/JS/JSTestOverridingNameGetter.cpp:
+        (WebCore::jsTestOverridingNameGetterPrototypeFunctionAnotherFunction):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::constructJSTestSerializedScriptValueInterface):
+
 2012-01-24  Greg Billock  <gbillock@google.com>
 
         Change dispatchIntent API to pure virtual in FrameLoaderClient.

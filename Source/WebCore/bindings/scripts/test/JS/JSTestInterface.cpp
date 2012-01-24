@@ -104,10 +104,10 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
@@ -255,7 +255,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
-    TestSupplemental::setSupplementalStr2(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)));
+    TestSupplemental::setSupplementalStr2(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 #endif
@@ -303,7 +303,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     ScriptExecutionContext* scriptContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined)));

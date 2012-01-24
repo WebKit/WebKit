@@ -97,13 +97,13 @@ EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJS
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& str1(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& str2(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).toString(exec)));
+    const String& str3(ustringToString(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 2, MissingIsEmpty).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestNamedConstructor> object = TestNamedConstructor::createForJSConstructor(jsConstructor->document(), str1, str2, str3, ec);

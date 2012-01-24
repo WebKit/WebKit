@@ -905,7 +905,7 @@ void setJSTestObjStringAttr(ExecState* exec, JSObject* thisObject, JSValue value
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setStringAttr(ustringToString(value.isEmpty() ? UString() : value.toString(exec)));
+    impl->setStringAttr(ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 
@@ -1046,7 +1046,7 @@ void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* thisOb
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setStringAttrWithGetterException(ustringToString(value.isEmpty() ? UString() : value.toString(exec)), ec);
+    impl->setStringAttrWithGetterException(ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)), ec);
     setDOMException(exec, ec);
 }
 
@@ -1056,7 +1056,7 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisOb
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setStringAttrWithSetterException(ustringToString(value.isEmpty() ? UString() : value.toString(exec)), ec);
+    impl->setStringAttrWithSetterException(ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)), ec);
     setDOMException(exec, ec);
 }
 
@@ -1228,7 +1228,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsUndefined)));
@@ -1264,7 +1264,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(ExecSta
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsUndefined)));
@@ -1301,7 +1301,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     int intArg(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 2, MissingIsUndefined)));
@@ -1323,7 +1323,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined)));
@@ -1464,7 +1464,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->addEventListener(ustringToAtomicString(exec->argument(0).toString(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
+    impl->addEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
@@ -1481,7 +1481,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
+    impl->removeEventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
@@ -1762,7 +1762,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
     TestObj* objArg(toTestObj(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->overloadedMethod(objArg, strArg);
@@ -1806,7 +1806,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& strArg(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->overloadedMethod(strArg);
@@ -1948,7 +1948,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod
 {
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    const String& type(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& type(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     TestObj::overloadedMethod1(type);
@@ -2119,7 +2119,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     if (exec->argumentCount() < 3)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
-    const String& str(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)));
+    const String& str(ustringToString(MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).isEmpty() ? UString() : MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined).toString(exec)->value(exec)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     float a(MAYBE_MISSING_PARAMETER(exec, 1, MissingIsUndefined).toFloat(exec));
