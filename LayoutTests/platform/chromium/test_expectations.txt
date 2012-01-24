@@ -4008,3 +4008,6 @@ BUG_CARYCLARK MAC : fast/dom/blur-contenteditable.html = IMAGE
 BUGWK76572 : http/tests/download = FAIL
 
 BUGWG76716 : compositing/visibility/layer-visible-content.html = IMAGE+TEXT
+
+BUGABARTH : media/audio-garbage-collect.html = PASS FAIL
+BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
