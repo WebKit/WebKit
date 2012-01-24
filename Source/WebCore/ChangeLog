@@ -1,3 +1,22 @@
+2012-01-24  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash in updateFirstLetter() from unnecessary anonymous block
+        https://bugs.webkit.org/show_bug.cgi?id=72675
+
+        Reviewed by David Hyatt.
+
+        There was a problem with anonymous blocks not getting removed when
+        their only block flow siblings are removed if they also have non-block
+        flow first-letter siblings (i.e. floats). This patch modifies
+        RenderBlock::removeChild() to look for this situation and strip out
+        unnecessary anonymous container blocks if it occurs.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::collapseAnonymousBoxChild): Added
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::collapseAnonymousBoxChild): Added
+
 2012-01-24  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] event.dataTransfer.types should not return "Text" or "URL"
