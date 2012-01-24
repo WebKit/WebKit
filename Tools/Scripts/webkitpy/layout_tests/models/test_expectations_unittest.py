@@ -199,7 +199,7 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertTrue(e.fatal)
-            exp_errors = [u"FAILURES FOR %s in %s" % (self._port.test_configuration(), self._port.path_to_test_expectations_file()),
+            exp_errors = [u"FAILURES IN %s" % self._port.path_to_test_expectations_file(),
                           u"Line:1 Unrecognized modifier 'foo' failures/expected/text.html",
                           u"Line:2 Missing expectations SKIP : failures/expected/image.html"]
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
@@ -207,15 +207,32 @@ SKIP : failures/expected/image.html""")
 
     def test_parse_error_nonfatal(self):
         try:
-            self.parse_exp('SKIP : failures/expected/text.html = TEXT',
-                           is_lint_mode=True)
+            self.parse_exp('SKIP : failures/expected/text.html = TEXT', is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertFalse(e.fatal)
-            exp_errors = [u'FAILURES FOR %s in %s' % (self._port.test_configuration(), self._port.path_to_test_expectations_file()),
+            exp_errors = [u'FAILURES IN %s' % self._port.path_to_test_expectations_file(),
                           u'Line:1 Test lacks BUG modifier. failures/expected/text.html']
             self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
             self.assertEqual(e.errors, exp_errors)
+
+    def test_error_on_different_platform(self):
+        # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
+        self.assertRaises(ParseError, self.parse_exp,
+            'BUG_TEST MAC : failures/expected/text.html = TEXT\nBUG_TEST MAC : failures/expected/text.html = TEXT',
+            is_lint_mode=True)
+
+    def test_error_on_different_build_type(self):
+        # parse_exp uses a Release port. Assert errors on DEBUG show up in lint mode.
+        self.assertRaises(ParseError, self.parse_exp,
+            'BUG_TEST DEBUG : failures/expected/text.html = TEXT\nBUG_TEST DEBUG : failures/expected/text.html = TEXT',
+            is_lint_mode=True)
+
+    def test_error_on_different_graphics_type(self):
+        # parse_exp uses a CPU port. Assert errors on GPU show up in lint mode.
+        self.assertRaises(ParseError, self.parse_exp,
+            'BUG_TEST GPU : failures/expected/text.html = TEXT\nBUG_TEST GPU : failures/expected/text.html = TEXT',
+            is_lint_mode=True)
 
     def test_overrides(self):
         self.parse_exp("BUG_EXP: failures/expected/text.html = TEXT",

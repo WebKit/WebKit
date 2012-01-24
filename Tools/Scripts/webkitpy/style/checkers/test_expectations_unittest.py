@@ -76,52 +76,11 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._expect_port_for_expectations_path(None, "/")
         self._expect_port_for_expectations_path("ChromiumMacPort", "/mock-checkout/LayoutTests/chromium-mac/test_expectations.txt")
 
-    def test_check_covers_all_configurations(self):
-        checker = TestExpectationsChecker('test/test_expectations.txt', self._error_collector, host=MockHost())
-        output = []
-
-        def mock_check_test_expectations(expectations_str, test_configuration, tests, overrides, output=output):
-            output.append(str(test_configuration))
-        checker.check_test_expectations = mock_check_test_expectations
-        checker.check(lines="")
-
-        expected_output = """<leopard, x86, debug, cpu>
-<leopard, x86, debug, gpu>
-<leopard, x86, release, cpu>
-<leopard, x86, release, gpu>
-<snowleopard, x86, debug, cpu>
-<snowleopard, x86, debug, gpu>
-<snowleopard, x86, release, cpu>
-<snowleopard, x86, release, gpu>
-<xp, x86, debug, cpu>
-<xp, x86, debug, gpu>
-<xp, x86, release, cpu>
-<xp, x86, release, gpu>
-<vista, x86, debug, cpu>
-<vista, x86, debug, gpu>
-<vista, x86, release, cpu>
-<vista, x86, release, gpu>
-<win7, x86, debug, cpu>
-<win7, x86, debug, gpu>
-<win7, x86, release, cpu>
-<win7, x86, release, gpu>
-<lucid, x86, debug, cpu>
-<lucid, x86, debug, gpu>
-<lucid, x86, release, cpu>
-<lucid, x86, release, gpu>
-<lucid, x86_64, debug, cpu>
-<lucid, x86_64, debug, gpu>
-<lucid, x86_64, release, cpu>
-<lucid, x86_64, release, gpu>"""
-
-        self.assertEqual("\n".join(output), expected_output)
-
     def assert_lines_lint(self, lines, expected):
         self._error_collector.reset_errors()
         checker = TestExpectationsChecker('test/test_expectations.txt',
                                           self._error_collector, host=MockHost())
         checker.check_test_expectations(expectations_str='\n'.join(lines),
-                                        test_configuration=checker._port_obj.test_configuration(),
                                         tests=[self._test_file],
                                         overrides=None)
         checker.check_tabs(lines)

@@ -348,30 +348,23 @@ class Manager(object):
         return path
 
     def lint(self):
-        lint_failed = False
-        for test_configuration in self._port.all_test_configurations():
-            try:
-                self.lint_expectations(test_configuration)
-            except test_expectations.ParseError:
-                lint_failed = True
-                self._printer.write("")
-
-        if lint_failed:
+        try:
+            test_expectations.TestExpectations(
+                self._port,
+                None,
+                self._port.test_expectations(),
+                self._port.test_configuration(),
+                self._options.lint_test_files,
+                self._port.test_expectations_overrides())
+        except test_expectations.ParseError, err:
+            for error in err.errors:
+                self._printer.write(error)
+            self._printer.write("")
             _log.error("Lint failed.")
             return -1
 
         _log.info("Lint succeeded.")
         return 0
-
-    def lint_expectations(self, config):
-        port = self._port
-        test_expectations.TestExpectations(
-            port,
-            None,
-            port.test_expectations(),
-            config,
-            self._options.lint_test_files,
-            port.test_expectations_overrides())
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test

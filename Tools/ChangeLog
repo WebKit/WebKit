@@ -1,3 +1,31 @@
+2012-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        check-webkit-style of the chromium test_expectations.txt file takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=76745
+
+        Reviewed by Dimitri Glazkov.
+
+        When in lint mode, have TestExpectations test all configurations instead
+        of looping over each configuration. This also has the benefit of making
+        the error output considerably more concise.
+
+        Also, got rid of the double-printing of errors when linting through check-webkit-style.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.lint):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations._report_errors):
+        (TestExpectations._add_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_parse_error_nonfatal):
+        (test_error_on_different_platform):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.check_test_expectations):
+        (TestExpectationsChecker.check):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_exepectations_path):
+        (TestExpectationsTestCase.assert_lines_lint):
+
 2012-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix attempt after r105543.

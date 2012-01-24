@@ -792,19 +792,13 @@ class TestExpectations(object):
         for warning in self._skipped_tests_warnings:
             warnings.append(warning)
 
-        if len(errors) or len(warnings):
+        if errors or warnings:
             test_expectation_path = self._port.path_to_test_expectations_file()
-            failure_title = "FAILURES FOR %s in %s" % (str(self._test_config), test_expectation_path)
-            _log.error(failure_title)
+            failure_title = "FAILURES IN %s" % test_expectation_path
 
-            for error in errors:
-                _log.error(error)
-            for warning in warnings:
-                _log.error(warning)
-
-            if len(errors):
+            if errors:
                 raise ParseError(fatal=True, errors=[failure_title] + errors)
-            if len(warnings):
+            if warnings:
                 self._has_warnings = True
                 if self._is_lint_mode:
                     raise ParseError(fatal=False, errors=[failure_title] + warnings)
@@ -830,7 +824,7 @@ class TestExpectations(object):
             if not expectation_line.expectations:
                 continue
 
-            if self._test_config in expectation_line.matching_configurations:
+            if self._is_lint_mode or self._test_config in expectation_line.matching_configurations:
                 self._model.add_expectation_line(expectation_line, overrides_allowed)
 
     def _add_skipped_tests(self, tests_to_skip):
