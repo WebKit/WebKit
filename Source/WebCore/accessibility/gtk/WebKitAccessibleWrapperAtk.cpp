@@ -66,6 +66,7 @@
 #include "WebKitAccessibleInterfaceAction.h"
 #include "WebKitAccessibleInterfaceComponent.h"
 #include "WebKitAccessibleInterfaceDocument.h"
+#include "WebKitAccessibleInterfaceEditableText.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -118,11 +119,6 @@ static AccessibilityObject* core(AtkSelection* selection)
 }
 
 static AccessibilityObject* core(AtkText* text)
-{
-    return core(ATK_OBJECT(text));
-}
-
-static AccessibilityObject* core(AtkEditableText* text)
 {
     return core(ATK_OBJECT(text));
 }
@@ -1846,82 +1842,6 @@ static void atk_text_interface_init(AtkTextIface* iface)
     iface->set_caret_offset = webkit_accessible_text_set_caret_offset;
 }
 
-// EditableText
-
-static gboolean webkit_accessible_editable_text_set_run_attributes(AtkEditableText* text, AtkAttributeSet* attrib_set, gint start_offset, gint end_offset)
-{
-    notImplemented();
-    return FALSE;
-}
-
-static void webkit_accessible_editable_text_set_text_contents(AtkEditableText* text, const gchar* string)
-{
-    // FIXME: string nullcheck?
-    core(text)->setValue(String::fromUTF8(string));
-}
-
-static void webkit_accessible_editable_text_insert_text(AtkEditableText* text, const gchar* string, gint length, gint* position)
-{
-    // FIXME: string nullcheck?
-
-    AccessibilityObject* coreObject = core(text);
-    // FIXME: Not implemented in WebCore
-    // coreObject->setSelectedTextRange(PlainTextRange(*position, 0));
-    // coreObject->setSelectedText(String::fromUTF8(string));
-
-    Document* document = coreObject->document();
-    if (!document || !document->frame())
-        return;
-
-    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(*position, 0)));
-    coreObject->setFocused(true);
-    // FIXME: We should set position to the actual inserted text length, which may be less than that requested.
-    if (document->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string), false, 0))
-        *position += length;
-}
-
-static void webkit_accessible_editable_text_copy_text(AtkEditableText* text, gint start_pos, gint end_pos)
-{
-    notImplemented();
-}
-
-static void webkit_accessible_editable_text_cut_text(AtkEditableText* text, gint start_pos, gint end_pos)
-{
-    notImplemented();
-}
-
-static void webkit_accessible_editable_text_delete_text(AtkEditableText* text, gint start_pos, gint end_pos)
-{
-    AccessibilityObject* coreObject = core(text);
-    // FIXME: Not implemented in WebCore
-    // coreObject->setSelectedTextRange(PlainTextRange(start_pos, end_pos - start_pos));
-    // coreObject->setSelectedText(String());
-
-    Document* document = coreObject->document();
-    if (!document || !document->frame())
-        return;
-
-    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(start_pos, end_pos - start_pos)));
-    coreObject->setFocused(true);
-    document->frame()->editor()->performDelete();
-}
-
-static void webkit_accessible_editable_text_paste_text(AtkEditableText* text, gint position)
-{
-    notImplemented();
-}
-
-static void atk_editable_text_interface_init(AtkEditableTextIface* iface)
-{
-    iface->set_run_attributes = webkit_accessible_editable_text_set_run_attributes;
-    iface->set_text_contents = webkit_accessible_editable_text_set_text_contents;
-    iface->insert_text = webkit_accessible_editable_text_insert_text;
-    iface->copy_text = webkit_accessible_editable_text_copy_text;
-    iface->cut_text = webkit_accessible_editable_text_cut_text;
-    iface->delete_text = webkit_accessible_editable_text_delete_text;
-    iface->paste_text = webkit_accessible_editable_text_paste_text;
-}
-
 // Image
 
 static void webkit_accessible_image_get_image_position(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
@@ -2295,8 +2215,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleActionInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atk_selection_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
-    {(GInterfaceInitFunc)atk_editable_text_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleEditableTextInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atk_text_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
