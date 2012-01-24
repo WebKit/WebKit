@@ -1,3 +1,18 @@
+2012-01-23  Dirk Pranke  <dpranke@chromium.org>
+
+        run-webkit-tests needs to propagate --chromium
+        https://bugs.webkit.org/show_bug.cgi?id=76870
+
+        Reviewed by Eric Seidel.
+
+        run-webkit-tests removes '--chromium' argument from @ARGV when
+        determining which port to run, which means that that doesn't
+        propagate to new-run-webkit-tests. That's bad (and is handled
+        for the other ports by re-adding the flag, but apparently we're
+        just now noticing for Chromium).
+
+        * Scripts/run-webkit-tests:
+
 2012-01-23  Brian Weinstein  <bweinstein@apple.com>
 
         More build fixing after r105646.
