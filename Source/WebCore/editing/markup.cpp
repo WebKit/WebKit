@@ -69,7 +69,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool propertyMissingOrEqualToNone(CSSStyleDeclaration*, int propertyID);
+static bool propertyMissingOrEqualToNone(CSSMutableStyleDeclaration*, int propertyID);
 
 class AttributeChange {
 public:
@@ -127,11 +127,11 @@ public:
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     virtual void appendString(const String& s) { return MarkupAccumulator::appendString(s); }
     void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
-    void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
+    void wrapWithStyleNode(CSSMutableStyleDeclaration*, Document*, bool isBlock = false);
     String takeResults();
 
 private:
-    void appendStyleNodeOpenTag(StringBuilder&, CSSStyleDeclaration*, Document*, bool isBlock = false);
+    void appendStyleNodeOpenTag(StringBuilder&, CSSMutableStyleDeclaration*, Document*, bool isBlock = false);
     const String styleNodeCloseTag(bool isBlock = false);
     virtual void appendText(StringBuilder& out, Text*);
     String renderedText(const Node*, const Range*);
@@ -176,7 +176,7 @@ void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlin
         m_nodes->append(node);
 }
 
-void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock)
+void StyledMarkupAccumulator::wrapWithStyleNode(CSSMutableStyleDeclaration* style, Document* document, bool isBlock)
 {
     StringBuilder openTag;
     appendStyleNodeOpenTag(openTag, style, document, isBlock);
@@ -184,7 +184,7 @@ void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Docu
     appendString(styleNodeCloseTag(isBlock));
 }
 
-void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, CSSStyleDeclaration* style, Document* document, bool isBlock)
+void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, CSSMutableStyleDeclaration* style, Document* document, bool isBlock)
 {
     // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
@@ -465,7 +465,7 @@ static inline Node* ancestorToRetainStructureAndAppearanceWithNoRenderer(Node* c
     return ancestorToRetainStructureAndAppearanceForBlock(commonAncestorBlock);
 }
 
-static bool propertyMissingOrEqualToNone(CSSStyleDeclaration* style, int propertyID)
+static bool propertyMissingOrEqualToNone(CSSMutableStyleDeclaration* style, int propertyID)
 {
     if (!style)
         return false;

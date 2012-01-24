@@ -1,3 +1,48 @@
+2012-01-24  Antti Koivisto  <antti@apple.com>
+
+        Reduce internal use of CSSStyleDeclaration base class
+        https://bugs.webkit.org/show_bug.cgi?id=76904
+
+        Reviewed by Andreas Kling.
+
+        Internally WebCore should use the more specific CSSMutableStyleDeclaration and CSSComputedStyleDeclaration types.
+        The CSSStyleDeclaration base should be used in the DOM API functions only. This will make it easier to separate 
+        internal style sheet implementation from the DOM in the future.
+        
+        - Switch CSSStyleDeclaration -> CSSMutableStyleDeclaration where feasible
+        - Use StyledElement::ensureInlineStyleDecl() instead of Element::style() (which is a DOM API function)
+        - Remove Attribute::style() which looks like a DOM API function but is not exposed.
+
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyCSSValue):
+        * dom/Attr.h:
+        (WebCore::Attr::style):
+        * dom/Attribute.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::propertyExistsInStyle):
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle):
+        (WebCore::HTMLTextDecorationEquivalent::propertyExistsInStyle):
+        (WebCore::HTMLTextDecorationEquivalent::valueIsPresentInStyle):
+        (WebCore::HTMLAttributeEquivalent::valueIsPresentInStyle):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::wrapWithStyleNode):
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag):
+        (WebCore::propertyMissingOrEqualToNone):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForAttributeStyles):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        (WebCore::PageSerializer::retrieveResourcesForCSSDeclaration):
+        * page/PageSerializer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2012-01-23  Andreas Kling  <awesomekling@apple.com>
 
         Make elements that don't have attributes smaller.

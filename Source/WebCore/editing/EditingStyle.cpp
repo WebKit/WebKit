@@ -121,8 +121,8 @@ public:
     virtual ~HTMLElementEquivalent() { }
     virtual bool matches(const Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
-    virtual bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style && style->getPropertyCSSValue(m_propertyID); }
-    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual bool propertyExistsInStyle(CSSMutableStyleDeclaration* style) const { return style && style->getPropertyCSSValue(m_propertyID); }
+    virtual bool valueIsPresentInStyle(Element*, CSSMutableStyleDeclaration*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
 
 protected:
@@ -154,7 +154,7 @@ HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, int primitiveValu
     ASSERT(primitiveValue != CSSValueInvalid);
 }
 
-bool HTMLElementEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+bool HTMLElementEquivalent::valueIsPresentInStyle(Element* element, CSSMutableStyleDeclaration* style) const
 {
     RefPtr<CSSValue> value = style->getPropertyCSSValue(m_propertyID);
     return matches(element) && value && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == m_primitiveValue->getIdent();
@@ -171,8 +171,8 @@ public:
     {
         return adoptPtr(new HTMLTextDecorationEquivalent(primitiveValue, tagName));
     }
-    virtual bool propertyExistsInStyle(CSSStyleDeclaration*) const;
-    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual bool propertyExistsInStyle(CSSMutableStyleDeclaration*) const;
+    virtual bool valueIsPresentInStyle(Element*, CSSMutableStyleDeclaration*) const;
 
 private:
     HTMLTextDecorationEquivalent(int primitiveValue, const QualifiedName& tagName);
@@ -184,12 +184,12 @@ HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent(int primitiveValue, c
 {
 }
 
-bool HTMLTextDecorationEquivalent::propertyExistsInStyle(CSSStyleDeclaration* style) const
+bool HTMLTextDecorationEquivalent::propertyExistsInStyle(CSSMutableStyleDeclaration* style) const
 {
     return style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect) || style->getPropertyCSSValue(CSSPropertyTextDecoration);
 }
 
-bool HTMLTextDecorationEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+bool HTMLTextDecorationEquivalent::valueIsPresentInStyle(Element* element, CSSMutableStyleDeclaration* style) const
 {
     RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     if (!styleValue)
@@ -210,7 +210,7 @@ public:
 
     bool matches(const Element* elem) const { return HTMLElementEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
     virtual bool hasAttribute() const { return true; }
-    virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
+    virtual bool valueIsPresentInStyle(Element*, CSSMutableStyleDeclaration*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
     virtual PassRefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
     inline const QualifiedName& attributeName() const { return m_attrName; }
@@ -233,7 +233,7 @@ HTMLAttributeEquivalent::HTMLAttributeEquivalent(CSSPropertyID id, const Qualifi
 {
 }
 
-bool HTMLAttributeEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
+bool HTMLAttributeEquivalent::valueIsPresentInStyle(Element* element, CSSMutableStyleDeclaration* style) const
 {
     RefPtr<CSSValue> value = attributeValueAsCSSValue(element);
     RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);

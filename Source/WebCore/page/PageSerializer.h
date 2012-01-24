@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class CachedImage;
-class CSSStyleDeclaration;
+class CSSMutableStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
 class Frame;
@@ -77,7 +77,7 @@ private:
     void serializeCSSStyleSheet(CSSStyleSheet*, const KURL&);
 
     void addImageToResources(CachedImage*, RenderObject*, const KURL&);
-    void retrieveResourcesForCSSDeclaration(CSSStyleDeclaration*);
+    void retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclaration*);
     void retrieveResourcesForCSSRule(CSSStyleRule*);
 
     Vector<Resource>* m_resources;

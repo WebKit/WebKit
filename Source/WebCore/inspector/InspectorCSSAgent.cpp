@@ -720,14 +720,14 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Eleme
     NamedNodeMap* attributes = element->attributes();
     for (unsigned i = 0; attributes && i < attributes->length(); ++i) {
         Attribute* attribute = attributes->attributeItem(i);
-        if (attribute->style()) {
-            RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
-            String attributeName = attribute->localName();
-            RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->style(), 0);
-            attrStyleObject->setString("name", attributeName.utf8().data());
-            attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
-            attrStyles->pushObject(attrStyleObject.release());
-        }
+        if (!attribute->decl())
+            continue;
+        RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
+        String attributeName = attribute->localName();
+        RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->decl(), 0);
+        attrStyleObject->setString("name", attributeName.utf8().data());
+        attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
+        attrStyles->pushObject(attrStyleObject.release());
     }
 
     return attrStyles.release();

@@ -69,8 +69,6 @@ public:
     
     PassRefPtr<Attribute> clone() const;
 
-    // An extension to get the style information for presentational attributes.
-    CSSStyleDeclaration* style() const { return m_styleDecl.get(); }
     CSSMappedAttributeDeclaration* decl() const { return m_styleDecl.get(); }
     void setDecl(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_styleDecl = decl; }
 

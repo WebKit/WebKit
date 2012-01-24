@@ -2747,12 +2747,10 @@ void Editor::applyEditingStyleToElement(Element* element) const
 {
     if (!element)
         return;
-
-    CSSStyleDeclaration* style = element->style();
-    ASSERT(style);
-    if (!style)
+    ASSERT(element->isStyledElement());
+    if (!element->isStyledElement())
         return;
-
+    CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
     ExceptionCode ec = 0;
     style->setProperty(CSSPropertyWordWrap, "break-word", false, ec);
     ASSERT(!ec);

@@ -422,7 +422,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
     Attribute* attr = attributeMap()->getAttributeItem(attributeName);
-    if (!attr || !attr->isMappedAttribute() || !attr->style())
+    if (!attr || !attr->isMappedAttribute() || !attr->decl())
         return 0;
 
     Attribute* cssSVGAttr = attr;
@@ -437,7 +437,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
         int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(cssSVGAttr->name());
         addCSSProperty(cssSVGAttr, propId, cssSVGAttr->value());
     }
-    return cssSVGAttr->style()->getPropertyCSSValue(name);
+    return cssSVGAttr->decl()->getPropertyCSSValue(name);
 }
 
 bool SVGStyledElement::instanceUpdatesBlocked() const

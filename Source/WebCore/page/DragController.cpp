@@ -27,7 +27,7 @@
 #include "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#include "CSSStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
 #include "CachedResourceLoader.h"
@@ -445,7 +445,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (!color.isValid())
             return false;
         RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
-        RefPtr<CSSStyleDeclaration> style = m_documentUnderMouse->createCSSStyleDeclaration();
+        RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
         ExceptionCode ec;
         style->setProperty(CSSPropertyColor, color.serialized(), false, ec);
         if (!innerFrame->editor()->shouldApplyStyle(style.get(), innerRange.get()))

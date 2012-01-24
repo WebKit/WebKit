@@ -56,7 +56,7 @@ public:
     bool isId() const;
 
     // An extension to get presentational information for attributes.
-    CSSStyleDeclaration* style() { return m_attribute->style(); }
+    CSSStyleDeclaration* style() { return m_attribute->decl(); }
 
     void setSpecified(bool specified) { m_specified = specified; }
 

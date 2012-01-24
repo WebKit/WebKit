@@ -111,6 +111,8 @@ public:
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
 
+    using CSSStyleDeclaration::getPropertyCSSValue;
+
     bool setProperty(int propertyID, int value, bool important = false) { return setProperty(propertyID, value, important, true); }
     bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes unit, bool important = false) { return setProperty(propertyId, value, unit, important, true); }
     bool setProperty(int propertyID, const String& value, bool important = false) { return setProperty(propertyID, value, important, true); }
