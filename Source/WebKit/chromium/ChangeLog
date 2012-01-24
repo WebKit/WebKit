@@ -1,3 +1,17 @@
+2012-01-23  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium][WebSocket] Remove binary communication using WebData in WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=76608
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSocket.h: Remove BinaryTypeData definition and sendBinary(const WebData&).
+        * public/WebSocketClient.h: Remove didReceiveBinaryData(const WebData&).
+        * src/WebSocketImpl.cpp: Remove WebData related code and set default binary type as BinaryTypeBlob.
+        (WebKit::WebSocketImpl::WebSocketImpl): Remove sendBinary(const WebData&).
+        (WebKit::WebSocketImpl::didReceiveBinaryData): Remove WebData supporting code.
+        * src/WebSocketImpl.h: Remove sendBinary(const WebData&).
+
 2012-01-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add <(SHARED_INTERMEDIATE_DIR)/webkit to include path of targets that depend on WebKit API so they pick up the copied headers in an onion build

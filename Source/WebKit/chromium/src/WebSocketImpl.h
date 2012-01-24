@@ -42,7 +42,6 @@ namespace WebCore { class WebSocketChannel; }
 
 namespace WebKit {
 
-class WebData;
 class WebDocument;
 class WebString;
 class WebURL;
@@ -59,8 +58,6 @@ public:
     virtual void connect(const WebURL&, const WebString& protocol);
     virtual WebString subprotocol();
     virtual bool sendText(const WebString&);
-    // FIXME: Remove sendBinary() after a switchover to other types.
-    virtual bool sendBinary(const WebData&);
     virtual bool sendArrayBuffer(const WebArrayBuffer&);
     virtual unsigned long bufferedAmount() const;
     virtual void close(int code, const WebString& reason);

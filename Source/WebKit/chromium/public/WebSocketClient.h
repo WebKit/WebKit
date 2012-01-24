@@ -32,7 +32,6 @@
 #define WebSocketClient_h
 
 #include "platform/WebCommon.h"
-#include "platform/WebData.h"
 
 namespace WebKit {
 
@@ -49,7 +48,6 @@ public:
     virtual ~WebSocketClient() { }
     virtual void didConnect() { }
     virtual void didReceiveMessage(const WebString& message) { }
-    virtual void didReceiveBinaryData(const WebData& binaryData) { }
     virtual void didReceiveArrayBuffer(const WebArrayBuffer& arrayBuffer) { }
     virtual void didReceiveMessageError() { }
     virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) { }

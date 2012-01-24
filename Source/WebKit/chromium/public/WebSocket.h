@@ -39,7 +39,6 @@ namespace WebCore { class WebSocketChannel; }
 namespace WebKit {
 
 class WebArrayBuffer;
-class WebData;
 class WebDocument;
 class WebString;
 class WebURL;
@@ -61,11 +60,9 @@ public:
         CloseEventCodeMaximumUserDefined = 4999
     };
 
-    // FIXME: Remove BinaryTypeData after a switchover to other types.
     enum BinaryType {
         BinaryTypeBlob = 0,
-        BinaryTypeArrayBuffer = 1,
-        BinaryTypeData = 2 // Don't use it
+        BinaryTypeArrayBuffer = 1
     };
 
     WEBKIT_EXPORT static WebSocket* create(const WebDocument&, WebSocketClient*);
@@ -75,8 +72,8 @@ public:
     // specification. It specifies binary object type for receiving binary
     // frames representation. Receiving text frames are always mapped to
     // WebString type regardless of this attribute.
-    // Default type must be BinaryTypeBlob, but currently is BinaryTypeData
-    // for a switchover from WebData to WebArrayBuffer.
+    // Default type is BinaryTypeBlob. But currently it is not supported.
+    // Set BinaryTypeArrayBuffer here ahead of using binary communication.
     // See also, The WebSocket API - http://www.w3.org/TR/websockets/ .
     virtual BinaryType binaryType() const = 0;
     virtual bool setBinaryType(BinaryType) = 0;
@@ -84,7 +81,6 @@ public:
     virtual void connect(const WebURL&, const WebString& protocol) = 0;
     virtual WebString subprotocol() = 0;
     virtual bool sendText(const WebString&) = 0;
-    virtual bool sendBinary(const WebData&) = 0;
     virtual bool sendArrayBuffer(const WebArrayBuffer&) = 0;
     virtual unsigned long bufferedAmount() const = 0;
     virtual void close(int code, const WebString& reason) = 0;

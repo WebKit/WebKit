@@ -47,7 +47,6 @@ class WebSocketChannel {
 #include "WebArrayBuffer.h"
 #include "WebDocument.h"
 #include "WebSocketClient.h"
-#include "platform/WebData.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 
@@ -55,10 +54,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// FIXME: Default m_binaryType must be Blob after supporting WebBlob.
 WebSocketImpl::WebSocketImpl(const WebDocument& document, WebSocketClient* client)
     : m_client(client)
-    , m_binaryType(BinaryTypeData)
+    , m_binaryType(BinaryTypeBlob)
 {
 #if ENABLE(WEB_SOCKETS)
     m_private = WebSocketChannel::create(PassRefPtr<Document>(document).get(), this);
@@ -111,15 +109,6 @@ bool WebSocketImpl::sendText(const WebString& message)
 {
 #if ENABLE(WEB_SOCKETS)
     return m_private->send(message);
-#else
-    ASSERT_NOT_REACHED();
-#endif
-}
-
-bool WebSocketImpl::sendBinary(const WebData& binaryData)
-{
-#if ENABLE(WEB_SOCKETS)
-    return m_private->send(binaryData.data(), binaryData.size());
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -193,9 +182,8 @@ void WebSocketImpl::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
 {
 #if ENABLE(WEB_SOCKETS)
     switch (m_binaryType) {
-    case BinaryTypeData:
-    case BinaryTypeBlob: // FIXME: Handle Blob after supporting WebBlob.
-        m_client->didReceiveBinaryData(WebData(binaryData->data(), binaryData->size()));
+    case BinaryTypeBlob:
+        // FIXME: Handle Blob after supporting WebBlob.
         break;
     case BinaryTypeArrayBuffer:
         m_client->didReceiveArrayBuffer(WebArrayBuffer(ArrayBuffer::create(binaryData->data(), binaryData->size())));
