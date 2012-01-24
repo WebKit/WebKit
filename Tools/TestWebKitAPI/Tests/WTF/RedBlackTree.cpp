@@ -44,7 +44,7 @@ public:
 
     char key()
     {
-        return m_key
+        return m_key;
     }
 
     char m_key;

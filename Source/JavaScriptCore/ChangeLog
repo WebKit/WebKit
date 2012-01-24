@@ -1,3 +1,9 @@
+2012-01-23  Brian Weinstein  <bweinstein@apple.com>
+
+        More build fixing after r105646.
+
+        * JavaScriptCore.exp:
+
 2012-01-23  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76855
