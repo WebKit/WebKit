@@ -83,7 +83,7 @@ static bool fillBMPGlyphs(unsigned offset,
                           GlyphPage* page,
                           const SimpleFontData* fontData)
 {
-    HWndDC dc((HWND)0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, fontData->platformData().hfont());
 
     TEXTMETRIC tm = {0};

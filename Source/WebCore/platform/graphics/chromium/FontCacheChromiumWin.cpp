@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Computer, Inc.
- * Copyright (c) 2006, 2007, 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (c) 2006, 2007, 2008, 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,7 @@
 #include "FontUtilsChromiumWin.h"
 #include "HashMap.h"
 #include "HashSet.h"
+#include "HWndDC.h"
 #include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include <unicode/uniset.h>
@@ -241,7 +242,7 @@ static HFONT createFontIndirectAndGetWinName(const String& family, LOGFONT* winf
     if (!hfont)
         return 0;
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(dc, hfont));
     WCHAR name[LF_FACESIZE];
     unsigned resultLength = GetTextFace(dc, LF_FACESIZE, name);
@@ -249,7 +250,6 @@ static HFONT createFontIndirectAndGetWinName(const String& family, LOGFONT* winf
         resultLength--; // ignore the null terminator
 
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
     *winName = String(name, resultLength);
     return hfont;
 }
@@ -279,7 +279,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
         return it->second->contains(character);
     
     HFONT hfont = fontData->hfont(); 
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(hdc, hfont));
     int count = GetFontUnicodeRanges(hdc, 0);
     if (!count && PlatformSupport::ensureFontLoaded(hfont))
@@ -287,7 +287,6 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     if (!count) {
         LOG_ERROR("Unable to get the font unicode range after second attempt");
         SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
         return true;
     }
 
@@ -299,7 +298,6 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     count = GetFontUnicodeRanges(hdc, glyphset);
     ASSERT(count > 0);
     SelectObject(hdc, oldFont);
-    ReleaseDC(0, hdc);
 
     // FIXME: consider doing either of the following two:
     // 1) port back ICU 4.0's faster look-up code for UnicodeSet
@@ -571,11 +569,10 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
     // both GetTextFace() and EnumFontFamilies() return the localized name. So,
     // FontCache::createFontPlatformData() does not filter out the fonts
     // returned by this EnumFontFamilies() call.
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     if (dc) {
         GetLastResortFallbackFontProcData procData(this, &description, shouldRetain, fallbackFontName);
         EnumFontFamilies(dc, 0, getLastResortFallbackFontProc, reinterpret_cast<LPARAM>(&procData));
-        ReleaseDC(0, dc);
 
         if (procData.m_fontData)
             return procData.m_fontData;
@@ -587,7 +584,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {
-    HDC hdc = GetDC(0);
+    HWndDC hdc(0);
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
@@ -599,8 +596,6 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     TraitsInFamilyProcData procData(familyName);
     EnumFontFamiliesEx(hdc, &logFont, traitsInFamilyEnumProc, reinterpret_cast<LPARAM>(&procData), 0);
     copyToVector(procData.m_traitsMasks, traitsMasks);
-
-    ReleaseDC(0, hdc);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

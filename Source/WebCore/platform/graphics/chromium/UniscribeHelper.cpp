@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007, 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2006, 2007, 2008, 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +33,7 @@
 
 #include "Font.h"
 #include "FontUtilsChromiumWin.h"
+#include "HWndDC.h"
 #include "PlatformContextSkia.h"
 #include "SkiaFontWin.h"
 #include "SkPoint.h"
@@ -786,13 +787,11 @@ void UniscribeHelper::EnsureCachedDCCreated()
     // Allocate a memory DC that is compatible with the Desktop DC since we don't have any window,
     // and we don't want to use the Desktop DC directly since it can have nasty side effects
     // as identified in Chrome Issue http://crbug.com/59315.
-    HDC screenDC = ::GetDC(0);
+    HWndDC screenDC(0);
     m_cachedDC = ::CreateCompatibleDC(screenDC);
     ASSERT(m_cachedDC);
-
-    int result = ::ReleaseDC(0, screenDC);
-    ASSERT(result == 1);
 }
+
 void UniscribeHelper::fillShapes()
 {
     m_shapes.resize(m_runs.size());

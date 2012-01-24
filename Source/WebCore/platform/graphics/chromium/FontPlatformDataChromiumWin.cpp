@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Computer, Inc.
- * Copyright (c) 2006, 2007, 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2006, 2007, 2008, 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,7 @@
 #include <objidl.h>
 #include <mlang.h>
 
+#include "HWndDC.h"
 #include "PlatformSupport.h"
 #include "SkTypeface_win.h"
 #include "SkiaFontWin.h"
@@ -161,7 +162,7 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
         HRESULT result = ScriptGetFontProperties(0, scriptCache(),
                                                  m_scriptFontProperties);
         if (result == E_PENDING) {
-            HDC dc = GetDC(0);
+            HWndDC dc(0);
             HGDIOBJ oldFont = SelectObject(dc, hfont());
             HRESULT hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);
@@ -177,7 +178,6 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
             }
 
             SelectObject(dc, oldFont);
-            ReleaseDC(0, dc);
         }
     }
     return m_scriptFontProperties;

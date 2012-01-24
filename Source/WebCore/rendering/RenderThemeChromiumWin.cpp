@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HWndDC.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
 #include "PlatformSupport.h"
@@ -178,13 +179,12 @@ static float systemFontSize(const LOGFONT& font)
     if (size < 0) {
         HFONT hFont = CreateFontIndirect(&font);
         if (hFont) {
-            HDC hdc = GetDC(0); // What about printing?  Is this the right DC?
+            HWndDC hdc(0); // What about printing? Is this the right DC?
             if (hdc) {
                 HGDIOBJ hObject = SelectObject(hdc, hFont);
                 TEXTMETRIC tm;
                 GetTextMetrics(hdc, &tm);
                 SelectObject(hdc, hObject);
-                ReleaseDC(0, hdc);
                 size = tm.tmAscent;
             }
             DeleteObject(hFont);
@@ -209,13 +209,11 @@ static float pointsToPixels(float points)
 {
     static float pixelsPerInch = 0.0f;
     if (!pixelsPerInch) {
-        HDC hdc = GetDC(0); // What about printing?  Is this the right DC?
-        if (hdc) { // Can this ever actually be NULL?
+        HWndDC hdc(0); // What about printing? Is this the right DC?
+        if (hdc) // Can this ever actually be NULL?
             pixelsPerInch = GetDeviceCaps(hdc, LOGPIXELSY);
-            ReleaseDC(0, hdc);
-        } else {
+        else
             pixelsPerInch = 96.0f;
-        }
     }
 
     static const float pointsPerInch = 72.0f;

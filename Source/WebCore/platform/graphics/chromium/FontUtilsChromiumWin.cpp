@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2007, 2008, 2009, 2010, Google Inc. All rights reserved.
+ * Copyright (c) 2006, 2007, 2008, 2009, 2010, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +33,7 @@
 
 #include <limits>
 
+#include "HWndDC.h"
 #include "PlatformString.h"
 #include "UniscribeHelper.h"
 #include <unicode/locid.h>
@@ -50,14 +51,13 @@ bool isFontPresent(const UChar* fontName)
                              fontName);
     if (!hfont)
         return false;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(dc, hfont));
     WCHAR actualFontName[LF_FACESIZE];
     GetTextFace(dc, LF_FACESIZE, actualFontName);
     actualFontName[LF_FACESIZE - 1] = 0;
     SelectObject(dc, oldFont);
     DeleteObject(hfont);
-    ReleaseDC(0, dc);
     // We don't have to worry about East Asian fonts with locale-dependent
     // names here for now.
     return !wcscmp(fontName, actualFontName);
@@ -241,24 +241,22 @@ const int kUndefinedAscent = std::numeric_limits<int>::min();
 // kUndefinedAscent is returned, instead.
 int getAscent(HFONT hfont)
 {
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, hfont);
     TEXTMETRIC tm;
     BOOL gotMetrics = GetTextMetrics(dc, &tm);
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
     return gotMetrics ? tm.tmAscent : kUndefinedAscent;
 }
 
 WORD getSpaceGlyph(HFONT hfont) 
 {
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, hfont);
     WCHAR space = L' ';
     WORD spaceGlyph = 0;
     GetGlyphIndices(dc, &space, 1, &spaceGlyph, 0);
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
     return spaceGlyph;
 }
 

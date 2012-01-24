@@ -1,3 +1,32 @@
+2012-01-13  David Levin  <levin@chromium.org>
+
+        [chromium] Convert uses of GetDC to HWndDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76290
+
+        Reviewed by Dmitry Titov.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::createFontIndirectAndGetWinName):
+        (WebCore::fontContainsCharacter):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        (WebCore::FontCache::getTraitsInFamily):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::scriptFontProperties):
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp:
+        (WebCore::FontMap::getAscent):
+        (WebCore::FontMap::getSpaceGlyph):
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::EnsureCachedDCCreated):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::systemFontSize):
+        (WebCore::pointsToPixels):
+
 2012-01-23  Joe Thomas  <joethomas@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75799

@@ -36,6 +36,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
+#include "HWndDC.h"
 #include "PlatformSupport.h"
 #include <wtf/MathExtras.h>
 
@@ -55,7 +56,7 @@ void SimpleFontData::platformInit()
         return;
     }
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     TEXTMETRIC textMetric = {0};
@@ -95,7 +96,6 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
 
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -147,7 +147,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 void SimpleFontData::determinePitch()
 {
     // TEXTMETRICS have this.  Set m_treatAsFixedPitch based off that.
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     // Yes, this looks backwards, but the fixed pitch bit is actually set if the font
@@ -166,7 +166,6 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = ((textMetric.tmPitchAndFamily & TMPF_FIXED_PITCH) == 0);
 
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
 }
 
 FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
@@ -179,7 +178,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     if (!m_platformData.size())
         return 0;
 
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     int width = 0;
@@ -194,7 +193,6 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     }
 
     SelectObject(dc, oldFont);
-    ReleaseDC(0, dc);
 
     return static_cast<float>(width);
 }
