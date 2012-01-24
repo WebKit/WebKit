@@ -474,7 +474,6 @@ WONTFIX SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 WONTFIX SKIP MAC : fast/dom/HTMLProgressElement/progress-element.html = TEXT
 
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
-WONTFIX SKIP : media/audio-data-url.html = TIMEOUT FAIL
 WONTFIX SKIP : media/audio-mpeg-supported.html = TIMEOUT FAIL
 WONTFIX SKIP : media/audio-mpeg4-supported.html = TIMEOUT FAIL
 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
