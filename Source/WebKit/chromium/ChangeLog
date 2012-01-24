@@ -1,3 +1,16 @@
+2012-01-23  Greg Billock  <gbillock@google.com>
+
+        Fine tune Web Intents Chromium API
+        https://bugs.webkit.org/show_bug.cgi?id=76754
+
+        Reviewed by Darin Fisher.
+
+        * public/WebIntent.h:
+        * public/WebIntentServiceInfo.h:
+        * src/WebIntent.cpp:
+        * src/WebIntentServiceInfo.cpp:
+        (WebKit::WebIntentServiceInfo::WebIntentServiceInfo):
+
 2012-01-23  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] updateRect is incorrect when contentBounds != bounds

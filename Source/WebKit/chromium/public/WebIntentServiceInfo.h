@@ -67,6 +67,11 @@ public:
     WEBKIT_EXPORT WebString disposition() const;
     WEBKIT_EXPORT void setDisposition(const WebString&);
 
+#if WEBKIT_IMPLEMENTATION
+    WebIntentServiceInfo(const WebString& action, const WebString& type, const WebURL& href,
+                         const WebString& title, const WebString& disposition);
+#endif
+
 private:
     WebString m_action;
     WebString m_type;

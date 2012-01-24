@@ -83,4 +83,17 @@ void WebIntentServiceInfo::setDisposition(const WebString& disposition)
     m_disposition = disposition;
 }
 
+WebIntentServiceInfo::WebIntentServiceInfo(const WebString& action,
+                                           const WebString& type,
+                                           const WebURL& href,
+                                           const WebString& title,
+                                           const WebString& disposition)
+    : m_action(action)
+    , m_type(type)
+    , m_href(href)
+    , m_title(title)
+    , m_disposition(disposition)
+{
+}
+
 } // namespace WebKit

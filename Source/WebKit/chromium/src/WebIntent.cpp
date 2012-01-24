@@ -102,9 +102,4 @@ WebString WebIntent::data() const
 #endif
 }
 
-int WebIntent::identifier() const
-{
-    return 0;
-}
-
 } // namespace WebKit

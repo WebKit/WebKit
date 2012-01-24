@@ -62,9 +62,6 @@ public:
     WEBKIT_EXPORT WebString type() const;
     WEBKIT_EXPORT WebString data() const;
 
-    // FIXME: delete this.
-    WEBKIT_EXPORT int identifier() const;
-
 #if WEBKIT_IMPLEMENTATION
     WebIntent(const WTF::PassRefPtr<WebCore::Intent>&);
 #endif
