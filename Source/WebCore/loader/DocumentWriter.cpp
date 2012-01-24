@@ -241,21 +241,6 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
     m_encodingWasChosenByUser = userChosen;
 }
 
-String DocumentWriter::deprecatedFrameEncoding() const
-{
-    Document* document = m_frame->document();
-    if (!document || document->url().isEmpty())
-        return m_encoding;
-
-    if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
-        return m_encoding;
-
-    if (m_decoder && m_decoder->encoding().isValid())
-        return m_decoder->encoding().name();
-
-    return String();
-}
-
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
 {
     ASSERT(!m_parser->isStopped());

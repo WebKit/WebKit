@@ -1,3 +1,24 @@
+2012-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Downloaded file name fallback encodings are not set correctly
+        https://bugs.webkit.org/show_bug.cgi?id=76862
+
+        Reviewed by Adam Barth.
+
+        Tests: http/tests/download/default-encoding.html
+               http/tests/download/form-submission-result.html
+               http/tests/download/inherited-encoding.html
+               http/tests/download/literal-utf-8.html
+
+        * loader/DocumentWriter.cpp:
+        * loader/DocumentWriter.h:
+        Removed deprecatedFrameEncoding. Due to changes in Document::encoding behavior, it can now
+        be used in its place.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::addExtraFieldsToRequest): Instead of hunting
+        down a correct loader (and active one is not always correct any more), just use opening document's
+        encoding.
+
 2012-01-23  Ojan Vafai  <ojan@chromium.org>
 
         Implement flex-pack:distribute

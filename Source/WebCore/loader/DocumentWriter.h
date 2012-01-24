@@ -59,11 +59,6 @@ public:
 
     void setEncoding(const String& encoding, bool userChosen);
 
-    // FIXME: It's really unforunate to need to expose this piece of state.
-    // I suspect a better design is to disentangle user-provided encodings,
-    // default encodings, and the decoding we're currently using.
-    String deprecatedFrameEncoding() const;
-
     const String& mimeType() const { return m_mimeType; }
     void setMIMEType(const String& type) { m_mimeType = type; }
 

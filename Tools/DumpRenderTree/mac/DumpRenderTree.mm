@@ -609,6 +609,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setDefaultFontSize:16];
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:0];
+    [preferences setDefaultTextEncodingName:@"ISO-8859-1"];
     [preferences setJavaEnabled:NO];
     [preferences setJavaScriptEnabled:YES];
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
