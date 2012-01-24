@@ -356,6 +356,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitPageCacheSupportsPluginsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,

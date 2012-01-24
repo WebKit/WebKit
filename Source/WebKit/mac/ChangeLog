@@ -1,3 +1,15 @@
+2012-01-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        pageCacheSupportsPlugins should default to true on WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=76891
+
+        Reviewed by Joseph Pecoraro.
+
+        The default was left out of r102619 by accident.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2012-01-23  Geoffrey Garen  <ggaren@apple.com>
 
         JSValue::toString() should return a JSString* instead of a UString
