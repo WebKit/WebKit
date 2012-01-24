@@ -1,3 +1,9 @@
+2012-01-24  Mark Rowe  <mrowe@apple.com>
+
+        Fix all of the builds after r105812.
+
+        * loader/EmptyClients.h: Move the #include in to the correct #if.
+
 2012-01-24  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium][V8] DOMWindow::postMessage crashes if window disassociated with frame.

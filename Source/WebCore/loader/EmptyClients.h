@@ -42,7 +42,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "InspectorClient.h"
-#include "IntentRequest.h"
 #include "PopupMenu.h"
 #include "ResourceError.h"
 #include "SearchPopupMenu.h"
@@ -53,6 +52,10 @@
 
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
+#endif
+
+#if ENABLE(WEB_INTENTS)
+#include "IntentRequest.h"
 #endif
 
 /*
