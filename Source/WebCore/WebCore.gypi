@@ -2956,7 +2956,6 @@
             'platform/efl/ClipboardEfl.h',
             'platform/efl/ContextMenuEfl.cpp',
             'platform/efl/ContextMenuItemEfl.cpp',
-            'platform/efl/CookieJarEfl.cpp',
             'platform/efl/CursorEfl.cpp',
             'platform/efl/DragDataEfl.cpp',
             'platform/efl/DragImageEfl.cpp',
