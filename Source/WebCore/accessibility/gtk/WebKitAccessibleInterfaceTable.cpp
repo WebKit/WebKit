@@ -87,24 +87,7 @@ static AccessibilityTableCell* cellAtIndex(AtkTable* table, gint index)
     return 0;
 }
 
-void webkitAccessibleTableInterfaceInit(AtkTableIface* iface)
-{
-    iface->ref_at = webkitAccessibleTableRefAt;
-    iface->get_index_at = webkitAccessibleTableGetIndexAt;
-    iface->get_column_at_index = webkitAccessibleTableGetColumnAtIndex;
-    iface->get_row_at_index = webkitAccessibleTableGetRowAtIndex;
-    iface->get_n_columns = webkitAccessibleTableGetNColumns;
-    iface->get_n_rows = webkitAccessibleTableGetNRows;
-    iface->get_column_extent_at = webkitAccessibleTableGetColumnExtentAt;
-    iface->get_row_extent_at = webkitAccessibleTableGetRowExtentAt;
-    iface->get_column_header = webkitAccessibleTableGetColumnHeader;
-    iface->get_row_header = webkitAccessibleTableGetRowHeader;
-    iface->get_caption = webkitAccessibleTableGetCaption;
-    iface->get_column_description = webkitAccessibleTableGetColumnDescription;
-    iface->get_row_description = webkitAccessibleTableGetRowDescription;
-}
-
-AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint column)
+static AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint column)
 {
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (!axCell)
@@ -112,14 +95,14 @@ AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint column)
     return axCell->wrapper();
 }
 
-gint webkitAccessibleTableGetIndexAt(AtkTable* table, gint row, gint column)
+static gint webkitAccessibleTableGetIndexAt(AtkTable* table, gint row, gint column)
 {
     AccessibilityTableCell* axCell = cell(table, row, column);
     AccessibilityTable* axTable = static_cast<AccessibilityTable*>(core(table));
     return cellIndex(axCell, axTable);
 }
 
-gint webkitAccessibleTableGetColumnAtIndex(AtkTable* table, gint index)
+static gint webkitAccessibleTableGetColumnAtIndex(AtkTable* table, gint index)
 {
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
     if (axCell) {
@@ -130,7 +113,7 @@ gint webkitAccessibleTableGetColumnAtIndex(AtkTable* table, gint index)
     return -1;
 }
 
-gint webkitAccessibleTableGetRowAtIndex(AtkTable* table, gint index)
+static gint webkitAccessibleTableGetRowAtIndex(AtkTable* table, gint index)
 {
     AccessibilityTableCell* axCell = cellAtIndex(table, index);
     if (axCell) {
@@ -141,7 +124,7 @@ gint webkitAccessibleTableGetRowAtIndex(AtkTable* table, gint index)
     return -1;
 }
 
-gint webkitAccessibleTableGetNColumns(AtkTable* table)
+static gint webkitAccessibleTableGetNColumns(AtkTable* table)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject())
@@ -149,7 +132,7 @@ gint webkitAccessibleTableGetNColumns(AtkTable* table)
     return 0;
 }
 
-gint webkitAccessibleTableGetNRows(AtkTable* table)
+static gint webkitAccessibleTableGetNRows(AtkTable* table)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject())
@@ -157,7 +140,7 @@ gint webkitAccessibleTableGetNRows(AtkTable* table)
     return 0;
 }
 
-gint webkitAccessibleTableGetColumnExtentAt(AtkTable* table, gint row, gint column)
+static gint webkitAccessibleTableGetColumnExtentAt(AtkTable* table, gint row, gint column)
 {
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (axCell) {
@@ -168,7 +151,7 @@ gint webkitAccessibleTableGetColumnExtentAt(AtkTable* table, gint row, gint colu
     return 0;
 }
 
-gint webkitAccessibleTableGetRowExtentAt(AtkTable* table, gint row, gint column)
+static gint webkitAccessibleTableGetRowExtentAt(AtkTable* table, gint row, gint column)
 {
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (axCell) {
@@ -179,7 +162,7 @@ gint webkitAccessibleTableGetRowExtentAt(AtkTable* table, gint row, gint column)
     return 0;
 }
 
-AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint column)
+static AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint column)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
@@ -197,7 +180,7 @@ AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable* table, gint column)
     return 0;
 }
 
-AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
+static AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
@@ -215,7 +198,7 @@ AtkObject* webkitAccessibleTableGetRowHeader(AtkTable* table, gint row)
     return 0;
 }
 
-AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
+static AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
@@ -229,20 +212,37 @@ AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
     return 0;
 }
 
-const gchar* webkitAccessibleTableGetColumnDescription(AtkTable* table, gint column)
+static const gchar* webkitAccessibleTableGetColumnDescription(AtkTable* table, gint column)
 {
     AtkObject* columnHeader = atk_table_get_column_header(table, column);
     if (columnHeader && ATK_IS_TEXT(columnHeader))
-        return webkitAccessibleTextGetText(ATK_TEXT(columnHeader), 0, -1);
+        return atk_text_get_text(ATK_TEXT(columnHeader), 0, -1);
 
     return 0;
 }
 
-const gchar* webkitAccessibleTableGetRowDescription(AtkTable* table, gint row)
+static const gchar* webkitAccessibleTableGetRowDescription(AtkTable* table, gint row)
 {
     AtkObject* rowHeader = atk_table_get_row_header(table, row);
     if (rowHeader && ATK_IS_TEXT(rowHeader))
-        return webkitAccessibleTextGetText(ATK_TEXT(rowHeader), 0, -1);
+        return atk_text_get_text(ATK_TEXT(rowHeader), 0, -1);
 
     return 0;
+}
+
+void webkitAccessibleTableInterfaceInit(AtkTableIface* iface)
+{
+    iface->ref_at = webkitAccessibleTableRefAt;
+    iface->get_index_at = webkitAccessibleTableGetIndexAt;
+    iface->get_column_at_index = webkitAccessibleTableGetColumnAtIndex;
+    iface->get_row_at_index = webkitAccessibleTableGetRowAtIndex;
+    iface->get_n_columns = webkitAccessibleTableGetNColumns;
+    iface->get_n_rows = webkitAccessibleTableGetNRows;
+    iface->get_column_extent_at = webkitAccessibleTableGetColumnExtentAt;
+    iface->get_row_extent_at = webkitAccessibleTableGetRowExtentAt;
+    iface->get_column_header = webkitAccessibleTableGetColumnHeader;
+    iface->get_row_header = webkitAccessibleTableGetRowHeader;
+    iface->get_caption = webkitAccessibleTableGetCaption;
+    iface->get_column_description = webkitAccessibleTableGetColumnDescription;
+    iface->get_row_description = webkitAccessibleTableGetRowDescription;
 }

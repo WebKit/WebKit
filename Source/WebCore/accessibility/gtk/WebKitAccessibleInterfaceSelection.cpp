@@ -123,18 +123,7 @@ static AccessibilityObject* optionFromSelection(AtkSelection* selection, gint in
     return 0;
 }
 
-void webkitAccessibleSelectionInterfaceInit(AtkSelectionIface* iface)
-{
-    iface->add_selection = webkitAccessibleSelectionAddSelection;
-    iface->clear_selection = webkitAccessibleSelectionClearSelection;
-    iface->ref_selection = webkitAccessibleSelectionRefSelection;
-    iface->get_selection_count = webkitAccessibleSelectionGetSelectionCount;
-    iface->is_child_selected = webkitAccessibleSelectionIsChildSelected;
-    iface->remove_selection = webkitAccessibleSelectionRemoveSelection;
-    iface->select_all_selection = webkitAccessibleSelectionSelectAllSelection;
-}
-
-gboolean webkitAccessibleSelectionAddSelection(AtkSelection* selection, gint index)
+static gboolean webkitAccessibleSelectionAddSelection(AtkSelection* selection, gint index)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection)
@@ -149,7 +138,7 @@ gboolean webkitAccessibleSelectionAddSelection(AtkSelection* selection, gint ind
     return FALSE;
 }
 
-gboolean webkitAccessibleSelectionClearSelection(AtkSelection* selection)
+static gboolean webkitAccessibleSelectionClearSelection(AtkSelection* selection)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection)
@@ -166,7 +155,7 @@ gboolean webkitAccessibleSelectionClearSelection(AtkSelection* selection)
     return FALSE;
 }
 
-AtkObject* webkitAccessibleSelectionRefSelection(AtkSelection* selection, gint index)
+static AtkObject* webkitAccessibleSelectionRefSelection(AtkSelection* selection, gint index)
 {
     AccessibilityObject* option = optionFromSelection(selection, index);
     if (option) {
@@ -178,7 +167,7 @@ AtkObject* webkitAccessibleSelectionRefSelection(AtkSelection* selection, gint i
     return 0;
 }
 
-gint webkitAccessibleSelectionGetSelectionCount(AtkSelection* selection)
+static gint webkitAccessibleSelectionGetSelectionCount(AtkSelection* selection)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection || !coreSelection->isAccessibilityRenderObject())
@@ -202,7 +191,7 @@ gint webkitAccessibleSelectionGetSelectionCount(AtkSelection* selection)
     return 0;
 }
 
-gboolean webkitAccessibleSelectionIsChildSelected(AtkSelection* selection, gint index)
+static gboolean webkitAccessibleSelectionIsChildSelected(AtkSelection* selection, gint index)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection)
@@ -215,7 +204,7 @@ gboolean webkitAccessibleSelectionIsChildSelected(AtkSelection* selection, gint 
     return FALSE;
 }
 
-gboolean webkitAccessibleSelectionRemoveSelection(AtkSelection* selection, gint index)
+static gboolean webkitAccessibleSelectionRemoveSelection(AtkSelection* selection, gint index)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection)
@@ -231,7 +220,7 @@ gboolean webkitAccessibleSelectionRemoveSelection(AtkSelection* selection, gint 
     return FALSE;
 }
 
-gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection* selection)
+static gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection* selection)
 {
     AccessibilityObject* coreSelection = core(selection);
     if (!coreSelection || !coreSelection->isMultiSelectable())
@@ -247,4 +236,15 @@ gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection* selection)
     }
 
     return FALSE;
+}
+
+void webkitAccessibleSelectionInterfaceInit(AtkSelectionIface* iface)
+{
+    iface->add_selection = webkitAccessibleSelectionAddSelection;
+    iface->clear_selection = webkitAccessibleSelectionClearSelection;
+    iface->ref_selection = webkitAccessibleSelectionRefSelection;
+    iface->get_selection_count = webkitAccessibleSelectionGetSelectionCount;
+    iface->is_child_selected = webkitAccessibleSelectionIsChildSelected;
+    iface->remove_selection = webkitAccessibleSelectionRemoveSelection;
+    iface->select_all_selection = webkitAccessibleSelectionSelectAllSelection;
 }

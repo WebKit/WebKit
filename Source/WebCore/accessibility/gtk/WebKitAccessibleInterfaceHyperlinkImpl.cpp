@@ -26,13 +26,7 @@ using namespace WebCore;
 
 static GQuark hyperlinkObjectQuark = 0;
 
-void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
-{
-    iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
-    hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
-}
-
-AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
+static AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
 {
     AtkHyperlink* hyperlinkObject = ATK_HYPERLINK(g_object_get_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark));
     if (!hyperlinkObject) {
@@ -40,4 +34,10 @@ AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperl
         g_object_set_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark, hyperlinkObject);
     }
     return hyperlinkObject;
+}
+
+void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
+{
+    iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
+    hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
 }

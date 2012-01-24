@@ -25,8 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleComponentInterfaceInit(AtkComponentIface*);
-AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent*, gint x, gint y, AtkCoordType);
-void webkitAccessibleComponentGetExtents(AtkComponent*, gint* x, gint* y, gint* width, gint* height, AtkCoordType);
-gboolean webkitAccessibleComponentGrabFocus(AtkComponent*);
 
 #endif // WebKitAccessibleInterfaceComponent_h

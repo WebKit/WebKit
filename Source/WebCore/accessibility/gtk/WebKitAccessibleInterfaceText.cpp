@@ -59,7 +59,7 @@ static AccessibilityObject* core(AtkText* text)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
-gchar* textForRenderer(RenderObject* renderer)
+static gchar* textForRenderer(RenderObject* renderer)
 {
     GString* resultText = g_string_new(0);
 
@@ -118,7 +118,7 @@ gchar* textForRenderer(RenderObject* renderer)
     return g_string_free(resultText, FALSE);
 }
 
-gchar* textForObject(AccessibilityObject* coreObject)
+static gchar* textForObject(AccessibilityObject* coreObject)
 {
     GString* str = g_string_new(0);
 
@@ -143,6 +143,8 @@ gchar* textForObject(AccessibilityObject* coreObject)
 
     return g_string_free(str, FALSE);
 }
+
+static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOffset);
 
 static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
@@ -504,29 +506,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     endOffset = startOffset + TextIterator::rangeLength(nodeRange.get(), true);
 }
 
-void webkitAccessibleTextInterfaceInit(AtkTextIface* iface)
-{
-    iface->get_text = webkitAccessibleTextGetText;
-    iface->get_text_after_offset = webkitAccessibleTextGetTextAfterOffset;
-    iface->get_text_at_offset = webkitAccessibleTextGetTextAtOffset;
-    iface->get_text_before_offset = webkitAccessibleTextGetTextBeforeOffset;
-    iface->get_character_at_offset = webkitAccessibleTextGetCharacterAtOffset;
-    iface->get_caret_offset = webkitAccessibleTextGetCaretOffset;
-    iface->get_run_attributes = webkitAccessibleTextGetRunAttributes;
-    iface->get_default_attributes = webkitAccessibleTextGetDefaultAttributes;
-    iface->get_character_extents = webkitAccessibleTextGetCharacterExtents;
-    iface->get_range_extents = webkitAccessibleTextGetRangeExtents;
-    iface->get_character_count = webkitAccessibleTextGetCharacterCount;
-    iface->get_offset_at_point = webkitAccessibleTextGetOffsetAtPoint;
-    iface->get_n_selections = webkitAccessibleTextGetNSelections;
-    iface->get_selection = webkitAccessibleTextGetSelection;
-    iface->add_selection = webkitAccessibleTextAddSelection;
-    iface->remove_selection = webkitAccessibleTextRemoveSelection;
-    iface->set_selection = webkitAccessibleTextSetSelection;
-    iface->set_caret_offset = webkitAccessibleTextSetCaretOffset;
-}
-
-gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint endOffset)
+static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint endOffset)
 {
     AccessibilityObject* coreObject = core(text);
 
@@ -568,28 +548,28 @@ gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint endOffs
     return g_strdup(ret.utf8().data());
 }
 
-gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
+static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
-gchar* webkitAccessibleTextGetTextAtOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
+static gchar* webkitAccessibleTextGetTextAtOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
-gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
+static gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
-gunichar webkitAccessibleTextGetCharacterAtOffset(AtkText*, gint)
+static gunichar webkitAccessibleTextGetCharacterAtOffset(AtkText*, gint)
 {
     notImplemented();
     return 0;
 }
 
-gint webkitAccessibleTextGetCaretOffset(AtkText* text)
+static gint webkitAccessibleTextGetCaretOffset(AtkText* text)
 {
     // coreObject is the unignored object whose offset the caller is requesting.
     // focusedObject is the object with the caret. It is likely ignored -- unless it's a link.
@@ -619,7 +599,7 @@ gint webkitAccessibleTextGetCaretOffset(AtkText* text)
     return offset;
 }
 
-AtkAttributeSet* webkitAccessibleTextGetRunAttributes(AtkText* text, gint offset, gint* startOffset, gint* endOffset)
+static AtkAttributeSet* webkitAccessibleTextGetRunAttributes(AtkText* text, gint offset, gint* startOffset, gint* endOffset)
 {
     AccessibilityObject* coreObject = core(text);
     AtkAttributeSet* result;
@@ -643,7 +623,7 @@ AtkAttributeSet* webkitAccessibleTextGetRunAttributes(AtkText* text, gint offset
     return result;
 }
 
-AtkAttributeSet* webkitAccessibleTextGetDefaultAttributes(AtkText* text)
+static AtkAttributeSet* webkitAccessibleTextGetDefaultAttributes(AtkText* text)
 {
     AccessibilityObject* coreObject = core(text);
     if (!coreObject || !coreObject->isAccessibilityRenderObject())
@@ -652,7 +632,7 @@ AtkAttributeSet* webkitAccessibleTextGetDefaultAttributes(AtkText* text)
     return getAttributeSetForAccessibilityObject(coreObject);
 }
 
-void webkitAccessibleTextGetCharacterExtents(AtkText* text, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType coords)
+static void webkitAccessibleTextGetCharacterExtents(AtkText* text, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType coords)
 {
     IntRect extents = textExtents(text, offset, 1, coords);
     *x = extents.x();
@@ -661,7 +641,7 @@ void webkitAccessibleTextGetCharacterExtents(AtkText* text, gint offset, gint* x
     *height = extents.height();
 }
 
-void webkitAccessibleTextGetRangeExtents(AtkText* text, gint startOffset, gint endOffset, AtkCoordType coords, AtkTextRectangle* rect)
+static void webkitAccessibleTextGetRangeExtents(AtkText* text, gint startOffset, gint endOffset, AtkCoordType coords, AtkTextRectangle* rect)
 {
     IntRect extents = textExtents(text, startOffset, endOffset - startOffset, coords);
     rect->x = extents.x();
@@ -670,12 +650,12 @@ void webkitAccessibleTextGetRangeExtents(AtkText* text, gint startOffset, gint e
     rect->height = extents.height();
 }
 
-gint webkitAccessibleTextGetCharacterCount(AtkText* text)
+static gint webkitAccessibleTextGetCharacterCount(AtkText* text)
 {
     return accessibilityObjectLength(core(text));
 }
 
-gint webkitAccessibleTextGetOffsetAtPoint(AtkText* text, gint x, gint y, AtkCoordType coords)
+static gint webkitAccessibleTextGetOffsetAtPoint(AtkText* text, gint x, gint y, AtkCoordType coords)
 {
     // FIXME: Use the AtkCoordType
     // TODO: Is it correct to ignore range.length?
@@ -684,7 +664,7 @@ gint webkitAccessibleTextGetOffsetAtPoint(AtkText* text, gint x, gint y, AtkCoor
     return range.start;
 }
 
-gint webkitAccessibleTextGetNSelections(AtkText* text)
+static gint webkitAccessibleTextGetNSelections(AtkText* text)
 {
     AccessibilityObject* coreObject = core(text);
     VisibleSelection selection = coreObject->selection();
@@ -702,7 +682,7 @@ gint webkitAccessibleTextGetNSelections(AtkText* text)
     return selectionBelongsToObject(coreObject, selection) ? 1 : 0;
 }
 
-gchar* webkitAccessibleTextGetSelection(AtkText* text, gint selectionNum, gint* startOffset, gint* endOffset)
+static gchar* webkitAccessibleTextGetSelection(AtkText* text, gint selectionNum, gint* startOffset, gint* endOffset)
 {
     // Default values, unless the contrary is proved
     *startOffset = *endOffset = 0;
@@ -724,29 +704,13 @@ gchar* webkitAccessibleTextGetSelection(AtkText* text, gint selectionNum, gint* 
     return webkitAccessibleTextGetText(text, *startOffset, *endOffset);
 }
 
-gboolean webkitAccessibleTextAddSelection(AtkText*, gint, gint)
+static gboolean webkitAccessibleTextAddSelection(AtkText*, gint, gint)
 {
     notImplemented();
     return FALSE;
 }
 
-gboolean webkitAccessibleTextRemoveSelection(AtkText* text, gint selectionNum)
-{
-    // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
-    if (selectionNum)
-        return FALSE;
-
-    // Do nothing if current selection doesn't belong to the object
-    if (!webkitAccessibleTextGetNSelections(text))
-        return FALSE;
-
-    // Set a new 0-sized selection to the caret position, in order
-    // to simulate selection removal (GAIL style)
-    gint caretOffset = webkitAccessibleTextGetCaretOffset(text);
-    return webkitAccessibleTextSetSelection(text, selectionNum, caretOffset, caretOffset);
-}
-
-gboolean webkitAccessibleTextSetSelection(AtkText* text, gint selectionNum, gint startOffset, gint endOffset)
+static gboolean webkitAccessibleTextSetSelection(AtkText* text, gint selectionNum, gint startOffset, gint endOffset)
 {
     // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
     if (selectionNum)
@@ -784,7 +748,23 @@ gboolean webkitAccessibleTextSetSelection(AtkText* text, gint selectionNum, gint
     return TRUE;
 }
 
-gboolean webkitAccessibleTextSetCaretOffset(AtkText* text, gint offset)
+static gboolean webkitAccessibleTextRemoveSelection(AtkText* text, gint selectionNum)
+{
+    // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+    if (selectionNum)
+        return FALSE;
+
+    // Do nothing if current selection doesn't belong to the object
+    if (!webkitAccessibleTextGetNSelections(text))
+        return FALSE;
+
+    // Set a new 0-sized selection to the caret position, in order
+    // to simulate selection removal (GAIL style)
+    gint caretOffset = webkitAccessibleTextGetCaretOffset(text);
+    return webkitAccessibleTextSetSelection(text, selectionNum, caretOffset, caretOffset);
+}
+
+static gboolean webkitAccessibleTextSetCaretOffset(AtkText* text, gint offset)
 {
     AccessibilityObject* coreObject = core(text);
 
@@ -809,4 +789,26 @@ gboolean webkitAccessibleTextSetCaretOffset(AtkText* text, gint offset)
 
     coreObject->setSelectedVisiblePositionRange(range);
     return TRUE;
+}
+
+void webkitAccessibleTextInterfaceInit(AtkTextIface* iface)
+{
+    iface->get_text = webkitAccessibleTextGetText;
+    iface->get_text_after_offset = webkitAccessibleTextGetTextAfterOffset;
+    iface->get_text_at_offset = webkitAccessibleTextGetTextAtOffset;
+    iface->get_text_before_offset = webkitAccessibleTextGetTextBeforeOffset;
+    iface->get_character_at_offset = webkitAccessibleTextGetCharacterAtOffset;
+    iface->get_caret_offset = webkitAccessibleTextGetCaretOffset;
+    iface->get_run_attributes = webkitAccessibleTextGetRunAttributes;
+    iface->get_default_attributes = webkitAccessibleTextGetDefaultAttributes;
+    iface->get_character_extents = webkitAccessibleTextGetCharacterExtents;
+    iface->get_range_extents = webkitAccessibleTextGetRangeExtents;
+    iface->get_character_count = webkitAccessibleTextGetCharacterCount;
+    iface->get_offset_at_point = webkitAccessibleTextGetOffsetAtPoint;
+    iface->get_n_selections = webkitAccessibleTextGetNSelections;
+    iface->get_selection = webkitAccessibleTextGetSelection;
+    iface->add_selection = webkitAccessibleTextAddSelection;
+    iface->remove_selection = webkitAccessibleTextRemoveSelection;
+    iface->set_selection = webkitAccessibleTextSetSelection;
+    iface->set_caret_offset = webkitAccessibleTextSetCaretOffset;
 }

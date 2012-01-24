@@ -25,8 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface*);
-const gchar* webkitAccessibleDocumentGetAttributeValue(AtkDocument*, const gchar*);
-AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument*);
-const gchar* webkitAccessibleDocumentGetLocale(AtkDocument*);
 
 #endif // WebKitAccessibleInterfaceDocument_h

@@ -23,10 +23,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface*);
-void webkitAccessibleValueGetCurrentValue(AtkValue*, GValue*);
-void webkitAccessibleValueGetMaximumValue(AtkValue*, GValue*);
-void webkitAccessibleValueGetMinimumValue(AtkValue*, GValue*);
-gboolean webkitAccessibleValueSetCurrentValue(AtkValue*, const GValue*);
-void webkitAccessibleValueGetMinimumIncrement(AtkValue*, GValue*);
 
 #endif // WebKitAccessibleInterfaceValue_h

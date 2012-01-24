@@ -46,6 +46,37 @@ static AccessibilityObject* core(AtkAction* action)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(action));
 }
 
+static gboolean webkitAccessibleActionDoAction(AtkAction* action, gint index)
+{
+    g_return_val_if_fail(!index, FALSE);
+    return core(action)->performDefaultAction();
+}
+
+static gint webkitAccessibleActionGetNActions(AtkAction*)
+{
+    return 1;
+}
+
+static const gchar* webkitAccessibleActionGetDescription(AtkAction*, gint)
+{
+    // TODO: Need a way to provide/localize action descriptions.
+    notImplemented();
+    return "";
+}
+
+static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint index)
+{
+    g_return_val_if_fail(!index, 0);
+    // FIXME: Construct a proper keybinding string.
+    return returnString(core(action)->accessKey().string());
+}
+
+static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint index)
+{
+    g_return_val_if_fail(!index, 0);
+    return returnString(core(action)->actionVerb());
+}
+
 void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)
 {
     iface->do_action = webkitAccessibleActionDoAction;
@@ -53,35 +84,4 @@ void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)
     iface->get_description = webkitAccessibleActionGetDescription;
     iface->get_keybinding = webkitAccessibleActionGetKeybinding;
     iface->get_name = webkitAccessibleActionGetName;
-}
-
-gboolean webkitAccessibleActionDoAction(AtkAction* action, gint index)
-{
-    g_return_val_if_fail(!index, FALSE);
-    return core(action)->performDefaultAction();
-}
-
-gint webkitAccessibleActionGetNActions(AtkAction*)
-{
-    return 1;
-}
-
-const gchar* webkitAccessibleActionGetDescription(AtkAction*, gint)
-{
-    // TODO: Need a way to provide/localize action descriptions.
-    notImplemented();
-    return "";
-}
-
-const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint index)
-{
-    g_return_val_if_fail(!index, 0);
-    // FIXME: Construct a proper keybinding string.
-    return returnString(core(action)->accessKey().string());
-}
-
-const gchar* webkitAccessibleActionGetName(AtkAction* action, gint index)
-{
-    g_return_val_if_fail(!index, 0);
-    return returnString(core(action)->actionVerb());
 }

@@ -25,8 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleImageInterfaceInit(AtkImageIface*);
-void webkitAccessibleImageGetImagePosition(AtkImage*, gint* x, gint* y, AtkCoordType);
-const gchar* webkitAccessibleImageGetImageDescription(AtkImage*);
-void webkitAccessibleImageGetImageSize(AtkImage*, gint* width, gint* height);
 
 #endif // WebKitAccessibleInterfaceImage_h

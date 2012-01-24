@@ -33,14 +33,7 @@ static AccessibilityObject* core(AtkHypertext* hypertext)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(hypertext));
 }
 
-void webkitAccessibleHypertextInterfaceInit(AtkHypertextIface* iface)
-{
-    iface->get_link = webkitAccessibleHypertextGetLink;
-    iface->get_n_links = webkitAccessibleHypertextGetNLinks;
-    iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
-}
-
-AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)
+static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)
 {
     AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
     if (index < 0 || static_cast<unsigned>(index) >= children.size())
@@ -65,7 +58,7 @@ AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint ind
     return 0;
 }
 
-gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
+static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
 {
     AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
     if (!children.size())
@@ -84,7 +77,7 @@ gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
     return linksFound;
 }
 
-gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charIndex)
+static gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charIndex)
 {
     size_t linksCount = webkitAccessibleHypertextGetNLinks(hypertext);
     if (!linksCount)
@@ -102,4 +95,11 @@ gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charInd
 
     // Not found if reached
     return -1;
+}
+
+void webkitAccessibleHypertextInterfaceInit(AtkHypertextIface* iface)
+{
+    iface->get_link = webkitAccessibleHypertextGetLink;
+    iface->get_n_links = webkitAccessibleHypertextGetNLinks;
+    iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
 }

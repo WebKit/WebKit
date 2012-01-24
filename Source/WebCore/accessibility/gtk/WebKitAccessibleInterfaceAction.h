@@ -25,10 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleActionInterfaceInit(AtkActionIface*);
-gboolean webkitAccessibleActionDoAction(AtkAction*, gint index);
-gint webkitAccessibleActionGetNActions(AtkAction*);
-const gchar* webkitAccessibleActionGetDescription(AtkAction*, gint index);
-const gchar* webkitAccessibleActionGetKeybinding(AtkAction*, gint index);
-const gchar* webkitAccessibleActionGetName(AtkAction*, gint index);
 
 #endif // WebKitAccessibleInterfaceAction_h

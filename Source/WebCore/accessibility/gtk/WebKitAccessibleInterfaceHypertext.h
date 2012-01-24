@@ -23,8 +23,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleHypertextInterfaceInit(AtkHypertextIface*);
-AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext*, gint index);
-gint webkitAccessibleHypertextGetNLinks(AtkHypertext*);
-gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext*, gint charIndex);
 
 #endif // WebKitAccessibleInterfaceHypertext_h

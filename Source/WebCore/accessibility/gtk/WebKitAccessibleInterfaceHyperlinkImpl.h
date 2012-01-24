@@ -23,6 +23,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface*);
-AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl*);
 
 #endif // WebKitAccessibleInterfaceHyperlinkImpl_h

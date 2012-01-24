@@ -25,12 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleSelectionInterfaceInit(AtkSelectionIface*);
-gboolean webkitAccessibleSelectionAddSelection(AtkSelection*, gint index);
-gboolean webkitAccessibleSelectionClearSelection(AtkSelection*);
-AtkObject* webkitAccessibleSelectionRefSelection(AtkSelection*, gint index);
-gint webkitAccessibleSelectionGetSelectionCount(AtkSelection*);
-gboolean webkitAccessibleSelectionIsChildSelected(AtkSelection*, gint index);
-gboolean webkitAccessibleSelectionRemoveSelection(AtkSelection*, gint index);
-gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection*);
 
 #endif // WebKitAccessibleInterfaceSelection_h

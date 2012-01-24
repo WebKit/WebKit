@@ -104,7 +104,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
         if (label) {
             AtkObject* atkObject = label->wrapper();
             if (ATK_IS_TEXT(atkObject))
-                return webkitAccessibleTextGetText(ATK_TEXT(atkObject), 0, -1);
+                return atk_text_get_text(ATK_TEXT(atkObject), 0, -1);
         }
 
         // Try text under the node.

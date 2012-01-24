@@ -67,19 +67,12 @@ static const gchar* documentAttributeValue(AtkDocument* document, const gchar* a
     return 0;
 }
 
-void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface* iface)
-{
-    iface->get_document_attribute_value = webkitAccessibleDocumentGetAttributeValue;
-    iface->get_document_attributes = webkitAccessibleDocumentGetAttributes;
-    iface->get_document_locale = webkitAccessibleDocumentGetLocale;
-}
-
-const gchar* webkitAccessibleDocumentGetAttributeValue(AtkDocument* document, const gchar* attribute)
+static const gchar* webkitAccessibleDocumentGetAttributeValue(AtkDocument* document, const gchar* attribute)
 {
     return documentAttributeValue(document, attribute);
 }
 
-AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* document)
+static AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* document)
 {
     AtkAttributeSet* attributeSet = 0;
     const gchar* attributes[] = { "DocType", "Encoding", "URI" };
@@ -93,7 +86,7 @@ AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* document)
     return attributeSet;
 }
 
-const gchar* webkitAccessibleDocumentGetLocale(AtkDocument* document)
+static const gchar* webkitAccessibleDocumentGetLocale(AtkDocument* document)
 {
     // TODO: Should we fall back on lang xml:lang when the following comes up empty?
     String language = core(document)->language();
@@ -101,4 +94,11 @@ const gchar* webkitAccessibleDocumentGetLocale(AtkDocument* document)
         return returnString(language);
 
     return 0;
+}
+
+void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface* iface)
+{
+    iface->get_document_attribute_value = webkitAccessibleDocumentGetAttributeValue;
+    iface->get_document_attributes = webkitAccessibleDocumentGetAttributes;
+    iface->get_document_locale = webkitAccessibleDocumentGetLocale;
 }

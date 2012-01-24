@@ -46,25 +46,18 @@ static AccessibilityObject* core(AtkImage* image)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(image));
 }
 
-void webkitAccessibleImageInterfaceInit(AtkImageIface* iface)
-{
-    iface->get_image_position = webkitAccessibleImageGetImagePosition;
-    iface->get_image_description = webkitAccessibleImageGetImageDescription;
-    iface->get_image_size = webkitAccessibleImageGetImageSize;
-}
-
-void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
+static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
 {
     IntRect rect = core(image)->elementRect();
     contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
 }
 
-const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
+static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 {
     return returnString(core(image)->accessibilityDescription());
 }
 
-void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)
+static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)
 {
     IntSize size = core(image)->size();
 
@@ -72,4 +65,11 @@ void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* heigh
         *width = size.width();
     if (height)
         *height = size.height();
+}
+
+void webkitAccessibleImageInterfaceInit(AtkImageIface* iface)
+{
+    iface->get_image_position = webkitAccessibleImageGetImagePosition;
+    iface->get_image_description = webkitAccessibleImageGetImageDescription;
+    iface->get_image_size = webkitAccessibleImageGetImageSize;
 }

@@ -25,12 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleEditableTextInterfaceInit(AtkEditableTextIface*);
-gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText*, AtkAttributeSet*, gint startOffset, gint endOffset);
-void webkitAccessibleEditableTextSetTextContents(AtkEditableText*, const gchar*);
-void webkitAccessibleEditableTextInsertText(AtkEditableText*, const gchar*, gint length, gint* position);
-void webkitAccessibleEditableTextCopyText(AtkEditableText*, gint startPos, gint endPos);
-void webkitAccessibleEditableTextCutText(AtkEditableText*, gint startPos, gint endPos);
-void webkitAccessibleEditableTextDeleteText(AtkEditableText*, gint startPos, gint endPos);
-void webkitAccessibleEditableTextPasteText(AtkEditableText*, gint position);
 
 #endif // WebKitAccessibleInterfaceEditableText_h

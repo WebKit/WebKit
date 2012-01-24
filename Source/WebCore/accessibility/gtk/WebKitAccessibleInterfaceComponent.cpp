@@ -64,14 +64,7 @@ static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coor
     return pos;
 }
 
-void webkitAccessibleComponentInterfaceInit(AtkComponentIface* iface)
-{
-    iface->ref_accessible_at_point = webkitAccessibleComponentRefAccessibleAtPoint;
-    iface->get_extents = webkitAccessibleComponentGetExtents;
-    iface->grab_focus = webkitAccessibleComponentGrabFocus;
-}
-
-AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
+static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
 {
     IntPoint pos = atkToContents(core(component), coordType, x, y);
 
@@ -82,14 +75,21 @@ AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* component
     return target->wrapper();
 }
 
-void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
+static void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
 {
     IntRect rect = core(component)->elementRect();
     contentsRelativeToAtkCoordinateType(core(component), coordType, rect, x, y, width, height);
 }
 
-gboolean webkitAccessibleComponentGrabFocus(AtkComponent* component)
+static gboolean webkitAccessibleComponentGrabFocus(AtkComponent* component)
 {
     core(component)->setFocused(true);
     return core(component)->isFocused();
+}
+
+void webkitAccessibleComponentInterfaceInit(AtkComponentIface* iface)
+{
+    iface->ref_accessible_at_point = webkitAccessibleComponentRefAccessibleAtPoint;
+    iface->get_extents = webkitAccessibleComponentGetExtents;
+    iface->grab_focus = webkitAccessibleComponentGrabFocus;
 }

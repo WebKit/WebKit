@@ -25,18 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleTableInterfaceInit(AtkTableIface*);
-AtkObject* webkitAccessibleTableRefAt(AtkTable*, gint row, gint column);
-gint webkitAccessibleTableGetIndexAt(AtkTable*, gint row, gint column);
-gint webkitAccessibleTableGetColumnAtIndex(AtkTable*, gint index);
-gint webkitAccessibleTableGetRowAtIndex(AtkTable*, gint index);
-gint webkitAccessibleTableGetNColumns(AtkTable*);
-gint webkitAccessibleTableGetNRows(AtkTable*);
-gint webkitAccessibleTableGetColumnExtentAt(AtkTable*, gint row, gint column);
-gint webkitAccessibleTableGetRowExtentAt(AtkTable*, gint row, gint column);
-AtkObject* webkitAccessibleTableGetColumnHeader(AtkTable*, gint column);
-AtkObject* webkitAccessibleTableGetRowHeader(AtkTable*, gint row);
-AtkObject* webkitAccessibleTableGetCaption(AtkTable*);
-const gchar* webkitAccessibleTableGetColumnDescription(AtkTable*, gint column);
-const gchar* webkitAccessibleTableGetRowDescription(AtkTable*, gint row);
 
 #endif // WebKitAccessibleInterfaceTable_h

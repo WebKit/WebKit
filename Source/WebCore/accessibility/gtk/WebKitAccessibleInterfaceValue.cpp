@@ -33,37 +33,28 @@ static AccessibilityObject* core(AtkValue* value)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(value));
 }
 
-void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
-{
-    iface->get_current_value = webkitAccessibleValueGetCurrentValue;
-    iface->get_maximum_value = webkitAccessibleValueGetMaximumValue;
-    iface->get_minimum_value = webkitAccessibleValueGetMinimumValue;
-    iface->set_current_value = webkitAccessibleValueSetCurrentValue;
-    iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
-}
-
-void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
+static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_DOUBLE);
     g_value_set_double(gValue, core(value)->valueForRange());
 }
 
-void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
+static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_DOUBLE);
     g_value_set_double(gValue, core(value)->maxValueForRange());
 }
 
-void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
+static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_DOUBLE);
     g_value_set_double(gValue, core(value)->minValueForRange());
 }
 
-gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
+static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
 {
     if (!G_VALUE_HOLDS_DOUBLE(gValue) && !G_VALUE_HOLDS_INT(gValue))
         return FALSE;
@@ -80,11 +71,20 @@ gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gVa
     return TRUE;
 }
 
-void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
+static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_DOUBLE);
 
     // There's not such a thing in the WAI-ARIA specification, thus return zero.
     g_value_set_double(gValue, 0.0);
+}
+
+void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)
+{
+    iface->get_current_value = webkitAccessibleValueGetCurrentValue;
+    iface->get_maximum_value = webkitAccessibleValueGetMaximumValue;
+    iface->get_minimum_value = webkitAccessibleValueGetMinimumValue;
+    iface->set_current_value = webkitAccessibleValueSetCurrentValue;
+    iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
 }

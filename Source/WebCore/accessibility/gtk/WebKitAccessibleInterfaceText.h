@@ -25,23 +25,5 @@
 #include <atk/atk.h>
 
 void webkitAccessibleTextInterfaceInit(AtkTextIface*);
-gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOffset);
-gchar* webkitAccessibleTextGetTextAfterOffset(AtkText*, gint offset, AtkTextBoundary, gint* startOffset, gint* endOffset);
-gchar* webkitAccessibleTextGetTextAtOffset(AtkText*, gint offset, AtkTextBoundary, gint* startOffset, gint* endOffset);
-gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText*, gint offset, AtkTextBoundary, gint* startOffset, gint* endOffset);
-gunichar webkitAccessibleTextGetCharacterAtOffset(AtkText*, gint offset);
-gint webkitAccessibleTextGetCaretOffset(AtkText*);
-AtkAttributeSet* webkitAccessibleTextGetRunAttributes(AtkText*, gint offset, gint* startOffset, gint* endOffset);
-AtkAttributeSet* webkitAccessibleTextGetDefaultAttributes(AtkText*);
-void webkitAccessibleTextGetCharacterExtents(AtkText*, gint offset, gint* x, gint* y, gint* width, gint* height, AtkCoordType);
-void webkitAccessibleTextGetRangeExtents(AtkText*, gint startOffset, gint endOffset, AtkCoordType, AtkTextRectangle*);
-gint webkitAccessibleTextGetCharacterCount(AtkText*);
-gint webkitAccessibleTextGetOffsetAtPoint(AtkText*, gint x, gint y, AtkCoordType);
-gint webkitAccessibleTextGetNSelections(AtkText*);
-gchar* webkitAccessibleTextGetSelection(AtkText*, gint selectionNum, gint* startOffset, gint* endOffset);
-gboolean webkitAccessibleTextAddSelection(AtkText*, gint startOffset, gint endOffset);
-gboolean webkitAccessibleTextSetSelection(AtkText*, gint selectionNum, gint startOffset, gint endOffset);
-gboolean webkitAccessibleTextRemoveSelection(AtkText*, gint selectionNum);
-gboolean webkitAccessibleTextSetCaretOffset(AtkText*, gint offset);
 
 #endif // WebKitAccessibleInterfaceText_h

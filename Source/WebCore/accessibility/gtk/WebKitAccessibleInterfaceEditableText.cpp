@@ -47,30 +47,19 @@ static AccessibilityObject* core(AtkEditableText* text)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
-void webkitAccessibleEditableTextInterfaceInit(AtkEditableTextIface* iface)
-{
-    iface->set_run_attributes = webkitAccessibleEditableTextSetRunAttributes;
-    iface->set_text_contents = webkitAccessibleEditableTextSetTextContents;
-    iface->insert_text = webkitAccessibleEditableTextInsertText;
-    iface->copy_text = webkitAccessibleEditableTextCopyText;
-    iface->cut_text = webkitAccessibleEditableTextCutText;
-    iface->delete_text = webkitAccessibleEditableTextDeleteText;
-    iface->paste_text = webkitAccessibleEditableTextPasteText;
-}
-
-gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText*, AtkAttributeSet*, gint, gint)
+static gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText*, AtkAttributeSet*, gint, gint)
 {
     notImplemented();
     return FALSE;
 }
 
-void webkitAccessibleEditableTextSetTextContents(AtkEditableText* text, const gchar* string)
+static void webkitAccessibleEditableTextSetTextContents(AtkEditableText* text, const gchar* string)
 {
     // FIXME: string nullcheck?
     core(text)->setValue(String::fromUTF8(string));
 }
 
-void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const gchar* string, gint length, gint* position)
+static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const gchar* string, gint length, gint* position)
 {
     // FIXME: string nullcheck?
 
@@ -90,17 +79,17 @@ void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const gchar* 
         *position += length;
 }
 
-void webkitAccessibleEditableTextCopyText(AtkEditableText*, gint, gint)
+static void webkitAccessibleEditableTextCopyText(AtkEditableText*, gint, gint)
 {
     notImplemented();
 }
 
-void webkitAccessibleEditableTextCutText(AtkEditableText*, gint, gint)
+static void webkitAccessibleEditableTextCutText(AtkEditableText*, gint, gint)
 {
     notImplemented();
 }
 
-void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint startPos, gint endPos)
+static void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint startPos, gint endPos)
 {
     AccessibilityObject* coreObject = core(text);
     // FIXME: Not implemented in WebCore
@@ -116,7 +105,18 @@ void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint startPos
     document->frame()->editor()->performDelete();
 }
 
-void webkitAccessibleEditableTextPasteText(AtkEditableText*, gint)
+static void webkitAccessibleEditableTextPasteText(AtkEditableText*, gint)
 {
     notImplemented();
+}
+
+void webkitAccessibleEditableTextInterfaceInit(AtkEditableTextIface* iface)
+{
+    iface->set_run_attributes = webkitAccessibleEditableTextSetRunAttributes;
+    iface->set_text_contents = webkitAccessibleEditableTextSetTextContents;
+    iface->insert_text = webkitAccessibleEditableTextInsertText;
+    iface->copy_text = webkitAccessibleEditableTextCopyText;
+    iface->cut_text = webkitAccessibleEditableTextCutText;
+    iface->delete_text = webkitAccessibleEditableTextDeleteText;
+    iface->paste_text = webkitAccessibleEditableTextPasteText;
 }

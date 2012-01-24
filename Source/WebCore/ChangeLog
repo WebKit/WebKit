@@ -1,3 +1,144 @@
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
+        Don't expose functions for the ATK interfaces in header files.
+
+        Expose only the initialization function for each interface, and
+        use the generic functions from ATK interfaces where needed.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceAction.cpp:
+        (webkitAccessibleActionDoAction): Made this function static.
+        (webkitAccessibleActionGetNActions): Ditto.
+        (webkitAccessibleActionGetDescription): Ditto.
+        (webkitAccessibleActionGetKeybinding): Ditto.
+        (webkitAccessibleActionGetName): Ditto.
+        (webkitAccessibleActionInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceAction.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceComponent.cpp:
+        (webkitAccessibleComponentRefAccessibleAtPoint): Made this function static.
+        (webkitAccessibleComponentGetExtents): Ditto.
+        (webkitAccessibleComponentGrabFocus): Ditto.
+        (webkitAccessibleComponentInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceComponent.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceDocument.cpp:
+        (webkitAccessibleDocumentGetAttributeValue): Made this function static.
+        (webkitAccessibleDocumentGetAttributes): Ditto.
+        (webkitAccessibleDocumentGetLocale): Ditto.
+        (webkitAccessibleDocumentInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceDocument.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceEditableText.cpp:
+        (webkitAccessibleEditableTextSetRunAttributes): Made this function static.
+        (webkitAccessibleEditableTextSetTextContents): Ditto.
+        (webkitAccessibleEditableTextInsertText): Ditto.
+        (webkitAccessibleEditableTextCopyText): Ditto.
+        (webkitAccessibleEditableTextCutText): Ditto.
+        (webkitAccessibleEditableTextDeleteText): Ditto.
+        (webkitAccessibleEditableTextPasteText): Ditto.
+        (webkitAccessibleEditableTextInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceEditableText.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.cpp:
+        (webkitAccessibleHyperlinkImplGetHyperlink): Made this function static.
+        (webkitAccessibleHyperlinkImplInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceHypertext.cpp:
+        (webkitAccessibleHypertextGetLink): Made this function static.
+        (webkitAccessibleHypertextGetNLinks): Ditto.
+        (webkitAccessibleHypertextGetLinkIndex): Ditto.
+        (webkitAccessibleHypertextInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceHypertext.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceImage.cpp:
+        (webkitAccessibleImageGetImagePosition): Made this function static.
+        (webkitAccessibleImageGetImageDescription): Ditto.
+        (webkitAccessibleImageGetImageSize): Ditto.
+        (webkitAccessibleImageInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceImage.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionAddSelection): Made this function static.
+        (webkitAccessibleSelectionClearSelection): Ditto.
+        (webkitAccessibleSelectionRefSelection): Ditto.
+        (webkitAccessibleSelectionGetSelectionCount): Ditto.
+        (webkitAccessibleSelectionIsChildSelected): Ditto.
+        (webkitAccessibleSelectionRemoveSelection): Ditto.
+        (webkitAccessibleSelectionSelectAllSelection): Ditto.
+        (webkitAccessibleSelectionInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceSelection.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceTable.cpp:
+        (webkitAccessibleTableRefAt): Made this function static.
+        (webkitAccessibleTableGetIndexAt): Ditto.
+        (webkitAccessibleTableGetColumnAtIndex): Ditto.
+        (webkitAccessibleTableGetRowAtIndex): Ditto.
+        (webkitAccessibleTableGetNColumns): Ditto.
+        (webkitAccessibleTableGetNRows): Ditto.
+        (webkitAccessibleTableGetColumnExtentAt): Ditto.
+        (webkitAccessibleTableGetRowExtentAt): Ditto.
+        (webkitAccessibleTableGetColumnHeader): Ditto.
+        (webkitAccessibleTableGetRowHeader): Ditto.
+        (webkitAccessibleTableGetCaption): Ditto.
+        (webkitAccessibleTableGetColumnDescription): Ditto.
+        (webkitAccessibleTableGetRowDescription): Ditto.
+        (webkitAccessibleTableInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceTable.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp:
+        (textForRenderer): Made this function static.
+        (textForObject): Ditto.
+        (webkitAccessibleTextGetText): Ditto.
+        (webkitAccessibleTextGetTextAfterOffset): Ditto.
+        (webkitAccessibleTextGetTextAtOffset): Ditto.
+        (webkitAccessibleTextGetTextBeforeOffset): Ditto.
+        (webkitAccessibleTextGetCharacterAtOffset): Ditto.
+        (webkitAccessibleTextGetCaretOffset): Ditto.
+        (webkitAccessibleTextGetRunAttributes): Ditto.
+        (webkitAccessibleTextGetDefaultAttributes): Ditto.
+        (webkitAccessibleTextGetCharacterExtents): Ditto.
+        (webkitAccessibleTextGetRangeExtents): Ditto.
+        (webkitAccessibleTextGetCharacterCount): Ditto.
+        (webkitAccessibleTextGetOffsetAtPoint): Ditto.
+        (webkitAccessibleTextGetNSelections): Ditto.
+        (webkitAccessibleTextGetSelection): Ditto.
+        (webkitAccessibleTextAddSelection): Ditto.
+        (webkitAccessibleTextSetSelection): Ditto.
+        (webkitAccessibleTextRemoveSelection): Ditto.
+        (webkitAccessibleTextSetCaretOffset): Ditto.
+        (webkitAccessibleTextInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceText.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueGetCurrentValue): Made this function static.
+        (webkitAccessibleValueGetMaximumValue): Ditto.
+        (webkitAccessibleValueGetMinimumValue): Ditto.
+        (webkitAccessibleValueSetCurrentValue): Ditto.
+        (webkitAccessibleValueGetMinimumIncrement): Ditto.
+        (webkitAccessibleValueInterfaceInit): Moved to the bottom.
+        * accessibility/gtk/WebKitAccessibleInterfaceValue.h: Removed all
+        functions but the one for initializing the interface from here.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetName): Replace call to
+        webkitAccessibleTextGetText with atk_text_get_text.
+
 2012-01-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add null check for ContentLayerChromium::m_delegate back to ContentLayerChromium::drawsContent()
