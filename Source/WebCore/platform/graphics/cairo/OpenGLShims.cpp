@@ -42,7 +42,7 @@ OpenGLFunctionTable* openGLFunctionTable()
 #if PLATFORM(QT)
 static void* getProcAddress(const char* procName)
 {
-    return QGLContext::currentContext()->getProcAddress(QString::fromLatin1(procName));
+    return reinterpret_cast<void*>(QGLContext::currentContext()->getProcAddress(QString::fromLatin1(procName)));
 }
 #else
 typedef void* (*glGetProcAddressType) (const char* procName);

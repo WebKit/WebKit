@@ -1,3 +1,14 @@
+2012-01-24  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Fix the build with the newes Qt5 hashes
+        https://bugs.webkit.org/show_bug.cgi?id=76657
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication): Disable the automatic touch->mouse event synthesis
+        for now to prevent an infinite loop where Qt always creates mouse events out of our touch mock events.
+
 2012-01-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Distinguish between Cygwin and cmd.exe in the way we set env variables

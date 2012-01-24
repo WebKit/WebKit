@@ -1,3 +1,15 @@
+2012-01-24  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Fix the build with the newes Qt5 hashes
+        https://bugs.webkit.org/show_bug.cgi?id=76657
+
+        Reviewed by Simon Hausmann.
+
+        No new tests needed.
+
+        * platform/graphics/cairo/OpenGLShims.cpp:
+        (WebCore::getProcAddress): Adopt API changes.
+
 2012-01-24  Ádám Kallai  <Kallai.Adam@stud.u-szeged.hu>
 
         [Qt] Incremental build problem.
