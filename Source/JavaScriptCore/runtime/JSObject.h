@@ -90,6 +90,8 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static UString className(const JSObject*);
 
+        static void finalize(JSCell*);
+
         JSValue prototype() const;
         void setPrototype(JSGlobalData&, JSValue prototype);
         bool setPrototypeWithCycleCheck(JSGlobalData&, JSValue prototype);

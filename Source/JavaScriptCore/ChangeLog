@@ -1,3 +1,17 @@
+2012-01-23  Luke Macpherson   <macpherson@chromium.org>
+
+        Unreviewed, rolling out r105676.
+        http://trac.webkit.org/changeset/105676
+        https://bugs.webkit.org/show_bug.cgi?id=76665
+
+        Breaks build on max due to compile warnings.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::finalize):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+
 2012-01-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Use copying collector for out-of-line JSObject property storage
