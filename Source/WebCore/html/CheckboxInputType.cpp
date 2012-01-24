@@ -51,7 +51,7 @@ const AtomicString& CheckboxInputType::formControlType() const
 
 bool CheckboxInputType::valueMissing(const String&) const
 {
-    return !element()->checked();
+    return element()->required() && !element()->checked();
 }
 
 String CheckboxInputType::valueMissingText() const

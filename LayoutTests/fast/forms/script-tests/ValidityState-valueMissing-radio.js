@@ -10,11 +10,8 @@ parent.innerHTML = '<input name=victim type=radio required>'
 var inputs = document.getElementsByName('victim');
 debug('No checked button:');
 shouldBeTrue('inputs[0].validity.valueMissing');
-// The following result should be false because the element does not have
-// "required".  It conforms to HTML5, and this behavior has no practical
-// problems.
-shouldBeFalse('inputs[1].validity.valueMissing');
-shouldBeFalse('inputs[2].validity.valueMissing');
+shouldBeTrue('inputs[1].validity.valueMissing');
+shouldBeTrue('inputs[2].validity.valueMissing');
 debug('The second button has been checked:');
 inputs[1].checked = true;
 shouldBeFalse('inputs[0].validity.valueMissing');
@@ -31,6 +28,7 @@ shouldBeFalse('inputs[0].validity.valueMissing');
 shouldBeFalse('inputs[1].validity.valueMissing');
 shouldBeFalse('inputs[2].validity.valueMissing');
 
+debug('');
 debug('With form element');
 parent.innerHTML = '<form>'
     + '<input name=victim type=radio required>'
@@ -40,9 +38,8 @@ parent.innerHTML = '<form>'
 inputs = document.getElementsByName('victim');
 debug('No checked button:');
 shouldBeTrue('inputs[0].validity.valueMissing');
-// The following result should be false.
-shouldBeFalse('inputs[1].validity.valueMissing');
-shouldBeFalse('inputs[2].validity.valueMissing');
+shouldBeTrue('inputs[1].validity.valueMissing');
+shouldBeTrue('inputs[2].validity.valueMissing');
 debug('The first button has been checked:');
 inputs[0].checked = true;
 shouldBeFalse('inputs[0].validity.valueMissing');
@@ -58,3 +55,22 @@ inputs[2].checked = true;
 shouldBeFalse('inputs[0].validity.valueMissing');
 shouldBeFalse('inputs[1].validity.valueMissing');
 shouldBeFalse('inputs[2].validity.valueMissing');
+
+debug('');
+debug('Not in a radio button group');
+var requiredButton = document.createElement('input');
+requiredButton.type = 'radio';
+requiredButton.name = 'victim';
+requiredButton.required = true;
+shouldBeFalse('requiredButton.validity.valueMissing');
+
+parent.innerHTML = '<input name=victim type=radio required><input name=victim type=radio>';
+requiredButton = document.getElementsByName('victim')[0];
+var button = document.getElementsByName('victim')[1];
+shouldBeTrue('requiredButton.validity.valueMissing');
+shouldBeTrue('button.validity.valueMissing');
+parent.removeChild(button);
+shouldBeFalse('button.validity.valueMissing');
+parent.removeChild(requiredButton);
+shouldBeFalse('requiredButton.validity.valueMissing');
+

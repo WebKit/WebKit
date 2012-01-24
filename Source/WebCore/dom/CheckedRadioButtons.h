@@ -28,16 +28,24 @@
 namespace WebCore {
 
 class HTMLInputElement;
+class RadioButtonGroup;
 
+// FIXME: Rename the class. The class was a simple map from a name to a checked
+// radio button. It manages RadioButtonGroup objects now.
 class CheckedRadioButtons {
 public:
+    CheckedRadioButtons();
+    ~CheckedRadioButtons();
     void addButton(HTMLInputElement*);
+    void updateCheckedState(HTMLInputElement*);
+    void requiredAttributeChanged(HTMLInputElement*);
     void removeButton(HTMLInputElement*);
     HTMLInputElement* checkedButtonForGroup(const AtomicString& groupName) const;
+    bool isInRequiredGroup(HTMLInputElement*) const;
 
 private:
-    typedef HashMap<AtomicStringImpl*, HTMLInputElement*> NameToInputMap;
-    OwnPtr<NameToInputMap> m_nameToCheckedRadioButtonMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<RadioButtonGroup> > NameToGroupMap;
+    OwnPtr<NameToGroupMap> m_nameToGroupMap;
 };
 
 } // namespace WebCore

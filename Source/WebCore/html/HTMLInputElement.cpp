@@ -178,38 +178,6 @@ bool HTMLInputElement::shouldAutocomplete() const
     return HTMLTextFormControlElement::shouldAutocomplete();
 }
 
-void HTMLInputElement::updateCheckedRadioButtons()
-{
-    checkedRadioButtons().addButton(this);
-
-    if (form()) {
-        const Vector<FormAssociatedElement*>& controls = form()->associatedElements();
-        for (unsigned i = 0; i < controls.size(); ++i) {
-            if (!controls[i]->isFormControlElement())
-                continue;
-            HTMLFormControlElement* control = static_cast<HTMLFormControlElement*>(controls[i]);
-            if (control->name() != name())
-                continue;
-            if (control->type() != type())
-                continue;
-            control->setNeedsValidityCheck();
-        }
-    } else {
-        typedef Document::FormElementListHashSet::const_iterator Iterator;
-        Iterator end = document()->formElements()->end();
-        for (Iterator it = document()->formElements()->begin(); it != end; ++it) {
-            HTMLFormControlElementWithState* control = *it;
-            if (control->formControlName() != name())
-                continue;
-            if (control->formControlType() != type())
-                continue;
-            if (control->form())
-                continue;
-            control->setNeedsValidityCheck();
-        }
-    }
-}
-
 bool HTMLInputElement::isValidValue(const String& value) const
 {
     if (!m_inputType->canSetStringValue()) {
@@ -232,8 +200,6 @@ bool HTMLInputElement::typeMismatch() const
 
 bool HTMLInputElement::valueMissing(const String& value) const
 {
-    if (!isRequiredFormControl() || readOnly() || disabled())
-        return false;
     return m_inputType->valueMissing(value);
 }
 
@@ -963,13 +929,11 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     if (checked() == nowChecked)
         return;
 
-    checkedRadioButtons().removeButton(this);
-
     m_reflectsCheckedAttribute = false;
     m_isChecked = nowChecked;
     setNeedsStyleRecalc();
     if (isRadioButton())
-        updateCheckedRadioButtons();
+        checkedRadioButtons().updateCheckedState(this);
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), CheckedState);
     setNeedsValidityCheck();
@@ -1557,6 +1521,12 @@ void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 bool HTMLInputElement::recalcWillValidate() const
 {
     return m_inputType->supportsValidation() && HTMLTextFormControlElement::recalcWillValidate();
+}
+
+void HTMLInputElement::requiredAttributeChanged()
+{
+    HTMLTextFormControlElement::requiredAttributeChanged();
+    checkedRadioButtons().requiredAttributeChanged(this);
 }
 
 #if ENABLE(INPUT_COLOR)

@@ -1,3 +1,90 @@
+2012-01-23  Kent Tamura  <tkent@chromium.org>
+
+        Introduce RadioButtonGroup class to keep track of the group members and required state
+        https://bugs.webkit.org/show_bug.cgi?id=74909
+
+        Reviewed by Darin Adler.
+
+        RadioButtonGroup contains a set of member radio buttons in the group,
+        and "required" status of the group. This helps implementing correct
+        radio button validity, and improving performance of updating validity
+        status of radio buttons.
+
+        This change fixes the following bugs:
+        - A radio button should be "required" if one of a member of the same
+          group has the "required" attribute.
+          https://bugs.webkit.org/show_bug.cgi?id=76365
+        - :invalid style is not applied when a checked radio button is removed
+          from its radio group
+          https://bugs.webkit.org/show_bug.cgi?id=74914
+        - Loading a page with N radio buttons in a group takes O(N^2) time.
+
+        Tests: fast/forms/radio/radio-live-validation-style.html
+               perf/adding-radio-buttons.html
+
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::isEmpty):
+        (WebCore::RadioButtonGroup::isRequired):
+        (WebCore::RadioButtonGroup::checkedButton):
+        (WebCore::RadioButtonGroup::RadioButtonGroup):
+        (WebCore::RadioButtonGroup::create):
+        (WebCore::RadioButtonGroup::isValid):
+        (WebCore::RadioButtonGroup::setCheckedButton):
+        (WebCore::RadioButtonGroup::add):
+        (WebCore::RadioButtonGroup::updateCheckedState):
+        (WebCore::RadioButtonGroup::requiredAttributeChanged):
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::RadioButtonGroup::setNeedsValidityCheckForAllButtons):
+        Add RadioButtonGroup class. It keeps track of pointers to member radio
+        buttons and required status of the group in addition to the checked
+        radio button pointer.
+
+        (WebCore::CheckedRadioButtons::CheckedRadioButtons):
+        (WebCore::CheckedRadioButtons::~CheckedRadioButtons):
+        Define empty constructor and destructor in order to avoid exposing
+        RadioButtonGroup class.
+
+        (WebCore::CheckedRadioButtons::addButton):
+        (WebCore::CheckedRadioButtons::updateCheckedState):
+        (WebCore::CheckedRadioButtons::requiredAttributeChanged):
+        (WebCore::CheckedRadioButtons::checkedButtonForGroup):
+        (WebCore::CheckedRadioButtons::isInRequiredGroup):
+        (WebCore::CheckedRadioButtons::removeButton):
+        Change the HashMap member of this class so that it maps a group name to
+        a RadioButtonGroup object. These functions just get a RadioButtonGroup
+        object and call a corresponding member function of RadioButtonGroup.
+
+        * dom/CheckedRadioButtons.h: Update declarations.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        (WebCore::HTMLFormControlElement::requiredAttributeChanged):
+        Move a part of parseMappedAttribute() into requiredAttributeChanged().
+        * html/HTMLFormControlElement.h: Add requiredAttributeChanged().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueMissing):
+        Move required check code to InputType::valueMissing implementations.
+        RadioInputType needs special handling for checking required state.
+        readOnly() and disabled() are unnecessary because willValidate() checks them.
+        (WebCore::HTMLInputElement::setChecked):
+        Call new function CheckedRadioButtons::updateCheckedState() instead of
+        removeButton() and updateCheckedRadioButtons().
+        (WebCore::HTMLInputElement::requiredAttributeChanged):
+        Override this to call CheckedRadioButtons::requiredAttributeChanged().
+        * html/HTMLInputElement.h: Add requiredAttributeChanged().
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::valueMissing):
+        Check required state by CheckedRadioButtons::isInRequiredGroup().
+        * html/RadioInputType.h: Remove attach().
+
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::valueMissing):
+          Move required check from HTMLInputElement::valueMissing().
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::valueMissing): ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::valueMissing): ditto.
+
 2012-01-24  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] PNG image with CMYK ICC color profile renders color-inverted and squashed

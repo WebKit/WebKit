@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+var parentForm = null;
+
+function setup(magnitude) {
+    if (parentForm)
+        document.body.removeChild(parentForm);
+    parentForm = document.createElement('form');
+    document.body.appendChild(parentForm);
+    for (var i = 0; i < magnitude; ++i) {
+        var radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'group1';
+        radio.checked = true;
+        parentForm.appendChild(radio);
+    }
+    parentForm.offsetLeft;
+}
+
+function test(magnitude) {
+    var radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'group1';
+    radio.checked = true;
+    parentForm.appendChild(radio);
+    radio.offsetLeft;
+    parentForm.removeChild(radio);
+}
+
+Magnitude.description("Tests that adding a radio button to a radio button group is constant in the number of radio buttons.");
+Magnitude.run(setup, test, Magnitude.CONSTANT);
+</script>
+</body>
+</html>

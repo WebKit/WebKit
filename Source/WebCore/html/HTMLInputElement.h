@@ -321,6 +321,7 @@ private:
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
     virtual bool recalcWillValidate() const;
+    virtual void requiredAttributeChanged() OVERRIDE;
 
     void updateType();
     
