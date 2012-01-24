@@ -343,7 +343,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 else
                     dist = 6;
             } else {
-                UString str = value.toString(exec);
+                UString str = value.toString(exec)->value(exec);
                 ret = QVariant(QChar(str.length() ? *(const ushort*)str.impl()->characters() : 0));
                 if (type == String)
                     dist = 3;
@@ -358,7 +358,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     *distance = 1;
                 return QString();
             } else {
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 ret = QVariant(QString((const QChar*)ustring.impl()->characters(), ustring.length()));
                 if (type == String)
                     dist = 0;
@@ -439,7 +439,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 int len = rtarray->getLength();
                 for (int i = 0; i < len; ++i) {
                     JSValue val = rtarray->getConcreteArray()->valueAt(exec, i);
-                    UString ustring = val.toString(exec);
+                    UString ustring = val.toString(exec)->value(exec);
                     QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                     result.append(qstring);
@@ -453,7 +453,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 int len = array->length();
                 for (int i = 0; i < len; ++i) {
                     JSValue val = array->get(exec, i);
-                    UString ustring = val.toString(exec);
+                    UString ustring = val.toString(exec)->value(exec);
                     QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                     result.append(qstring);
@@ -462,7 +462,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 ret = QVariant(result);
             } else {
                 // Make a single length array
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
                 QStringList result;
                 result.append(qstring);
@@ -478,7 +478,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 ret = QVariant(QByteArray(reinterpret_cast<const char*>(arr->data()), arr->length()));
                 dist = 0;
             } else {
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 ret = QVariant(QString((const QChar*)ustring.impl()->characters(), ustring.length()).toLatin1());
                 if (type == String)
                     dist = 5;
@@ -521,7 +521,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 }
 #ifndef QT_NO_DATESTRING
             } else if (type == String) {
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                 if (hint == QMetaType::QDateTime) {
@@ -571,7 +571,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 RegExpObject *re = static_cast<RegExpObject*>(object);
 */
                 // Attempt to convert.. a bit risky
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                 // this is of the form '/xxxxxx/i'
@@ -591,7 +591,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     qConvDebug() << "couldn't parse a JS regexp";
                 }
             } else if (type == String) {
-                UString ustring = value.toString(exec);
+                UString ustring = value.toString(exec)->value(exec);
                 QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
 
                 QRegExp re(qstring);
@@ -1599,7 +1599,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                         funcObject = asObj;
                     } else {
                         // Convert it to a string
-                        UString funcName = exec->argument(1).toString(exec);
+                        UString funcName = exec->argument(1).toString(exec)->value(exec);
                         Identifier funcIdent(exec, funcName);
 
                         // ### DropAllLocks

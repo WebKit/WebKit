@@ -73,7 +73,7 @@ JSValue JSClipboard::clearData(ExecState* exec)
     }
 
     if (exec->argumentCount() == 1) {
-        clipboard->clearData(ustringToString(exec->argument(0).toString(exec)));
+        clipboard->clearData(ustringToString(exec->argument(0).toString(exec)->value(exec)));
         return jsUndefined();
     }
 
@@ -90,7 +90,7 @@ JSValue JSClipboard::getData(ExecState* exec)
     Clipboard* clipboard = impl();
 
     bool success;
-    String result = clipboard->getData(ustringToString(exec->argument(0).toString(exec)), success);
+    String result = clipboard->getData(ustringToString(exec->argument(0).toString(exec)->value(exec)), success);
     if (!success)
         return jsUndefined();
 

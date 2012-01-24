@@ -1,3 +1,189 @@
+2012-01-23  Geoffrey Garen  <ggaren@apple.com>
+
+        JSValue::toString() should return a JSString* instead of a UString
+        https://bugs.webkit.org/show_bug.cgi?id=76861
+
+        Reviewed by Gavin Barraclough.
+        
+        This makes the common case -- toString() on a string -- faster and
+        inline-able. (Not a measureable speedup, but we can now remove a bunch
+        of duplicate hand-rolled code for this optimization.)
+        
+        This also clarifies the boundary between "C++ strings" and "JS strings".
+        
+        In all cases other than true, false, null, undefined, and multi-digit
+        numbers, the JS runtime was just retrieving a UString from a JSString,
+        so returning a JSString* is strictly better. In the other cases, we can
+        optimize to avoid creating a new JSString if we care to, but it doesn't
+        seem to be a big deal.
+
+        * JavaScriptCore.exp: Export!
+        
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        (runWithScripts):
+        (runInteractive):
+        * API/JSValueRef.cpp:
+        (JSValueToStringCopy):
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString): Call value() after calling toString(), to
+        convert from "JS string" (JSString*) to "C++ string" (UString), since
+        toString() no longer returns a "C++ string".
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationValueAddNotNumber):
+        * jit/JITStubs.cpp:
+        (op_add): Updated for removal of toPrimitiveString():
+        all '+' operands can use toString(), except for object operands, which
+        need to take a slow path to call toPrimitive().
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPush):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/DateConstructor.cpp:
+        (JSC::dateParse):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate): Call value() after calling toString(), as above.
+
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create): Simplified down to one canonical create()
+        function, to make string handling easier.
+
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInvalidParamError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort): Call value() after calling toString(), as above.
+
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h: Removed JSCell::toString() because JSValue does this
+        job now. Doing it in JSCell is slower (requires extra type checking), and
+        creates the misimpression that language-defined toString() behavior is
+        an implementation detail of JSCell.
+        
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape): Call value() after calling toString(), as above.
+
+        * runtime/JSONObject.cpp:
+        (JSC::unwrapBoxedPrimitive):
+        (JSC::Stringifier::Stringifier):
+        (JSC::JSONProtoFuncParse): Removed some manual optimization that toString()
+        takes care of.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toString):
+        * runtime/JSObject.h: Updated to return JSString*.
+
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        (JSC::JSValue::toString): Removed, since I removed JSCell::toString().
+
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toStringSlowCase): Removed toPrimitiveString(), and re-
+        spawned toStringSlowCase() from its zombie corpse, since toPrimitiveString()
+        basically did what we want all the time. (Note that the toPrimitive()
+        preference changes from NoPreference to PreferString, because that's
+        how ToString is defined in the language. op_add does not want this behavior.)
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString): A little simpler, now that toString()
+        returns a JSString*.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncDefineGetter):
+        (JSC::objectProtoFuncDefineSetter):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncPropertyIsEnumerable): More calls to value(), as above.
+
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase): Need to check for object before taking the toString()
+        fast path becuase adding an object to a string requires calling toPrimitive()
+        on the object, not toString(). (They differ in their preferred conversion
+        type.)
+
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsStringFromArguments): This code gets simpler, now that toString()
+        does the right thing.
+
+        (JSC::jsAdd): Now checks for object, just like jsAddSlowCase().
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorInput):
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString): More calls to value(), as above.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        (JSC::callStringConstructor): This code gets simpler, now that toString()
+        does the right thing.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncConcat):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplit):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::trimString): Some of this code gets simpler, now that toString()
+        does the right thing. More calls to value(), as above.
+
 2012-01-23  Luke Macpherson   <macpherson@chromium.org>
 
         Unreviewed, rolling out r105676.

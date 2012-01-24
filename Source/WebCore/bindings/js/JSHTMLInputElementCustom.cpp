@@ -86,7 +86,7 @@ void JSHTMLInputElement::setSelectionDirection(ExecState* exec, JSValue value)
         return;
     }
 
-    input->setSelectionDirection(ustringToString(value.toString(exec)));
+    input->setSelectionDirection(ustringToString(value.toString(exec)->value(exec)));
 }
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
@@ -97,7 +97,7 @@ JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
 
     int start = exec->argument(0).toInt32(exec);
     int end = exec->argument(1).toInt32(exec);
-    String direction = ustringToString(exec->argument(2).toString(exec));
+    String direction = ustringToString(exec->argument(2).toString(exec)->value(exec));
 
     input->setSelectionRange(start, end, direction);
     return jsUndefined();

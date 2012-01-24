@@ -238,7 +238,7 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
         if (i)
             putchar(' ');
 
-        printf("%s", exec->argument(i).toString(exec).utf8().data());
+        printf("%s", exec->argument(i).toString(exec)->value(exec).utf8().data());
     }
 
     putchar('\n');
@@ -248,7 +248,7 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {
-    fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec).utf8().data());
+    fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec)->value(exec).utf8().data());
     return JSValue::encode(jsUndefined());
 }
 
@@ -277,7 +277,7 @@ EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*)
 
 EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 {
-    UString fileName = exec->argument(0).toString(exec);
+    UString fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
@@ -294,7 +294,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 {
-    UString fileName = exec->argument(0).toString(exec);
+    UString fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
@@ -310,7 +310,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 {
-    UString fileName = exec->argument(0).toString(exec);
+    UString fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
@@ -487,9 +487,9 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         success = success && !evaluationException;
         if (dump) {
             if (evaluationException)
-                printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
+                printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
             else
-                printf("End: %s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
+                printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         }
 
         globalData.stopSampling();
@@ -546,9 +546,9 @@ static void runInteractive(GlobalObject* globalObject)
         JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(line.data(), interpreterName), JSValue(), &evaluationException);
 #endif
         if (evaluationException)
-            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
+            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         else
-            printf("%s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
+            printf("%s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
 
         globalObject->globalExec()->clearException();
     }

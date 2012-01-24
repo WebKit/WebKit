@@ -96,17 +96,17 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
     if (args.isEmpty())
         program = "(function() { \n})";
     else if (args.size() == 1)
-        program = makeUString("(function() { ", args.at(0).toString(exec), "\n})");
+        program = makeUString("(function() { ", args.at(0).toString(exec)->value(exec), "\n})");
     else {
         UStringBuilder builder;
         builder.append("(function(");
-        builder.append(args.at(0).toString(exec));
+        builder.append(args.at(0).toString(exec)->value(exec));
         for (size_t i = 1; i < args.size() - 1; i++) {
             builder.append(",");
-            builder.append(args.at(i).toString(exec));
+            builder.append(args.at(i).toString(exec)->value(exec));
         }
         builder.append(") { ");
-        builder.append(args.at(args.size() - 1).toString(exec));
+        builder.append(args.at(args.size() - 1).toString(exec)->value(exec));
         builder.append("\n})");
         program = builder.toUString();
     }

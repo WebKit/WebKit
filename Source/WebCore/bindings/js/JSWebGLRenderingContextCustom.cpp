@@ -241,7 +241,7 @@ JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
         return throwSyntaxError(exec);
 
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
-    const String& name = ustringToString(exec->argument(0).toString(exec));
+    const String& name = ustringToString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return jsUndefined();
     WebGLExtension* extension = context->getExtension(name);

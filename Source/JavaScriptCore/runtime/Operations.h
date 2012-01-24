@@ -81,10 +81,7 @@ namespace JSC {
 
         for (unsigned i = 0; i < count; ++i) {
             JSValue v = strings[i].jsValue();
-            if (v.isString())
-                ropeBuilder.append(asString(v));
-            else
-                ropeBuilder.append(jsString(globalData, v.toString(exec)));
+            ropeBuilder.append(v.toString(exec));
 
             if (ropeBuilder.length() < oldLength) // True for overflow
                 return throwOutOfMemoryError(exec);
@@ -97,20 +94,13 @@ namespace JSC {
     {
         JSGlobalData* globalData = &exec->globalData();
         JSString::RopeBuilder ropeBuilder(*globalData);
-
-        if (thisValue.isString())
-            ropeBuilder.append(asString(thisValue));
-        else
-            ropeBuilder.append(jsString(globalData, thisValue.toString(exec)));
+        ropeBuilder.append(thisValue.toString(exec));
 
         unsigned oldLength = 0;
 
         for (unsigned i = 0; i < exec->argumentCount(); ++i) {
             JSValue v = exec->argument(i);
-            if (v.isString())
-                ropeBuilder.append(asString(v));
-            else
-                ropeBuilder.append(jsString(globalData, v.toString(exec)));
+            ropeBuilder.append(v.toString(exec));
 
             if (ropeBuilder.length() < oldLength) // True for overflow
                 return throwOutOfMemoryError(exec);
@@ -300,11 +290,8 @@ namespace JSC {
         if (v1.isNumber() && v2.isNumber())
             return jsNumber(v1.asNumber() + v2.asNumber());
         
-        if (v1.isString()) {
-            return v2.isString()
-                ? jsString(callFrame, asString(v1), asString(v2))
-                : jsString(callFrame, asString(v1), v2.toPrimitiveString(callFrame));
-        }
+        if (v1.isString() && !v2.isObject())
+            return jsString(callFrame, asString(v1), v2.toString(callFrame));
 
         // All other cases are pretty uncommon
         return jsAddSlowCase(callFrame, v1, v2);

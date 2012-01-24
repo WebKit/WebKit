@@ -1,3 +1,13 @@
+2012-01-23  Geoffrey Garen  <ggaren@apple.com>
+
+        JSValue::toString() should return a JSString* instead of a UString
+        https://bugs.webkit.org/show_bug.cgi?id=76861
+
+        Reviewed by Gavin Barraclough.
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal):
+
 2012-01-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implement a new allocator for backing stores

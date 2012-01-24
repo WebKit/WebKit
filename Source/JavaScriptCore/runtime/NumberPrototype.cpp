@@ -447,7 +447,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
 
     if (radix == 10)
-        return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
+        return JSValue::encode(jsNumber(x).toString(exec));
 
     // Fast path for number to character conversion.
     if (radix == 36) {
@@ -474,7 +474,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
     if (!toThisNumber(exec->hostThisValue(), x))
         return throwVMTypeError(exec);
 
-    return JSValue::encode(jsString(exec, jsNumber(x).toString(exec)));
+    return JSValue::encode(jsNumber(x).toString(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)

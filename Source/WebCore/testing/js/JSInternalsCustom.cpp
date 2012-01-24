@@ -56,7 +56,7 @@ void JSInternals::setUserPreferredLanguages(ExecState* exec, JSValue value)
     Vector<String> languages;
     JSArray* array = asArray(value);
     for (unsigned i = 0; i < array->length(); ++i) {
-        String language = ustringToString(array->getIndex(i).toString(exec));
+        String language = ustringToString(array->getIndex(i).toString(exec)->value(exec));
         languages.append(language);
     }
     

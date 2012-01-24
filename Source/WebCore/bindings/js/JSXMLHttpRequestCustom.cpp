@@ -85,8 +85,8 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
     if (exec->argumentCount() < 2)
         return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)));
-    String method = ustringToString(exec->argument(0).toString(exec));
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)->value(exec)));
+    String method = ustringToString(exec->argument(0).toString(exec)->value(exec));
 
     ExceptionCode ec = 0;
     if (exec->argumentCount() >= 3) {
@@ -129,7 +129,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
         else if (val.inherits(&JSArrayBuffer::s_info))
             impl()->send(toArrayBuffer(val), ec);
         else
-            impl()->send(ustringToString(val.toString(exec)), ec);
+            impl()->send(ustringToString(val.toString(exec)->value(exec)), ec);
     }
 
     int signedLineNumber;

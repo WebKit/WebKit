@@ -51,8 +51,7 @@ namespace JSC {
 
 static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
-    UString str = exec->argument(0).toString(exec);
-    CString cstr = str.utf8(true);
+    CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(true);
     if (!cstr.data())
         return throwError(exec, createURIError(exec, "String contained an illegal UTF-16 sequence."));
 
@@ -143,7 +142,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
 static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
 {
     JSStringBuilder builder;
-    UString str = exec->argument(0).toString(exec);
+    UString str = exec->argument(0).toString(exec)->value(exec);
     
     if (str.is8Bit())
         return decode(exec, str.characters8(), str.length(), doNotUnescape, strict);
@@ -513,7 +512,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (!x.isString())
         return JSValue::encode(x);
 
-    UString s = x.toString(exec);
+    UString s = x.toString(exec)->value(exec);
 
     if (s.is8Bit()) {
         LiteralParser<LChar> preparser(exec, s.characters8(), s.length(), NonStrictJSON);
@@ -556,7 +555,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     }
 
     // If ToString throws, we shouldn't call ToInt32.
-    UString s = value.toString(exec);
+    UString s = value.toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -565,7 +564,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec))));
+    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->value(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
@@ -623,7 +622,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         "*+-./@_";
 
     JSStringBuilder builder;
-    UString str = exec->argument(0).toString(exec);
+    UString str = exec->argument(0).toString(exec)->value(exec);
     if (str.is8Bit()) {
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
@@ -662,7 +661,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
     UStringBuilder builder;
-    UString str = exec->argument(0).toString(exec);
+    UString str = exec->argument(0).toString(exec)->value(exec);
     int k = 0;
     int len = str.length();
     

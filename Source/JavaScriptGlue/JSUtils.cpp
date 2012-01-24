@@ -215,7 +215,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue inValue, ExecState *exec, ObjectImpLi
 
         if (inValue.isString())
             {
-                UString uString = inValue.toString(exec);
+                UString uString = inValue.toString(exec)->value(exec);
                 result = UStringToCFString(uString);
                 return result;
             }

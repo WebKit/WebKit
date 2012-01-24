@@ -110,13 +110,13 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             return throwVMError(exec, createTypeError(exec, "Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
-        UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec);
+        UString pattern = !exec->argumentCount() ? UString("") : arg0.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
         RegExpFlags flags = NoFlags;
         if (!arg1.isUndefined()) {
-            flags = regExpFlags(arg1.toString(exec));
+            flags = regExpFlags(arg1.toString(exec)->value(exec));
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             if (flags == InvalidFlags)
@@ -153,7 +153,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         postfix[index++] = 'i';
     if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean(exec))
         postfix[index] = 'm';
-    UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec);
+    UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
     return JSValue::encode(jsMakeNontrivialString(exec, "/", source.length() ? source : UString("(?:)"), postfix));
 }

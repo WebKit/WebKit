@@ -231,7 +231,7 @@ JSValue RegExpObject::exec(ExecState* exec)
 bool RegExpObject::match(ExecState* exec)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    UString input = exec->argument(0).toString(exec);
+    UString input = exec->argument(0).toString(exec)->value(exec);
     JSGlobalData* globalData = &exec->globalData();
     if (!regExp()->global()) {
         int position;

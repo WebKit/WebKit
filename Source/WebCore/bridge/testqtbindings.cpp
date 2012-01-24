@@ -114,7 +114,7 @@ int main(int argc, char** argv)
             if (comp.complType() == Throw) {
                 qDebug() << "exception thrown";
                 JSValue* exVal = comp.value();
-                char* msg = exVal->toString(exec).ascii();
+                char* msg = exVal->toString(exec)->value(exec).ascii();
                 int lineno = -1;
                 if (exVal->type() == ObjectType) {
                     JSValue* lineVal = exVal->getObject()->get(exec, Identifier("line"));

@@ -91,7 +91,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
 {
-    result = ustringToString(value.toString(exec));
+    result = ustringToString(value.toString(exec)->value(exec));
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)

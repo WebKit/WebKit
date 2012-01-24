@@ -63,7 +63,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
                     env->NewStringUTF(""));
                 for (unsigned i = 0; i < length; i++) {
                     JSValue item = jsArray->get(exec, i);
-                    UString stringValue = item.toString(exec);
+                    UString stringValue = item.toString(exec)->value(exec);
                     env->SetObjectArrayElement(jarray, i,
                         env->functions->NewString(env, (const jchar *)stringValue.characters(), stringValue.length()));
                 }
@@ -98,7 +98,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             jarray = (jobjectArray)env->NewCharArray(length);
             for (unsigned i = 0; i < length; i++) {
                 JSValue item = jsArray->get(exec, i);
-                UString stringValue = item.toString(exec);
+                UString stringValue = item.toString(exec)->value(exec);
                 jchar value = 0;
                 if (stringValue.length() > 0)
                     value = ((const jchar*)stringValue.characters())[0];
@@ -249,7 +249,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
             // converting from a null.
             if (!result.l && !strcmp(javaClassName, "java.lang.String")) {
                 if (!value.isNull()) {
-                    UString stringValue = value.toString(exec);
+                    UString stringValue = value.toString(exec)->value(exec);
                     JNIEnv* env = getJNIEnv();
                     jobject javaString = env->functions->NewString(env, (const jchar*)stringValue.characters(), stringValue.length());
                     result.l = javaString;

@@ -58,7 +58,7 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
 
 String ScriptValue::toString(ScriptState* scriptState) const
 {
-    String result = ustringToString(m_value.get().toString(scriptState));
+    String result = ustringToString(m_value.get().toString(scriptState)->value(scriptState));
     // Handle the case where an exception is thrown as part of invoking toString on the object.
     if (scriptState->hadException())
         scriptState->clearException();

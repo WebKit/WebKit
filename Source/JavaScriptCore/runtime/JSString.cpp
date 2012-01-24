@@ -229,11 +229,6 @@ double JSString::toNumber(ExecState* exec) const
     return jsToNumber(value(exec));
 }
 
-UString JSString::toString(ExecState* exec) const
-{
-    return value(exec);
-}
-
 inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
     StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), globalObject->stringObjectStructure());

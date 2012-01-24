@@ -197,7 +197,7 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
     JSGlobalData* globalData = &exec->globalData();
 
     // Don't put to an object if toString throws an exception.
-    Identifier ident(exec, property.toString(exec));
+    Identifier ident(exec, property.toString(exec)->value(exec));
     if (!globalData->exception) {
         PutPropertySlot slot(strict);
         baseValue.put(exec, ident, value, slot);
@@ -259,11 +259,8 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
     
     ASSERT(!op1.isNumber() || !op2.isNumber());
     
-    if (op1.isString()) {
-        if (op2.isString())
-            return JSValue::encode(jsString(exec, asString(op1), asString(op2)));
-        return JSValue::encode(jsString(exec, asString(op1), op2.toPrimitiveString(exec)));
-    }
+    if (op1.isString() && !op2.isObject())
+        return JSValue::encode(jsString(exec, asString(op1), op2.toString(exec)));
 
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
@@ -306,7 +303,7 @@ EncodedJSValue DFG_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         }
     }
 
-    Identifier ident(exec, property.toString(exec));
+    Identifier ident(exec, property.toString(exec)->value(exec));
     return JSValue::encode(baseValue.get(exec, ident));
 }
 
@@ -326,7 +323,7 @@ EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
             return JSValue::encode(result);
     }
 
-    Identifier ident(exec, property.toString(exec));
+    Identifier ident(exec, property.toString(exec)->value(exec));
     return JSValue::encode(JSValue(base).get(exec, ident));
 }
 

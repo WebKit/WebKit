@@ -298,7 +298,7 @@ void RegExpConstructor::put(JSCell* cell, ExecState* exec, const Identifier& pro
 
 void setRegExpConstructorInput(ExecState* exec, JSObject* baseObject, JSValue value)
 {
-    asRegExpConstructor(baseObject)->setInput(value.toString(exec));
+    asRegExpConstructor(baseObject)->setInput(value.toString(exec)->value(exec));
 }
 
 void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValue value)
@@ -323,13 +323,13 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         return asObject(arg0);
     }
 
-    UString pattern = arg0.isUndefined() ? UString("") : arg0.toString(exec);
+    UString pattern = arg0.isUndefined() ? UString("") : arg0.toString(exec)->value(exec);
     if (exec->hadException())
         return 0;
 
     RegExpFlags flags = NoFlags;
     if (!arg1.isUndefined()) {
-        flags = regExpFlags(arg1.toString(exec));
+        flags = regExpFlags(arg1.toString(exec)->value(exec));
         if (exec->hadException())
             return 0;
         if (flags == InvalidFlags)

@@ -86,7 +86,7 @@ bool JSStorage::putDelegate(ExecState* exec, const Identifier& propertyName, JSV
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
     
-    String stringValue = ustringToString(value.toString(exec));
+    String stringValue = ustringToString(value.toString(exec)->value(exec));
     if (exec->hadException())
         return true;
     

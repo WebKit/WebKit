@@ -78,7 +78,7 @@ static UString valueToSourceString(ExecState* exec, JSValue val)
         return "0";
 
     if (val.isString())
-        return makeUString("\"", escapeQuotes(val.toString(exec)), "\"");
+        return makeUString("\"", escapeQuotes(val.toString(exec)->value(exec)), "\"");
 
     return val.description();
 }

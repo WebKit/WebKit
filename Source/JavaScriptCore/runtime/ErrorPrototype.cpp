@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     if (name.isUndefined())
         nameString = "Error";
     else {
-        nameString = name.toString(exec);
+        nameString = name.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     if (message.isUndefined())
         messageString = "";
     else {
-        messageString = message.toString(exec);
+        messageString = message.toString(exec)->value(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }

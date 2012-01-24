@@ -85,7 +85,7 @@ jvalue JavaField::dispatchValueFromInstance(ExecState* exec, const JavaInstance*
                 args[0].l = jinstance;
                 dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, returnType, mid, args, result, 0, exceptionDescription);
                 if (exceptionDescription)
-                    throwError(exec, createError(exec, exceptionDescription.toString(exec)));
+                    throwError(exec, createError(exec, exceptionDescription.toString(exec)->value(exec)));
             }
         }
     }
@@ -147,7 +147,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
         break;
     }
 
-    LOG(LiveConnect, "JavaField::valueFromInstance getting %s = %s", UString(name().impl()).utf8().data(), jsresult.toString(exec).ascii().data());
+    LOG(LiveConnect, "JavaField::valueFromInstance getting %s = %s", UString(name().impl()).utf8().data(), jsresult.toString(exec)->value(exec).ascii().data());
 
     return jsresult;
 }
@@ -172,7 +172,7 @@ void JavaField::dispatchSetValueToInstance(ExecState* exec, const JavaInstance* 
                 args[1] = javaValue;
                 dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, JavaTypeVoid, mid, args, result, 0, exceptionDescription);
                 if (exceptionDescription)
-                    throwError(exec, createError(exec, exceptionDescription.toString(exec)));
+                    throwError(exec, createError(exec, exceptionDescription.toString(exec)->value(exec)));
             }
         }
     }
@@ -183,7 +183,7 @@ void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValue a
     const JavaInstance* instance = static_cast<const JavaInstance*>(i);
     jvalue javaValue = convertValueToJValue(exec, i->rootObject(), aValue, m_type, typeClassName());
 
-    LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", UString(name().impl()).utf8().data(), aValue.toString(exec).ascii().data());
+    LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", UString(name().impl()).utf8().data(), aValue.toString(exec)->value(exec).ascii().data());
 
     switch (m_type) {
     case JavaTypeArray:

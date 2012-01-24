@@ -518,11 +518,11 @@ double JSObject::toNumber(ExecState* exec) const
     return primitive.toNumber(exec);
 }
 
-UString JSObject::toString(ExecState* exec) const
+JSString* JSObject::toString(ExecState* exec) const
 {
     JSValue primitive = toPrimitive(exec, PreferString);
     if (exec->hadException())
-        return "";
+        return jsEmptyString(exec);
     return primitive.toString(exec);
 }
 

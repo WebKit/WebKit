@@ -139,7 +139,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             reportCurrentException(exec);
         } else {
             if (!retval.isUndefinedOrNull() && event->storesResultAsString())
-                event->storeResult(ustringToString(retval.toString(exec)));
+                event->storeResult(ustringToString(retval.toString(exec)->value(exec)));
             if (m_isAttribute) {
                 if (retval.isFalse())
                     event->preventDefault();

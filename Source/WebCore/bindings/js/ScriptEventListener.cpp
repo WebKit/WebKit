@@ -103,7 +103,8 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
-    return ustringToString(jsFunction->toString(scriptStateFromNode(jsListener->isolatedWorld(), document)));
+    ScriptState* scriptState = scriptStateFromNode(jsListener->isolatedWorld(), document);
+    return ustringToString(jsFunction->toString(scriptState)->value(scriptState));
 }
 
 bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, int& lineNumber)

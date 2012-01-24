@@ -69,7 +69,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     if (!frame)
         return;
 
-    String str = ustringToString(value.toString(exec));
+    String str = ustringToString(value.toString(exec)->value(exec));
 
     Frame* lexicalFrame = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
 

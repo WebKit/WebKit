@@ -105,14 +105,14 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
         if (!type.isString())
             continue;
 
-        String typeString = ustringToString(type.toString(exec));
+        String typeString = ustringToString(type.toString(exec)->value(exec));
         if (typeString == "separator") {
             items.append(new ContextMenuItem(SeparatorType,
                                              ContextMenuItemCustomTagNoAction,
                                              String()));
         } else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
-            ContextMenuItem* menuItem = new ContextMenuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, ustringToString(label.toString(exec)));
+            ContextMenuItem* menuItem = new ContextMenuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, ustringToString(label.toString(exec)->value(exec)));
             if (!enabled.isUndefined())
                 menuItem->setEnabled(enabled.toBoolean(exec));
             if (!checked.isUndefined())

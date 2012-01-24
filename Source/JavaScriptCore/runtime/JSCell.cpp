@@ -145,13 +145,6 @@ double JSCell::toNumber(ExecState* exec) const
     return static_cast<const JSObject*>(this)->toNumber(exec);
 }
 
-UString JSCell::toString(ExecState* exec) const
-{
-    if (isString())
-        return static_cast<const JSString*>(this)->toString(exec);
-    return static_cast<const JSObject*>(this)->toString(exec);
-}
-
 JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
     if (isString())

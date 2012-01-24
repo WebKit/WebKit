@@ -95,10 +95,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
     if (!exec->argumentCount())
         return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
     
-    JSString* string = exec->argument(0).isString()
-        ? asString(exec->argument(0))
-        : jsString(exec, exec->argument(0).toString(exec));
-    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), string));
+    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
 }
 
 ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -111,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())
         return JSValue::encode(jsEmptyString(exec));
-    return JSValue::encode(jsString(exec, exec->argument(0).toString(exec)));
+    return JSValue::encode(exec->argument(0).toString(exec));
 }
 
 CallType StringConstructor::getCallData(JSCell*, CallData& callData)

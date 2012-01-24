@@ -179,7 +179,7 @@ void JSLocation::defineGetter(JSObject* object, ExecState* exec, const Identifie
 
 void JSLocation::setHref(ExecState* exec, JSValue value)
 {
-    UString href = value.toString(exec);
+    UString href = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setHref(ustringToString(href), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -187,7 +187,7 @@ void JSLocation::setHref(ExecState* exec, JSValue value)
 
 void JSLocation::setProtocol(ExecState* exec, JSValue value)
 {
-    UString protocol = value.toString(exec);
+    UString protocol = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     ExceptionCode ec = 0;
@@ -197,7 +197,7 @@ void JSLocation::setProtocol(ExecState* exec, JSValue value)
 
 void JSLocation::setHost(ExecState* exec, JSValue value)
 {
-    UString host = value.toString(exec);
+    UString host = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setHost(ustringToString(host), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -205,7 +205,7 @@ void JSLocation::setHost(ExecState* exec, JSValue value)
 
 void JSLocation::setHostname(ExecState* exec, JSValue value)
 {
-    UString hostname = value.toString(exec);
+    UString hostname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setHostname(ustringToString(hostname), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -213,7 +213,7 @@ void JSLocation::setHostname(ExecState* exec, JSValue value)
 
 void JSLocation::setPort(ExecState* exec, JSValue value)
 {
-    UString port = value.toString(exec);
+    UString port = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setPort(ustringToString(port), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -221,7 +221,7 @@ void JSLocation::setPort(ExecState* exec, JSValue value)
 
 void JSLocation::setPathname(ExecState* exec, JSValue value)
 {
-    UString pathname = value.toString(exec);
+    UString pathname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setPathname(ustringToString(pathname), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -229,7 +229,7 @@ void JSLocation::setPathname(ExecState* exec, JSValue value)
 
 void JSLocation::setSearch(ExecState* exec, JSValue value)
 {
-    UString pathname = value.toString(exec);
+    UString pathname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setSearch(ustringToString(pathname), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -237,7 +237,7 @@ void JSLocation::setSearch(ExecState* exec, JSValue value)
 
 void JSLocation::setHash(ExecState* exec, JSValue value)
 {
-    UString hash = value.toString(exec);
+    UString hash = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
     impl()->setHash(ustringToString(hash), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -245,7 +245,7 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
 
 JSValue JSLocation::replace(ExecState* exec)
 {
-    UString urlString = exec->argument(0).toString(exec);
+    UString urlString = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
     impl()->replace(ustringToString(urlString), activeDOMWindow(exec), firstDOMWindow(exec));
@@ -260,7 +260,7 @@ JSValue JSLocation::reload(ExecState* exec)
 
 JSValue JSLocation::assign(ExecState* exec)
 {
-    UString urlString = exec->argument(0).toString(exec);
+    UString urlString = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
     impl()->assign(ustringToString(urlString), activeDOMWindow(exec), firstDOMWindow(exec));

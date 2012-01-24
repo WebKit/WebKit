@@ -72,7 +72,7 @@ bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identif
 
 bool JSDOMStringMap::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    String stringValue = ustringToString(value.toString(exec));
+    String stringValue = ustringToString(value.toString(exec)->value(exec));
     if (exec->hadException())
         return false;
     ExceptionCode ec = 0;

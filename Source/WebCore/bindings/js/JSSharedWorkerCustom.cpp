@@ -62,10 +62,10 @@ EncodedJSValue JSC_HOST_CALL JSSharedWorkerConstructor::constructJSSharedWorker(
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
 
-    UString scriptURL = exec->argument(0).toString(exec);
+    UString scriptURL = exec->argument(0).toString(exec)->value(exec);
     UString name;
     if (exec->argumentCount() > 1)
-        name = exec->argument(1).toString(exec);
+        name = exec->argument(1).toString(exec)->value(exec);
 
     if (exec->hadException())
         return JSValue::encode(JSValue());

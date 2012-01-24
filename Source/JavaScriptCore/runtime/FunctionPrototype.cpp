@@ -207,7 +207,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
             length = targetLength - numBoundArgs;
     }
 
-    Identifier name(exec, target.get(exec, exec->propertyNames().name).toString(exec));
+    Identifier name(exec, target.get(exec, exec->propertyNames().name).toString(exec)->value(exec));
 
     return JSValue::encode(JSBoundFunction::create(exec, globalObject, targetObject, exec->argument(0), boundArgs, length, name));
 }

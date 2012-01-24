@@ -43,7 +43,7 @@ namespace WebCore {
 JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 {
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
-    const UString& contextId = exec->argument(0).toString(exec);
+    const UString& contextId = exec->argument(0).toString(exec)->value(exec);
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(WEBGL)
     if (contextId == "experimental-webgl" || contextId == "webkit-3d") {

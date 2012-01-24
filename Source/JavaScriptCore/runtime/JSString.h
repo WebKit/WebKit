@@ -217,7 +217,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
-        UString toString(ExecState*) const;
         double toNumber(ExecState*) const;
         
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -453,24 +452,11 @@ namespace JSC {
         return isTrue(); // false, null, and undefined all convert to false.
     }
 
-    inline UString JSValue::toString(ExecState* exec) const
+    inline JSString* JSValue::toString(ExecState* exec) const
     {
         if (isString())
-            return static_cast<JSString*>(asCell())->value(exec);
-        if (isInt32())
-            return exec->globalData().numericStrings.add(asInt32());
-        if (isDouble())
-            return exec->globalData().numericStrings.add(asDouble());
-        if (isTrue())
-            return "true";
-        if (isFalse())
-            return "false";
-        if (isNull())
-            return "null";
-        if (isUndefined())
-            return "undefined";
-        ASSERT(isCell());
-        return asCell()->toString(exec);
+            return static_cast<JSString*>(asCell());
+        return toStringSlowCase(exec);
     }
 
 } // namespace JSC

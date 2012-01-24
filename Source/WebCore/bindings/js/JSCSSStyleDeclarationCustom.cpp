@@ -184,7 +184,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& prope
 
 JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
 {
-    const String& propertyName(ustringToString(exec->argument(0).toString(exec)));
+    const String& propertyName(ustringToString(exec->argument(0).toString(exec)->value(exec)));
     if (exec->hadException())
         return jsUndefined();
 

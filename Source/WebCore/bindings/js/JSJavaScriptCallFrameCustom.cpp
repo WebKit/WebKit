@@ -40,7 +40,7 @@ namespace WebCore {
 JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
 {
     JSValue exception;
-    JSValue result = impl()->evaluate(exec->argument(0).toString(exec), exception);
+    JSValue result = impl()->evaluate(exec->argument(0).toString(exec)->value(exec), exception);
 
     if (exception)
         throwError(exec, exception);

@@ -204,10 +204,9 @@ bool JSValue::isValidCallee()
     return asObject(asCell())->globalObject();
 }
 
-JSString* JSValue::toPrimitiveString(ExecState* exec) const
+JSString* JSValue::toStringSlowCase(ExecState* exec) const
 {
-    if (isString())
-        return static_cast<JSString*>(asCell());
+    ASSERT(!isString());
     if (isInt32())
         return jsString(&exec->globalData(), exec->globalData().numericStrings.add(asInt32()));
     if (isDouble())
@@ -222,10 +221,11 @@ JSString* JSValue::toPrimitiveString(ExecState* exec) const
         return jsNontrivialString(exec, exec->propertyNames().undefined.ustring());
 
     ASSERT(isCell());
-    JSValue v = asCell()->toPrimitive(exec, NoPreference);
-    if (v.isString())
-        return static_cast<JSString*>(v.asCell());
-    return jsString(&exec->globalData(), v.toString(exec));
+    JSValue value = asCell()->toPrimitive(exec, PreferString);
+    if (exec->hadException())
+        return jsEmptyString(exec);
+    ASSERT(!value.isObject());
+    return value.toString(exec);
 }
 
 } // namespace JSC

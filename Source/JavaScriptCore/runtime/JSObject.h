@@ -141,7 +141,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE bool toBoolean(ExecState*) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
-        JS_EXPORT_PRIVATE UString toString(ExecState*) const;
+        JS_EXPORT_PRIVATE JSString* toString(ExecState*) const;
 
         // NOTE: JSObject and its subclasses must be able to gracefully handle ExecState* = 0,
         // because this call may come from inside the compiler.

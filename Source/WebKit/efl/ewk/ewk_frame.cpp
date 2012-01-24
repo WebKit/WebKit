@@ -436,7 +436,8 @@ char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
         return 0;
 
     JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-    resultString = WebCore::ustringToString(result.toString(smartData->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()));
+    JSC::ExecState* exec = smartData->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec();
+    resultString = WebCore::ustringToString(result.toString(exec)->value(exec));
     return strdup(resultString.utf8().data());
 #else
     notImplemented();

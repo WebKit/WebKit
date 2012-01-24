@@ -70,7 +70,7 @@ JSValue JSDeviceOrientationEvent::absolute(ExecState*) const
 
 JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
 {
-    const String& type = ustringToString(exec->argument(0).toString(exec));
+    const String& type = ustringToString(exec->argument(0).toString(exec)->value(exec));
     bool bubbles = exec->argument(1).toBoolean(exec);
     bool cancelable = exec->argument(2).toBoolean(exec);
     // If alpha, beta or gamma are null or undefined, mark them as not provided.
