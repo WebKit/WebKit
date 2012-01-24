@@ -1,3 +1,13 @@
+2012-01-24  David Levin  <levin@chromium.org>
+
+        [windows] Convert usage of GetDC to HWndDC Part 3.
+        https://bugs.webkit.org/show_bug.cgi?id=76889
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::paint): Fix a dc leak and use the dellayed allocation.
+
 2012-01-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] TestDownloads hitting an assertion in Debug builds

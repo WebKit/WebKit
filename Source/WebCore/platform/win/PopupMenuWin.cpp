@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "HWndDC.h"
 #include "HostWindow.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -42,6 +43,7 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
+
 #include <windows.h>
 #include <windowsx.h>
 #if OS(WINCE)
@@ -566,7 +568,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         return;
 
     if (!m_DC) {
-        m_DC = ::CreateCompatibleDC(::GetDC(m_popup));
+        m_DC = ::CreateCompatibleDC(HWndDC(m_popup));
         if (!m_DC)
             return;
     }
@@ -660,12 +662,10 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     if (m_scrollbar)
         m_scrollbar->paint(&context, damageRect);
 
-    HDC localDC = hdc ? hdc : ::GetDC(m_popup);
+    HWndDC hWndDC;
+    HDC localDC = hdc ? hdc : hWndDC.setHWnd(m_popup);
 
     ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC, damageRect.x(), damageRect.y(), SRCCOPY);
-
-    if (!hdc)
-        ::ReleaseDC(m_popup, localDC);
 }
 
 int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const

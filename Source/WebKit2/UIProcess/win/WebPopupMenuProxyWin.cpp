@@ -34,6 +34,7 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/BitmapInfo.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <windowsx.h>
 
@@ -808,7 +809,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
         return;
 
     if (!m_DC) {
-        m_DC = ::CreateCompatibleDC(::GetDC(m_popup));
+        m_DC = ::CreateCompatibleDC(HWndDC(m_popup));
         if (!m_DC)
             return;
     }
@@ -848,12 +849,11 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
     if (m_scrollbar)
         m_scrollbar->paint(&context, damageRect);
 
-    HDC localDC = hdc ? hdc : ::GetDC(m_popup);
+
+    HWndDC hWndDC;
+    HDC localDC = hdc ? hdc : hWndDC.setHWnd(m_popup);
 
     ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC, damageRect.x(), damageRect.y(), SRCCOPY);
-
-    if (!hdc)
-        ::ReleaseDC(m_popup, localDC);
 }
 
 bool WebPopupMenuProxyWin::setFocusedIndex(int i, bool hotTracking)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UniscribeController.h"
 #include "Font.h"
+#include "HWndDC.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
@@ -248,13 +249,12 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     if (placeResult == E_PENDING) {
         // The script cache isn't primed with enough info yet.  We need to select our HFONT into
         // a DC and pass the DC in to ScriptPlace.
-        HDC hdc = GetDC(0);
+        HWndDC hdc(0);
         HFONT hfont = fontData->platformData().hfont();
         HFONT oldFont = (HFONT)SelectObject(hdc, hfont);
         placeResult = ScriptPlace(hdc, fontData->scriptCache(), glyphs.data(), glyphs.size(), visualAttributes.data(),
                                   &item.a, advances.data(), offsets.data(), 0);
         SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
     }
     
     if (FAILED(placeResult) || glyphs.isEmpty())
@@ -380,7 +380,7 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
                                 Vector<WORD>& glyphs, Vector<WORD>& clusters,
                                 Vector<SCRIPT_VISATTR>& visualAttributes)
 {
-    HDC hdc = 0;
+    HWndDC hdc;
     HFONT oldFont = 0;
     HRESULT shapeResult = E_PENDING;
     int glyphCount = 0;
@@ -391,7 +391,7 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
             // The script cache isn't primed with enough info yet.  We need to select our HFONT into
             // a DC and pass the DC in to ScriptShape.
             ASSERT(!hdc);
-            hdc = GetDC(0);
+            hdc.setHWnd(0);
             HFONT hfont = fontData->platformData().hfont();
             oldFont = (HFONT)SelectObject(hdc, hfont);
         } else if (shapeResult == E_OUTOFMEMORY) {
@@ -401,10 +401,8 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
         }
     } while (shapeResult == E_PENDING || shapeResult == E_OUTOFMEMORY);
 
-    if (hdc) {
+    if (hdc)
         SelectObject(hdc, oldFont);
-        ReleaseDC(0, hdc);
-    }
 
     if (FAILED(shapeResult))
         return false;
