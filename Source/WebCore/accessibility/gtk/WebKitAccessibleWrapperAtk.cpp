@@ -67,6 +67,7 @@
 #include "WebKitAccessibleInterfaceComponent.h"
 #include "WebKitAccessibleInterfaceDocument.h"
 #include "WebKitAccessibleInterfaceEditableText.h"
+#include "WebKitAccessibleInterfaceHyperlinkImpl.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -80,8 +81,6 @@
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
-
-static GQuark hyperlinkObjectQuark = 0;
 
 static AccessibilityObject* fallbackObject()
 {
@@ -811,8 +810,6 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
     klass->get_attributes = webkit_accessible_get_attributes;
     klass->ref_relation_set = webkit_accessible_ref_relation_set;
-
-    hyperlinkObjectQuark = g_quark_from_static_string("webkit-accessible-hyperlink-object");
 }
 
 GType
@@ -2140,21 +2137,6 @@ static void atkHypertextInterfaceInit(AtkHypertextIface* iface)
     iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
 }
 
-static AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
-{
-    AtkHyperlink* hyperlinkObject = ATK_HYPERLINK(g_object_get_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark));
-    if (!hyperlinkObject) {
-        hyperlinkObject = ATK_HYPERLINK(webkitAccessibleHyperlinkNew(hyperlink));
-        g_object_set_qdata(G_OBJECT(hyperlink), hyperlinkObjectQuark, hyperlinkObject);
-    }
-    return hyperlinkObject;
-}
-
-static void atkHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
-{
-    iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
-}
-
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
@@ -2225,8 +2207,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atkHypertextInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0},
-    {(GInterfaceInitFunc)atkHyperlinkImplInterfaceInit,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atkValueInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0}
