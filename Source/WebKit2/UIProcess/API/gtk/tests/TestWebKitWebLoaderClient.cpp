@@ -55,27 +55,26 @@ static void testLoadingError(LoadTrackingTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFinished);
 }
 
-static void assertNormalLoadHappenedAndClearEvents(Vector<LoadTrackingTest::LoadEvents>& events)
+static void assertNormalLoadHappened(Vector<LoadTrackingTest::LoadEvents>& events)
 {
     g_assert_cmpint(events.size(), ==, 3);
     g_assert_cmpint(events[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
     g_assert_cmpint(events[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFinished);
-    events.clear();
 }
 
 static void testLoadHtml(LoadTrackingTest* test, gconstpointer)
 {
     test->loadHtml("<html><body>Hello WebKit-GTK+</body></html>", 0);
     test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+    assertNormalLoadHappened(test->m_loadEvents);
 }
 
 static void testLoadPlainText(LoadTrackingTest* test, gconstpointer)
 {
     test->loadPlainText("Hello WebKit-GTK+");
     test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+    assertNormalLoadHappened(test->m_loadEvents);
 }
 
 static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
@@ -83,7 +82,7 @@ static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
     GRefPtr<WebKitURIRequest> request(webkit_uri_request_new(kServer->getURIForPath("/normal").data()));
     test->loadRequest(request.get());
     test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+    assertNormalLoadHappened(test->m_loadEvents);
 }
 
 class LoadStopTrackingTest : public LoadTrackingTest {
@@ -131,11 +130,11 @@ static void testWebViewReload(LoadTrackingTest* test, gconstpointer)
 
     test->loadURI(kServer->getURIForPath("/normal").data());
     test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+    assertNormalLoadHappened(test->m_loadEvents);
 
     webkit_web_view_reload(test->m_webView);
     test->waitUntilLoadFinished();
-    assertNormalLoadHappenedAndClearEvents(test->m_loadEvents);
+    assertNormalLoadHappened(test->m_loadEvents);
 }
 
 static void testLoadProgress(LoadTrackingTest* test, gconstpointer)

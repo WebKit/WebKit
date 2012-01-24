@@ -138,3 +138,30 @@ void LoadTrackingTest::estimatedProgressChanged()
     m_estimatedProgress = progress;
 }
 
+void LoadTrackingTest::loadURI(const char* uri)
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::loadURI(uri);
+}
+
+void LoadTrackingTest::loadHtml(const char* html, const char* baseURI)
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::loadHtml(html, baseURI);
+}
+
+void LoadTrackingTest::loadPlainText(const char* plainText)
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::loadPlainText(plainText);
+}
+
+void LoadTrackingTest::loadRequest(WebKitURIRequest* request)
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::loadRequest(request);
+}

@@ -39,6 +39,11 @@ public:
     virtual void loadFailed(const char* failingURI, GError*);
     virtual void estimatedProgressChanged();
 
+    void loadURI(const char* uri);
+    void loadHtml(const char* html, const char* baseURI);
+    void loadPlainText(const char* plainText);
+    void loadRequest(WebKitURIRequest*);
+
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
 
     enum LoadEvents {

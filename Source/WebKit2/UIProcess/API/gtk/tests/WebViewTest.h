@@ -31,10 +31,10 @@ public:
     WebViewTest();
     virtual ~WebViewTest();
 
-    void loadURI(const char* uri);
-    void loadHtml(const char* html, const char* baseURI);
-    void loadPlainText(const char* plainText);
-    void loadRequest(WebKitURIRequest*);
+    virtual void loadURI(const char* uri);
+    virtual void loadHtml(const char* html, const char* baseURI);
+    virtual void loadPlainText(const char* plainText);
+    virtual void loadRequest(WebKitURIRequest*);
     void replaceContent(const char* html, const char* contentURI, const char* baseURI);
     void goBack();
     void goForward();

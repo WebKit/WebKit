@@ -48,7 +48,10 @@ void WebViewTest::loadURI(const char* uri)
 
 void WebViewTest::loadHtml(const char* html, const char* baseURI)
 {
-    m_activeURI = "about:blank";
+    if (!baseURI)
+        m_activeURI = "about:blank";
+    else
+        m_activeURI = baseURI;
     webkit_web_view_load_html(m_webView, html, baseURI);
 }
 

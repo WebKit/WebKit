@@ -1,3 +1,30 @@
+2012-01-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][WK2] Make the LoadTracking and WebView test fixtures more flexible
+        https://bugs.webkit.org/show_bug.cgi?id=76755
+
+        Reviewed by Alejandro G. Castro.
+
+        Always clear the loading events when loading new content in the load tracking
+        test. In the WebView test correctly handle loading HTML with a URL that isn't
+        "about:blank."
+
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (LoadTrackingTest::loadURI): Reset the class state when starting a new load.
+        (LoadTrackingTest::loadHtml): Ditto.
+        (LoadTrackingTest::loadPlainText): Ditto.
+        (LoadTrackingTest::loadRequest): Ditto.
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h: Added new method definitions.
+        * UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp:
+        (assertNormalLoadHappened): No longer clear loading events. The fixture handles that now.
+        (testLoadHtml): Update to reflect new method name.
+        (testLoadPlainText): Ditto.
+        (testLoadRequest): Ditto.
+        (testWebViewReload): Ditto.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::loadHtml): Properly interpret the baseURL parameter.
+        * UIProcess/API/gtk/tests/WebViewTest.h: Make loading methods virtual.
+
 2012-01-23  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Implement SSL error handling QML API.
