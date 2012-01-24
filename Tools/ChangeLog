@@ -1,5 +1,30 @@
 2012-01-23  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: make --chromium work like --qt
+        https://bugs.webkit.org/show_bug.cgi?id=76875
+
+        Reviewed by Adam Barth.
+
+        --chromium used to have to be handled differently from --qt
+        due to the way the PortFactory was implemented; there's not
+        really a good reason for that any more so this patch makes
+        things slightly more consistent and eliminates the
+        options.chromium flag (--chromium is now truly a synonym for
+        --platform chromium).
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._default_port):
+        (PortFactory.get):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.setUp):
+        (FactoryTest.test_chromium_mac):
+        (FactoryTest.test_chromium_linux):
+        (FactoryTest.test_chromium_win):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
+2012-01-23  Dirk Pranke  <dpranke@chromium.org>
+
         run-webkit-tests needs to propagate --chromium
         https://bugs.webkit.org/show_bug.cgi?id=76870
 

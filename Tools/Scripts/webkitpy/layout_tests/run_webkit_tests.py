@@ -170,17 +170,16 @@ def parse_args(args=None):
                              help='Set the configuration to Release'),
         # old-run-webkit-tests also accepts -c, --configuration CONFIGURATION.
         optparse.make_option("--platform", help="Override port/platform being tested (i.e. chromium-mac)"),
-        optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
-        optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
+        optparse.make_option("--chromium", action="store_const", const='chromium', dest='platform', help='Alias for --platform=chromium'),
         optparse.make_option('--efl', action='store_const', const='efl', dest="platform", help='Alias for --platform=efl'),
+        optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform", help='Alias for --platform=gtk'),
+        optparse.make_option('--qt', action='store_const', const='qt', dest="platform", help='Alias for --platform=qt'),
     ]
 
     print_options = printing.print_options()
 
     # FIXME: These options should move onto the ChromiumPort.
     chromium_options = [
-        optparse.make_option("--chromium", action="store_true", default=False,
-            help="use the Chromium port"),
         optparse.make_option("--startup-dialog", action="store_true",
             default=False, help="create a dialog on DumpRenderTree startup"),
         optparse.make_option("--gp-fault-error-box", action="store_true",

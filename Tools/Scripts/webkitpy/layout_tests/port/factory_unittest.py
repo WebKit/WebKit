@@ -52,7 +52,6 @@ class FactoryTest(unittest.TestCase):
 
     def setUp(self):
         self.webkit_options = MockOptions(pixel_tests=False)
-        self.chromium_options = MockOptions(pixel_tests=False, chromium=True)
 
     def assert_port(self, port_name=None, os_name=None, os_version=None, options=None, cls=None):
         host = MockSystemHost(os_name=os_name, os_version=os_version)
@@ -115,19 +114,19 @@ class FactoryTest(unittest.TestCase):
         self.assert_port(port_name='chromium-mac-leopard', cls=chromium_mac.ChromiumMacPort)
         self.assert_port(port_name='chromium-mac', os_name='mac', os_version='leopard',
                          cls=chromium_mac.ChromiumMacPort)
-        self.assert_port(port_name=None, os_name='mac', os_version='leopard', options=self.chromium_options,
+        self.assert_port(port_name='chromium', os_name='mac', os_version='leopard',
                          cls=chromium_mac.ChromiumMacPort)
 
     def test_chromium_linux(self):
         self.assert_port(port_name='chromium-linux', cls=chromium_linux.ChromiumLinuxPort)
-        self.assert_port(port_name=None, os_name='linux', os_version='lucid', options=self.chromium_options,
+        self.assert_port(port_name='chromium', os_name='linux', os_version='lucid',
                          cls=chromium_linux.ChromiumLinuxPort)
 
     def test_chromium_win(self):
         self.assert_port(port_name='chromium-win-xp', cls=chromium_win.ChromiumWinPort)
         self.assert_port(port_name='chromium-win', os_name='win', os_version='xp',
                          cls=chromium_win.ChromiumWinPort)
-        self.assert_port(port_name=None, os_name='win', os_version='xp', options=self.chromium_options,
+        self.assert_port(port_name='chromium', os_name='win', os_version='xp',
                          cls=chromium_win.ChromiumWinPort)
 
     def test_unknown_specified(self):

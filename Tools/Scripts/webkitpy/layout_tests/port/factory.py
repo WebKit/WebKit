@@ -67,9 +67,7 @@ class PortFactory(object):
 
     def _default_port(self, options):
         platform = self._host.platform
-        if options and hasattr(options, 'chromium') and options.chromium:
-            return 'chromium-' + platform.os_name
-        elif platform.is_linux():
+        if platform.is_linux():
             return 'chromium-linux'
         elif platform.is_mac():
             return 'mac'
@@ -82,6 +80,12 @@ class PortFactory(object):
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
         port_name = port_name or self._default_port(options)
+
+        # FIXME(dpranke): We special-case '--platform chromium' so that it can co-exist
+        # with '--platform chromium-mac' and '--platform chromium-linux' properly (we
+        # can't look at the port_name prefix in this case).
+        if port_name == 'chromium':
+            port_name = 'chromium-' + self._host.platform.os_name
 
         # FIXME: Remove this when we remove the chromium-gpu ports.
         if port_name == 'chromium-gpu':
