@@ -71,6 +71,7 @@
 #include "WebKitAccessibleInterfaceHypertext.h"
 #include "WebKitAccessibleInterfaceImage.h"
 #include "WebKitAccessibleInterfaceSelection.h"
+#include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -123,11 +124,6 @@ static AccessibilityObject* core(AtkText* text)
 static AccessibilityObject* core(AtkTable* table)
 {
     return core(ATK_OBJECT(table));
-}
-
-static AccessibilityObject* core(AtkValue* value)
-{
-    return core(ATK_OBJECT(value));
 }
 
 static gchar* webkit_accessible_text_get_text(AtkText*, gint startOffset, gint endOffset);
@@ -1820,62 +1816,6 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
-static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
-{
-    memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->valueForRange());
-}
-
-static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
-{
-    memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->maxValueForRange());
-}
-
-static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
-{
-    memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->minValueForRange());
-}
-
-static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
-{
-    if (!G_VALUE_HOLDS_DOUBLE(gValue) && !G_VALUE_HOLDS_INT(gValue))
-        return FALSE;
-
-    AccessibilityObject* coreObject = core(value);
-    if (!coreObject->canSetValueAttribute())
-        return FALSE;
-
-    if (G_VALUE_HOLDS_DOUBLE(gValue))
-        coreObject->setValue(String::number(g_value_get_double(gValue)));
-    else
-        coreObject->setValue(String::number(g_value_get_int(gValue)));
-
-    return TRUE;
-}
-
-static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
-{
-    memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-
-    // There's not such a thing in the WAI-ARIA specification, thus return zero.
-    g_value_set_double(gValue, 0.0);
-}
-
-static void atkValueInterfaceInit(AtkValueIface* iface)
-{
-    iface->get_current_value = webkitAccessibleValueGetCurrentValue;
-    iface->get_maximum_value = webkitAccessibleValueGetMaximumValue;
-    iface->get_minimum_value = webkitAccessibleValueGetMinimumValue;
-    iface->set_current_value = webkitAccessibleValueSetCurrentValue;
-    iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
-}
-
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleActionInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleSelectionInterfaceInit), 0, 0},
@@ -1889,8 +1829,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHyperlinkImplInterfaceInit), 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
-    {(GInterfaceInitFunc)atkValueInterfaceInit,
-     (GInterfaceFinalizeFunc) 0, 0}
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleValueInterfaceInit), 0, 0}
 };
 
 enum WAIType {
