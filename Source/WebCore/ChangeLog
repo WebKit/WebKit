@@ -1,3 +1,27 @@
+2012-01-24  Parag Radke  <nrqv63@motorola.com>
+
+        REGRESSION (r73385): Marquee with behavior="alternate" is not working
+        https://bugs.webkit.org/show_bug.cgi?id=64230
+
+        Reviewed by Simon Fraser.
+
+        This patch gives correct content width for marquee, which computes
+        correct start position to scroll marquee.
+
+        Test: fast/html/marquee-alternate.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        We need(style()->marqueeBehavior() != MALTERNATE) check as we always need the marquee's 
+        actual content width to compute the initial/end position in case of 'MALTERNATE'.
+        So we need to calculate the logical width in Alternate case even if fixed width is specified
+        as content has to animate between renderBox().right().x() - contentWidth() and 
+        renderBox().left().x() + contentWidth().
+        
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        Using PreferredLogicalWidth in place of LayoutOverflow for calculating correct content width.
+
 2012-01-24  Andreas Kling  <awesomekling@apple.com>
 
         RenderInline: Skip caching the computed line height.

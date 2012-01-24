@@ -116,7 +116,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
     if (isHorizontal()) {
         bool ltr = s->isLeftToRightDirection();
         int clientWidth = box->clientWidth();
-        int contentWidth = ltr ? box->maxXLayoutOverflow() : box->minXLayoutOverflow();
+        int contentWidth = ltr ? box->maxPreferredLogicalWidth() : box->minPreferredLogicalWidth();
         if (ltr)
             contentWidth += (box->paddingRight() - box->borderLeft());
         else {
