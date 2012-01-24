@@ -214,6 +214,7 @@ protected:
     // The update rect is the region of the compositor resource that was actually updated by the compositor.
     // For layers that may do updating outside the compositor's control (i.e. plugin layers), this information
     // is not available and the update rect will remain empty.
+    // Note this rect is in layer space (not content space).
     FloatRect m_updateRect;
 
     RefPtr<LayerChromium> m_maskLayer;

@@ -26,6 +26,7 @@
 
 #include "TiledLayerChromium.h"
 
+#include "CCLayerTreeTestCommon.h"
 #include "LayerTextureUpdater.h"
 #include "TextureManager.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
@@ -141,6 +142,22 @@ private:
 
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     TextureManager* m_textureManager;
+};
+
+class FakeTiledLayerWithScaledBounds : public FakeTiledLayerChromium {
+public:
+    explicit FakeTiledLayerWithScaledBounds(TextureManager* textureManager)
+        : FakeTiledLayerChromium(textureManager)
+    {
+    }
+
+    void setContentBounds(const IntSize& contentBounds) { m_forcedContentBounds = contentBounds; }
+    virtual IntSize contentBounds() const { return m_forcedContentBounds; }
+
+    FloatRect updateRect() { return m_updateRect; }
+
+protected:
+    IntSize m_forcedContentBounds;
 };
 
 void FakeLayerTextureUpdater::setRectToInvalidate(const IntRect& rect, FakeTiledLayerChromium* layer)
@@ -337,6 +354,45 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     // The layer should still be invalid as prepareToUpdate invoked invalidate.
     layer->prepareToUpdate(IntRect(0, 0, 100, 200));
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
+}
+
+TEST(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
+{
+    // The updateRect (that indicates what was actually painted) should be in
+    // layer space, not the content space.
+
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerWithScaledBounds> layer = adoptRef(new FakeTiledLayerWithScaledBounds(textureManager.get()));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    IntRect layerBounds(0, 0, 300, 200);
+    IntRect contentBounds(0, 0, 200, 250);
+
+    layer->setBounds(layerBounds.size());
+    layer->setContentBounds(contentBounds.size());
+    layer->setVisibleLayerRect(contentBounds);
+
+    // On first update, the updateRect includes all tiles, even beyond the boundaries of the layer.
+    // However, it should still be in layer space, not content space.
+    layer->invalidateRect(contentBounds);
+    layer->prepareToUpdate(contentBounds);
+    layer->updateCompositorResources(0, updater);
+    EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 300, 300 * 0.8), layer->updateRect());
+
+    // After the tiles are updated once, another invalidate only needs to update the bounds of the layer.
+    layer->invalidateRect(contentBounds);
+    layer->prepareToUpdate(contentBounds);
+    layer->updateCompositorResources(0, updater);
+    EXPECT_FLOAT_RECT_EQ(FloatRect(layerBounds), layer->updateRect());
+
+    // Partial re-paint should also be represented by the updateRect in layer space, not content space.
+    IntRect partialDamage(30, 100, 10, 10);
+    layer->invalidateRect(partialDamage);
+    layer->prepareToUpdate(contentBounds);
+    layer->updateCompositorResources(0, updater);
+    EXPECT_FLOAT_RECT_EQ(FloatRect(45, 80, 15, 8), layer->updateRect());
 }
 
 } // namespace

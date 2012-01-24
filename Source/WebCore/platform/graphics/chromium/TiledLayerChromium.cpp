@@ -240,7 +240,11 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
         }
     }
 
+    // The updateRect should be in layer space. So we have to convert the paintRect from content space to layer space.
     m_updateRect = FloatRect(m_paintRect);
+    float widthScale = bounds().width() / static_cast<float>(contentBounds().width());
+    float heightScale = bounds().height() / static_cast<float>(contentBounds().height());
+    m_updateRect.scale(widthScale, heightScale);
 }
 
 void TiledLayerChromium::setTilingOption(TilingOption tilingOption)

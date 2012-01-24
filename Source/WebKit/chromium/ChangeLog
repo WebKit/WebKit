@@ -1,3 +1,17 @@
+2012-01-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] updateRect is incorrect when contentBounds != bounds
+        https://bugs.webkit.org/show_bug.cgi?id=72919
+
+        Reviewed by James Robinson.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds):
+        (WTF::FakeTiledLayerWithScaledBounds::setContentBounds):
+        (WTF::FakeTiledLayerWithScaledBounds::contentBounds):
+        (WTF::FakeTiledLayerWithScaledBounds::updateRect):
+        (WTF::TEST):
+
 2012-01-23  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Chromium][WebSocket] Remove binary communication using WebData in WebKit API

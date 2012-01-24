@@ -1,3 +1,24 @@
+2012-01-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] updateRect is incorrect when contentBounds != bounds
+        https://bugs.webkit.org/show_bug.cgi?id=72919
+
+        Reviewed by James Robinson.
+
+        Unit test added to TiledLayerChromiumTest.cpp
+
+        The m_updateRect member in LayerChromium types is used to track
+        what was painted for that layer. For tiled layers (especially
+        image layers), the updateRect was being given with respect to the
+        size of the content, rather than the size of the layer. This patch
+        adds a conversion so that updateRect is always with respect to the
+        layer size, so that damage tracking will work correctly in those
+        cases.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+
 2012-01-23  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Make "Copy as HTML" use the same copy functions as other copy methods.
