@@ -1,0 +1,4 @@
+Test that media controls repaint correctly during paused states when new data is buffered.
+
+
+

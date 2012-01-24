@@ -1,30 +1,28 @@
 <html>
-   <head>
-       <script src="../../media-resources/media-file.js"></script>
-       <script>
-           var painted = false;
-           function start() {
-               if (window.layoutTestController)
-                   layoutTestController.waitUntilDone();
+    <head>
+        <script src="../../media-resources/media-file.js"></script>
+        <script>
+            function start() {
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText(true);
+                    layoutTestController.waitUntilDone();
+                }
 
                 var video = document.querySelector('video');
 
                 video.addEventListener('progress', function(event) {
-                    // Each progress event should correlate to a repaint. Check
-                    // by watching for a repaint between progress events.
-                    if (painted) {
-                        layoutTestController.notifyDone();
-                    } else {
-                        layoutTestController.display();
-                        painted = true;
-                    }
+                    layoutTestController.display();
+                }, false);
+
+                video.addEventListener('suspend', function(event) {
+                    layoutTestController.notifyDone();
                 }, false);
 
                 var mediaFile = findMediaFile("video", "resources/test");
                 var mimeType = mimeTypeForFile(mediaFile);
 
                 // Don't actually play since we're testing via an image diff.
-                video.src = 'http://127.0.0.1:8000/media/video-throttled-load.cgi?&name=' + mediaFile + '&throttle=10&type=' + mimeType
+                video.src = 'http://127.0.0.1:8000/media/video-throttled-load.cgi?&name=' + mediaFile + '&throttle=80&type=' + mimeType
             }
         </script>
     </head>
@@ -32,5 +30,5 @@
     <body onload="start();">
         <p>Test that media controls repaint correctly during paused states when new data is buffered.</p>
         <video controls preload></video><br/>
-   </body>
+    </body>
 </html>

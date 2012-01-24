@@ -3833,7 +3833,7 @@ BUGV81900 SLOW LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activat
 BUGWK73710 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-62-t.svg = PASS CRASH
 
 // New test, image results added but it is timing out on Leopard.
-BUGWK75570 LEOPARD : http/tests/media/video-buffering-repaints-controls.html = PASS TIMEOUT
+BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 
 // New reftest failing on Win7.
 BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
