@@ -163,6 +163,30 @@ sub FileNamePrefix
     return $codeGenerator->FileNamePrefix();
 }
 
+sub UpdateFileIfChanged
+{
+    my $object = shift;
+    my $fileName = shift;
+    my $contents = shift;
+
+    my $shouldUpdate = 0;
+
+    if (open FH, $fileName) {
+        local $/ = undef;
+        my $oldContents = <FH>;
+        $shouldUpdate = 1 if $oldContents ne $contents;
+        close FH;
+    } else {
+        $shouldUpdate = 1;
+    }
+
+    if ($shouldUpdate) {
+        open FH, "> $fileName" or die "Couldn't open $fileName: $!\n";
+        print FH $contents;
+        close FH;
+    }
+}
+
 sub ForAllParents
 {
     my $object = shift;
