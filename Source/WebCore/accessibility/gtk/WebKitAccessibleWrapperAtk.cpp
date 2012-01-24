@@ -69,6 +69,7 @@
 #include "WebKitAccessibleInterfaceEditableText.h"
 #include "WebKitAccessibleInterfaceHyperlinkImpl.h"
 #include "WebKitAccessibleInterfaceHypertext.h"
+#include "WebKitAccessibleInterfaceImage.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -121,11 +122,6 @@ static AccessibilityObject* core(AtkSelection* selection)
 static AccessibilityObject* core(AtkText* text)
 {
     return core(ATK_OBJECT(text));
-}
-
-static AccessibilityObject* core(AtkImage* image)
-{
-    return core(ATK_OBJECT(image));
 }
 
 static AccessibilityObject* core(AtkTable* table)
@@ -1835,36 +1831,6 @@ static void atk_text_interface_init(AtkTextIface* iface)
     iface->set_caret_offset = webkit_accessible_text_set_caret_offset;
 }
 
-// Image
-
-static void webkit_accessible_image_get_image_position(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
-{
-    IntRect rect = core(image)->elementRect();
-    contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
-}
-
-static const gchar* webkit_accessible_image_get_image_description(AtkImage* image)
-{
-    return returnString(core(image)->accessibilityDescription());
-}
-
-static void webkit_accessible_image_get_image_size(AtkImage* image, gint* width, gint* height)
-{
-    IntSize size = core(image)->size();
-
-    if (width)
-        *width = size.width();
-    if (height)
-        *height = size.height();
-}
-
-static void atk_image_interface_init(AtkImageIface* iface)
-{
-    iface->get_image_position = webkit_accessible_image_get_image_position;
-    iface->get_image_description = webkit_accessible_image_get_image_description;
-    iface->get_image_size = webkit_accessible_image_get_image_size;
-}
-
 // Table
 
 static AccessibilityTableCell* cell(AtkTable* table, guint row, guint column)
@@ -2126,8 +2092,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_text_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleComponentInterfaceInit), 0, 0},
-    {(GInterfaceInitFunc)atk_image_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleImageInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atk_table_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
     {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleHypertextInterfaceInit), 0, 0},

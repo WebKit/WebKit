@@ -1357,6 +1357,8 @@
             'accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.h',
             'accessibility/gtk/WebKitAccessibleInterfaceHypertext.cpp',
             'accessibility/gtk/WebKitAccessibleInterfaceHypertext.h',
+            'accessibility/gtk/WebKitAccessibleInterfaceImage.cpp',
+            'accessibility/gtk/WebKitAccessibleInterfaceImage.h',
             'accessibility/gtk/WebKitAccessibleUtil.cpp',
             'accessibility/gtk/WebKitAccessibleUtil.h',
             'accessibility/gtk/WebKitAccessibleWrapperAtk.cpp',
