@@ -1,3 +1,31 @@
+2012-01-23  Andreas Kling  <awesomekling@apple.com>
+
+        Make elements that don't have attributes smaller.
+        <http://webkit.org/b/76876>
+
+        Reviewed by Antti Koivisto.
+
+        Move the inline style declaration from StyledElement to NamedNodeMap, since having
+        an inline style declaration also implies having a style attribute on the element.
+        This saves one CPU word per element that has no attributes.
+
+        This reduces memory consumption by 412 kB (on 64-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::ensureInlineStyleDecl):
+        (WebCore::NamedNodeMap::destroyInlineStyleDecl):
+        (WebCore::NamedNodeMap::createInlineStyleDecl):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::inlineStyleDecl):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+
 2012-01-24  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Qt's cross-process AC copies images excessively when updating tiles.
