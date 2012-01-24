@@ -40,6 +40,15 @@
 
 using namespace WebCore;
 
+AtkAttributeSet* addToAtkAttributeSet(AtkAttributeSet* attributeSet, const char* name, const char* value)
+{
+    AtkAttribute* attribute = static_cast<AtkAttribute*>(g_malloc(sizeof(AtkAttribute)));
+    attribute->name = g_strdup(name);
+    attribute->value = g_strdup(value);
+    attributeSet = g_slist_prepend(attributeSet, attribute);
+    return attributeSet;
+}
+
 void contentsRelativeToAtkCoordinateType(AccessibilityObject* coreObject, AtkCoordType coordType, IntRect rect, gint* x, gint* y, gint* width, gint* height)
 {
     FrameView* frameView = coreObject->documentFrameView();

@@ -4425,6 +4425,8 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceAction.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.h \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.cpp \
+	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp \

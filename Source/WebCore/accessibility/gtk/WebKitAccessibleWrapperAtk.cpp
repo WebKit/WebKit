@@ -65,6 +65,7 @@
 #include "WebKitAccessibleHyperlink.h"
 #include "WebKitAccessibleInterfaceAction.h"
 #include "WebKitAccessibleInterfaceComponent.h"
+#include "WebKitAccessibleInterfaceDocument.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -139,11 +140,6 @@ static AccessibilityObject* core(AtkTable* table)
 static AccessibilityObject* core(AtkHypertext* hypertext)
 {
     return core(ATK_OBJECT(hypertext));
-}
-
-static AccessibilityObject* core(AtkDocument* document)
-{
-    return core(ATK_OBJECT(document));
 }
 
 static AccessibilityObject* core(AtkValue* value)
@@ -467,20 +463,10 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
     return -1;
 }
 
-static AtkAttributeSet* addAttributeToSet(AtkAttributeSet* attributeSet, const char* name, const char* value)
-{
-    AtkAttribute* attribute = static_cast<AtkAttribute*>(g_malloc(sizeof(AtkAttribute)));
-    attribute->name = g_strdup(name);
-    attribute->value = g_strdup(value);
-    attributeSet = g_slist_prepend(attributeSet, attribute);
-
-    return attributeSet;
-}
-
 static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
 {
     AtkAttributeSet* attributeSet = 0;
-    attributeSet = addAttributeToSet(attributeSet, "toolkit", "WebKitGtk");
+    attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
 
     AccessibilityObject* coreObject = core(object);
     if (!coreObject)
@@ -489,13 +475,13 @@ static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
     int headingLevel = coreObject->headingLevel();
     if (headingLevel) {
         String value = String::number(headingLevel);
-        attributeSet = addAttributeToSet(attributeSet, "level", value.utf8().data());
+        attributeSet = addToAtkAttributeSet(attributeSet, "level", value.utf8().data());
     }
 
     // Set the 'layout-guess' attribute to help Assistive
     // Technologies know when an exposed table is not data table.
     if (coreObject->isAccessibilityTable() && !coreObject->isDataTable())
-        attributeSet = addAttributeToSet(attributeSet, "layout-guess", "true");
+        attributeSet = addToAtkAttributeSet(attributeSet, "layout-guess", "true");
 
     return attributeSet;
 }
@@ -1330,20 +1316,20 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     AtkAttributeSet* result = 0;
     GOwnPtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_SIZE), buffer.get());
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_SIZE), buffer.get());
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
     if (bgColor.isValid()) {
         buffer.set(g_strdup_printf("%i,%i,%i",
                                    bgColor.red(), bgColor.green(), bgColor.blue()));
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
     }
 
     Color fgColor = style->visitedDependentColor(CSSPropertyColor);
     if (fgColor.isValid()) {
         buffer.set(g_strdup_printf("%i,%i,%i",
                                    fgColor.red(), fgColor.green(), fgColor.blue()));
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
     }
 
     int baselinePosition;
@@ -1365,20 +1351,20 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     if (includeRise) {
         buffer.set(g_strdup_printf("%i", baselinePosition));
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_RISE), buffer.get());
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_RISE), buffer.get());
     }
 
     if (!style->textIndent().isUndefined()) {
         int indentation = style->textIndent().calcValue(object->size().width());
         buffer.set(g_strdup_printf("%i", indentation));
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }
 
     String fontFamilyName = style->font().family().family().string();
     if (fontFamilyName.left(8) == "-webkit-")
         fontFamilyName = fontFamilyName.substring(8);
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FAMILY_NAME), fontFamilyName.utf8().data());
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FAMILY_NAME), fontFamilyName.utf8().data());
 
     int fontWeight = -1;
     switch (style->font().weight()) {
@@ -1411,7 +1397,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     }
     if (fontWeight > 0) {
         buffer.set(g_strdup_printf("%i", fontWeight));
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_WEIGHT), buffer.get());
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_WEIGHT), buffer.get());
     }
 
     switch (style->textAlign()) {
@@ -1421,29 +1407,29 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         break;
     case LEFT:
     case WEBKIT_LEFT:
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "left");
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "left");
         break;
     case RIGHT:
     case WEBKIT_RIGHT:
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "right");
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "right");
         break;
     case CENTER:
     case WEBKIT_CENTER:
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "center");
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "center");
         break;
     case JUSTIFY:
-        result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "fill");
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_JUSTIFICATION), "fill");
     }
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & UNDERLINE) ? "single" : "none");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & UNDERLINE) ? "single" : "none");
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->font().italic() ? "italic" : "normal");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->font().italic() ? "italic" : "normal");
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & LINE_THROUGH) ? "true" : "false");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & LINE_THROUGH) ? "true" : "false");
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INVISIBLE), (style->visibility() == HIDDEN) ? "true" : "false");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INVISIBLE), (style->visibility() == HIDDEN) ? "true" : "false");
 
-    result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_EDITABLE), object->isReadOnly() ? "false" : "true");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_EDITABLE), object->isReadOnly() ? "false" : "true");
 
     return result;
 }
@@ -2249,63 +2235,6 @@ static void atkHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
     iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
 }
 
-static const gchar* documentAttributeValue(AtkDocument* document, const gchar* attribute)
-{
-    Document* coreDocument = core(document)->document();
-    if (!coreDocument)
-        return 0;
-
-    String value = String();
-    if (!g_ascii_strcasecmp(attribute, "DocType") && coreDocument->doctype())
-        value = coreDocument->doctype()->name();
-    else if (!g_ascii_strcasecmp(attribute, "Encoding"))
-        value = coreDocument->charset();
-    else if (!g_ascii_strcasecmp(attribute, "URI"))
-        value = coreDocument->documentURI();
-    if (!value.isEmpty())
-        return returnString(value);
-
-    return 0;
-}
-
-static const gchar* webkit_accessible_document_get_attribute_value(AtkDocument* document, const gchar* attribute)
-{
-    return documentAttributeValue(document, attribute);
-}
-
-static AtkAttributeSet* webkit_accessible_document_get_attributes(AtkDocument* document)
-{
-    AtkAttributeSet* attributeSet = 0;
-    const gchar* attributes[] = { "DocType", "Encoding", "URI" };
-
-    for (unsigned i = 0; i < G_N_ELEMENTS(attributes); i++) {
-        const gchar* value = documentAttributeValue(document, attributes[i]);
-        if (value)
-            attributeSet = addAttributeToSet(attributeSet, attributes[i], value);
-    }
-
-    return attributeSet;
-}
-
-static const gchar* webkit_accessible_document_get_locale(AtkDocument* document)
-{
-
-    // TODO: Should we fall back on lang xml:lang when the following comes up empty?
-    String language = core(document)->language();
-    if (!language.isEmpty())
-        return returnString(language);
-
-    return 0;
-}
-
-static void atk_document_interface_init(AtkDocumentIface* iface)
-{
-    iface->get_document_attribute_value = webkit_accessible_document_get_attribute_value;
-    iface->get_document_attributes = webkit_accessible_document_get_attributes;
-    iface->get_document_locale = webkit_accessible_document_get_locale;
-}
-
-
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
@@ -2379,8 +2308,7 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atkHyperlinkImplInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0},
-    {(GInterfaceInitFunc)atk_document_interface_init,
-     (GInterfaceFinalizeFunc) 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(webkitAccessibleDocumentInterfaceInit), 0, 0},
     {(GInterfaceInitFunc)atkValueInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0}
 };

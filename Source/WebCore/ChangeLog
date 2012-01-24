@@ -5,6 +5,40 @@
 
         Reviewed by Martin Robinson.
 
+        New files for the implementation of the AtkDocument interface,
+        containing the related code from WebKitAccessibleWrapperAtk.cpp.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceDocument.cpp: Added.
+        (core):
+        (documentAttributeValue):
+        (webkitAccessibleDocumentInterfaceInit):
+        (webkitAccessibleDocumentGetAttributeValue):
+        (webkitAccessibleDocumentGetAttributes):
+        (webkitAccessibleDocumentGetLocale):
+        * accessibility/gtk/WebKitAccessibleInterfaceDocument.h: Added.
+
+        Move common function addAttributeToSet() out from the wrapper to
+        the utility file, used from WebKitAccessibleInterfaceDocument.cpp.
+
+        * accessibility/gtk/WebKitAccessibleUtil.cpp:
+        (addToAtkAttributeSet): Taken from WebKitAccessibleWrapperAtk.cpp.
+        * accessibility/gtk/WebKitAccessibleUtil.h:
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Remove local
+        implementation of addAttributeToSet, as well as all the code related
+        to the implementation of the AtkDocument interface.
+
+        Add new files to build files.
+
+        * GNUmakefile.list.am: Add WebKitAccessibleInterfaceDocument.[h|cpp].
+        * WebCore.gypi: Ditto.
+
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
         New files for the implementation of the AtkComponent interface,
         containing the related code from WebKitAccessibleWrapperAtk.cpp.
 
