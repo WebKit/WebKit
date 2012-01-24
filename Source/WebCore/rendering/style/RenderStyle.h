@@ -615,7 +615,7 @@ public:
     Length lineHeight() const { return inherited->line_height; }
     int computedLineHeight() const
     {
-        Length lh = lineHeight();
+        const Length& lh = inherited->line_height;
 
         // Negative value means the line height is not set.  Use the font's built-in spacing.
         if (lh.isNegative())

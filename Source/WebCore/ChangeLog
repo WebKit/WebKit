@@ -1,3 +1,29 @@
+2012-01-24  Andreas Kling  <awesomekling@apple.com>
+
+        RenderInline: Skip caching the computed line height.
+        <http://webkit.org/b/76929>
+
+        Reviewed by David Hyatt.
+
+        Stop caching the computed line height on RenderInline and make retrieving it from
+        RenderStyle slightly cheaper, freeing up 4 bytes per RenderInline instance.
+        This appears to be mostly performance neutral, I don't get more than the occasional
+        sample hit when instrumenting heavier web pages.
+
+        This reduces memory consumption by 228 kB (both 32/64-bit) when viewing the full
+        HTML5 spec at <http://whatwg.org/c>.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::lineHeight):
+        * rendering/RenderInline.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::computedLineHeight):
+
+            Optimize computedLineHeight() to mitigate some of the damage of calling
+            it more often.
+
 2012-01-24  Abhishek Arya  <inferno@chromium.org>
 
         Crash when rendering -webkit-column-span.

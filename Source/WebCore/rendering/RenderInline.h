@@ -168,7 +168,6 @@ private:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
-    mutable LayoutUnit m_lineHeight;
     bool m_alwaysCreateLineBoxes : 1;
 };
 

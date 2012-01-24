@@ -47,7 +47,6 @@ namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
     : RenderBoxModelObject(node)
-    , m_lineHeight(-1)
     , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
@@ -144,8 +143,6 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         currCont->setStyle(newStyle);
         currCont->setContinuation(nextCont);
     }
-
-    m_lineHeight = -1;
 
     if (!m_alwaysCreateLineBoxes) {
         bool alwaysCreateLineBoxes = hasSelfPaintingLayer() || hasBoxDecorations() || newStyle->hasPadding() || newStyle->hasMargin() || hasOutline();
@@ -1269,11 +1266,8 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
         if (s != style())
             return s->computedLineHeight();
     }
-    
-    if (m_lineHeight == -1)
-        m_lineHeight = style()->computedLineHeight();
-    
-    return m_lineHeight;
+
+    return style()->computedLineHeight();
 }
 
 LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
