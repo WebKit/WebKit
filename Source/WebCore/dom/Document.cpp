@@ -3444,6 +3444,13 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         }
 
         m_focusedNode->dispatchFocusInEvent(eventNames().focusinEvent, oldFocusedNode); // DOM level 3 bubbling focus event.
+
+        if (m_focusedNode != newFocusedNode) {
+            // handler shifted focus
+            focusChangeBlocked = true;
+            goto SetFocusedNodeDone;
+        }
+
         // FIXME: We should remove firing DOMFocusInEvent event when we are sure no content depends
         // on it, probably when <rdar://problem/8503958> is m.
         m_focusedNode->dispatchFocusInEvent(eventNames().DOMFocusInEvent, oldFocusedNode); // DOM level 2 for compatibility.
