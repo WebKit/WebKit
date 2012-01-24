@@ -1,3 +1,12 @@
+2012-01-23  Priit Laes  <plaes@plaes.org>
+
+        [GTK][PATCH] More build silencing with (AM_V_...)
+        https://bugs.webkit.org/show_bug.cgi?id=76791
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Silence is golden...
+
 2012-01-23  Arko Saha  <nghq36@motorola.com>
 
         MicroData: Remove ExceptionCode& from setAttribute() call.

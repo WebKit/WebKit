@@ -380,14 +380,15 @@ endif # END ENABLE_MEDIA_STREAM
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
 $(GENSOURCES_WEBCORE)/XPathGrammar.h: $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
 $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
-	rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
-	$(BISON) -d -p xpathyy $< -o $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
-	touch $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
-	echo '#ifndef XPathGrammar_h' > $(GENSOURCES_WEBCORE)/XPathGrammar.h
-	echo '#define XPathGrammar_h' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
-	cat $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
-	echo '#endif' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
-	rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
+	$(AM_V_GEN)
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
+	$(AM_V_at)$(BISON) -d -p xpathyy $< -o $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
+	$(AM_V_at)touch $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
+	$(AM_V_at)echo '#ifndef XPathGrammar_h' > $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)echo '#define XPathGrammar_h' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)cat $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)echo '#endif' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
 
 # ----
 # XSLT Support
@@ -603,32 +604,34 @@ endif  # END ENABLE_DEVICE_ORIENTATION
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
-	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
-	mv CSSPropertyNames* $(GENSOURCES_WEBCORE)
+	$(AM_V_GEN)
+	$(AM_V_at)cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
+	$(AM_V_at)mv CSSPropertyNames* $(GENSOURCES_WEBCORE)
 
 # Lower case all the values, as CSS values are case-insensitive
 DerivedSources/WebCore/CSSValueKeywords.cpp: DerivedSources/WebCore/CSSValueKeywords.h
 DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/makevalues.pl
-	cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
-	$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
-	mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
+	$(AM_V_GEN)
+	$(AM_V_at)cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
+	$(AM_V_at)mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
 
 # XML Viewer CSS
 DerivedSources/WebCore/XMLViewerCSS.h: $(WebCore)/xml/XMLViewer.css
-	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
 
 # XML Viewer JS
 DerivedSources/WebCore/XMLViewerJS.h: $(WebCore)/xml/XMLViewer.js
-	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js $(GENSOURCES_WEBCORE)/XMLViewerJS.h
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js $(GENSOURCES_WEBCORE)/XMLViewerJS.h
 
 # HTML entity names
 DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
-	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o $(GENSOURCES_WEBCORE)/HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
 # color names
 DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
-	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/platform/ColorData.gperf
+	$(AM_V_GEN)$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/platform/ColorData.gperf
 
 # CSS tokenizer
 DerivedSources/WebCore/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
@@ -639,14 +642,15 @@ DerivedSources/WebCore/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
 DerivedSources/WebCore/CSSGrammar.h: $(GENSOURCES_WEBCORE)/CSSGrammar.cpp
 DerivedSources/WebCore/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
-	rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
-	$(BISON) -d -p cssyy $< -o $(GENSOURCES_WEBCORE)/CSSGrammar.cpp
-	touch $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
-	echo '#ifndef CSSGrammar_h' > $(GENSOURCES_WEBCORE)/CSSGrammar.h
-	echo '#define CSSGrammar_h' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
-	cat $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
-	echo '#endif' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
-	rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
+	$(AM_V_GEN)
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
+	$(AM_V_at)$(BISON) -d -p cssyy $< -o $(GENSOURCES_WEBCORE)/CSSGrammar.cpp
+	$(AM_V_at)touch $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
+	$(AM_V_at)echo '#ifndef CSSGrammar_h' > $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)echo '#define CSSGrammar_h' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)cat $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)echo '#endif' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
@@ -713,16 +717,16 @@ DerivedSources/WebCore/ExceptionCodeDescription.cpp DerivedSources/WebCore/Excep
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
-	$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
 
 DerivedSources/WebCore/InspectorBackendDispatcher.cpp: $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/CodeGeneratorInspector.py
-	$(PYTHON) $(WebCore)/inspector/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)"
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)"
 DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
 DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendStub.js
 DerivedSources/WebCore/InspectorBackendStub.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
 DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
-	perl $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
 
 if ENABLE_WEB_AUDIO
 # Installing HRTF database wav files
@@ -772,9 +776,10 @@ IDL_FILES_TMP = $(top_builddir)/DerivedSources/WebCore/idl_files.tmp
 
 .SECONDARY:
 $(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls)
-	echo -n > $(IDL_FILES_TMP)
-	($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
+	$(AM_V_GEN)
+	$(AM_V_at)echo -n > $(IDL_FILES_TMP)
+	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
 
 .SECONDARY:
 DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm $(SUPPLEMENTAL_DEPENDENCY_FILE)
@@ -983,8 +988,9 @@ ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/Images/* \
 		DerivedSources/WebCore/InspectorBackendStub.js \
 		$(WebCore)/English.lproj/localizedStrings.js
-	$(AM_V_GEN)mkdir -p ${GENSOURCES_INSPECTOR}/UglifyJS
-	$(AM_V_GEN)mkdir -p ${GENSOURCES_INSPECTOR}/images
+	$(AM_V_GEN)
+	$(AM_V_at)mkdir -p ${GENSOURCES_INSPECTOR}/UglifyJS
+	$(AM_V_at)mkdir -p ${GENSOURCES_INSPECTOR}/images
 	$(AM_V_at)cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
 	$(AM_V_at)cp ${dist_webinspectoruglifyjs_DATA} ${GENSOURCES_INSPECTOR}/UglifyJS
 	$(AM_V_at)cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
