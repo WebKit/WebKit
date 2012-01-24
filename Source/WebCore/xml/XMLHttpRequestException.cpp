@@ -38,7 +38,7 @@ static const char* const exceptionNames[] = {
 };
 
 static const char* const exceptionDescriptions[] = {
-    "A network error occured in synchronous requests.",
+    "A network error occurred in synchronous requests.",
     "The user aborted a request in synchronous requests."
 };
 

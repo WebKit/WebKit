@@ -54,7 +54,7 @@ static const char* const exceptionDescriptions[] = {
     "A requested file or directory could not be found at the time an operation was processed.",
     "It was determined that certain files are unsafe for access within a Web application, or that too many calls are being made on file resources.",
     "An ongoing operation was aborted, typically with a call to abort().",
-    "The requested file could not be read, typically due to permission problems that have occured after a reference to a file was acquired.",
+    "The requested file could not be read, typically due to permission problems that have occurred after a reference to a file was acquired.",
     "A URI supplied to the API was malformed, or the resulting Data URL has exceeded the URL length limitations for Data URLs.",
     "An attempt was made to write to a file or directory which could not be modified due to the state of the underlying filesystem.",
     "An operation that depends on state cached in an interface object was made but the state had changed since it was read from disk.",

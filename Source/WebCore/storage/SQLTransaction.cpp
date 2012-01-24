@@ -299,7 +299,7 @@ void SQLTransaction::openTransactionAndPreflight()
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError) {
             m_database->reportStartTransactionResult(4, SQLError::UNKNOWN_ERR, 0);
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured during transaction preflight");
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction preflight");
         }
         handleTransactionError(false);
         return;
@@ -483,7 +483,7 @@ void SQLTransaction::postflightAndCommit()
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError) {
             m_database->reportCommitTransactionResult(3, SQLError::UNKNOWN_ERR, 0);
-            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured during transaction postflight");
+            m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction postflight");
         }
         handleTransactionError(false);
         return;

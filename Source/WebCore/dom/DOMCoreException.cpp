@@ -80,7 +80,7 @@ static const char* const coreExceptionDescriptions[] = {
     "The type of an object was incompatible with the expected type of the parameter associated to the object.",
     "An attempt was made to break through the security policy of the user agent.",
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
-    "A network error occured.",
+    "A network error occurred.",
     "The user aborted a request.",
     "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL.",
     "An attempt was made to add something to storage that exceeded the quota.",

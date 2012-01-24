@@ -1,3 +1,17 @@
+2012-01-23  Thiago Marcos P. Santos  <tmpsantos@gmail.com>
+
+        Fixed typo in exception messages
+        https://bugs.webkit.org/show_bug.cgi?id=76710
+
+        Reviewed by Alexey Proskuryakov.
+
+        * dom/DOMCoreException.cpp:
+        * fileapi/FileException.cpp:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * xml/XMLHttpRequestException.cpp:
+
 2012-01-18  David Levin  <levin@chromium.org>
 
         Allow delayed DC allocation in HWndDC.
