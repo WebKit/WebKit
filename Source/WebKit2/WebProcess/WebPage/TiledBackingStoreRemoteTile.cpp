@@ -88,6 +88,11 @@ Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
     OwnPtr<GraphicsContext> graphicsContext(bitmap->createGraphicsContext());
     graphicsContext->drawImageBuffer(m_localBuffer.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
 
+#if PLATFORM(QT)
+    // Qt uses BGRA interally, we swizzle to RGBA for OpenGL.
+    bitmap->swizzleRGB();
+#endif
+
     UpdateInfo updateInfo;
     updateInfo.updateRectBounds = m_rect;
     updateInfo.updateScaleFactor = m_tiledBackingStore->contentsScale();

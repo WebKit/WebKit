@@ -347,6 +347,7 @@ public:
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
 
     void updateContents(PixelFormat, const IntRect&, void*);
+    void updateRawContents(const IntRect&, const void*);
     void pack()
     {
         // This is currently a stub.
@@ -734,6 +735,13 @@ void BitmapTextureGL::updateContents(PixelFormat pixelFormat, const IntRect& rec
     if (shouldSwizzle)
         swizzleBGRAToRGBA(static_cast<uint32_t*>(bits), rect.size());
 #endif
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x(), rect.y(), rect.width(), rect.height(), glFormat, GL_UNSIGNED_BYTE, bits))
+}
+
+void BitmapTextureGL::updateRawContents(const IntRect& rect, const void* bits)
+{
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+    GLuint glFormat = isOpaque() ? GL_RGB : GL_RGBA;
     GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x(), rect.y(), rect.width(), rect.height(), glFormat, GL_UNSIGNED_BYTE, bits))
 }
 

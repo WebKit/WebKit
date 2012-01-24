@@ -76,7 +76,6 @@ void BitmapTextureQt::updateContents(PixelFormat pixelFormat, const IntRect& rec
     m_painter.end();
 }
 
-
 bool BitmapTextureQt::save(const String& path)
 {
     return m_pixmap.save(path, "PNG");

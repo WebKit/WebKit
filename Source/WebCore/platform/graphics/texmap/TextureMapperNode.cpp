@@ -481,7 +481,7 @@ void TextureMapperNode::clearAllDirectlyCompositedImageTiles()
     }
 }
 
-void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, void* bits, BitmapTexture::PixelFormat format)
+void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceRect, const IntRect& targetRect, const void* bits)
 {
     ASSERT(m_textureMapper);
 
@@ -498,7 +498,7 @@ void TextureMapperNode::setContentsTileBackBuffer(int id, const IntRect& sourceR
     if (!tile.backBuffer.texture)
         tile.backBuffer.texture = m_textureMapper->createTexture();
     tile.backBuffer.texture->reset(sourceRect.size(), false);
-    tile.backBuffer.texture->updateContents(format, sourceRect, bits);
+    tile.backBuffer.texture->updateRawContents(sourceRect, bits);
     tile.isBackBufferUpdated = true;
 }
 

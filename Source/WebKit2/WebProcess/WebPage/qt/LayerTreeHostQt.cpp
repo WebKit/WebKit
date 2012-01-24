@@ -321,6 +321,8 @@ int64_t LayerTreeHostQt::adoptImageBackingStore(Image* image)
         graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint::zero());
     }
 
+    // Qt uses BGRA internally, we swizzle to RGBA for OpenGL.
+    bitmap->swizzleRGB();
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
     m_webPage->send(Messages::LayerTreeHostProxy::CreateDirectlyCompositedImage(key, handle));

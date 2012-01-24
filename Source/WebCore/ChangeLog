@@ -1,3 +1,25 @@
+2012-01-24  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Qt's cross-process AC copies images excessively when updating tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=76877
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add BitmapTexture::updateRawContents(), which allows uploading image data to a texture
+        without changing its format or swizzling RGB. The data has to be in the texture's native
+        format.
+
+        No new tests, this affects performance on all existing tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateRawContents):
+        * platform/graphics/qt/TextureMapperQt.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::BitmapTexture::updateRawContents):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::setContentsTileBackBuffer):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
 2012-01-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: inspector/debugger/dom-breakpoints.html started to fail after r105642

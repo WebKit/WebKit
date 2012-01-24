@@ -135,6 +135,7 @@ public:
     // This creates a QImage that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     QImage createQImage();
+    void swizzleRGB();
 #endif
 
 private:

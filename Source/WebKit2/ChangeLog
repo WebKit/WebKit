@@ -1,3 +1,36 @@
+2012-01-24  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Qt's cross-process AC copies images excessively when updating tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=76877
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Instead of copying QImages, pass a reference to the ShareableBitmap that was originally
+        created by the web process. Also, swizzle the image's RGB in the web process, before it's
+        transferred to the UI process.
+
+        Data flow before change:
+        (Web Process) Render to image -> IPC -> (UI Process) Copy (render queue) -> Copy Swizzled RGB -> Upload
+
+        Data flow after change:
+        (Web Process) Render to image -> swizzle RGB -> IPC -> (UI Process) -> Upload
+
+        * Shared/ShareableBitmap.h:
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::swizzleRGB):
+        * UIProcess/LayerTreeHostProxy.h:
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::updateTile):
+        (WebKit::LayerTreeHostProxy::createImage):
+        (WebKit::LayerTreeHostProxy::syncRemoteContent):
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        (WebKit::LayerTreeHostProxy::createDirectlyCompositedImage):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp:
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::adoptImageBackingStore):
+
 2012-01-24  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] QtWebIconDatabaseClient leaves a dangling pointer on WebIconDatabase after its destruction

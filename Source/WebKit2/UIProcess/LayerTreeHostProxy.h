@@ -110,8 +110,8 @@ protected:
     void syncLayerParameters(const WebLayerInfo&);
     void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
-    void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, const QImage&);
-    void createImage(int64_t, const QImage&);
+    void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, ShareableBitmap*);
+    void createImage(int64_t, ShareableBitmap*);
     void destroyImage(int64_t);
     void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
     void flushLayerChanges();
