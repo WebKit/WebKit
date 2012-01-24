@@ -132,7 +132,7 @@ class Rollout(IRCCommand):
             return "%s: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON" % nick
 
         revision_urls_string = join_with_separators([urls.view_revision_url(revision) for revision in svn_revision_list])
-        tool.irc().post("%s: Preparing rollout for %s..." % (nick, revision_urls_string))
+        tool.irc().post("%s: Preparing rollout for %s ..." % (nick, revision_urls_string))
 
         self._update_working_copy(tool)
 

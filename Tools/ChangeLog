@@ -1,3 +1,21 @@
+2012-01-24  James Robinson  <jamesr@chromium.org>
+
+        Put a space between the trac link and ellipsis in sheriffbot rollout message so it linkifies better in some IRC clients
+        https://bugs.webkit.org/show_bug.cgi?id=76884
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout.execute):
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        (SheriffIRCBotTest.test_rollout):
+        (SheriffIRCBotTest.test_revert):
+        (SheriffIRCBotTest.test_multi_rollout):
+        (SheriffIRCBotTest.test_rollout_with_r_in_svn_revision):
+        (SheriffIRCBotTest.test_multi_rollout_with_r_in_svn_revision):
+        (SheriffIRCBotTest.test_rollout_invalidate_reason):
+        (test_multi_rollout_invalidate_reason):
+
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
         The cpp parser of prepare-ChangeLog cannot detect a change in classes and namespaces
