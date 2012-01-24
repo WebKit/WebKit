@@ -452,6 +452,8 @@ RenderBlock* RenderBlock::clone() const
     else {
         cloneBlock = new (renderArena()) RenderBlock(node());
         cloneBlock->setStyle(style());
+        if (!childrenInline() && cloneBlock->firstChild() && cloneBlock->firstChild()->isInline())
+            cloneBlock->makeChildrenNonInline();
     }
     cloneBlock->setChildrenInline(childrenInline());
     return cloneBlock;
@@ -665,8 +667,8 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
     // cross the streams and have to cope with both types of continuations mixed together).
     // This function currently supports (1) and (2).
     RenderBlock* columnsBlockAncestor = 0;
-    if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isFloatingOrPositioned()
-        && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
+    if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isBeforeOrAfterContent()
+        && !newChild->isFloatingOrPositioned() && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
         if (style()->specifiesColumns())
             columnsBlockAncestor = this;
         else if (!isInline() && parent() && parent()->isRenderBlock()) {

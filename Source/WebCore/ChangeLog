@@ -1,3 +1,25 @@
+2012-01-24  Abhishek Arya  <inferno@chromium.org>
+
+        Crash when rendering -webkit-column-span.
+        https://bugs.webkit.org/show_bug.cgi?id=73265
+
+        Reviewed by David Hyatt.
+
+        This patch addresses 2 problems causing crashes in multi-column layout
+        1. Trying to render -webkit-column-span for :before, :after caused
+           re-entrancy in updateBeforeAfterContent while working on splitFlow.
+        2. Cloning a block which has its :before, :after content not added yet,
+           caused issues because cloneBlock will definitely have its :before,
+           :after content created when setStyle() is called. So, we would
+           overwrite cloneBlock with a wrong childrenInline value.
+
+        Tests: fast/multicol/clone-block-children-inline-mismatch-crash.html
+               fast/multicol/span/generated-child-split-flow-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+        (WebCore::RenderBlock::columnsBlockForSpanningElement):
+
 2012-01-22  Robert Hogan  <robert@webkit.org>
 
         Incorrect positioning of floating pseudo-elements in table captions
