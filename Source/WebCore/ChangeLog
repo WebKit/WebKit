@@ -1,3 +1,24 @@
+2012-01-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105738.
+        http://trac.webkit.org/changeset/105738
+        https://bugs.webkit.org/show_bug.cgi?id=76930
+
+        caused fast/css/getComputedStyle/computed-style-border-
+        image.html to crash (Requested by kling on #webkit).
+
+        * dom/NamedNodeMap.cpp:
+        * dom/NamedNodeMap.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        (WebCore::StyledElement::ensureInlineStyleDecl):
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyleDecl):
+
 2012-01-24  Parag Radke  <nrqv63@motorola.com>
 
         REGRESSION (r73385): Marquee with behavior="alternate" is not working
