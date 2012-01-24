@@ -2175,7 +2175,7 @@ BUGWK44199 RELEASE : perf/typing-at-end-of-line.html = PASS TEXT
 BUGWK44199 BUGWK63057 RELEASE SLOW : perf/array-binary-search.html = MISSING PASS TEXT
 BUGWK72901 RELEASE SLOW : perf/array-push-pop.html = PASS
 BUGWK44199 RELEASE : perf/array-reverse.html = PASS TIMEOUT
-BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING
+BUGWK63057 RELEASE : perf/adding-radio-buttons.html = MISSING FAIL
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT IMAGE
