@@ -1,3 +1,19 @@
+2012-01-24  Geoffrey Garen  <ggaren@apple.com>
+
+        JSValue::toString() should return a JSString* instead of a UString
+        https://bugs.webkit.org/show_bug.cgi?id=76861
+
+        Fixed two failing layout tests after my last patch.
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSort): Call value() after calling toString(), as
+        in all other cases.
+        
+        I missed this case because the JSString* type has a valid operator<,
+        so the compiler didn't complain.
+
 2012-01-24  Kenichi Ishibashi  <bashi@chromium.org>
 
         [V8] Add Uint8ClampedArray support

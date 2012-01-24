@@ -571,7 +571,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
                 l.append(minObj);
                 compareResult = call(exec, function, callType, callData, jsUndefined(), l).toNumber(exec);
             } else
-                compareResult = (jObj.toString(exec) < minObj.toString(exec)) ? -1 : 1;
+                compareResult = (jObj.toString(exec)->value(exec) < minObj.toString(exec)->value(exec)) ? -1 : 1;
 
             if (compareResult < 0) {
                 themin = j;
