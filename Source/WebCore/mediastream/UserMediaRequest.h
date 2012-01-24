@@ -61,9 +61,9 @@ public:
     NavigatorUserMediaErrorCallback* errorCallback() const { return m_errorCallback.get(); }
 
     void start();
-    void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector&);
+    void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
-    void succeed(const MediaStreamSourceVector&);
+    void succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     void fail();
 
     // ContextDestructionObserver

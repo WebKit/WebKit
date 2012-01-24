@@ -29,20 +29,52 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "MediaStreamCenter.h"
+#include "MediaStreamSource.h"
 #include "ScriptExecutionContext.h"
 #include "UUID.h"
 
 namespace WebCore {
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackList> prpTracks)
+static void processTrackList(PassRefPtr<MediaStreamTrackList> prpTracks, const String& kind, MediaStreamSourceVector& sources, ExceptionCode& ec)
 {
     RefPtr<MediaStreamTrackList> tracks = prpTracks;
-    MediaStreamSourceVector sources;
-    for (unsigned i = 0; i < tracks->length(); ++i)
-        sources.append(tracks->item(i)->component()->source());
+    if (!tracks)
+        return;
 
-    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), sources);
+    for (unsigned i = 0; i < tracks->length(); ++i) {
+        MediaStreamTrack* track = tracks->item(i);
+        if (track->kind() != kind) {
+            ec = SYNTAX_ERR;
+            return;
+        }
+        MediaStreamSource* source = track->component()->source();
+        bool isDuplicate = false;
+        for (MediaStreamSourceVector::iterator j = sources.begin(); j < sources.end(); ++j) {
+            if ((*j)->id() == source->id()) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        if (!isDuplicate)
+            sources.append(source);
+    }
+}
+
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackList> audioTracks, PassRefPtr<MediaStreamTrackList> videoTracks, ExceptionCode& ec)
+{
+    MediaStreamSourceVector audioSources;
+    processTrackList(audioTracks, "audio", audioSources, ec);
+    if (ec)
+        return 0;
+
+    MediaStreamSourceVector videoSources;
+    processTrackList(videoTracks, "video", videoSources, ec);
+    if (ec)
+        return 0;
+
+    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources);
     MediaStreamCenter::instance().didConstructMediaStream(descriptor.get());
     return adoptRef(new MediaStream(context, descriptor.release()));
 }
@@ -58,14 +90,19 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
 {
     m_descriptor->setOwner(this);
 
-    MediaStreamTrackVector trackVector;
-    size_t numberOfTracks = m_descriptor->numberOfComponents();
+    MediaStreamTrackVector audioTrackVector;
+    size_t numberOfAudioTracks = m_descriptor->numberOfAudioComponents();
+    audioTrackVector.reserveCapacity(numberOfAudioTracks);
+    for (size_t i = 0; i < numberOfAudioTracks; i++)
+        audioTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->audioComponent(i)));
+    m_audioTracks = MediaStreamTrackList::create(audioTrackVector);
 
-    trackVector.reserveCapacity(numberOfTracks);
-    for (size_t i = 0; i < numberOfTracks; i++)
-        trackVector.append(MediaStreamTrack::create(m_descriptor, i));
-
-    m_tracks = MediaStreamTrackList::create(trackVector);
+    MediaStreamTrackVector videoTrackVector;
+    size_t numberOfVideoTracks = m_descriptor->numberOfVideoComponents();
+    videoTrackVector.reserveCapacity(numberOfVideoTracks);
+    for (size_t i = 0; i < numberOfVideoTracks; i++)
+        videoTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->videoComponent(i)));
+    m_videoTracks = MediaStreamTrackList::create(videoTrackVector);
 }
 
 MediaStream::~MediaStream()

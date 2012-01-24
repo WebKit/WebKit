@@ -1,3 +1,25 @@
+2012-01-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Split the MediaStream track list into audio/video specific ones.
+        https://bugs.webkit.org/show_bug.cgi?id=76614
+
+        Reviewed by Darin Fisher.
+
+        * public/WebUserMediaClient.h:
+        (WebKit::WebUserMediaClient::requestUserMedia):
+        * public/WebUserMediaRequest.h:
+        * public/platform/WebMediaStreamDescriptor.h:
+        * src/UserMediaClientImpl.cpp:
+        (WebKit::UserMediaClientImpl::requestUserMedia):
+        * src/UserMediaClientImpl.h:
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::sources):
+        (WebKit::WebMediaStreamDescriptor::audioSources):
+        (WebKit::WebMediaStreamDescriptor::videoSources):
+        (WebKit::WebMediaStreamDescriptor::initialize):
+        * src/WebUserMediaRequest.cpp:
+        (WebKit::WebUserMediaRequest::requestSucceeded):
+
 2012-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Show layer borders for scrollbar layers

@@ -47,7 +47,7 @@ public:
     };
 
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackList>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackList>, PassRefPtr<MediaStreamTrackList>, ExceptionCode&);
     virtual ~MediaStream();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
@@ -55,7 +55,8 @@ public:
     ReadyState readyState() const;
     String label() const { return m_descriptor->label(); }
 
-    MediaStreamTrackList* tracks() { return m_tracks.get(); }
+    MediaStreamTrackList* audioTracks() { return m_audioTracks.get(); }
+    MediaStreamTrackList* videoTracks() { return m_videoTracks.get(); }
 
     void streamEnded();
 
@@ -84,7 +85,8 @@ private:
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
 
-    RefPtr<MediaStreamTrackList> m_tracks;
+    RefPtr<MediaStreamTrackList> m_audioTracks;
+    RefPtr<MediaStreamTrackList> m_videoTracks;
     RefPtr<MediaStreamDescriptor> m_descriptor;
 };
 

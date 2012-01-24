@@ -60,12 +60,35 @@ WebString WebMediaStreamDescriptor::label() const
     return m_private->label();
 }
 
+// FIXME: Cleanup when the chromium code has switched to the split sources implementation.
 void WebMediaStreamDescriptor::sources(WebVector<WebMediaStreamSource>& webSources) const
 {
-    size_t numberOfSources = m_private->numberOfComponents();
+    size_t numberOfAudioSources = m_private->numberOfAudioComponents();
+    size_t numberOfVideoSources = m_private->numberOfVideoComponents();
+    WebVector<WebMediaStreamSource> result(numberOfAudioSources + numberOfVideoSources);
+    size_t i = 0;
+    for (size_t j = 0; j < numberOfAudioSources; ++i, ++j)
+        result[i] = m_private->audioComponent(j)->source();
+    for (size_t j = 0; j < numberOfVideoSources; ++i, ++j)
+        result[i] = m_private->videoComponent(j)->source();
+    webSources.swap(result);
+}
+
+void WebMediaStreamDescriptor::audioSources(WebVector<WebMediaStreamSource>& webSources) const
+{
+    size_t numberOfSources = m_private->numberOfAudioComponents();
     WebVector<WebMediaStreamSource> result(numberOfSources);
     for (size_t i = 0; i < numberOfSources; ++i)
-        result[i] = m_private->component(i)->source();
+        result[i] = m_private->audioComponent(i)->source();
+    webSources.swap(result);
+}
+
+void WebMediaStreamDescriptor::videoSources(WebVector<WebMediaStreamSource>& webSources) const
+{
+    size_t numberOfSources = m_private->numberOfVideoComponents();
+    WebVector<WebMediaStreamSource> result(numberOfSources);
+    for (size_t i = 0; i < numberOfSources; ++i)
+        result[i] = m_private->videoComponent(i)->source();
     webSources.swap(result);
 }
 
@@ -85,14 +108,32 @@ WebMediaStreamDescriptor::operator WebCore::MediaStreamDescriptor*() const
     return m_private.get();
 }
 
+// FIXME: Cleanup when the chromium code has switched to the split sources implementation.
 void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& sources)
 {
-    MediaStreamSourceVector s;
+    MediaStreamSourceVector audio, video;
     for (size_t i = 0; i < sources.size(); ++i) {
         MediaStreamSource* curr = sources[i];
-        s.append(curr);
+        if (curr->type() == MediaStreamSource::TypeAudio)
+            audio.append(curr);
+        else if (curr->type() == MediaStreamSource::TypeVideo)
+            video.append(curr);
     }
-    m_private = MediaStreamDescriptor::create(label, s);
+    m_private = MediaStreamDescriptor::create(label, audio, video);
+}
+
+void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources)
+{
+    MediaStreamSourceVector audio, video;
+    for (size_t i = 0; i < audioSources.size(); ++i) {
+        MediaStreamSource* curr = audioSources[i];
+        audio.append(curr);
+    }
+    for (size_t i = 0; i < videoSources.size(); ++i) {
+        MediaStreamSource* curr = videoSources[i];
+        video.append(curr);
+    }
+    m_private = MediaStreamDescriptor::create(label, audio, video);
 }
 
 void WebMediaStreamDescriptor::assign(const WebMediaStreamDescriptor& other)

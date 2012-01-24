@@ -68,7 +68,10 @@ public:
     WEBKIT_EXPORT bool cameraPreferenceEnvironment() const;
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
 
+    // DEPRECATED
     WEBKIT_EXPORT void requestSucceeded(const WebVector<WebMediaStreamSource>&);
+
+    WEBKIT_EXPORT void requestSucceeded(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources);
     WEBKIT_EXPORT void requestFailed();
 
 #if WEBKIT_IMPLEMENTATION

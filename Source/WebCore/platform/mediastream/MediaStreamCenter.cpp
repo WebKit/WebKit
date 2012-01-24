@@ -68,11 +68,11 @@ MediaStreamCenter::~MediaStreamCenter()
 
 void MediaStreamCenter::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
 {
-    MediaStreamSourceVector sources;
-    client->mediaStreamSourcesQueryCompleted(sources);
+    MediaStreamSourceVector audioSources, videoSources;
+    client->mediaStreamSourcesQueryCompleted(audioSources, videoSources);
 }
 
-void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, unsigned)
+void MediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
 {
 }
 

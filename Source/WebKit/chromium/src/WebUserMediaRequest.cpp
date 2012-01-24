@@ -86,18 +86,41 @@ WebSecurityOrigin WebUserMediaRequest::securityOrigin() const
     return WebSecurityOrigin(m_private->scriptExecutionContext()->securityOrigin());
 }
 
+void WebUserMediaRequest::requestSucceeded(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources)
+{
+    if (m_private.isNull())
+        return;
+
+    MediaStreamSourceVector audio;
+    for (size_t i = 0; i < audioSources.size(); ++i) {
+        MediaStreamSource* curr = audioSources[i];
+        audio.append(curr);
+    }
+    MediaStreamSourceVector video;
+    for (size_t i = 0; i < videoSources.size(); ++i) {
+        MediaStreamSource* curr = videoSources[i];
+        video.append(curr);
+    }
+
+    m_private->succeed(audio, video);
+}
+
+// FIXME: Cleanup when the chromium code has switched to the split sources implementation.
 void WebUserMediaRequest::requestSucceeded(const WebVector<WebMediaStreamSource>& sources)
 {
     if (m_private.isNull())
         return;
 
-    MediaStreamSourceVector s;
+    MediaStreamSourceVector audio, video;
     for (size_t i = 0; i < sources.size(); ++i) {
         MediaStreamSource* curr = sources[i];
-        s.append(curr);
+        if (curr->type() == MediaStreamSource::TypeAudio)
+            audio.append(curr);
+        else if (curr->type() == MediaStreamSource::TypeVideo)
+            video.append(curr);
     }
 
-    m_private->succeed(s);
+    m_private->succeed(audio, video);
 }
 
 void WebUserMediaRequest::requestFailed()

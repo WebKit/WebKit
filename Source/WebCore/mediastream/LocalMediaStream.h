@@ -35,7 +35,7 @@ namespace WebCore {
 
 class LocalMediaStream : public MediaStream {
 public:
-    static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, const MediaStreamSourceVector&);
+    static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     virtual ~LocalMediaStream();
 
     void stop();
@@ -44,7 +44,7 @@ public:
     virtual const AtomicString& interfaceName() const;
 
 private:
-    LocalMediaStream(ScriptExecutionContext*, const MediaStreamSourceVector&);
+    LocalMediaStream(ScriptExecutionContext*, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
     void stopTimerFired(Timer<LocalMediaStream>*);
 

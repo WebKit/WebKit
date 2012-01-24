@@ -40,7 +40,7 @@ class MediaStreamComponent;
 
 class MediaStreamTrack : public RefCounted<MediaStreamTrack> {
 public:
-    static PassRefPtr<MediaStreamTrack> create(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);
+    static PassRefPtr<MediaStreamTrack> create(PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
     virtual ~MediaStreamTrack();
 
     String kind() const;
@@ -52,10 +52,10 @@ public:
     MediaStreamComponent* component();
 
 private:
-    MediaStreamTrack(PassRefPtr<MediaStreamDescriptor>, size_t trackIndex);
+    MediaStreamTrack(PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
 
     RefPtr<MediaStreamDescriptor> m_streamDescriptor;
-    const size_t m_trackIndex;
+    RefPtr<MediaStreamComponent> m_component;
 };
 
 typedef Vector<RefPtr<MediaStreamTrack> > MediaStreamTrackVector;

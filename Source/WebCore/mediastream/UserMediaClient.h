@@ -42,7 +42,7 @@ class UserMediaClient {
 public:
     virtual void pageDestroyed() = 0;
 
-    virtual void requestUserMedia(PassRefPtr<UserMediaRequest>, const MediaStreamSourceVector&) = 0;
+    virtual void requestUserMedia(PassRefPtr<UserMediaRequest>, const MediaStreamSourceVector&,  const MediaStreamSourceVector&) = 0;
     virtual void cancelUserMediaRequest(UserMediaRequest*) = 0;
 
 protected:

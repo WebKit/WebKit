@@ -1,3 +1,53 @@
+2012-01-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Split the MediaStream track list into audio/video specific ones.
+        https://bugs.webkit.org/show_bug.cgi?id=76614
+
+        The latest draft of the WebRTC standard have split the MediaStream combined track list
+        into audio/video specific ones.
+
+        Reviewed by Darin Fisher.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
+        * mediastream/LocalMediaStream.cpp:
+        (WebCore::LocalMediaStream::create):
+        (WebCore::LocalMediaStream::LocalMediaStream):
+        * mediastream/LocalMediaStream.h:
+        * mediastream/MediaStream.cpp:
+        (WebCore::processTrackList):
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        * mediastream/MediaStream.h:
+        (WebCore::MediaStream::audioTracks):
+        (WebCore::MediaStream::videoTracks):
+        * mediastream/MediaStream.idl:
+        * mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::kind):
+        (WebCore::MediaStreamTrack::label):
+        (WebCore::MediaStreamTrack::enabled):
+        (WebCore::MediaStreamTrack::setEnabled):
+        (WebCore::MediaStreamTrack::component):
+        * mediastream/MediaStreamTrack.h:
+        * mediastream/UserMediaClient.h:
+        * mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::mediaStreamSourcesQueryCompleted):
+        (WebCore::UserMediaRequest::succeed):
+        * mediastream/UserMediaRequest.h:
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore::MediaStreamCenter::queryMediaStreamSources):
+        (WebCore::MediaStreamCenter::didSetMediaStreamTrackEnabled):
+        * platform/mediastream/MediaStreamCenter.h:
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::create):
+        (WebCore::MediaStreamDescriptor::numberOfAudioComponents):
+        (WebCore::MediaStreamDescriptor::audioComponent):
+        (WebCore::MediaStreamDescriptor::numberOfVideoComponents):
+        (WebCore::MediaStreamDescriptor::videoComponent):
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+
 2012-01-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105738.

@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class MediaStreamComponent;
 class MediaStreamDescriptor;
 
 class MediaStreamSourcesQueryClient : public RefCounted<MediaStreamSourcesQueryClient> {
@@ -47,7 +48,7 @@ public:
     virtual bool audio() const = 0;
     virtual bool video() const = 0;
 
-    virtual void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector&) = 0;
+    virtual void mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources) = 0;
 };
 
 class MediaStreamCenter {
@@ -63,7 +64,7 @@ public:
     // FIXME: add a way to mute a MediaStreamSource from the WebKit API layer
 
     // Calls from the DOM objects to notify the platform
-    void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, unsigned componentIndex);
+    void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*);
     void didStopLocalMediaStream(MediaStreamDescriptor*);
     void didConstructMediaStream(MediaStreamDescriptor*);
 

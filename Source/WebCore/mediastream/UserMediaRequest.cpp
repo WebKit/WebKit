@@ -71,18 +71,18 @@ void UserMediaRequest::start()
     MediaStreamCenter::instance().queryMediaStreamSources(this);
 }
 
-void UserMediaRequest::mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& sources)
+void UserMediaRequest::mediaStreamSourcesQueryCompleted(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
     if (m_client)
-        m_client->requestUserMedia(this, sources);
+        m_client->requestUserMedia(this, audioSources, videoSources);
 }
 
-void UserMediaRequest::succeed(const MediaStreamSourceVector& sources)
+void UserMediaRequest::succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
     if (!m_scriptExecutionContext)
         return;
 
-    RefPtr<LocalMediaStream> stream = LocalMediaStream::create(m_scriptExecutionContext, sources);
+    RefPtr<LocalMediaStream> stream = LocalMediaStream::create(m_scriptExecutionContext, audioSources, videoSources);
     m_successCallback->handleEvent(stream.get());
 }
 

@@ -27,11 +27,13 @@ module core {
     interface [
         Conditional=MEDIA_STREAM,
         EventTarget,
-        Constructor(in MediaStreamTrackList trackList),
-        CallWith=ScriptExecutionContext
+        Constructor(in MediaStreamTrackList audioTracks, in MediaStreamTrackList videoTracks),
+        CallWith=ScriptExecutionContext,
+        ConstructorRaisesException
    ] MediaStream {
         readonly attribute DOMString label;
-        readonly attribute MediaStreamTrackList tracks;
+        readonly attribute MediaStreamTrackList audioTracks;
+        readonly attribute MediaStreamTrackList videoTracks;
 
         // FIXME: implement the record method when MediaStreamRecorder is available.
 

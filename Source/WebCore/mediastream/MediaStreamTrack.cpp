@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
 {
-    return adoptRef(new MediaStreamTrack(streamDescriptor, trackIndex));
+    return adoptRef(new MediaStreamTrack(streamDescriptor, component));
 }
 
-MediaStreamTrack::MediaStreamTrack(PassRefPtr<MediaStreamDescriptor> streamDescriptor, size_t trackIndex)
+MediaStreamTrack::MediaStreamTrack(PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
     : m_streamDescriptor(streamDescriptor)
-    , m_trackIndex(trackIndex)
+    , m_component(component)
 {
 }
 
@@ -53,7 +53,7 @@ String MediaStreamTrack::kind() const
     DEFINE_STATIC_LOCAL(String, audioKind, ("audio"));
     DEFINE_STATIC_LOCAL(String, videoKind, ("video"));
 
-    switch (m_streamDescriptor->component(m_trackIndex)->source()->type()) {
+    switch (m_component->source()->type()) {
     case MediaStreamSource::TypeAudio:
         return audioKind;
     case MediaStreamSource::TypeVideo:
@@ -66,27 +66,27 @@ String MediaStreamTrack::kind() const
 
 String MediaStreamTrack::label() const
 {
-    return m_streamDescriptor->component(m_trackIndex)->source()->name();
+    return m_component->source()->name();
 }
 
 bool MediaStreamTrack::enabled() const
 {
-    return m_streamDescriptor->component(m_trackIndex)->enabled();
+    return m_component->enabled();
 }
 
 void MediaStreamTrack::setEnabled(bool enabled)
 {
-    if (enabled == m_streamDescriptor->component(m_trackIndex)->enabled())
+    if (enabled == m_component->enabled())
         return;
 
-    m_streamDescriptor->component(m_trackIndex)->setEnabled(enabled);
+    m_component->setEnabled(enabled);
 
-    MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_trackIndex);
+    MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_component.get());
 }
 
 MediaStreamComponent* MediaStreamTrack::component()
 {
-    return m_streamDescriptor->component(m_trackIndex);
+    return m_component.get();
 }
 
 } // namespace WebCore
