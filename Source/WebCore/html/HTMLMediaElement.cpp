@@ -3620,9 +3620,9 @@ String HTMLMediaElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLMediaElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLMediaElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 

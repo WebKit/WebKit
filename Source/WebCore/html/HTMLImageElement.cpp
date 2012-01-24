@@ -375,9 +375,9 @@ String HTMLImageElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLImageElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLImageElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 

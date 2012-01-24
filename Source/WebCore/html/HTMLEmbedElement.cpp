@@ -236,9 +236,9 @@ String HTMLEmbedElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLEmbedElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLEmbedElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 

@@ -1,3 +1,37 @@
+2012-01-23  Arko Saha  <nghq36@motorola.com>
+
+        MicroData: Remove ExceptionCode& from setAttribute() call.
+        https://bugs.webkit.org/show_bug.cgi?id=76695
+
+        Reviewed by Hajime Morita.
+
+        Changeset http://trac.webkit.org/changeset/103296 removed unused
+        ExceptionCode& argument from Element::setAttribute(QualifiedName).
+        Hence updating all calls to setAttribute() method in MicroData code.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setItemValueText):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::setItemValueText):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::setItemValueText):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::setItemValueText):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setItemValueText):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setItemValueText):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setItemValueText):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::setItemValueText):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::setItemValueText):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::setItemValueText):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::setItemValueText):
+
 2012-01-23  Hayato Ito  <hayato@chromium.org>
 
         Fix crash when a focused node is removed while in processing focusin event.

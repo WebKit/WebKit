@@ -103,9 +103,9 @@ String HTMLMetaElement::itemValueText() const
     return getAttribute(contentAttr);
 }
 
-void HTMLMetaElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLMetaElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(contentAttr, value, ec);
+    setAttribute(contentAttr, value);
 }
 #endif
 

@@ -520,9 +520,9 @@ String HTMLObjectElement::itemValueText() const
     return getURLAttribute(dataAttr);
 }
 
-void HTMLObjectElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLObjectElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(dataAttr, value, ec);
+    setAttribute(dataAttr, value);
 }
 #endif
 

@@ -353,9 +353,9 @@ String HTMLTrackElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLTrackElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLTrackElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 

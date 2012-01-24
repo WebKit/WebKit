@@ -593,9 +593,9 @@ String HTMLAnchorElement::itemValueText() const
     return getURLAttribute(hrefAttr);
 }
 
-void HTMLAnchorElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLAnchorElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(hrefAttr, value, ec);
+    setAttribute(hrefAttr, value);
 }
 #endif
 

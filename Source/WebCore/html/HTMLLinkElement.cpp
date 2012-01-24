@@ -454,9 +454,9 @@ String HTMLLinkElement::itemValueText() const
     return getURLAttribute(hrefAttr);
 }
 
-void HTMLLinkElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLLinkElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(hrefAttr, value, ec);
+    setAttribute(hrefAttr, value);
 }
 #endif
 

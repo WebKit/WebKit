@@ -127,9 +127,9 @@ String HTMLSourceElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLSourceElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLSourceElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 

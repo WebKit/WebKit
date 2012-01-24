@@ -252,9 +252,9 @@ String HTMLAreaElement::itemValueText() const
     return getURLAttribute(hrefAttr);
 }
 
-void HTMLAreaElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLAreaElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(hrefAttr, value, ec);
+    setAttribute(hrefAttr, value);
 }
 #endif
 

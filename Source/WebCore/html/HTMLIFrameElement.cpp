@@ -128,9 +128,9 @@ String HTMLIFrameElement::itemValueText() const
     return getURLAttribute(srcAttr);
 }
 
-void HTMLIFrameElement::setItemValueText(const String& value, ExceptionCode& ec)
+void HTMLIFrameElement::setItemValueText(const String& value, ExceptionCode&)
 {
-    setAttribute(srcAttr, value, ec);
+    setAttribute(srcAttr, value);
 }
 #endif
 
