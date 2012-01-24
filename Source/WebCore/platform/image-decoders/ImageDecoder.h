@@ -301,6 +301,22 @@ namespace WebCore {
         void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
         bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
+        enum { iccColorProfileHeaderLength = 128 };
+
+        static bool rgbColorProfile(const char* profileData, unsigned profileLength)
+        {
+            ASSERT(profileLength >= iccColorProfileHeaderLength);
+
+            return !memcmp(&profileData[16], "RGB ", 4);
+        }
+
+        static bool inputDeviceColorProfile(const char* profileData, unsigned profileLength)
+        {
+            ASSERT(profileLength >= iccColorProfileHeaderLength);
+
+            return !memcmp(&profileData[12], "mntr", 4) || !memcmp(&profileData[12], "scnr", 4);
+        }
+
         // Sets the "decode failure" flag.  For caller convenience (since so
         // many callers want to return false after calling this), returns false
         // to enable easy tailcalling.  Subclasses may override this to also

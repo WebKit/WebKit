@@ -1,3 +1,23 @@
+2012-01-24  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] PNG image with CMYK ICC color profile renders color-inverted and squashed
+        https://bugs.webkit.org/show_bug.cgi?id=76804
+
+        Reviewed by Adam Barth.
+
+        Use color profiles for PNG images only if their embedded color profile is from an RGB
+        color space input device.
+
+        Test: fast/images/rgb-png-with-cmyk-color-profile.html
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::rgbColorProfile): Return true if the profile has an RGB color space.
+        (WebCore::ImageDecoder::inputDeviceColorProfile): Return true if the profile is from an input device.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::readColorProfile): Ignore PNG image embedded color profile unless the profile
+        comes from an RGB color space input device.
+        (WebCore::PNGImageDecoder::headerAvailable): Minor white-space removals courtesy Xcode.
+
 2012-01-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: fix sticky DOM breakpoints.
