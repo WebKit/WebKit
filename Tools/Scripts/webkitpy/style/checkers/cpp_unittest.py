@@ -1715,6 +1715,7 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_operator_methods(self):
         self.assert_lint('String operator+(const String&, const String&);', '')
+        self.assert_lint('String operator/(const String&, const String&);', '')
         self.assert_lint('bool operator==(const String&, const String&);', '')
         self.assert_lint('String& operator-=(const String&, const String&);', '')
         self.assert_lint('String& operator+=(const String&, const String&);', '')

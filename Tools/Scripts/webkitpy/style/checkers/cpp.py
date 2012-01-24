@@ -1808,7 +1808,7 @@ def check_spacing(file_extension, clean_lines, line_number, error):
     line = clean_lines.elided[line_number]  # get rid of comments and strings
 
     # Don't try to do spacing checks for operator methods
-    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=)\(', 'operator\(', line)
+    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', 'operator\(', line)
     # Don't try to do spacing checks for #include or #import statements at
     # minimum because it messes up checks for spacing around /
     if match(r'\s*#\s*(?:include|import)', line):
