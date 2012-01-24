@@ -1,5 +1,54 @@
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
+        The cpp parser of prepare-ChangeLog cannot detect a change in classes and namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=75531
+
+        Reviewed by David Kilzer.
+
+        Previously, the cpp parser of prepare-ChangeLog could not detect a change
+        outside methods. Consider the following cpp file.
+
+            namespace N {
+            int a;     // this change does not appear on ChangeLog.
+            class C {
+                int b;     // this change does not appear on ChangeLog.
+                void f()
+                {
+                    int c;     // this change appears on ChangeLog.
+                }
+                int d;     // this change does not appear on ChangeLog.
+            };
+            int e;     // this change does not appear on ChangeLog.
+            };
+
+        The previous prepare-ChangeLog outputs just methods in which a change is found:
+            (N::C::f):
+
+        This patch fixes prepare-ChangeLog so that it outputs namespaces, classes
+        and methods in which a change is found:
+            (N):
+            (N::C):
+            (N::C::f):
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp): Modified as described above.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp: Added test cases.
+        (Class104):
+        (Class105):
+        (Class106):
+        (Class106::func32):
+        (Class106::func33):
+        (NameSpace3):
+        (NameSpace4):
+        (NameSpace5):
+        (NameSpace6):
+        (Class107):
+        (NameSpace5::NameSpace6::Class107::func34):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+
+2012-01-24  Kentaro Hara  <haraken@chromium.org>
+
         prepare-ChangeLog outputs warnings for top-level { ... } blocks
         https://bugs.webkit.org/show_bug.cgi?id=75943
 

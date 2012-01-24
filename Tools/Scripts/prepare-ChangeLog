@@ -620,6 +620,7 @@ sub get_function_line_ranges_for_cpp($$)
     my $in_braces = 0;
     my $brace_start = 0;
     my $brace_end = 0;
+    my $namespace_start = -1;
     my $skip_til_brace_or_semicolon = 0;
 
     my $word = "";
@@ -695,11 +696,11 @@ sub get_function_line_ranges_for_cpp($$)
               } elsif (/{/) {
                   my $selector = method_decl_to_selector ($potential_method_spec);
                   $potential_name = "${potential_method_char}\[${interface_name} ${selector}\]";
-                  
+
                   $potential_method_spec = "";
                   $potential_method_char = "";
                   $in_method_declaration = 0;
-  
+
                   $_ = $original;
                   s/^[^;{]*//;
               } elsif (/\@end/) {
@@ -711,7 +712,7 @@ sub get_function_line_ranges_for_cpp($$)
               }
         }
 
-        
+
         # start of method declaration
         if ((my $method_char, my $method_spec) = m&^([-+])([^0-9;][^;]*);?$&) {
             my $original = $_;
@@ -731,7 +732,7 @@ sub get_function_line_ranges_for_cpp($$)
             if (/\{/) {
               my $selector = method_decl_to_selector ($potential_method_spec);
               $potential_name = "${potential_method_char}\[${interface_name} ${selector}\]";
-              
+
               $potential_method_spec = "";
               $potential_method_char = "";
               $in_method_declaration = 0;
@@ -777,9 +778,15 @@ sub get_function_line_ranges_for_cpp($$)
             if ($1 eq "{") {
                 $skip_til_brace_or_semicolon = 0;
 
+                if ($namespace_start >= 0 and $namespace_start < $potential_start) {
+                    push @ranges, [ $namespace_start . "", $potential_start - 1, $name ];
+                }
+
                 if ($potential_namespace) {
                     push @namespaces, $potential_namespace;
                     $potential_namespace = "";
+                    $name = $namespaces[-1];
+                    $namespace_start = $. + 1;
                     next;
                 }
 
@@ -803,7 +810,18 @@ sub get_function_line_ranges_for_cpp($$)
             # Close brace.
             if ($1 eq "}") {
                 if (!$in_braces && @namespaces) {
+                    if ($namespace_start >= 0 and $namespace_start < $.) {
+                        push @ranges, [ $namespace_start . "", $. - 1, $name ];
+                    }
+
                     pop @namespaces;
+                    if (@namespaces) {
+                        $name = $namespaces[-1];
+                        $namespace_start = $. + 1;
+                    } else {
+                        $name = "";
+                        $namespace_start = -1;
+                    }
                     next;
                 }
 
@@ -814,7 +832,13 @@ sub get_function_line_ranges_for_cpp($$)
                 # This could be a function body.
                 if (!$in_braces and $name) {
                     push @ranges, [ $start, $., $name ];
-                    $name = "";
+                    if (@namespaces) {
+                        $name = $namespaces[-1];
+                        $namespace_start = $. + 1;
+                    } else {
+                        $name = "";
+                        $namespace_start = -1;
+                    }
                 }
 
                 $potential_start = 0;
