@@ -34,6 +34,12 @@ namespace WebCore {
 class HWndDC {
     WTF_MAKE_NONCOPYABLE(HWndDC);
 public:
+    HWndDC()
+        : m_hwnd(0)
+        , m_hdc(0)
+    {
+    }
+
     explicit HWndDC(HWND hwnd)
         : m_hwnd(hwnd)
         , m_hdc(::GetDC(hwnd))
@@ -48,8 +54,24 @@ public:
 
     ~HWndDC()
     {
-        if (m_hdc)
-            ::ReleaseDC(m_hwnd, m_hdc);
+        clear();
+    }
+
+    HDC setHWnd(HWND hwnd)
+    {
+        clear();
+        m_hwnd = hwnd;
+        m_hdc = ::GetDC(hwnd);
+        return m_hdc;
+    }
+
+    void clear()
+    {
+        if (!m_hdc)
+            return;
+        ::ReleaseDC(m_hwnd, m_hdc);
+        m_hwnd = 0;
+        m_hdc = 0;
     }
 
     operator HDC()

@@ -1,3 +1,21 @@
+2012-01-18  David Levin  <levin@chromium.org>
+
+        Allow delayed DC allocation in HWndDC.
+        https://bugs.webkit.org/show_bug.cgi?id=76737
+
+        Reviewed by Adam Roben.
+
+        No new functionality exposed so no new tests.
+
+        * platform/win/HWndDC.h: Changed this slightly to allow
+        for allocating a window DC after the initial creation since
+        this pattern occurrs in several places so this makes it easy to
+        replace them in an upcoming change.
+        (WebCore::HWndDC::HWndDC):
+        (WebCore::HWndDC::~HWndDC):
+        (WebCore::HWndDC::setHWnd):
+        (WebCore::HWndDC::clear):
+
 2012-01-23  Arko Saha  <nghq36@motorola.com>
 
         MicroData: Compilation error while building Webkit with --microdata.
