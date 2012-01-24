@@ -31,7 +31,7 @@ WEBKIT += webcore
 }
 
 QT += network
-haveQt(5): QT += widgets printsupport
+haveQt(5): QT += widgets printsupport quick
 
 win32*:!win32-msvc* {
     # Make sure OpenGL libs are after the webcore lib so MinGW can resolve symbols

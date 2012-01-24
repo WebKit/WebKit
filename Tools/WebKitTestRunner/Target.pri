@@ -25,7 +25,7 @@ SOURCES += \
 
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 
-QT = core gui widgets network declarative testlib
+QT = core gui widgets network declarative testlib quick
 
 load(features)
 

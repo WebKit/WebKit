@@ -1,3 +1,12 @@
+2012-01-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Some qmake build files must include Qt5's "quick" module.
+        https://bugs.webkit.org/show_bug.cgi?id=76671
+
+        Unreviewed build fix.
+
+        * Source/api.pri:
+
 2012-01-21  Priit Laes  <plaes@plaes.org>
 
         [GTK][PATCH] Enable MathML support by default

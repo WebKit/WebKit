@@ -7,7 +7,7 @@ SOURCES += $${TARGET}.cpp \
            ../util.cpp
 INCLUDEPATH += $$PWD
 
-QT += testlib declarative widgets
+QT += testlib declarative widgets quick
 
 CONFIG += qtwebkit
 
