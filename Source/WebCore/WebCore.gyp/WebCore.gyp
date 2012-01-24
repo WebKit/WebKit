@@ -378,6 +378,8 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorBackendDispatcher.h',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorFrontend.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorTypeBuilder.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorTypeBuilder.h',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
           ],
           'variables': {
@@ -389,7 +391,6 @@
             '<@(_inputs)',
             '--output_h_dir', '<(SHARED_INTERMEDIATE_DIR)/webkit',
             '--output_cpp_dir', '<(SHARED_INTERMEDIATE_DIR)/webcore',
-            '--defines', '<(feature_defines) LANGUAGE_JAVASCRIPT',
           ],
           'message': 'Generating Inspector protocol sources from Inspector.json',
         },
@@ -1129,6 +1130,7 @@
         # Additional .cpp files from the webcore_inspector_sources list.
         '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorFrontend.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorTypeBuilder.cpp',
       ],
       'conditions': [
         ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {

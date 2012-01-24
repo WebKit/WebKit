@@ -57,8 +57,6 @@ TYPE_NAME_FIX_MAP = {
 
 
 cmdline_parser = optparse.OptionParser()
-# FIXME: get rid of this option once the system is stable.
-cmdline_parser.add_option("--defines")
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
 
@@ -75,40 +73,12 @@ try:
         raise Exception("Output .cpp directory must be specified")
 except Exception, e:
     sys.stderr.write("Failed to parse command-line arguments: %s\n\n" % e)
-    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir> [--defines <defines string>]\n")
+    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir>\n")
     exit(1)
 
 
 def dash_to_camelcase(word):
     return ''.join(x.capitalize() or '-' for x in word.split('-'))
-
-def parse_defines(str):
-    if not str:
-        return {}
-
-    items = str.split()
-    result = {}
-    for item in items:
-        if item[0] == '"' and item[-1] == '"' and len(item) >= 2:
-            item = item[1:-1]
-        eq_pos = item.find("=")
-        if eq_pos == -1:
-            key = item
-            value = True
-        else:
-            key = item[:eq_pos]
-            value_str = item[eq_pos + 1:]
-            if value_str == "0":
-                value = False
-            elif value_str == "1":
-                value = True
-            else:
-                # Should we support other values?
-                raise Exception("Unrecognized define value: '%s' (key: '%s')" % (value_str, key))
-        result[key] = value
-    return result
-
-defines_map = parse_defines(arg_options.defines)
 
 
 class Capitalizer:
@@ -1241,6 +1211,7 @@ $code    if (m_inspectorFrontendChannel)
 """#ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
+#include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
 #include <PlatformString.h>
 #include <wtf/PassRefPtr.h>
@@ -1289,6 +1260,7 @@ ${fieldDeclarations}};
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
+#include "InspectorTypeBuilder.h"
 
 namespace WebCore {
 
@@ -1711,10 +1683,49 @@ const char* const enum_constant_values[] = {
 $enumConstantValues};
 
 String getEnumConstantValue(int code) {
+    // Test variable from generated sources, declared in InspectorTypeBuilder.h and defined in InspectorTypeBuilder.cpp
+    ASSERT(typeBuilderTestVariable);
     return enum_constant_values[code];
 }
 
 } // namespace TypeBuilder
+
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
+""")
+
+    typebuilder_h = string.Template(file_header_ +
+"""
+#ifndef InspectorBackendDispatcher_h
+#define InspectorBackendDispatcher_h
+
+namespace WebCore {
+
+// FIXME: move here TypeBuilder namespace from InspectorFrontend.h
+
+// FIXME: Used to test that we don't miss .cpp file. Remove once tested.
+extern bool typeBuilderTestVariable;
+
+} // namespace WebCore
+#endif // !defined(InspectorBackendDispatcher_h)
+
+""")
+
+    typebuilder_cpp = string.Template(file_header_ +
+"""
+
+#include "config.h"
+#if ENABLE(INSPECTOR)
+
+#include "InspectorTypeBuilder.h"
+
+namespace WebCore {
+
+// FIXME: move here TypeBuilder namespace from InspectorFrontend.cpp
+
+// FIXME: Used to test that we don't miss .cpp file. Remove once tested.
+bool typeBuilderTestVariable = true;
 
 } // namespace WebCore
 
@@ -2168,14 +2179,11 @@ backend_cpp_file = open(output_cpp_dirname + "/InspectorBackendDispatcher.cpp", 
 frontend_h_file = open(output_header_dirname + "/InspectorFrontend.h", "w")
 frontend_cpp_file = open(output_cpp_dirname + "/InspectorFrontend.cpp", "w")
 
+typebuilder_h_file = open(output_header_dirname + "/InspectorTypeBuilder.h", "w")
+typebuilder_cpp_file = open(output_cpp_dirname + "/InspectorTypeBuilder.cpp", "w")
+
 backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
 
-
-frontend_h_file.write(Templates.frontend_h.substitute(None,
-         fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
-         domainClassList=join(Generator.frontend_domain_class_lines, ""),
-         typeBuilders=join(flatten_list(Generator.type_builder_fragments), ""),
-         forwards=join(Generator.type_builder_forwards, "")))
 
 backend_h_file.write(Templates.backend_h.substitute(None,
     constructorInit=join(Generator.backend_constructor_init_list, "\n"),
@@ -2185,16 +2193,26 @@ backend_h_file.write(Templates.backend_h.substitute(None,
     fieldDeclarations=join(Generator.backend_field_list, "\n"),
     forwardDeclarations=join(Generator.backend_forward_list, "\n")))
 
-frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
-    constructorInit=join(Generator.frontend_constructor_init_list, ""),
-    methods=join(Generator.frontend_method_list, "\n"),
-    enumConstantValues=EnumConstants.get_enum_constant_code()))
-
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
     includes=join(Generator.backend_include_list, "\n"),
     methods=join(Generator.backend_method_implementation_list, "\n"),
     messageHandlers=join(Generator.method_handler_list, "\n")))
+
+frontend_h_file.write(Templates.frontend_h.substitute(None,
+         fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
+         domainClassList=join(Generator.frontend_domain_class_lines, ""),
+         typeBuilders=join(flatten_list(Generator.type_builder_fragments), ""),
+         forwards=join(Generator.type_builder_forwards, "")))
+
+frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
+    constructorInit=join(Generator.frontend_constructor_init_list, ""),
+    methods=join(Generator.frontend_method_list, "\n"),
+    enumConstantValues=EnumConstants.get_enum_constant_code()))
+
+typebuilder_h_file.write(Templates.typebuilder_h.substitute(None))
+
+typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None))
 
 backend_js_file.write(Templates.backend_js.substitute(None,
     domainInitializers=join(Generator.backend_js_domain_initializer_list, "")))

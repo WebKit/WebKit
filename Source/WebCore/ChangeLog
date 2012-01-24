@@ -1,3 +1,26 @@
+2012-01-24  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: put TypeBuilder namespace in a separate sources
+        https://bugs.webkit.org/show_bug.cgi?id=76868
+
+        Reviewed by Yury Semikhatsky.
+
+        Configurations of (hopefully) all build systems are fixed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.py:
+        (dash_to_camelcase):
+        (InspectorFrontend_h):
+        (InspectorBackendDispatcher_h):
+
 2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Refactor GTK's accessibilitity code to be more modular
