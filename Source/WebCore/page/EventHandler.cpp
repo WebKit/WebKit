@@ -1920,8 +1920,7 @@ bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard
             preventedDefault = targetFrame->eventHandler()->performDragAndDrop(event, clipboard);
     } else if (m_dragTarget.get())
         preventedDefault = dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
-    if (preventedDefault)
-        clearDragState();
+    clearDragState();
     return preventedDefault;
 }
 
