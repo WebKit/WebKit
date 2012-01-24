@@ -1441,15 +1441,6 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
     return node;
 }
 
-void InspectorDOMAgent::copyNode(ErrorString*, int nodeId)
-{
-    Node* node = nodeForId(nodeId);
-    if (!node)
-        return;
-    String markup = createMarkup(node);
-    Pasteboard::generalPasteboard()->writePlainText(markup);
-}
-
 void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId)
 {
     if (Node* node = nodeForPath(path))

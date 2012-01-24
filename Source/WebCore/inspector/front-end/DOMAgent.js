@@ -269,12 +269,14 @@ WebInspector.DOMNode.prototype = {
         DOMAgent.removeNode(this.id, WebInspector.domAgent._markRevision(this, callback));
     },
 
-    /**
-     * @param {function(?Protocol.Error)=} callback
-     */
-    copyNode: function(callback)
+    copyNode: function()
     {
-        DOMAgent.copyNode(this.id, callback);
+        function copy(error, text)
+        {
+            if (!error)
+                InspectorFrontendHost.copyText(text);
+        }
+        DOMAgent.getOuterHTML(this.id, copy);
     },
 
     /**

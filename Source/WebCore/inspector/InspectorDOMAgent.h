@@ -162,7 +162,6 @@ public:
 
     Node* nodeForId(int nodeId);
     int boundNodeId(Node*);
-    void copyNode(ErrorString*, int nodeId);
     void setDOMListener(DOMListener*);
 
     static String documentURLString(Document*);

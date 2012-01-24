@@ -1315,14 +1315,6 @@
                 "hidden": true
             },
             {
-                "name": "copyNode",
-                "parameters": [
-                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to copy." }
-                ],
-                "description": "Copies node's HTML markup into the clipboard.",
-                "hidden": true
-            },
-            {
                 "name": "getOuterHTML",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get markup for." }
