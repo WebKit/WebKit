@@ -88,6 +88,11 @@ ContentLayerChromium::~ContentLayerChromium()
 {
 }
 
+bool ContentLayerChromium::drawsContent() const
+{
+    return TiledLayerChromium::drawsContent() && m_delegate;
+}
+
 void ContentLayerChromium::paintContentsIfDirty()
 {
     updateTileSizeAndTilingOption();

@@ -1,3 +1,21 @@
+2012-01-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add null check for ContentLayerChromium::m_delegate back to ContentLayerChromium::drawsContent()
+        https://bugs.webkit.org/show_bug.cgi?id=76887
+
+        Reviewed by Dimitri Glazkov.
+
+        A ContentLayerChromium's m_delegate pointer is nulled out when its owning GraphicsLayerChromium is destroyed.
+        It's possible in some circumstances for this to happen during painting. The null check for this pointer was
+        erroneously removed from the base class TiledLayerChromium in r105460.
+
+        No new tests since we don't know how to reproduce this sort of layer mutation during paint (not for lack of
+        trying!). Fix based on crash reports from the field.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+
 2012-01-16  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r102040): Wrong column widths when row has colspan and unwrappable text

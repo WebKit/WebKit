@@ -57,6 +57,7 @@ public:
 
     void clearDelegate() { m_delegate = 0; }
 
+    virtual bool drawsContent() const;
     virtual void paintContentsIfDirty();
     virtual void idlePaintContentsIfDirty();
 
@@ -64,6 +65,7 @@ public:
 
 protected:
     explicit ContentLayerChromium(ContentLayerDelegate*);
+
 
 private:
     virtual void createTextureUpdater(const CCLayerTreeHost*);
