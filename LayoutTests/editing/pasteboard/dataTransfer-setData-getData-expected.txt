@@ -31,8 +31,8 @@ PASS getDataResult is "# comment\r\nhttp://test.com\r\nhttp://check.com"
 PASS getDataResultType is "string"
 PASS getDataResult is "http://test.com/"
 --- Test set 'text/uri-list', get 'URL' with only comments:
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be  (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+PASS getDataResult is ""
 --- Test set/get 'text/plain':
 PASS getDataResultType is "string"
 PASS getDataResult is "Lorem ipsum dolor sit amet."

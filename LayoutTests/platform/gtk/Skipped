@@ -1298,6 +1298,7 @@ http/tests/navigation/post-307-response.html
 
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
+fast/events/dropzone-005.html
 
 # [GTK] DumpRenderTree doesn't block external requests
 # https://bugs.webkit.org/show_bug.cgi?id=62585

@@ -1,5 +1,26 @@
 2012-01-24  Daniel Cheng  <dcheng@chromium.org>
 
+        [chromium] event.dataTransfer.types should not return "Text" or "URL"
+        https://bugs.webkit.org/show_bug.cgi?id=76218
+
+        Per the spec, "Text" and "URL" are special values handled for IE compatibility reasons in
+        dataTransfer.setData() and dataTransfer.getData(). These values should not be exposed
+        elsewhere.
+
+        Reviewed by Tony Chang.
+
+        Test: fast/events/dropzone-005.html
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::canSmartReplace):
+
+2012-01-24  Daniel Cheng  <dcheng@chromium.org>
+
         Make DataTransferItemList::length() const.
         https://bugs.webkit.org/show_bug.cgi?id=76946
 

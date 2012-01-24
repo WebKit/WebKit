@@ -140,6 +140,7 @@ fast/events/drag-selects-image.html
 fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
+fast/events/dropzone-005.html
 fast/events/fire-mousedown-while-pressing-mouse-button.html
 fast/events/frame-click-focus.html
 fast/events/ondragenter.html

@@ -50,14 +50,14 @@ static bool containsHTML(const ChromiumDataObject* dropData)
 
 bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
-    return m_platformDragData->types().contains(mimeTypeURL)
+    return m_platformDragData->types().contains(mimeTypeTextURIList)
         || (filenamePolicy == ConvertFilenames && m_platformDragData->containsFilenames());
 }
 
 String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     String url;
-    if (m_platformDragData->types().contains(mimeTypeURL)) {
+    if (m_platformDragData->types().contains(mimeTypeTextURIList)) {
         bool ignoredSuccess;
         url = m_platformDragData->getData(mimeTypeURL, ignoredSuccess);
         if (title)
@@ -109,7 +109,7 @@ bool DragData::canSmartReplace() const
     // ClipboardWin::writeRange is called).  For example, dragging a link
     // should not result in a space being added.
     return m_platformDragData->types().contains(mimeTypeTextPlain)
-        && !m_platformDragData->types().contains(mimeTypeURL);
+        && !m_platformDragData->types().contains(mimeTypeTextURIList);
 }
 
 bool DragData::containsCompatibleContent() const

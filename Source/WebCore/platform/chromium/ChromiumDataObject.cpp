@@ -116,9 +116,6 @@ HashSet<String> ChromiumDataObject::types() const
         results.add(mimeTypeTextPlain);
     }
 
-    if (m_url.isValid())
-        results.add(mimeTypeURL);
-
     if (!m_uriList.isEmpty())
         results.add(mimeTypeTextURIList);
 
@@ -146,7 +143,7 @@ String ChromiumDataObject::getData(const String& type, bool& success) const
     }
 
     if (type == mimeTypeURL) {
-        success = !m_url.isEmpty();
+        success = !m_uriList.isEmpty();
         return m_url.string();
     }
 

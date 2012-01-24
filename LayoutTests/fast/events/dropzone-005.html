@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+#dropTarget, #dragMe { text-align: center; display: table-cell; vertical-align: middle }
+#dropTarget {width: 256px; height: 256px; border: 1px dashed}
+#dragMe {-webkit-user-drag: element; -webkit-user-select: none; background: #ff0000; width: 64px; height: 64px; color: white}
+</style>
+<script>
+var dragMe;
+var dropTarget;
+var dropEffectElem;
+var consoleElm;
+var event;
+
+window.onload = function()
+{
+    dragMe = document.getElementById("dragMe");
+    dropTarget = document.getElementById("dropTarget");
+    dropEffectElem = document.getElementById("dropEffect");
+    consoleElm = document.getElementById("console");
+    
+    if (!dragMe || !dropTarget || !dropEffectElem || !consoleElm)
+        return;
+    
+    dropEffectElem.onclick = changeDropZone;
+    changeDropZone();
+    dropTarget.ondrop = drop;
+    dragMe.ondragend = function()
+    {
+        debug("Received dragend event");
+    }
+    
+    runTest();
+}
+
+function changeDropZone()
+{
+    dropTarget.setAttribute("webkitdropzone", " StRinG:text/plain sTrING:url " + dropEffectElem.options[dropEffectElem.selectedIndex].value);
+}
+
+function printDropEvent(e)
+{
+    chosenDropEffect = dropEffectElem.options[dropEffectElem.selectedIndex].value;
+    debug("Received drop event when chosenDropEffect is " + chosenDropEffect);
+}
+
+function runTest()
+{
+    if (!window.eventSender)
+        return;
+        
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+        
+    var startX = dragMe.offsetLeft + 10;
+    var startY = dragMe.offsetTop + dragMe.offsetHeight / 2;
+    var endX = dropTarget.offsetLeft + 10;
+    var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2
+    
+    var numEffects = dropEffectElem.options.length;
+    
+    for (var j = 0; j < numEffects; ++j) {
+        dropEffectElem.options[j].selected = true;
+        changeDropZone();
+            
+        eventSender.mouseMoveTo(startX, startY);
+        eventSender.mouseDown();
+        eventSender.leapForward(100);
+        eventSender.mouseMoveTo(endX, endY);
+        eventSender.mouseUp();
+    }
+
+    var testContainer = document.getElementById("test-container");
+    if (testContainer)
+        document.body.removeChild(testContainer);
+    debug('<br /><span class="pass">TEST COMPLETE</span>');
+}
+</script>
+<script src="resources/dropzone.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="test-container">
+<div id="dropTarget">Drop the image onto me.<br/><br/>
+<label for="dropEffect">Expects dropEffect</label> <select id="dropEffect">
+<option value="copy">Copy</option>
+<option value="move">Move</option>
+<option value="link">Link</option>
+<option value="dummy">Nonexistent (Dummy) Effect should be converted to copy</option>
+</select>
+</div>
+<hr/>
+<p>Items that can be dragged to the drop target:</p>
+<img id="dragMe" src="resources/greenbox.png">
+<hr/>
+</div>
+<div id="console"></div>
+<script>
+description("This test checks that dragging an image on to a drop zone doesn't match string:url.<br/>");
+</script>
+</body>
+</html>
