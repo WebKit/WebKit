@@ -1,3 +1,31 @@
+2012-01-24  Kentaro Hara  <haraken@chromium.org>
+
+        prepare-ChangeLog outputs warnings for top-level { ... } blocks
+        https://bugs.webkit.org/show_bug.cgi?id=75943
+
+        Reviewed by David Kilzer.
+
+        Currently, prepare-ChangeLog outputs warnings for top-level { ... } blocks,
+        because it does not distinguish '}' at the end of a subroutine
+        with '}' at the end of a if or for statement.
+
+        foo.pl:
+            if (1) {
+            }
+            for (@v) {
+            }
+
+        output:
+            nested functions found at top-level at foo.pl:2
+            nested functions found at top-level at foo.pl:4
+
+        This patch fixes the bug.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_perl):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests.pl:
+        Added test cases. No change in the test results.
+
 2012-01-24  Dirk Pranke  <dpranke@chromium.org>
 
         r105674 broke check-webkit-style for chromium's test_expectations.

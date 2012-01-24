@@ -131,3 +131,13 @@ sub prototypeDeclaration1;
 sub prototypeDeclaration2();
 sub prototypeDeclaration3(\@$$);
 
+if (1) {
+}
+
+for (@array) {
+}
+
+{}
+
+{
+}

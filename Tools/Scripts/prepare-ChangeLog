@@ -1307,10 +1307,7 @@ sub get_function_line_ranges_for_perl($$)
                 $hereDocumentIdentifier = $1;
             }
             if (index($_, "}") == 0) {
-                unless ($start) {
-                    warn "nested functions found at top-level at $fileName:$.\n";
-                    next;
-                }
+                next unless $start;
                 push(@ranges, [$start, $., $currentFunction]);
                 $currentFunction = "";
                 $start = 0;
