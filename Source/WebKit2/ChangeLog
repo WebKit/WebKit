@@ -1,3 +1,16 @@
+2012-01-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] TestDownloads hitting an assertion in Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=76915
+
+        Reviewed by Martin Robinson.
+
+        No new tests required as it fixes some assertions in a unit test.
+
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+
 2012-01-24  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Qt's cross-process AC copies images excessively when updating tiles.

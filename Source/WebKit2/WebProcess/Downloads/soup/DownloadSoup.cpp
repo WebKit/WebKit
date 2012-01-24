@@ -132,8 +132,8 @@ public:
 
 void Download::start(WebPage* initiatingWebPage)
 {
-    ASSERT(m_downloadClient);
-    ASSERT(m_resourceHandle);
+    ASSERT(!m_downloadClient);
+    ASSERT(!m_resourceHandle);
     m_downloadClient = adoptPtr(new DownloadClient(this));
     m_resourceHandle = ResourceHandle::create(0, m_request, m_downloadClient.get(), false, false);
     didStart();
@@ -141,8 +141,8 @@ void Download::start(WebPage* initiatingWebPage)
 
 void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* resourceHandle, const ResourceResponse&)
 {
-    ASSERT(m_downloadClient);
-    ASSERT(m_resourceHandle);
+    ASSERT(!m_downloadClient);
+    ASSERT(!m_resourceHandle);
     m_downloadClient = adoptPtr(new DownloadClient(this));
     resourceHandle->setClient(m_downloadClient.get());
     m_resourceHandle = resourceHandle;
