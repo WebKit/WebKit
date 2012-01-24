@@ -58,7 +58,7 @@ private:
     unsigned iconURLHashForPageURL(const String&);
     static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo);
     uint64_t m_contextId;
-    WebKit::WebIconDatabase* m_iconDatabase;
+    RefPtr<WebKit::WebIconDatabase> m_iconDatabase;
     Mutex m_imageLock;
 };
 

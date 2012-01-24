@@ -53,11 +53,12 @@ QtWebIconDatabaseClient::QtWebIconDatabaseClient(QtWebContext *qtWebContext)
     iconDatabaseClient.version = kWKIconDatabaseClientCurrentVersion;
     iconDatabaseClient.clientInfo = this;
     iconDatabaseClient.didChangeIconForPageURL = didChangeIconForPageURL;
-    WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase), &iconDatabaseClient);
+    WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), &iconDatabaseClient);
 }
 
 QtWebIconDatabaseClient::~QtWebIconDatabaseClient()
 {
+    WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), 0);
 }
 
 void QtWebIconDatabaseClient::didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo)
