@@ -3234,13 +3234,8 @@ sub WriteData
     my $implFileName = "$outputDir/$prefix$name.cpp";
     my $depsFileName = "$outputDir/$prefix$name.dep";
 
-    # Remove old dependency file.
-    unlink($depsFileName);
-
-    open(IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
-
-    # Write content to file.
-    print IMPL @implContentHeader;
+    # Update a .cpp file if the contents are changed.
+    my $contents = join "", @implContentHeader;
 
     my @includes = ();
     my %implIncludeConditions = ();
@@ -3259,27 +3254,25 @@ sub WriteData
         }
     }
     foreach my $include (sort @includes) {
-        print IMPL "#include $include\n";
+        $contents .= "#include $include\n";
     }
     foreach my $condition (sort keys %implIncludeConditions) {
-        print IMPL "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
+        $contents .= "\n#if " . $codeGenerator->GenerateConditionalStringFromAttributeValue($condition) . "\n";
         foreach my $include (sort @{$implIncludeConditions{$condition}}) {
-            print IMPL "#include $include\n";
+            $contents .= "#include $include\n";
         }
-        print IMPL "#endif\n";
+        $contents .= "#endif\n";
     }
 
-    print IMPL @implContent;
-    close(IMPL);
+    $contents .= join "", @implContent;
+    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
 
     @implContentHeader = ();
     @implContent = ();
     %implIncludes = ();
 
-    open(HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
-
-    # Write content to file.
-    print HEADER @headerContentHeader;
+    # Update a .h file if the contents are changed.
+    $contents = join "", @headerContentHeader;
 
     @includes = ();
     foreach my $include (keys %headerIncludes) {
@@ -3287,10 +3280,10 @@ sub WriteData
         push @includes, $include;
     }
     foreach my $include (sort @includes) {
-        print HEADER "#include $include\n";
+        $contents .= "#include $include\n";
     }
 
-    print HEADER @headerContent;
+    $contents .= join "", @headerContent;
 
     @includes = ();
     foreach my $include (keys %headerTrailingIncludes) {
@@ -3298,10 +3291,9 @@ sub WriteData
         push @includes, $include;
     }
     foreach my $include (sort @includes) {
-        print HEADER "#include $include\n";
+        $contents .= "#include $include\n";
     }
-
-    close(HEADER);
+    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
 
     @headerContentHeader = ();
     @headerContent = ();
@@ -3309,10 +3301,9 @@ sub WriteData
     %headerTrailingIncludes = ();
 
     if (@depsContent) {
-        open(DEPS, ">$depsFileName") || die "Couldn't open file $depsFileName";
-        # Write dependency file.
-        print DEPS @depsContent;
-        close(DEPS);
+        # Update a .dep file if the contents are changed.
+        $contents = join "", @depsContent;
+        $codeGenerator->UpdateFileIfChanged($depsFileName, $contents);
 
         @depsContent = ();
     }
