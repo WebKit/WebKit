@@ -1,3 +1,13 @@
+2012-01-24  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Fix the event timestamps for touch mocking
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::sendTouchEvent): We should not set QEvent::None as the
+        timestamp argument in the QWindowSystemInterface::handleTouchEvent call.
+
 2012-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement DownloadClient in WebKit2 GTK+ API

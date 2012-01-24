@@ -179,7 +179,7 @@ void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
     }
 
     m_pendingFakeTouchEventCount++;
-    QWindowSystemInterface::handleTouchEvent(browserWindow, QEvent::None, device, m_touchPoints.values());
+    QWindowSystemInterface::handleTouchEvent(browserWindow, device, m_touchPoints.values());
 
     if (!m_windowOptions.useTraditionalDesktopBehavior())
         browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
