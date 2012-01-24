@@ -1,5 +1,30 @@
 2012-01-23  David Levin  <levin@chromium.org>
 
+        [windows] Convert usages of GetDC to HWndDC Part 2.
+        https://bugs.webkit.org/show_bug.cgi?id=76750
+
+        Reviewed by Adam Roben.
+
+        * FullscreenVideoController.cpp:
+        (createCompatibleDCForWindow): Moved out the code which creates a DC for a window
+        to keep the same scope for the DC lifetime.
+        (FullscreenVideoController::draw):  Switch to using OwnPtr<HDC>
+        since createCompatibleDCForWindow returns a PassOwnPtr.
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::update): 
+          Cleaned up leaks from calling GetDC without release.
+          Note that there is a potential leak of hdc that previously existed
+          and still does in an early exit scenario. (This could be easily fixed
+          by using OwnPtr<HDC> but I was trying to keep this patch focused.)
+        * WebView.cpp:
+        (WebView::scrollBackingStore): Typical conversion.
+        (WebView::updateBackingStore): Reduced the scope of windowDC to be
+        right where it is being used.
+        (WebView::performLayeredWindowUpdate): Typical conversion.
+        (WebView::paintIntoBackingStore): Ditto.
+
+2012-01-23  David Levin  <levin@chromium.org>
+
         [windows] Convert usages of GetDC to HWndDC Part 1.
         https://bugs.webkit.org/show_bug.cgi?id=76744
 

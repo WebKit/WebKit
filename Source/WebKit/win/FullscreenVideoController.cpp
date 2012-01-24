@@ -37,11 +37,14 @@
 #include <WebCore/Font.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/TextRun.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -482,12 +485,10 @@ static String timeToString(float time)
 
 void FullscreenVideoController::draw()
 {
-    HDC windowDC = GetDC(m_hudWindow);
-    HDC bitmapDC = CreateCompatibleDC(windowDC);
-    ::ReleaseDC(m_hudWindow, windowDC);
-    HGDIOBJ oldBitmap = SelectObject(bitmapDC, m_bitmap.get());
+    OwnPtr<HDC> bitmapDC = adoptPtr(CreateCompatibleDC(HWndDC(m_hudWindow)));
+    HGDIOBJ oldBitmap = SelectObject(bitmapDC.get(), m_bitmap.get());
 
-    GraphicsContext context(bitmapDC, true);
+    GraphicsContext context(bitmapDC.get(), true);
 
     context.save();
 
@@ -549,12 +550,11 @@ void FullscreenVideoController::draw()
     SIZE size = { windowWidth, windowHeight };
     POINT sourcePoint = {0, 0};
     POINT destPoint = { m_hudPosition.x(), m_hudPosition.y() };
-    BOOL result = UpdateLayeredWindow(m_hudWindow, 0, &destPoint, &size, bitmapDC, &sourcePoint, 0, &blendFunction, ULW_ALPHA);
+    BOOL result = UpdateLayeredWindow(m_hudWindow, 0, &destPoint, &size, bitmapDC.get(), &sourcePoint, 0, &blendFunction, ULW_ALPHA);
 
     context.restore();
 
-    ::SelectObject(bitmapDC, oldBitmap);
-    ::DeleteDC(bitmapDC);
+    ::SelectObject(bitmapDC.get(), oldBitmap);
 }
 
 LRESULT FullscreenVideoController::hudWndProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)

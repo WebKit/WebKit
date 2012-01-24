@@ -28,6 +28,7 @@
 
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HWndDC.h>
 
 using namespace WebCore;
 
@@ -39,10 +40,10 @@ HDC ShareableBitmap::windowsContext() const
     if (m_windowsContext)
         return m_windowsContext.get();
 
-    OwnPtr<HDC> screenDC = adoptPtr(::GetDC(0));
+    HWndDC screenDC(0);
     BitmapInfo bmInfo = BitmapInfo::createBottomUp(m_size);
 
-    m_windowsContext = adoptPtr(::CreateCompatibleDC(screenDC.get()));
+    m_windowsContext = adoptPtr(::CreateCompatibleDC(screenDC));
     m_windowsBitmap = adoptPtr(CreateDIBSection(m_windowsContext.get(), &bmInfo, DIB_RGB_COLORS, 0, m_sharedMemory->handle(), 0));
     ::SelectObject(m_windowsContext.get(), m_windowsBitmap.get());
 

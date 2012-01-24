@@ -33,11 +33,12 @@
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/HWndDC.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
 
 using namespace WebCore;
 
@@ -134,7 +135,7 @@ void WebNodeHighlight::update()
 {
     ASSERT(m_overlay);
 
-    HDC hdc = ::CreateCompatibleDC(::GetDC(m_overlay));
+    HDC hdc = ::CreateCompatibleDC(HWndDC(m_overlay));
     if (!hdc)
         return;
 
@@ -174,8 +175,7 @@ void WebNodeHighlight::update()
     dstPoint.x = webViewRect.left;
     dstPoint.y = webViewRect.top;
 
-    ::UpdateLayeredWindow(m_overlay, ::GetDC(0), &dstPoint, &size, hdc, &srcPoint, 0, &bf, ULW_ALPHA);
-
+    ::UpdateLayeredWindow(m_overlay, HWndDC(0), &dstPoint, &size, hdc, &srcPoint, 0, &bf, ULW_ALPHA);
     ::DeleteDC(hdc);
 }
 

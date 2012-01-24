@@ -1,5 +1,16 @@
 2012-01-23  David Levin  <levin@chromium.org>
 
+        [windows] Convert usages of GetDC to HWndDC Part 2.
+        https://bugs.webkit.org/show_bug.cgi?id=76750
+
+        Reviewed by Adam Roben.
+
+        * Shared/win/ShareableBitmapWin.cpp:
+        (WebKit::ShareableBitmap::windowsContext): Fix incorrect usage of OwnPtr<HDC> which
+        would do a DeleteDC instead of a ReleaseDC.
+
+2012-01-23  David Levin  <levin@chromium.org>
+
         [windows] Convert usages of GetDC to HWndDC Part 1.
         https://bugs.webkit.org/show_bug.cgi?id=76744
 
