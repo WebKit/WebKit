@@ -1,3 +1,12 @@
+2012-01-23  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should support Chromium Mac Lion
+        https://bugs.webkit.org/show_bug.cgi?id=76880
+
+        Reviewed by Eric Seidel.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+
 2012-01-23  Emil A Eklund  <eae@chromium.org>
 
         check-webkit-style whitespace/operators triggers on overloaded division operator
