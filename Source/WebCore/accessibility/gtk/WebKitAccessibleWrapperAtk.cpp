@@ -93,7 +93,7 @@ static AccessibilityObject* core(AtkObject* object)
     return core(WEBKIT_ACCESSIBLE(object));
 }
 
-static const gchar* webkit_accessible_get_name(AtkObject* object)
+static const gchar* webkitAccessibleGetName(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
     if (!coreObject->isAccessibilityRenderObject())
@@ -139,7 +139,7 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
     return returnString(coreObject->stringValue());
 }
 
-static const gchar* webkit_accessible_get_description(AtkObject* object)
+static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
     Node* node = 0;
@@ -223,7 +223,7 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
     return coreParent->wrapper();
 }
 
-static AtkObject* webkit_accessible_get_parent(AtkObject* object)
+static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 {
     // Check first if the parent has been already set.
     AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->get_parent(object);
@@ -270,7 +270,7 @@ static gint getNChildrenForTable(AccessibilityObject* coreObject)
     return cellsCount;
 }
 
-static gint webkit_accessible_get_n_children(AtkObject* object)
+static gint webkitAccessibleGetNChildren(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
 
@@ -307,7 +307,7 @@ static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gi
     return 0;
 }
 
-static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
+static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
 {
     if (index < 0)
         return 0;
@@ -371,8 +371,7 @@ static gint getIndexInParentForCellInRow(AccessibilityObject* coreObject)
     return -1;
 }
 
-
-static gint webkit_accessible_get_index_in_parent(AtkObject* object)
+static gint webkitAccessibleGetIndexInParent(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* parent = coreObject->parentObjectUnignored();
@@ -407,7 +406,7 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
     return -1;
 }
 
-static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
+static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 {
     AtkAttributeSet* attributeSet = 0;
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
@@ -534,7 +533,7 @@ static AtkRole atkRole(AccessibilityRole role)
     }
 }
 
-static AtkRole webkit_accessible_get_role(AtkObject* object)
+static AtkRole webkitAccessibleGetRole(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
 
@@ -671,7 +670,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
         atk_state_set_add_state(stateSet, ATK_STATE_VISITED);
 }
 
-static AtkStateSet* webkit_accessible_ref_state_set(AtkObject* object)
+static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
 {
     AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_state_set(object);
     AccessibilityObject* coreObject = core(object);
@@ -690,7 +689,7 @@ static AtkStateSet* webkit_accessible_ref_state_set(AtkObject* object)
     return stateSet;
 }
 
-static AtkRelationSet* webkit_accessible_ref_relation_set(AtkObject* object)
+static AtkRelationSet* webkitAccessibleRefRelationSet(AtkObject* object)
 {
     AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_relation_set(object);
     AccessibilityObject* coreObject = core(object);
@@ -700,7 +699,7 @@ static AtkRelationSet* webkit_accessible_ref_relation_set(AtkObject* object)
     return relationSet;
 }
 
-static void webkit_accessible_init(AtkObject* object, gpointer data)
+static void webkitAccessibleInit(AtkObject* object, gpointer data)
 {
     if (ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize)
         ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize(object, data);
@@ -708,7 +707,7 @@ static void webkit_accessible_init(AtkObject* object, gpointer data)
     WEBKIT_ACCESSIBLE(object)->m_object = reinterpret_cast<AccessibilityObject*>(data);
 }
 
-static void webkit_accessible_finalize(GObject* object)
+static void webkitAccessibleFinalize(GObject* object)
 {
     // This is a good time to clear the return buffer.
     returnString(String());
@@ -722,19 +721,19 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
 
     webkit_accessible_parent_class = g_type_class_peek_parent(klass);
 
-    gobjectClass->finalize = webkit_accessible_finalize;
+    gobjectClass->finalize = webkitAccessibleFinalize;
 
-    klass->initialize = webkit_accessible_init;
-    klass->get_name = webkit_accessible_get_name;
-    klass->get_description = webkit_accessible_get_description;
-    klass->get_parent = webkit_accessible_get_parent;
-    klass->get_n_children = webkit_accessible_get_n_children;
-    klass->ref_child = webkit_accessible_ref_child;
-    klass->get_role = webkit_accessible_get_role;
-    klass->ref_state_set = webkit_accessible_ref_state_set;
-    klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
-    klass->get_attributes = webkit_accessible_get_attributes;
-    klass->ref_relation_set = webkit_accessible_ref_relation_set;
+    klass->initialize = webkitAccessibleInit;
+    klass->get_name = webkitAccessibleGetName;
+    klass->get_description = webkitAccessibleGetDescription;
+    klass->get_parent = webkitAccessibleGetParent;
+    klass->get_n_children = webkitAccessibleGetNChildren;
+    klass->ref_child = webkitAccessibleRefChild;
+    klass->get_role = webkitAccessibleGetRole;
+    klass->ref_state_set = webkitAccessibleRefStateSet;
+    klass->get_index_in_parent = webkitAccessibleGetIndexInParent;
+    klass->get_attributes = webkitAccessibleGetAttributes;
+    klass->ref_relation_set = webkitAccessibleRefRelationSet;
 }
 
 GType
