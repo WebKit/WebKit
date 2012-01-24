@@ -932,15 +932,9 @@ sub WriteData
     my $headerFileName = "$outputDir/" . $name . ".h";
     my $implFileName = "$outputDir/" . $name . ".cpp";
 
-    # Remove old files.
-    unlink($headerFileName);
-    unlink($implFileName);
-
-    # Write public header.
-    open(HEADER, ">$headerFileName") or die "Couldn't open file $headerFileName";
-    
-    print HEADER @headerContentHeader;
-    print HEADER "\n";
+    # Update a .h file if the contents are changed.
+    my $contents = join "", @headerContentHeader;
+    $contents .= "\n";
     foreach my $class (sort keys(%headerForwardDeclarations)) {
         if ($class =~ /::/) {
             my $namespacePart = $class;
@@ -949,34 +943,32 @@ sub WriteData
             my $classPart = $class;
             $classPart =~ s/${namespacePart}:://;
 
-            print HEADER "namespace $namespacePart {\nclass $classPart;\n};\n\n";
+            $contents .= "namespace $namespacePart {\nclass $classPart;\n};\n\n";
         } else {
-            print HEADER "class $class;\n"
+            $contents .= "class $class;\n"
         }
     }
 
     my $hasForwardDeclarations = keys(%headerForwardDeclarations);
-    print HEADER "\n" if $hasForwardDeclarations;
-    print HEADER @headerContent;
-    close(HEADER);
+    $contents .= "\n" if $hasForwardDeclarations;
+    $contents .= join "", @headerContent;
+    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
 
     @headerContentHeader = ();
     @headerContent = ();
     %headerForwardDeclarations = ();
 
-    # Write implementation file.
-    open(IMPL, ">$implFileName") or die "Couldn't open file $implFileName";
-
-    print IMPL @implContentHeader;
+    # Update a .cpp file if the contents are changed.
+    $contents = join "", @implContentHeader;
 
     foreach my $include (sort keys(%implIncludes)) {
         # "className.h" is already included right after config.h, silence check-webkit-style
         next if $include eq "$name.h";
-        print IMPL "#include \"$include\"\n";
+        $contents .= "#include \"$include\"\n";
     }
 
-    print IMPL @implContent;
-    close(IMPL);
+    $contents .= join "", @implContent;
+    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
 
     @implContentHeader = ();
     @implContent = ();
