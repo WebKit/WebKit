@@ -38,7 +38,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
 {
     // Arguments: Options, successCallback, (optional)errorCallback
 
-    String options = ustringToString(exec->argument(0).toString(exec));
+    String options = ustringToString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return jsUndefined();
 

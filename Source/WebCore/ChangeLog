@@ -1,3 +1,10 @@
+2012-01-24  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for GTK Debug build after r105698.
+
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::webkitGetUserMedia):
+
 2012-01-23  Scott Graham  <scottmg@chromium.org>
 
         Avoid spurious rebuilds on vs2010 due to DerivedSources not existing
