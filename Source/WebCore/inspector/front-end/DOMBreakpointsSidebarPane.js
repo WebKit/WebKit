@@ -60,6 +60,7 @@ WebInspector.DOMBreakpointsSidebarPane = function()
 WebInspector.DOMBreakpointsSidebarPane.prototype = {
     _inspectedURLChanged: function(event)
     {
+        this._breakpointElements = {};
         this._reset();
         var url = event.data;
         this._inspectedURL = url.removeURLFragment();

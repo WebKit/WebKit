@@ -1,3 +1,13 @@
+2012-01-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: fix sticky DOM breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=64437
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._inspectedURLChanged):
+
 2012-01-24  Gregg Tavares  <gman@google.com>
 
         Expose WebGL texture compression methods on WebGLRenderingContext
