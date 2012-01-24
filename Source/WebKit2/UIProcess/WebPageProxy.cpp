@@ -2367,6 +2367,11 @@ void WebPageProxy::authenticationRequiredRequest(const String& hostname, const S
 {
     m_pageClient->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, username, password);
 }
+
+void WebPageProxy::certificateVerificationRequest(const String& hostname, bool& ignoreErrors)
+{
+    m_pageClient->handleCertificateVerificationRequest(hostname, ignoreErrors);
+}
 #endif // PLATFORM(QT).
 
 #if ENABLE(TOUCH_EVENTS)

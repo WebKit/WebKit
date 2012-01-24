@@ -43,6 +43,7 @@ QtNetworkAccessManager::QtNetworkAccessManager(WebProcess* webProcess)
     , m_webProcess(webProcess)
 {
     connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)), SLOT(onAuthenticationRequired(QNetworkReply*, QAuthenticator*)));
+    connect(this, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 }
 
 WebPage* QtNetworkAccessManager::obtainOriginatingWebPage(const QNetworkRequest& request)
@@ -93,6 +94,25 @@ void QtNetworkAccessManager::onAuthenticationRequired(QNetworkReply* reply, QAut
             authenticator->setUser(username);
         if (!password.isEmpty())
             authenticator->setPassword(password);
+    }
+}
+
+void QtNetworkAccessManager::onSslErrors(QNetworkReply* reply, const QList<QSslError>& qSslErrors)
+{
+    WebPage* webPage = obtainOriginatingWebPage(reply->request());
+
+    // FIXME: This check can go away once our Qt version is up-to-date. See: QTBUG-23512.
+    if (!webPage)
+        return;
+
+    String hostname = reply->url().host();
+    bool ignoreErrors = false;
+
+    if (webPage->sendSync(
+        Messages::WebPageProxy::CertificateVerificationRequest(hostname),
+        Messages::WebPageProxy::CertificateVerificationRequest::Reply(ignoreErrors))) {
+        if (ignoreErrors)
+            reply->ignoreSslErrors(qSslErrors);
     }
 }
 

@@ -1,3 +1,40 @@
+2012-01-23  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Implement SSL error handling QML API.
+        https://bugs.webkit.org/show_bug.cgi?id=76793
+
+        Reviewed by Simon Hausmann.
+
+        This patch implements support for accepting or rejecting invalid SSL
+        certificates from the QML API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::handleCertificateVerificationRequest):
+        (QQuickWebViewExperimental::certificateVerificationDialog):
+        (QQuickWebViewExperimental::setCertificateVerificationDialog):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::certificateVerificationRequest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (CertificateVerificationDialogContextObject::CertificateVerificationDialogContextObject):
+        (CertificateVerificationDialogContextObject::hostname):
+        (CertificateVerificationDialogContextObject::accept):
+        (CertificateVerificationDialogContextObject::reject):
+        (QtDialogRunner::initForCertificateVerification):
+        * UIProcess/qt/QtDialogRunner.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::handleCertificateVerificationRequest):
+        * UIProcess/qt/QtPageClient.h:
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::QtNetworkAccessManager):
+        (WebKit::QtNetworkAccessManager::onSslErrors):
+        * WebProcess/qt/QtNetworkAccessManager.h:
+
 2012-01-23  David Levin  <levin@chromium.org>
 
         [windows] Convert usages of GetDC to HWndDC Part 2.

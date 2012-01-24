@@ -118,6 +118,11 @@ void QtPageClient::handleAuthenticationRequiredRequest(const String& hostname, c
     password = qPassword;
 }
 
+void QtPageClient::handleCertificateVerificationRequest(const String& hostname, bool& ignoreErrors)
+{
+    ignoreErrors = QQuickWebViewPrivate::get(m_webView)->handleCertificateVerificationRequest(hostname);
+}
+
 void QtPageClient::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: This is a temporary fix until we get cursor support in QML items.

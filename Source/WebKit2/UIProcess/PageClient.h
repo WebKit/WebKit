@@ -110,7 +110,8 @@ public:
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
     virtual void updateTextInputState() = 0;
     virtual void handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password) = 0;
-#endif
+    virtual void handleCertificateVerificationRequest(const String& hostname, bool& ignoreErrors) = 0;
+#endif // PLATFORM(QT).
 
 #if PLATFORM(QT) || PLATFORM(GTK)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) = 0;

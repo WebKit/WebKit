@@ -39,6 +39,7 @@ public:
     bool initForConfirm(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message);
     bool initForPrompt(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& message, const QString& defaultValue);
     bool initForAuthentication(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername);
+    bool initForCertificateVerification(QDeclarativeComponent*, QQuickItem*, const QString& hostname);
 
     QQuickItem* dialog() const { return m_dialog.get(); }
 

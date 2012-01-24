@@ -55,6 +55,7 @@ public:
     virtual void handleDownloadRequest(DownloadProxy*);
     virtual void handleApplicationSchemeRequest(PassRefPtr<QtNetworkRequestData>);
     virtual void handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password);
+    virtual void handleCertificateVerificationRequest(const String& hostname, bool& ignoreErrors);
 
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);

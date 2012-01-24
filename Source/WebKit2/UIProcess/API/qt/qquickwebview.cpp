@@ -60,6 +60,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , confirmDialog(0)
     , promptDialog(0)
     , authenticationDialog(0)
+    , certificateVerificationDialog(0)
     , itemSelector(0)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , isTransitioningToNewPage(false)
@@ -479,6 +480,25 @@ void QQuickWebViewPrivate::handleAuthenticationRequiredRequest(const QString& ho
     password = dialogRunner.password();
 }
 
+bool QQuickWebViewPrivate::handleCertificateVerificationRequest(const QString& hostname)
+{
+    if (!certificateVerificationDialog)
+        return false;
+
+    Q_Q(QQuickWebView);
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForCertificateVerification(certificateVerificationDialog, q, hostname))
+        return false;
+
+    setViewInAttachedProperties(dialogRunner.dialog());
+
+    disableMouseEvents();
+    dialogRunner.exec();
+    enableMouseEvents();
+
+    return dialogRunner.wasAccepted();
+}
+
 void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType type)
 {
 #ifndef QT_NO_FILEDIALOG
@@ -723,6 +743,21 @@ void QQuickWebViewExperimental::setAuthenticationDialog(QDeclarativeComponent* a
         return;
     d->authenticationDialog = authenticationDialog;
     emit authenticationDialogChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::certificateVerificationDialog() const
+{
+    Q_D(const QQuickWebView);
+    return d->certificateVerificationDialog;
+}
+
+void QQuickWebViewExperimental::setCertificateVerificationDialog(QDeclarativeComponent* certificateVerificationDialog)
+{
+    Q_D(QQuickWebView);
+    if (d->certificateVerificationDialog == certificateVerificationDialog)
+        return;
+    d->certificateVerificationDialog = certificateVerificationDialog;
+    emit certificateVerificationDialogChanged();
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::itemSelector() const

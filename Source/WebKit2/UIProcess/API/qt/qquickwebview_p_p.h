@@ -98,6 +98,7 @@ public:
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
 
     void handleAuthenticationRequiredRequest(const QString& hostname, const QString& realm, const QString& prefilledUsername, QString& username, QString& password);
+    bool handleCertificateVerificationRequest(const QString& hostname);
 
     void setUseTraditionalDesktopBehaviour(bool enable);
     void setViewInAttachedProperties(QObject*);
@@ -154,6 +155,7 @@ private:
     QDeclarativeComponent* confirmDialog;
     QDeclarativeComponent* promptDialog;
     QDeclarativeComponent* authenticationDialog;
+    QDeclarativeComponent* certificateVerificationDialog;
     QDeclarativeComponent* itemSelector;
 
     WebCore::ViewportArguments viewportArguments;

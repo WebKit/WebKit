@@ -102,6 +102,31 @@ private:
     QString m_prefilledUsername;
 };
 
+class CertificateVerificationDialogContextObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString hostname READ hostname CONSTANT)
+
+public:
+    CertificateVerificationDialogContextObject(const QString& hostname)
+        : QObject()
+        , m_hostname(hostname)
+    {
+    }
+
+    QString hostname() const { return m_hostname; }
+
+public slots:
+    void accept() { emit accepted(); }
+    void reject() { emit rejected(); }
+
+signals:
+    void accepted();
+    void rejected();
+
+private:
+    QString m_hostname;
+};
+
 bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
@@ -144,6 +169,19 @@ bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQu
 
     connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(onAuthenticationAccepted(QString, QString)));
     connect(contextObject, SIGNAL(accepted(QString, QString)), SLOT(quit()));
+    connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+
+    return true;
+}
+
+bool QtDialogRunner::initForCertificateVerification(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname)
+{
+    CertificateVerificationDialogContextObject* contextObject = new CertificateVerificationDialogContextObject(hostname);
+    if (!createDialog(component, dialogParent, contextObject))
+        return false;
+
+    connect(contextObject, SIGNAL(accepted()), SLOT(onAccepted()));
+    connect(contextObject, SIGNAL(accepted()), SLOT(quit()));
     connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
 
     return true;
