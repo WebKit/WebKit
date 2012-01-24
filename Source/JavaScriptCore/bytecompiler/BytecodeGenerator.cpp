@@ -217,7 +217,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(m_globalData->stack())
+    , m_stack(wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -288,7 +288,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(m_globalData->stack())
+    , m_stack(wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -449,7 +449,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(m_globalData->stack())
+    , m_stack(wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {

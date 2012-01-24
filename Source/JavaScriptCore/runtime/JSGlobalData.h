@@ -230,13 +230,6 @@ namespace JSC {
         bool canUseJIT() { return m_canUseJIT; }
 #endif
 
-        const StackBounds& stack()
-        {
-            return (globalDataType == Default)
-                ? m_stack
-                : wtfThreadData().stack();
-        }
-
         OwnPtr<ParserArena> parserArena;
         OwnPtr<Keywords> keywords;
         Interpreter* interpreter;
@@ -362,7 +355,6 @@ namespace JSC {
 #if ENABLE(JIT) && ENABLE(INTERPRETER)
         bool m_canUseJIT;
 #endif
-        StackBounds m_stack;
 #if ENABLE(GC_VALIDATION)
         bool m_isInitializingObject;
 #endif
