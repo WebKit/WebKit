@@ -40,6 +40,10 @@
     overflow: auto;
 }
 
+.tabbed-pane-content.has-no-tabs {
+    background-color: lightgray;
+}
+
 .tabbed-pane-header {
     height: 23px;
     border-bottom: 1px solid rgb(163, 163, 163);

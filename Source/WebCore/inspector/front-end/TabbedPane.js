@@ -208,6 +208,11 @@ WebInspector.TabbedPane.prototype = {
         if (!this.isShowing())
             return;
 
+        if (!this._tabs.length)
+            this._contentElement.addStyleClass("has-no-tabs");
+        else
+            this._contentElement.removeStyleClass("has-no-tabs");
+        
         if (!this._measuredDropDownButtonWidth)
             this._measureDropDownButton();
 

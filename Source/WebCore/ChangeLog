@@ -1,5 +1,17 @@
 2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Scripts panel tabbed editor container should have gray background when there are no open tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=76903
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype._updateTabElements):
+        * inspector/front-end/tabbedPane.css:
+        (.tabbed-pane-content.has-no-tabs):
+
+2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: OpenResourceDialog should work when there are no open tabs in scripts panel.
         https://bugs.webkit.org/show_bug.cgi?id=76907
 
