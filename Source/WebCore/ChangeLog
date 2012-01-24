@@ -1,3 +1,25 @@
+2012-01-24  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In CodeGeneratorGObject.pm, merge
+        GeneratePrivateHeader() into WriteData()
+        https://bugs.webkit.org/show_bug.cgi?id=76923
+
+        Reviewed by Adam Barth.
+
+        This patch merges GeneratePrivateHeader() into WriteData(),
+        so that all code to output .h/.cpp is managed by WriteData(),
+        just like other CodeGenerator*.pm does.
+
+        No tests. No change in behavior.
+        Confirm that GTK/GObject build passes.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (Generate):
+        (WriteData): Copied GeneratePrivateHeader() to here.
+        Removed $hasLegacyParen, $hasRealParent and $hasParent
+        since they are not used.
+        (GenerateInterface):
+
 2012-01-24  Daniel Cheng  <dcheng@chromium.org>
 
         dropzone does not normalize type strings
