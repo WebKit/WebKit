@@ -67,7 +67,8 @@ sub decode16BitUnicodeEscapeSequences
     return $result;
 }
 
-print "Content-Type: text/html; charset=UTF-8\n\n";
+my $charsetToUse = $cgi->param('charset') ? $cgi->param('charset') : "UTF-8";
+print "Content-Type: text/html; charset=$charsetToUse\n\n";
 
 print "<!DOCTYPE html>\n";
 print "<html>\n";

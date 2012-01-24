@@ -1,3 +1,30 @@
+2012-01-23  Tom Sepez  <tsepez@chromium.org>
+
+        decodeEscapeSequences() not correct for some encodings (GBK, Big5, ...).
+        https://bugs.webkit.org/show_bug.cgi?id=71316
+
+        Reviewed by Daniel Bates.
+
+        Pass trailing unescaped bytes into the character set decoder to get correct
+        results in the presence of encodings which re-use ASCII values in sequences.
+        
+        Tests: http/tests/navigation/anchor-frames-gbk.html
+               http/tests/security/xssAuditor/iframe-onload-GBK-char.html
+               http/tests/security/xssAuditor/img-onerror-GBK-char.html
+               http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode-16bit-unicode.html
+               http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode.html
+               http/tests/security/xssAuditor/script-tag-Big5-char.html
+               http/tests/security/xssAuditor/script-tag-Big5-char2.html
+
+        * platform/text/DecodeEscapeSequences.h:
+        (WebCore::Unicode16BitEscapeSequence::findInString):
+        (WebCore::Unicode16BitEscapeSequence::findEndOfRun):
+        (WebCore::Unicode16BitEscapeSequence::decodeRun):
+        (WebCore::URLEscapeSequence::findInString):
+        (WebCore::URLEscapeSequence::findEndOfRun):
+        (WebCore::URLEscapeSequence::decodeRun):
+        (WebCore::decodeEscapeSequences):
+
 2012-01-23  Adam Barth  <abarth@webkit.org>
 
         Fix a build break in a clean compile of the Chromium port (at least

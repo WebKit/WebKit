@@ -1930,6 +1930,9 @@ BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch
 // Note: this test was also marked as flaky on WIN RELEASE above, BUGCR31342.
 BUGCR39423 : security/block-test.html = TIMEOUT
 
+// Due to the differences in handling text encodings in KURL and googleurl.
+BUGWK20559 : http/tests/navigation/anchor-frames-gbk.html = TEXT
+
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
