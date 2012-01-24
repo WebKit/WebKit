@@ -1,3 +1,15 @@
+2012-01-24  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Refactor GTK's accessibilitity code to be more modular
+        https://bugs.webkit.org/show_bug.cgi?id=76783
+
+        Reviewed by Martin Robinson.
+
+        Cleanup the list of includes in WebKitAccessibleWrapperAtk.cpp.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp: Removes
+        'include' lines that are no longer needed after the refactor.
+
 2012-01-24  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Remove CookieJarEfl.cpp

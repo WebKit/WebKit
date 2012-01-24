@@ -34,33 +34,14 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
-#include "AccessibilityList.h"
-#include "AccessibilityListBox.h"
-#include "AccessibilityListBoxOption.h"
-#include "AccessibilityTable.h"
-#include "AccessibilityTableCell.h"
-#include "AccessibilityTableColumn.h"
-#include "AccessibilityTableRow.h"
-#include "CharacterNames.h"
 #include "Document.h"
-#include "DocumentType.h"
-#include "Editor.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GOwnPtr.h"
 #include "HTMLNames.h"
-#include "HTMLSelectElement.h"
-#include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
 #include "HostWindow.h"
-#include "InlineTextBox.h"
-#include "IntRect.h"
-#include "NotImplemented.h"
-#include "RenderListItem.h"
-#include "RenderListMarker.h"
-#include "RenderText.h"
+#include "RenderObject.h"
 #include "Settings.h"
-#include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
 #include "WebKitAccessibleInterfaceAction.h"
@@ -77,14 +58,8 @@
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
 #include "visible_units.h"
-
-#include <atk/atk.h>
-#include <glib.h>
 #include <glib/gprintf.h>
-#include <libgail-util/gail-util.h>
-#include <pango/pango.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/CString.h>
+#include <gtk/gtk.h>
 
 using namespace WebCore;
 
