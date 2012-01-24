@@ -1,3 +1,12 @@
+2012-01-23  Scott Graham  <scottmg@chromium.org>
+
+        Avoid spurious rebuilds on vs2010 due to DerivedSources not existing
+        https://bugs.webkit.org/show_bug.cgi?id=76873
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-01-23  Geoffrey Garen  <ggaren@apple.com>
 
         JSValue::toString() should return a JSString* instead of a UString
