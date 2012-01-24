@@ -27,6 +27,7 @@ WebKitCacheModel
 webkit_web_context_get_default
 webkit_web_context_get_cache_model
 webkit_web_context_set_cache_model
+webkit_web_context_download_uri
 
 <SUBSECTION Standard>
 WebKitWebContextClass
@@ -315,11 +316,14 @@ webkit_download_get_type
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR
 WEBKIT_POLICY_ERROR
+WEBKIT_DOWNLOAD_ERROR
 WebKitNetworkError
 WebKitPluginError
 WebKitPolicyError
+WebKitDownloadError
 webkit_network_error_quark
 webkit_plugin_error_quark
 webkit_policy_error_quark
+webkit_download_error_quark
 </SECTION>
 

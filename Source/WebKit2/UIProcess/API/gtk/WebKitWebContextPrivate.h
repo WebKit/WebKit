@@ -32,6 +32,9 @@
 G_BEGIN_DECLS
 
 WKContextRef webkitWebContextGetWKContext(WebKitWebContext*);
+WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef);
+void webkitWebContextRemoveDownload(WKDownloadRef);
+void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
 
 G_END_DECLS
 

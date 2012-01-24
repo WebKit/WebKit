@@ -60,6 +60,7 @@ def get_webkit2_options():
                    ' -I' + src_path(),
         'ignored_files': glob.glob(src_path('*Private.h')) + \
                          glob.glob(src_path('PageClientImpl.*')) + \
+                         glob.glob(src_path('WebKitDownloadClient.*')) + \
                          glob.glob(src_path('WebKitUIClient.*')) + \
                          glob.glob(src_path('WebKitWebLoaderClient.*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \

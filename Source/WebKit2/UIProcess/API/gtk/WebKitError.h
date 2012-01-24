@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 #define WEBKIT_NETWORK_ERROR webkit_network_error_quark ()
 #define WEBKIT_POLICY_ERROR  webkit_policy_error_quark ()
 #define WEBKIT_PLUGIN_ERROR  webkit_plugin_error_quark ()
+#define WEBKIT_DOWNLOAD_ERROR webkit_download_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -89,14 +90,31 @@ typedef enum {
     WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD = 204,
 } WebKitPluginError;
 
-WEBKIT_API GQuark
-webkit_network_error_quark (void);
+/**
+ * WebKitDownloadError:
+ * @WEBKIT_DOWNLOAD_ERROR_NETWORK: Download failure due to network error
+ * @WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER: Download was cancelled by user
+ * @WEBKIT_DOWNLOAD_ERROR_DESTINATION: Download failure due to destination error
+ *
+ * Enum values used to denote the various download errors.
+ */
+typedef enum {
+    WEBKIT_DOWNLOAD_ERROR_NETWORK = 499,
+    WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER = 400,
+    WEBKIT_DOWNLOAD_ERROR_DESTINATION = 401
+} WebKitDownloadError;
 
 WEBKIT_API GQuark
-webkit_policy_error_quark  (void);
+webkit_network_error_quark  (void);
 
 WEBKIT_API GQuark
-webkit_plugin_error_quark  (void);
+webkit_policy_error_quark   (void);
+
+WEBKIT_API GQuark
+webkit_plugin_error_quark   (void);
+
+WEBKIT_API GQuark
+webkit_download_error_quark (void);
 
 G_END_DECLS
 

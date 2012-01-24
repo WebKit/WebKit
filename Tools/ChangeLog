@@ -1,3 +1,13 @@
+2012-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement DownloadClient in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=72952
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Ignore WebKitDownloadClient.
+
 2012-01-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] editing/deleting/5408255.html results are incorrect

@@ -1,3 +1,57 @@
+2012-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement DownloadClient in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=72952
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp: Added.
+        (didStart): Call webkitWebContextDownloadStarted().
+        (didReceiveResponse): Call webkitDownloadSetResponse() with the
+        received response.
+        (didReceiveData): Call webkitDownloadNotifyProgress().
+        (decideDestinationWithSuggestedFilename): Call
+        webkitDownloadDecideDestinationWithSuggestedFilename().
+        (didCreateDestination): Call webkitDownloadDestinationCreated().
+        (didFail): Call webkitDownloadFailed() or
+        webkitDownloadCancelled() if the download was cancelled before
+        failing.
+        (didCancel): Call webkitDownloadCancelled().
+        (didFinish): Call webkitDownloadFinished().
+        (attachDownloadClientToContext): Add
+        implementation for download client callbacks.
+        * UIProcess/API/gtk/WebKitDownloadClient.h: Added.
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_download_error_quark): Add quark for download errors.
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_class_init): Add download-started signal.
+        (createDefaultWebContext): Initialize the download client.
+        (downloadsMap): HashMap containing download objects for all
+        ongoing download operations.
+        (webkit_web_context_download_uri): Start a new download for the
+        given URI.
+        (webkitWebContextGetOrCreateDownload): Helper function to create a
+        new download object or return the existing one from the downloads map.
+        (webkitWebContextRemoveDownload): Remove the download object from
+        the downloads map.
+        (webkitWebContextDownloadStarted): Emit
+        WebKitWebContext::download-started for the given download object.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test for downloads.
+        * UIProcess/API/gtk/tests/TestDownloads.cpp: Added.
+        (getWebKit1TestResoucesDir):
+        (testDownloadLocalFile):
+        (testDownloadLocalFileError):
+        (serverCallback):
+        (testDownloadRemoteFile):
+        (testDownloadRemoteFileError):
+        (beforeAll):
+        (afterAll):
+
 2012-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitDownload to WebKit2 GTK+ API

@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitDownload.h>
 
 G_BEGIN_DECLS
 
@@ -88,6 +89,10 @@ webkit_web_context_set_cache_model (WebKitWebContext *context,
                                     WebKitCacheModel  cache_model);
 WEBKIT_API WebKitCacheModel
 webkit_web_context_get_cache_model (WebKitWebContext *context);
+
+WEBKIT_API WebKitDownload *
+webkit_web_context_download_uri    (WebKitWebContext *context,
+                                    const gchar      *uri);
 
 G_END_DECLS
 

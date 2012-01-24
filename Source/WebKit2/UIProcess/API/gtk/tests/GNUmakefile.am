@@ -3,7 +3,8 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitWebView \
 	Programs/WebKit2APITests/TestWebKitWebLoaderClient \
 	Programs/WebKit2APITests/TestWebKitSettings \
-	Programs/WebKit2APITests/TestBackForwardList
+	Programs/WebKit2APITests/TestBackForwardList \
+	Programs/WebKit2APITests/TestDownloads
 
 noinst_PROGRAMS += $(TEST_PROGS)
 
@@ -15,6 +16,7 @@ endif
 
 webkit2_tests_cppflags = \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
+	-DWEBKIT_SRC_DIR=\"${shell pwd}/${srcdir}\" \
 	$(javascriptcore_cppflags) \
 	-I$(srcdir)/Source/JavaScriptCore \
 	-I$(srcdir)/Source \
@@ -96,3 +98,10 @@ Programs_WebKit2APITests_TestWebKitAccessibility_CPPFLAGS = $(webkit2_tests_cppf
 Programs_WebKit2APITests_TestWebKitAccessibility_LDADD = $(webkit2_tests_ldadd) $(ATSPI2_LIBS)
 Programs_WebKit2APITests_TestWebKitAccessibility_LDFLAGS = $(webkit2_tests_ldflags)
 endif
+
+Programs_WebKit2APITests_TestDownloads_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestDownloads.cpp
+Programs_WebKit2APITests_TestDownloads_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestDownloads_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestDownloads_LDFLAGS = $(webkit2_tests_ldflags)
+

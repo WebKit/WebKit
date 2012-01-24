@@ -20,12 +20,28 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebContext.h"
+#include "WebKitDownloadClient.h"
+#include "WebKitDownloadPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include <wtf/HashMap.h>
+#include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
+
+using namespace WebKit;
+
+enum {
+    DOWNLOAD_STARTED,
+
+    LAST_SIGNAL
+};
 
 struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
 };
+
+static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
@@ -47,15 +63,32 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webContextClass);
     gObjectClass->finalize = webkitWebContextFinalize;
 
+    /**
+     * WebKitWebContext::download-started:
+     * @context: the #WebKitWebContext
+     * @download: the #WebKitDownload associated with this event
+     *
+     * This signal is emitted when a new download request is made.
+     */
+    signals[DOWNLOAD_STARTED] =
+        g_signal_new("download-started",
+                     G_TYPE_FROM_CLASS(gObjectClass),
+                     G_SIGNAL_RUN_LAST,
+                     0, 0, 0,
+                     g_cclosure_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1,
+                     WEBKIT_TYPE_DOWNLOAD);
+
     g_type_class_add_private(webContextClass, sizeof(WebKitWebContextPrivate));
 }
-
 
 static gpointer createDefaultWebContext(gpointer)
 {
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL));
     webContext->priv->context = WKContextGetSharedProcessContext();
     WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
+    attachDownloadClientToContext(webContext);
+
     return webContext;
 }
 
@@ -148,6 +181,59 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
     }
 
     return WEBKIT_CACHE_MODEL_WEB_BROWSER;
+}
+
+typedef HashMap<WKDownloadRef, GRefPtr<WebKitDownload> > DownloadsMap;
+
+static DownloadsMap& downloadsMap()
+{
+    DEFINE_STATIC_LOCAL(DownloadsMap, downloads, ());
+    return downloads;
+}
+
+/**
+ * webkit_web_context_download_uri:
+ * @context: a #WebKitWebContext
+ * @uri: the URI to download
+ *
+ * Requests downloading of the specified URI string.
+ *
+ * Returns: (transfer full): a new #WebKitDownload representing the
+ *    the download operation.
+ */
+WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const gchar* uri)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+    g_return_val_if_fail(uri, 0);
+
+    WebKitWebContextPrivate* priv = context->priv;
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKURLCreateWithUTF8CString(uri));
+    WKRetainPtr<WKURLRequestRef> wkRequest(AdoptWK, WKURLRequestCreateWithWKURL(wkURL.get()));
+    WKRetainPtr<WKDownloadRef> wkDownload = WKContextDownloadURLRequest(priv->context.get(), wkRequest.get());
+    WebKitDownload* download = webkitDownloadCreate(wkDownload.get());
+    downloadsMap().set(wkDownload.get(), download);
+    return download;
+}
+
+WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)
+{
+    GRefPtr<WebKitDownload> download = downloadsMap().get(wkDownload);
+    if (download)
+        return download.get();
+
+    download = adoptGRef(webkitDownloadCreate(wkDownload));
+    downloadsMap().set(wkDownload, download.get());
+    return download.get();
+}
+
+void webkitWebContextRemoveDownload(WKDownloadRef wkDownload)
+{
+    downloadsMap().remove(wkDownload);
+}
+
+void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* download)
+{
+    g_signal_emit(context, signals[DOWNLOAD_STARTED], 0, download);
 }
 
 WKContextRef webkitWebContextGetWKContext(WebKitWebContext* context)
