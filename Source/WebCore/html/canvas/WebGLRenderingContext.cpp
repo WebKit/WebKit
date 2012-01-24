@@ -1195,8 +1195,8 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width,
-                                                 GC3Dsizei height, GC3Dint border, ArrayBufferView* data)
+void WebGLRenderingContext::compressedTexImage2D(GC3Denum /*target*/, GC3Dint /*level*/, GC3Denum /*internalformat*/, GC3Dsizei /*width*/,
+                                                 GC3Dsizei /*height*/, GC3Dint /*border*/, ArrayBufferView* /*data*/)
 {
     if (isContextLost())
         return;
@@ -1205,8 +1205,8 @@ void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level,
     m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
 }
 
-void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                                                    GC3Dsizei width, GC3Dsizei height, GC3Denum format, ArrayBufferView* data)
+void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum /*target*/, GC3Dint /*level*/, GC3Dint /*xoffset*/, GC3Dint /*yoffset*/,
+                                                    GC3Dsizei /*width*/, GC3Dsizei /*height*/, GC3Denum /*format*/, ArrayBufferView* /*data*/)
 {
     if (isContextLost())
         return;
