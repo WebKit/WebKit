@@ -1,3 +1,15 @@
+2012-01-24  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [V8] Add Uint8ClampedArray support
+        https://bugs.webkit.org/show_bug.cgi?id=76803
+
+        Reviewed by Kenneth Russell.
+
+        * wtf/ArrayBufferView.h:
+        (WTF::ArrayBufferView::isUnsignedByteClampedArray): Added.
+        * wtf/Uint8ClampedArray.h:
+        (WTF::Uint8ClampedArray::isUnsignedByteClampedArray): Overridden to return true.
+
 2012-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitDownload to WebKit2 GTK+ API

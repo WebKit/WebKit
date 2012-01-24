@@ -56,6 +56,7 @@ optimizeSetMethod(Int8Array);
 optimizeSetMethod(Int16Array);
 optimizeSetMethod(Int32Array);
 optimizeSetMethod(Uint8Array);
+optimizeSetMethod(Uint8ClampedArray);
 optimizeSetMethod(Uint16Array);
 optimizeSetMethod(Uint32Array);
 

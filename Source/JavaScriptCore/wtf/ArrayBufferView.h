@@ -40,6 +40,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
   public:
     virtual bool isByteArray() const { return false; }
     virtual bool isUnsignedByteArray() const { return false; }
+    virtual bool isUnsignedByteClampedArray() const { return false; }
     virtual bool isShortArray() const { return false; }
     virtual bool isUnsignedShortArray() const { return false; }
     virtual bool isIntArray() const { return false; }

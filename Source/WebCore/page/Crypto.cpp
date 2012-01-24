@@ -42,6 +42,7 @@ bool isIntegerArray(ArrayBufferView* array)
 {
     return array->isByteArray()
         || array->isUnsignedByteArray()
+        || array->isUnsignedByteClampedArray()
         || array->isShortArray()
         || array->isUnsignedShortArray()
         || array->isIntArray()

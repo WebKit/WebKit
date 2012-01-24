@@ -51,6 +51,7 @@
 #include "Uint16Array.h"
 #include "Uint32Array.h"
 #include "Uint8Array.h"
+#include "Uint8ClampedArray.h"
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
@@ -69,6 +70,7 @@
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"
+#include "V8Uint8ClampedArray.h"
 #include "V8Utilities.h"
 
 #include <wtf/Assertions.h>
@@ -214,6 +216,7 @@ enum SerializationTag {
 enum ArrayBufferViewSubTag {
     ByteArrayTag = 'b',
     UnsignedByteArrayTag = 'B',
+    UnsignedByteClampedArrayTag = 'C',
     ShortArrayTag = 'w',
     UnsignedShortArrayTag = 'W',
     IntArrayTag = 'd',
@@ -396,6 +399,8 @@ public:
             append(ByteArrayTag);
         else if (arrayBufferView.isUnsignedByteArray())
             append(UnsignedByteArrayTag);
+        else if (arrayBufferView.isUnsignedByteClampedArray())
+            append(UnsignedByteClampedArrayTag);
         else if (arrayBufferView.isShortArray())
             append(ShortArrayTag);
         else if (arrayBufferView.isUnsignedShortArray())
@@ -1627,6 +1632,9 @@ private:
             break;
         case UnsignedByteArrayTag:
             *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        case UnsignedByteClampedArrayTag:
+            *value = toV8(Uint8ClampedArray::create(arrayBuffer.release(), byteOffset, byteLength));
             break;
         case ShortArrayTag: {
             uint32_t shortLength = byteLength / sizeof(int16_t);

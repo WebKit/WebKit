@@ -51,6 +51,9 @@ private:
                              unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<unsigned char>;
+
+    // Overridden from ArrayBufferView.
+    virtual bool isUnsignedByteClampedArray() const { return true; }
 };
 
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(unsigned length)

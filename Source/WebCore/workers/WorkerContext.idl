@@ -118,6 +118,7 @@ module threads {
         attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
         attribute Int8ArrayConstructor Int8Array; // Usable with new operator
         attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
+        attribute Uint8ArrayConstructor Uint8ClampedArray; // Usable with new operator
         attribute Int16ArrayConstructor Int16Array; // Usable with new operator
         attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
         attribute Int32ArrayConstructor Int32Array; // Usable with new operator
