@@ -1,3 +1,56 @@
+2012-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitDownload to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=72949
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitDownload.cpp: Added.
+        (webkitDownloadFinalize):
+        (webkitDownloadGetProperty):
+        (webkitDownloadDecideDestination):
+        (webkit_download_init):
+        (webkit_download_class_init):
+        (webkitDownloadCreate): Create a new WebKitDownload for a given
+        WKDownloadRef.
+        (webkitDownloadSetResponse): Set the network response of the
+        download.
+        (webkitDownloadIsCancelled): Whether the download has been
+        cancelled by the user.
+        (webkitDownloadNotifyProgress): Emit notify::estimated-progress if
+        needed.
+        (webkitDownloadFailed): Emit WebKitDownload::failed with the given
+        error.
+        (webkitDownloadCancelled): Emit WebKitDownload::failed with
+        cancelled error.
+        (webkitDownloadFinished): Emit WebKitDownload::finished.
+        (webkitDownloadDecideDestinationWithSuggestedFilename): Emit
+        WebKitDownload::decide-destination.
+        (webkitDownloadDestinationCreated): Emit
+        WebKitDownload::created-destination.
+        (webkit_download_get_destination): Return the destination URI of
+        the download.
+        (webkit_download_set_destination): Set the destination URI of the
+        download.
+        (webkit_download_get_response): Return the response received by
+        the server.
+        (webkit_download_cancel): Cancel the download.
+        (webkit_download_get_estimated_progress): Return the estimated
+        progress.
+        (webkit_download_get_elapsed_time): Return the time elapsed since
+        the download started.
+        * UIProcess/API/gtk/WebKitDownload.h: Added.
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkitURIResponseGetResourceResponse):
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_download_get_type().
+        * UIProcess/API/gtk/webkit2.h: Include WebKitDownload.h.
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2012-01-23  Geoffrey Garen  <ggaren@apple.com>
 
         JSValue::toString() should return a JSString* instead of a UString

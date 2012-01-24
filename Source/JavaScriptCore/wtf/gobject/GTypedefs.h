@@ -58,6 +58,7 @@ typedef struct _GSocketConnection GSocketConnection;
 typedef struct _GSource GSource;
 typedef struct _GVariant GVariant;
 typedef union _GdkEvent GdkEvent;
+typedef struct _GTimer GTimer;
 
 #if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;

@@ -8,3 +8,5 @@ webkit_settings_get_type
 webkit_uri_response_get_type
 webkit_uri_request_get_type
 webkit_window_properties_get_type
+webkit_download_get_type
+

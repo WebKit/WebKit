@@ -49,6 +49,12 @@ template <> void freeOwnedGPtr<GDir>(GDir* ptr)
         g_dir_close(ptr);
 }
 
+template <> void freeOwnedGPtr<GTimer>(GTimer* ptr)
+{
+    if (ptr)
+        g_timer_destroy(ptr);
+}
+
 } // namespace WTF
 
 #endif // ENABLE(GLIB_SUPPORT)

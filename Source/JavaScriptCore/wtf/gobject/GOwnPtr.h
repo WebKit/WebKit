@@ -37,6 +37,7 @@ template<> void freeOwnedGPtr<GError>(GError*);
 template<> void freeOwnedGPtr<GList>(GList*);
 template<> void freeOwnedGPtr<GPatternSpec>(GPatternSpec*);
 template<> void freeOwnedGPtr<GDir>(GDir*);
+template<> void freeOwnedGPtr<GTimer>(GTimer*);
 
 template <typename T> class GOwnPtr {
     WTF_MAKE_NONCOPYABLE(GOwnPtr);

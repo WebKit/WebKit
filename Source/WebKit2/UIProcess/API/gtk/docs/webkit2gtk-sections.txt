@@ -287,6 +287,30 @@ webkit_window_properties_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitDownload</FILE>
+WebKitDownload
+webkit_download_get_destination
+webkit_download_set_destination
+webkit_download_get_response
+webkit_download_cancel
+webkit_download_get_estimated_progress
+webkit_download_get_elapsed_time
+
+<SUBSECTION Standard>
+WebKitDownloadClass
+WEBKIT_TYPE_DOWNLOAD
+WEBKIT_DOWNLOAD
+WEBKIT_IS_DOWNLOAD
+WEBKIT_DOWNLOAD_CLASS
+WEBKIT_IS_DOWNLOAD_CLASS
+WEBKIT_DOWNLOAD_GET_CLASS
+
+<SUBSECTION Private>
+WebKitDownloadPrivate
+webkit_download_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitError</FILE>
 WEBKIT_NETWORK_ERROR
 WEBKIT_PLUGIN_ERROR

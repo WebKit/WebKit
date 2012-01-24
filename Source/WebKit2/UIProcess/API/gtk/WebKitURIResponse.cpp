@@ -176,3 +176,8 @@ WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::Res
     uriResponse->priv->resourceResponse = resourceResponse;
     return uriResponse;
 }
+
+const WebCore::ResourceResponse& webkitURIResponseGetResourceResponse(WebKitURIResponse* uriResponse)
+{
+    return uriResponse->priv->resourceResponse;
+}

@@ -1,3 +1,15 @@
+2012-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitDownload to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=72949
+
+        Reviewed by Martin Robinson.
+
+        * wtf/gobject/GOwnPtr.cpp:
+        (WTF::GTimer): Use g_timer_destroy() to free a GTimer.
+        * wtf/gobject/GOwnPtr.h: Add GTimer template.
+        * wtf/gobject/GTypedefs.h: Add GTimer forward declaration.
+
 2012-01-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for Qt LinuxSH4 build after r105698.
