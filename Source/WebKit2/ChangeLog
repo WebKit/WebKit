@@ -1,3 +1,11 @@
+2012-01-24  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt.
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::showDebugBorders):
+        (WebKit::LayerTreeHostQt::showRepaintCounter):
+
 2012-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Show layer borders for scrollbar layers

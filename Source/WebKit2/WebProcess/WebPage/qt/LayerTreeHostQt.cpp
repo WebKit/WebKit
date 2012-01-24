@@ -371,12 +371,12 @@ void LayerTreeHostQt::paintContents(const WebCore::GraphicsLayer* graphicsLayer,
     }
 }
 
-bool LayerTreeHostQt::showDebugBorders() const
+bool LayerTreeHostQt::showDebugBorders(const WebCore::GraphicsLayer*) const
 {
     return m_webPage->corePage()->settings()->showDebugBorders();
 }
 
-bool LayerTreeHostQt::showRepaintCounter() const
+bool LayerTreeHostQt::showRepaintCounter(const WebCore::GraphicsLayer*) const
 {
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
