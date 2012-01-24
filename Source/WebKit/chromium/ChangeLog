@@ -1,3 +1,14 @@
+2012-01-23  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] Clean up old WebSharedWorker::startWorkerContext() method.
+        https://bugs.webkit.org/show_bug.cgi?id=76853
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSharedWorker.h:
+        * src/WebSharedWorkerImpl.cpp:
+        * src/WebSharedWorkerImpl.h:
+
 2012-01-23  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] Implement layoutTestController.workerThreadCount in DRT

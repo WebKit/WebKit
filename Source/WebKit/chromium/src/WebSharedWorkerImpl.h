@@ -97,8 +97,6 @@ public:
     // WebSharedWorker methods:
     virtual bool isStarted();
 
-    // API is transitioning from first form to second form. The methods must remain virtual to avoid breaking chromium on the next webkit roll.
-    virtual void startWorkerContext(const WebURL&, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long);
     virtual void startWorkerContext(const WebURL&, const WebString& name, const WebString& userAgent, const WebString& sourceCode, const WebString& contentSecurityPolicy, WebContentSecurityPolicyType, long long cacheId);
 
     virtual void connect(WebMessagePortChannel*, ConnectListener*);
