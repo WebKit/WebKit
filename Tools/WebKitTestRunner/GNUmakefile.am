@@ -115,6 +115,7 @@ Libraries_libTestRunnerInjectedBundle_la_LDFLAGS = \
 
 Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
 	-DFONTS_CONF_DIR=\"${shell pwd}/${srcdir}/Tools/DumpRenderTree/gtk/fonts\" \
+	-DTOP_LEVEL_DIR=\"${shell pwd}/${srcdir}\" \
 	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
 	-I$(srcdir)/Tools/WebKitTestRunner \
 	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle \

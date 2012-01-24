@@ -48,36 +48,42 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 }
 }
 
-static const char* getWebKitDataDirectory()
+static char* getPathToImageResource(char* resource)
 {
     static char* dataDirectory = 0;
-    if (dataDirectory)
-        return dataDirectory;
+    if (!dataDirectory) {
+        dataDirectory = new char[PATH_MAX];
+        if (!GetModuleFileName(hmodule, static_cast<CHAR*>(dataDirectory), sizeof(dataDirectory) - 10))
+            dataDirectory = DATA_DIR;
 
-    dataDirectory = new char[PATH_MAX];
-    if (!GetModuleFileName(hmodule, static_cast<CHAR*>(dataDirectory), sizeof(dataDirectory) - 10))
-        return DATA_DIR;
-
-    // FIXME: This is pretty ugly. Ideally we should be using Windows API
-    // functions or GLib methods to calculate paths.
-    unsigned char *p;
-    p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
-    *p = '\0';
-    p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
-    if (p) {
-        if (!stricmp((const char *) (p+1), "bin"))
-            *p = '\0';
+        // FIXME: This is pretty ugly. Ideally we should be using Windows API
+        // functions or GLib methods to calculate paths.
+        unsigned char *p;
+        p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
+        *p = '\0';
+        p = _mbsrchr(static_cast<const unsigned char *>(dataDirectory), '\\');
+        if (p) {
+            if (!stricmp((const char *) (p+1), "bin"))
+                *p = '\0';
+        }
+        strcat(dataDirectory, "\\share\\webkitgtk-"WEBKITGTK_API_VERSION_STRING"\\images\\");
     }
-    strcat(dataDirectory, "\\share");
 
-    return dataDirectory;
+    char* imageResourcePath = new char[PATH_MAX];
+    strcat(imageResourcePath, dataDirectory);
+    strcat(imageResourcePath, resource);
+
+    return imageResourcePath;
 }
 
 #else
 
-static const char* getWebKitDataDirectory()
+static char* getPathToImageResource(char* resource)
 {
-    return DATA_DIR;
+    if (g_getenv("WEBKIT_TOP_LEVEL"))
+        return g_build_filename(g_getenv("WEBKIT_TOP_LEVEL"), "Source", "WebCore", "Resources", resource, NULL);
+
+    return g_build_filename(DATA_DIR, "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "images", resource, NULL);
 }
 
 #endif
@@ -138,7 +144,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
         fileName = getThemeIconFileName(GTK_STOCK_MISSING_IMAGE, 16);
     if (fileName.isNull()) {
         GOwnPtr<gchar> imageName(g_strdup_printf("%s.png", name));
-        GOwnPtr<gchar> glibFileName(g_build_filename(getWebKitDataDirectory(), "webkitgtk-"WEBKITGTK_API_VERSION_STRING, "images", imageName.get(), NULL));
+        GOwnPtr<gchar> glibFileName(getPathToImageResource(imageName.get()));
         fileName = glibFileName.get();
     }
 

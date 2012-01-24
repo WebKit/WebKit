@@ -169,16 +169,10 @@ static void initializeGtkFontSettings(const char* testURL)
 
 CString getTopLevelPath()
 {
-    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
-        return topLevelDirectory;
+    if (!g_getenv("WEBKIT_TOP_LEVEL"))
+        g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
 
-    // If the environment variable wasn't provided then assume we were built into
-    // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
-    // directory is non-standard, but we can't do much more about this.
-    GOwnPtr<char> parentPath(g_path_get_dirname(getCurrentExecutablePath().data()));
-    GOwnPtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", NULL));
-    GOwnPtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
-    return absoluteTopLevelPath.get();
+    return TOP_LEVEL_DIR;
 }
 
 static void initializeFonts(const char* testURL = 0)

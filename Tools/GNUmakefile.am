@@ -74,6 +74,7 @@ libWebCoreInternals_la_CFLAGS = \
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \
 	$(global_cppflags) \
+	-DTOP_LEVEL_DIR=\"${shell pwd}/${srcdir}\" \
 	-I$(srcdir)/Tools/DumpRenderTree \
 	-I$(srcdir)/Tools/DumpRenderTree/cairo \
 	-I$(srcdir)/Tools/DumpRenderTree/gtk \

@@ -1,3 +1,24 @@
+2012-01-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] editing/deleting/5408255.html results are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=53644
+
+        Reviewed by Martin Robinson.
+
+        WEBKIT_TOP_LEVEL environment variable is now set directly in either
+        WebKitTestRunner or DumpRenderTree through usage of a compilation-time
+        macro. This way both tools can be run outside the test harness without
+        the need to manually set the environment variable.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getTopLevelPath):
+        * GNUmakefile.am:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+
 2012-01-23  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] Implement layoutTestController.workerThreadCount in DRT

@@ -1,3 +1,22 @@
+2012-01-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] editing/deleting/5408255.html results are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=53644
+
+        Reviewed by Martin Robinson.
+
+        When the WEBKIT_TOP_LEVEL environment variable is set, resources
+        should be loaded from the source tree to which the variable is
+        pointing. This approach is used when performing testing on the
+        Gtk port.
+
+        No new tests, changes cause one test to pass.
+
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (getPathToImageResource): Also make changes to the resource path
+        construction code on Windows.
+        (WebCore::Image::loadPlatformResource):
+
 2012-01-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in WebCore::RenderTableSection::rowLogicalHeightChanged
