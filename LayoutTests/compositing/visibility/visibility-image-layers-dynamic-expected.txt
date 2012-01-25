@@ -35,7 +35,6 @@ Initial
         (GraphicsLayer
           (position 14.00 314.00)
           (bounds 757.00 152.00)
-          (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
@@ -50,10 +49,10 @@ Initial
 After step 1
 
 (GraphicsLayer
-  (bounds 785.00 1301.00)
+  (bounds 785.00 1286.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 1301.00)
+      (bounds 785.00 1286.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -80,7 +79,6 @@ After step 1
         (GraphicsLayer
           (position 14.00 314.00)
           (bounds 757.00 152.00)
-          (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
@@ -95,10 +93,10 @@ After step 1
 After step 2
 
 (GraphicsLayer
-  (bounds 785.00 1965.00)
+  (bounds 785.00 1935.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 1965.00)
+      (bounds 785.00 1935.00)
       (children 3
         (GraphicsLayer
           (position 14.00 6.00)
@@ -124,7 +122,6 @@ After step 2
         (GraphicsLayer
           (position 14.00 314.00)
           (bounds 757.00 152.00)
-          (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (position 20.00 20.00)
