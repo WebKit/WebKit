@@ -79,6 +79,9 @@ svg/custom/mouse-move-on-svg-root-standalone.svg
 svg/custom/mouse-move-on-svg-root.xhtml
 svg/custom/use-events-crash.svg
 
+# eventSender.mouseScrollBy() is unimplemented
+scrollbars/scroll-rtl-or-bt-layer.html
+
 # [WK2] [Qt] Support drag in mouse events for WebKit2 EventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=69946>
 editing/pasteboard/drag-drop-iframe-refresh-crash.html
