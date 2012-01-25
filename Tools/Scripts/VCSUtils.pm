@@ -374,7 +374,10 @@ sub svnRevisionForDirectory($)
         my $gitLog = `cd $dir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
         ($revision) = ($gitLog =~ m/ +git-svn-id: .+@(\d+) /g);
     }
-    die "Unable to determine current SVN revision in $dir" unless (defined $revision);
+    if (!defined($revision)) {
+        $revision = "unknown";
+        warn "Unable to determine current SVN revision in $dir";
+    }
     return $revision;
 }
 

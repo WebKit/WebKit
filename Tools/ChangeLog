@@ -1,3 +1,15 @@
+2012-01-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] build-webkit --qt requires a git-svn or SVN checkout.
+
+        Reviewed by Tor Arne Vestø.
+
+        Don't require it by making svnRevisionForDirectory return "unknown"
+        instead of bailing out with an error.
+
+        * Scripts/VCSUtils.pm:
+        (svnRevisionForDirectory):
+
 2012-01-25  Adam Barth  <abarth@webkit.org>
 
         Temporarily disable running the unit tests on the Chromium EWS.  These
