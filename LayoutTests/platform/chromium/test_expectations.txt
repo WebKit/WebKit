@@ -3876,9 +3876,6 @@ BUGWK65711 : svg/text/remove-text-node-from-tspan.html = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT IMAGE
 BUGWK65711 : svg/text/append-text-node-to-tspan.html = IMAGE+TEXT IMAGE
 
-// Needs baseline
-BUGWK76118 : fast/css/text-overflow-input.html = MISSING
-
 // Text layout should have changed, kerning should look more natural. We previously didn't relayout
 // the text when moving to a new view target, and thus didn't update the scaledFont.
 BUGWK76446 : svg/custom/linking-a-03-b-all.svg = IMAGE+TEXT
