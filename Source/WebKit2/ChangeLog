@@ -1,3 +1,18 @@
+2012-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [WK2] Navigation events not triggered by a mouse event claim to be triggered by the left mouse button during policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=76344
+
+        Reviewed by Sam Weinig.
+
+        When creating InjectedBundleNavigationActions, initialize the mouse button to NoButton.
+        This ensures that when there is no mouse event associated with the action, when the event
+        hits the client-API layer, the button is still NoButton.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction): Initialize m_mouseButton
+        to WebMouseEvent::NoButton.
+
 2012-01-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Implement tap feedback respecting -webkit-tap-highlight-color

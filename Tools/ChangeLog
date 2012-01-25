@@ -1,3 +1,17 @@
+2012-01-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [WK2] Navigation events not triggered by a mouse event claim to be triggered by the left mouse button during policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=76344
+
+        Reviewed by Sam Weinig.
+
+        Add a test verifying that the mouse button during policy decisions for
+        events not triggered by mouse events is NoButton.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationAction): Added test.
+        (TestWebKitAPI::decidePolicyForNewWindowAction): Added test.
+
 2012-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should timeout sooner

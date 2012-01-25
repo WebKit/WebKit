@@ -86,10 +86,10 @@ PassRefPtr<InjectedBundleNavigationAction> InjectedBundleNavigationAction::creat
 }
 
 InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, const NavigationAction& navigationAction, PassRefPtr<FormState> prpFormState)
+    : m_navigationType(navigationAction.type())
+    , m_modifiers(modifiersForNavigationAction(navigationAction))
+    , m_mouseButton(WebMouseEvent::NoButton)
 {
-    m_navigationType    = navigationAction.type();
-    m_modifiers         = modifiersForNavigationAction(navigationAction);
-
     if (const MouseEvent* mouseEvent = mouseEventForNavigationAction(navigationAction)) {
         m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation(), false));
         m_mouseButton   = mouseButtonForMouseEvent(mouseEvent);
