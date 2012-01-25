@@ -1,3 +1,42 @@
+2012-01-24  Kentaro Hara  <haraken@chromium.org>
+
+        webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl should test stdout and stderr
+        https://bugs.webkit.org/show_bug.cgi?id=75836
+
+        Reviewed by David Kilzer.
+
+        Previously parser_unittests.pl can just test the returned value of
+        get_function_line_ranges() in prepare-ChangeLog. This patch fixes
+        parser_unittests.pl so that it also tests the stdout and stderr of
+        get_function_line_ranges().
+
+        This patch adds css_unittests_warning.css, which contains test cases
+        for warning messages of the CSS parser of prepare-ChangeLog.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        (captureOutput): Captures the stdout and stderr of a given method.
+        (convertAbsolutepathToWebKitPath): Converts absolute paths in a given
+        string to relative paths.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css: Added.
+        (element1):
+        (element2):
+        (element3):
+        (element4):
+        ():
+        (element5):
+        (element6):
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+        Just updated the test results, i.e. added stdout and stderr results.
+        No essential changes in the test results.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests-expected.txt: Ditto.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/java_unittests-expected.txt: Ditto.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/javascript_unittests-expected.txt: Ditto.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests-expected.txt: Ditto.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests-expected.txt: Ditto.
+
 2012-01-24  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: new-run-webkit-httpd is broken

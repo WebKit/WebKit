@@ -26,11 +26,15 @@ use warnings;
 use Data::Dumper;
 use File::Basename;
 use File::Spec;
+use File::Temp qw(tempfile);
 use FindBin;
 use Getopt::Long;
 use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
+
+sub captureOutput($);
+sub convertAbsolutepathToWebKitPath($);
 
 my %testFiles = ("perl_unittests.pl" => "get_function_line_ranges_for_perl",
                  "python_unittests.py" => "get_function_line_ranges_for_python",
@@ -38,6 +42,7 @@ my %testFiles = ("perl_unittests.pl" => "get_function_line_ranges_for_perl",
                  "cpp_unittests.cpp" => "get_function_line_ranges_for_cpp",
                  "javascript_unittests.js" => "get_function_line_ranges_for_javascript",
                  "css_unittests.css" => "get_selector_line_ranges_for_css",
+                 "css_unittests_warning.css" => "get_selector_line_ranges_for_css",
                 );
 
 my $resetResults;
@@ -56,12 +61,16 @@ plan(tests => scalar @testSet);
 foreach my $test (@testSet) {
     open FH, "< $test->{inputFile}" or die "Cannot open $test->{inputFile}: $!";
     my $parser = eval "\\&PrepareChangeLog::$test->{method}";
-    my @actualOutput = $parser->(\*FH, $test->{inputFile});;
+    my @ranges;
+    my ($stdout, $stderr) = captureOutput(sub { @ranges = $parser->(\*FH, $test->{inputFile}); });
     close FH;
+    $stdout = convertAbsolutepathToWebKitPath($stdout);
+    $stderr = convertAbsolutepathToWebKitPath($stderr);
 
+    my %actualOutput = (ranges => \@ranges, stdout => $stdout, stderr => $stderr);
     if ($resetResults) {
         open FH, "> $test->{expectedFile}" or die "Cannot open $test->{expectedFile}: $!";
-        print FH Data::Dumper->new([\@actualOutput])->Terse(1)->Indent(1)->Dump();
+        print FH Data::Dumper->new([\%actualOutput])->Terse(1)->Indent(1)->Dump();
         close FH;
         next;
     }
@@ -71,5 +80,52 @@ foreach my $test (@testSet) {
     my $expectedOutput = eval <FH>;
     close FH;
 
-    is_deeply(\@actualOutput, $expectedOutput, "Tests $test->{inputFile}");
+    is_deeply(\%actualOutput, $expectedOutput, "Tests $test->{inputFile}");
+}
+
+sub captureOutput($)
+{
+    my ($targetMethod) = @_;
+
+    my ($stdoutFH, $stdoutFileName) = tempfile();
+    my ($stderrFH, $stderrFileName) = tempfile();
+
+    open OLDSTDOUT, ">&", \*STDOUT or die "Cannot dup STDOUT: $!";
+    open OLDSTDERR, ">&", \*STDERR or die "Cannot dup STDERR: $!";
+
+    open STDOUT, ">&", $stdoutFH or die "Cannot redirect STDOUT: $!";
+    open STDERR, ">&", $stderrFH or die "Cannot redirect STDERR: $!";
+
+    &$targetMethod();
+
+    close STDOUT;
+    close STDERR;
+
+    open STDOUT, ">&OLDSTDOUT" or die "Cannot dup OLDSTDOUT: $!";
+    open STDERR, ">&OLDSTDERR" or die "Cannot dup OLDSTDERR: $!";
+
+    close OLDSTDOUT;
+    close OLDSTDERR;
+
+    seek $stdoutFH, 0, 0;
+    seek $stderrFH, 0, 0;
+    local $/ = undef;
+    my $stdout = <$stdoutFH>;
+    my $stderr = <$stderrFH>;
+
+    close $stdoutFH;
+    close $stderrFH;
+
+    unlink $stdoutFileName or die "Cannot unlink $stdoutFileName: $!";
+    unlink $stderrFileName or die "Cannot unlink $stderrFileName: $!";
+    return ($stdout, $stderr);
+}
+
+sub convertAbsolutepathToWebKitPath($)
+{
+    my $string = shift;
+    my $sourceDir = LoadAsModule::sourceDir();
+    $sourceDir .= "/" unless $sourceDir =~ m-/$-;
+    $string =~ s/$sourceDir//g;
+    return $string;
 }
