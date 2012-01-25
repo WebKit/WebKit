@@ -160,7 +160,7 @@ bool TiledLayerChromium::drawsContent() const
     if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)
         return false;
 
-    return !m_skipsDraw;
+    return true;
 }
 
 bool TiledLayerChromium::needsContentsScale() const

@@ -88,6 +88,8 @@ protected:
     // After preparing an update, returns true if more pre-painting is needed.
     bool needsIdlePaint(const IntRect& layerRect);
 
+    bool skipsDraw() const { return m_skipsDraw; }
+
     virtual void protectVisibleTileTextures();
 
     virtual TextureManager* textureManager() const;

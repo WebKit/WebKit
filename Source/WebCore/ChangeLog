@@ -1,3 +1,21 @@
+2012-01-24  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Ignore m_skipsDraw in TiledLayerChromium::drawsContent()
+        https://bugs.webkit.org/show_bug.cgi?id=76735
+
+        This is to add skipped layers to their RenderSurface's layer list so that they
+        are considered in the next update. Without this change, m_skipsDraw = false sticks
+        with the layer for the remainder of its lifetime.
+
+        Reviewed by James Robinson.
+
+        Tests: Unit test (TiledLayerChromiumTest.cpp)
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::drawsContent):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (WebCore::TiledLayerChromium::skipsDraw):
+
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
         Invalidate r105697, r105766, r105809 and r105805

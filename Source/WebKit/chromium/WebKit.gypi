@@ -86,6 +86,7 @@
             'tests/CCTimerTest.cpp',
             'tests/CompositorFakeGraphicsContext3D.h',
             'tests/CompositorFakeWebGraphicsContext3D.h',
+            'tests/FakeCCLayerTreeHostClient.h',
             'tests/FakeGraphicsContext3DTest.cpp',
             'tests/FakeWebGraphicsContext3D.h',
             'tests/FloatQuadTest.cpp',

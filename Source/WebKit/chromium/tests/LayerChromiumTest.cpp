@@ -28,6 +28,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 #include "CCLayerTreeTestCommon.h"
+#include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
 #include "NonCompositedContentHost.h"
 #include "WebCompositor.h"
@@ -49,20 +50,6 @@ using ::testing::AnyNumber;
     } while (0)
 
 namespace {
-
-class FakeCCLayerTreeHostClient : public CCLayerTreeHostClient {
-public:
-    virtual void updateAnimations(double frameBeginTime) { }
-    virtual void layout() { }
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) { }
-    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() { return 0; }
-    virtual void didRecreateGraphicsContext(bool success) { }
-    virtual void didCommitAndDrawFrame() { }
-    virtual void didCompleteSwapBuffers() { }
-
-    // Used only in the single-threaded path.
-    virtual void scheduleComposite() { }
-};
 
 class MockCCLayerTreeHost : public CCLayerTreeHost {
 public:

@@ -27,8 +27,10 @@
 #include "TiledLayerChromium.h"
 
 #include "CCLayerTreeTestCommon.h"
+#include "FakeCCLayerTreeHostClient.h"
 #include "LayerTextureUpdater.h"
 #include "TextureManager.h"
+#include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
@@ -128,9 +130,19 @@ public:
         return TiledLayerChromium::needsIdlePaint(rect);
     }
 
+    bool skipsDraw() const
+    {
+        return TiledLayerChromium::skipsDraw();
+    }
+
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
 
     virtual TextureManager* textureManager() const { return m_textureManager; }
+
+    virtual void paintContentsIfDirty()
+    {
+        prepareToUpdate(visibleLayerRect());
+    }
 
 private:
     virtual void createTextureUpdater(const CCLayerTreeHost*) { }
@@ -393,6 +405,59 @@ TEST(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
     layer->prepareToUpdate(contentBounds);
     layer->updateCompositorResources(0, updater);
     EXPECT_FLOAT_RECT_EQ(FloatRect(45, 80, 15, 8), layer->updateRect());
+}
+
+TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
+{
+    // Initialize without threading support.
+    WebKit::WebCompositor::initialize(0);
+    FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
+    RefPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCSettings());
+
+    // Create two 300 x 300 tiled layers.
+    IntSize contentBounds(300, 300);
+    IntRect contentRect(IntPoint::zero(), contentBounds);
+
+    RefPtr<FakeTiledLayerChromium> rootLayer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
+    RefPtr<FakeTiledLayerChromium> childLayer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
+    rootLayer->addChild(childLayer);
+
+    rootLayer->setBounds(contentBounds);
+    rootLayer->setPosition(FloatPoint(150, 150));
+    childLayer->setBounds(contentBounds);
+    childLayer->setPosition(FloatPoint(150, 150));
+    rootLayer->invalidateRect(contentRect);
+    childLayer->invalidateRect(contentRect);
+
+    // We have enough memory for only one of the two layers.
+    int memoryLimit = 4 * 300 * 300; // 4 bytes per pixel.
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    ccLayerTreeHost->setRootLayer(rootLayer);
+    ccLayerTreeHost->setViewportSize(IntSize(300, 300));
+    ccLayerTreeHost->contentsTextureManager()->setMaxMemoryLimitBytes(memoryLimit);
+    ccLayerTreeHost->updateLayers();
+    ccLayerTreeHost->updateCompositorResources(ccLayerTreeHost->context(), updater);
+
+    // We'll skip the root layer.
+    EXPECT_TRUE(rootLayer->skipsDraw());
+    EXPECT_FALSE(childLayer->skipsDraw());
+
+    ccLayerTreeHost->commitComplete();
+
+    // Remove the child layer.
+    rootLayer->removeAllChildren();
+
+    // Need to set the max limit again as it gets overwritten by updateLayers().
+    ccLayerTreeHost->contentsTextureManager()->setMaxMemoryLimitBytes(memoryLimit);
+    ccLayerTreeHost->updateLayers();
+    EXPECT_FALSE(rootLayer->skipsDraw());
+
+    ccLayerTreeHost->setRootLayer(0);
+    ccLayerTreeHost.clear();
+    WebKit::WebCompositor::shutdown();
 }
 
 } // namespace
