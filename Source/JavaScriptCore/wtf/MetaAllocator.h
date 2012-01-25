@@ -43,6 +43,22 @@ namespace WTF {
 
 #define ENABLE_META_ALLOCATOR_PROFILE 0
 
+class MetaAllocatorTracker {
+public:
+    void notify(MetaAllocatorHandle*);
+    void release(MetaAllocatorHandle*);
+
+    MetaAllocatorHandle* find(void* address)
+    {
+        MetaAllocatorHandle* handle = m_allocations.findGreatestLessThanOrEqual(address);
+        if (handle && address < handle->end())
+            return handle;
+        return 0;
+    }
+
+    RedBlackTree<MetaAllocatorHandle, void*> m_allocations;
+};
+
 class MetaAllocator {
     WTF_MAKE_NONCOPYABLE(MetaAllocator);
 
@@ -52,6 +68,11 @@ public:
     virtual ~MetaAllocator();
     
     WTF_EXPORT_PRIVATE PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes);
+
+    void trackAllocations(MetaAllocatorTracker* tracker)
+    {
+        m_tracker = tracker;
+    }
     
     // Non-atomic methods for getting allocator statistics.
     size_t bytesAllocated() { return m_bytesAllocated; }
@@ -118,6 +139,9 @@ private:
         size_t m_sizeInBytes;
     };
     typedef RedBlackTree<FreeSpaceNode, size_t> Tree;
+
+    // Release a MetaAllocatorHandle.
+    void release(MetaAllocatorHandle*);
     
     // Remove free space from the allocator. This is effectively
     // the allocate() function, except that it does not mark the
@@ -159,6 +183,8 @@ private:
     size_t m_bytesCommitted;
     
     SpinLock m_lock;
+
+    MetaAllocatorTracker* m_tracker;
 
 #ifndef NDEBUG
     size_t m_mallocBalance;

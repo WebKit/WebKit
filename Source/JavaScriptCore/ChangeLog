@@ -1,3 +1,38 @@
+2012-01-24  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76855
+        Implement a JIT-code aware sampling profiler for JSC
+
+        Reviewed by Oliver Hunt.
+
+        Add support to MetaAllocator.cpp to track all live handles in a map,
+        allowing lookup based on any address within the allocation.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorTracker::notify):
+        (WTF::MetaAllocatorTracker::release):
+            - Track live handle objects in a map.
+        (WTF::MetaAllocator::release):
+            - Removed support for handles with null m_allocator (no longer used).
+            - Notify the tracker of handles being released.
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+            - Moved functionality out into MetaAllocator::release.
+        (WTF::MetaAllocatorHandle::shrink):
+            - Removed support for handles with null m_allocator (no longer used).
+        (WTF::MetaAllocator::MetaAllocator):
+            - Initialize m_tracker.
+        (WTF::MetaAllocator::allocate):
+            - Notify the tracker of new allocations.
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocatorTracker::find):
+            - Lookup a MetaAllocatorHandle based on an address inside the allocation.
+        (WTF::MetaAllocator::trackAllocations):
+            - Register a callback object to track allocation state.
+        * wtf/MetaAllocatorHandle.h:
+            - Remove unused createSelfManagedHandle/constructor.
+        (WTF::MetaAllocatorHandle::key):
+            - Added, for use in RedBlackTree.
+
 2012-01-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Use copying collector for out-of-line JSObject property storage

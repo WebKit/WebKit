@@ -30,6 +30,7 @@
 #define WTF_MetaAllocatorHandle_h
 
 #include <wtf/Assertions.h>
+#include <wtf/RedBlackTree.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -37,25 +38,12 @@ namespace WTF {
 
 class MetaAllocator;
 
-class MetaAllocatorHandle : public RefCounted<MetaAllocatorHandle> {
+class MetaAllocatorHandle : public RefCounted<MetaAllocatorHandle>, public RedBlackTree<MetaAllocatorHandle, void*>::Node {
 private:
     MetaAllocatorHandle(MetaAllocator*, void* start, size_t sizeInBytes);
     
-    MetaAllocatorHandle(void* start, size_t sizeInBytes)
-        : m_allocator(0)
-        , m_start(start)
-        , m_sizeInBytes(sizeInBytes)
-    {
-        ASSERT(start);
-    }
-    
 public:
     WTF_EXPORT_PRIVATE ~MetaAllocatorHandle();
-    
-    static PassRefPtr<MetaAllocatorHandle> createSelfManagedHandle(void* start, size_t sizeInBytes)
-    {
-        return adoptRef(new MetaAllocatorHandle(start, sizeInBytes));
-    }
     
     void* start()
     {
@@ -83,6 +71,11 @@ public:
     {
         ASSERT(m_allocator);
         return m_allocator;
+    }
+    
+    void* key()
+    {
+        return m_start;
     }
     
 private:

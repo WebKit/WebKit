@@ -33,6 +33,28 @@
 
 namespace WTF {
 
+void MetaAllocatorTracker::notify(MetaAllocatorHandle* handle)
+{
+    m_allocations.insert(handle);
+}
+
+void MetaAllocatorTracker::release(MetaAllocatorHandle* handle)
+{
+    m_allocations.remove(handle);
+}
+
+ALWAYS_INLINE void MetaAllocator::release(MetaAllocatorHandle* handle)
+{
+    SpinLockHolder locker(&m_lock);
+    if (handle->sizeInBytes()) {
+        decrementPageOccupancy(handle->start(), handle->sizeInBytes());
+        addFreeSpaceFromReleasedHandle(handle->start(), handle->sizeInBytes());
+    }
+
+    if (UNLIKELY(!!m_tracker))
+        m_tracker->release(handle);
+}
+
 MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, size_t sizeInBytes)
     : m_allocator(allocator)
     , m_start(start)
@@ -45,23 +67,13 @@ MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, 
 
 MetaAllocatorHandle::~MetaAllocatorHandle()
 {
-    if (!m_allocator)
-        return;
-    SpinLockHolder locker(&m_allocator->m_lock);
-    if (m_sizeInBytes) {
-        m_allocator->decrementPageOccupancy(m_start, m_sizeInBytes);
-        m_allocator->addFreeSpaceFromReleasedHandle(m_start, m_sizeInBytes);
-    }
+    ASSERT(m_allocator);
+    m_allocator->release(this);
 }
 
 void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
 {
     ASSERT(newSizeInBytes <= m_sizeInBytes);
-    
-    if (!m_allocator) {
-        m_sizeInBytes = newSizeInBytes;
-        return;
-    }
     
     SpinLockHolder locker(&m_allocator->m_lock);
 
@@ -91,6 +103,7 @@ MetaAllocator::MetaAllocator(size_t allocationGranule)
     , m_bytesAllocated(0)
     , m_bytesReserved(0)
     , m_bytesCommitted(0)
+    , m_tracker(0)
 #ifndef NDEBUG
     , m_mallocBalance(0)
 #endif
@@ -157,6 +170,9 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes)
     MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes);
     // FIXME: Implement a verifier scheme that groks MetaAllocatorHandles
     handle->deprecatedTurnOffVerifier();
+
+    if (UNLIKELY(!!m_tracker))
+        m_tracker->notify(handle);
 
     return adoptRef(handle);
 }
