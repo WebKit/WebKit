@@ -19,8 +19,8 @@
 <script>
   function test() {
     if (window.internals) {
-      window.internals.setEnableCompositingForFixedPosition(document, true);
-      window.internals.setPageScaleFactor(document, 2, 0, 0);
+      window.internals.settings.setEnableCompositingForFixedPosition(true);
+      window.internals.settings.setPageScaleFactor(2, 0, 0);
     }
     if (window.layoutTestController)
       layoutTestController.dumpAsText(true);

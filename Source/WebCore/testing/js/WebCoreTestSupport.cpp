@@ -27,7 +27,6 @@
 #include "WebCoreTestSupport.h"
 
 #include "Internals.h"
-#include "JSDOMGlobalObject.h"
 #include "JSDocument.h"
 #include "JSInternals.h"
 #include <JavaScriptCore/APICast.h>
@@ -43,7 +42,9 @@ void injectInternalsObject(JSContextRef context)
     JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    globalObject->putDirect(exec->globalData(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create()));
+    ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
+    Document* document = scriptContext->isDocument() ? static_cast<Document*>(scriptContext) : 0;
+    globalObject->putDirect(exec->globalData(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(document)));
 }
 
 void resetInternalsObject(JSContextRef context)

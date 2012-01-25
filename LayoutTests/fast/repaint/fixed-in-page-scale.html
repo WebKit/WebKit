@@ -9,7 +9,7 @@
     <script>
       window.enablePixelTesting = true;
       if (window.internals)
-          window.internals.setShouldLayoutFixedElementsRelativeToFrame(document, true);
+          window.internals.settings.setShouldLayoutFixedElementsRelativeToFrame(true);
 
       function scroll() {
           window.scrollTo(100,100);

@@ -2,8 +2,8 @@
   <head>
     <script>
       if (window.internals) {
-        window.internals.setForceCompositingMode(document, true);
-        window.internals.setEnableCompositingForScrollableFrames(document, true);
+        window.internals.settings.setForceCompositingMode(true);
+        window.internals.settings.setEnableCompositingForScrollableFrames(true);
       }
       function doTest() {
         if (window.layoutTestController) {

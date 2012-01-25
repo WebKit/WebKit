@@ -1,0 +1,49 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+module window {
+    interface [
+        OmitConstructor
+    ] InternalSettings {
+        void setInspectorResourcesDataSizeLimits(in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
+        void setForceCompositingMode(in boolean enabled) raises(DOMException);
+        void setEnableCompositingForFixedPosition(in boolean enabled) raises(DOMException);
+        void setEnableCompositingForScrollableFrames(in boolean enabled) raises(DOMException);
+        void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
+        void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
+        void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
+        void setZoomAnimatorTransform(in float scale, in float tx, in float ty) raises(DOMException);
+        void setZoomParameters(in float scale, in float x, in float y) raises(DOMException);
+        void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
+        void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
+        void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
+        void setShouldLayoutFixedElementsRelativeToFrame(in boolean enabled) raises(DOMException);
+        void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
+        boolean unifiedTextCheckingEnabled() raises (DOMException);
+        float pageScaleFactor() raises(DOMException);
+        void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
+    };
+}
+

@@ -10,7 +10,7 @@
       window.enablePixelTesting = true;
 
       function scroll() {
-          // The page scale, as set by window.internals.setPageScaleFactor should not be apparent
+          // The page scale, as set by window.internals.settings.setPageScaleFactor should not be apparent
           // to javascript. So, we expect scrolling to (100,100) to be page coordinates, rather
           // than device pixels.
           document.body.scrollLeft = 100;
@@ -26,7 +26,7 @@
           var scaleFactor = 2.0;
           var scaleOffset = 0;
           if (window.internals) {
-             window.internals.setPageScaleFactor(document, scaleFactor, scaleOffset, scaleOffset);
+             window.internals.settings.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
           }
       }
 

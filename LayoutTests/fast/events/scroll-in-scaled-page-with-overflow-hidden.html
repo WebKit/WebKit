@@ -23,7 +23,7 @@
         document.body.offsetLeft;
 
         if (window.internals)
-            window.internals.setPageScaleFactor(document, 2, 0, 0);
+            window.internals.settings.setPageScaleFactor(2, 0, 0);
 
         shouldBe("window.document.body.scrollTop", "0");
 

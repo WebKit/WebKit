@@ -1303,6 +1303,7 @@ SOURCES += \
     storage/StorageSyncManager.cpp \
     storage/StorageTracker.cpp \
     testing/Internals.cpp \
+    testing/InternalSettings.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
@@ -2713,6 +2714,7 @@ HEADERS += \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
     testing/Internals.h \
+    testing/InternalSettings.h \
     workers/AbstractWorker.h \
     workers/DedicatedWorkerContext.h \
     workers/DedicatedWorkerThread.h \

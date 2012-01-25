@@ -9,7 +9,7 @@ function testRects()
     
     var div = document.getElementById("div");
     var rect = div.getBoundingClientRect();
-    window.internals.setPageScaleFactor(document, 2, 0, 0);
+    window.internals.settings.setPageScaleFactor(2, 0, 0);
     var scaledRect = div.getBoundingClientRect();
 
     var result = document.getElementById("result");

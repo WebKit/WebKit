@@ -49,24 +49,9 @@ module window {
         void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
 
-        void setInspectorResourcesDataSizeLimits(in Document document, in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
-
         ClientRect boundingBox(in Element element) raises(DOMException);
         unsigned long markerCountForNode(in Node node, in DOMString markerType) raises(DOMException);
         Range markerRangeForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
-
-        void setForceCompositingMode(in Document document, in boolean enabled) raises(DOMException);
-        void setEnableCompositingForFixedPosition(in Document document, in boolean enabled) raises(DOMException);
-        void setEnableCompositingForScrollableFrames(in Document document, in boolean enabled) raises(DOMException);
-        void setAcceleratedDrawingEnabled(in Document document, in boolean enabled) raises(DOMException);
-        void setAcceleratedFiltersEnabled(in Document document, in boolean enabled) raises(DOMException);
-        void setEnableScrollAnimator(in Document document, in boolean enabled) raises(DOMException);
-        void setZoomAnimatorTransform(in Document document, in float scale, in float tx, in float ty) raises(DOMException);
-        void setZoomParameters(in Document document, in float scale, in float x, in float y) raises(DOMException);
-        void setMockScrollbarsEnabled(in Document document, in boolean enabled) raises(DOMException);
-
-        void setPasswordEchoEnabled(in Document document, in boolean enabled) raises(DOMException);
-        void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);
 
         void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
 
@@ -84,17 +69,12 @@ module window {
         unsigned long locationFromRange(in Element scope, in Range range) raises (DOMException);
         unsigned long lengthFromRange(in Element scope, in Range range) raises (DOMException);
 
-        void setShouldLayoutFixedElementsRelativeToFrame(in Document document, in boolean enabled) raises(DOMException);
-        void setUnifiedTextCheckingEnabled(in Document document, in boolean enabled) raises (DOMException);
-        boolean unifiedTextCheckingEnabled(in Document document) raises (DOMException);
-
         long lastSpellCheckRequestSequence(in Document document) raises (DOMException);
         long lastSpellCheckProcessedSequence(in Document document) raises (DOMException);
 
-        float pageScaleFactor(in Document document) raises(DOMException);
-        void setPageScaleFactor(in Document document, in float scaleFactor, in long x, in long y) raises(DOMException);
-
         attribute [Custom] Array userPreferredLanguages;
+
+        readonly attribute InternalSettings settings;
     };
 }
 

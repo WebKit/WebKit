@@ -43,13 +43,18 @@ libWebCoreInternals_la_SOURCES = \
 	Source/WebCore/bindings/js/JSDOMWrapper.h \
 	Source/WebCore/testing/Internals.cpp \
 	Source/WebCore/testing/Internals.h \
+	Source/WebCore/testing/InternalSettings.cpp \
+	Source/WebCore/testing/InternalSettings.h \
 	Source/WebCore/testing/js/JSInternalsCustom.cpp \
 	Source/WebCore/testing/js/WebCoreTestSupport.cpp \
 	Source/WebCore/testing/js/WebCoreTestSupport.h
 
 libwebcoreinternals_built_sources += \
 	DerivedSources/WebCore/JSInternals.cpp \
-	DerivedSources/WebCore/JSInternals.h
+	DerivedSources/WebCore/JSInternals.h   \
+	DerivedSources/WebCore/JSInternalSettings.cpp \
+	DerivedSources/WebCore/JSInternalSettings.h
+
 nodist_libWebCoreInternals_la_SOURCES = $(libwebcoreinternals_built_sources)
 BUILT_SOURCES += $(libwebcoreinternals_built_sources)
 

@@ -10,7 +10,7 @@ function loadData()
         return;
     }
     // Each '*' symbol will use two bytes in String object, hence multiplying by two.
-    internals.setInspectorResourcesDataSizeLimits(document, 2*300, 2*200);
+    internals.settings.setInspectorResourcesDataSizeLimits(2*300, 2*200);
 
     // Here we test replacement logic. We save first two resources content,
     // discard third resource content once we see its size exceeds limit,

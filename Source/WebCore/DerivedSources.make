@@ -524,6 +524,7 @@ BINDING_IDLS = \
     $(WebCore)/svg/SVGZoomAndPan.idl \
     $(WebCore)/svg/SVGZoomEvent.idl \
     $(WebCore)/testing/Internals.idl \
+    $(WebCore)/testing/InternalSettings.idl \
     $(WebCore)/webaudio/AudioBuffer.idl \
     $(WebCore)/webaudio/AudioBufferCallback.idl \
     $(WebCore)/webaudio/AudioBufferSourceNode.idl \

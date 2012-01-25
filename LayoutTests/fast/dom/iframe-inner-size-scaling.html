@@ -10,7 +10,7 @@
             originalHeight = frame.contentWindow.innerHeight;
 
             if (window.internals)
-                window.internals.setPageScaleFactor(document, 2, 0, 0);
+                window.internals.settings.setPageScaleFactor(2, 0, 0);
 
             shouldBeNonZero("frame.contentWindow.innerWidth");
             shouldBeNonZero("frame.contentWindow.innerHeight");

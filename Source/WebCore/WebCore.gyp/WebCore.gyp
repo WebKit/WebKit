@@ -2036,6 +2036,8 @@
         '<@(webcore_test_support_files)',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8Internals.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8Internals.h',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8InternalSettings.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8InternalsSettings.h',
       ],
       'sources/': [
         ['exclude', 'testing/js'],

@@ -23,7 +23,7 @@
   </style>
   <script>
     if (window.internals)
-      window.internals.setMockScrollbarsEnabled(document, true);
+      window.internals.settings.setMockScrollbarsEnabled(true);
     if (window.layoutTestController) {
       layoutTestController.dumpAsText(true);
       layoutTestController.waitUntilDone();

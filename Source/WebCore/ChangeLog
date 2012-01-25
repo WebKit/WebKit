@@ -1,3 +1,66 @@
+2012-01-23  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring][Internals] Should have InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=76424
+
+        Reviewed by Kent Tamura.
+
+        This change extracted setting related method from window.internals
+        to window.internals.settings object.
+        - Invoked Internals::reset() in the constructor to employ Document object.
+        - Moved setting and configuration related Internals methods to
+          newly introduced InternalSettings object.
+
+        No new tests, covered by existing tests.
+
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCoreTestSupport.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/InternalSettings.cpp: Added.
+        (WebCore::InternalSettings::create):
+        (WebCore::InternalSettings::~InternalSettings):
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::settings):
+        (WebCore::InternalSettings::document):
+        (WebCore::InternalSettings::page):
+        (WebCore::InternalSettings::setInspectorResourcesDataSizeLimits):
+        (WebCore::InternalSettings::setForceCompositingMode):
+        (WebCore::InternalSettings::setAcceleratedFiltersEnabled):
+        (WebCore::InternalSettings::setEnableCompositingForFixedPosition):
+        (WebCore::InternalSettings::setEnableCompositingForScrollableFrames):
+        (WebCore::InternalSettings::setAcceleratedDrawingEnabled):
+        (WebCore::InternalSettings::setEnableScrollAnimator):
+        (WebCore::InternalSettings::setZoomAnimatorTransform):
+        (WebCore::InternalSettings::setZoomParameters):
+        (WebCore::InternalSettings::setMockScrollbarsEnabled):
+        (WebCore::InternalSettings::setPasswordEchoEnabled):
+        (WebCore::InternalSettings::setPasswordEchoDurationInSeconds):
+        (WebCore::InternalSettings::setShouldLayoutFixedElementsRelativeToFrame):
+        (WebCore::InternalSettings::setUnifiedTextCheckingEnabled):
+        (WebCore::InternalSettings::unifiedTextCheckingEnabled):
+        (WebCore::InternalSettings::pageScaleFactor):
+        (WebCore::InternalSettings::setPageScaleFactor):
+        (WebCore::InternalSettings::setPerTileDrawingEnabled):
+        * testing/InternalSettings.h: Added.
+        * testing/InternalSettings.idl: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::create):
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::reset):
+        * testing/Internals.h:
+        (WebCore::Internals::settings):
+        * testing/Internals.idl:
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+
 2012-01-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         border-image should not crash when the source is not specified.

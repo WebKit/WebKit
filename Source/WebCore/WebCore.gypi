@@ -5985,6 +5985,7 @@
         ],
         'webcore_test_support_idl_files': [
           'testing/Internals.idl',
+          'testing/InternalSettings.idl',
         ],
         'webcore_test_support_files': [
             'testing/v8/V8InternalsCustom.cpp',
@@ -5995,6 +5996,8 @@
             'testing/js/WebCoreTestSupport.h',
             'testing/Internals.cpp',
             'testing/Internals.h',
+            'testing/InternalSettings.cpp',
+            'testing/InternalSettings.h',
         ],
         'webcore_resource_files': [
             'English.lproj/Localizable.strings',

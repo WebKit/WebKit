@@ -401,6 +401,7 @@ IDL_BINDINGS += \
     $$PWD/storage/SQLTransactionSync.idl \
     $$PWD/storage/SQLTransactionSyncCallback.idl \
     $$PWD/testing/Internals.idl \
+    $$PWD/testing/InternalSettings.idl \
     $$PWD/webaudio/AudioBuffer.idl \
     $$PWD/webaudio/AudioBufferSourceNode.idl \
     $$PWD/webaudio/AudioChannelMerger.idl \

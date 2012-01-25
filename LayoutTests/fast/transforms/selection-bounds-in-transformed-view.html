@@ -6,7 +6,7 @@
     <script>
         if (window.layoutTestController && window.internals) {
             layoutTestController.dumpAsText();
-            window.internals.setPageScaleFactor(document, 2, 0, 0);
+            window.internals.settings.setPageScaleFactor(2, 0, 0);
         }
 
         document.execCommand("FindString", false, "target");

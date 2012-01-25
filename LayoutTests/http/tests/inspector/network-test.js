@@ -44,7 +44,7 @@ function resetInspectorResourcesData()
     if (!window.internals)
         return false;
 
-    internals.setInspectorResourcesDataSizeLimits(document, 10 * 1000 * 1000, 1000 * 1000);
+    internals.settings.setInspectorResourcesDataSizeLimits(10 * 1000 * 1000, 1000 * 1000);
     return true;
 }
 

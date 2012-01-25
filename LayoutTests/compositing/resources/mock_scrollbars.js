@@ -1,3 +1,3 @@
 if (window.internals) {
-  window.internals.setMockScrollbarsEnabled(document, true);
+  window.internals.settings.setMockScrollbarsEnabled(true);
 }

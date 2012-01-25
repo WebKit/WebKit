@@ -914,6 +914,7 @@ dom_binding_idls += \
 	$(WebCore)/storage/Storage.idl \
 	$(WebCore)/storage/StorageEvent.idl \
 	$(WebCore)/testing/Internals.idl \
+	$(WebCore)/testing/InternalSettings.idl \
 	$(WebCore)/webaudio/AudioContext.idl \
 	$(WebCore)/webaudio/AudioPannerNode.idl \
 	$(WebCore)/webaudio/DynamicsCompressorNode.idl \

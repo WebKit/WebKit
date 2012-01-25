@@ -84,7 +84,7 @@ function endTest()
 
 function runTest() {
     if (window.internals) {
-        window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+        window.internals.settings.setPageScaleFactor(0.5, 0, 0);
     }
 
     var div = document.getElementById('touchtarget');

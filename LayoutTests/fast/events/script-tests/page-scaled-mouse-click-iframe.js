@@ -60,15 +60,15 @@ function iframeLoaded() {
 
     testEvents(0, "Unscaled", "click(10, 10)");
 
-    window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+    window.internals.settings.setPageScaleFactor(0.5, 0, 0);
     testEvents(0, "setPageScale(0.5)", "click(20, 20)");
 
-    window.internals.setPageScaleFactor(document, 1.0, 0, 0);
+    window.internals.settings.setPageScaleFactor(1.0, 0, 0);
     html.style["-webkit-transform"] = "scale(0.5, 2.0)";
     html.style["-webkit-transform-origin"] = "0 0";
     testEvents(0, "CSS scale(0.5, 2.0)", "click(20, 5)");
 
-    window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+    window.internals.settings.setPageScaleFactor(0.5, 0, 0);
     testEvents(0, "setPageScale(0.5), CSS scale(0.5, 2.0)", "click(40, 10)");
   }
 

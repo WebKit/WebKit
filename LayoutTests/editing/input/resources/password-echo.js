@@ -80,8 +80,8 @@ function init(tests)
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
         if (window.internals) {
-            window.internals.setPasswordEchoEnabled(document, true);
-            window.internals.setPasswordEchoDurationInSeconds(document, 0.1);
+            window.internals.settings.setPasswordEchoEnabled(true);
+            window.internals.settings.setPasswordEchoDurationInSeconds(0.1);
             testnode = document.getElementById('testnode');
             run(tests, -1);
         }

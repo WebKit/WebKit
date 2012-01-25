@@ -37,6 +37,7 @@ namespace WebCore {
 class ClientRect;
 class Document;
 class Element;
+class InternalSettings;
 class Node;
 class Range;
 class ShadowRoot;
@@ -46,7 +47,7 @@ typedef int ExceptionCode;
 class Internals : public RefCounted<Internals>,
                   public FrameDestructionObserver {
 public:
-    static PassRefPtr<Internals> create();
+    static PassRefPtr<Internals> create(Document*);
     virtual ~Internals();
 
     void reset(Document*);
@@ -74,31 +75,10 @@ public:
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
 
-#if ENABLE(INSPECTOR)
-    void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
-#else
-    void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&) { }
-#endif
-
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String&, unsigned, ExceptionCode&);
-
-    void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
-    void setEnableCompositingForFixedPosition(Document*, bool enabled, ExceptionCode&);
-    void setEnableCompositingForScrollableFrames(Document*, bool enabled, ExceptionCode&);
-    void setAcceleratedDrawingEnabled(Document*, bool enabled, ExceptionCode&);
-    void setAcceleratedFiltersEnabled(Document*, bool enabled, ExceptionCode&);
-
-    void setEnableScrollAnimator(Document*, bool enabled, ExceptionCode&);
-    void setZoomAnimatorTransform(Document*, float scale, float tx, float ty, ExceptionCode&);
-    void setZoomParameters(Document*, float scale, float x, float y, ExceptionCode&);
-
-    void setMockScrollbarsEnabled(Document*, bool enabled, ExceptionCode&);
-
-    void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
-    void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
 
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
 
@@ -114,31 +94,21 @@ public:
     PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
-    void setShouldLayoutFixedElementsRelativeToFrame(Document*, bool, ExceptionCode&);
-
-    void setUnifiedTextCheckingEnabled(Document*, bool, ExceptionCode&);
-    bool unifiedTextCheckingEnabled(Document*, ExceptionCode&);
 
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
     
-    float pageScaleFactor(Document*,  ExceptionCode&);
-    void setPageScaleFactor(Document*, float scaleFactor, int x, int y, ExceptionCode&);
-
-    void setPerTileDrawingEnabled(Document*, bool enabled, ExceptionCode&);
-
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 
     static const char* internalsId;
 
-private:
-    Internals();
+    InternalSettings* settings() const { return m_settings.get(); }
 
-    double m_passwordEchoDurationInSecondsBackup;
-    bool m_passwordEchoEnabledBackup : 1;
-    bool m_passwordEchoDurationInSecondsBackedUp : 1;
-    bool m_passwordEchoEnabledBackedUp : 1;
+private:
+    explicit Internals(Document*);
+
+    RefPtr<InternalSettings> m_settings;
 };
 
 } // namespace WebCore
