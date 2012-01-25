@@ -265,11 +265,20 @@ class Bugzilla(object):
         self.committers = committers
         self.cached_quips = []
         self.edit_user_parser = EditUsersParser()
+        self._browser = None
 
-        from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-        self.browser = Browser()
-        # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
-        self.browser.set_handle_robots(False)
+    def _get_browser(self):
+        if not self._browser:
+            from webkitpy.thirdparty.autoinstalled.mechanize import Browser
+            self._browser = Browser()
+            # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
+            self._browser.set_handle_robots(False)
+        return self._browser
+
+    def _set_browser(self, value):
+        self._browser = value
+
+    browser = property(_get_browser, _set_browser)
 
     def fetch_user(self, user_id):
         self.authenticate()

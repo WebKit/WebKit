@@ -1,3 +1,19 @@
+2012-01-24  Ojan Vafai  <ojan@chromium.org>
+
+        Initializing the browser property of the Bugzilla class takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=76960
+
+        Reviewed by Adam Barth.
+
+        Lazily initialize it. This saves ~150ms on a no-op run-webkit-tests call
+        on my Mac Pro.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.__init__):
+        (Bugzilla._get_browser):
+        (Bugzilla):
+        (Bugzilla._set_browser):
+
 2012-01-24  Mark Rowe  <mrowe@apple.com>
 
         Death to JavaScriptGlue.
