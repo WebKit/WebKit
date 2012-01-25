@@ -1,3 +1,18 @@
+2012-01-24  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: new-run-webkit-httpd is broken
+        https://bugs.webkit.org/show_bug.cgi?id=76963
+
+        Reviewed by Adam Barth.
+
+        r105674 broke new-run-webkit-httpd, since options.chromium
+        doesn't exist any more. We didn't catch this because we don't
+        run the integration tests by default anywhere :(.
+
+        * Scripts/new-run-webkit-httpd:
+        (run):
+        (main):
+
 2012-01-24  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic pixel zoomer should let you look at every pixel of the image
