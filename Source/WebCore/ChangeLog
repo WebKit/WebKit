@@ -1,3 +1,19 @@
+2012-01-25  Kenichi Ishibashi  <bashi@chromium.org>
+
+        fast/text/unicode-variation-selector.html doesn't pass on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=76041
+
+        Reviewed by Dan Bernstein.
+
+        Consumes non-BMP marks in advanceByCombiningCharacterSequence() to take into
+        account Ideographic variation selectors (these are non-BMP marks).
+
+        No new tests. fast/text/unicode-variation-selector.html should pass on Lion.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::advanceByCombiningCharacterSequence): Use Unicode code point
+        to iterate the loop which consumes marks.
+
 2012-01-25  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: DetailedHeapSnapshot: adjust node name cell format for the retainers tree.
