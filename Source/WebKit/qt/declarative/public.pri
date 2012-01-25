@@ -27,7 +27,7 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 CONFIG += qtwebkit qtwebkit-private
 
 QT += declarative
-haveQt(5): QT += widgets
+haveQt(5): QT += widgets quick
 
 contains(QT_CONFIG, qtquick1): {
     QT += qtquick1
