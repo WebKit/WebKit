@@ -305,7 +305,7 @@ InspectorTest.findAndExpandGCRoots = function(callback)
     callback = InspectorTest.safeWrap(callback);
     function propertyMatcher(data)
     {
-        return data.value === "(GC roots) @3";
+        return data.value === "(GC roots): @3";
     }
     var gcRoots = InspectorTest.findRow("object", propertyMatcher);
     InspectorTest.assertEquals(true, !!gcRoots, "GC roots row");
