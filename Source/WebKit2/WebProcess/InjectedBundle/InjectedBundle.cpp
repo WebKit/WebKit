@@ -159,6 +159,14 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
         (*iter)->settings()->setPrivateBrowsingEnabled(enabled);
 }
 
+void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    HashSet<Page*>::const_iterator end = pages.end();
+    for (HashSet<Page*>::const_iterator iter = pages.begin(); iter != end; ++iter)
+        (*iter)->settings()->setJavaScriptCanOpenWindowsAutomatically(!enabled);
+}
+
 void InjectedBundle::switchNetworkLoaderToNewTestingSession()
 {
 #if USE(CFURLSTORAGESESSIONS)

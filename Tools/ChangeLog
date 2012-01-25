@@ -1,3 +1,17 @@
+2012-01-25  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
+
+        [WK2] WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=63458
+
+        Reviewed by Adam Roben.
+
+        Implement the setPopupBlockingEnabled method.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setPopupBlockingEnabled):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2012-01-24  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Cleanup testfonts handling

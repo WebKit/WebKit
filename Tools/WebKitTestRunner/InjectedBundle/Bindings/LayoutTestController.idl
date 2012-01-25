@@ -54,6 +54,7 @@ module WTR {
         void setFrameFlatteningEnabled(in boolean value);
         void setJavaScriptCanAccessClipboard(in boolean value);
         void setPrivateBrowsingEnabled(in boolean value);
+        void setPopupBlockingEnabled(in boolean value);
         void setAuthorAndUserStylesEnabled(in boolean value);
         void addOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);
         void removeOriginAccessWhitelistEntry(in DOMString sourceOrigin, in DOMString destinationProtocol, in DOMString destinationHost, in boolean allowDestinationSubdomains);

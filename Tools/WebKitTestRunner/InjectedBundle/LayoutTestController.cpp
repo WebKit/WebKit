@@ -378,6 +378,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool enabled)
      WKBundleSetPrivateBrowsingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
+void LayoutTestController::setPopupBlockingEnabled(bool enabled)
+{
+     WKBundleSetPopupBlockingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool enabled)
 {
      WKBundleSetAuthorAndUserStylesEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);

@@ -874,24 +874,6 @@ http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
 # https://bugs.webkit.org/show_bug.cgi?id=71896
 http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
 
-# WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
-# https://bugs.webkit.org/show_bug.cgi?id=63458
-fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html
-fast/events/popup-blocked-from-iframe-src.html
-fast/events/popup-allowed-from-gesture-initiated-event.html
-fast/events/popup-allowed-from-gesture-initiated-form-submit.html
-fast/events/popup-blocked-from-fake-button-click.html
-fast/events/popup-blocked-from-fake-focus.html
-fast/events/popup-blocked-from-fake-user-gesture.html
-fast/events/popup-blocked-from-history-reload.html
-fast/events/popup-blocked-from-iframe-script.html
-fast/events/popup-blocked-from-mousemove.html
-fast/events/popup-blocked-from-untrusted-mouse-click.html
-fast/events/popup-blocked-from-window-open.html
-fast/events/popup-blocked-to-post-blank.html
-fast/events/popup-blocking-timers.html
-plugins/plugin-initiate-popup-window.html
-
 # WebKitTestRunner needs an implementation of allowRoundingHacks
 # http://webkit.org/b/63477
 platform/mac/fast/text/rounding-hacks.html
@@ -1241,6 +1223,7 @@ fast/dom/StyleSheet/detached-style-pi.xhtml
 fast/dom/StyleSheet/detached-style.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dom/tab-in-right-alignment.html
+fast/events/popup-blocked-from-fake-user-gesture.html
 fast/frames/frame-element-name.html
 fast/frames/iframe-onload-remove-self-no-crash.html
 fast/frames/iframe-reparenting-adopt-node.html
@@ -1280,6 +1263,7 @@ media/controls-after-reload.html
 media/controls-styling.html
 platform/mac/fast/loader/non-html-load-event.html
 plugins/embed-attributes-style.html
+plugins/plugin-initiate-popup-window.html
 storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/dom/fuzz-path-parser.html

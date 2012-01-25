@@ -1,3 +1,20 @@
+2012-01-25  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
+
+        [WK2] WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=63458
+
+        Reviewed by Adam Roben.
+
+        Implement the setPopupBlockingEnabled method.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetPrivateBrowsingEnabled):
+        (WKBundleSetPopupBlockingEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPopupBlockingEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2012-01-25  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt] Build fix when using force_static_libs_as_shared
