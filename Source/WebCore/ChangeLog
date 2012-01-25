@@ -1,3 +1,21 @@
+2012-01-25  Noel Gordon  <noel.gordon@gmail.com>
+
+        JPEGDecoder should use imageDecoder colorProfile helpers
+        https://bugs.webkit.org/show_bug.cgi?id=76968
+        
+        Reviewed by Adam Barth.
+
+        No new tests. Cover by existing tests, in particular:
+          fast/images/ycbcr-with-cmyk-color-profile.html
+          fast/images/gray-scale-jpeg-with-color-profile.html
+          fast/images/cmyk-jpeg-with-color-profile.html
+          fast/images/color-jpeg-with-color-profile.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: white-space removals via Xcode.
+        (WebCore::readColorProfile):  Use ImageDecoder.h color profile helper routines.
+        (WebCore::JPEGImageReader::JPEGImageReader):
+        (WebCore::JPEGImageReader::decode):
+
 2012-01-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Divide TextureMapperNode.cpp to 3 files.
