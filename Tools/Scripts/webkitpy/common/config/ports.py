@@ -245,10 +245,6 @@ class ChromiumPort(WebKitPort):
         return command
 
     @classmethod
-    def run_webkit_unit_tests_command(cls):
-        return cls.script_shell_command("run-chromium-webkit-unit-tests")
-
-    @classmethod
     def run_webkit_tests_command(cls):
         command = cls.script_shell_command("new-run-webkit-tests")
         command.append("--chromium")
