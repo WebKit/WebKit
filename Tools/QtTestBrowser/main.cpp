@@ -31,6 +31,7 @@
  */
 
 #include "DumpRenderTreeSupportQt.h"
+#include "QtInitializeTestFonts.h"
 #include "launcherwindow.h"
 #include "urlloader.h"
 
@@ -42,61 +43,8 @@ WindowOptions windowOptions;
 #include <QFileInfo>
 #include <QFontDatabase>
 
-#if defined(Q_WS_X11)
-#include <fontconfig/fontconfig.h>
-#endif
-
-
-#if defined(Q_WS_X11)
-// Very similar to WebCore::DumpRenderTree::initializeFonts();
-// Duplicated here so that QtTestBrowser would display contents
-// with the same fonts as run-webkit-tests/DumpRenderTree.
-static void initTestFonts()
-{
-    static int numFonts = -1;
-
-    // Some test cases may add or remove application fonts (via @font-face).
-    // Make sure to re-initialize the font set if necessary.
-    FcFontSet* appFontSet = FcConfigGetFonts(0, FcSetApplication);
-    if (appFontSet && numFonts >= 0 && appFontSet->nfont == numFonts)
-        return;
-
-    QByteArray fontDir = getenv("WEBKIT_TESTFONTS");
-    if (fontDir.isEmpty() || !QDir(fontDir).exists()) {
-        fprintf(stderr,
-                "\n\n"
-                "----------------------------------------------------------------------\n"
-                "WEBKIT_TESTFONTS environment variable is not set correctly.\n"
-                "This variable has to point to the directory containing the fonts\n"
-                "you can clone from git://gitorious.org/qtwebkit/testfonts.git\n"
-                "----------------------------------------------------------------------\n"
-               );
-        exit(1);
-    }
-    // Looks for qt/fonts.conf relative to the directory of the QtTestBrowser 
-    // executable.
-    QString configFileString = QCoreApplication::applicationDirPath();
-    configFileString += "/../../../Tools/DumpRenderTree/qt/fonts.conf";
-    QByteArray configFileArray = configFileString.toUtf8();
-    FcConfig* config = FcConfigCreate();
-    if (!FcConfigParseAndLoad (config, (FcChar8*) configFileArray.data(), true))
-        qFatal("Couldn't load font configuration file");
-    if (!FcConfigAppFontAddDir (config, (FcChar8*) fontDir.data()))
-        qFatal("Couldn't add font dir!");
-    FcConfigSetCurrent(config);
-
-    appFontSet = FcConfigGetFonts(config, FcSetApplication);
-    numFonts = appFontSet->nfont;
-}
-#endif
-
 int launcherMain(const QApplication& app)
 {
-#ifdef Q_WS_X11
-    if (windowOptions.useTestFonts)
-        initTestFonts();
-#endif
-
 #ifndef NDEBUG
     int retVal = app.exec();
     DumpRenderTreeSupportQt::garbageCollectorCollect();
@@ -199,9 +147,7 @@ void LauncherApplication::handleUserOptions()
              << "[-offline-storage-database-enabled]"
              << "[-offline-web-application-cache-enabled]"
              << "[-set-offline-storage-default-quota maxSize]"
-#if defined(Q_WS_X11)
              << "[-use-test-fonts]"
-#endif
              << "[-print-loaded-urls]"
              << "URLs";
         appQuit(0);
@@ -294,10 +240,8 @@ void LauncherApplication::handleUserOptions()
     }
 #endif
 
-#if defined(Q_WS_X11)
     if (args.contains("-use-test-fonts"))
-        windowOptions.useTestFonts = true;
-#endif
+        WebKit::initializeTestFonts();
 
     if (args.contains("-print-loaded-urls"))
         windowOptions.printLoadedUrls = true;

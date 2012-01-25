@@ -29,6 +29,8 @@
 
 #include "DumpRenderTreeQt.h"
 
+#include "QtInitializeTestFonts.h"
+
 #include <wtf/AlwaysInline.h>
 
 #include <qstringlist.h>
@@ -141,13 +143,14 @@ int main(int argc, char* argv[])
     if (suppressQtDebugOutput)
         qInstallMsgHandler(messageHandler);
 
-    WebCore::DumpRenderTree::initializeFonts();
+    WebKit::initializeTestFonts();
 
     QApplication::setGraphicsSystem("raster");
     QApplication::setStyle(new QWindowsStyle);
 
     QApplication app(argc, argv);
 
+#if QT_VERSION <= QT_VERSION_CHECK(5, 0, 0) // FIXME: need a way to port this to Qt5.
 #ifdef Q_WS_X11
     QX11Info::setAppDpiY(0, 96);
     QX11Info::setAppDpiX(0, 96);
@@ -165,6 +168,7 @@ int main(int argc, char* argv[])
     * default font, but with the correct paint-device DPI.
    */
     QApplication::setFont(QWidget().font());
+#endif
 
 #if HAVE(SIGNAL_H)
     setupSignalHandlers(&crashHandler);

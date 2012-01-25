@@ -1,3 +1,42 @@
+2012-01-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Cleanup testfonts handling
+        https://bugs.webkit.org/show_bug.cgi?id=76068
+
+        Reviewed by Simon Hausmann.
+
+        Factor test font initialization into it's own file  so test
+        font users can share the implementation by adding the file
+        to their build.
+        Use fonts.conf from the test font directory to not require the
+        current directory to be the WebKit root.
+        Fix the -use-test-fonts option of QtTestBrowser by initializing
+        the fonts earlier, before it is too late (namely before calling
+        show on the main window).
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/QtInitializeTestFonts.cpp: Copied from Tools/WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp.
+        (WebKit::initializeTestFonts):
+        * DumpRenderTree/qt/QtInitializeTestFonts.h: Added.
+        * DumpRenderTree/qt/fonts.conf: Removed. No need for this since
+        we will use the one from the test fonts directory.
+        * DumpRenderTree/qt/main.cpp:
+        (main): Fix the ifdefs to make it clear that the code to
+        set up the Dpi has not been ported to Qt5 yet.
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/main.cpp:
+        (launcherMain):
+        (LauncherApplication::handleUserOptions):
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts): Remove the code to set up the Dpi
+        because it does not work with Qt5.
+
 2012-01-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] build-webkit --qt requires a git-svn or SVN checkout.

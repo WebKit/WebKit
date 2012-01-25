@@ -8,6 +8,7 @@ TEMPLATE = lib
 TARGET = WTRInjectedBundle
 
 SOURCES += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     AccessibilityController.cpp \
     AccessibilityTextMarker.cpp \
     AccessibilityTextMarkerRange.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
 include(DerivedSources.pri)
 
 HEADERS += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.h \
     AccessibilityController.h \
     AccessibilityTextMarker.h \
     AccessibilityTextMarkerRange.h \
@@ -62,7 +64,8 @@ INCLUDEPATH += \
     $$PWD/.. \
     $$PWD/Bindings \
     $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js \
-    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
+    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt
 
 PREFIX_HEADER = $$PWD/../WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"

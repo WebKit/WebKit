@@ -34,6 +34,7 @@ HEADERS += \
     LayoutTestControllerQt.h \
     GCControllerQt.h \
     PlainTextControllerQt.h \
+    QtInitializeTestFonts.h \
     testplugin.h
 
 SOURCES += \
@@ -46,6 +47,7 @@ SOURCES += \
     WorkQueueItemQt.cpp \
     LayoutTestControllerQt.cpp \
     GCControllerQt.cpp \
+    QtInitializeTestFonts.cpp \
     testplugin.cpp \
     main.cpp
 

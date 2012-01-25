@@ -83,9 +83,6 @@ public:
 #ifndef QT_NO_OPENGL
         , useQGLWidgetViewport(false)
 #endif
-#if defined(Q_WS_X11)
-        , useTestFonts(false)
-#endif
         , printLoadedUrls(false)
         , startMaximized(false)
     {
@@ -108,9 +105,6 @@ public:
     quint64 offlineStorageDefaultQuotaSize;
 #ifndef QT_NO_OPENGL
     bool useQGLWidgetViewport;
-#endif
-#if defined(Q_WS_X11)
-    bool useTestFonts;
 #endif
     bool printLoadedUrls;
     QUrl inspectorUrl;

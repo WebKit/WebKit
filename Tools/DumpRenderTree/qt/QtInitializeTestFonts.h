@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ActivateFonts.h"
-#include "DumpRenderTreeSupportQt.h"
-#include "QtInitializeTestFonts.h"
+#ifndef QtInitializeTestFonts_h
+#define QtInitializeTestFonts_h
 
-#include <QApplication>
-#include <QWidget>
-#include <QWindowsStyle>
+namespace WebKit {
 
-namespace WTR {
+// Helper to share code between test font users.
+void initializeTestFonts();
 
-void activateFonts()
-{
-    WebKit::initializeTestFonts();
+}
 
-    QApplication::setGraphicsSystem(QLatin1String("raster"));
-#if HAVE(QSTYLE)
-    QApplication::setStyle(new QWindowsStyle);
 #endif
-}
-
-}
