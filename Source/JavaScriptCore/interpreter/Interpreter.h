@@ -79,6 +79,16 @@ namespace JSC {
         JSGlobalData& globalData;
         CallFrame* oldCallFrame;
     };
+    
+    class NativeCallFrameTracer {
+    public:
+        ALWAYS_INLINE NativeCallFrameTracer(JSGlobalData* global, CallFrame* callFrame)
+        {
+            ASSERT(global);
+            ASSERT(callFrame);
+            global->topCallFrame = callFrame;
+        }
+    };
 
 #if PLATFORM(IOS)
     // We use a smaller reentrancy limit on iPhone because of the high amount of
