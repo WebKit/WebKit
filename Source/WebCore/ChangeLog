@@ -1,3 +1,21 @@
+2012-01-25  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Remove unnecessary member variable from PluginView.
+        https://bugs.webkit.org/show_bug.cgi?id=76909
+
+        Reviewed by Adam Roben.
+
+        No new tests needed.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::getURLNotify):
+        (WebCore::PluginView::getURL):
+        (WebCore::PluginView::PluginView):
+        (WebCore::PluginView::handlePost):
+        (WebCore::PluginView::getValueForURL):
+        (WebCore::PluginView::setValueForURL):
+        * plugins/PluginView.h:
+
 2012-01-25  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt] Build fix when using force_static_libs_as_shared

@@ -303,7 +303,6 @@ namespace WebCore {
         Element* m_element;
         bool m_isStarted;
         KURL m_url;
-        KURL m_baseURL;
         PluginStatus m_status;
         Vector<IntRect> m_invalidRects;
 
