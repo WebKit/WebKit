@@ -69,15 +69,6 @@ JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, const Id
     return getNamedItems(exec, thisObj, propertyName);
 }
 
-JSValue JSHTMLCollection::item(ExecState* exec)
-{
-    bool ok;
-    uint32_t index = Identifier::toUInt32(exec->argument(0).toString(exec)->value(exec), ok);
-    if (ok)
-        return toJS(exec, globalObject(), impl()->item(index));
-    return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
-}
-
 JSValue JSHTMLCollection::namedItem(ExecState* exec)
 {
     return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));

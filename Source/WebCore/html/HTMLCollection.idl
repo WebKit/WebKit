@@ -28,7 +28,7 @@ module html {
         Polymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;
-        [Custom] Node item(in [Optional=CallWithDefaultValue] unsigned long index);
+        Node item(in [Optional=CallWithDefaultValue] unsigned long index);
         [Custom] Node namedItem(in [Optional=CallWithDefaultValue] DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
