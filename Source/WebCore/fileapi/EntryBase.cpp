@@ -75,7 +75,7 @@ String EntryBase::toURL()
         result.append(DOMFileSystemBase::kExternalPathPrefix);
         break;
     }
-    result.append(encodeWithURLEscapeSequences(m_fullPath));
+    result.append(m_fullPath);
     return result.toString();
 }
 

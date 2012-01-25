@@ -174,35 +174,6 @@ KURLGooglePrivate::KURLGooglePrivate(WTF::HashTableDeletedValueType)
 {
 }
  
-KURLGooglePrivate::KURLGooglePrivate(const KURLGooglePrivate& o)
-    : m_isValid(o.m_isValid)
-    , m_protocolIsInHTTPFamily(o.m_protocolIsInHTTPFamily)
-    , m_parsed(o.m_parsed)
-    , m_utf8(o.m_utf8)
-    , m_utf8IsASCII(o.m_utf8IsASCII)
-    , m_stringIsValid(o.m_stringIsValid)
-    , m_string(o.m_string)
-{
-    if (o.m_innerURL.get())
-        m_innerURL = adoptPtr(new KURL(o.m_innerURL->copy()));
-}
-
-KURLGooglePrivate& KURLGooglePrivate::operator=(const KURLGooglePrivate& o)
-{
-    m_isValid = o.m_isValid;
-    m_protocolIsInHTTPFamily = o.m_protocolIsInHTTPFamily;
-    m_parsed = o.m_parsed;
-    m_utf8 = o.m_utf8;
-    m_utf8IsASCII = o.m_utf8IsASCII;
-    m_stringIsValid = o.m_stringIsValid;
-    m_string = o.m_string;
-    if (o.m_innerURL.get())
-        m_innerURL = adoptPtr(new KURL(o.m_innerURL->copy()));
-    else
-        m_innerURL.clear();
-    return *this;
-}
-
 // Setters for the data. Using the ASCII version when you know the
 // data is ASCII will be slightly more efficient. The UTF-8 version
 // will always be correct if the caller is unsure.
@@ -226,7 +197,6 @@ void KURLGooglePrivate::setUtf8(const CString& str)
     m_utf8 = str;
     m_stringIsValid = false;
     initProtocolIsInHTTPFamily();
-    initInnerURL();
 }
 
 void KURLGooglePrivate::setAscii(const CString& str)
@@ -235,7 +205,6 @@ void KURLGooglePrivate::setAscii(const CString& str)
     m_utf8IsASCII = true;
     m_stringIsValid = false;
     initProtocolIsInHTTPFamily();
-    initInnerURL();
 }
 
 void KURLGooglePrivate::init(const KURL& base,
@@ -289,21 +258,6 @@ void KURLGooglePrivate::init(const KURL& base, const CHAR* rel, int relLength,
     }
 }
 
-void KURLGooglePrivate::initInnerURL()
-{
-    if (!m_isValid) {
-        m_innerURL.clear();
-        return;
-    }
-    url_parse::Parsed* innerParsed = m_parsed.inner_parsed();
-    if (innerParsed)
-        m_innerURL = adoptPtr(new KURL(
-            ParsedURLString,
-            String(m_utf8.data() + innerParsed->scheme.begin, innerParsed->Length() - innerParsed->scheme.begin)));
-    else
-        m_innerURL.clear();
-}
-
 void KURLGooglePrivate::initProtocolIsInHTTPFamily()
 {
     if (!m_isValid) {
@@ -331,10 +285,6 @@ void KURLGooglePrivate::copyTo(KURLGooglePrivate* dest) const
     dest->m_utf8IsASCII = m_utf8IsASCII;
     dest->m_stringIsValid = false;
     dest->m_string = String(); // Clear the invalid string to avoid cross thread ref counting.
-    if (m_innerURL)
-        dest->m_innerURL = adoptPtr(new KURL(m_innerURL->copy()));
-    else
-        dest->m_innerURL.clear();
 }
 
 String KURLGooglePrivate::componentString(const url_parse::Component& comp) const
@@ -877,10 +827,7 @@ String encodeWithURLEscapeSequences(const String& notEncodedString)
         buffer.Resize(inputLength * 3);
 
     url_util::EncodeURIComponent(input, inputLength, &buffer);
-    String escaped(buffer.data(), buffer.length());
-    // Unescape '/'; it's safe and much prettier.
-    escaped.replace("%2F", "/");
-    return escaped;
+    return String(buffer.data(), buffer.length());
 }
 
 bool KURL::isHierarchical() const

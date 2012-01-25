@@ -31,7 +31,6 @@
 #ifndef KURLGooglePrivate_h
 #define KURLGooglePrivate_h
 
-#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 
 #include <googleurl/src/url_parse.h>
@@ -50,8 +49,6 @@ namespace WebCore {
         KURLGooglePrivate();
         KURLGooglePrivate(const url_parse::Parsed&, bool isValid);
         KURLGooglePrivate(WTF::HashTableDeletedValueType);
-        KURLGooglePrivate(const KURLGooglePrivate&);
-        KURLGooglePrivate& operator=(const KURLGooglePrivate&);
 
         // Initializes the object. This will call through the backend initializer
         // below.
@@ -97,10 +94,7 @@ namespace WebCore {
         bool m_protocolIsInHTTPFamily;
         url_parse::Parsed m_parsed; // Indexes into the UTF-8 version of the string.
 
-        KURL* innerURL() const { return m_innerURL.get(); }
-
     private:
-        void initInnerURL();
         void initProtocolIsInHTTPFamily();
 
         CString m_utf8;
@@ -113,8 +107,6 @@ namespace WebCore {
 
         mutable bool m_stringIsValid;
         mutable String m_string;
-
-        OwnPtr<KURL> m_innerURL;
     };
 
 } // namespace WebCore

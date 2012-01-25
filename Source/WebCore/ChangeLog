@@ -1,3 +1,23 @@
+2012-01-25  Anton Muhin  <antonm@chromium.org>
+
+        Unreview manual revert of r105843.
+
+        * fileapi/EntryBase.cpp:
+        (WebCore::EntryBase::toURL):
+        * page/SecurityOrigin.cpp:
+        (WebCore::extractInnerURL):
+        * platform/KURL.h:
+        (KURL):
+        * platform/KURLGoogle.cpp:
+        (WebCore):
+        (WebCore::KURLGooglePrivate::setUtf8):
+        (WebCore::KURLGooglePrivate::setAscii):
+        (WebCore::KURLGooglePrivate::initProtocolIsInHTTPFamily):
+        (WebCore::KURLGooglePrivate::copyTo):
+        (WebCore::encodeWithURLEscapeSequences):
+        * platform/KURLGooglePrivate.h:
+        (KURLGooglePrivate):
+
 2012-01-25  Noel Gordon  <noel.gordon@gmail.com>
 
         Use maximum image dimension definition from libwebp

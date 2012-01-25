@@ -218,13 +218,6 @@ public:
     const CString& utf8String() const { return m_url.utf8String(); }
 #endif
 
-
-#if USE(GOOGLEURL)
-    const KURL* innerURL() const { return m_url.innerURL(); }
-#else
-    const KURL* innerURL() const { return 0; }
-#endif
-
 #ifndef NDEBUG
     void print() const;
 #endif
