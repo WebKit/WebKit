@@ -91,6 +91,7 @@
 }
 
 .tabbed-pane-header-tab-close-button {
+    font-family: Arial, monospace;
     position: relative;
     bottom: 1px;
     opacity: 0;
