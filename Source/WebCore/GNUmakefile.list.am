@@ -721,6 +721,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/ProgressEvent.idl \
 	$(WebCore)/dom/Range.idl \
 	$(WebCore)/dom/RangeException.idl \
+	$(WebCore)/dom/ShadowRoot.idl \
 	$(WebCore)/dom/Text.idl \
 	$(WebCore)/dom/TextEvent.idl \
 	$(WebCore)/dom/Touch.idl \
@@ -1155,6 +1156,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	Source/WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	Source/WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSShadowRoot.h \
+	Source/WebCore/bindings/js/JSShadowRoot.cpp \
 	Source/WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.h \

@@ -272,6 +272,7 @@
 #include "JSScreen.cpp"
 #include "JSScriptProfile.cpp"
 #include "JSScriptProfileNode.cpp"
+#include "JSShadowRoot.cpp"
 #include "JSSharedWorker.cpp"
 #include "JSSharedWorkerContext.cpp"
 #include "JSSQLError.cpp"

@@ -407,6 +407,14 @@ webcore_cppflags += -DENABLE_WORKERS=1
 endif
 
 # ---
+# Shadow DOM support
+# ---
+if ENABLE_SHADOW_DOM
+FEATURE_DEFINES += ENABLE_SHADOW_DOM=1
+webcore_cppflags += -DENABLE_SHADOW_DOM=1
+endif
+
+# ---
 # SharedWorker support
 # ---
 if ENABLE_SHARED_WORKERS

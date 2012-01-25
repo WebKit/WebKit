@@ -659,6 +659,14 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
+# check whether to enable Shadow DOM support
+AC_MSG_CHECKING([whether to enable Shadow DOM support])
+AC_ARG_ENABLE(shadow_dom,
+              AC_HELP_STRING([--enable-shadow-dom],
+                             [enable support for Shadow DOM [default=yes]]),
+              [],[enable_shadow_dom="yes"])
+AC_MSG_RESULT([$enable_shadow_dom])
+
 # check whether to enable SharedWorkers support
 AC_MSG_CHECKING([whether to enable SharedWorkers support])
 AC_ARG_ENABLE(shared_workers,
@@ -1196,6 +1204,7 @@ AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
+AM_CONDITIONAL([ENABLE_SHADOW_DOM],[test "$enable_shadow_dom" = "yes"])
 AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
@@ -1295,6 +1304,7 @@ Features:
  Image resizer support                                    : $enable_image_resizer
  Link prefetch support                                    : $enable_link_prefetch
  Opcode stats                                             : $enable_opcode_stats
+ Shadow DOM support                                       : $enable_shadow_dom
  SharedWorkers support                                    : $enable_shared_workers
  Color input support                                      : $enable_input_color
  Speech input support                                     : $enable_input_speech

@@ -3576,6 +3576,7 @@
 		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
+		A7DB418214CE1F0A00A2E316 /* ShadowRoot.idl in Resources */ = {isa = PBXBuildFile; fileRef = A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */; };
 		A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */; };
 		A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */; };
 		A7F5D94F1384F02D00A29A87 /* NodeRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */; };
@@ -10418,6 +10419,7 @@
 		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
 		A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoader.h; path = workers/WorkerScriptLoader.h; sourceTree = "<group>"; };
 		A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerScriptLoader.cpp; path = workers/WorkerScriptLoader.cpp; sourceTree = "<group>"; };
+		A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
 		A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckingHelper.cpp; sourceTree = "<group>"; };
 		A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckingHelper.h; sourceTree = "<group>"; };
 		A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderingContext.cpp; sourceTree = "<group>"; };
@@ -20603,6 +20605,7 @@
 				E45322AA140CE267005A0F92 /* SelectorQuery.h */,
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
+				A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */,

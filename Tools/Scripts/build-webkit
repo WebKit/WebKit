@@ -117,6 +117,7 @@ my (
     $progressTagSupport,
     $quotaSupport,
     $registerProtocolHandlerSupport,
+    $shadowDomSupport,
     $sharedWorkersSupport,
     $styleScopedSupport,
     $svgSupport,
@@ -295,6 +296,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },
+
+    { option => "shadow-dom", desc => "Toggle Shadow DOM support",
+      define => "ENABLE_SHADOW_DOM", default => 0, value => \$shadowDomSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$sharedWorkersSupport },

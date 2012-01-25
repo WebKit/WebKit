@@ -180,6 +180,7 @@ SET(WebCore_IDL_FILES
     dom/ProgressEvent.idl
     dom/RangeException.idl
     dom/Range.idl
+    dom/ShadowRoot.idl
     dom/TextEvent.idl
     dom/Text.idl
     dom/TouchEvent.idl
