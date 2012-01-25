@@ -49,9 +49,6 @@ public:
 
     // For callers: provide a reasonable compression quality default.
     enum Quality { DefaultCompressionQuality = 80 };
-
-    // Maximum image width or height allowed by the WEBP specification.
-    enum Dimension { MaximumImageDimension = 16383 };
 };
 
 } // namespace WebCore

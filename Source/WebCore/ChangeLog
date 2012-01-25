@@ -1,5 +1,19 @@
 2012-01-25  Noel Gordon  <noel.gordon@gmail.com>
 
+        Use maximum image dimension definition from libwebp
+        https://bugs.webkit.org/show_bug.cgi?id=76980
+
+        Reviewed by Kent Tamura.
+
+        No new tests, no change in behavior.
+
+        * platform/image-encoders/skia/WEBPImageEncoder.cpp:
+        (WebCore::encodePixels): s/WEBP_MAX_DIMENSION/WEBPImageEncoder::MaximumImageDimension/
+        * platform/image-encoders/skia/WEBPImageEncoder.h:
+        (): Remove local definition of the maximum webp image dimension
+
+2012-01-25  Noel Gordon  <noel.gordon@gmail.com>
+
         JPEGDecoder should use imageDecoder colorProfile helpers
         https://bugs.webkit.org/show_bug.cgi?id=76968
         

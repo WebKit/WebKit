@@ -96,10 +96,10 @@ static bool encodePixels(IntSize imageSize, const unsigned char* pixels, bool pr
         return false;
 
     imageSize.clampNegativeToZero();
-    if (!imageSize.width() || imageSize.width() > WEBPImageEncoder::MaximumImageDimension)
+    if (!imageSize.width() || imageSize.width() > WEBP_MAX_DIMENSION)
         return false;
     picture.width = imageSize.width();
-    if (!imageSize.height() || imageSize.height() > WEBPImageEncoder::MaximumImageDimension)
+    if (!imageSize.height() || imageSize.height() > WEBP_MAX_DIMENSION)
         return false;
     picture.height = imageSize.height();
 
