@@ -3933,6 +3933,7 @@ contains(CONFIG, texmap) {
         platform/graphics/texmap/GraphicsLayerTextureMapper.h \
         platform/graphics/texmap/LayerTransform.h \
         platform/graphics/texmap/TextureMapper.h \
+        platform/graphics/texmap/TextureMapperAnimation.h \
         platform/graphics/texmap/TextureMapperNode.h \
         platform/graphics/texmap/TextureMapperPlatformLayer.h
 
@@ -3940,6 +3941,7 @@ contains(CONFIG, texmap) {
         platform/graphics/qt/TextureMapperQt.cpp \
         platform/graphics/texmap/LayerTransform.cpp \
         platform/graphics/texmap/TextureMapper.cpp \
+        platform/graphics/texmap/TextureMapperAnimation.cpp \
         platform/graphics/texmap/TextureMapperNode.cpp \
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 

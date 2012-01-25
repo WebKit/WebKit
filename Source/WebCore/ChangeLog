@@ -1,3 +1,35 @@
+2012-01-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Divide TextureMapperNode.cpp to 3 files.
+        https://bugs.webkit.org/show_bug.cgi?id=76660
+
+         Reviewed by Kenneth Rohde Christiansen.
+
+         Split the animation part of TextureMapperNode out to a separate file, called
+         TextureMapperAnimation.
+         Provide a clean interface for that class, that allows separating the internals of the scene
+         painting from the internals of the animation interpolation.
+
+         No new tests. Existing animation tests cover this.
+
+         * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::pauseAnimation):
+        (WebCore::GraphicsLayerTextureMapper::removeAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::descendantsOrSelfHaveRunningAnimations):
+        (WebCore::TextureMapperNode::syncAnimations):
+        (WebCore::TextureMapperNode::syncAnimationsRecursively):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (TextureMapperNode):
+
 2012-01-25  Hajime Morita  <morrita@google.com>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom

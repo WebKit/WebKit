@@ -5726,6 +5726,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
@@ -5744,6 +5746,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
