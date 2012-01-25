@@ -1,3 +1,9 @@
+2012-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Trigger Chromium Mac Release (Perf) on new commits.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-01-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit needs public performance tests running on public bots
