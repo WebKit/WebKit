@@ -515,9 +515,6 @@ if (isGtk()) {
         }
     }
 
-    # Apple builds JavaScriptGlue, and only on the Mac.
-    splice @projects, 1, 0, "Source/JavaScriptGlue";
-
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
 
@@ -683,7 +680,7 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
-        my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore|JavaScriptGlue");
+        my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore");
         my $projectPath = $useGYPProject ? "gyp/$project" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {

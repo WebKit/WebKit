@@ -44,7 +44,6 @@ my %words;
 
 my @paths;
 find(\&wanted, "Source/JavaScriptCore");
-find(\&wanted, "Source/JavaScriptGlue");
 find(\&wanted, "Source/WebCore");
 find(\&wanted, "WebKit");
 find(\&wanted, "Source/WebKit2");

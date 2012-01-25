@@ -1,3 +1,12 @@
+2012-01-24  Mark Rowe  <mrowe@apple.com>
+
+        Death to JavaScriptGlue.
+
+        Rubber-stamped by Geoffrey Garen.
+
+        * Source/JavaScriptGlue: Removed.
+        * Source/Makefile: Stop building JavaScriptGlue.
+
 2012-01-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Some qmake build files must include Qt5's "quick" module.

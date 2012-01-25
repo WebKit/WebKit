@@ -55,7 +55,6 @@ def _should_file_trigger_build(target_platform, file):
         ("wx", []),
 
         # Directories that should trigger builds on only some bots.
-        ("Source/JavaScriptGlue", ["mac"]),
         ("Source/WebCore/image-decoders", ["chromium"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
         ("cairo", ["gtk", "wincairo"]),

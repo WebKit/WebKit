@@ -1,3 +1,20 @@
+2012-01-24  Mark Rowe  <mrowe@apple.com>
+
+        Death to JavaScriptGlue.
+
+        Rubber-stamped by Geoffrey Garen.
+
+        * BuildSlaveSupport/build-launcher-app:
+        (copyNightlyLauncher):
+        * Scripts/build-webkit:
+        * Scripts/do-file-rename:
+        * Scripts/do-webcore-rename:
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build):
+        * Scripts/webkitpy/common/config/build_unittest.py: Update the test to use another Mac-specific
+        path in conjunction with a cross-platform path.
+        (ShouldBuildTest):
+
 2012-01-24  Kentaro Hara  <haraken@chromium.org>
 
         webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl should test stdout and stderr

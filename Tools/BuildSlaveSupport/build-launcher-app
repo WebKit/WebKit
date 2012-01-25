@@ -104,7 +104,7 @@ sub copyNightlyLauncher
     print OUT "$branch\n";
     close(OUT);
 
-    my @frameworks = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
+    my @frameworks = ("JavaScriptCore", "WebCore", "WebKit");
     for my $framework (@frameworks) {
         system("ditto", productDir() . "/$framework.framework", "$nightlyLauncherStagingPath/Contents/Resources/$framework.framework") == 0 or die "Failed copying $framework.framework into $nightlyLauncherStagingPath";
     }
