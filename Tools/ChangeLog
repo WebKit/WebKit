@@ -1,3 +1,26 @@
+2012-01-25  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up a bunch of test scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=76973
+
+        Reviewed by Eric Seidel.
+
+        There were several helper modules in the webkitpy.test package
+        that appear to only be used by executive_unittest.py. I am
+        rolling them all into that file to make that clearer.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_run_command_args_type):
+        (ExecutiveTest.test_run_command_with_unicode):
+        (ExecutiveTest.test_running_pids):
+        (command_line):
+        (main):
+        * Scripts/webkitpy/common/system/fileutils.py: Removed.
+        * Scripts/webkitpy/test/cat.py: Removed.
+        * Scripts/webkitpy/test/cat_unittest.py: Removed.
+        * Scripts/webkitpy/test/echo.py: Removed.
+        * Scripts/webkitpy/test/echo_unittest.py: Removed.
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         Remove Python 2.5 support from WebKit
