@@ -1,3 +1,11 @@
+2012-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <http://webkit.org/b/76941> Web Inspector: Remove Unused InspectorFrontendHost.search Stub
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/InspectorFrontendHostStub.js:
+
 2012-01-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector style fix.

@@ -77,10 +77,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
-    search: function(sourceRow, query)
-    {
-    },
-
     setAttachedWindowHeight: function(height)
     {
     },
