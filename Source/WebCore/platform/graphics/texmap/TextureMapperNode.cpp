@@ -585,11 +585,8 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
            layer->m_effectTarget = this;
     }
 
-    if (changeMask & AnimationChange) {
-        m_animations.clear();
-        for (size_t i = 0; i < graphicsLayer->m_animations.size(); ++i)
-            m_animations.append(graphicsLayer->m_animations[i]);
-    }
+    if (changeMask & AnimationChange)
+        m_animations = graphicsLayer->m_animations;
 
     m_state.maskLayer = toTextureMapperNode(graphicsLayer->maskLayer());
     m_state.replicaLayer = toTextureMapperNode(graphicsLayer->replicaLayer());
@@ -614,11 +611,6 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     if (!m_currentContent.needsDisplay)
         m_currentContent.needsDisplayRect.unite(pendingContent.needsDisplayRect);
 
-    if (!hasOpacityAnimation())
-        m_opacity = m_state.opacity;
-    if (!hasTransformAnimation())
-        m_transform.setLocalTransform(m_state.transform);
-
     m_transform.setPosition(m_state.pos);
     m_transform.setAnchorPoint(m_state.anchorPoint);
     m_transform.setSize(m_state.size);
@@ -628,10 +620,8 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
 
 bool TextureMapperNode::descendantsOrSelfHaveRunningAnimations() const
 {
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (!m_animations[i]->paused)
-            return true;
-    }
+    if (m_animations.hasRunningAnimations())
+        return true;
 
     for (size_t i = 0; i < m_children.size(); ++i) {
         if (m_children[i]->descendantsOrSelfHaveRunningAnimations())
@@ -641,197 +631,18 @@ bool TextureMapperNode::descendantsOrSelfHaveRunningAnimations() const
     return false;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, bool alternate)
+void TextureMapperNode::syncAnimations()
 {
-    if (!duration)
-        return 0;
-    const int loopCount = runningTime / duration;
-    const double lastFullLoop = duration * double(loopCount);
-    const double remainder = runningTime - lastFullLoop;
-    const double normalized = remainder / duration;
-    return (loopCount % 2 && alternate) ? (1 - normalized) : normalized;
-}
-
-void TextureMapperNode::applyOpacityAnimation(float fromOpacity, float toOpacity, double progress)
-{
-    // Optimization: special case the edge values (0 and 1).
-    if (progress == 1.0)
-        setOpacity(toOpacity);
-    else if (!progress)
-        setOpacity(fromOpacity);
-    else
-        setOpacity(fromOpacity + progress * (toOpacity - fromOpacity));
-}
-
-static inline double solveEpsilon(double duration)
-{
-    return 1.0 / (200.0 * duration);
-}
-
-static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
-{
-    UnitBezier bezier(p1x, p1y, p2x, p2y);
-    return bezier.solve(t, solveEpsilon(duration));
-}
-
-static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
-{
-    if (stepAtStart)
-        return std::min(1.0, (floor(numSteps * t) + 1) / numSteps);
-    return floor(numSteps * t) / numSteps;
-}
-
-static inline float applyTimingFunction(const TimingFunction* timingFunction, float progress, double duration)
-{
-    if (!timingFunction)
-        return progress;
-
-    if (timingFunction->isCubicBezierTimingFunction()) {
-        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        return solveCubicBezierFunction(ctf->x1(),
-                                        ctf->y1(),
-                                        ctf->x2(),
-                                        ctf->y2(),
-                                        progress, duration);
-    }
-
-    if (timingFunction->isStepsTimingFunction()) {
-        const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(timingFunction);
-        return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), double(progress));
-    }
-
-    return progress;
-}
-
-void TextureMapperNode::applyTransformAnimation(const TextureMapperAnimation& animation, const TransformOperations* from, const TransformOperations* to, double progress)
-{
-    // Optimization: special case the edge values (0 and 1).
-    if (progress == 1.0 || !progress) {
-        TransformationMatrix matrix;
-        const TransformOperations* ops = progress ? to : from;
-        ops->apply(animation.boxSize, matrix);
-        setTransform(matrix);
-    }
-
-    if (!animation.listsMatch) {
-        TransformationMatrix toMatrix, fromMatrix;
-        to->apply(animation.boxSize, toMatrix);
-        from->apply(animation.boxSize, fromMatrix);
-        toMatrix.blend(fromMatrix, progress);
-        setTransform(toMatrix);
-        return;
-    }
-
-    TransformationMatrix matrix;
-
-    if (!to->size()) {
-        const TransformOperations* swap = to;
-        to = from;
-        from = swap;
-    } else if (!from->size())
-        progress = 1.0 - progress;
-
-    TransformOperations blended(*to);
-    for (size_t i = 0; i < animation.functionList.size(); ++i)
-        blended.operations()[i]->blend(from->at(i), progress, !from->at(i))->apply(matrix, animation.boxSize);
-
-    setTransform(matrix);
-}
-
-void TextureMapperNode::applyAnimationFrame(const TextureMapperAnimation& animation, const AnimationValue* from, const AnimationValue* to, float progress)
-{
-    switch (animation.keyframes.property()) {
-    case AnimatedPropertyOpacity:
-        applyOpacityAnimation((static_cast<const FloatAnimationValue*>(from)->value()), (static_cast<const FloatAnimationValue*>(to)->value()), progress);
-        return;
-    case AnimatedPropertyWebkitTransform:
-        applyTransformAnimation(animation, static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress);
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-void TextureMapperNode::applyAnimation(const TextureMapperAnimation& animation, double normalizedValue)
-{
-    // Optimization: special case the edge values (0 and 1).
-    if (!normalizedValue) {
-        applyAnimationFrame(animation, animation.keyframes.at(0), animation.keyframes.at(1), 0);
-        return;
-    }
-    if (normalizedValue == 1.0) {
-        applyAnimationFrame(animation, animation.keyframes.at(animation.keyframes.size() - 2), animation.keyframes.at(animation.keyframes.size() - 1), 1);
-        return;
-    }
-    if (animation.keyframes.size() == 2) {
-        normalizedValue = applyTimingFunction(animation.animation->timingFunction().get(), normalizedValue, animation.animation->duration());
-        applyAnimationFrame(animation, animation.keyframes.at(0), animation.keyframes.at(1), normalizedValue);
-        return;
-    }
-
-    for (size_t i = 0; i < animation.keyframes.size() - 1; ++i) {
-        const AnimationValue* from = animation.keyframes.at(i);
-        const AnimationValue* to = animation.keyframes.at(i + 1);
-        if (from->keyTime() > normalizedValue || to->keyTime() < normalizedValue)
-            continue;
-
-        normalizedValue = (normalizedValue - from->keyTime()) / (to->keyTime() - from->keyTime());
-        normalizedValue = applyTimingFunction(from->timingFunction(), normalizedValue, animation.animation->duration());
-        applyAnimationFrame(animation, from, to, normalizedValue);
-        break;
-    }
-}
-
-bool TextureMapperNode::hasOpacityAnimation() const
-{
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        const TextureMapperAnimation& animation = *m_animations[i].get();
-        if (animation.keyframes.property() == AnimatedPropertyOpacity)
-            return true;
-    }
-    return false;
-}
-
-bool TextureMapperNode::hasTransformAnimation() const
-{
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        const TextureMapperAnimation& animation = *m_animations[i].get();
-        if (animation.keyframes.property() == AnimatedPropertyWebkitTransform)
-            return true;
-    }
-    return false;
-}
-
-void TextureMapperNode::syncAnimations(GraphicsLayerTextureMapper* layer)
-{
-    for (int i = m_animations.size() - 1; i >= 0; --i) {
-        RefPtr<TextureMapperAnimation> animation = m_animations[i];
-
-        double totalRunningTime = WTF::currentTime() - animation->startTime;
-        RefPtr<Animation> anim = animation->animation;
-        double normalizedValue = normalizedAnimationValue(totalRunningTime, anim->duration(), anim->direction());
-
-        if (anim->iterationCount() != Animation::IterationCountInfinite && totalRunningTime >= anim->duration() * anim->iterationCount()) {
-            // We apply an animation that very close to the edge, so that the final frame is applied, oterwise we might get, for example, an opacity of 0.01 which is still visible.
-            if (anim->fillsForwards()) {
-                if (animation->keyframes.property() == AnimatedPropertyWebkitTransform)
-                    setTransform(m_state.transform);
-                else if (animation->keyframes.property() == AnimatedPropertyOpacity)
-                    setOpacity(m_state.opacity);
-            }
-
-            m_animations.remove(i);
-            continue;
-        }
-
-        if (!animation->paused)
-            applyAnimation(*animation.get(), normalizedValue);
-    }
+    m_animations.apply(this);
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
+        setTransform(m_state.transform);
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity))
+        setOpacity(m_state.opacity);
 }
 
 void TextureMapperNode::syncAnimationsRecursively()
 {
-    syncAnimations(0);
+    syncAnimations();
 
     for (int i = m_children.size() - 1; i >= 0; --i)
         m_children[i]->syncAnimationsRecursively();
@@ -855,8 +666,7 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
     if (m_state.replicaLayer)
         m_state.replicaLayer->syncCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->replicaLayer()), textureMapper);
 
-    syncAnimations(graphicsLayer);
-
+    syncAnimations();
     computeTiles();
 
     if (graphicsLayer)
@@ -879,11 +689,5 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
     }
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& values)
-    : keyframes(values)
-{
 }
-
-}
-
 #endif

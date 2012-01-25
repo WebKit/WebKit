@@ -365,59 +365,27 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
         return false;
 
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        // The same animation name can be used for two animations with different properties.
-        if (m_animations[i]->name != keyframesName || m_animations[i]->keyframes.property() != valueList.property())
-            continue;
+    bool listsMatch;
+    bool hasBigRotation;
+    Vector<TransformOperation::OperationType> functionList;
 
-        // We already have a copy of this animation, that means that we're resuming it rather than adding it.
-        RefPtr<TextureMapperAnimation>& animation = m_animations[i];
-        animation->animation = Animation::create(anim);
-        animation->paused = false;
-        animation->startTime = WTF::currentTime() - timeOffset;
-        notifyChange(TextureMapperNode::AnimationChange);
-        m_animationStartedTimer.startOneShot(0);
-        return true;
-    }
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
+        fetchTransformOperationList(valueList, functionList, listsMatch, hasBigRotation);
 
-    RefPtr<TextureMapperAnimation> animation = TextureMapperAnimation::create(valueList);
-    animation->boxSize = boxSize;
-    animation->name = keyframesName;
-    animation->animation = Animation::create(anim);
-    animation->paused = false;
-    animation->startTime = WTF::currentTime() - timeOffset;
-
-    if (valueList.property() == AnimatedPropertyWebkitTransform) {
-        bool hasBigRotation; // Not used, but required as a pointer parameter for the function.
-        fetchTransformOperationList(valueList, animation->functionList, animation->listsMatch, hasBigRotation);
-    }
-
-    m_animations.append(animation);
+    m_animations.add(keyframesName, TextureMapperAnimation(valueList, boxSize, anim, timeOffset, functionList, listsMatch));
     notifyChange(TextureMapperNode::AnimationChange);
     m_animationStartedTimer.startOneShot(0);
-
     return true;
 }
 
 void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, double timeOffset)
 {
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i]->name != animationName)
-            continue;
-        m_animations[i]->paused = true;
-        notifyChange(TextureMapperNode::AnimationChange);
-    }
+    m_animations.pause(animationName, timeOffset);
 }
 
 void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
 {
-    for (int i = m_animations.size() - 1; i >= 0; --i) {
-        // The same animation name can be used for two animations with different properties. We should remove both.
-        if (m_animations[i]->name != animationName)
-            continue;
-        m_animations.remove(i);
-        notifyChange(TextureMapperNode::AnimationChange);
-    }
+    m_animations.remove(animationName);
 }
 
 void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*)
