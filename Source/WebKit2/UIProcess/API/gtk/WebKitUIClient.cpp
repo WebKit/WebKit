@@ -21,97 +21,96 @@
 #include "WebKitUIClient.h"
 
 #include "WebKitPrivate.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
 
 using namespace WebKit;
 
-G_DEFINE_TYPE(WebKitUIClient, webkit_ui_client, G_TYPE_OBJECT)
-
-static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void*)
+static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), wkWindowFeatures);
+    return webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(clientInfo), wkWindowFeatures);
 }
 
-static void showPage(WKPageRef page, const void*)
+static void showPage(WKPageRef page, const void* clientInfo)
 {
-    webkitWebViewReadyToShowPage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWebViewReadyToShowPage(WEBKIT_WEB_VIEW(clientInfo));
 }
 
-static void closePage(WKPageRef page, const void*)
+static void closePage(WKPageRef page, const void* clientInfo)
 {
-    webkitWebViewClosePage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWebViewClosePage(WEBKIT_WEB_VIEW(clientInfo));
 }
 
-static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef, const void*)
+static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
-    webkitWebViewRunJavaScriptAlert(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8());
+    webkitWebViewRunJavaScriptAlert(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8());
 }
 
-static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef, const void*)
+static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
-    return webkitWebViewRunJavaScriptConfirm(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8());
+    return webkitWebViewRunJavaScriptConfirm(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8());
 }
 
-static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void*)
+static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
 {
-    return webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8(),
+    return webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(clientInfo), toImpl(message)->string().utf8(),
                                             toImpl(defaultValue)->string().utf8());
 }
 
-static bool toolbarsAreVisible(WKPageRef page, const void*)
+static bool toolbarsAreVisible(WKPageRef page, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     return webkit_window_properties_get_toolbar_visible(windowProperties);
 }
 
-static void setToolbarsAreVisible(WKPageRef page, bool toolbarsVisible, const void*)
+static void setToolbarsAreVisible(WKPageRef page, bool toolbarsVisible, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     webkitWindowPropertiesSetToolbarVisible(windowProperties, toolbarsVisible);
 }
 
-static bool menuBarIsVisible(WKPageRef page, const void*)
+static bool menuBarIsVisible(WKPageRef page, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     return webkit_window_properties_get_menubar_visible(windowProperties);
 }
 
-static void setMenuBarIsVisible(WKPageRef page, bool menuBarVisible, const void*)
+static void setMenuBarIsVisible(WKPageRef page, bool menuBarVisible, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     webkitWindowPropertiesSetMenubarVisible(windowProperties, menuBarVisible);
 }
 
-static bool statusBarIsVisible(WKPageRef page, const void*)
+static bool statusBarIsVisible(WKPageRef page, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     return webkit_window_properties_get_statusbar_visible(windowProperties);
 }
 
-static void setStatusBarIsVisible(WKPageRef page, bool statusBarVisible, const void*)
+static void setStatusBarIsVisible(WKPageRef page, bool statusBarVisible, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     webkitWindowPropertiesSetStatusbarVisible(windowProperties, statusBarVisible);
 }
 
-static bool isResizable(WKPageRef page, const void*)
+static bool isResizable(WKPageRef page, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     return webkit_window_properties_get_resizable(windowProperties);
 }
 
-static void setIsResizable(WKPageRef page, bool resizable, const void*)
+static void setIsResizable(WKPageRef page, bool resizable, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     webkitWindowPropertiesSetResizable(windowProperties, resizable);
 }
 
-static WKRect getWindowFrame(WKPageRef page, const void*)
+static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 {
     GdkRectangle geometry = { 0, 0, 0, 0 };
-    GtkWidget* window = gtk_widget_get_toplevel(toImpl(page)->viewWidget());
+    GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(clientInfo));
     if (gtk_widget_is_toplevel(window) && gtk_widget_get_visible(window)) {
         gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
         gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
@@ -119,18 +118,18 @@ static WKRect getWindowFrame(WKPageRef page, const void*)
     return WKRectMake(geometry.x, geometry.y, geometry.width, geometry.height);
 }
 
-static void setWindowFrame(WKPageRef page, WKRect frame, const void*)
+static void setWindowFrame(WKPageRef page, WKRect frame, const void* clientInfo)
 {
-    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
     GdkRectangle geometry = { frame.origin.x, frame.origin.y, frame.size.width, frame.size.height };
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 }
 
-void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPage)
+void attachUIClientToView(WebKitWebView* webView)
 {
     WKPageUIClient wkUIClient = {
         kWKPageUIClientCurrentVersion,
-        uiClient, // clientInfo
+        webView, // clientInfo
         0, // createNewPage_deprecatedForUseWithV0
         showPage,
         closePage,
@@ -174,13 +173,7 @@ void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPa
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
     };
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageUIClient(wkPage, &wkUIClient);
 }
 
-static void webkit_ui_client_init(WebKitUIClient* client)
-{
-}
-
-static void webkit_ui_client_class_init(WebKitUIClientClass* clientClass)
-{
-}

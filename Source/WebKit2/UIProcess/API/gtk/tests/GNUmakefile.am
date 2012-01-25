@@ -1,7 +1,7 @@
 TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitWebContext \
 	Programs/WebKit2APITests/TestWebKitWebView \
-	Programs/WebKit2APITests/TestWebKitWebLoaderClient \
+	Programs/WebKit2APITests/TestLoaderClient \
 	Programs/WebKit2APITests/TestWebKitSettings \
 	Programs/WebKit2APITests/TestBackForwardList \
 	Programs/WebKit2APITests/TestDownloads
@@ -67,11 +67,11 @@ Programs_WebKit2APITests_TestWebKitWebView_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebKitWebView_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitWebView_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitWebLoaderClient_SOURCES = \
-	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp
-Programs_WebKit2APITests_TestWebKitWebLoaderClient_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitWebLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2APITests_TestLoaderClient_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestLoaderClient.cpp
+Programs_WebKit2APITests_TestLoaderClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestLoaderClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
 
 Programs_WebKit2APITests_TestWebKitSettings_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitSettings.cpp

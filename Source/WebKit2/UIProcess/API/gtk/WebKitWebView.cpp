@@ -24,11 +24,11 @@
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
+#include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
-#include "WebKitWebLoaderClient.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
@@ -76,8 +76,6 @@ struct _WebKitWebViewPrivate {
     CString activeURI;
     bool replacingContent;
 
-    GRefPtr<WebKitWebLoaderClient> loaderClient;
-    GRefPtr<WebKitUIClient> uiClient;
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
     GRefPtr<WebKitWindowProperties> windowProperties;
@@ -146,12 +144,6 @@ static gboolean webkitWebViewScriptPrompt(WebKitWebView* webView, const char* me
     return TRUE;
 }
 
-static void webkitWebViewSetLoaderClient(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
-{
-    webView->priv->loaderClient = loaderClient;
-    webkitWebLoaderClientAttachLoaderClientToPage(loaderClient, wkPage);
-}
-
 static void webkitWebViewConstructed(GObject* object)
 {
     if (G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed)
@@ -163,15 +155,10 @@ static void webkitWebViewConstructed(GObject* object)
 
     webkitWebViewBaseCreateWebPage(webViewBase, webkitWebContextGetWKContext(priv->context), 0);
 
+    attachLoaderClientToView(webView);
+    attachUIClientToView(webView);
+
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
-
-    static GRefPtr<WebKitWebLoaderClient> defaultLoaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, NULL)));
-    webkitWebViewSetLoaderClient(webView, defaultLoaderClient.get(), toAPI(page));
-
-    static GRefPtr<WebKitUIClient> defaultUIClient = adoptGRef(WEBKIT_UI_CLIENT(g_object_new(WEBKIT_TYPE_UI_CLIENT, NULL)));
-    priv->uiClient = defaultUIClient.get();
-    webkitUIClientAttachUIClientToPage(priv->uiClient.get(), toAPI(page));
-
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
     priv->settings = adoptGRef(webkit_settings_new());
     webkitSettingsAttachSettingsToPage(priv->settings.get(), toAPI(page));

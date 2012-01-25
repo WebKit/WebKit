@@ -19,9 +19,10 @@
  */
 
 #include "config.h"
-#include "WebKitWebLoaderClient.h"
+#include "WebKitLoaderClient.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
@@ -29,14 +30,12 @@
 using namespace WebKit;
 using namespace WebCore;
 
-G_DEFINE_TYPE(WebKitWebLoaderClient, webkit_web_loader_client, G_TYPE_OBJECT)
-
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_STARTED);
+    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_STARTED);
 }
 
 static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -44,7 +43,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, W
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_REDIRECTED);
+    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_REDIRECTED);
 }
 
 static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
@@ -56,7 +55,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
                                                  resourceError.errorCode(),
                                                  resourceError.localizedDescription().utf8().data()));
-    webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_STARTED,
+    webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_STARTED,
                             resourceError.failingURL().utf8().data(), webError.get());
 }
 
@@ -65,7 +64,7 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_COMMITTED);
+    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_COMMITTED);
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -73,7 +72,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_FINISHED);
+    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_FINISHED);
 }
 
 static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
@@ -85,43 +84,41 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
     GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
                                                  resourceError.errorCode(),
                                                  resourceError.localizedDescription().utf8().data()));
-    webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), WEBKIT_LOAD_COMMITTED,
+    webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_COMMITTED,
                             resourceError.failingURL().utf8().data(), webError.get());
 }
 
-static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void*)
+static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewUpdateURI(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWebViewUpdateURI(WEBKIT_WEB_VIEW(clientInfo));
 }
 
-static void didReceiveTitleForFrame(WKPageRef page, WKStringRef titleRef, WKFrameRef frameRef, WKTypeRef, const void*)
+static void didReceiveTitleForFrame(WKPageRef page, WKStringRef titleRef, WKFrameRef frameRef, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frameRef))
         return;
 
-    webkitWebViewSetTitle(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(titleRef)->string().utf8());
+    webkitWebViewSetTitle(WEBKIT_WEB_VIEW(clientInfo), toImpl(titleRef)->string().utf8());
 }
 
 static void didChangeProgress(WKPageRef page, const void* clientInfo)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
-    webkitWebViewSetEstimatedLoadProgress(webView, WKPageGetEstimatedProgress(page));
+    webkitWebViewSetEstimatedLoadProgress(WEBKIT_WEB_VIEW(clientInfo), WKPageGetEstimatedProgress(page));
 }
 
 static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(toImpl(page)->viewWidget());
-    webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(webView), addedItem, removedItems);
+    webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(WEBKIT_WEB_VIEW(clientInfo)), addedItem, removedItems);
 }
 
-void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
+void attachLoaderClientToView(WebKitWebView* webView)
 {
     WKPageLoaderClient wkLoaderClient = {
         kWKPageLoaderClientCurrentVersion,
-        loaderClient, // clientInfo
+        webView, // clientInfo
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -149,13 +146,7 @@ void webkitWebLoaderClientAttachLoaderClientToPage(WebKitWebLoaderClient* loader
         0, // didFailToInitializePlugin
         0 // didDetectXSSForFrame
     };
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);
 }
 
-static void webkit_web_loader_client_init(WebKitWebLoaderClient*)
-{
-}
-
-static void webkit_web_loader_client_class_init(WebKitWebLoaderClientClass*)
-{
-}

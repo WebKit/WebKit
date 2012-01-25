@@ -1,3 +1,56 @@
+2012-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Page clients don't need to be GObjects anymore in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=76899
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp: Renamed from
+        Source/WebKit2/UIProcess/API/gtk/WebKitWebLoaderClient.cpp.
+        (didStartProvisionalLoadForFrame): Use clientInfo instead fo
+        getting the view from the page.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (didFailProvisionalLoadWithErrorForFrame): Ditto.
+        (didCommitLoadForFrame): Ditto.
+        (didFinishLoadForFrame): Ditto.
+        (didFailLoadWithErrorForFrame): Ditto.
+        (didSameDocumentNavigationForFrame): Ditto.
+        (didReceiveTitleForFrame): Ditto.
+        (didChangeProgress): Ditto.
+        (didChangeBackForwardList): Ditto.
+        (attachLoaderClientToView): Pass WebKitWebView as clientInfo to
+        callbacks.
+        * UIProcess/API/gtk/WebKitLoaderClient.h: Added.
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (createNewPage): Use clientInfo instead fo getting the view from
+        the page.
+        (showPage): Ditto.
+        (closePage): Ditto.
+        (runJavaScriptAlert): Ditto.
+        (runJavaScriptConfirm): Ditto.
+        (runJavaScriptPrompt): Ditto.
+        (toolbarsAreVisible): Ditto.
+        (setToolbarsAreVisible): Ditto.
+        (menuBarIsVisible): Ditto.
+        (setMenuBarIsVisible): Ditto.
+        (statusBarIsVisible): Ditto.
+        (setStatusBarIsVisible): Ditto.
+        (isResizable): Ditto.
+        (setIsResizable): Ditto.
+        (getWindowFrame): Ditto.
+        (setWindowFrame): Ditto.
+        (attachUIClientToView): Pass WebKitWebView as clientInfo to
+        callbacks.
+        * UIProcess/API/gtk/WebKitUIClient.h: Remove GObject boilerplate.
+        * UIProcess/API/gtk/WebKitWebLoaderClient.h: Removed.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Remove UIClient and LoaderClient
+        objects and call attachUIClientToView() and attachLoaderClientToView().
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Rename
+        WebKitWebLoaderClient to WebKitLoaderClient.
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp: Renamed from
+        Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebLoaderClient.cpp.
+
 2012-01-25  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Implement registering of <style scoped> with the scoping element

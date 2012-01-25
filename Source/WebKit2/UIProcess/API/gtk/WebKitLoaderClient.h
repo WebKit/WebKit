@@ -17,11 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitUIClient_h
-#define WebKitUIClient_h
+#ifndef WebKitLoaderClient_h
+#define WebKitLoaderClient_h
 
 #include "WebKitWebView.h"
 
-void attachUIClientToView(WebKitWebView*);
+void attachLoaderClientToView(WebKitWebView*);
 
 #endif

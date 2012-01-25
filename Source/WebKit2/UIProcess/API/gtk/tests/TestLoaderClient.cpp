@@ -239,8 +239,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    LoadTrackingTest::add("WebKitWebLoaderClient", "loading-status", testLoadingStatus);
-    LoadTrackingTest::add("WebKitWebLoaderClient", "loading-error", testLoadingError);
+    LoadTrackingTest::add("WebKitWebView", "loading-status", testLoadingStatus);
+    LoadTrackingTest::add("WebKitWebView", "loading-error", testLoadingError);
     LoadTrackingTest::add("WebKitWebView", "load-html", testLoadHtml);
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
     LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);

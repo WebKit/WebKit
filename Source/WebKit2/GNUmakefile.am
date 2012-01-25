@@ -529,6 +529,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitDownloadClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.h \
@@ -544,8 +546,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h \
-	Source/WebKit2/UIProcess/API/gtk/WebKitWebLoaderClient.h \
-	Source/WebKit2/UIProcess/API/gtk/WebKitWebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h \

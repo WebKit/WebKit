@@ -1,3 +1,14 @@
+2012-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Page clients don't need to be GObjects anymore in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=76899
+
+        Reviewed by Martin Robinson.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): WebKitWebLoaderClient has been renamed to
+        WebKitLoaderClient.
+
 2012-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Trigger Chromium Mac Release (Perf) on new commits.
