@@ -73,10 +73,10 @@ static String keyIdentifierForBlackBerryCharacter(unsigned short character)
         return "Insert";
     case KEYCODE_PG_UP:
     case KEYCODE_KP_PG_UP:
-        return "PageDown";
+        return "PageUp";
     case KEYCODE_PG_DOWN:
     case KEYCODE_KP_PG_DOWN:
-        return "PageUp";
+        return "PageDown";
     case KEYCODE_END:
     case KEYCODE_KP_END:
         return "End";
@@ -299,10 +299,10 @@ static int windowsKeyCodeForBlackBerryCharacter(unsigned short character)
         return VK_INSERT;
     case KEYCODE_PG_UP:
     case KEYCODE_KP_PG_UP:
-        return VK_NEXT;
+        return VK_PRIOR;
     case KEYCODE_PG_DOWN:
     case KEYCODE_KP_PG_DOWN:
-        return VK_PRIOR;
+        return VK_NEXT;
     case KEYCODE_END:
     case KEYCODE_KP_END:
         return VK_END;
