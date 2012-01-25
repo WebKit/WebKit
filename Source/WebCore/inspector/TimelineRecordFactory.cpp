@@ -40,6 +40,7 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 

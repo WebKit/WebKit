@@ -1931,6 +1931,14 @@
             {
                 "name": "stop",
                 "description": "Stops capturing instrumentation events."
+            },
+            {
+                "name": "setIncludeMemoryDetails",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "True to start collecting DOM counters." }
+                ],
+                "hidden": true,
+                "description": "Starts calculating various DOM statistics and sending them as part of timeline events."
             }
         ],
         "events": [

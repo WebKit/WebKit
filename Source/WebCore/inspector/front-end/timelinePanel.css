@@ -502,3 +502,43 @@
     color: rgb(50%, 50%, 50%);
     white-space: nowrap;
 }
+
+#timeline-memory-splitter {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    height: 5px;
+    cursor: ns-resize;
+}
+
+#memory-counters-graph {
+    overflow: hidden;
+}
+
+#memory-graphs-container {
+    border-top: 1px solid #AAA;
+}
+
+#memory-graphs-container .split-view-contents {
+    overflow: hidden;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid #AAA;
+}
+
+.memory-counter-sidebar-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.memory-counter-sidebar-info.bottom-border-visible {
+    border-bottom: 1px solid #AAA;
+}

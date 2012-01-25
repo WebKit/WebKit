@@ -78,6 +78,7 @@
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>KeyboardShortcut.js</file>
+    <file>MemoryStatistics.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>NetworkItemView.js</file>
     <file>NetworkLog.js</file>

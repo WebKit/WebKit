@@ -166,7 +166,8 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
     --module jsmodule_console:2:jsmodule_components \
         --js Source/WebCore/inspector/front-end/ConsoleView.js \
         --js Source/WebCore/inspector/front-end/ConsolePanel.js \
-    --module jsmodule_timeline:2:jsmodule_components \
+    --module jsmodule_timeline:3:jsmodule_components \
+        --js Source/WebCore/inspector/front-end/MemoryStatistics.js \
         --js Source/WebCore/inspector/front-end/TimelineOverviewPane.js \
         --js Source/WebCore/inspector/front-end/TimelinePanel.js \
     --module jsmodule_audits:6:jsmodule_components \

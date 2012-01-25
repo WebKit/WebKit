@@ -50,6 +50,14 @@ WebInspector.TimelinePanel = function()
     this._containerElement.id = "timeline-container";
     this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
 
+    if (WebInspector.experimentsSettings.showMemoryCounters.isEnabled()) {
+        this._timelineMemorySplitter = this.element.createChild("div");
+        this._timelineMemorySplitter.id = "timeline-memory-splitter";
+        this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
+        this._timelineMemorySplitter.addStyleClass("hidden");
+        this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
+    }
+
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
     this.sidebarTree.appendChild(itemsTreeElement);
 
@@ -119,6 +127,47 @@ WebInspector.TimelinePanel.rowHeight = 18;
 WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePanel.prototype = {
+    /**
+     * @param {Event} event
+     */
+    _startSplitterDragging: function(event)
+    {
+        this._dragOffset = this._timelineMemorySplitter.offsetTop + 2 - event.pageY;
+        WebInspector.elementDragStart(this._timelineMemorySplitter, this._splitterDragging.bind(this), this._endSplitterDragging.bind(this), event, "ns-resize");
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _splitterDragging: function(event)
+    {
+        var top = event.pageY + this._dragOffset
+        this._setSplitterPosition(top);
+        event.preventDefault();
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _endSplitterDragging: function(event)
+    {
+        delete this._dragOffset;
+        WebInspector.elementDragEnd(event);
+        if (this._memoryStatistics)
+            this._memoryStatistics.show();
+    },
+
+    _setSplitterPosition: function(top)
+    {
+        const overviewHeight = 90;
+        const sectionMinHeight = 100;
+        top = Number.constrain(top, overviewHeight + sectionMinHeight, this.element.offsetHeight - sectionMinHeight);
+
+        this.splitView.element.style.height = (top - overviewHeight) + "px";
+        this._timelineMemorySplitter.style.top = (top - 2) + "px";
+        this._memoryStatistics.setTopPosition(top);
+    },
+
     _linkifyLocation: function(url, lineNumber, columnNumber)
     {
         // FIXME(62725): stack trace line/column numbers are one-based.
@@ -165,6 +214,11 @@ WebInspector.TimelinePanel.prototype = {
         return topPaneElement;
     },
 
+    get calculator()
+    {
+        return this._calculator;
+    },
+
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Timeline");
@@ -172,7 +226,11 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.garbageCollectButton.element, this.clearButton.element, this._overviewPane.statusBarFilters];
+        var result = [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.garbageCollectButton.element, this.clearButton.element];
+        if (this._memoryStatisticsButton)
+            result.push(this._memoryStatisticsButton.element);
+        result.push(this._overviewPane.statusBarFilters);
+        return result;
     },
 
     get categories()
@@ -239,6 +297,11 @@ WebInspector.TimelinePanel.prototype = {
 
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
         this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
+
+        if (WebInspector.experimentsSettings.showMemoryCounters.isEnabled()) {
+            this._memoryStatisticsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Toggle DOM counters graphs"), "dom-counters-status-bar-item");
+            this._memoryStatisticsButton.addEventListener("click", this._toggleMemoryStatistics, this);
+        }
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";
@@ -379,10 +442,30 @@ WebInspector.TimelinePanel.prototype = {
         ProfilerAgent.collectGarbage();
     },
 
+    _toggleMemoryStatistics: function()
+    {
+        if (this._memoryStatistics.visible()) {
+            this._timelineMemorySplitter.addStyleClass("hidden");
+            this._memoryStatistics.hide();
+            this.splitView.element.style.height = "auto";
+            this.splitView.element.style.bottom = "0";
+            this.onResize();
+        } else {
+            this._timelineMemorySplitter.removeStyleClass("hidden");
+            this._memoryStatistics.show();
+            this.splitView.element.style.bottom = "auto";
+            this._setSplitterPosition(600);
+        }
+    },
+
     _onTimelineEventRecorded: function(event)
     {
-        if (this.toggleTimelineButton.toggled)
+        if (this.toggleTimelineButton.toggled) {
             this._addRecordToTimeline(event.data);
+
+            if (this._memoryStatistics && event.data["domGroups"])
+                this._memoryStatistics.addTimlineEvent(event);
+        }
     },
 
     _addRecordToTimeline: function(record)
@@ -493,6 +576,8 @@ WebInspector.TimelinePanel.prototype = {
         this._topPaneSidebarElement.style.width = width + "px";
         this._scheduleRefresh(false);
         this._overviewPane.sidebarResized(width);
+        if (this._memoryStatistics)
+            this._memoryStatistics.setSidebarWidth(width);
     },
 
     onResize: function()
@@ -585,10 +670,13 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         this._overviewPane.update(this._rootRecord.children, this._calculator._showShortEvents);
+
         this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter();
         if(!this._boundariesAreValid)
             this._updateEventDividers();
+        if (this._memoryStatistics && this._memoryStatistics.visible())
+            this._memoryStatistics.refresh();
         this._boundariesAreValid = true;
     },
 

@@ -45,6 +45,7 @@
 namespace WebCore {
 class Event;
 class InspectorFrontend;
+class InspectorMemoryAgent;
 class InspectorState;
 class InstrumentingAgents;
 class IntRect;
@@ -56,9 +57,9 @@ typedef String ErrorString;
 class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
-    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorMemoryAgent* memoryAgent)
     {
-        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state));
+        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state, memoryAgent));
     }
 
     ~InspectorTimelineAgent();
@@ -69,6 +70,7 @@ public:
 
     void start(ErrorString*, int* maxCallStackDepth);
     void stop(ErrorString*);
+    void setIncludeMemoryDetails(ErrorString*, bool);
 
     int id() const { return m_id; }
 
@@ -139,10 +141,11 @@ private:
         String type;
     };
         
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*, InspectorMemoryAgent*);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack);
     void setHeapSizeStatistic(InspectorObject* record);
+    void collectDomCounters();
         
     void didCompleteCurrentRecord(const String& type);
     void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack);
@@ -169,6 +172,7 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
+    InspectorMemoryAgent* m_memoryAgent;
 };
 
 } // namespace WebCore

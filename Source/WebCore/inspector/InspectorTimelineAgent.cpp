@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "IdentifiersFactory.h"
 #include "InspectorFrontend.h"
+#include "InspectorMemoryAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
@@ -50,6 +51,7 @@ namespace WebCore {
 namespace TimelineAgentState {
 static const char timelineAgentEnabled[] = "timelineAgentEnabled";
 static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
+static const char includeMemoryDetails[] = "includeMemoryDetails";
 }
 
 // Must be kept in sync with TimelineAgent.js
@@ -163,6 +165,11 @@ void InspectorTimelineAgent::stop(ErrorString*)
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
 }
 
+void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
+{
+    m_state->setBoolean(TimelineAgentState::includeMemoryDetails, value);
+}
+
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
 {
     pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true);
@@ -170,6 +177,7 @@ void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scri
 
 void InspectorTimelineAgent::didCallFunction()
 {
+    collectDomCounters();
     didCompleteCurrentRecord(TimelineRecordType::FunctionCall);
 }
 
@@ -180,6 +188,7 @@ void InspectorTimelineAgent::willDispatchEvent(const Event& event)
 
 void InspectorTimelineAgent::didDispatchEvent()
 {
+    collectDomCounters();
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 
@@ -223,6 +232,7 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
     if (!m_recordStack.isEmpty()) {
         TimelineRecordEntry entry = m_recordStack.last();
         entry.data->setNumber("endLine", endLine);
+        collectDomCounters();
         didCompleteCurrentRecord(TimelineRecordType::ParseHTML);
     }
 }
@@ -244,6 +254,7 @@ void InspectorTimelineAgent::willFireTimer(int timerId)
 
 void InspectorTimelineAgent::didFireTimer()
 {
+    collectDomCounters();
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
@@ -274,6 +285,7 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
     
 void InspectorTimelineAgent::didEvaluateScript()
 {
+    collectDomCounters();
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
 }
 
@@ -381,6 +393,23 @@ void InspectorTimelineAgent::setHeapSizeStatistic(InspectorObject* record)
     ScriptGCEvent::getHeapSize(usedHeapSize, totalHeapSize, heapSizeLimit);
     record->setNumber("usedHeapSize", usedHeapSize);
     record->setNumber("totalHeapSize", totalHeapSize);
+
+}
+
+void InspectorTimelineAgent::collectDomCounters()
+{
+    if (!m_state->getBoolean(TimelineAgentState::includeMemoryDetails))
+        return;
+    if (m_recordStack.isEmpty())
+        return;
+
+    String error;
+    RefPtr<InspectorArray> domGroups;
+    RefPtr<InspectorObject> strings;
+    m_memoryAgent->getDOMNodeCount(&error, domGroups, strings);
+
+    if (domGroups)
+        m_recordStack.last().record->setArray("domGroups", domGroups.release());
 }
 
 void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
@@ -399,11 +428,12 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorMemoryAgent* memoryAgent)
     : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents, state)
     , m_frontend(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
+    , m_memoryAgent(memoryAgent)
 {
 }
 

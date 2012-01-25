@@ -1,3 +1,78 @@
+2012-01-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show memory counter graphs in timeline panel
+        https://bugs.webkit.org/show_bug.cgi?id=76843
+
+        Timeline panel is extended with several graphs depicting total node count,
+        number of DOM groups and event listeners. This feature is hidden behind
+        experimental setting.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setDomCountersEnabled):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent::collectDomCounters):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::create):
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.MemoryStatistics):
+        (WebInspector.MemoryStatistics.prototype.setTopPosition):
+        (WebInspector.MemoryStatistics.prototype.setSidebarWidth):
+        (WebInspector.MemoryStatistics.prototype._sidebarResized):
+        (WebInspector.MemoryStatistics.prototype._updateSize):
+        (WebInspector.MemoryStatistics.prototype._updateSidebarSize):
+        (WebInspector.MemoryStatistics.prototype._createCounterSidebarElement):
+        (WebInspector.MemoryStatistics.prototype.addTimlineEvent):
+        (WebInspector.MemoryStatistics.prototype._draw.getGroupCount):
+        (WebInspector.MemoryStatistics.prototype._draw.getNodeCount):
+        (WebInspector.MemoryStatistics.prototype._draw.getListenerCount):
+        (WebInspector.MemoryStatistics.prototype._draw):
+        (WebInspector.MemoryStatistics.prototype._calculateVisibleIndexes):
+        (WebInspector.MemoryStatistics.prototype._onMouseOver):
+        (WebInspector.MemoryStatistics.prototype._refreshCurrentValues):
+        (WebInspector.MemoryStatistics.prototype.visible):
+        (WebInspector.MemoryStatistics.prototype.show):
+        (WebInspector.MemoryStatistics.prototype.refresh):
+        (WebInspector.MemoryStatistics.prototype.hide):
+        (WebInspector.MemoryStatistics.prototype._setVerticalClip):
+        (WebInspector.MemoryStatistics.prototype._calculateXValues):
+        (WebInspector.MemoryStatistics.prototype._drawPolyline):
+        (WebInspector.MemoryStatistics.prototype._drawBottomBound):
+        (WebInspector.MemoryStatistics.prototype._clear):
+        (WebInspector.TimelinePanel.prototype._startSplitterDragging):
+        (WebInspector.TimelinePanel.prototype._splitterDragging):
+        (WebInspector.TimelinePanel.prototype._endSplitterDragging):
+        (WebInspector.TimelinePanel.prototype._setSplitterPosition):
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._toggleMemoryStatistics):
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        * inspector/front-end/timelinePanel.css:
+        (#timeline-memory-splitter):
+        (#memory-counters-graph):
+        (#memory-graphs-container):
+        (#memory-graphs-container .split-view-contents):
+        (.timeline-marker):
+        (.memory-counter-sidebar-info):
+        (.memory-counter-sidebar-info.bottom-border-visible):
+
 2012-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         <http://webkit.org/b/76941> Web Inspector: Remove Unused InspectorFrontendHost.search Stub
