@@ -207,7 +207,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         cell.className = "object-column";
         var div = document.createElement("div");
         div.className = "source-code event-properties";
-        div.style.overflow = "hidden";
+        div.style.overflow = "visible";
         var data = this.data["object"];
         if (this._prefixObjectCell)
             this._prefixObjectCell(div, data);
@@ -215,6 +215,8 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         valueSpan.className = "value console-formatted-" + data.valueStyle;
         valueSpan.textContent = data.value;
         div.appendChild(valueSpan);
+        if (this._postfixObjectCell)
+            this._postfixObjectCell(div, data);
         cell.appendChild(div);
         cell.addStyleClass("disclosure");
         if (this.depth)
@@ -263,7 +265,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle += " highlight";
         if (this.detachedDOMTreeNode)
             valueStyle += " detached-dom-tree-node";
-        data["object"] = { valueStyle: valueStyle, value: value + " @" + this.snapshotNodeId };
+        data["object"] = { valueStyle: valueStyle, value: value + ": @" + this.snapshotNodeId };
 
         var view = this.dataGrid.snapshotView;
         data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.bytesToString(this._shallowSize);
@@ -334,6 +336,8 @@ WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge)
     WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, edge.node);
     this._referenceName = edge.name;
     this._referenceType = edge.type;
+    this._propertyAccessor = edge.propertyAccessor;
+    this._retainerNode = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
     this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex, tree);
     this._updateHasChildren();
@@ -407,14 +411,32 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _prefixObjectCell: function(div, data)
     {
+        if (this._retainerNode) {
+            var prefixSpan = document.createElement("span");
+            prefixSpan.textContent = WebInspector.UIString("retained by ");
+            div.appendChild(prefixSpan);
+            return;
+        }
+
         var nameSpan = document.createElement("span");
         nameSpan.className = data.nameClass;
         nameSpan.textContent = data.name;
+        div.appendChild(nameSpan);
+
         var separatorSpan = document.createElement("span");
         separatorSpan.className = "separator";
         separatorSpan.textContent = ": ";
-        div.appendChild(nameSpan);
         div.appendChild(separatorSpan);
+    },
+
+    _postfixObjectCell: function(div, data)
+    {
+        if (this._retainerNode) {
+            var referenceTypeSpan = document.createElement("span");
+            referenceTypeSpan.className = "console-formatted-object";
+            referenceTypeSpan.textContent = this._propertyAccessor;
+            div.appendChild(referenceTypeSpan);
+        }
     }
 }
 

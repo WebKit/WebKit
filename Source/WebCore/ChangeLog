@@ -1,3 +1,20 @@
+2012-01-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: DetailedHeapSnapshot: adjust node name cell format for the retainers tree.
+        https://bugs.webkit.org/show_bug.cgi?id=76989
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype._createObjectCell):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._prefixObjectCell):
+        (WebInspector.HeapSnapshotObjectNode.prototype._postfixObjectCell):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotEdgesProvider.prototype._serialize):
+
 2012-01-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Pass Database, object stores and indexes meta information to frontend.

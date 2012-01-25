@@ -1318,7 +1318,7 @@ WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter, i
 WebInspector.HeapSnapshotEdgesProvider.prototype = {
     _serialize: function(edge)
     {
-        return {name: edge.name, node: WebInspector.HeapSnapshotNodesProvider.prototype._serialize(edge.node), nodeIndex: edge.nodeIndex, type: edge.type};
+        return {name: edge.name, propertyAccessor: edge.toString(), node: WebInspector.HeapSnapshotNodesProvider.prototype._serialize(edge.node), nodeIndex: edge.nodeIndex, type: edge.type};
     },
 
     sort: function(comparator, leftBound, rightBound, count)
