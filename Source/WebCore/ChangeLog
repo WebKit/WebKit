@@ -1,3 +1,30 @@
+2012-01-25  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Refactor Clipboard invalidate for DataTransferItem/DataTransferItemList into a wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=76993
+
+        We want to unify the backing data store for ClipboardChromium and DataTransferItems. For
+        that, we want use a similar representation to DataTransferItem list inside
+        ChromiumDataObject.  However, since ChromiumDataObject should be valid in scopes where
+        Clipboard is not (e.g. default drag processing), we need to separate the clipboard
+        invalidation logic into a wrapper class.
+
+        Reviewed by Tony Chang.
+
+        Covered by existing tests.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        ():
+        (WebCore::ClipboardChromium::items):
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::getAsString):
+        * platform/chromium/DataTransferItemListChromium.cpp:
+        (WebCore::DataTransferItemListChromium::length):
+        (WebCore::DataTransferItemListChromium::item):
+        (WebCore::DataTransferItemListChromium::deleteItem):
+        (WebCore::DataTransferItemListChromium::clear):
+        (WebCore::DataTransferItemListChromium::add):
+
 2012-01-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Divide TextureMapperNode.cpp to 3 files.

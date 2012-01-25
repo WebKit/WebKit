@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "DragData.h"
 #include "Element.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
 #include "Frame.h"
@@ -47,12 +48,159 @@
 #include "PlatformSupport.h"
 #include "Range.h"
 #include "RenderImage.h"
-#include "ScriptExecutionContext.h"
+#include "StringCallback.h"
 #include "markup.h"
 
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+namespace {
+
+// These wrapper classes invalidate a DataTransferItem/DataTransferItemList when the associated
+// Clipboard object goes out of scope.
+class DataTransferItemListPolicyWrapper : public DataTransferItemList {
+public:
+    static PassRefPtr<DataTransferItemListPolicyWrapper> create(
+        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemListChromium>);
+
+    virtual size_t length() const;
+    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    virtual void deleteItem(unsigned long index, ExceptionCode&);
+    virtual void clear();
+    virtual void add(const String& data, const String& type, ExceptionCode&);
+    virtual void add(PassRefPtr<File>);
+
+private:
+    DataTransferItemListPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemListChromium>);
+
+    RefPtr<ClipboardChromium> m_clipboard;
+    RefPtr<DataTransferItemListChromium> m_list;
+};
+
+class DataTransferItemPolicyWrapper : public DataTransferItem {
+public:
+    static PassRefPtr<DataTransferItemPolicyWrapper> create(
+        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItem>);
+
+    virtual String kind() const;
+    virtual String type() const;
+
+    virtual void getAsString(PassRefPtr<StringCallback>) const;
+    virtual PassRefPtr<Blob> getAsFile() const;
+
+private:
+    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItem>);
+
+    RefPtr<ClipboardChromium> m_clipboard;
+    RefPtr<DataTransferItem> m_item;
+};
+
+PassRefPtr<DataTransferItemListPolicyWrapper> DataTransferItemListPolicyWrapper::create(
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemListChromium> list)
+{
+    return adoptRef(new DataTransferItemListPolicyWrapper(clipboard, list));
+}
+
+size_t DataTransferItemListPolicyWrapper::length() const
+{
+    if (m_clipboard->policy() == ClipboardNumb)
+        return 0;
+    return m_list->length();
+}
+
+PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned long index)
+{
+    if (m_clipboard->policy() == ClipboardNumb)
+        return 0;
+    RefPtr<DataTransferItem> item = m_list->item(index);
+    if (!item)
+        return 0;
+    return DataTransferItemPolicyWrapper::create(m_clipboard, item);
+}
+
+void DataTransferItemListPolicyWrapper::deleteItem(unsigned long index, ExceptionCode& ec)
+{
+    if (m_clipboard->policy() != ClipboardWritable) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    // FIXME: We handle all the exceptions here, so we don't need to propogate ec.
+    m_list->deleteItem(index, ec);
+}
+
+void DataTransferItemListPolicyWrapper::clear()
+{
+    if (m_clipboard->policy() != ClipboardWritable)
+        return;
+    m_list->clear();
+}
+
+void DataTransferItemListPolicyWrapper::add(const String& data, const String& type, ExceptionCode& ec)
+{
+    if (m_clipboard->policy() != ClipboardWritable)
+        return;
+    m_list->add(data, type, ec);
+}
+
+void DataTransferItemListPolicyWrapper::add(PassRefPtr<File> file)
+{
+    if (m_clipboard->policy() != ClipboardWritable)
+        return;
+    m_list->add(file);
+}
+
+DataTransferItemListPolicyWrapper::DataTransferItemListPolicyWrapper(
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemListChromium> list)
+    : m_clipboard(clipboard)
+    , m_list(list)
+{
+}
+
+PassRefPtr<DataTransferItemPolicyWrapper> DataTransferItemPolicyWrapper::create(
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItem> item)
+{
+    return adoptRef(new DataTransferItemPolicyWrapper(clipboard, item));
+}
+
+String DataTransferItemPolicyWrapper::kind() const
+{
+    if (m_clipboard->policy() == ClipboardNumb)
+        return String();
+    return m_item->kind();
+}
+
+String DataTransferItemPolicyWrapper::type() const
+{
+    if (m_clipboard->policy() == ClipboardNumb)
+        return String();
+    return m_item->type();
+}
+
+void DataTransferItemPolicyWrapper::getAsString(PassRefPtr<StringCallback> callback) const
+{
+    if (m_clipboard->policy() != ClipboardReadable && m_clipboard->policy() != ClipboardWritable)
+        return;
+
+    m_item->getAsString(callback);
+}
+
+PassRefPtr<Blob> DataTransferItemPolicyWrapper::getAsFile() const
+{
+    if (m_clipboard->policy() != ClipboardReadable && m_clipboard->policy() != ClipboardWritable)
+        return 0;
+
+    return m_item->getAsFile();
+}
+
+DataTransferItemPolicyWrapper::DataTransferItemPolicyWrapper(
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItem> item)
+    : m_clipboard(clipboard)
+    , m_item(item)
+{
+}
+
+} // namespace
 
 using namespace HTMLNames;
 
@@ -343,15 +491,17 @@ bool ClipboardChromium::hasData()
 #if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItemList> ClipboardChromium::items()
 {
-    if (!m_dataObject || (policy() != ClipboardReadable && policy() != ClipboardWritable)) {
+    if (!m_dataObject)
         // Return an unassociated empty list.
         return DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
-    }
 
     if (!m_itemList)
         m_itemList = DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
 
-    return m_itemList;
+    // FIXME: According to the spec, we are supposed to return the same collection of items each
+    // time. We now return a wrapper that always wraps the *same* set of items, so JS shouldn't be
+    // able to tell, but we probably still want to fix this.
+    return DataTransferItemListPolicyWrapper::create(this, m_itemList);
 }
 
 // FIXME: integrate ChromiumDataObject and DataTransferItemList rather than holding them separately and keeping them synced.

@@ -90,8 +90,7 @@ DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, 
 
 void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback) const
 {
-    if ((m_owner->policy() != ClipboardReadable && m_owner->policy() != ClipboardWritable)
-        || kind() != kindString)
+    if (kind() != kindString)
         return;
 
     if (clipboardChromium()->storageHasUpdated())

@@ -60,17 +60,12 @@ DataTransferItemListChromium::DataTransferItemListChromium(PassRefPtr<Clipboard>
 
 size_t DataTransferItemListChromium::length() const
 {
-    if (m_owner->policy() == ClipboardNumb)
-        return 0;
     clipboardChromium()->mayUpdateItems(m_items);
     return m_items.size();
 }
 
 PassRefPtr<DataTransferItem> DataTransferItemListChromium::item(unsigned long index)
 {
-    if (m_owner->policy() == ClipboardNumb)
-        return 0;
-
     clipboardChromium()->mayUpdateItems(m_items);
     if (index >= length())
         return 0;
@@ -79,11 +74,6 @@ PassRefPtr<DataTransferItem> DataTransferItemListChromium::item(unsigned long in
 
 void DataTransferItemListChromium::deleteItem(unsigned long index, ExceptionCode& ec)
 {
-    if (m_owner->policy() != ClipboardWritable) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
     clipboardChromium()->mayUpdateItems(m_items);
     if (index >= length())
         return;
@@ -116,18 +106,12 @@ void DataTransferItemListChromium::deleteItem(unsigned long index, ExceptionCode
 
 void DataTransferItemListChromium::clear()
 {
-    if (m_owner->policy() != ClipboardWritable)
-        return;
-
     m_items.clear();
     clipboardChromium()->clearAllData();
 }
 
 void DataTransferItemListChromium::add(const String& data, const String& type, ExceptionCode& ec)
 {
-    if (m_owner->policy() != ClipboardWritable)
-        return;
-
     RefPtr<ChromiumDataObject> dataObject = clipboardChromium()->dataObject();
     if (!dataObject)
         return;
@@ -146,7 +130,7 @@ void DataTransferItemListChromium::add(const String& data, const String& type, E
 
 void DataTransferItemListChromium::add(PassRefPtr<File> file)
 {
-    if (m_owner->policy() != ClipboardWritable || !file)
+    if (!file)
         return;
 
     RefPtr<ChromiumDataObject> dataObject = clipboardChromium()->dataObject();
