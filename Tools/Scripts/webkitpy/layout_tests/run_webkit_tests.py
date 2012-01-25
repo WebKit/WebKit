@@ -38,10 +38,48 @@ import sys
 
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.views import printing
 
 
 _log = logging.getLogger(__name__)
+
+
+def lint(port, options, expectations_class):
+    host = port.host
+    if options.platform:
+        ports_to_lint = [port]
+    else:
+        ports_to_lint = [host.port_factory.get(name) for name in host.port_factory.all_port_names()]
+
+    files_linted = set()
+    lint_failed = False
+
+    for port_to_lint in ports_to_lint:
+        expectations_file = port_to_lint.path_to_test_expectations_file()
+        if expectations_file in files_linted:
+            continue
+
+        try:
+            expectations_class(port_to_lint,
+                tests=None,
+                expectations=port_to_lint.test_expectations(),
+                test_config=port_to_lint.test_configuration(),
+                is_lint_mode=True,
+                overrides=port_to_lint.test_expectations_overrides())
+        except test_expectations.ParseError, e:
+            lint_failed = True
+            _log.error('')
+            for error in e.errors:
+                _log.error(error)
+            _log.error('')
+        files_linted.add(expectations_file)
+
+    if lint_failed:
+        _log.error('Lint failed.')
+        return -1
+    _log.info('Lint succeeded.')
+    return 0
 
 
 def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
@@ -57,15 +95,15 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         printer.cleanup()
         return 0
 
+    if options.lint_test_files:
+        return lint(port, options, test_expectations.TestExpectations)
+
     # We wrap any parts of the run that are slow or likely to raise exceptions
     # in a try/finally to ensure that we clean up the logging configuration.
     unexpected_result_count = -1
     try:
         manager = Manager(port, options, printer)
         manager.print_config()
-
-        if options.lint_test_files:
-            return manager.lint()
 
         printer.print_update("Collecting tests ...")
         try:

@@ -71,6 +71,7 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port import Port
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
 from webkitpy.test.skip import skip_if
+from webkitpy.tool.mocktool import MockOptions
 
 
 def parse_args(extra_args=None, record_results=False, tests_included=False, new_results=False, print_nothing=True):
@@ -188,6 +189,76 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
 unexpected_tests_count = 12
 
 
+class LintTest(unittest.TestCase):
+    def test_all_configurations(self):
+
+        class FakePort(object):
+            def __init__(self, name, path):
+                self.name = name
+                self.path = path
+
+            def test_expectations(self):
+                return ''
+
+            def path_to_test_expectations_file(self):
+                return self.path
+
+            def test_configuration(self):
+                return None
+
+            def test_expectations_overrides(self):
+                return None
+
+        class FakeFactory(object):
+            def __init__(self, host, ports):
+                self.host = host
+                self.ports = {}
+                for port in ports:
+                    self.ports[port.name] = port
+                    port.host = host
+                    port.factory = self
+
+            def get(self, port_name, *args, **kwargs):
+                return self.ports[port_name]
+
+            def all_port_names(self):
+                return sorted(self.ports.keys())
+
+        class FakeExpectationsParser(object):
+            def __init__(self, port, *args, **kwargs):
+                port.host.ports_parsed.append(port.name)
+
+        host = MockHost()
+        host.ports_parsed = []
+        host.port_factory = FakeFactory(host, (FakePort('a', 'path-to-a'),
+                                               FakePort('b', 'path-to-b'),
+                                               FakePort('b-win', 'path-to-b')))
+
+        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None), FakeExpectationsParser), 0)
+        self.assertEquals(host.ports_parsed, ['a', 'b'])
+
+        host.ports_parsed = []
+        self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a'), FakeExpectationsParser), 0)
+        self.assertEquals(host.ports_parsed, ['a'])
+
+    def test_lint_test_files(self):
+        res, out, err, user = logging_run(['--lint-test-files'])
+        self.assertEqual(res, 0)
+        self.assertTrue(out.empty())
+        self.assertTrue(any(['Lint succeeded' in msg for msg in err.get()]))
+
+    def test_lint_test_files__errors(self):
+        options, parsed_args = parse_args(['--lint-test-files'])
+        host = MockHost()
+        port_obj = host.port_factory.get(options.platform, options=options)
+        port_obj.test_expectations = lambda: "# syntax error"
+        res, out, err = run_and_capture(port_obj, options, parsed_args)
+
+        self.assertEqual(res, -1)
+        self.assertTrue(out.empty())
+        self.assertTrue(any(['Lint failed' in msg for msg in err.get()]))
+
+
 class MainTest(unittest.TestCase):
     def test_accelerated_compositing(self):
         # This just tests that we recognize the command line args
@@ -283,23 +354,6 @@ class MainTest(unittest.TestCase):
         self.assertRaises(KeyboardInterrupt, logging_run,
             ['failures/expected/keyboard.html', '--worker-model', 'inline'],
             tests_included=True)
-
-    def test_lint_test_files(self):
-        res, out, err, user = logging_run(['--lint-test-files'])
-        self.assertEqual(res, 0)
-        self.assertTrue(out.empty())
-        self.assertTrue(any(['Lint succeeded' in msg for msg in err.get()]))
-
-    def test_lint_test_files__errors(self):
-        options, parsed_args = parse_args(['--lint-test-files'])
-        host = MockHost()
-        port_obj = host.port_factory.get(options.platform, options=options)
-        port_obj.test_expectations = lambda: "# syntax error"
-        res, out, err = run_and_capture(port_obj, options, parsed_args)
-
-        self.assertEqual(res, -1)
-        self.assertTrue(out.empty())
-        self.assertTrue(any(['Lint failed' in msg for msg in err.get()]))
 
     def test_no_tests_found(self):
         res, out, err, user = logging_run(['resources'], tests_included=True)

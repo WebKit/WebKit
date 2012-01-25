@@ -347,25 +347,6 @@ class Manager(object):
             return path[len(self.LAYOUT_TESTS_DIRECTORY + self._filesystem.sep):]
         return path
 
-    def lint(self):
-        try:
-            test_expectations.TestExpectations(
-                self._port,
-                None,
-                self._port.test_expectations(),
-                self._port.test_configuration(),
-                self._options.lint_test_files,
-                self._port.test_expectations_overrides())
-        except test_expectations.ParseError, err:
-            for error in err.errors:
-                self._printer.write(error)
-            self._printer.write("")
-            _log.error("Lint failed.")
-            return -1
-
-        _log.info("Lint succeeded.")
-        return 0
-
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
 
