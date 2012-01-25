@@ -18,7 +18,7 @@ for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
     chunks.push(chunk);
 }
 
-log("Testing " + spec.length + " byte document in " + chunkCount + " " + chunkSize + " byte chunks.");
+logInfo("Testing " + spec.length + " byte document in " + chunkCount + " " + chunkSize + " byte chunks.");
 
 function loadChunkedSpecIntoIframe(iframe) {
     // Note: We've inlined the stylesheets in html5.html.  Before we did that, it seemed to be

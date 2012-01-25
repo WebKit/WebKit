@@ -3,6 +3,11 @@ function log(text) {
     window.scrollTo(0, document.body.height);
 }
 
+function logInfo(text) {
+    if (!window.layoutTestController)
+        log(text);
+}
+
 function loadFile(path) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", path, false);
