@@ -1,3 +1,128 @@
+2012-01-25  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: add optional runtime validator
+        https://bugs.webkit.org/show_bug.cgi?id=76676
+
+        Reviewed by Yury Semikhatsky.
+
+        Generator algorithm is redone significantly.
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.BaseType):
+        (RawTypes.BaseType.request_raw_internal_runtime_cast):
+        (RawTypes.BaseType.generate_validate_method_impl):
+        (RawTypes):
+        (RawTypes.generate_validate_methods):
+        (RawTypes.String):
+        (RawTypes.String.generate_validate_method):
+        (RawTypes.String.get_raw_validator_call_text):
+        (RawTypes.Int):
+        (RawTypes.Int.generate_validate_method):
+        (RawTypes.Int.get_raw_validator_call_text):
+        (RawTypes.Number):
+        (RawTypes.Number.generate_validate_method):
+        (RawTypes.Number.get_raw_validator_call_text):
+        (RawTypes.Bool):
+        (RawTypes.Bool.generate_validate_method):
+        (RawTypes.Bool.get_raw_validator_call_text):
+        (RawTypes.Object):
+        (RawTypes.Object.generate_validate_method):
+        (RawTypes.Object.get_raw_validator_call_text):
+        (RawTypes.Any):
+        (RawTypes.Any.generate_validate_method):
+        (RawTypes.Any.get_raw_validator_call_text):
+        (RawTypes.Array):
+        (RawTypes.Array.generate_validate_method):
+        (RawTypes.Array.get_raw_validator_call_text):
+        (TypeBindings.create_named_type_declaration.Helper):
+        (TypeBindings.create_ad_hoc_type_declaration.Helper):
+        (TypeBindings.create_type_declaration_.EnumBinding):
+        (TypeBindings.create_type_declaration_.EnumBinding.resolve_inner):
+        (TypeBindings.create_type_declaration_.EnumBinding.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.EnumBinding.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_validator_call_text):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_in_c_type_text):
+        (TypeBindings.create_type_declaration_.PlainString):
+        (TypeBindings.create_type_declaration_.PlainString.resolve_inner):
+        (TypeBindings.create_type_declaration_.PlainString.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.PlainString.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.PlainString.get_validator_call_text):
+        (TypeBindings.create_type_declaration_.TypedefString):
+        (TypeBindings.create_type_declaration_.TypedefString.resolve_inner):
+        (TypeBindings.create_type_declaration_.TypedefString.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.TypedefString.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.TypedefString.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.TypedefString.get_validator_call_text):
+        (TypeBindings.create_type_declaration_.TypedefString.get_in_c_type_text):
+        (TypeBindings.create_type_declaration_.ClassBinding):
+        (TypeBindings.create_type_declaration_.ClassBinding.resolve_inner):
+        (TypeBindings.create_type_declaration_.ClassBinding.resolve_inner.PropertyData):
+        (TypeBindings.create_type_declaration_.ClassBinding.resolve_inner.ResolveData):
+        (TypeBindings.create_type_declaration_.ClassBinding.request_user_runtime_cast):
+        (TypeBindings.create_type_declaration_.ClassBinding.request_internal_runtime_cast):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (get_validator_call_text):
+        (get_in_c_type_text):
+        (AdHocTypeContextImpl):
+        (AdHocTypeContextImpl.__init__):
+        (AdHocTypeContextImpl.get_type_name_fix):
+        (AdHocTypeContextImpl.get_type_name_fix.NameFix):
+        (AdHocTypeContextImpl.get_type_name_fix.NameFix.output_comment):
+        (AdHocTypeContextImpl.add_type):
+        (PlainObjectBinding):
+        (PlainObjectBinding.resolve_inner):
+        (PlainObjectBinding.request_user_runtime_cast):
+        (PlainObjectBinding.request_internal_runtime_cast):
+        (PlainObjectBinding.get_validator_call_text):
+        (ArrayBinding):
+        (ArrayBinding.resolve_inner):
+        (ArrayBinding.resolve_inner.AdHocTypeContext):
+        (ArrayBinding.resolve_inner.AdHocTypeContext.get_type_name_fix):
+        (ArrayBinding.resolve_inner.AdHocTypeContext.get_type_name_fix.NameFix):
+        (ArrayBinding.resolve_inner.AdHocTypeContext.get_type_name_fix.NameFix.output_comment):
+        (ArrayBinding.resolve_inner.AdHocTypeContext.add_type):
+        (ArrayBinding.resolve_inner.ResolveData):
+        (ArrayBinding.request_user_runtime_cast):
+        (ArrayBinding.request_internal_runtime_cast):
+        (ArrayBinding.get_code_generator):
+        (ArrayBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (ArrayBinding.get_validator_call_text):
+        (ArrayBinding.get_in_c_type_text):
+        (RawTypeBinding.resolve_inner):
+        (RawTypeBinding):
+        (RawTypeBinding.request_user_runtime_cast):
+        (RawTypeBinding.request_internal_runtime_cast):
+        (RawTypeBinding.get_validator_call_text):
+        (TypeData.get_name):
+        (TypeData):
+        (TypeData.get_domain_name):
+        (resolve_param_type):
+        (NeedRuntimeCastRequest):
+        (NeedRuntimeCastRequest.__init__):
+        (NeedRuntimeCastRequest.acknowledge):
+        (NeedRuntimeCastRequest.is_acknowledged):
+        (resolve_all_types):
+        (resolve_all_types.ForwardListener):
+        (resolve_all_types.ForwardListener.add_type_data):
+        (resolve_all_types.ResolveContext):
+        (Generator):
+        (Generator.go):
+        (Generator.process_event):
+        (Generator.process_event.AdHocTypeContext):
+        (Generator.process_event.AdHocTypeContext.add_type):
+        (Generator.process_event.EventForwardListener):
+        (Generator.process_event.EventForwardListener.add_type_data):
+        (Generator.process_event.EventResolveContext):
+        (Generator.process_event.EventGenerateContext):
+        (Generator.process_types.GenerateContext):
+        (Generator.process_types.create_type_builder_caller.call_type_builder):
+        (Generator.process_types.generate_forward_callback):
+        * inspector/InspectorValues.h:
+        (WebCore::InspectorObject::size):
+
 2012-01-25  Anton Muhin  <antonm@chromium.org>
 
         Unreview manual revert of r105843.

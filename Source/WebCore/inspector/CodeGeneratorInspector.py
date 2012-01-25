@@ -56,6 +56,9 @@ TYPE_NAME_FIX_MAP = {
 }
 
 
+TYPES_WITH_RUNTIME_CAST_SET = frozenset([])
+
+
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
@@ -144,6 +147,8 @@ class Capitalizer:
 
     ABBREVIATION = frozenset(["XHR", "DOM", "CSS"])
 
+VALIDATOR_IFDEF_NAME = "!ASSERT_DISABLED"
+
 
 class DomainNameFixes:
     @classmethod
@@ -215,6 +220,8 @@ class RawTypes(object):
             raise Exception("Unknown type: %s" % json_type)
 
     class BaseType(object):
+        need_internal_runtime_cast_ = False
+
         @classmethod
         def get_c_param_type(cls, param_type, optional):
             return cls.default_c_param_type
@@ -226,6 +233,35 @@ class RawTypes(object):
         @staticmethod
         def get_output_argument_prefix():
             return "&"
+
+        @classmethod
+        def request_raw_internal_runtime_cast(cls):
+            if not cls.need_internal_runtime_cast_:
+                RawTypes.types_to_generate_validator_.append(cls)
+                cls.need_internal_runtime_cast_ = True
+
+        @classmethod
+        def generate_validate_method(cls, writer):
+            params = cls.get_validate_method_params()
+            writer.newline("static void assert%s(InspectorValue* value)\n" % params.name)
+            writer.newline("{\n")
+            writer.newline("    %s v;\n" % params.var_type)
+            writer.newline("    bool castRes = value->as%s(&v);\n" % params.as_method_name)
+            writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
+            writer.newline("}\n\n\n")
+
+        @classmethod
+        def get_raw_validator_call_text(cls):
+            return "assert%s" % cls.get_validate_method_params().name
+
+    types_to_generate_validator_ = []
+
+    @classmethod
+    def generate_validate_methods(cls, writer):
+        for t in cls.types_to_generate_validator_:
+            if t.need_internal_runtime_cast_:
+                t.generate_validate_method(writer)
+
 
     class String(BaseType):
         @classmethod
@@ -249,6 +285,14 @@ class RawTypes(object):
         def get_js_bind_type():
             return "string"
 
+        @staticmethod
+        def get_validate_method_params():
+            class ValidateMethodParams:
+                name = "String"
+                var_type = "String"
+                as_method_name = "String"
+            return ValidateMethodParams
+
         _plain_c_type = CParamType("String")
         _ref_c_type = CParamType("const String&")
 
@@ -269,6 +313,14 @@ class RawTypes(object):
         def get_js_bind_type():
             return "number"
 
+        @staticmethod
+        def get_validate_method_params():
+            class ValidateMethodParams:
+                name = "Int"
+                var_type = "int"
+                as_method_name = "Number"
+            return ValidateMethodParams
+
         default_c_param_type = CParamType("int")
 
     class Number(BaseType):
@@ -287,6 +339,10 @@ class RawTypes(object):
         @staticmethod
         def get_js_bind_type():
             raise Exception("Unsupported")
+
+        @staticmethod
+        def get_validate_method_params():
+            raise Exception("TODO")
 
         default_c_param_type = CParamType("double")
 
@@ -318,6 +374,10 @@ class RawTypes(object):
         @staticmethod
         def is_event_param_check_optional():
             return True
+
+        @staticmethod
+        def get_validate_method_params():
+            raise Exception("TODO")
 
         _plain_c_type = CParamType("bool")
         _ref_c_type = CParamType("const bool* const", "*%s")
@@ -352,6 +412,10 @@ class RawTypes(object):
         def get_output_argument_prefix():
             return ""
 
+        @staticmethod
+        def get_validate_method_params():
+            raise Exception("TODO")
+
         _plain_c_type = CParamType("RefPtr<InspectorObject>")
         _ref_c_type = CParamType("PassRefPtr<InspectorObject>")
 
@@ -380,6 +444,17 @@ class RawTypes(object):
         @staticmethod
         def is_event_param_check_optional():
             return True
+
+        @staticmethod
+        def generate_validate_method(writer):
+            writer.newline("static void assertAny(InspectorValue* value)\n")
+            writer.newline("{\n")
+            writer.newline("    // No-op.\n")
+            writer.newline("}\n\n\n")
+
+        @staticmethod
+        def get_raw_validator_call_text():
+            return "assertAny"
 
         _plain_c_type = CParamType("RefPtr<InspectorValue>")
         _ref_c_type = CParamType("PassRefPtr<InspectorValue>")
@@ -415,6 +490,10 @@ class RawTypes(object):
         @staticmethod
         def get_output_argument_prefix():
             return ""
+
+        @staticmethod
+        def get_validate_method_params():
+            raise Exception("TODO")
 
         _plain_c_type = CParamType("RefPtr<InspectorArray>")
         _ref_c_type = CParamType("PassRefPtr<InspectorArray>")
@@ -527,7 +606,8 @@ class TypeBindings:
 
         class Helper:
             is_ad_hoc = False
-            full_name_prefix = "TypeBuilder::" + context_domain_name + "::"
+            full_name_prefix_for_use = "TypeBuilder::" + context_domain_name + "::"
+            full_name_prefix_for_impl = "TypeBuilder::" + context_domain_name + "::"
 
             @staticmethod
             def write_doc(writer):
@@ -548,7 +628,8 @@ class TypeBindings:
     def create_ad_hoc_type_declaration(json_typable, context_domain_name, ad_hoc_type_context):
         class Helper:
             is_ad_hoc = True
-            full_name_prefix = ""
+            full_name_prefix_for_use = ""
+            full_name_prefix_for_impl = ad_hoc_type_context.container_full_name_prefix
 
             @staticmethod
             def write_doc(writer):
@@ -566,14 +647,31 @@ class TypeBindings:
             if "enum" in json_typable:
 
                 class EnumBinding:
-                    @staticmethod
-                    def get_code_generator():
+                    need_user_runtime_cast_ = False
+                    need_internal_runtime_cast_ = False
+
+                    @classmethod
+                    def resolve_inner(cls, resolve_context):
+                        pass
+
+                    @classmethod
+                    def request_user_runtime_cast(cls, request):
+                        if request:
+                            cls.need_user_runtime_cast_ = True
+                            request.acknowledge()
+
+                    @classmethod
+                    def request_internal_runtime_cast(cls):
+                        cls.need_internal_runtime_cast_ = True
+
+                    @classmethod
+                    def get_code_generator(enum_binding_cls):
                         #FIXME: generate ad-hoc enums too once we figure out how to better implement them in C++.
                         comment_out = helper.is_ad_hoc
 
                         class CodeGenerator:
                             @staticmethod
-                            def generate_type_builder(writer, forward_listener):
+                            def generate_type_builder(writer, generate_context):
                                 enum = json_typable["enum"]
                                 helper.write_doc(writer)
                                 enum_name = fixed_type_name.class_name
@@ -595,6 +693,29 @@ class TypeBindings:
                                     writer.append("%s" % enum_pos)
                                     writer.append(",\n")
                                 writer.newline("    };\n")
+                                if enum_binding_cls.need_user_runtime_cast_:
+                                    raise Exception("Not yet implemented")
+
+                                if enum_binding_cls.need_internal_runtime_cast_:
+                                    writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
+                                    writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
+                                    writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
+
+                                    validator_writer = generate_context.validator_writer
+                                    validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, enum_name))
+                                    validator_writer.newline("{\n")
+                                    validator_writer.newline("    WTF::String s;\n")
+                                    validator_writer.newline("    bool cast_res = value->asString(&s);\n")
+                                    validator_writer.newline("    ASSERT(cast_res);\n")
+                                    if len(enum) > 0:
+                                        condition_list = []
+                                        for enum_item in enum:
+                                            enum_pos = EnumConstants.add_constant(enum_item)
+                                            condition_list.append("s == \"%s\"" % enum_item)
+                                        validator_writer.newline("    ASSERT(%s);\n" % join(condition_list, " || "))
+                                    validator_writer.newline("}\n\n\n")
+
+
                                 writer.newline("}; // struct ")
                                 writer.append(enum_name)
                                 writer.append("\n\n")
@@ -610,8 +731,12 @@ class TypeBindings:
                         return CodeGenerator
 
                     @classmethod
+                    def get_validator_call_text(cls):
+                        return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::assertCorrectValue"
+
+                    @classmethod
                     def get_in_c_type_text(cls, optional):
-                        return helper.full_name_prefix + fixed_type_name.class_name + "::Enum"
+                        return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::Enum"
 
                     @staticmethod
                     def get_setter_value_expression_pattern():
@@ -626,9 +751,25 @@ class TypeBindings:
                 if helper.is_ad_hoc:
 
                     class PlainString:
+                        @classmethod
+                        def resolve_inner(cls, resolve_context):
+                            pass
+
+                        @staticmethod
+                        def request_user_runtime_cast(request):
+                            raise Exception("Unsupported")
+
+                        @staticmethod
+                        def request_internal_runtime_cast():
+                            pass
+
                         @staticmethod
                         def get_code_generator():
                             return None
+
+                        @classmethod
+                        def get_validator_call_text(cls):
+                            return RawTypes.String.get_raw_validator_call_text()
 
                         @staticmethod
                         def reduce_to_raw_type():
@@ -647,11 +788,23 @@ class TypeBindings:
                 else:
 
                     class TypedefString:
+                        @classmethod
+                        def resolve_inner(cls, resolve_context):
+                            pass
+
+                        @staticmethod
+                        def request_user_runtime_cast(request):
+                            raise Exception("Unsupported")
+
+                        @staticmethod
+                        def request_internal_runtime_cast():
+                            RawTypes.String.request_raw_internal_runtime_cast()
+
                         @staticmethod
                         def get_code_generator():
                             class CodeGenerator:
                                 @staticmethod
-                                def generate_type_builder(writer, forward_listener):
+                                def generate_type_builder(writer, generate_context):
                                     helper.write_doc(writer)
                                     fixed_type_name.output_comment(writer)
                                     writer.newline("typedef String ")
@@ -668,6 +821,10 @@ class TypeBindings:
 
                             return CodeGenerator
 
+                        @classmethod
+                        def get_validator_call_text(cls):
+                            return RawTypes.String.get_raw_validator_call_text()
+
                         @staticmethod
                         def reduce_to_raw_type():
                             return RawTypes.String
@@ -678,7 +835,7 @@ class TypeBindings:
 
                         @classmethod
                         def get_in_c_type_text(cls, optional):
-                            return "const %s%s&" % (helper.full_name_prefix, fixed_type_name.class_name)
+                            return "const %s%s&" % (helper.full_name_prefix_for_use, fixed_type_name.class_name)
 
                     return TypedefString
 
@@ -686,11 +843,71 @@ class TypeBindings:
             if "properties" in json_typable:
 
                 class ClassBinding:
-                    @staticmethod
-                    def get_code_generator():
+                    resolve_data_ = None
+                    need_user_runtime_cast_ = False
+                    need_internal_runtime_cast_ = False
+
+                    @classmethod
+                    def resolve_inner(cls, resolve_context):
+                        if cls.resolve_data_:
+                            return
+
+                        properties = json_typable["properties"]
+                        main = []
+                        optional = []
+
+                        ad_hoc_type_list = []
+
+                        for prop in properties:
+                            prop_name = prop["name"]
+                            ad_hoc_type_context = cls.AdHocTypeContextImpl(prop_name, fixed_type_name.class_name, resolve_context, ad_hoc_type_list, helper.full_name_prefix_for_impl)
+                            binding = resolve_param_type(prop, context_domain_name, ad_hoc_type_context)
+
+                            code_generator = binding.get_code_generator()
+                            if code_generator:
+                                code_generator.register_use(resolve_context.forward_listener)
+
+                            class PropertyData:
+                                param_type_binding = binding
+                                p = prop
+
+                            if prop.get("optional"):
+                                optional.append(PropertyData)
+                            else:
+                                main.append(PropertyData)
+
+                        class ResolveData:
+                            main_properties = main
+                            optional_properties = optional
+                            ad_hoc_types = ad_hoc_type_context.ad_hoc_type_list
+
+                        cls.resolve_data_ = ResolveData
+
+                        for ad_hoc in ad_hoc_type_list:
+                            ad_hoc.resolve_inner(resolve_context)
+
+                    @classmethod
+                    def request_user_runtime_cast(cls, request):
+                        if not request:
+                            return
+                        cls.need_user_runtime_cast_ = True
+                        request.acknowledge()
+                        cls.request_internal_runtime_cast()
+
+                    @classmethod
+                    def request_internal_runtime_cast(cls):
+                        cls.need_internal_runtime_cast_ = True
+                        for p in cls.resolve_data_.main_properties:
+                            p.param_type_binding.request_internal_runtime_cast()
+                        for p in cls.resolve_data_.optional_properties:
+                            p.param_type_binding.request_internal_runtime_cast()
+
+                    @classmethod
+                    def get_code_generator(class_binding_cls):
                         class CodeGenerator:
                             @classmethod
-                            def generate_type_builder(cls, writer, forward_listener):
+                            def generate_type_builder(cls, writer, generate_context):
+                                resolve_data = class_binding_cls.resolve_data_
                                 helper.write_doc(writer)
                                 class_name = fixed_type_name.class_name
                                 fixed_type_name.output_comment(writer)
@@ -700,14 +917,10 @@ class TypeBindings:
                                 writer.newline("public:\n")
                                 ad_hoc_type_writer = writer.insert_writer("    ")
 
-                                properties = json_typable["properties"]
-                                main_properties = []
-                                optional_properties = []
-                                for p in properties:
-                                    if "optional" in p and p["optional"]:
-                                        optional_properties.append(p)
-                                    else:
-                                        main_properties.append(p)
+                                for ad_hoc_type in resolve_data.ad_hoc_types:
+                                    code_generator = ad_hoc_type.get_code_generator()
+                                    if code_generator:
+                                        code_generator.generate_type_builder(ad_hoc_type_writer, generate_context)
 
                                 writer.newline_multiline(
 """    enum {
@@ -715,10 +928,10 @@ class TypeBindings:
 """)
 
                                 state_enum_items = []
-                                if len(main_properties) > 0:
+                                if len(resolve_data.main_properties) > 0:
                                     pos = 0
-                                    for p in main_properties:
-                                        item_name = Capitalizer.lower_camel_case_to_upper(p["name"]) + "Set"
+                                    for prop_data in resolve_data.main_properties:
+                                        item_name = Capitalizer.lower_camel_case_to_upper(prop_data.p["name"]) + "Set"
                                         state_enum_items.append(item_name)
                                         writer.newline("        %s = 1 << %s,\n" % (item_name, pos))
                                         pos += 1
@@ -750,12 +963,10 @@ class TypeBindings:
 """ % (all_fields_set_value, class_name, class_name))
 
                                 pos = 0
-                                for prop in main_properties:
-                                    prop_name = prop["name"]
+                                for prop_data in resolve_data.main_properties:
+                                    prop_name = prop_data.p["name"]
 
-                                    ad_hoc_type_context = cls.AdHocTypeContextImpl(prop_name, fixed_type_name.class_name, ad_hoc_type_writer, forward_listener)
-
-                                    param_type_binding = resolve_param_type(prop, context_domain_name, ad_hoc_type_context)
+                                    param_type_binding = prop_data.param_type_binding
                                     param_raw_type = param_type_binding.reduce_to_raw_type()
                                     for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
                                         writer.newline_multiline("""
@@ -773,10 +984,6 @@ class TypeBindings:
                                            param_raw_type.get_setter_name(), prop_name,
                                            param_type_opt.get_setter_value_expression(param_type_binding, "value"),
                                            state_enum_items[pos]))
-
-                                        code_generator = param_type_binding.get_code_generator()
-                                        if code_generator:
-                                            code_generator.register_use(forward_listener)
 
                                     pos += 1
 
@@ -799,8 +1006,8 @@ class TypeBindings:
                                 writer.newline("    /*\n")
                                 writer.newline("     * Synthetic constructor:\n")
                                 writer.newline("     * RefPtr<%s> result = %s::create()" % (class_name, class_name))
-                                for prop in main_properties:
-                                    writer.append_multiline("\n     *     .set%s(...)" % Capitalizer.lower_camel_case_to_upper(prop["name"]))
+                                for prop_data in resolve_data.main_properties:
+                                    writer.append_multiline("\n     *     .set%s(...)" % Capitalizer.lower_camel_case_to_upper(prop_data.p["name"]))
                                 writer.append_multiline(";\n     */\n")
 
                                 writer.newline_multiline(
@@ -810,11 +1017,9 @@ class TypeBindings:
     }
 """ % class_name)
 
-                                for prop in optional_properties:
-                                    prop_name = prop["name"]
-                                    ad_hoc_type_context = cls.AdHocTypeContextImpl(prop_name, fixed_type_name.class_name, ad_hoc_type_writer, forward_listener)
-
-                                    param_type_binding = resolve_param_type(prop, context_domain_name, ad_hoc_type_context)
+                                for prop_data in resolve_data.optional_properties:
+                                    prop_name = prop_data.p["name"]
+                                    param_type_binding = prop_data.param_type_binding
                                     setter_name = "set%s" % Capitalizer.lower_camel_case_to_upper(prop_name)
 
                                     for param_type_opt in MethodGenerateModes.get_modes(param_type_binding):
@@ -822,38 +1027,58 @@ class TypeBindings:
                                         writer.append("(%s value)\n" % param_type_opt.get_c_param_type_text(param_type_binding))
                                         writer.newline("    {\n")
                                         writer.newline("        this->set%s(\"%s\", %s);\n"
-                                            % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop["name"],
+                                            % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop_data.p["name"],
                                                param_type_opt.get_setter_value_expression(param_type_binding, "value")))
                                         writer.newline("    }\n")
 
-                                    code_generator = param_type_binding.get_code_generator()
-                                    if code_generator:
-                                        code_generator.register_use(forward_listener)
 
                                     if setter_name in INSPECTOR_OBJECT_SETTER_NAMES:
                                         writer.newline("    using InspectorObject::%s;\n\n" % setter_name)
 
+                                if class_binding_cls.need_user_runtime_cast_:
+                                    writer.newline("    static PassRefPtr<%s> runtimeCast(PassRefPtr<InspectorValue> value)\n" % class_name)
+                                    writer.newline("    {\n")
+                                    writer.newline("        RefPtr<InspectorObject> object;\n")
+                                    writer.newline("        bool castRes = value->asObject(&object);\n")
+                                    writer.newline("        ASSERT_UNUSED(castRes, castRes);\n")
+                                    writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
+                                    writer.newline("        assertCorrectValue(object.get());\n")
+                                    writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
+                                    writer.newline("        COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObject), type_cast_problem);\n" % class_name)
+                                    writer.newline("        return static_cast<%s*>(object.get());\n" % class_name)
+                                    writer.newline("    }\n")
+                                    writer.append("\n")
+
+                                if class_binding_cls.need_internal_runtime_cast_:
+                                    writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
+                                    writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
+                                    writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
+
+                                    validator_writer = generate_context.validator_writer
+                                    validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
+                                    validator_writer.newline("{\n")
+                                    validator_writer.newline("    RefPtr<InspectorObject> object;\n")
+                                    validator_writer.newline("    bool castRes = value->asObject(&object);\n")
+                                    validator_writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
+                                    validator_writer.newline("    InspectorObject::iterator it;\n")
+                                    for prop_data in resolve_data.main_properties:
+                                        validator_writer.newline("    it = object->find(\"%s\");\n" % prop_data.p["name"])
+                                        validator_writer.newline("    ASSERT(it != object->end());\n")
+                                        validator_writer.newline("    %s(it->second.get());\n" % prop_data.param_type_binding.get_validator_call_text())
+
+                                    validator_writer.newline("    int count = %s;\n" % len(resolve_data.main_properties))
+
+                                    for prop_data in resolve_data.optional_properties:
+                                        validator_writer.newline("    it = object->find(\"%s\");\n" % prop_data.p["name"])
+                                        validator_writer.newline("    if (it != object->end()) {\n")
+                                        validator_writer.newline("        %s(it->second.get());\n" % prop_data.param_type_binding.get_validator_call_text())
+                                        validator_writer.newline("        ++count;\n")
+                                        validator_writer.newline("    }\n")
+
+                                    validator_writer.newline("    ASSERT(count == object->size());\n")
+                                    validator_writer.newline("}\n\n\n")
+
                                 writer.newline("};\n\n")
-
-                            class AdHocTypeContextImpl:
-                                def __init__(self, property_name, class_name, writer, forward_listener):
-                                    self.property_name = property_name
-                                    self.class_name = class_name
-                                    self.writer = writer
-                                    self.forward_listener = forward_listener
-
-                                def get_type_name_fix(self):
-                                    class NameFix:
-                                        class_name = Capitalizer.lower_camel_case_to_upper(self.property_name)
-
-                                        @staticmethod
-                                        def output_comment(writer):
-                                            writer.newline("// Named after property name '%s' while generating %s.\n" % (self.property_name, self.class_name))
-
-                                    return NameFix
-
-                                def call_generate_type_builder(self, code_generator):
-                                    code_generator.generate_type_builder(self.writer, self.forward_listener)
 
                             @staticmethod
                             def generate_forward_declaration(writer):
@@ -872,9 +1097,13 @@ class TypeBindings:
 
                         return CodeGenerator
 
+                    @staticmethod
+                    def get_validator_call_text():
+                        return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::assertCorrectValue"
+
                     @classmethod
                     def get_in_c_type_text(cls, optional):
-                        return "PassRefPtr<" + helper.full_name_prefix + fixed_type_name.class_name + ">"
+                        return "PassRefPtr<" + helper.full_name_prefix_for_use + fixed_type_name.class_name + ">"
 
                     @staticmethod
                     def get_setter_value_expression_pattern():
@@ -884,13 +1113,50 @@ class TypeBindings:
                     def reduce_to_raw_type():
                         return RawTypes.Object
 
+                    class AdHocTypeContextImpl:
+                        def __init__(self, property_name, class_name, resolve_context, ad_hoc_type_list, parent_full_name_prefix):
+                            self.property_name = property_name
+                            self.class_name = class_name
+                            self.resolve_context = resolve_context
+                            self.ad_hoc_type_list = ad_hoc_type_list
+                            self.container_full_name_prefix = parent_full_name_prefix + class_name + "::"
+
+                        def get_type_name_fix(self):
+                            class NameFix:
+                                class_name = Capitalizer.lower_camel_case_to_upper(self.property_name)
+
+                                @staticmethod
+                                def output_comment(writer):
+                                    writer.newline("// Named after property name '%s' while generating %s.\n" % (self.property_name, self.class_name))
+
+                            return NameFix
+
+                        def add_type(self, binding):
+                            self.ad_hoc_type_list.append(binding)
+
                 return ClassBinding
             else:
 
                 class PlainObjectBinding:
+                    @classmethod
+                    def resolve_inner(cls, resolve_context):
+                        pass
+
+                    @staticmethod
+                    def request_user_runtime_cast(request):
+                        pass
+
+                    @staticmethod
+                    def request_internal_runtime_cast():
+                        pass
+
                     @staticmethod
                     def get_code_generator():
                         pass
+
+                    @staticmethod
+                    def get_validator_call_text():
+                        raise Exception("Unsupported")
 
                     @classmethod
                     def get_in_c_type_text(cls, optional):
@@ -908,12 +1174,67 @@ class TypeBindings:
         elif json_typable["type"] == "array":
 
             class ArrayBinding:
-                @staticmethod
-                def get_code_generator():
+                resolve_data_ = None
+                need_internal_runtime_cast_ = False
+
+                @classmethod
+                def resolve_inner(cls, resolve_context):
+                    if cls.resolve_data_:
+                        return
+
+                    ad_hoc_types = []
+                    if "items" in json_typable:
+
+                        class AdHocTypeContext:
+                            container_full_name_prefix = "<not yet defined>"
+
+                            @staticmethod
+                            def get_type_name_fix():
+                                class NameFix:
+                                    class_name = "Item"
+
+                                    @staticmethod
+                                    def output_comment(writer):
+                                        pass
+
+                                return NameFix
+
+                            @staticmethod
+                            def add_type(binding):
+                                ad_hoc_types.append(binding)
+
+                        item_binding = resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
+                    else:
+                        item_binding = RawTypeBinding(RawTypes.Any)
+
+                    code_generator = item_binding.get_code_generator()
+                    if code_generator:
+                        code_generator.register_use(resolve_context.forward_listener)
+
+                    class ResolveData:
+                        item_type_binding = item_binding
+                        ad_hoc_type_list = ad_hoc_types
+
+                    cls.resolve_data_ = ResolveData
+
+                    for t in ad_hoc_types:
+                        t.resolve_inner(resolve_context)
+
+                @classmethod
+                def request_user_runtime_cast(cls, request):
+                    raise Exception("Not implemented yet")
+
+                @classmethod
+                def request_internal_runtime_cast(cls):
+                    cls.need_internal_runtime_cast_ = True
+                    cls.resolve_data_.item_type_binding.request_internal_runtime_cast()
+
+                @classmethod
+                def get_code_generator(array_binding_cls):
 
                     class CodeGenerator:
                         @staticmethod
-                        def generate_type_builder(writer, forward_listener):
+                        def generate_type_builder(writer, generate_context):
                             helper.write_doc(writer)
                             class_name = fixed_type_name.class_name
                             fixed_type_name.output_comment(writer)
@@ -926,27 +1247,14 @@ class TypeBindings:
                             writer.newline("public:\n")
                             ad_hoc_type_writer = writer.insert_writer("    ")
 
-                            if "items" in json_typable:
+                            resolve_data = array_binding_cls.resolve_data_
 
-                                class AdHocTypeContext:
-                                    @staticmethod
-                                    def get_type_name_fix():
-                                        class NameFix:
-                                            class_name = "Item"
+                            for ad_hoc_type in resolve_data.ad_hoc_type_list:
+                                code_generator = ad_hoc_type.get_code_generator()
+                                if code_generator:
+                                    code_generator.generate_type_builder(ad_hoc_type_writer, generate_context)
 
-                                            @staticmethod
-                                            def output_comment(writer):
-                                                pass
-
-                                        return NameFix
-
-                                    @staticmethod
-                                    def call_generate_type_builder(code_generator):
-                                        code_generator.generate_type_builder(ad_hoc_type_writer, forward_listener)
-
-                                item_type_binding = resolve_param_type(json_typable["items"], context_domain_name, AdHocTypeContext)
-                            else:
-                                item_type_binding = RawTypeBinding(RawTypes.Any)
+                            item_type_binding = resolve_data.item_type_binding
 
                             for item_type_opt in MethodGenerateModes.get_modes(item_type_binding):
                                 writer.newline("    void addItem")
@@ -962,9 +1270,21 @@ class TypeBindings:
                             writer.newline("        return adoptRef(new %s());\n" % fixed_type_name.class_name)
                             writer.newline("    }\n")
 
-                            code_generator = item_type_binding.get_code_generator()
-                            if code_generator:
-                                code_generator.register_use(forward_listener)
+                            if array_binding_cls.need_internal_runtime_cast_:
+                                writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
+                                writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
+                                writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
+
+                                validator_writer = generate_context.validator_writer
+                                validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
+                                validator_writer.newline("{\n")
+                                validator_writer.newline("    RefPtr<InspectorArray> array;\n")
+                                validator_writer.newline("    bool castRes = value->asArray(&array);\n")
+                                validator_writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
+                                validator_writer.newline("    for (unsigned i = 0; i < array->length(); ++i) {\n")
+                                validator_writer.newline("        %s(array->get(i).get());\n" % resolve_data.item_type_binding.get_validator_call_text())
+                                validator_writer.newline("    }\n")
+                                validator_writer.newline("}\n\n\n")
 
                             writer.newline("};\n\n")
 
@@ -985,9 +1305,13 @@ class TypeBindings:
 
                     return CodeGenerator
 
+                @staticmethod
+                def get_validator_call_text():
+                    return helper.full_name_prefix_for_use + fixed_type_name.class_name + "::assertCorrectValue"
+
                 @classmethod
                 def get_in_c_type_text(cls, optional):
-                    return "PassRefPtr<%s%s>" % (helper.full_name_prefix, fixed_type_name.class_name)
+                    return "PassRefPtr<%s%s>" % (helper.full_name_prefix_for_use, fixed_type_name.class_name)
 
                 @staticmethod
                 def get_setter_value_expression_pattern():
@@ -1008,8 +1332,20 @@ class RawTypeBinding:
     def __init__(self, raw_type):
         self.raw_type_ = raw_type
 
+    def resolve_inner(self, resolve_context):
+        pass
+
+    def request_user_runtime_cast(self, request):
+        raise Exception("Unsupported")
+
+    def request_internal_runtime_cast(self):
+        self.raw_type_.request_raw_internal_runtime_cast()
+
     def get_code_generator(self):
         return None
+
+    def get_validator_call_text(self):
+        return self.raw_type_.get_raw_validator_call_text()
 
     def get_in_c_type_text(self, optional):
         return self.raw_type_.get_c_param_type(ParamType.EVENT, optional).get_text()
@@ -1054,6 +1390,12 @@ class TypeData(object):
 
     def get_json_type(self):
         return self.json_type_
+
+    def get_name(self):
+        return self.json_type_["id"]
+
+    def get_domain_name(self):
+        return self.json_domain_["domain"]
 
 
 class DomainData:
@@ -1105,9 +1447,7 @@ def resolve_param_type(json_parameter, scope_domain_name, ad_hoc_type_context):
         return type_data.get_binding()
     elif "type" in json_parameter:
         result = TypeBindings.create_ad_hoc_type_declaration(json_parameter, scope_domain_name, ad_hoc_type_context)
-        code_generator = result.get_code_generator()
-        if code_generator:
-            ad_hoc_type_context.call_generate_type_builder(code_generator)
+        ad_hoc_type_context.add_type(result)
         return result
     else:
         raise Exception("Unknown type")
@@ -1301,7 +1641,7 @@ $setters
 
     enum MethodNames {
 $methodNamesEnumContent
-};
+    };
 
     static const char* commandNames[];
 
@@ -1690,6 +2030,10 @@ String getEnumConstantValue(int code) {
 
 } // namespace TypeBuilder
 
+#if """ + VALIDATOR_IFDEF_NAME + """
+$validatorCode
+#endif // """ + VALIDATOR_IFDEF_NAME + """
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
@@ -1746,6 +2090,63 @@ $domainInitializers
 
 
 type_map = TypeMap(json_api)
+
+
+class NeedRuntimeCastRequest:
+    def __init__(self):
+        self.ack_ = None
+
+    def acknowledge(self):
+        self.ack_ = True
+
+    def is_acknowledged(self):
+        return self.ack_
+
+
+def resolve_all_types():
+    runtime_cast_generate_requests = {}
+    for type_name in TYPES_WITH_RUNTIME_CAST_SET:
+        runtime_cast_generate_requests[type_name] = NeedRuntimeCastRequest()
+
+    class ForwardListener:
+        type_data_set = set()
+        already_declared_set = set()
+
+        @classmethod
+        def add_type_data(cls, type_data):
+            if type_data not in cls.already_declared_set:
+                cls.type_data_set.add(type_data)
+
+    class ResolveContext:
+        forward_listener = ForwardListener
+
+    for domain_data in type_map.domains():
+        for type_data in domain_data.types():
+            # Do not generate forwards for this type any longer.
+            ForwardListener.already_declared_set.add(type_data)
+
+            binding = type_data.get_binding()
+            binding.resolve_inner(ResolveContext)
+
+    for domain_data in type_map.domains():
+        for type_data in domain_data.types():
+            full_type_name = "%s.%s" % (type_data.get_domain_name(), type_data.get_name())
+            request = runtime_cast_generate_requests.pop(full_type_name, None)
+            binding = type_data.get_binding()
+            if request:
+                binding.request_user_runtime_cast(request)
+
+            if request and not request.is_acknowledged():
+                raise Exception("Failed to generate runtimeCast in " + full_type_name)
+
+    for full_type_name in runtime_cast_generate_requests:
+        raise Exception("Failed to generate runtimeCast. Type " + full_type_name + " not found")
+
+    return ForwardListener
+
+
+global_forward_listener = resolve_all_types()
+
 
 
 def get_annotated_type_text(raw_type, annotated_type):
@@ -1827,9 +2228,14 @@ class Generator:
     frontend_constructor_init_list = []
     type_builder_fragments = []
     type_builder_forwards = []
+    validator_impl_list = []
+    validator_impl_raw_types_list = []
+
 
     @staticmethod
     def go():
+        Generator.validator_impl_list.append(Generator.validator_impl_raw_types_list)
+
         Generator.process_types(type_map)
 
         first_cycle_guardable_list_list = [
@@ -1916,13 +2322,10 @@ class Generator:
                 for l in reversed(sorted_cycle_guardable_list_list):
                     domain_guard.generate_close(l)
 
+        RawTypes.generate_validate_methods(Writer(Generator.validator_impl_raw_types_list, ""))
+
     @staticmethod
     def process_event(json_event, domain_name, frontend_method_declaration_lines):
-        class NoOpForwardListener:
-            @staticmethod
-            def add_type_data(type_data):
-                pass
-
         event_name = json_event["name"]
         parameter_list = []
         method_line_list = []
@@ -1946,7 +2349,11 @@ class Generator:
 
                 optional = optional_mask and json_optional
 
+                ad_hoc_type_list = []
+
                 class AdHocTypeContext:
+                    container_full_name_prefix = "<not yet defined>"
+
                     @staticmethod
                     def get_type_name_fix():
                         class NameFix:
@@ -1959,10 +2366,29 @@ class Generator:
                         return NameFix
 
                     @staticmethod
-                    def call_generate_type_builder(code_generator):
-                        code_generator.generate_type_builder(ad_hoc_type_writer, NoOpForwardListener)
+                    def add_type(binding):
+                        ad_hoc_type_list.append(binding)
 
                 param_type_binding = resolve_param_type(json_parameter, domain_name, AdHocTypeContext)
+
+                class EventForwardListener:
+                    @staticmethod
+                    def add_type_data(type_data):
+                        pass
+
+                class EventResolveContext:
+                    forward_listener = EventForwardListener
+
+                for type in ad_hoc_type_list:
+                    type.resolve_inner(EventResolveContext)
+
+                class EventGenerateContext:
+                    validator_writer = "not supported in EventGenerateContext"
+
+                for type in ad_hoc_type_list:
+                    generator = type.get_code_generator()
+                    if generator:
+                        generator.generate_type_builder(ad_hoc_type_writer, EventGenerateContext)
 
                 annotated_type = get_annotated_type_text(c_type.get_text(), param_type_binding.get_in_c_type_text(json_optional))
 
@@ -2089,14 +2515,8 @@ class Generator:
     def process_types(type_map):
         output = Generator.type_builder_fragments
 
-        class ForwardListener:
-            type_data_set = set()
-            already_declared_set = set()
-
-            @classmethod
-            def add_type_data(cls, type_data):
-                if type_data not in cls.already_declared_set:
-                    cls.type_data_set.add(type_data)
+        class GenerateContext:
+            validator_writer = Writer(Generator.validator_impl_list, "")
 
         def generate_all_domains_code(out, type_data_callback):
             writer = Writer(out, "")
@@ -2130,13 +2550,11 @@ class Generator:
 
         def create_type_builder_caller(generate_pass_id):
             def call_type_builder(type_data, writer_getter):
-                # Do not generate forwards for this type any longer.
-                ForwardListener.already_declared_set.add(type_data)
-
                 code_generator = type_data.get_binding().get_code_generator()
                 if code_generator and generate_pass_id == code_generator.get_generate_pass_id():
                     writer = writer_getter()
-                    code_generator.generate_type_builder(writer, ForwardListener)
+
+                    code_generator.generate_type_builder(writer, GenerateContext)
             return call_type_builder
 
         generate_all_domains_code(output, create_type_builder_caller(TypeBuilderPass.MAIN))
@@ -2144,7 +2562,7 @@ class Generator:
         Generator.type_builder_forwards.append("// Forward declarations.\n")
 
         def generate_forward_callback(type_data, writer_getter):
-            if type_data in ForwardListener.type_data_set:
+            if type_data in global_forward_listener.type_data_set:
                 binding = type_data.get_binding()
                 binding.get_code_generator().generate_forward_declaration(writer_getter())
         generate_all_domains_code(Generator.type_builder_forwards, generate_forward_callback)
@@ -2208,7 +2626,8 @@ frontend_h_file.write(Templates.frontend_h.substitute(None,
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
     constructorInit=join(Generator.frontend_constructor_init_list, ""),
     methods=join(Generator.frontend_method_list, "\n"),
-    enumConstantValues=EnumConstants.get_enum_constant_code()))
+    enumConstantValues=EnumConstants.get_enum_constant_code(),
+    validatorCode=join(flatten_list(Generator.validator_impl_list), "")))
 
 typebuilder_h_file.write(Templates.typebuilder_h.substitute(None))
 
