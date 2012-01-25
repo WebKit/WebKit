@@ -27,12 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-try:
-    # This API exists only in Python 2.6 and higher.  :(
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-
+import multiprocessing
 import ctypes
 import errno
 import logging
@@ -160,21 +155,7 @@ class Executive(object):
         return child_output
 
     def cpu_count(self):
-        if multiprocessing:
-            return multiprocessing.cpu_count()
-        # Darn.  We don't have the multiprocessing package.
-        system_name = platform.system()
-        if system_name == "Darwin":
-            return int(self.run_command(["sysctl", "-n", "hw.ncpu"]))
-        elif system_name == "Windows":
-            return int(os.environ.get('NUMBER_OF_PROCESSORS', 1))
-        elif system_name == "Linux":
-            num_cores = os.sysconf("SC_NPROCESSORS_ONLN")
-            if isinstance(num_cores, int) and num_cores > 0:
-                return num_cores
-        # This quantity is a lie but probably a reasonable guess for modern
-        # machines.
-        return 2
+        return multiprocessing.cpu_count()
 
     @staticmethod
     def interpreter_for_script(script_path, fs=None):

@@ -1,3 +1,19 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        Remove Python 2.5 support from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=71593
+
+        Reviewed by Adam Barth.
+
+        Just removing support from this one core file.
+        I'll commit the rest of the (large) change once we've
+        gone 24 hours and seen that no bots have exploded.
+        We can roll out this one change if we break bots
+        and then roll in the rest once those bots are fixed.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.cpu_count):
+
 2012-01-25  Hajime Morita  <morrita@google.com>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom
