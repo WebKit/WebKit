@@ -37,7 +37,9 @@ namespace WTF {
 void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool includesGuardPages)
 {
     void* result = reserveAndCommit(bytes, usage, writable, executable, includesGuardPages);
-#if HAVE(MADV_FREE_REUSE)
+#if OS(QNX)
+    posix_madvise(result, bytes, POSIX_MADV_DONTNEED);
+#elif HAVE(MADV_FREE_REUSE)
     // To support the "reserve then commit" model, we have to initially decommit.
     while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
 #endif
@@ -120,7 +122,9 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
 void OSAllocator::commit(void* address, size_t bytes, bool, bool)
 {
-#if HAVE(MADV_FREE_REUSE)
+#if OS(QNX)
+    posix_madvise(address, bytes, POSIX_MADV_WILLNEED);
+#elif HAVE(MADV_FREE_REUSE)
     while (madvise(address, bytes, MADV_FREE_REUSE) == -1 && errno == EAGAIN) { }
 #else
     // Non-MADV_FREE_REUSE reservations automatically commit on demand.
@@ -131,7 +135,9 @@ void OSAllocator::commit(void* address, size_t bytes, bool, bool)
 
 void OSAllocator::decommit(void* address, size_t bytes)
 {
-#if HAVE(MADV_FREE_REUSE)
+#if OS(QNX)
+    posix_madvise(address, bytes, POSIX_MADV_DONTNEED);
+#elif HAVE(MADV_FREE_REUSE)
     while (madvise(address, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
 #elif HAVE(MADV_FREE)
     while (madvise(address, bytes, MADV_FREE) == -1 && errno == EAGAIN) { }

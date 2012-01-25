@@ -723,6 +723,8 @@
 
 #define HAVE_ERRNO_H 1
 #define HAVE_MMAP 1
+#define HAVE_MADV_FREE_REUSE 1
+#define HAVE_MADV_FREE 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1

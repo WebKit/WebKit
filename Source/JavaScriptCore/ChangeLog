@@ -1,3 +1,17 @@
+2012-01-25  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Implement OSAllocator::commit/decommit.
+        BlackBerry port should support virtual memory decommiting.
+        https://bugs.webkit.org/show_bug.cgi?id=77013
+
+        Reviewed by Rob Buis.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::commit):
+        (WTF::OSAllocator::decommit):
+        * wtf/Platform.h:
+
 2012-01-24  Oliver Hunt  <oliver@apple.com>
 
         Make DFG update topCallFrame
