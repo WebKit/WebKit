@@ -5,6 +5,10 @@
 BUGWK76478 : compositing/iframes/repaint-after-losing-scrollbars.html = IMAGE
 BUGWK76489 : compositing/webgl/webgl-reflection.html = IMAGE
 
+// Needs ENABLE_SHADOW_DOM
+BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
+BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
+
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
 

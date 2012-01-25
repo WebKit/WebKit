@@ -44,6 +44,7 @@ class ShadowInclusionList;
 // You should create HTMLContentElement during the host construction.
 class HTMLContentElement : public HTMLElement {
 public:
+    static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document*);
     static PassRefPtr<HTMLContentElement> create(Document*);
 
     virtual ~HTMLContentElement();

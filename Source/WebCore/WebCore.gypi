@@ -978,6 +978,7 @@
             'html/canvas/WebGLTexture.idl',
             'html/canvas/WebGLUniformLocation.idl',
             'html/canvas/WebGLVertexArrayObjectOES.idl',
+            'html/shadow/HTMLContentElement.idl',
             'html/track/TextTrackList.idl',
             'html/track/TrackEvent.idl',
             'inspector/InjectedScriptHost.idl',

@@ -38,9 +38,23 @@ namespace WebCore {
 
 using HTMLNames::selectAttr;
 
+static const QualifiedName& contentTagName()
+{
+#if ENABLE(SHADOW_DOM)
+    return HTMLNames::contentTag;
+#else
+    DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
+    return tagName;
+#endif
+}
+
 PassRefPtr<HTMLContentElement> HTMLContentElement::create(Document* document)
 {
-    DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
+    return adoptRef(new HTMLContentElement(contentTagName(), document));
+}
+
+PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& tagName, Document* document)
+{
     return adoptRef(new HTMLContentElement(tagName, document));
 }
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div id="targetContainer" style="position: relative;"></div>
+<div id="comparisonContainer" style="position: relative;"></div>
+
+<script src="../../js/resources/js-test-pre.js"></script>
+<script><!--
+description("HTMLContentElement should be able to survive even outside shadow.");
+
+function removeContainerLines(text)
+{
+    var lines = text.split("\n");
+    lines.splice(0, 2);
+    return lines.join("\n");
+}
+
+var cases = [
+    ["<div><content></content></div>",
+     "<div></div>"],
+    ["<div><content>Here is a text.</content></div>",
+     "<div>Here is a text.</div>"],
+    ["<div><content><div>Here is a </div><div>series of</div><div>blocks</div></content></div>",
+     "<div><div>Here is a </div><div>series of</div><div>blocks</div></div>"],
+    ["<div><content><span>Here is a<span><span>series of</span><span>inlines.</span></content></div>",
+     "<div><span>Here is a<span><span>series of</span><span>inlines.</span></div>"],
+    ["<div><content>Here is a <content>nested content</content> inside content.</content></div>",
+     "<div>Here is a <" + "!-- --" + ">nested content<" + "!-- --" + "> inside content.</div>"],
+    ["<div><content>Here is a <div>block and <content>nested content</content> inside the block</div>.</content></div>",
+     "<div>Here is a <div>block and <!" + "-- --" + ">nested content<!" + "-- --" + "> inside the block</div>.</div>"]
+];
+
+var targetContainer = document.getElementById("targetContainer");
+var comparisonContainer = document.getElementById("comparisonContainer");
+
+for (var i = 0; i < cases.length; ++i) {
+    var targetMarkup = cases[i][0];
+    var expectedMarkup = cases[i][1];
+
+    targetContainer.innerHTML = targetMarkup;
+    comparisonContainer.innerHTML = expectedMarkup;
+    targetRenderTree = removeContainerLines(window.internals.elementRenderTreeAsText(targetContainer));
+    comparisonRenderTree = removeContainerLines(window.internals.elementRenderTreeAsText(comparisonContainer));
+    debug(escapeHTML(targetMarkup));
+    shouldBe("targetRenderTree", "comparisonRenderTree");
+}
+
+targetContainer.innerHTML = comparisonContainer.innerHTML = "";
+
+--></script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

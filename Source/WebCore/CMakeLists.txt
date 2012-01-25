@@ -306,6 +306,8 @@ SET(WebCore_IDL_FILES
     html/canvas/Uint8Array.idl
     html/canvas/Uint8ClampedArray.idl
 
+    html/shadow/HTMLContentElement.idl
+
     html/track/TextTrackList.idl
     html/track/TrackEvent.idl
 

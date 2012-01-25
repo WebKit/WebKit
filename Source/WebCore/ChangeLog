@@ -1,3 +1,35 @@
+2012-01-25  Hajime Morita  <morrita@google.com>
+
+        <content> should create HTMLContentElement object
+        https://bugs.webkit.org/show_bug.cgi?id=76439
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added HTMLContentElement.idl which has @select attribute.
+        - Added "content" element.
+
+        Both are behind ENABLE_SHADOW_DOM.
+
+        Tests: fast/dom/shadow/content-element-api.html
+               fast/dom/shadow/content-element-outside-shadow.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLTagNames.in:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::contentTagName):
+        (WebCore):
+        (WebCore::HTMLContentElement::create):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        * html/shadow/HTMLContentElement.idl: Added.
+
 2012-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105828.

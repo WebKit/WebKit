@@ -1,3 +1,7 @@
 // These are the layout test expectations for the EFL port(s) of WebKit.
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+// Needs ENABLE_SHADOW_DOM
+BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
+BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT

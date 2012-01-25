@@ -328,6 +328,7 @@ IDL_BINDINGS += \
     $$PWD/html/TimeRanges.idl \
     $$PWD/html/ValidityState.idl \
     $$PWD/html/VoidCallback.idl \
+    $$PWD/html/shadow/HTMLContentElement.idl \
     $$PWD/inspector/InjectedScriptHost.idl \
     $$PWD/inspector/InspectorFrontendHost.idl \
     $$PWD/inspector/JavaScriptCallFrame.idl \
