@@ -63,8 +63,8 @@ TEST(WebKit1, InspectorBarTest)
     DOMDocument *document = webView.get().mainFrameDocument;
     [[document body] focus];
     
-    EXPECT_TRUE([[[[webView.get() mainFrame] frameView] documentView] respondsToSelector:@selector(typingAttributes)]);
-    NSDictionary *attributes = [(id)[[[webView.get() mainFrame] frameView] documentView] typingAttributes];
+    EXPECT_TRUE([webView.get() respondsToSelector:@selector(typingAttributes)]);
+    NSDictionary *attributes = [(id)webView.get() typingAttributes];
     [(id)[[[webView.get() mainFrame] frameView] documentView] doCommandBySelector:@selector(bold:)];
     EXPECT_FALSE([attributes isEqual:[(id)[[[webView.get() mainFrame] frameView] documentView] typingAttributes]]);
     

@@ -5537,6 +5537,16 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     [self _performResponderOperation:_cmd with:text];
 }
 
+- (NSDictionary *)typingAttributes
+{
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (coreFrame)
+        return coreFrame->editor()->fontAttributesForSelectionStart();
+    
+    return nil;
+}
+
+
 @end
 
 @implementation WebView (WebViewEditingInMail)

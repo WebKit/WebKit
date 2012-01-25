@@ -5686,15 +5686,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return result;
 }
 
-- (NSDictionary *)typingAttributes
-{
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        return coreFrame->editor()->fontAttributesForSelectionStart();
-
-    return nil;
-}
-
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
     [self _executeSavedKeypressCommands];

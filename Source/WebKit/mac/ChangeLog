@@ -1,3 +1,15 @@
+2012-01-25  Enrica Casucci  <enrica@apple.com>
+
+        WebView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.
+        https://bugs.webkit.org/show_bug.cgi?id=76951
+        <rdar://problem/9325158>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebHTMLView.mm: Removed typingAttributes implementation.
+        * WebView/WebView.mm:
+        (-[WebView typingAttributes]): Added.
+
 2012-01-24  Enrica Casucci  <enrica@apple.com>
 
         WebHTMLView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.
