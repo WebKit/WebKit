@@ -1,3 +1,15 @@
+2012-01-24  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix Mac build after changeset <http://trac.webkit.org/changeset/105843>
+        (https://bugs.webkit.org/show_bug.cgi?id=75049)
+
+        Don't include NotImplemented.h in KURL.h since NotImplemented.h includes Logging.h, which defines
+        LOG_CHANNEL_PREFIX to be "Log". And this conflicts with the inclusion of WebKitLogging.h in
+        WebHTMLView.mm (which would have defined LOG_CHANNEL_PREFIX to be "WebKitLog").
+
+        * platform/KURL.h:
+        (WebCore::KURL::innerURL):
+
 2012-01-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Ignore m_skipsDraw in TiledLayerChromium::drawsContent()

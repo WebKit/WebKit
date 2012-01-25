@@ -26,7 +26,6 @@
 #ifndef KURL_h
 #define KURL_h
 
-#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "URLString.h"
 #include <wtf/HashMap.h>
@@ -223,7 +222,7 @@ public:
 #if USE(GOOGLEURL)
     const KURL* innerURL() const { return m_url.innerURL(); }
 #else
-    const KURL* innerURL() const { notImplemented(); return 0; }
+    const KURL* innerURL() const { return 0; }
 #endif
 
 #ifndef NDEBUG
