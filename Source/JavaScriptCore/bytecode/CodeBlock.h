@@ -669,10 +669,16 @@ namespace JSC {
             return m_rareData && !!m_rareData->m_codeOrigins.size();
         }
         
-        CodeOrigin codeOriginForReturn(ReturnAddressPtr returnAddress)
+        bool codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& codeOrigin)
         {
-            ASSERT(hasCodeOrigins());
-            return binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), getJITCode().offsetOf(returnAddress.value()))->codeOrigin;
+            if (!hasCodeOrigins())
+                return false;
+            unsigned offset = getJITCode().offsetOf(returnAddress.value());
+            CodeOriginAtCallReturnOffset* entry = binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), offset, WTF::KeyMustNotBePresentInArray);
+            if (entry->callReturnOffset != offset)
+                return false;
+            codeOrigin = entry->codeOrigin;
+            return true;
         }
         
         bool addFrequentExitSite(const DFG::FrequentExitSite& site)

@@ -1,3 +1,17 @@
+2012-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Inlining breaks call frame walking when the walking is done from outside the inlinee,
+        but inside a code block that had inlining
+        https://bugs.webkit.org/show_bug.cgi?id=76978
+        <rdar://problem/10720904>
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOriginForReturn):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallerFrame):
+
 2012-01-24  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76855

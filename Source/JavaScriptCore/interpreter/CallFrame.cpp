@@ -91,7 +91,12 @@ CallFrame* CallFrame::trueCallerFrame()
     // Figure out where the caller frame would have gone relative to the machine
     // caller, and rematerialize it. Do so for the entire inline stack.
     
-    CodeOrigin codeOrigin = machineCaller->codeBlock()->codeOriginForReturn(returnPC());
+    ReturnAddressPtr currentReturnPC = returnPC();
+    CodeBlock* machineCodeBlock = machineCaller->codeBlock();
+    
+    CodeOrigin codeOrigin;
+    if (!machineCodeBlock->codeOriginForReturn(currentReturnPC, codeOrigin))
+        return machineCaller; // Not currently in inlined code, so machineCaller == trueCaller
     
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
         InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
