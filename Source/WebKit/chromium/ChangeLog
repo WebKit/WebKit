@@ -1,3 +1,11 @@
+2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium test fix.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._waitUntilScriptsAreParsed.waitForAllScripts):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed):
+
 2012-01-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Adding a test to verify that m_skipsDraw gets reset between frames for
