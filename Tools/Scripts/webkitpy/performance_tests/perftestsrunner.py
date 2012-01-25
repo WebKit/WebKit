@@ -88,7 +88,7 @@ class PerfTestsRunner(object):
                 help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
             optparse.make_option("--build-directory",
                 help="Path to the directory under which build files are kept (should not include configuration)"),
-            optparse.make_option("--time-out-ms", default=600 * 1000,
+            optparse.make_option("--time-out-ms", default=240 * 1000,
                 help="Set the timeout for each test"),
             optparse.make_option("--output-json-path",
                 help="Filename of the JSON file that summaries the results"),
@@ -238,7 +238,7 @@ class PerfTestsRunner(object):
         for line in re.split('\n', output.text):
             resultLine = self._inspector_result_regex.match(line)
             if resultLine:
-                self._results[resultLine.group('name').replace(' ', '')] = int(resultLine.group('value'))
+                self._results[resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
                 self._buildbot_output.write("%s\n" % line)
                 got_a_result = True
             elif not len(line) == 0:
@@ -272,7 +272,7 @@ class PerfTestsRunner(object):
         for line in re.split('\n', output.text):
             score = score_regex.match(line)
             if score:
-                results[score.group(1)] = score.group(2)
+                results[score.group(1)] = float(score.group(2))
                 continue
 
             if not self._should_ignore_line_in_parser_test_result(line):

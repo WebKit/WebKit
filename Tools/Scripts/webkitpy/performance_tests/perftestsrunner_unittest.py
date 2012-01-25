@@ -171,9 +171,9 @@ max 1120
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(unexpected_result_count, 0)
         self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
-        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
-        self.assertEqual(buildbot_output.get()[2], 'RESULT Parser: some-parser= 1100 ms\n')
-        self.assertEqual(buildbot_output.get()[3], 'median= 1101 ms, stdev= 11 ms, min= 1080 ms, max= 1120 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n')
+        self.assertEqual(buildbot_output.get()[2], 'RESULT Parser: some-parser= 1100.0 ms\n')
+        self.assertEqual(buildbot_output.get()[3], 'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms\n')
 
     def test_run_test_set_with_json_output(self):
         buildbot_output = array_stream.ArrayStream()
@@ -184,12 +184,12 @@ max 1120
         self.assertEqual(runner.run(), 0)
         self.assertEqual(len(buildbot_output.get()), 3)
         self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
-        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n')
         self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
-            {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
+            {"event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
             "revision": 1234})
 
@@ -204,12 +204,12 @@ max 1120
         self.assertEqual(runner.run(), 0)
         self.assertEqual(len(buildbot_output.get()), 3)
         self.assertEqual(buildbot_output.get()[0], 'RESULT Bindings: event-target-wrapper= 1489.05 ms\n')
-        self.assertEqual(buildbot_output.get()[1], 'median= 1487 ms, stdev= 14.46 ms, min= 1471 ms, max= 1510 ms\n')
+        self.assertEqual(buildbot_output.get()[1], 'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n')
         self.assertEqual(buildbot_output.get()[2], 'RESULT group_name: test_name= 42 ms\n')
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
-            {"event-target-wrapper": {"max": "1510", "avg": "1489.05", "median": "1487", "min": "1471", "stdev": "14.46"},
+            {"event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
             "revision": 1234,
             "key": "value"})

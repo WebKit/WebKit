@@ -1,3 +1,23 @@
+2012-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should timeout sooner
+        https://bugs.webkit.org/show_bug.cgi?id=77026
+
+        Reviewed by Adam Barth.
+
+        Bump off the timeout from 10 minutes to 4 minutes.
+
+        Also use float instead of str in test result values to compress the size of json files bots upload.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._process_chromium_style_test_result):
+        (PerfTestsRunner._process_parser_test_result):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_set_for_parser_tests):
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+
 2012-01-25  Enrica Casucci  <enrica@apple.com>
 
         WebView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.
