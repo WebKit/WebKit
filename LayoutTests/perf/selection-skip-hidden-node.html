@@ -1,0 +1,34 @@
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<div id="HiddenText"></div><p id="VisibleText">Visible Text</p>
+<script>
+var hiddenDiv = document.getElementById('HiddenText');
+hiddenDiv.style.display = 'none';
+
+var longText = "super long long text";
+while (longText.length < 16)
+    longText = longText + longText;
+
+function setupFunction(magnitude)
+{
+    while (hiddenDiv.hasChildNodes())
+        hiddenDiv.removeChild(hiddenDiv.lastChild);
+
+    var text = longText;
+    for (var i = 0; i < magnitude; ++i)
+        text += longText;
+
+    var textNode = document.createTextNode(text);
+    hiddenDiv.appendChild(textNode);
+}
+
+function test(magnitude)
+{
+    window.getSelection().setPosition(document.body, 0);
+}
+
+Magnitude.description("Tests that traversing hidden text nodes is constant time.");
+Magnitude.run(setupFunction, test, Magnitude.CONSTANT);
+
+</script>
+</body>

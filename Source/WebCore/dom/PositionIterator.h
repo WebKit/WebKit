@@ -64,6 +64,9 @@ public:
     bool atEndOfNode() const;
     bool isCandidate() const;
 
+    void moveToLeafNodeStart();
+    void moveToLeafNodeEnd();
+
 private:
     Node* m_anchorNode;
     Node* m_nodeAfterPositionInAnchor; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;

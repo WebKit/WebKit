@@ -177,4 +177,20 @@ bool PositionIterator::isCandidate() const
     return false;
 }
 
+void PositionIterator::moveToLeafNodeStart()
+{
+    if (!m_anchorNode || m_nodeAfterPositionInAnchor || m_anchorNode->hasChildNodes())
+        return;
+
+    m_offsetInAnchor = 0;
+}
+
+void PositionIterator::moveToLeafNodeEnd()
+{
+    if (!m_anchorNode || m_nodeAfterPositionInAnchor || m_anchorNode->hasChildNodes())
+        return;
+
+    m_offsetInAnchor = lastOffsetForEditing(m_anchorNode);
+}
+
 } // namespace WebCore

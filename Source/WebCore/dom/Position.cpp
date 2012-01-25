@@ -615,8 +615,10 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         RenderObject* renderer = currentNode->renderer();
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
+        if (!renderer || renderer->style()->visibility() != VISIBLE) {
+            currentPos.moveToLeafNodeStart();
             continue;
+        }
                  
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPos;
@@ -636,6 +638,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
         if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.atEndOfNode())
                 return positionAfterNode(currentNode);
+            currentPos.moveToLeafNodeStart();
             continue;
         }
 
@@ -747,8 +750,10 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         RenderObject* renderer = currentNode->renderer();
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
+        if (!renderer || renderer->style()->visibility() != VISIBLE) {
+            currentPos.moveToLeafNodeEnd();
             continue;
+        }
             
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
             lastVisible = currentPos;
@@ -763,6 +768,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
         if (editingIgnoresContent(currentNode) || isTableElement(currentNode)) {
             if (currentPos.offsetInLeafNode() <= renderer->caretMinOffset())
                 return createLegacyEditingPosition(currentNode, renderer->caretMinOffset());
+            currentPos.moveToLeafNodeEnd();
             continue;
         }
 

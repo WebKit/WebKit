@@ -1,3 +1,27 @@
+2012-01-25  Yong Li  <yoli@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65377
+        Skip the entire node when it is right to do so, instead of stepping
+        through every character, so we save CPU time on checking every position
+        unnecessarily.
+
+        Reviewed by Darin Adler.
+
+        Test: perf/selection-skip-hidden-node.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::moveToLeafNodeStart):
+        (WebCore::PositionIterator::moveToLeafNodeEnd):
+        * dom/PositionIterator.h:
+        * editing/htmlediting.cpp:
+        (WebCore::nextCandidate):
+        (WebCore::nextVisuallyDistinctCandidate):
+        (WebCore::previousCandidate):
+        (WebCore::previousVisuallyDistinctCandidate):
+
 2012-01-25  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Remove unnecessary member variable from PluginView.

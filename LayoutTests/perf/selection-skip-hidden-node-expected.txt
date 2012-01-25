@@ -1,0 +1,3 @@
+Tests that traversing hidden text nodes is constant time.
+PASS
+
