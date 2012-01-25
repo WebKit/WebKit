@@ -1,3 +1,45 @@
+2012-01-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Implement tap feedback respecting -webkit-tap-highlight-color
+        https://bugs.webkit.org/show_bug.cgi?id=76914
+
+        Reviewed by Simon Hausmann.
+
+        Implement tap highlighting for Qt. When a touch press is issued,
+        which is not handled by the web page, then we highlight any
+        activatable node below. In all otehr cases, we hide any highlights.
+
+        The highlighting itself is painted on an accelerated PageOverlay,
+        on the web process side.
+
+        * Target.pri:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePotentialActivation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::recognize):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handlePotentialSingleTapEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        * WebProcess/WebPage/TapHighlightController.cpp: Added.
+        (WebKit::TapHighlightController::TapHighlightController):
+        (WebKit::TapHighlightController::~TapHighlightController):
+        (WebKit::TapHighlightController::highlight):
+        (WebKit::TapHighlightController::hideHighlight):
+        (WebKit::TapHighlightController::pageOverlayDestroyed):
+        (WebKit::TapHighlightController::willMoveToWebPage):
+        (WebKit::TapHighlightController::didMoveToWebPage):
+        (WebKit::highlightColor):
+        (WebKit::TapHighlightController::drawRect):
+        (WebKit::TapHighlightController::mouseEvent):
+        * WebProcess/WebPage/TapHighlightController.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::highlightPotentialActivation):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::tapHighlightController):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-01-25  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [WK2] WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled

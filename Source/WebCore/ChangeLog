@@ -1,3 +1,21 @@
+2012-01-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Implement tap feedback respecting -webkit-tap-highlight-color
+        https://bugs.webkit.org/show_bug.cgi?id=76914
+
+        Reviewed by Simon Hausmann.
+
+        Implement highlighting of dom nodes with a rounded rect, respecting
+        the color of -webkit-tap-highlight-color and any transform applied
+        to the element.
+
+        Tested with manual test.
+
+        * Target.pri:
+        * page/GestureTapHighlighter.cpp: Added.
+        (WebCore::GestureTapHighlighter::pathForNodeHighlight):
+        * page/GestureTapHighlighter.h: Added.
+
 2012-01-25  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Need to distinguish key paths that don't yield value vs. yield invalid key

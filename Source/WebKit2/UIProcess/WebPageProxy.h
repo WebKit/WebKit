@@ -382,6 +382,9 @@ public:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const NativeWebTouchEvent&);
+#if PLATFORM(QT)
+    void handlePotentialActivation(const WebCore::IntPoint&);
+#endif
 #endif
 
     void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);

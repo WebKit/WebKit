@@ -286,6 +286,12 @@ bool QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
     return accepted;
 }
 
+void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint& point)
+{
+    QTransform fromItemTransform = m_webPage->transformFromItem();
+    m_webPageProxy->handlePotentialActivation(fromItemTransform.map(point.pos()).toPoint());
+}
+
 void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)
 {
     m_postponeTextInputStateChanged = true;

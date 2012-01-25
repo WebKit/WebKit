@@ -41,6 +41,7 @@
 #include "InjectedBundlePageResourceLoadClient.h"
 #include "InjectedBundlePageUIClient.h"
 #include "MessageSender.h"
+#include "TapHighlightController.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -316,6 +317,10 @@ public:
     static const WebEvent* currentEvent();
 
     FindController& findController() { return m_findController; }
+#if PLATFORM(QT)
+    TapHighlightController& tapHighlightController() { return m_tapHighlightController; }
+#endif
+
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
 
@@ -544,6 +549,9 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
     void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
+#if PLATFORM(QT)
+    void highlightPotentialActivation(const WebCore::IntPoint&);
+#endif
 #endif
     void contextMenuHidden() { m_isShowingContextMenu = false; }
 
@@ -708,6 +716,9 @@ private:
 #endif
 
     FindController m_findController;
+#if PLATFORM(QT)
+    TapHighlightController m_tapHighlightController;
+#endif
     RefPtr<PageOverlay> m_pageOverlay;
 
     RefPtr<WebPage> m_underlayPage;

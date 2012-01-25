@@ -986,6 +986,7 @@ SOURCES += \
     page/FrameView.cpp \
     page/Geolocation.cpp \
     page/GeolocationController.cpp \
+    page/GestureTapHighlighter.cpp \
     page/GroupSettings.cpp \
     page/History.cpp \
     page/Location.cpp \
@@ -2044,6 +2045,7 @@ HEADERS += \
     page/FrameView.h \
     page/Geolocation.h \
     page/Geoposition.h \
+    page/GestureTapHighlighter.h\
     page/GroupSettings.h \
     page/History.h \
     page/Location.h \

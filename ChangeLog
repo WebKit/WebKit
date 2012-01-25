@@ -1,3 +1,14 @@
+2012-01-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Implement tap feedback respecting -webkit-tap-highlight-color
+        https://bugs.webkit.org/show_bug.cgi?id=76914
+
+        Reviewed by Simon Hausmann.
+
+        Add a manual test.
+
+        * ManualTests/qt/tap-highlighting.html: Added.
+
 2012-01-25  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Implement registering of <style scoped> with the scoping element

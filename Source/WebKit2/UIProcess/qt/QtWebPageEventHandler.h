@@ -47,6 +47,7 @@ public:
 
     void setViewportInteractionEngine(QtViewportInteractionEngine*);
 
+    void handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint&);
     void handleSingleTapEvent(const QTouchEvent::TouchPoint&);
     void handleDoubleTapEvent(const QTouchEvent::TouchPoint&);
 

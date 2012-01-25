@@ -68,6 +68,11 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
         } else
             m_tapState = SingleTapStarted;
         m_touchBeginEventForTap = adoptPtr(new QTouchEvent(*event));
+
+        if (m_tapState == SingleTapStarted) {
+            const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
+            m_eventHandler->handlePotentialSingleTapEvent(touchPoint);
+        }
         break;
     case QEvent::TouchUpdate:
         // If the touch point moves further than the threshold, we cancel the tap gesture.
@@ -111,6 +116,10 @@ bool QtTapGestureRecognizer::recognize(const QTouchEvent* event, qint64 eventTim
     default:
         break;
     }
+
+    if (m_tapState == NoTap)
+        m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
+
     return false;
 }
 

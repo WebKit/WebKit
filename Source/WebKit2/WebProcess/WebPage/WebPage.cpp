@@ -194,6 +194,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_setCanStartMediaTimer(WebProcess::shared().runLoop(), this, &WebPage::setCanStartMediaTimerFired)
     , m_findController(this)
+#if PLATFORM(QT)
+    , m_tapHighlightController(this)
+#endif
     , m_geolocationPermissionRequestManager(this)
     , m_pageID(pageID)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
@@ -1424,6 +1427,27 @@ void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& session
 }
 
 #if ENABLE(TOUCH_EVENTS)
+#if PLATFORM(QT)
+void WebPage::highlightPotentialActivation(const IntPoint& point)
+{
+    Node* activationNode = 0;
+    Frame* mainframe = m_page->mainFrame();
+
+    if (point != IntPoint::zero()) {
+        HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
+        activationNode = result.innerNode();
+
+        if (!activationNode->isFocusable())
+            activationNode = activationNode->enclosingLinkEventParentOrSelf();
+    }
+
+    if (activationNode)
+        tapHighlightController().highlight(activationNode);
+    else
+        tapHighlightController().hideHighlight();
+}
+#endif
+
 static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 {
     Frame* frame = page->mainFrame();
