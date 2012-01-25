@@ -1,3 +1,21 @@
+2012-01-25  Sami Kyostila  <skyostil@chromium.org>
+
+        Clipping of render layer boundaries does not take page scale into account
+        https://bugs.webkit.org/show_bug.cgi?id=76850
+
+        Reviewed by Simon Fraser.
+
+        When inserting render layers into the compositor's overlap map, the
+        layer boundaries are clipped against any potential parent clip rects.
+        The clip rects are given in CSS coordinates, while the render layer
+        boundaries are in scaled CSS coordinates, so the result is incorrect.
+        This patch scales the clip rects before calculating the intersection.
+
+        Test: compositing/overflow/overflow-scaled-descendant-overlapping.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+
 2012-01-25  Stephen Chenney  <schenney@chromium.org>
 
         Linecaps wrong for zero length lines
