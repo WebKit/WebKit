@@ -209,9 +209,6 @@ Position nextCandidate(const Position& position)
         p.increment();
         if (p.isCandidate())
             return p;
-        RenderObject* renderer = p.node() ? p.node()->renderer() : 0;
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
-            p.moveToLeafNodeEnd();
     }
     return Position();
 }
@@ -224,9 +221,6 @@ Position nextVisuallyDistinctCandidate(const Position& position)
         p = p.next(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
-        RenderObject* renderer = p.deprecatedNode() ? p.deprecatedNode()->renderer() : 0;
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
-            p.moveToOffset(lastOffsetForEditing(p.deprecatedNode()));
     }
     return Position();
 }
@@ -238,9 +232,6 @@ Position previousCandidate(const Position& position)
         p.decrement();
         if (p.isCandidate())
             return p;
-        RenderObject* renderer = p.node() ? p.node()->renderer() : 0;
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
-            p.moveToLeafNodeStart();
     }
     return Position();
 }
@@ -253,9 +244,6 @@ Position previousVisuallyDistinctCandidate(const Position& position)
         p = p.previous(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
-        RenderObject* renderer = p.deprecatedNode() ? p.deprecatedNode()->renderer() : 0;
-        if (!renderer || renderer->style()->visibility() != VISIBLE)
-            p.moveToOffset(0);
     }
     return Position();
 }

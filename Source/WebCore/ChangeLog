@@ -1,3 +1,24 @@
+2012-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105885.
+        http://trac.webkit.org/changeset/105885
+        https://bugs.webkit.org/show_bug.cgi?id=77027
+
+        Causes assertions in Position. (Requested by leviw|gardening
+        on #webkit).
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        * dom/PositionIterator.cpp:
+        * dom/PositionIterator.h:
+        (PositionIterator):
+        * editing/htmlediting.cpp:
+        (WebCore::nextCandidate):
+        (WebCore::nextVisuallyDistinctCandidate):
+        (WebCore::previousCandidate):
+        (WebCore::previousVisuallyDistinctCandidate):
+
 2012-01-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         border-image should be implemented like a shorthand.
