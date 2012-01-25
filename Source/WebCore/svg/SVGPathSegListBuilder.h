@@ -50,7 +50,7 @@ private:
         m_pathSegRole = PathSegUndefinedRole;
     }
 
-    // Used in UnalteredParisng/NormalizedParsing modes.
+    // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
     virtual void lineTo(const FloatPoint&, PathCoordinateMode);
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);

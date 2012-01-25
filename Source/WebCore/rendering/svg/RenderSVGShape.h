@@ -33,6 +33,7 @@
 #include "SVGMarkerLayoutInfo.h"
 #include "StrokeStyleApplier.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ class FloatPoint;
 class GraphicsContextStateSaver;
 class RenderSVGContainer;
 class RenderSVGPath;
+class RenderSVGResource;
 class SVGStyledTransformableElement;
 
 class BoundingRectStrokeStyleApplier : public StrokeStyleApplier {
@@ -92,6 +94,7 @@ protected:
     float strokeWidth() const;
     void setIsPaintingFallback(bool isFallback) { m_fillFallback = isFallback; }
     FloatRect calculateMarkerBoundsIfNeeded();
+    void processZeroLengthSubpaths();
 
     bool hasPath() const { return m_path.get(); }
 
@@ -116,11 +119,15 @@ private:
 
     void updateCachedBoundaries();
 
-    void setupSquareCapPath(Path*&, int& applyMode);
-    bool setupNonScalingStrokePath(Path*&, GraphicsContextStateSaver&);
+    Path* zeroLengthLinecapPath(const FloatPoint&);
+    bool setupNonScalingStrokeTransform(AffineTransform&, GraphicsContextStateSaver&);
+    Path* nonScalingStrokePath(const Path*, const AffineTransform&);
     bool shouldStrokeZeroLengthSubpath() const;
-    FloatRect zeroLengthSubpathRect() const;
+    FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
 
+    void fillShape(RenderStyle*, GraphicsContext*, Path*, RenderSVGShape*);
+    void strokePath(RenderStyle*, GraphicsContext*, Path*, RenderSVGResource*,
+                    const Color&, bool, const AffineTransform&, int);
     void fillAndStrokePath(GraphicsContext*);
     void inflateWithStrokeAndMarkerBounds();
 
@@ -131,6 +138,7 @@ private:
     SVGMarkerLayoutInfo m_markerLayoutInfo;
     AffineTransform m_localTransform;
     OwnPtr<Path> m_path;
+    Vector<FloatPoint> m_zeroLengthLinecapLocations;
 
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;

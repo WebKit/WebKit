@@ -1,3 +1,37 @@
+2012-01-25  Stephen Chenney  <schenney@chromium.org>
+
+        Linecaps wrong for zero length lines
+        https://bugs.webkit.org/show_bug.cgi?id=71820
+
+        Reviewed by Nikolas Zimmermann.
+
+        Total reworking of the method used to draw zero-length linecaps for
+        SVG. This patch works for all zero length sub-paths.
+
+        Tests: svg/stroke/zero-length-path-linecap-rendering.svg
+               svg/stroke/zero-length-subpaths-linecap-rendering.svg
+
+        * rendering/svg/RenderSVGShape.cpp: Significant refactoring to enable
+          new implementation and clarify code.
+        (WebCore::RenderSVGShape::createShape):
+        (WebCore::RenderSVGShape::strokeContains):
+        (WebCore::RenderSVGShape::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGShape::zeroLengthSubpathRect):
+        (WebCore::RenderSVGShape::zeroLengthLinecapPath):
+        (WebCore::RenderSVGShape::nonScalingStrokePath):
+        (WebCore::RenderSVGShape::setupNonScalingStrokeTransform):
+        (WebCore::RenderSVGShape::fillShape):
+        (WebCore::RenderSVGShape::strokePath):
+        (WebCore::RenderSVGShape::fillAndStrokePath):
+        (WebCore::RenderSVGShape::updateCachedBoundaries):
+        (WebCore::RenderSVGShape::processZeroLengthSubpaths):
+        * rendering/svg/RenderSVGShape.h: Declarations for new methods.
+        * rendering/svg/SVGSubpathData.h: Class for finding zero length subpaths.
+        * svg/SVGPathBuilder.h: Fix typos
+        * svg/SVGPathConsumer.h: Fix typos
+        * svg/SVGPathSegListBuilder.h: Fix typos
+        * svg/SVGPathTraversalStateBuilder.h: Fix typos
+
 2012-01-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: show memory counter graphs in timeline panel

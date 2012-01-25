@@ -49,7 +49,7 @@ public:
     virtual bool continueConsuming() = 0;
     virtual void cleanup() = 0;
 
-    // Used in UnalteredParisng/NormalizedParsing modes.
+    // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) = 0;
     virtual void lineTo(const FloatPoint&, PathCoordinateMode) = 0;
     virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) = 0;
