@@ -5,7 +5,7 @@ layer at (0,0) size 800x172
     RenderBody {BODY} at (5,5) size 790x162
       RenderEmbeddedObject {OBJECT} at (0,0) size 158x158 [border: (1px dashed #800000)]
         layer at (0,0) size 152x152
-          RenderView at (0,0) size 136x136
+          RenderView at (0,0) size 152x152
         layer at (0,0) size 152x152
           RenderSVGRoot {svg} at (0,0) size 152x152
             RenderSVGPath {circle} at (0,0) size 152x152 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]

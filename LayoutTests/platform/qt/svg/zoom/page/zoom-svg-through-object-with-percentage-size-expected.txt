@@ -1,47 +1,47 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x383
-  RenderBlock {html} at (0,0) size 800x383
-    RenderBody {body} at (5,5) size 790x373
-      RenderTable {table} at (44,0) size 701x373
-        RenderTableSection (anonymous) at (0,0) size 701x373
-          RenderTableRow {tr} at (0,0) size 701x373
-            RenderTableCell {td} at (0,0) size 701x373 [r=0 c=0 rs=1 cs=3]
-              RenderTable {table} at (6,6) size 689x361
-                RenderTableSection (anonymous) at (0,0) size 689x361
-                  RenderTableRow {tr} at (0,1) size 689x68
-                    RenderTableCell {td} at (1,1) size 687x68 [r=0 c=0 rs=1 cs=2]
-                      RenderBlock {h1} at (5,19) size 677x30
-                        RenderText {#text} at (99,0) size 479x30
-                          text run at (99,0) width 479: "Both sides should have identical size after zooming"
-                  RenderTableRow {tr} at (0,70) size 689x25
-                    RenderTableCell {td} at (1,70) size 343x25 [r=1 c=0 rs=1 cs=1]
+layer at (0,0) size 800x382
+  RenderBlock {html} at (0,0) size 800x382
+    RenderBody {body} at (5,5) size 790x372
+      RenderTable {table} at (44,0) size 701x372
+        RenderTableSection (anonymous) at (0,0) size 701x372
+          RenderTableRow {tr} at (0,0) size 701x372
+            RenderTableCell {td} at (0,0) size 701x372 [r=0 c=0 rs=1 cs=3]
+              RenderTable {table} at (6,6) size 689x360
+                RenderTableSection (anonymous) at (0,0) size 689x360
+                  RenderTableRow {tr} at (0,1) size 689x67
+                    RenderTableCell {td} at (1,1) size 687x67 [r=0 c=0 rs=1 cs=2]
+                      RenderBlock {h1} at (5,19) size 677x29
+                        RenderText {#text} at (74,0) size 529x29
+                          text run at (74,0) width 529: "Both sides should have identical size after zooming"
+                  RenderTableRow {tr} at (0,69) size 689x25
+                    RenderTableCell {td} at (1,69) size 343x25 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (143,5) size 57x15
                         text run at (143,5) width 57: "SVG Image"
-                    RenderTableCell {td} at (345,70) size 343x25 [r=1 c=1 rs=1 cs=1]
+                    RenderTableCell {td} at (345,69) size 343x25 [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (143,5) size 57x15
                         text run at (143,5) width 57: "PNG Image"
-                  RenderTableRow {tr} at (0,96) size 689x264
-                    RenderTableCell {td} at (1,96) size 343x264 [r=2 c=0 rs=1 cs=1]
+                  RenderTableRow {tr} at (0,95) size 689x264
+                    RenderTableCell {td} at (1,95) size 343x264 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {object} at (5,5) size 333x250
                         layer at (0,0) size 333x250
-                          RenderView at (0,0) size 317x234
+                          RenderView at (0,0) size 333x250
                         layer at (0,0) size 333x250
                           RenderSVGRoot {svg} at (0,0) size 333x250
                             RenderSVGContainer {g} at (18,31) size 260x164
-                              RenderSVGRect {rect} at (20,31) size 37x58 [stroke={[type=SOLID] [color=#000000]}] [x=30.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (20,31) size 36x57 [stroke={[type=SOLID] [color=#000000]}] [x=30.00] [y=46.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (90,32) size 35x56 [fill={[type=SOLID] [color=#FF0000]}] [x=130.00] [y=46.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (172,31) size 37x58 [stroke={[type=SOLID] [color=#000000]}] [x=250.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (173,31) size 36x57 [stroke={[type=SOLID] [color=#000000]}] [x=250.00] [y=46.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (242,32) size 36x56 [fill={[type=SOLID] [color=#FF0000]}] [x=350.00] [y=46.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (18,133) size 41x62 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=30.00] [y=196.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (87,133) size 41x62 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=130.00] [y=196.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (170,133) size 41x62 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=250.00] [y=196.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (242,136) size 36x56 [fill={[type=SOLID] [color=#00FF00]}] [x=350.00] [y=196.00] [width=50.00] [height=80.00]
-                            RenderSVGText {text} at (10,301) size 273x54 contains 1 chunk(s)
-                              RenderSVGInlineText {#text} at (0,0) size 273x54
-                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 272.43: "$Revision: 1.7 $"
+                            RenderSVGText {text} at (10,301) size 295x51 contains 1 chunk(s)
+                              RenderSVGInlineText {#text} at (0,0) size 295x51
+                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 294.05: "$Revision: 1.7 $"
                             RenderSVGRect {rect} at (0,0) size 333x250 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {td} at (345,96) size 343x263 [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {td} at (345,95) size 343x263 [r=2 c=1 rs=1 cs=1]
                       RenderImage {img} at (5,5) size 333x249
                       RenderText {#text} at (0,0) size 0x0

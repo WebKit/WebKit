@@ -24,8 +24,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 2 of BODY > HTML > #document toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -33,9 +32,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 600x31
-        RenderText {#text} at (0,0) size 102x32
-          text run at (0,0) width 102: "There is a"
-        RenderText {#text} at (102,0) size 253x32
-          text run at (102,0) width 253: "Which taken at the flood"
+      RenderBlock {DIV} at (0,0) size 600x30
+        RenderText {#text} at (0,0) size 362x30
+          text run at (0,0) width 362: "There is aWhich taken at the flood"
 caret: position 10 of child 0 {#text} of child 1 {DIV} of body
