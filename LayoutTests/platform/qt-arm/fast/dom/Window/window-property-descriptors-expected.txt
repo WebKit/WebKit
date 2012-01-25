@@ -5,7 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Array') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Attr') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'Audio') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'BeforeLoadEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Blob') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Boolean') is 'object'
@@ -65,7 +64,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAllCollection') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAnchorElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAppletElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAreaElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAudioElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBRElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBaseElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBaseFontElement') is 'object'
@@ -99,7 +97,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLLegendElement') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLLinkElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMapElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMarqueeElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMediaElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMenuElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMetaElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMeterElement') is 'object'
@@ -116,7 +113,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLProgressElement') is 'o
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLQuoteElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLScriptElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLSelectElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLSourceElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLSpanElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLStyleElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTableCaptionElement') is 'object'
@@ -129,7 +125,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTextAreaElement') is 'o
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTitleElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLUListElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLUnknownElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLVideoElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HashChangeEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Image') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'ImageData') is 'object'
@@ -137,7 +132,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'Infinity') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'JSON') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'KeyboardEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Math') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'MediaError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'MediaList') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'MessageChannel') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'MessageEvent') is 'object'
@@ -306,12 +300,12 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'SyntaxError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Text') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'TextEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'TextMetrics') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'TimeRanges') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'TouchEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'TypeError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'UIEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'URIError') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitAnimationEvent') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSFilterValue') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSKeyframeRule') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSKeyframesRule') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'WebKitCSSMatrix') is 'object'
@@ -488,6 +482,8 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeTrue') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeTrueQuiet') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeUndefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldEvaluateTo') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldHaveHadError') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldNotBe') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldThrow') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'status') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'statusbar') is 'object'
@@ -500,7 +496,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'toolbar') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'top') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'undefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'unescape') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'webkitNotifications') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'window') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'windowPropertyNames') is 'object'
 PASS Object.getOwnPropertyDescriptor(window, '__defineGetter__') is undefined.
@@ -548,9 +543,12 @@ PASS Object.getOwnPropertyDescriptor(window, 'stop') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toLocaleString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'valueOf') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelAnimationFrame') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelRequestAnimationFrame') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromNodeToPage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromPageToNode') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitPostMessage') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitRequestAnimationFrame') is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

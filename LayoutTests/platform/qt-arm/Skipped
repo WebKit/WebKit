@@ -162,3 +162,21 @@ http/tests/websocket/tests/hixie76/workers/close-in-worker.html
 http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html
 http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html
 http/tests/websocket/tests/hixie76/workers/worker-simple.html
+
+# new failing tests
+fast/events/click-count.html
+fast/events/dont-loose-last-event.html
+fast/forms/basic-selects.html
+fast/html/marquee-alternate.html
+http/tests/appcache/auth.html
+http/tests/inspector/extensions-ignore-cache.html
+http/tests/inspector/inspect-element.html
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+svg/wicd/rightsizing-grid.xhtml
+
+# fail because of missing video support
+http/tests/misc/empty-urls.html
+
+# fails because of missing WebGL support
+fast/events/constructors/webgl-context-event-constructor.html
