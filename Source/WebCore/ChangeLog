@@ -1,3 +1,45 @@
+2012-01-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Pass Database, object stores and indexes meta information to frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=76711
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        (WebCore::assertDocument):
+        (WebCore::assertIDBFactory):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        * inspector/InspectorIndexedDBAgent.h:
+        (InspectorIndexedDBAgent):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel):
+        (WebInspector.IndexedDBModel.prototype._frameDetached):
+        (WebInspector.IndexedDBModel.prototype._reset):
+        (WebInspector.IndexedDBModel.prototype._originAddedToFrame):
+        (WebInspector.IndexedDBModel.prototype._originRemovedFromFrame):
+        (WebInspector.IndexedDBModel.prototype._originRemoved):
+        (WebInspector.IndexedDBModel.prototype._updateOriginDatabaseNames):
+        (WebInspector.IndexedDBModel.prototype._databaseRemoved):
+        (WebInspector.IndexedDBModel.prototype._loadDatabaseNamesForFrame):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.Frame):
+        (WebInspector.IndexedDBModel.Database):
+        (WebInspector.IndexedDBModel.ObjectStore):
+        (WebInspector.IndexedDBModel.ObjectStoreIndex):
+        (WebInspector.IndexedDBRequestManager.prototype._databaseNamesLoaded):
+        (WebInspector.IndexedDBRequestManager.prototype.requestDatabase.innerCallback):
+        (WebInspector.IndexedDBRequestManager.prototype.requestDatabase):
+        (WebInspector.IndexedDBRequestManager.prototype._databaseLoaded):
+        (WebInspector.IndexedDBRequestManager.prototype._frameDetached):
+        (WebInspector.IndexedDBRequestManager.prototype._databaseRemoved):
+        (WebInspector.IndexedDBRequestManager.prototype._reset):
+        (WebInspector.IndexedDBRequestManager.DatabaseRequest):
+        (WebInspector.IndexedDBDispatcher.prototype.databaseNamesLoaded):
+        (WebInspector.IndexedDBDispatcher.prototype.databaseLoaded):
+
 2012-01-25  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: add optional runtime validator

@@ -61,6 +61,7 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
     void requestDatabaseNamesForFrame(ErrorString*, int requestId, const String& frameId);
+    void requestDatabase(ErrorString*, int requestId, const String& frameId, const String& databaseName);
 private:
     InspectorIndexedDBAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);
 
