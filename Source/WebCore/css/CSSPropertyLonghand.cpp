@@ -66,6 +66,15 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     };
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBorderColor, borderColorProperties);
 
+    static const int borderImageProperties[] = {
+        CSSPropertyBorderImageSource,
+        CSSPropertyBorderImageSlice,
+        CSSPropertyBorderImageWidth,
+        CSSPropertyBorderImageOutset,
+        CSSPropertyBorderImageRepeat
+    };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBorderImage, borderImageProperties);
+
     static const int borderStyleProperties[] = {
         CSSPropertyBorderTopStyle,
         CSSPropertyBorderRightStyle,

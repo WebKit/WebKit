@@ -173,7 +173,7 @@ public:
 
     // CSS3 Parsing Routines (for properties specific to CSS3)
     PassRefPtr<CSSValueList> parseShadow(CSSParserValueList*, int propId);
-    bool parseBorderImage(int propId, RefPtr<CSSValue>&);
+    bool parseBorderImage(int propId, RefPtr<CSSValue>&, bool important = false);
     bool parseBorderImageRepeat(RefPtr<CSSValue>&);
     bool parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValue>&);
     bool parseBorderImageWidth(RefPtr<CSSPrimitiveValue>&);

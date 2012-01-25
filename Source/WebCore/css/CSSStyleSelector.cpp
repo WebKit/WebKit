@@ -4288,7 +4288,7 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
 
     // Set the image (this kicks off the load).
     CSSPropertyID imageProperty;
-    if (property == CSSPropertyWebkitBorderImage || property == CSSPropertyBorderImage)
+    if (property == CSSPropertyWebkitBorderImage)
         imageProperty = CSSPropertyBorderImageSource;
     else if (property == CSSPropertyWebkitMaskBoxImage)
         imageProperty = CSSPropertyWebkitMaskBoxImageSource;

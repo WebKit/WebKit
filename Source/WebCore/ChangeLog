@@ -1,3 +1,52 @@
+2012-01-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        border-image should be implemented like a shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=76697
+
+        Reviewed by Tony Chang.
+
+        Make sure that border-image is implemented like a shorthand : when we parse
+        it we set the correct value to its longhands. The code was not doing it
+        previously as we inherited the old implementation of -webkit-border-image which
+        is not a shorthand but a regular property. It will then increase
+        style.length for a given element as we now expand the longhands.
+        The behavior stays the same for -webkit-border-image.
+
+        Test: fast/css/border-image-style-length.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::commitWebKitBorderImage):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (BorderImageParseContext):
+        (WebCore::BorderImageParseContext::commitBorderImageProperty):
+        (WebCore::CSSParser::parseBorderImage):
+        * css/CSSParser.h:
+        ():
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap):
+        * css/CSSStyleApplyProperty.cpp:
+        ():
+        (WebCore::ApplyPropertyExpanding::applyInheritValue):
+        (WebCore::ApplyPropertyExpanding::applyInitialValue):
+        (WebCore::ApplyPropertyExpanding::applyValue):
+        (WebCore::ApplyPropertyBorderImageModifier::applyInitialValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::ensurePropertyMap):
+        (WebCore::addShorthandProperties):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::borderImageSlices):
+        (WebCore::RenderStyleBitfields::borderImageWidth):
+        (WebCore::RenderStyleBitfields::borderImageOutset):
+        (RenderStyleBitfields):
+        (WebCore::RenderStyleBitfields::setBorderImageSlices):
+        (WebCore::RenderStyleBitfields::setBorderImageWidth):
+        (WebCore::RenderStyleBitfields::setBorderImageOutset):
+
 2012-01-23  MORITA Hajime  <morrita@google.com>
 
         [Refactoring][Internals] Should have InternalSettings

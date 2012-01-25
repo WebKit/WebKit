@@ -976,7 +976,9 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage));
 
         gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource));
-        gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage));
+        gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices));
+        gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth));
+        gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset));
 
         gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource));
         gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage));
@@ -1117,6 +1119,7 @@ static void addShorthandProperties()
         CSSPropertyBorderRadius,
         CSSPropertyBorderWidth,
         CSSPropertyBorder,
+        CSSPropertyBorderImage,
         CSSPropertyBorderSpacing,
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,

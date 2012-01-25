@@ -47,7 +47,7 @@ using namespace std;
 namespace WebCore {
 
 enum ExpandValueBehavior {SuppressValue = 0, ExpandValue};
-template <ExpandValueBehavior expandValue, CSSPropertyID one = CSSPropertyInvalid, CSSPropertyID two = CSSPropertyInvalid, CSSPropertyID three = CSSPropertyInvalid, CSSPropertyID four = CSSPropertyInvalid>
+template <ExpandValueBehavior expandValue, CSSPropertyID one = CSSPropertyInvalid, CSSPropertyID two = CSSPropertyInvalid, CSSPropertyID three = CSSPropertyInvalid, CSSPropertyID four = CSSPropertyInvalid, CSSPropertyID five = CSSPropertyInvalid>
 class ApplyPropertyExpanding {
 public:
 
@@ -69,6 +69,7 @@ public:
         applyInheritValue<two>(selector);
         applyInheritValue<three>(selector);
         applyInheritValue<four>(selector);
+        applyInheritValue<five>(selector);
     }
 
     template <CSSPropertyID id>
@@ -89,6 +90,7 @@ public:
         applyInitialValue<two>(selector);
         applyInitialValue<three>(selector);
         applyInitialValue<four>(selector);
+        applyInitialValue<five>(selector);
     }
 
     template <CSSPropertyID id>
@@ -112,6 +114,7 @@ public:
         applyValue<two>(selector, value);
         applyValue<three>(selector, value);
         applyValue<four>(selector, value);
+        applyValue<five>(selector, value);
     }
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
@@ -904,7 +907,7 @@ public:
         NinePieceImage image(getValue(selector->style()));
         switch (modifier) {
         case Outset:
-            image.setOutset(LengthBox());
+            image.setOutset(LengthBox(0));
             break;
         case Repeat:
             image.setHorizontalRule(StretchImageRule);
@@ -1761,7 +1764,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderColor, ApplyPropertyExpanding<SuppressValue, CSSPropertyBorderTopColor, CSSPropertyBorderRightColor, CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor>::createHandler());
     setPropertyHandler(CSSPropertyBorder, ApplyPropertyExpanding<SuppressValue, CSSPropertyBorderStyle, CSSPropertyBorderWidth, CSSPropertyBorderColor>::createHandler());
 
-    setPropertyHandler(CSSPropertyBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage>::createHandler());
+    setPropertyHandler(CSSPropertyBorderImage, ApplyPropertyExpanding<SuppressValue, CSSPropertyBorderImageSource, CSSPropertyBorderImageSlice, CSSPropertyBorderImageWidth, CSSPropertyBorderImageOutset, CSSPropertyBorderImageRepeat>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderImage, ApplyPropertyBorderImage<Image, CSSPropertyWebkitBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<Mask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage>::createHandler());
 

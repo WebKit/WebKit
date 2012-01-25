@@ -1474,7 +1474,10 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
-    case CSSPropertyBorderImage:
+    case CSSPropertyBorderImage: {
+        RefPtr<CSSValue> result;
+        return parseBorderImage(propId, result, important);
+    }
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {
         RefPtr<CSSValue> result;
@@ -5299,9 +5302,8 @@ bool CSSParser::parseFlex(int propId, bool important)
 }
 
 struct BorderImageParseContext {
-    BorderImageParseContext(CSSValuePool* cssValuePool)
-    : m_cssValuePool(cssValuePool)
-    , m_canAdvance(false)
+    BorderImageParseContext()
+    : m_canAdvance(false)
     , m_allowCommit(true)
     , m_allowImage(true)
     , m_allowImageSlice(true)
@@ -5381,12 +5383,27 @@ struct BorderImageParseContext {
         m_allowImage = !m_image;
     }
 
-    PassRefPtr<CSSValue> commitBorderImage()
+    PassRefPtr<CSSValue> commitWebKitBorderImage()
     {
         return createBorderImageValue(m_image, m_imageSlice, m_borderSlice, m_outset, m_repeat);
     }
 
-    CSSValuePool* m_cssValuePool;
+    void commitBorderImage(CSSParser* parser, bool important)
+    {
+        commitBorderImageProperty(CSSPropertyBorderImageSource, parser, m_image, important);
+        commitBorderImageProperty(CSSPropertyBorderImageSlice, parser, m_imageSlice, important);
+        commitBorderImageProperty(CSSPropertyBorderImageWidth, parser, m_borderSlice, important);
+        commitBorderImageProperty(CSSPropertyBorderImageOutset, parser, m_outset, important);
+        commitBorderImageProperty(CSSPropertyBorderImageRepeat, parser, m_repeat, important);
+    }
+
+    void commitBorderImageProperty(int propId, CSSParser* parser, PassRefPtr<CSSValue> value, bool important)
+    {
+        if (value)
+            parser->addProperty(propId, value, important);
+        else
+            parser->addProperty(propId, parser->cssValuePool()->createImplicitInitialValue(), important, true);
+    }
 
     bool m_canAdvance;
 
@@ -5407,10 +5424,10 @@ struct BorderImageParseContext {
     RefPtr<CSSValue> m_repeat;
 };
 
-bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
+bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result, bool important)
 {
     ShorthandScope scope(this, propId);
-    BorderImageParseContext context(cssValuePool());
+    BorderImageParseContext context;
     while (CSSParserValue* val = m_valueList->current()) {
         context.setCanAdvance(false);
 
@@ -5463,8 +5480,11 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
     }
 
     if (context.allowCommit()) {
-        // Need to fully commit as a single value.
-        result = context.commitBorderImage();
+        if (propId == CSSPropertyBorderImage)
+            context.commitBorderImage(this, important);
+        else
+            // Need to fully commit as a single value.
+            result = context.commitWebKitBorderImage();
         return true;
     }
 

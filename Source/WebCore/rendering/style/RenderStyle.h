@@ -538,7 +538,10 @@ public:
 
     const NinePieceImage& borderImage() const { return surround->border.image(); }
     StyleImage* borderImageSource() const { return surround->border.image().image(); }
- 
+    LengthBox borderImageSlices() const { return surround->border.image().imageSlices(); }
+    LengthBox borderImageWidth() const { return surround->border.image().borderSlices(); }
+    LengthBox borderImageOutset() const { return surround->border.image().outset(); }
+
     LengthSize borderTopLeftRadius() const { return surround->border.topLeft(); }
     LengthSize borderTopRightRadius() const { return surround->border.topRight(); }
     LengthSize borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
@@ -1019,6 +1022,9 @@ public:
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b) }
     void setBorderImageSource(PassRefPtr<StyleImage> v) { surround.access()->border.m_image.setImage(v); }
+    void setBorderImageSlices(LengthBox slices) { surround.access()->border.m_image.setImageSlices(slices); }
+    void setBorderImageWidth(LengthBox slices) { surround.access()->border.m_image.setBorderSlices(slices); }
+    void setBorderImageOutset(LengthBox outset) { surround.access()->border.m_image.setOutset(outset); }
 
     void setBorderTopLeftRadius(LengthSize s) { SET_VAR(surround, border.m_topLeft, s) }
     void setBorderTopRightRadius(LengthSize s) { SET_VAR(surround, border.m_topRight, s) }

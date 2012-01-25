@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test the style.length of an element with a border-image.")
+
+var testContainer = document.createElement("div");
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = '<div id="test">hello</div>';
+
+e = document.getElementById('test');
+e.style.borderImage = "url(dummy://test.png) 10 / 13px 1.5em 1em 10px";
+shouldBe("e.style.length", "5");
+e.style.borderImage = "";
+shouldBe("e.style.length", "0");
+e.style.webkitBorderImage = "url(dummy://test.png) 0 7 0 13 / 0 7 0 13 stretch stretch";
+shouldBe("e.style.length", "1");
+document.body.removeChild(testContainer);
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
