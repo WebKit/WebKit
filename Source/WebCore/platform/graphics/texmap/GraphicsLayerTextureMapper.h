@@ -95,7 +95,7 @@ private:
     bool m_syncQueued;
     int m_changeMask;
     TextureMapperNode::ContentData m_pendingContent;
-    TextureMapperAnimations m_animations;
+    Vector<RefPtr<TextureMapperAnimation> > m_animations;
     void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
     Timer<GraphicsLayerTextureMapper> m_animationStartedTimer;
 };

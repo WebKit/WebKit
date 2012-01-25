@@ -1,3 +1,47 @@
+2012-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105858.
+        http://trac.webkit.org/changeset/105858
+        https://bugs.webkit.org/show_bug.cgi?id=77004
+
+        It made many tests crash on Qt (Requested by Ossy on #webkit).
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::pauseAnimation):
+        (WebCore::GraphicsLayerTextureMapper::removeAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp: Removed.
+        * platform/graphics/texmap/TextureMapperAnimation.h: Removed.
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::syncCompositingStateSelf):
+        (WebCore::TextureMapperNode::descendantsOrSelfHaveRunningAnimations):
+        (WebCore::normalizedAnimationValue):
+        (WebCore):
+        (WebCore::TextureMapperNode::applyOpacityAnimation):
+        (WebCore::solveEpsilon):
+        (WebCore::solveCubicBezierFunction):
+        (WebCore::solveStepsFunction):
+        (WebCore::applyTimingFunction):
+        (WebCore::TextureMapperNode::applyTransformAnimation):
+        (WebCore::TextureMapperNode::applyAnimationFrame):
+        (WebCore::TextureMapperNode::applyAnimation):
+        (WebCore::TextureMapperNode::hasOpacityAnimation):
+        (WebCore::TextureMapperNode::hasTransformAnimation):
+        (WebCore::TextureMapperNode::syncAnimations):
+        (WebCore::TextureMapperNode::syncAnimationsRecursively):
+        (WebCore::TextureMapperNode::syncCompositingState):
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        (TextureMapperAnimation):
+        (WebCore::TextureMapperAnimation::create):
+        (WebCore):
+        (TextureMapperNode):
+
 2012-01-25  Kenichi Ishibashi  <bashi@chromium.org>
 
         fast/text/unicode-variation-selector.html doesn't pass on Lion

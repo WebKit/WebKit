@@ -27,9 +27,10 @@
 #include "IntPointHash.h"
 #include "LayerTransform.h"
 #include "TextureMapper.h"
-#include "TextureMapperAnimation.h"
 #include "Timer.h"
 #include "TransformOperations.h"
+#include "TranslateTransformOperation.h"
+#include "UnitBezier.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -56,7 +57,22 @@ public:
     { }
 };
 
-class TextureMapperNode : public TextureMapperAnimationClient {
+class TextureMapperAnimation : public RefCounted<TextureMapperAnimation> {
+public:
+    String name;
+    KeyframeValueList keyframes;
+    IntSize boxSize;
+    RefPtr<Animation> animation;
+    bool paused;
+    Vector<TransformOperation::OperationType> functionList;
+    bool listsMatch;
+    bool hasBigRotation;
+    double startTime;
+    TextureMapperAnimation(const KeyframeValueList&);
+    static PassRefPtr<TextureMapperAnimation> create(const KeyframeValueList& values) { return adoptRef(new TextureMapperAnimation(values)); }
+};
+
+class TextureMapperNode {
 
 public:
     // This set of flags help us defer which properties of the layer have been
@@ -182,7 +198,13 @@ private:
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void renderContent(TextureMapper*, GraphicsLayer*);
 
-    void syncAnimations();
+    void syncAnimations(GraphicsLayerTextureMapper*);
+    void applyAnimation(const TextureMapperAnimation&, double runningTime);
+    void applyAnimationFrame(const TextureMapperAnimation&, const AnimationValue* from, const AnimationValue* to, float progress);
+    void applyOpacityAnimation(float fromOpacity, float toOpacity, double);
+    void applyTransformAnimation(const TextureMapperAnimation&, const TransformOperations* start, const TransformOperations* end, double);
+    bool hasOpacityAnimation() const;
+    bool hasTransformAnimation() const;
     bool isVisible() const;
     bool shouldPaintToIntermediateSurface() const;
 
@@ -293,7 +315,8 @@ private:
 
     State m_state;
     TextureMapper* m_textureMapper;
-    TextureMapperAnimations m_animations;
+
+    Vector<RefPtr<TextureMapperAnimation> > m_animations;
 };
 
 
