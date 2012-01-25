@@ -42,6 +42,7 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderFlexibleBox.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -3593,6 +3594,13 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
         // and vertical-lr/rl as the same.
         bool hasTopOverflow = !style()->isLeftToRightDirection() && !isHorizontalWritingMode();
         bool hasLeftOverflow = !style()->isLeftToRightDirection() && isHorizontalWritingMode();
+        if (isFlexibleBox() && style()->isReverseFlexDirection()) {
+            RenderFlexibleBox* flexibleBox = static_cast<RenderFlexibleBox*>(this);
+            if (flexibleBox->isHorizontalFlow())
+                hasLeftOverflow = true;
+            else
+                hasTopOverflow = true;
+        }
         
         if (!hasTopOverflow)
             overflowRect.shiftYEdgeTo(max(overflowRect.y(), clientBox.y()));

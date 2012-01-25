@@ -175,6 +175,14 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 
     m_overflow.clear();
 
+    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
+    if (scrollsOverflow()) {
+        if (style()->overflowX() == OSCROLL)
+            layer()->setHasHorizontalScrollbar(true);
+        if (style()->overflowY() == OSCROLL)
+            layer()->setHasVerticalScrollbar(true);
+    }
+
     layoutFlexItems(relayoutChildren);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
@@ -190,6 +198,11 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     statePusher.pop();
 
     updateLayerTransform();
+
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
+    // we overflow or not.
+    if (hasOverflowClip())
+        layer()->updateScrollInfoAfterLayout();
 
     repainter.repaintAfterLayout();
 
@@ -636,6 +649,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
 {
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
     mainAxisOffset += initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
+    if (style()->flexDirection() == FlowRowReverse)
+        mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit totalMainExtent = mainAxisExtent();
@@ -699,6 +714,7 @@ void RenderFlexibleBox::layoutColumnReverse(FlexOrderIterator& iterator, const W
     // just moving the children to a new position.
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
     mainAxisOffset -= initialPackingOffset(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
+    mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     size_t i = 0;

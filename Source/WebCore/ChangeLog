@@ -1,3 +1,24 @@
+2012-01-25  Tony Chang  <tony@chromium.org>
+
+        support overflow:auto and overflow:scroll in new flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=76953
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/flexbox-overflow-auto-expected.html
+               css3/flexbox/flexbox-overflow-auto.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addLayoutOverflow): In the case of reverse flexboxen, we can overflow up or to the left (like horizontal-bt or rtl content).
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Call updateScrollInfoAfterLayout() to add overflow scrollbars.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): In row-reverse, offset the start of the content by the scrollbar.
+        (WebCore::RenderFlexibleBox::layoutColumnReverse): In column-reverse, offset the start of the content by the scrollbar.
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox): Make isHorizontalFlow public.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::isReverseFlexDirection): Convenience method.
+
 2012-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105885.

@@ -46,6 +46,8 @@ public:
 
     virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
 
+    bool isHorizontalFlow() const;
+
 private:
     class TreeOrderIterator;
     class FlexOrderIterator;
@@ -53,7 +55,6 @@ private:
 
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
-    bool isHorizontalFlow() const;
     bool isLeftToRightFlow() const;
     Length crossAxisLength() const;
     Length mainAxisLengthForChild(RenderBox* child) const;
