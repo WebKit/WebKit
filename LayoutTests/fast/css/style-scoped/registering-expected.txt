@@ -1,0 +1,59 @@
+Test [un]registering a <style scoped> element from its parent
+
+--- Initial ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Attaching ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Unsetting @scoped ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Re-setting @scoped ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Inserting/removing scope elements from document ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 1
+--- Multiple scoped style elements within single scope ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 3
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Removing scoping element from document ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Inserting scope within other scope ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 2
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+--- Cloning <style scoped> and parents ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 2
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope1deep) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope1shallow) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope2deep) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope2shallow) is 0
+--- inserting clones into single parent ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 2
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 4
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope1deep) is 2
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope1shallow) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope2deep) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(clonescope2shallow) is 0
+--- Unsetting @scoped in nested scope ---
+PASS internals.numberOfScopedHTMLStyleChildren(scope1) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(scope2) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(scope3) is 4
+--- DONE ---
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,14 @@
+2012-01-25  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Implement registering of <style scoped> with the scoping element
+        https://bugs.webkit.org/show_bug.cgi?id=67790
+
+        windows.internals updates
+
+        Reviewed by Dimitri Glazkov.
+
+        * Source/autotools/symbols.filter:
+
 2012-01-24  Mark Rowe  <mrowe@apple.com>
 
         Death to JavaScriptGlue.

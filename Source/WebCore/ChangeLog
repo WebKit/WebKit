@@ -1,3 +1,46 @@
+2012-01-25  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Implement registering of <style scoped> with the scoping element
+        https://bugs.webkit.org/show_bug.cgi?id=67790
+
+        Implement registering of a <style> element with its parent element if the 'scoped' attribute is set.
+        Update the registration whenever the 'scoped' attribute is changed,
+        or the <style> element eneters or leaves the tree.
+
+        Also, extend windows.internals to allow for testing of the registration ref-counting.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/css/style-scoped/registering.html
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        (WebCore::Element::hasScopedHTMLStyleChild):
+        (WebCore::Element::numberOfScopedHTMLStyleChildren):
+        (WebCore::Element::registerScopedHTMLStyleChild):
+        (WebCore::Element::unregisterScopedHTMLStyleChild):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::registerScopedHTMLStyleChild):
+        (WebCore::ElementRareData::unregisterScopedHTMLStyleChild):
+        (WebCore::ElementRareData::hasScopedHTMLStyleChild):
+        (WebCore::ElementRareData::numberOfScopedHTMLStyleChildren):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseMappedAttribute):
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        (WebCore::HTMLStyleElement::insertedIntoDocument):
+        (WebCore::HTMLStyleElement::removedFromDocument):
+        (WebCore::HTMLStyleElement::willRemove):
+        * html/HTMLStyleElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfScopedHTMLStyleChildren):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-01-24  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix Mac build after changeset <http://trac.webkit.org/changeset/105843>

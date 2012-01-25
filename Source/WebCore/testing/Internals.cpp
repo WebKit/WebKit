@@ -164,6 +164,19 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     return representation;
 }
 
+size_t Internals::numberOfScopedHTMLStyleChildren(const Element* element, ExceptionCode& ec) const
+{
+    if (element)
+#if ENABLE(STYLE_SCOPED)
+        return element->numberOfScopedHTMLStyleChildren();
+#else
+        return 0;
+#endif
+
+    ec = INVALID_ACCESS_ERR;
+    return 0;
+}
+
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
 {
     if (!host) {

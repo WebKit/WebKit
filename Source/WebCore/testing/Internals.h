@@ -55,6 +55,8 @@ public:
 
     bool isPreloaded(Document*, const String& url);
 
+    size_t numberOfScopedHTMLStyleChildren(const Element*, ExceptionCode&) const;
+
 #if ENABLE(SHADOW_DOM)
     typedef ShadowRoot ShadowRootIfShadowDOMEnabledOrNode;
 #else

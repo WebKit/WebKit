@@ -1,0 +1,144 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../js/resources/js-test-style.css">
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <p>Test [un]registering a &lt;style scoped&gt; element from its parent</p>
+    <div id="scope1">
+        <style id="global1"></style>
+        <style scoped='scoped1' id="scoped1"></style>
+    </div>
+    <div id="scope2">
+    </div>
+
+    <div id="console"></div>
+
+    <script>
+        if (!window.internals || !window.internals.numberOfScopedHTMLStyleChildren)
+            debug("windows.internals.numberOfScopedHTMLStyleChildren not found!");
+        else {
+            var scope1 = document.getElementById('scope1');
+            var scope2 = document.getElementById('scope2');
+            var scope3 = document.createElement('div');
+
+            var global1 = document.getElementById('global1');
+            var scoped1 = document.getElementById('scoped1');
+
+            var global2 = document.createElement('style');
+            var scoped2 = document.createElement('style');
+            scoped2.setAttribute('scoped', 'scoped');
+            var scoped3 = document.createElement('style');
+            scoped3.scoped = true;
+
+            /* NOTE: <style scoped> outside the document is NOT registered! */
+            debug("--- Initial ---");
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* out of tree */
+
+            debug("--- Attaching ---");
+            scope2.appendChild(scoped2);
+            scope2.appendChild(global2);
+            scope3.appendChild(scoped3);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* out of tree */
+
+            debug("--- Unsetting @scoped ---");
+            scoped1.scoped = false;
+            scoped2.scoped = false;
+            scoped3.removeAttribute('scoped');
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "0"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* out of tree */
+
+            debug("--- Re-setting @scoped ---");
+            scoped1.scoped = true;
+            scoped2.setAttribute('scoped', 'scoped');
+            scoped3.setAttribute('scoped', '');
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* out of tree */
+
+            debug("--- Inserting/removing scope elements from document ---");
+            document.body.insertBefore(scope3, scope2);
+            document.body.removeChild(scope2);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "1"); /* in tree */
+
+            debug("--- Multiple scoped style elements within single scope ---");
+            scope2.removeChild(scoped2);
+            scope2.removeChild(global2);
+            scope3.removeChild(scoped3);
+            scope1.appendChild(scoped3);
+            scope1.appendChild(scoped2);
+            scope1.appendChild(global2);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "3"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* in tree */
+
+            debug("--- Removing scoping element from document ---");
+            document.body.removeChild(scope1);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* in tree */
+
+            debug("--- Inserting scope within other scope ---");
+            document.body.insertBefore(scope2, scope3);
+            scope1.removeChild(scoped2);
+            scope2.appendChild(scoped2);
+            scope2.appendChild(scope1);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "2"); /* in tree, child of scope2 */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* in tree */
+
+            debug("--- Cloning &lt;style scoped&gt; and parents ---");
+            var clonescope1deep = scope1.cloneNode(true);
+            var clonescope1shallow = scope1.cloneNode(false);
+            var clonescope2deep = scope2.cloneNode(true);
+            var clonescope2shallow = scope2.cloneNode(false);
+            var clonescoped1deep = scoped1.cloneNode(true);
+            var clonescoped1shallow = scoped1.cloneNode(false);
+            var clonescoped2deep = scoped2.cloneNode(true);
+            var clonescoped2shallow = scoped2.cloneNode(false);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "2"); /* in tree, child of scope2 */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "0"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope1deep)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope1shallow)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope2deep)", "0"); /* out of tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope2shallow)", "0"); /* out of tree */
+
+            debug("--- inserting clones into single parent ---");
+            scope3.appendChild(clonescope1deep);
+            scope3.appendChild(clonescope1shallow);
+            scope3.appendChild(clonescope2deep);
+            scope3.appendChild(clonescope2shallow);
+            scope3.appendChild(clonescoped1deep);
+            scope3.appendChild(clonescoped1shallow);
+            scope3.appendChild(clonescoped2deep);
+            scope3.appendChild(clonescoped2shallow);
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "2"); /* in tree, child of scope2 */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "4"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope1deep)", "2"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope1shallow)", "0"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope2deep)", "1"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(clonescope2shallow)", "0"); /* in tree */
+
+            debug("--- Unsetting @scoped in nested scope ---");
+            scoped1.scoped = false;
+            scoped2.removeAttribute('scoped');
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope1)", "1"); /* in tree, child of scope2 */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope2)", "0"); /* in tree */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(scope3)", "4"); /* in tree */
+
+            debug("--- DONE ---");
+        }
+        var successfullyParsed = true;
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

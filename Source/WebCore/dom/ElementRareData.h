@@ -40,6 +40,13 @@ public:
 
     void resetComputedStyle();
 
+#if ENABLE(STYLE_SCOPED)
+    void registerScopedHTMLStyleChild();
+    void unregisterScopedHTMLStyleChild();
+    bool hasScopedHTMLStyleChild() const;
+    size_t numberOfScopedHTMLStyleChildren() const;
+#endif
+
     using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
     using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
 
@@ -68,6 +75,10 @@ public:
     ShadowRoot* m_shadowRoot;
     AtomicString m_shadowPseudoId;
 
+#if ENABLE(STYLE_SCOPED)
+    size_t m_numberOfScopedHTMLStyleChildren;
+#endif
+
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
 
@@ -86,6 +97,9 @@ inline IntSize defaultMinimumSizeForResizing()
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
     , m_shadowRoot(0)
+#if ENABLE(STYLE_SCOPED)
+    , m_numberOfScopedHTMLStyleChildren(0)
+#endif
     , m_styleAffectedByEmpty(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
@@ -102,6 +116,30 @@ inline void ElementRareData::resetComputedStyle()
 {
     m_computedStyle.clear();
 }
+
+#if ENABLE(STYLE_SCOPED)
+inline void ElementRareData::registerScopedHTMLStyleChild()
+{
+    ++m_numberOfScopedHTMLStyleChildren;
+}
+
+inline void ElementRareData::unregisterScopedHTMLStyleChild()
+{
+    ASSERT(m_numberOfScopedHTMLStyleChildren > 0);
+    if (m_numberOfScopedHTMLStyleChildren > 0)
+        --m_numberOfScopedHTMLStyleChildren;
+}
+
+inline bool ElementRareData::hasScopedHTMLStyleChild() const
+{
+    return m_numberOfScopedHTMLStyleChildren;
+}
+
+inline size_t ElementRareData::numberOfScopedHTMLStyleChildren() const
+{
+    return m_numberOfScopedHTMLStyleChildren;
+}
+#endif
 
 }
 #endif // ElementRareData_h

@@ -2068,3 +2068,7 @@ __ZN7WebCore20ScrollingCoordinator18handleGestureEventERKNS_20PlatformGestureEve
 #endif
 
 #endif
+
+#if ENABLE(STYLE_SCOPED)
+__ZNK7WebCore7Element31numberOfScopedHTMLStyleChildrenEv
+#endif
