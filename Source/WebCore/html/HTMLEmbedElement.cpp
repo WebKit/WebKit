@@ -154,11 +154,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
-    ASSERT(!m_inBeforeLoadEventHandler);
-    m_inBeforeLoadEventHandler = true;
-    bool beforeLoadAllowedLoad = dispatchBeforeLoadEvent(m_url);
-    m_inBeforeLoadEventHandler = false;
-
+    bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(m_url);
     if (!beforeLoadAllowedLoad) {
         if (document()->isPluginDocument()) {
             // Plugins inside plugin documents load differently than other plugins. By the time

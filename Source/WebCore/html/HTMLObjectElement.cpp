@@ -289,11 +289,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
         return;
 
-    ASSERT(!m_inBeforeLoadEventHandler);
-    m_inBeforeLoadEventHandler = true;
-    bool beforeLoadAllowedLoad = dispatchBeforeLoadEvent(url);
-    m_inBeforeLoadEventHandler = false;
-
+    bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
     // beforeload events can modify the DOM, potentially causing
     // RenderWidget::destroy() to be called.  Ensure we haven't been
     // destroyed before continuing.

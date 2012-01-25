@@ -1,3 +1,20 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        Share more code between updateWidget implementations in HTMLEmbedElement and HTMLObjectElement
+        https://bugs.webkit.org/show_bug.cgi?id=74340
+
+        Reviewed by Adam Barth.
+
+        I'm preparing to unify these two methods, and starting by sharing more code between them.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::guardedDispatchBeforeLoadEvent):
+        * html/HTMLPlugInElement.h:
+
 2012-01-25  Eric Uhrhane  <ericu@chromium.org>
 
         Add full support for filesystem URLs.

@@ -110,6 +110,17 @@ PassScriptInstance HTMLPlugInElement::getInstance()
     return m_instance;
 }
 
+bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
+{
+    ASSERT(!m_inBeforeLoadEventHandler);
+    m_inBeforeLoadEventHandler = true;
+    // static_cast is used to avoid a compile error since dispatchBeforeLoadEvent
+    // is intentionally undefined on this class.
+    bool beforeLoadAllowedLoad = static_cast<HTMLFrameOwnerElement*>(this)->dispatchBeforeLoadEvent(sourceURL);
+    m_inBeforeLoadEventHandler = false;
+    return beforeLoadAllowedLoad;
+}
+
 Widget* HTMLPlugInElement::pluginWidget()
 {
     if (m_inBeforeLoadEventHandler) {

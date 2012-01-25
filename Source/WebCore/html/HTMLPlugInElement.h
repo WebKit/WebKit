@@ -62,8 +62,12 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
 
     bool m_inBeforeLoadEventHandler;
+    // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
+    bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
 
 private:
+    bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
+
     virtual void defaultEventHandler(Event*);
 
     virtual RenderWidget* renderWidgetForJSBindings() = 0;
