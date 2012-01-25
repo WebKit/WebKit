@@ -26,7 +26,8 @@ PassRefPtr<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, Pass
                                                 PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(image);
+    if (image)
+        list->append(image);
 
     if (borderSlice || outset) {
         RefPtr<CSSValueList> listSlash = CSSValueList::createSlashSeparated();

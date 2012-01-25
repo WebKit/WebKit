@@ -4279,8 +4279,8 @@ void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue
 
 void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value, NinePieceImage& image)
 {
-    // If we're a primitive value, then we are "none" and don't need to alter the empty image at all.
-    if (!value || value->isPrimitiveValue())
+    // If we're not a value list, then we are "none" and don't need to alter the empty image at all.
+    if (!value || !value->isValueList())
         return;
 
     // Retrieve the border image value.
@@ -4295,24 +4295,15 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     else
         imageProperty = property;
 
-    if (CSSValue* imageValue = borderImage->item(0))
-        image.setImage(styleImage(imageProperty, imageValue));
+    for (unsigned i = 0 ; i < borderImage->length() ; ++i) {
+        CSSValue* current = borderImage->item(i);
 
-    if (borderImage->item(1)) {
-        if (borderImage->item(1)->cssValueType() != CSSValue::CSS_VALUE_LIST) {
-            // Map in the image slices.
-            if (borderImage->item(1)) {
-                if (borderImage->item(1)->isBorderImageSliceValue()) {
-                    mapNinePieceImageSlice(borderImage->item(1), image);
-                     if (borderImage->item(2))
-                        // Set the appropriate rules for stretch/round/repeat of the slices
-                        mapNinePieceImageRepeat(borderImage->item(2), image);
-                } else
-                    // Set the appropriate rules for stretch/round/repeat of the slices
-                    mapNinePieceImageRepeat(borderImage->item(1), image);
-            }
-        } else {
-            CSSValueList* slashList = static_cast<CSSValueList*>(borderImage->item(1));
+        if (current->isImageValue() || current->isImageGeneratorValue())
+            image.setImage(styleImage(imageProperty, current));
+        else if (current->isBorderImageSliceValue())
+            mapNinePieceImageSlice(current, image);
+        else if (current->isValueList()) {
+            CSSValueList* slashList = static_cast<CSSValueList*>(current);
             // Map in the image slices.
             if (slashList->item(0) && slashList->item(0)->isBorderImageSliceValue())
                 mapNinePieceImageSlice(slashList->item(0), image);
@@ -4324,9 +4315,9 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
             // Map in the outset.
             if (slashList->item(2))
                 image.setOutset(mapNinePieceImageQuad(slashList->item(2)));
-
-            // Set the appropriate rules for stretch/round/repeat of the slices
-            mapNinePieceImageRepeat(borderImage->item(2), image);
+        } else if (current->isPrimitiveValue()) {
+            // Set the appropriate rules for stretch/round/repeat of the slices.
+            mapNinePieceImageRepeat(current, image);
         }
     }
 

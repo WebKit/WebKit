@@ -1,3 +1,24 @@
+2012-01-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        border-image should not crash when the source is not specified.
+        https://bugs.webkit.org/show_bug.cgi?id=77001
+
+        Reviewed by Andreas Kling.
+
+        This bug was introduced by r105502 but was exposed by r105738.
+        The image-source of a border-image is not mandatory therefore it
+        may happen that you have no value set for it. WebCore::createBorderImageValue
+        was wrongly assuming that the image is always set. This problem also required a bit
+        of refactoring in CSSStyleSelector::mapNinePieceImage to take into account that
+        the image could be optional (just like other properties).
+
+        Test: fast/css/border-image-null-image-crash.html
+
+        * css/CSSBorderImage.cpp:
+        (WebCore::createBorderImageValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+
 2012-01-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Implement tap feedback respecting -webkit-tap-highlight-color
