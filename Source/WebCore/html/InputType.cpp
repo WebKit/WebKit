@@ -436,6 +436,10 @@ bool InputType::shouldUseInputMethod() const
     return false;
 }
 
+void InputType::handleFocusEvent()
+{
+}
+
 void InputType::handleBlurEvent()
 {
 }

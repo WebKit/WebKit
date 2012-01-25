@@ -49,6 +49,8 @@ private:
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;
     virtual bool isPasswordField() const OVERRIDE;
+    virtual void handleFocusEvent() OVERRIDE;
+    virtual void handleBlurEvent() OVERRIDE;
 };
 
 } // namespace WebCore

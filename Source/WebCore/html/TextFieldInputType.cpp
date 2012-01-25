@@ -161,6 +161,13 @@ void TextFieldInputType::forwardEvent(Event* event)
     }
 }
 
+void TextFieldInputType::handleBlurEvent()
+{
+    InputType::handleBlurEvent();
+    if (Frame* frame = element()->document()->frame())
+        frame->editor()->textFieldDidEndEditing(element());
+}
+
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 {
     return (event->type() == eventNames().textInputEvent && event->hasInterface(eventNames().interfaceForTextEvent) && static_cast<TextEvent*>(event)->data() == "\n") || InputType::shouldSubmitImplicitly(event);

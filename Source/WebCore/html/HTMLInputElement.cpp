@@ -472,23 +472,12 @@ bool HTMLInputElement::shouldUseInputMethod()
 
 void HTMLInputElement::handleFocusEvent()
 {
-    if (!isTextField())
-        return;
-    if (isPasswordField() && document()->frame())
-        document()->setUseSecureKeyboardEntryWhenActive(true);
+    m_inputType->handleFocusEvent();
 }
 
 void HTMLInputElement::handleBlurEvent()
 {
     m_inputType->handleBlurEvent();
-    if (!isTextField())
-        return;
-    Frame* frame = document()->frame();
-    if (!frame)
-        return;
-    if (isPasswordField())
-        document()->setUseSecureKeyboardEntryWhenActive(false);
-    frame->editor()->textFieldDidEndEditing(this);
 }
 
 void HTMLInputElement::setType(const String& type)

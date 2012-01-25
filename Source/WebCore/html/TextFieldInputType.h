@@ -63,6 +63,7 @@ protected:
     virtual void destroyShadowSubtree() OVERRIDE;
     virtual void disabledAttributeChanged() OVERRIDE;
     virtual void readonlyAttributeChanged() OVERRIDE;
+    virtual void handleBlurEvent() OVERRIDE;
 
 private:
     virtual bool isTextField() const OVERRIDE;

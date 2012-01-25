@@ -1,3 +1,35 @@
+2012-01-25  Kent Tamura  <tkent@chromium.org>
+
+        Move focus/blur handling code of HTMLInputElement to InputType
+        https://bugs.webkit.org/show_bug.cgi?id=76984
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests. Just a refactoring.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::handleFocusEvent):
+        Move the code to PasswordInputType::handleFocusEvent().
+        (WebCore::HTMLInputElement::handleBlurEvent):
+        Move the code to TextFieldInputType::handleBlurEvent() and
+        PasswordInputType::handleBlurEvent().
+        * html/InputType.cpp:
+        (WebCore::InputType::handleFocusEvent):
+        * html/InputType.h:
+        (InputType): Add handleFocusEvent().
+        * html/PasswordInputType.cpp:
+        (WebCore::PasswordInputType::handleFocusEvent):
+        Move the code for type=password from HTMLInputElement::handleFocusEvent().
+        (WebCore::PasswordInputType::handleBlurEvent):
+        Move the code for tyep=password from HTMLInputElement::handleBlurEvent().
+        * html/PasswordInputType.h:
+        (PasswordInputType): Add handleFocusEvent() and handleBlurEvent().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBlurEvent):
+        Move the code for text field types from HTMLInputElement::handleBlurEvent().
+        * html/TextFieldInputType.h:
+        (TextFieldInputType): Add handleBlurEvent().
+
 2012-01-25  Adam Barth  <abarth@webkit.org>
 
         Node.cpp shouldn't duplicate QualifiedName parsing logic
