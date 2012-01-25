@@ -19,7 +19,7 @@ DEFINES += QT_MAKEDLL
 haveQt(5) {
     # Add a QtScript dependency for the time being, in order to pull in the include
     # path for QtScript when it's built as a standalone module
-    QT += script
+    QT += script widgets
 } else {
     INCLUDEPATH += $$PWD/../JavaScriptCore/wtf/qt/compat
 }

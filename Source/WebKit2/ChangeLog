@@ -1,3 +1,14 @@
+2012-01-25  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] Build fix when using force_static_libs_as_shared
+        https://bugs.webkit.org/show_bug.cgi?id=76832
+
+        Reviewed by Simon Hausmann.
+
+        Add a dependency on QtWidgets.
+
+        * Target.pri:
+
 2012-01-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] FindController should not assume that ports do not want to highlight text matches
