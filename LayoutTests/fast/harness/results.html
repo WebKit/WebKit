@@ -785,8 +785,13 @@ TableSorter._sort = function(newHeader)
 var PixelZoomer = {};
 
 PixelZoomer.showOnDelay = true;
-
 PixelZoomer._zoomFactor = 6;
+
+var kResultWidth = 800;
+var kResultHeight = 600;
+
+var kZoomedResultWidth = kResultWidth * PixelZoomer._zoomFactor;
+var kZoomedResultHeight = kResultHeight * PixelZoomer._zoomFactor;
 
 PixelZoomer._zoomImageContainer = function(url)
 {
@@ -805,6 +810,9 @@ PixelZoomer._zoomImageContainer = function(url)
     
     var image = new Image();
     image.src = url;
+    image.style.width = kZoomedResultWidth + 'px';
+    image.style.height = kZoomedResultHeight + 'px';
+    image.style.border = '1px solid black';
     imageContainer.appendChild(image);
     container.appendChild(imageContainer);
     
@@ -838,21 +846,10 @@ PixelZoomer._createContainer = function(e)
 
 PixelZoomer._draw = function(imageContainer)
 {
-    var containerWidth = imageContainer.offsetWidth;
-    var containerHeight = imageContainer.offsetHeight;
-  
-    var scaledMiddleX = PixelZoomer._currentX * PixelZoomer._zoomFactor;
-    var scaledMiddleY = PixelZoomer._currentY * PixelZoomer._zoomFactor;
-    
-    var left = scaledMiddleX - containerWidth / 2;
-    var top = scaledMiddleY - containerHeight / 2;
-    
     var image = imageContainer.querySelector('img');
-    image.style.width = (800 * PixelZoomer._zoomFactor) + 'px';
-    image.style.height = (600 * PixelZoomer._zoomFactor) + 'px';
-
-    image.style.top = -top + 'px';
-    image.style.left = -left + 'px';
+    var containerBounds = imageContainer.getBoundingClientRect();
+    image.style.left = (containerBounds.width / 2 - PixelZoomer._percentX * kZoomedResultWidth) + 'px';
+    image.style.top = (containerBounds.height / 2 - PixelZoomer._percentY * kZoomedResultHeight) + 'px';
 }
 
 PixelZoomer._drawAll = function()
@@ -887,10 +884,10 @@ PixelZoomer.handleMouseMove = function(e) {
             remove(container);
         return;
     }
-    
+
     var targetLocation = e.target.getBoundingClientRect();
-    PixelZoomer._currentX = e.clientX - targetLocation.left;
-    PixelZoomer._currentY = e.clientY - targetLocation.top;
+    PixelZoomer._percentX = (e.clientX - targetLocation.left) / targetLocation.width;
+    PixelZoomer._percentY = (e.clientY - targetLocation.top) / targetLocation.height;
 
     if (!container) {
         if (PixelZoomer.showOnDelay) {

@@ -103,8 +103,8 @@ function draw(imageContainer)
 {
     var image = imageContainer.querySelector('img');
     var containerBounds = imageContainer.getBoundingClientRect();
-    image.style.left = -(pixelzoomer._percentX * kZoomedResultWidth) + containerBounds.width/2 + 'px';
-    image.style.top = -(pixelzoomer._percentY * kZoomedResultHeight) + containerBounds.height/2 + 'px';
+    image.style.left = (containerBounds.width / 2 - pixelzoomer._percentX * kZoomedResultWidth) + 'px';
+    image.style.top = (containerBounds.height / 2 - pixelzoomer._percentY * kZoomedResultHeight) + 'px';
 }
 
 function drawAll()

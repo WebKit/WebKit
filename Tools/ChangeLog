@@ -1,3 +1,14 @@
+2012-01-25  Adam Barth  <abarth@webkit.org>
+
+        Update results.html version of PixelZoomer
+        https://bugs.webkit.org/show_bug.cgi?id=76965
+
+        Reviewed by Ojan Vafai.
+
+        Improve readability as suggested by Ojan.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/pixelzoomer.js:
+
 2012-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Page clients don't need to be GObjects anymore in WebKit2 GTK+ API
