@@ -1142,6 +1142,9 @@ fast/events/wheelevent-direction-inverted-from-device.html
 # eventSender.clearKillRing() is unimplemented
 editing/pasteboard/emacs-cntl-y-001.html
 
+# eventSender.mouseScrollBy() is unimplemented
+scrollbars/scroll-rtl-or-bt-layer.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 
