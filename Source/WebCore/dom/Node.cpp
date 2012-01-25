@@ -128,62 +128,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// http://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
-static bool isValidNameStartCharacter(UChar c)
-{
-    return isASCIIAlpha(c)
-        || c == ':'
-        || c == '_'
-        || (c >= 0xC0 && c <= 0xD6)
-        || (c >= 0xD8 && c <= 0xF6)
-        || (c >= 0xF8 && c <= 0x2FF)
-        || (c >= 0x370 && c <= 0x37D)
-        || (c >= 0x37F && c <= 0x1FFF)
-        || (c >= 0x200C && c <= 0x200D)
-        || (c >= 0x2070 && c <= 0x218F)
-        || (c >= 0x2C00 && c <= 0x2FEF)
-        || (c >= 0x3001 && c <= 0xD7FF)
-        || (c >= 0xF900 && c <= 0xFDCF)
-        || (c >= 0xFDF0 && c <= 0xFFFD)
-        // We're supposed to allow characters in the range U+10000-U+EFFFF,
-        // but doing so precisely requires decoding UTF-16 surrogates.
-        // Instead, we just allow all non-BMP characters. This is consistent
-        // with the philosphy (if not the letter) of the XML specification:
-        //   "The intention is to be inclusive rather than exclusive, so that
-        //   writing systems not yet encoded in Unicode can be used in XML names."
-        //
-        // FIXME: Validate non-BMP characters correctly.
-        || (c >= 0xD800 && c <= 0xDFFF);
-}
-
-// http://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
-static bool isValidNameCharacter(UChar c)
-{
-    return isValidNameStartCharacter(c)
-        || isASCIIDigit(c)
-        || c == '-'
-        || c == '.'
-        || c == 0xB7
-        || (c >= 0x0300 && c <= 0x036F)
-        || (c >= 0x203F && c <= 0x2040);
-}
-
-// http://www.w3.org/TR/2008/REC-xml-20081126/#NT-Name
-static bool hasInvalidValidNameCharacters(const AtomicString& prefix)
-{
-    const UChar* characters = prefix.characters();
-    size_t length = prefix.length();
-    if (!length)
-        return false;
-    if (!isValidNameStartCharacter(characters[0]))
-        return true;
-    for (size_t i = 1; i < length; ++i) {
-        if (!isValidNameCharacter(characters[i]))
-            return true;
-    }
-    return false;
-}
-
 bool Node::isSupported(const String& feature, const String& version)
 {
     return DOMImplementation::hasFeature(feature, version);
@@ -1244,7 +1188,7 @@ void Node::checkSetPrefix(const AtomicString& prefix, ExceptionCode& ec)
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // Element::setPrefix() and Attr::setPrefix()
 
-    if (hasInvalidValidNameCharacters(prefix)) {
+    if (!prefix.isEmpty() && !Document::isValidName(prefix)) {
         ec = INVALID_CHARACTER_ERR;
         return;
     }

@@ -1,3 +1,18 @@
+2012-01-25  Adam Barth  <abarth@webkit.org>
+
+        Node.cpp shouldn't duplicate QualifiedName parsing logic
+        https://bugs.webkit.org/show_bug.cgi?id=76672
+
+        Reviewed by Eric Seidel.
+
+        I added this code out of ignorance that this logic already existed in
+        Document.cpp.  In a future patch, we should consider moving it to
+        QualifiedName.cpp.
+
+        * dom/Node.cpp:
+        (WebCore):
+        (WebCore::Node::checkSetPrefix):
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         Share more code between updateWidget implementations in HTMLEmbedElement and HTMLObjectElement
