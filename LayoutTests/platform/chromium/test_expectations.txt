@@ -3806,8 +3806,6 @@ BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK75742 MAC : fast/forms/input-disabled-color.html = IMAGE
 
-BUGWK75784 : fast/canvas/webgl/invalid-passed-params.html = TEXT
-
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
 BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
