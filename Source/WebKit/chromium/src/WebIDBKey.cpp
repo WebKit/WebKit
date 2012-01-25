@@ -76,10 +76,18 @@ WebIDBKey WebIDBKey::createInvalid()
     return key;
 }
 
+WebIDBKey WebIDBKey::createNull()
+{
+    WebIDBKey key;
+    key.assignNull();
+    return key;
+}
+
 WebIDBKey WebIDBKey::createFromValueAndKeyPath(const WebSerializedScriptValue& serializedScriptValue, const WebIDBKeyPath& idbKeyPath)
 {
+    // FIXME: If key path is empty string, this should return invalid key instead
     if (serializedScriptValue.isNull())
-        return WebIDBKey::createInvalid();
+        return WebIDBKey::createNull();
     return createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
 }
 
@@ -112,6 +120,7 @@ static PassRefPtr<IDBKey> convertFromWebIDBKeyArray(const WebVector<WebIDBKey>& 
             keys.append(IDBKey::createNumber(array[i].number()));
             break;
         case WebIDBKey::InvalidType:
+        case WebIDBKey::NullType:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -170,6 +179,11 @@ void WebIDBKey::assignNumber(double number)
 
 void WebIDBKey::assignInvalid()
 {
+    m_private = IDBKey::createInvalid();
+}
+
+void WebIDBKey::assignNull()
+{
     m_private = 0;
 }
 
@@ -181,7 +195,7 @@ void WebIDBKey::reset()
 WebIDBKey::Type WebIDBKey::type() const
 {
     if (!m_private.get())
-        return InvalidType;
+        return NullType;
     return Type(m_private->type());
 }
 

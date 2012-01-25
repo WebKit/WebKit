@@ -49,6 +49,7 @@ public:
     WEBKIT_EXPORT static WebIDBKey createDate(double);
     WEBKIT_EXPORT static WebIDBKey createNumber(double);
     WEBKIT_EXPORT static WebIDBKey createInvalid();
+    WEBKIT_EXPORT static WebIDBKey createNull();
     WEBKIT_EXPORT static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
     WEBKIT_EXPORT static WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey&, const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
@@ -65,6 +66,7 @@ public:
     WEBKIT_EXPORT void assignDate(double);
     WEBKIT_EXPORT void assignNumber(double);
     WEBKIT_EXPORT void assignInvalid();
+    WEBKIT_EXPORT void assignNull();
     WEBKIT_EXPORT void reset();
 
     enum Type {
@@ -72,7 +74,8 @@ public:
         ArrayType,
         StringType,
         DateType,
-        NumberType
+        NumberType,
+        NullType,
     };
 
     WEBKIT_EXPORT Type type() const;

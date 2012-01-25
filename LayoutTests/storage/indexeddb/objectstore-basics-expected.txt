@@ -98,11 +98,9 @@ PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
-store.add({x: null}, 'validkey')
-PASS event.cancelable is true
-addWithNullIndexFailure():
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
+Expecting exception from store.add({x: null}, 'validkey')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.get('key')
@@ -164,6 +162,10 @@ The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
+If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
+Expecting exception from storeWithIndex.put({indexKey: null}, 'key')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 
 IDBObjectStore.add()
 The object store uses in-line keys and the key parameter was provided.
@@ -184,6 +186,10 @@ PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 The key parameter was provided but does not contain a valid key.
 Expecting exception from storeWithOutOfLineKeys.add({}, null)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
+Expecting exception from storeWithIndex.add({indexKey: null}, 'key')
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true

@@ -1,3 +1,23 @@
+2012-01-25  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Need to distinguish key paths that don't yield value vs. yield invalid key
+        https://bugs.webkit.org/show_bug.cgi?id=76487
+
+        Added a NullType to represent a null IDBKey pointer. This is needed to distinguish the
+        cases in the spec where the key resolution algorithm returns no value (null) versus
+        returns a value but that value is not a valid key (invalid).
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBKey.h:
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::createNull): Added.
+        (WebKit::WebIDBKey::createFromValueAndKeyPath): Now returns null if value is null.
+        (WebKit::convertFromWebIDBKeyArray): Null keys should never exist within arrays.
+        (WebKit::WebIDBKey::assignInvalid):
+        (WebKit::WebIDBKey::assignNull):
+        (WebKit::WebIDBKey::type):
+
 2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium test fix.

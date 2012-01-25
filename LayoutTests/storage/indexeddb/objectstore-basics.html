@@ -215,18 +215,7 @@ function addAgainFailure()
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
-    request = evalAndLog("store.add({x: null}, 'validkey')");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = addWithNullIndexFailure;
-}
-
-function addWithNullIndexFailure()
-{
-    shouldBeTrue("event.cancelable");
-    debug("addWithNullIndexFailure():");
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
-
-    evalAndLog("event.preventDefault()");
+    evalAndExpectException("store.add({x: null}, 'validkey')", "webkitIDBDatabaseException.DATA_ERR");
 
     transaction = evalAndLog("db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
@@ -318,8 +307,8 @@ function testPreConditions()
         debug("The key parameter was provided but does not contain a valid key.");
         evalAndExpectException("storeWithOutOfLineKeys.put({}, null)", "webkitIDBDatabaseException.DATA_ERR");
 
-        // FIXME: Add precondition checks for put() with index key paths that yield invalid keys.
-        // https://bugs.webkit.org/show_bug.cgi?id=76487
+        debug("If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.");
+        evalAndExpectException("storeWithIndex.put({indexKey: null}, 'key')", "webkitIDBDatabaseException.DATA_ERR");
 
         debug("");
         debug("IDBObjectStore.add()");
@@ -338,8 +327,8 @@ function testPreConditions()
         debug("The key parameter was provided but does not contain a valid key.");
         evalAndExpectException("storeWithOutOfLineKeys.add({}, null)", "webkitIDBDatabaseException.DATA_ERR");
 
-        // FIXME: Add precondition checks for add() with index key paths that yield invalid keys.
-        // https://bugs.webkit.org/show_bug.cgi?id=76487
+        debug("If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.");
+        evalAndExpectException("storeWithIndex.add({indexKey: null}, 'key')", "webkitIDBDatabaseException.DATA_ERR");
 
         done();
     };

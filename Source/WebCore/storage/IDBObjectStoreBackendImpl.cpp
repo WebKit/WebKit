@@ -131,35 +131,43 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
 
-    if (key && (key->type() == IDBKey::InvalidType)) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return;
-    }
-
-    const bool autoIncrement = objectStore->autoIncrement();
-    const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-
     if (putMode != CursorUpdate) {
+        if (key && !key->valid()) {
+            ec = IDBDatabaseException::DATA_ERR;
+            return;
+        }
+        const bool autoIncrement = objectStore->autoIncrement();
+        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
         if (!key && !autoIncrement && !hasKeyPath) {
             ec = IDBDatabaseException::DATA_ERR;
             return;
         }
         if (hasKeyPath) {
-            if (key && key->valid()) {
+            if (key) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return;
             }
+
+            RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
             if (!autoIncrement) {
-                RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
                 if (!keyPathKey || !keyPathKey->valid()) {
                     ec = IDBDatabaseException::DATA_ERR;
                     return;
                 }
+            } else if (keyPathKey && !keyPathKey->valid()) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
             }
         }
-        // FIXME: Add precondition checks for index key paths that yield invalid keys.
-        // https://bugs.webkit.org/show_bug.cgi?id=76487
-     }
+        for (IndexMap::iterator it = m_indexes.begin(); it != m_indexes.end(); ++it) {
+            const RefPtr<IDBIndexBackendImpl>& index = it->second;
+            RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
+            if (indexKey && !indexKey->valid()) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+        }
+    }
 
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
@@ -172,11 +180,6 @@ PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBack
 
     const bool autoIncrement = objectStore->autoIncrement();
     const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-
-    if (hasKeyPath && key && putMode != CursorUpdate) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that has a keyPath."));
-        return 0;
-    }
 
     if (autoIncrement && key) {
         objectStore->resetAutoIncrementKeyCache();
@@ -207,11 +210,7 @@ PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::selectKeyForPut(IDBObjectStoreBack
     if (hasKeyPath) {
         RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
 
-        if (!keyPathKey) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key could not be fetched from the keyPath."));
-            return 0;
-        }
-
+        // FIXME: This check should be moved to put() and raise an exception. WK76952
         if (putMode == CursorUpdate && !keyPathKey->isEqual(key)) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key fetched from the keyPath does not match the key of the cursor."));
             return 0;
@@ -234,11 +233,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     RefPtr<IDBKey> key = selectKeyForPut(objectStore.get(), prpKey.get(), putMode, callbacks.get(), value);
     if (!key)
         return;
-
-    if (key->type() == IDBKey::InvalidType) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Not a valid key."));
-        return;
-    }
+    ASSERT(key->valid());
 
     Vector<RefPtr<IDBKey> > indexKeys;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
@@ -249,10 +244,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             indexKeys.append(indexKey.release());
             continue;
         }
-        if (indexKey->type() == IDBKey::InvalidType) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is not valid."));
-            return;
-        }
+        ASSERT(indexKey->valid());
 
         if ((!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) && !index->addingKeyAllowed(indexKey.get(), key.get())) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
@@ -339,7 +331,7 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRe
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (key->type() == IDBKey::InvalidType) {
+    if (!key || !key->valid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }

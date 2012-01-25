@@ -1,0 +1,70 @@
+Test IndexedDB keyPath edge cases
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+PASS IDBTransaction == null is false
+indexedDB.deleteDatabase('keypath-edges')
+indexedDB.open('keypath-edges')
+
+openSuccess():
+db = event.target.result
+request = db.setVersion('1')
+db.createObjectStore('store-with-path', {keyPath: 'foo'})
+db.createObjectStore('store-with-path-and-generator', {keyPath: 'foo', autoIncrement: true})
+
+testKeyPaths():
+transaction = db.transaction(['store-with-path'], IDBTransaction.READ_WRITE)
+store = transaction.objectStore('store-with-path')
+
+Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
+Expecting exception from store.put(null)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
+Expecting exception from store.put({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR
+Expecting exception from store.put({foo: null})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+Key path resolves to a value that is valid key; should yield 'string' key, should succeed
+store.put({foo: 'zoo'})
+PASS store.put succeeded
+
+testKeyPathsAndGenerator():
+transaction = db.transaction(['store-with-path-and-generator'], IDBTransaction.READ_WRITE)
+store = transaction.objectStore('store-with-path-and-generator')
+
+Key path doesn't resolve to a value; should yield null, put request should raise error event
+store.put(null)
+PASS Error event raised: The generated key could not be inserted into the object using the keyPath.
+PASS event.target.errorCode is IDBDatabaseException.DATA_ERR
+PASS event.cancelable is true
+event.preventDefault()
+
+Key path doesn't resolve to a value; should yield null, key should be generated, put request should succeed
+store.put({})
+PASS store.put succeeded
+
+Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR
+Expecting exception from store.put({foo: null})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+Key path resolves to a value that is valid key; should yield 'string' key, should succeed
+store.put({foo: 'zoo'})
+PASS store.put succeeded
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
