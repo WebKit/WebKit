@@ -35,6 +35,7 @@
 #include "WebLayerTreeInfo.h"
 #include "WebProcess.h"
 #include <WebCore/RunLoop.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -152,6 +153,10 @@ private:
     bool m_inUpdateMode : 2;
 
     void notifyChange();
+    void notifyChangeRecursively();
+    HashSet<String> m_transformAnimations;
+
+    bool selfOrAncestorHasActiveTransformAnimations() const;
 
 #if USE(TILED_BACKING_STORE)
     void computeTransformedVisibleRect();

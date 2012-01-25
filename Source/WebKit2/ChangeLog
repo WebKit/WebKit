@@ -1,3 +1,33 @@
+2012-01-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [WK2][Qt] REGRESSION: Pages with transform animations sometimes omit some of the layers since r105413
+        https://bugs.webkit.org/show_bug.cgi?id=76886
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We now render the whole layer if it or one if its ancestors has an active transform
+        animations. It's possible to optimize further in the future, but not currently necessary.
+        Also, we make sure that when a WebGraphicsLayer's property that affects transformation is
+        changed, all its descandants layers are marked as modified so that we re-adjust their
+        visible rect in the next pass.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::notifyChangeRecursively):
+        (WebCore):
+        (WebCore::WebGraphicsLayer::setPosition):
+        (WebCore::WebGraphicsLayer::setAnchorPoint):
+        (WebCore::WebGraphicsLayer::setSize):
+        (WebCore::WebGraphicsLayer::setTransform):
+        (WebCore::WebGraphicsLayer::setChildrenTransform):
+        (WebCore::WebGraphicsLayer::setPreserves3D):
+        (WebCore::WebGraphicsLayer::setMasksToBounds):
+        (WebCore::WebGraphicsLayer::addAnimation):
+        (WebCore::WebGraphicsLayer::removeAnimation):
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::WebGraphicsLayer::selfOrAncestorHasActiveTransformAnimations):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayer):
+
 2012-01-25  Hajime Morita  <morrita@google.com>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom

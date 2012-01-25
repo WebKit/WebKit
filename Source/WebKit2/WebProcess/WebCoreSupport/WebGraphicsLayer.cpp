@@ -69,6 +69,15 @@ void WebGraphicsLayer::notifyChange()
         client()->notifySyncRequired(this);
 }
 
+void WebGraphicsLayer::notifyChangeRecursively()
+{
+    notifyChange();
+    for (size_t i = 0; i < children().size(); ++i)
+        toWebGraphicsLayer(children()[i])->notifyChangeRecursively();
+    if (replicaLayer())
+        toWebGraphicsLayer(replicaLayer())->notifyChange();
+}
+
 WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
@@ -173,7 +182,7 @@ void WebGraphicsLayer::setPosition(const FloatPoint& p)
         return;
 
     GraphicsLayer::setPosition(p);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
@@ -182,7 +191,7 @@ void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
         return;
 
     GraphicsLayer::setAnchorPoint(p);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setSize(const FloatSize& size)
@@ -194,7 +203,7 @@ void WebGraphicsLayer::setSize(const FloatSize& size)
     setNeedsDisplay();
     if (maskLayer())
         maskLayer()->setSize(size);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
@@ -203,7 +212,7 @@ void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
         return;
 
     GraphicsLayer::setTransform(t);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
@@ -212,7 +221,7 @@ void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
         return;
 
     GraphicsLayer::setChildrenTransform(t);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setPreserves3D(bool b)
@@ -221,7 +230,7 @@ void WebGraphicsLayer::setPreserves3D(bool b)
         return;
 
     GraphicsLayer::setPreserves3D(b);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setMasksToBounds(bool b)
@@ -229,7 +238,7 @@ void WebGraphicsLayer::setMasksToBounds(bool b)
     if (masksToBounds() == b)
         return;
     GraphicsLayer::setMasksToBounds(b);
-    notifyChange();
+    notifyChangeRecursively();
 }
 
 void WebGraphicsLayer::setDrawsContent(bool b)
@@ -296,9 +305,11 @@ bool WebGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const In
     webAnimation.animation = Animation::create(anim);
     webAnimation.startTime = timeOffset;
     m_layerInfo.animations.append(webAnimation);
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
+        m_transformAnimations.add(keyframesName);
 
     m_hasPendingAnimations = true;
-    notifyChange();
+    notifyChangeRecursively();
 
     return true;
 }
@@ -319,6 +330,7 @@ void WebGraphicsLayer::removeAnimation(const String& animationName)
     webAnimation.name = animationName;
     webAnimation.operation = WebLayerAnimation::RemoveAnimation;
     m_layerInfo.animations.append(webAnimation);
+    m_transformAnimations.remove(animationName);
     notifyChange();
 }
 
@@ -535,6 +547,11 @@ IntRect WebGraphicsLayer::tiledBackingStoreContentsRect()
 
 IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
 {
+    // If this layer is part of an active transform animation, the visible rect might change,
+    // so we rather render the whole layer until some better optimization is available.
+    if (selfOrAncestorHasActiveTransformAnimations())
+        return tiledBackingStoreContentsRect();
+
     // Non-invertible layers are not visible.
     if (!m_layerTransform.combined().isInvertible())
         return IntRect();
@@ -697,6 +714,17 @@ static PassOwnPtr<GraphicsLayer> createWebGraphicsLayer(GraphicsLayerClient* cli
 void WebGraphicsLayer::initFactory()
 {
     GraphicsLayer::setGraphicsLayerFactory(createWebGraphicsLayer);
+}
+
+bool WebGraphicsLayer::selfOrAncestorHasActiveTransformAnimations() const
+{
+    if (!m_transformAnimations.isEmpty())
+        return true;
+
+    if (parent())
+        return toWebGraphicsLayer(parent())->selfOrAncestorHasActiveTransformAnimations();
+
+    return false;
 }
 
 }
