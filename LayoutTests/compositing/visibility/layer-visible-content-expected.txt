@@ -3,10 +3,11 @@
   (children 1
     (GraphicsLayer
       (bounds 800.00 600.00)
-      (children 2
+      (children 1
         (GraphicsLayer
           (bounds 200.00 200.00)
           (drawsContent 1)
+          (contentsVisible 0)
           (children 1
             (GraphicsLayer
               (bounds 200.00 200.00)
@@ -17,11 +18,6 @@
               )
             )
           )
-        )
-        (GraphicsLayer
-          (bounds 800.00 15.00)
-          (opacity 0.00)
-          (drawsContent 1)
         )
       )
     )

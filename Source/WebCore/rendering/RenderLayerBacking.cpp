@@ -403,11 +403,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 #endif
     
     m_owningLayer->updateVisibilityStatus();
-
-    // m_graphicsLayer is the corresponding GraphicsLayer for this RenderLayer and its non-compositing
-    // descendants. So, the visibility flag for m_graphicsLayer should be true if there are any
-    // non-compositing visible layers.
-    m_graphicsLayer->setContentsVisible(m_owningLayer->hasVisibleContent() || m_owningLayer->hasVisibleDescendant());
+    m_graphicsLayer->setContentsVisible(m_owningLayer->hasVisibleContent());
     
     RenderStyle* style = renderer()->style();
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer()->hasReflection());
