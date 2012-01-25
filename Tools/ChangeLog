@@ -1,3 +1,14 @@
+2012-01-24  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic pixel zoomer should let you look at every pixel of the image
+        https://bugs.webkit.org/show_bug.cgi?id=76962
+
+        Reviewed by Ojan Vafai.
+
+        Previously, you couldn't get up to the right and bottom pixels.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/pixelzoomer.js:
+
 2012-01-24  Enrica Casucci  <enrica@apple.com>
 
         WebHTMLView should implement typingAttributes methods to work correctly with the Inspector bar in Mail.

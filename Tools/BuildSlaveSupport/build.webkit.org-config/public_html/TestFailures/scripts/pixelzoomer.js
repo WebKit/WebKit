@@ -33,6 +33,12 @@ var pixelzoomer = pixelzoomer || {};
 var kZoomFactor = 6;
 var kDelayTimeoutMS = 400;
 
+var kResultWidth = 800;
+var kResultHeight = 600;
+
+var kZoomedResultWidth = kResultWidth * kZoomFactor;
+var kZoomedResultHeight = kResultHeight * kZoomFactor;
+
 function matchesSelector(node, selector)
 {
     if (node.webkitMatchesSelector)
@@ -68,6 +74,9 @@ function zoomImageContainer(url)
 
     var image = new Image();
     image.src = url;
+    image.style.width = kZoomedResultWidth + 'px';
+    image.style.height = kZoomedResultHeight + 'px';
+    image.style.border = '1px solid black';
     imageContainer.appendChild(image);
     container.appendChild(imageContainer);
 
@@ -92,21 +101,10 @@ function createContainer(e)
 
 function draw(imageContainer)
 {
-    var containerWidth = imageContainer.offsetWidth;
-    var containerHeight = imageContainer.offsetHeight;
-
-    var scaledMiddleX = pixelzoomer._currentX * kZoomFactor;
-    var scaledMiddleY = pixelzoomer._currentY * kZoomFactor;
-
-    var left = scaledMiddleX - containerWidth / 2;
-    var top = scaledMiddleY - containerHeight / 2;
-
     var image = imageContainer.querySelector('img');
-    image.style.width = (800 * kZoomFactor) + 'px';
-    image.style.height = (600 * kZoomFactor) + 'px';
-
-    image.style.top = -top + 'px';
-    image.style.left = -left + 'px';
+    var containerBounds = imageContainer.getBoundingClientRect();
+    image.style.left = -(pixelzoomer._percentX * kZoomedResultWidth) + containerBounds.width/2 + 'px';
+    image.style.top = -(pixelzoomer._percentY * kZoomedResultHeight) + containerBounds.height/2 + 'px';
 }
 
 function drawAll()
@@ -132,7 +130,7 @@ function handleMouseMove(e)
         return;
 
     var container = document.querySelector('.pixel-zoom-container');
-    
+
     var resultContainer = (e.target.className == 'result-container') ?
         e.target : parentOfType(e.target, '.result-container');
     if (!resultContainer || !resultContainer.querySelector('img')) {
@@ -141,8 +139,8 @@ function handleMouseMove(e)
     }
 
     var targetLocation = e.target.getBoundingClientRect();
-    pixelzoomer._currentX = e.clientX - targetLocation.left;
-    pixelzoomer._currentY = e.clientY - targetLocation.top;
+    pixelzoomer._percentX = (e.clientX - targetLocation.left) / targetLocation.width;
+    pixelzoomer._percentY = (e.clientY - targetLocation.top) / targetLocation.height;
 
     if (!container) {
         if (pixelzoomer.showOnDelay) {
