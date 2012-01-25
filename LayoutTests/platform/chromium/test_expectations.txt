@@ -874,11 +874,11 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
-BUGWK71820 : svg/stroke/zero-length-subpaths-linecap-rendering.svg = IMAGE+TEXT PASS
-BUGWK71820 : svg/stroke/zero-length-path-linecap-rendering.svg = IMAGE+TEXT PASS
-BUGWK71820 : svg/custom/path-moveto-only-rendering.svg = PASS IMAGE+TEXT
-BUGWK71820 : svg/custom/subpaths-moveto-only-rendering.svg = TEXT PASS
-BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = PASS IMAGE+TEXT
+BUGWK71820 : svg/stroke/zero-length-subpaths-linecap-rendering.svg = PASS FAIL
+BUGWK71820 : svg/stroke/zero-length-path-linecap-rendering.svg = PASS FAIL
+BUGWK71820 : svg/custom/path-moveto-only-rendering.svg = PASS FAIL
+BUGWK71820 : svg/custom/subpaths-moveto-only-rendering.svg = PASS FAIL
+BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = PASS FAIL
 
 // We show reduced version of the entire SVN image rather than an image
 BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
