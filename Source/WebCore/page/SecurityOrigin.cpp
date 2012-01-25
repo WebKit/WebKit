@@ -82,6 +82,8 @@ static bool shouldUseInnerURL(const KURL& url)
 // security origin can be parsed using this algorithm.
 static KURL extractInnerURL(const KURL& url)
 {
+    if (url.innerURL())
+        return *url.innerURL();
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
     return KURL(ParsedURLString, decodeURLEscapeSequences(url.path()));

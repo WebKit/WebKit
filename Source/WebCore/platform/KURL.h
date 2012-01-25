@@ -26,6 +26,7 @@
 #ifndef KURL_h
 #define KURL_h
 
+#include "NotImplemented.h"
 #include "PlatformString.h"
 #include "URLString.h"
 #include <wtf/HashMap.h>
@@ -216,6 +217,13 @@ public:
     // Getters for the parsed structure and its corresponding 8-bit string.
     const url_parse::Parsed& parsed() const { return m_url.m_parsed; }
     const CString& utf8String() const { return m_url.utf8String(); }
+#endif
+
+
+#if USE(GOOGLEURL)
+    const KURL* innerURL() const { return m_url.innerURL(); }
+#else
+    const KURL* innerURL() const { notImplemented(); return 0; }
 #endif
 
 #ifndef NDEBUG

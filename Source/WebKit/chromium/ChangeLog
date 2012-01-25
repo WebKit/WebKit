@@ -1,3 +1,17 @@
+2012-01-25  Eric Uhrhane  <ericu@chromium.org>
+
+        Add full support for filesystem URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=75049
+
+        Reviewed by Adam Barth.
+
+        No new tests; existing layout tests cover the basic functionality, and
+        the new functionality won't be there until Chromium adds it.  This patch
+        merely enables that, without changing behavior.
+
+        * tests/KURLTest.cpp:
+        TEST(KURLTest, Encode): Update expectation that '/' sails through unescaped.
+        
 2012-01-25  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Need to distinguish key paths that don't yield value vs. yield invalid key
