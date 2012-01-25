@@ -1779,7 +1779,7 @@ sub WriteData
     my $hasForwardDeclarations = keys(%headerForwardDeclarations) + keys(%headerForwardDeclarationsForProtocols);
     $contents .= "\n" if $hasForwardDeclarations;
     $contents .= join "", @headerContent;
-    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
+    $codeGenerator->UpdateFile($headerFileName, $contents);
 
     @headerContentHeader = ();
     @headerContent = ();
@@ -1794,7 +1794,7 @@ sub WriteData
         $hasForwardDeclarations = keys(%privateHeaderForwardDeclarations) + keys(%privateHeaderForwardDeclarationsForProtocols);
         $contents .= "\n" if $hasForwardDeclarations;
         $contents .= join "", @privateHeaderContent;
-        $codeGenerator->UpdateFileIfChanged($privateHeaderFileName, $contents);
+        $codeGenerator->UpdateFile($privateHeaderFileName, $contents);
 
         @privateHeaderContentHeader = ();
         @privateHeaderContent = ();
@@ -1807,7 +1807,7 @@ sub WriteData
         $contents = join "", @implContentHeader;
         map { $contents .= "#import \"$_\"\n" } sort keys(%implIncludes);
         $contents .= join "", @implContent;
-        $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
+        $codeGenerator->UpdateFile($implFileName, $contents);
 
         @implContentHeader = ();
         @implContent = ();
@@ -1816,7 +1816,7 @@ sub WriteData
 
     if (@internalHeaderContent > 0) {
         $contents = join "", @internalHeaderContent;
-        $codeGenerator->UpdateFileIfChanged($internalHeaderFileName, $contents);
+        $codeGenerator->UpdateFile($internalHeaderFileName, $contents);
 
         @internalHeaderContent = ();
     }
@@ -1824,7 +1824,7 @@ sub WriteData
     # Write dependency file.
     if (@depsContent) {
         $contents = join "", @depsContent;
-        $codeGenerator->UpdateFileIfChanged($depsFileName, $contents);
+        $codeGenerator->UpdateFile($depsFileName, $contents);
 
         @depsContent = ();
     }

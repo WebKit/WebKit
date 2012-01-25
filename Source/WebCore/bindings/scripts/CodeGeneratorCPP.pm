@@ -952,7 +952,7 @@ sub WriteData
     my $hasForwardDeclarations = keys(%headerForwardDeclarations);
     $contents .= "\n" if $hasForwardDeclarations;
     $contents .= join "", @headerContent;
-    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
+    $codeGenerator->UpdateFile($headerFileName, $contents);
 
     @headerContentHeader = ();
     @headerContent = ();
@@ -968,7 +968,7 @@ sub WriteData
     }
 
     $contents .= join "", @implContent;
-    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
+    $codeGenerator->UpdateFile($implFileName, $contents);
 
     @implContentHeader = ();
     @implContent = ();

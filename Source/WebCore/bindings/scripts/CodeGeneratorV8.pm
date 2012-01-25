@@ -3835,7 +3835,7 @@ sub WriteData
 
     $contents .= "\n";
     $contents .= join "", @implContentDecls, @implContent;
-    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
+    $codeGenerator->UpdateFile($implFileName, $contents);
 
     %implIncludes = ();
     @implFixedHeader = ();
@@ -3844,7 +3844,7 @@ sub WriteData
 
     # Update a .h file if the contents are changed.
     $contents = join "", @headerContent;
-    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
+    $codeGenerator->UpdateFile($headerFileName, $contents);
 
     @headerContent = ();
 }

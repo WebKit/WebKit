@@ -3265,7 +3265,7 @@ sub WriteData
     }
 
     $contents .= join "", @implContent;
-    $codeGenerator->UpdateFileIfChanged($implFileName, $contents);
+    $codeGenerator->UpdateFile($implFileName, $contents);
 
     @implContentHeader = ();
     @implContent = ();
@@ -3293,7 +3293,7 @@ sub WriteData
     foreach my $include (sort @includes) {
         $contents .= "#include $include\n";
     }
-    $codeGenerator->UpdateFileIfChanged($headerFileName, $contents);
+    $codeGenerator->UpdateFile($headerFileName, $contents);
 
     @headerContentHeader = ();
     @headerContent = ();
@@ -3303,7 +3303,7 @@ sub WriteData
     if (@depsContent) {
         # Update a .dep file if the contents are changed.
         $contents = join "", @depsContent;
-        $codeGenerator->UpdateFileIfChanged($depsFileName, $contents);
+        $codeGenerator->UpdateFile($depsFileName, $contents);
 
         @depsContent = ();
     }
