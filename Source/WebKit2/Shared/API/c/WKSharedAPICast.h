@@ -688,6 +688,8 @@ inline FindOptions toFindOptions(WKFindOptions wkFindOptions)
         findOptions |= FindOptionsShowOverlay;
     if (wkFindOptions & kWKFindOptionsShowFindIndicator)
         findOptions |= FindOptionsShowFindIndicator;
+    if (wkFindOptions & kWKFindOptionsShowHighlight)
+        findOptions |= FindOptionsShowHighlight;
 
     return static_cast<FindOptions>(findOptions);
 }

@@ -111,10 +111,12 @@ void FindController::findString(const String& string, FindOptions options, unsig
         shouldShowOverlay = options & FindOptionsShowOverlay;
 
         if (shouldShowOverlay) {
+            bool shouldShowHighlight = options & FindOptionsShowHighlight;
+
             if (maxMatchCount == numeric_limits<unsigned>::max())
                 --maxMatchCount;
             
-            unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
+            unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
 
             // Check if we have more matches than allowed.
             if (matchCount > maxMatchCount) {

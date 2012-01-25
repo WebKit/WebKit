@@ -37,7 +37,8 @@ enum {
     kWKFindOptionsBackwards = 1 << 3,
     kWKFindOptionsWrapAround = 1 << 4,
     kWKFindOptionsShowOverlay = 1 << 5,
-    kWKFindOptionsShowFindIndicator = 1 << 6
+    kWKFindOptionsShowFindIndicator = 1 << 6,
+    kWKFindOptionsShowHighlight = 1 << 7
 };
 typedef uint32_t WKFindOptions;
 

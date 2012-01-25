@@ -1,3 +1,20 @@
+2012-01-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] FindController should not assume that ports do not want to highlight text matches
+        https://bugs.webkit.org/show_bug.cgi?id=76921
+
+        Reviewed by Darin Adler.
+
+        FindController must obey the FindOptionsShowHighlight flag instead
+        of assuming that ports do not want to highlight search matches.
+
+        * Shared/API/c/WKFindOptions.h: added kWKFindOptionsShowHighlight.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toFindOptions): Ditto.
+        * Shared/WebFindOptions.h: added FindOptionsShowHighlight.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+
 2012-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Page clients don't need to be GObjects anymore in WebKit2 GTK+ API
