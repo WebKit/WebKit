@@ -1025,17 +1025,6 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
            && prev->isAnonymousColumnSpanBlock() == next->isAnonymousColumnSpanBlock();
 }
 
-void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderObject* child)
-{
-    parent->setNeedsLayoutAndPrefWidthsRecalc();
-    parent->setChildrenInline(child->childrenInline());
-    RenderBlock* anonBlock = toRenderBlock(parent->children()->removeChildNode(parent, child, child->hasLayer()));
-    anonBlock->moveAllChildrenTo(parent, child->hasLayer());
-    // Delete the now-empty block's lines and nuke it.
-    anonBlock->deleteLineBoxTree();
-    anonBlock->destroy();
-}
-
 void RenderBlock::removeChild(RenderObject* oldChild)
 {
     // If this child is a block, and if our previous and next siblings are
@@ -1092,17 +1081,13 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
-        collapseAnonymousBoxChild(this, child);
-    } else if ((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) {
-        // It's possible that the removal has knocked us down to a single anonymous
-        // block with pseudo-style element siblings (e.g. first-letter). If these
-        // are floating or positioned, then we need to pull the content up also.
-        RenderBlock* anonBlock = toRenderBlock((prev && prev->isAnonymousBlock()) ? prev : next);
-        if ((anonBlock->previousSibling() || anonBlock->nextSibling())
-            && (!anonBlock->previousSibling() || (anonBlock->previousSibling()->style()->styleType() != NOPSEUDO && anonBlock->previousSibling()->isFloatingOrPositioned()))
-            && (!anonBlock->nextSibling() || (anonBlock->nextSibling()->style()->styleType() != NOPSEUDO && anonBlock->nextSibling()->isFloatingOrPositioned()))) {
-            collapseAnonymousBoxChild(this, anonBlock);
-        }
+        setNeedsLayoutAndPrefWidthsRecalc();
+        setChildrenInline(child->childrenInline());
+        RenderBlock* anonBlock = toRenderBlock(children()->removeChildNode(this, child, child->hasLayer()));
+        anonBlock->moveAllChildrenTo(this, child->hasLayer());
+        // Delete the now-empty block's lines and nuke it.
+        anonBlock->deleteLineBoxTree();
+        anonBlock->destroy();
     }
 
     if (!firstChild() && !documentBeingDestroyed()) {

@@ -1,3 +1,17 @@
+2012-01-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105828.
+        http://trac.webkit.org/changeset/105828
+        https://bugs.webkit.org/show_bug.cgi?id=77036
+
+        Caused many crashes in ClusterFuzz and PerformanceTests
+        (Requested by inferno-sec on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+
 2012-01-25  Shawn Singh  <shawnsingh@chromium.org>
 
         Fix the semantics of passing contentsVisible flag to GraphicsLayers
