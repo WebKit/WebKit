@@ -39,7 +39,7 @@ class BrowserWindow : public QQuickView {
     Q_OBJECT
 
 public:
-    BrowserWindow(WindowOptions* = 0);
+    BrowserWindow(WindowOptions*);
     ~BrowserWindow();
     void load(const QString& url);
     void reload();
@@ -56,6 +56,7 @@ protected slots:
 
 private:
     void updateUserAgentList();
+    WindowOptions* m_windowOptions;
     QStringList m_userAgentList;
 };
 

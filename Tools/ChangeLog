@@ -1,3 +1,19 @@
+2012-01-26  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] The Qt MiniBrowser crashes when given multiple URL's
+        https://bugs.webkit.org/show_bug.cgi?id=77009
+
+        Reviewed by Simon Hausmann.
+
+        This patch fixes a crash in BrowserWindow::newWindow() where a
+        BrowserWindow-object is constructed with a 0 pointer as the
+        WindowOptions parameter which leads to a crash.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::newWindow):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2012-01-26  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Use ICU if available

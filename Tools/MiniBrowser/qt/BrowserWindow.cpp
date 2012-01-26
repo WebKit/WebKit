@@ -37,6 +37,7 @@
 #include <QPointF>
 
 BrowserWindow::BrowserWindow(WindowOptions* options)
+    : m_windowOptions(options)
 {
     setWindowTitle("MiniBrowser");
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
@@ -88,7 +89,7 @@ void BrowserWindow::focusAddressBar()
 
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
-    BrowserWindow* window = new BrowserWindow();
+    BrowserWindow* window = new BrowserWindow(m_windowOptions);
     window->load(url);
     return window;
 }
