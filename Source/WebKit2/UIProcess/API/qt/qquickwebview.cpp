@@ -550,16 +550,8 @@ void QQuickWebViewPrivate::_q_onOpenPanelFinished(int result)
 
 void QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour(bool enable)
 {
-    Q_Q(QQuickWebView);
-
-    // Do not guard, testing for the same value, as we call this from the constructor.
-
     webPageProxy->setUseFixedLayout(!enable);
     pageView->setUsesTraditionalDesktopBehaviour(enable);
-    if (enable)
-        initializeDesktop(q);
-    else
-        initializeTouch(q);
 }
 
 void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
@@ -1054,12 +1046,24 @@ void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
 {
     Q_D(QQuickWebView);
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
-    if (newGeometry.size() != oldGeometry.size()) {
-        if (d->pageView->usesTraditionalDesktopBehaviour())
-            d->updateDesktopViewportSize();
-        else
-            d->updateTouchViewportSize();
-    }
+
+    if (newGeometry.isEmpty() || newGeometry.size() == oldGeometry.size())
+        return;
+
+    if (d->pageView->usesTraditionalDesktopBehaviour())
+        d->updateDesktopViewportSize();
+    else
+        d->updateTouchViewportSize();
+}
+
+void QQuickWebView::componentComplete()
+{
+    Q_D(QQuickWebView);
+    QQuickItem::componentComplete();
+    if (d->pageView->usesTraditionalDesktopBehaviour())
+        d->initializeDesktop(this);
+    else
+        d->initializeTouch(this);
 }
 
 void QQuickWebView::keyPressEvent(QKeyEvent* event)

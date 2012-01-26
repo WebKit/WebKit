@@ -44,7 +44,7 @@ QSize QWebViewportInfo::contentsSize() const
 QVariant QWebViewportInfo::currentScale() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(1.0);
 
     return m_webViewPrivate->interactionEngine->currentCSSScale();
 }
@@ -52,7 +52,7 @@ QVariant QWebViewportInfo::currentScale() const
 QVariant QWebViewportInfo::devicePixelRatio() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(1.0);
 
     return m_webViewPrivate->interactionEngine->constraints().devicePixelRatio;
 }
@@ -60,7 +60,7 @@ QVariant QWebViewportInfo::devicePixelRatio() const
 QVariant QWebViewportInfo::initialScale() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(1.0);
 
     return m_webViewPrivate->interactionEngine->constraints().initialScale;
 }
@@ -68,7 +68,7 @@ QVariant QWebViewportInfo::initialScale() const
 QVariant QWebViewportInfo::minimumScale() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(0.25);
 
     return m_webViewPrivate->interactionEngine->constraints().minimumScale;
 }
@@ -76,7 +76,7 @@ QVariant QWebViewportInfo::minimumScale() const
 QVariant QWebViewportInfo::maximumScale() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(1.8);
 
     return m_webViewPrivate->interactionEngine->constraints().maximumScale;
 }
@@ -84,7 +84,7 @@ QVariant QWebViewportInfo::maximumScale() const
 QVariant QWebViewportInfo::isScalable() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(true);
 
     return m_webViewPrivate->interactionEngine->constraints().isUserScalable;
 }
@@ -92,7 +92,7 @@ QVariant QWebViewportInfo::isScalable() const
 QVariant QWebViewportInfo::layoutSize() const
 {
     if (!m_webViewPrivate->interactionEngine)
-        return QVariant();
+        return QVariant(QSize());
 
     return m_webViewPrivate->interactionEngine->constraints().layoutSize;
 }

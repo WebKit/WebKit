@@ -135,7 +135,7 @@ Q_SIGNALS:
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
-
+    virtual void componentComplete();
     virtual void keyPressEvent(QKeyEvent*);
     virtual void keyReleaseEvent(QKeyEvent*);
     virtual void inputMethodEvent(QInputMethodEvent*);

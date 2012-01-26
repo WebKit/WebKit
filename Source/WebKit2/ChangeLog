@@ -1,3 +1,31 @@
+2012-01-26  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Add the componentComplete method to WebView
+        https://bugs.webkit.org/show_bug.cgi?id=77111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move the touch/desktop initialization to componentComplete.
+        Also return valid default values in the viewport info functions
+        if the interaction engine is not yet initialized because the
+        viewport info component could finish initialization earlier
+        than the WebView, which results in QML warnings during MiniBrowser
+        startup.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (QQuickWebView::geometryChanged):
+        (QQuickWebView::componentComplete):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::currentScale):
+        (QWebViewportInfo::devicePixelRatio):
+        (QWebViewportInfo::initialScale):
+        (QWebViewportInfo::minimumScale):
+        (QWebViewportInfo::maximumScale):
+        (QWebViewportInfo::isScalable):
+        (QWebViewportInfo::layoutSize):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         WebWheelEvent::Phase and PlatformWheelEvent::Phase declarations should match AppKit
