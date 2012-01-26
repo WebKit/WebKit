@@ -368,6 +368,11 @@ void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
     WKBundleSetFrameFlatteningEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
+void LayoutTestController::setGeolocationPermission(bool enabled)
+{
+    WKBundleSetGeolocationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
 void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
 {
      WKBundleSetJavaScriptCanAccessClipboard(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);

@@ -1,3 +1,19 @@
+2012-01-26  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
+
+        [WK2] WebKitTestRunner needs layoutTestController.setGeolocationPermission
+        https://bugs.webkit.org/show_bug.cgi?id=42545
+
+        Reviewed by Zoltan Herczeg.
+
+        Implement the setGeolocationPermission method.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setGeolocationPermission):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-01-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [NRWT] Support --ignore-metrics

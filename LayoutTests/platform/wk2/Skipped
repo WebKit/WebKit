@@ -535,9 +535,9 @@ platform/mac/fast/loader/file-url-mimetypes-2.html
 platform/mac/fast/loader/file-url-mimetypes-3.html
 platform/mac/fast/loader/file-url-mimetypes.html
 
-# WebKitTestRunner needs layoutTestController.setGeolocationPermission
-# <https://bugs.webkit.org/show_bug.cgi?id=42545>
-fast/dom/Geolocation/argument-types.html
+# WebKitTestRunner needs layoutTestController.setMockGeolocationPosition
+# and layoutTestController.setMockGeolocationError
+# <https://bugs.webkit.org/show_bug.cgi?id=59201>
 fast/dom/Geolocation/callback-exception.html
 fast/dom/Geolocation/callback-to-deleted-context.html
 fast/dom/Geolocation/callback-to-remote-context.html
@@ -553,7 +553,6 @@ fast/dom/Geolocation/disconnected-frame.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/maximum-age.html
 fast/dom/Geolocation/multiple-requests.html
-fast/dom/Geolocation/notimer-after-unload.html
 fast/dom/Geolocation/permission-denied-already-clear-watch.html
 fast/dom/Geolocation/permission-denied-already-error.html
 fast/dom/Geolocation/permission-denied-already-success.html
@@ -563,19 +562,13 @@ fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
 fast/dom/Geolocation/reentrant-permission-denied.html
 fast/dom/Geolocation/reentrant-success.html
-fast/dom/Geolocation/remove-remote-context-in-error-callback-crash.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout.html
+fast/dom/Geolocation/timeout-clear-watch.html
+fast/dom/Geolocation/timeout-zero.html
 fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
 fast/dom/Geolocation/window-close-crash.html
-
-# WebKitTestRunner needs layoutTestController.setMockGeolocationPosition
-# and layoutTestController.setMockGeolocationError
-# <https://bugs.webkit.org/show_bug.cgi?id=59201>
-fast/dom/Geolocation/timeout-clear-watch.html
-fast/dom/Geolocation/timeout-zero.html
-
 
 # WebKitTestRunner needs layoutTestController.setCustomPolicyDelegate
 # <https://bugs.webkit.org/show_bug.cgi?id=42546>
@@ -1303,7 +1296,9 @@ plugins/destroy-on-setwindow.html
 # Sporadically fails in WebKit2 for unknown reasons.
 fast/forms/input-align.html
 
-# WebProcess sometimes terminates when running this test
+# WebProcess sometimes terminates when running these tests
+fast/dom/Geolocation/notimer-after-unload.html
+fast/dom/Geolocation/remove-remote-context-in-error-callback-crash.html
 fast/forms/form-associated-element-crash.html
 
 # New history tests added in r76205 fail on WebKit2 (perhaps the change

@@ -46,6 +46,10 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
+#include <WebCore/GeolocationClient.h>
+#include <WebCore/GeolocationClientMock.h>
+#include <WebCore/GeolocationController.h>
+#include <WebCore/GeolocationPosition.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -143,6 +147,15 @@ void InjectedBundle::setFrameFlatteningEnabled(WebPageGroupProxy* pageGroup, boo
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setFrameFlatteningEnabled(enabled);
+}
+
+void InjectedBundle::setGeoLocationPermission(WebPageGroupProxy* pageGroup, bool enabled)
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        static_cast<GeolocationClientMock*>((*iter)->geolocationController()->client())->setPermission(enabled);
+#endif
 }
 
 void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGroup, bool enabled)

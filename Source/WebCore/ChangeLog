@@ -1,3 +1,16 @@
+2012-01-26  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
+
+        [WK2] WebKitTestRunner needs layoutTestController.setGeolocationPermission
+        https://bugs.webkit.org/show_bug.cgi?id=42545
+
+        Reviewed by Zoltan Herczeg.
+
+        No need for new tests, there is no behavior change.
+
+        Added a line to file which copies the forwarding headers.
+
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+
 2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix Qt build after r105978.
