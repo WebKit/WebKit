@@ -1,3 +1,29 @@
+2012-01-26  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        [Qt] GC should be parallel on Qt platform
+        https://bugs.webkit.org/show_bug.cgi?id=73309
+
+        Reviewed by Zoltan Herczeg.
+
+        These changes made the parallel gc feature available for Qt port.
+        The implementation of "registerGCThread" and "isMainThreadOrGCThread"
+        is moved from MainThreadMac.mm to the common MainThread.cpp to make
+        them available for other platforms.
+
+        Measurement results:
+        V8           speed-up:  1.071x as fast  [From: 746.1ms  To: 696.4ms ]
+        WindScorpion speed-up:  1.082x as fast  [From: 3490.4ms To: 3226.7ms]
+        V8 Splay     speed-up:  1.158x as fast  [From: 145.8ms  To: 125.9ms ]
+
+        Tested on Intel(R) Core(TM) i5-2320 CPU @ 3.00GHz with 4-core.
+
+        * wtf/MainThread.cpp:
+        (WTF):
+        (WTF::registerGCThread):
+        (WTF::isMainThreadOrGCThread):
+        * wtf/Platform.h:
+        * wtf/mac/MainThreadMac.mm:
+
 2012-01-26  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r105555): Incorrect use of OS() macro breaks OwnPtr when used with Win32 data types

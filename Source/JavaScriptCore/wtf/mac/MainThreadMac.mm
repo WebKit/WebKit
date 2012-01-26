@@ -145,31 +145,4 @@ bool isMainThread()
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
 
-#if ENABLE(PARALLEL_GC)
-void registerGCThread()
-{
-    if (!isGCThread) {
-        // This happens if we're running in a process that doesn't care about
-        // MainThread.
-        return;
-    }
-
-    **isGCThread = true;
-}
-
-bool isMainThreadOrGCThread()
-{
-    if (isGCThread->isSet() && **isGCThread)
-        return true;
-    
-    return isMainThread();
-}
-#else
-// This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
-bool isMainThreadOrGCThread()
-{
-    return isMainThread();
-}
-#endif
-
 } // namespace WTF
