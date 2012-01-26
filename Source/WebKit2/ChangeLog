@@ -1,5 +1,21 @@
 2012-01-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        WebPreferencesStore: use DEFINE_STATIC_LOCAL for overrides HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=77109
+
+        Reviewed by Andreas Kling.
+
+        Fix build for Clang.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit):
+        (WebKit::boolTestRunnerOverridesMap):
+        (WebKit::WebPreferencesStore::overrideBoolValueForKey):
+        (WebKit::WebPreferencesStore::removeTestRunnerOverrides):
+        (WebKit::WebPreferencesStore::getBoolValueForKey):
+
+2012-01-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         Implement overridePreference for boolean preferences in WebKitTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=77033
 

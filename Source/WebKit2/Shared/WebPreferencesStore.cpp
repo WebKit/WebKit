@@ -47,8 +47,13 @@ namespace WebPreferencesKey {
 
 } // namespace WebPreferencesKey
 
+typedef HashMap<String, bool> BoolOverridesMap;
 
-static HashMap<String, bool> boolTestRunnerOverridesMap;
+static BoolOverridesMap& boolTestRunnerOverridesMap()
+{
+    DEFINE_STATIC_LOCAL(BoolOverridesMap, map, ());
+    return map;
+}
 
 WebPreferencesStore::WebPreferencesStore()
 {
@@ -77,12 +82,12 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
 
 void WebPreferencesStore::overrideBoolValueForKey(const String& key, bool value)
 {
-    boolTestRunnerOverridesMap.set(key, value);
+    boolTestRunnerOverridesMap().set(key, value);
 }
 
 void WebPreferencesStore::removeTestRunnerOverrides()
 {
-    boolTestRunnerOverridesMap.clear();
+    boolTestRunnerOverridesMap().clear();
 }
 
 
@@ -180,8 +185,8 @@ bool WebPreferencesStore::setBoolValueForKey(const String& key, bool value)
 bool WebPreferencesStore::getBoolValueForKey(const String& key) const
 {
     // FIXME: Extend overriding to other key types used from LayoutTestController.
-    HashMap<String, bool>::const_iterator it = boolTestRunnerOverridesMap.find(key);
-    if (it != boolTestRunnerOverridesMap.end())
+    BoolOverridesMap::const_iterator it = boolTestRunnerOverridesMap().find(key);
+    if (it != boolTestRunnerOverridesMap().end())
         return it->second;
     return valueForKey(m_boolValues, key);
 }
