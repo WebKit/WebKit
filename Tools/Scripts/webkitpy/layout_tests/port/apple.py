@@ -51,20 +51,12 @@ class ApplePort(WebKitPort):
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
-        if port_name.endswith('-wk2'):
-            # FIXME: This may be wrong, since options is a global property, and the port_name is specific to this object?
-            if options and not hasattr(options, 'webkit_test_runner'):
-                options.webkit_test_runner = True
-            port_name = port_name.replace('-wk2', '')
         if port_name == cls.port_name:
-            # FIXME: This is almost certainly wrong; we shouldn't be returning a port name at all
-            # if we're on the wrong platform and it isn't fully specified. Also, 'mac' and 'win'
-            # shouldn't be legal port names, since we can't distinguish them from underspecified
-            # abbreviations (i.e., does 'mac' refer to 'mac-future' or 'the version of mac matching the
-            # version of the operating system on the host machine'?).
-            if port_name != host.platform.os_name:
-                return port_name
-            return port_name + '-' + host.platform.os_version
+            assert port_name == host.platform.os_name
+            return cls.port_name + '-' + host.platform.os_version
+        if port_name == cls.port_name + '-wk2':
+            assert port_name == host.platform.os_name
+            return cls.port_name + '-' + host.platform.os_version + '-wk2'
         return port_name
 
     def _strip_port_name_prefix(self, port_name):
@@ -78,15 +70,14 @@ class ApplePort(WebKitPort):
         WebKitPort.__init__(self, host, port_name, **kwargs)
 
         allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
+        port_name = port_name.replace('-wk2', '')
         assert port_name in allowed_port_names, "%s is not in %s" % (port_name, allowed_port_names)
         self._version = self._strip_port_name_prefix(port_name)
 
-    # FIXME: A more sophisitcated version of this function should move to WebKitPort and replace all calls to name().
+    # FIXME: A more sophisticated version of this function should move to WebKitPort and replace all calls to name().
+    # This is also a misleading name, since 'mac-future' gets remapped to 'mac'.
     def _port_name_with_version(self):
-        components = [self.port_name]
-        if self._version != self.FUTURE_VERSION:
-            components.append(self._version)
-        return '-'.join(components)
+        return self.name().replace('-future', '').replace('-wk2', '')
 
     def _generate_all_test_configurations(self):
         configurations = []

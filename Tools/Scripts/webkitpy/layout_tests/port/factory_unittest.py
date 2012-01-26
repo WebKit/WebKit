@@ -59,11 +59,15 @@ class FactoryTest(unittest.TestCase):
         self.assertTrue(isinstance(port, cls))
 
     def test_mac(self):
-        self.assert_port(port_name='mac', cls=mac.MacPort)
+        self.assert_port(port_name='mac-leopard', cls=mac.MacPort)
+        self.assert_port(port_name='mac-leopard-wk2', cls=mac.MacPort)
+        self.assert_port(port_name='mac', os_name='mac', os_version='leopard', cls=mac.MacPort)
         self.assert_port(port_name=None,  os_name='mac', os_version='leopard', cls=mac.MacPort)
 
     def test_win(self):
-        self.assert_port(port_name='win', cls=win.WinPort)
+        self.assert_port(port_name='win-xp', cls=win.WinPort)
+        self.assert_port(port_name='win-xp-wk2', cls=win.WinPort)
+        self.assert_port(port_name='win', os_name='win', os_version='xp', cls=win.WinPort)
         self.assert_port(port_name=None, os_name='win', os_version='xp', cls=win.WinPort)
         self.assert_port(port_name=None, os_name='win', os_version='xp', options=self.webkit_options, cls=win.WinPort)
 

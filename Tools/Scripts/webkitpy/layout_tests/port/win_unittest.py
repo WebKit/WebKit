@@ -80,6 +80,7 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_version('win-xp', 'xp')
         self._assert_version('win-vista', 'vista')
         self._assert_version('win-7sp0', '7sp0')
+        self.assertRaises(AssertionError, self._assert_version, 'win-me', 'xp')
 
     def test_compare_text(self):
         expected = "EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\nfoo\nEDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n"

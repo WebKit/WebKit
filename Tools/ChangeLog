@@ -1,3 +1,46 @@
+2012-01-23  Dirk Pranke  <dpranke@chromium.org>
+
+        investigate use of 'mac' and 'win' as fully-specified port names for the apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=76475
+
+        Reviewed by Eric Seidel.
+
+        This patch cleans up the internal usage of port names for the
+        Apple mac and Apple win ports so that 'mac' and 'win are never
+        considered "fully specified" port names: they are still legal
+        input to the PortFactory.get() routine, but only if run on the given
+        platform (i.e. trying to PortFactory.get('mac') on windows or
+        linux will return an error, since we don't know which version of
+        the port is desired.
+
+        This also cleans up handling of the webkit2 variants, so that
+        the full port names consistently follow the
+        <operating_system>-<version>[-<wk2>] convention.
+
+        Lastly this patch adds some assertions and removes some
+        try/catch logic to catch more programming and usage errors;
+        previously mac-tiger might've been allowed -- and it would've
+        translated into using just the baselines in platform/mac -- but
+        now it should fail.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.determine_full_port_name):
+        (ApplePort.__init__):
+        (ApplePort):
+        (ApplePort._port_name_with_version):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_mac):
+        (FactoryTest.test_win):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.test_versions):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinTest.test_versions):
+
 2012-01-25  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: print nicer errors while linting expectations files, remove redundant tests

@@ -63,10 +63,10 @@ _exact_matches = {
     "GTK Linux 32-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk"])},
     "Leopard Intel Debug (Tests)": {"port_name": "mac-leopard", "specifiers": set(["leopard"])},
     "SnowLeopard Intel Release (Tests)": {"port_name": "mac-snowleopard", "specifiers": set(["snowleopard"])},
-    "SnowLeopard Intel Release (WebKit2 Tests)": {"port_name": "mac-wk2", "specifiers": set(["wk2"])},
+    "SnowLeopard Intel Release (WebKit2 Tests)": {"port_name": "mac-snowleopard-wk2", "specifiers": set(["wk2"])},
     "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"])},
     "Windows XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win"])},
-    "Windows 7 Release (WebKit2 Tests)": {"port_name": "win-wk2", "specifiers": set(["wk2"])},
+    "Windows 7 Release (WebKit2 Tests)": {"port_name": "win-future-wk2", "specifiers": set(["wk2"])},
 }
 
 

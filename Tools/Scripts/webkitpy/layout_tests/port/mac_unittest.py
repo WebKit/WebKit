@@ -114,6 +114,8 @@ java/
         self.assert_name('mac', 'future', 'mac-future')
         self.assert_name('mac-future', 'future', 'mac-future')
 
+        self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard')
+
 
     def test_is_version_methods(self):
         leopard_port = self.make_port(port_name='mac-leopard')
