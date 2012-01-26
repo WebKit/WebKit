@@ -3686,6 +3686,7 @@ BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
 BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
+BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
 BUGWK72904 XP : http/tests/media/video-served-as-text.html = PASS TEXT
 
