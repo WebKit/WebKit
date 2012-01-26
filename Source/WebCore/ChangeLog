@@ -1,3 +1,28 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Move horizontal rubber-band checks to ScrollElasticityController::handleWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=77147
+
+        Reviewed by Adam Roben.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        Always call ScrollElasticityController::handleWheelEvent, and only call didBeginScrollGesture and
+        didEndScrollGesture if the event was actually handled.
+
+        (WebCore::ScrollAnimatorMac::shouldRubberBandInDirection):
+        Implement this.
+
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::handleWheelEvent):
+        Check if we should rubber-band and return false if we shouldn't.
+
+        (WebCore::ScrollElasticityController::shouldRubberBandInHorizontalDirection):
+        Ask the client if we should rubber-band.
+
 2012-01-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove setLayerTreeHost nonsense on lost context

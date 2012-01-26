@@ -888,17 +888,6 @@ void ScrollAnimatorMac::cancelAnimations()
 }
 
 #if ENABLE(RUBBER_BANDING)
-
-static bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
-{
-    if (wheelEvent.deltaX() > 0)
-        return scrollableArea->shouldRubberBandInDirection(ScrollLeft);
-    if (wheelEvent.deltaX() < 0)
-        return scrollableArea->shouldRubberBandInDirection(ScrollRight);
-
-    return true;
-}
-
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
@@ -918,16 +907,16 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             return ScrollAnimator::handleWheelEvent(wheelEvent);
     }
 
-    if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
-        if (pinnedInDirection(-wheelEvent.deltaX(), 0) &&
-            !shouldRubberBandInHorizontalDirection(wheelEvent, m_scrollableArea))
-            return false;
+    bool didHandleEvent = m_scrollElasticityController.handleWheelEvent(wheelEvent);
 
-        didBeginScrollGesture();
-    } else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded)
-        didEndScrollGesture();
+    if (didHandleEvent) {
+        if (wheelEvent.phase() == PlatformWheelEventPhaseBegan)
+            didBeginScrollGesture();
+        else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded)
+            didEndScrollGesture();
+    }
 
-    return m_scrollElasticityController.handleWheelEvent(wheelEvent);
+    return didHandleEvent;
 }
 
 bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
@@ -1016,6 +1005,11 @@ bool ScrollAnimatorMac::canScrollVertically()
     if (!scrollbar)
         return false;
     return scrollbar->enabled();
+}
+
+bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection direction)
+{
+    return m_scrollableArea->shouldRubberBandInDirection(direction);
 }
 
 IntPoint ScrollAnimatorMac::absoluteScrollPosition()

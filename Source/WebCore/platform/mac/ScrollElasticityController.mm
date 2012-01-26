@@ -117,16 +117,12 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
 
 bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
-    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimerIsActive)) {
-        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
-            m_ignoreMomentumScrolls = false;
-            return true;
-        }
-        return false;
-    }
-
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
+        // First, check if we should rubber-band at all.
+        if (m_client->pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0)) &&
+            !shouldRubberBandInHorizontalDirection(wheelEvent))
+            return false;
+
         m_inScrollGesture = true;
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
@@ -146,6 +142,15 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
     if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
         snapRubberBand();
         return true;
+    }
+
+    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
+    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberbandTimerIsActive)) {
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
+            m_ignoreMomentumScrolls = false;
+            return true;
+        }
+        return false;
     }
 
     float deltaX = m_overflowScrollDelta.width();
@@ -386,6 +391,16 @@ void ScrollElasticityController::snapRubberBand()
 
     m_client->startSnapRubberbandTimer();
     m_snapRubberbandTimerIsActive = true;
+}
+
+bool ScrollElasticityController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent)
+{
+    if (wheelEvent.deltaX() > 0)
+        return m_client->shouldRubberBandInDirection(ScrollLeft);
+    if (wheelEvent.deltaX() < 0)
+        return m_client->shouldRubberBandInDirection(ScrollRight);
+
+    return true;
 }
 
 } // namespace WebCore

@@ -125,6 +125,7 @@ private:
     virtual bool pinnedInDirection(const FloatSize&) OVERRIDE;
     virtual bool canScrollHorizontally() OVERRIDE;
     virtual bool canScrollVertically() OVERRIDE;
+    virtual bool shouldRubberBandInDirection(ScrollDirection) OVERRIDE;
     virtual WebCore::IntPoint absoluteScrollPosition() OVERRIDE;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) OVERRIDE;
     virtual void immediateScrollBy(const FloatSize&) OVERRIDE;
