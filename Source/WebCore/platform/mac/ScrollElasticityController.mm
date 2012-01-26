@@ -132,11 +132,6 @@ void ScrollElasticityController::beginScrollGesture()
     stopSnapRubberbandTimer();
 }
 
-void ScrollElasticityController::endScrollGesture()
-{
-    snapRubberBand();
-}
-
 bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
@@ -146,6 +141,11 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
             return true;
         }
         return false;
+    }
+
+    if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
+        snapRubberBand();
+        return true;
     }
 
     float deltaX = m_overflowScrollDelta.width();
@@ -175,10 +175,10 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
     isHorizontallyStretched = stretchAmount.width();
     isVerticallyStretched = stretchAmount.height();
 
-    PlatformWheelEventPhase phase = wheelEvent.momentumPhase();
+    PlatformWheelEventPhase momentumPhase = wheelEvent.momentumPhase();
 
     // If we are starting momentum scrolling then do some setup.
-    if (!m_momentumScrollInProgress && (phase == PlatformWheelEventPhaseBegan || phase == PlatformWheelEventPhaseChanged))
+    if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhaseBegan || momentumPhase == PlatformWheelEventPhaseChanged))
         m_momentumScrollInProgress = true;
 
     CFTimeInterval timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
@@ -279,7 +279,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
         }
     }
 
-    if (m_momentumScrollInProgress && phase == PlatformWheelEventPhaseEnded) {
+    if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhaseEnded) {
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = 0;

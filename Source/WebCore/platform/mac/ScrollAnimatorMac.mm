@@ -929,11 +929,8 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 
         didBeginScrollGesture();
         m_scrollElasticityController.beginScrollGesture();
-    } else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
+    } else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded)
         didEndScrollGesture();
-        m_scrollElasticityController.endScrollGesture();
-        return true;
-    }
 
     return m_scrollElasticityController.handleWheelEvent(wheelEvent);
 }

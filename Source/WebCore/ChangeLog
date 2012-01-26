@@ -1,3 +1,20 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of ScrollElasticityController::endScrollGesture()
+        https://bugs.webkit.org/show_bug.cgi?id=77134
+
+        Reviewed by Adam Roben.
+
+        Just make ScrollElasticityController::handleWheelEvent call snapRubberBand if the wheel
+        event phase is PlatformWheelEventPhaseEnded.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        * platform/mac/ScrollElasticityController.h:
+        (ScrollElasticityController):
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::handleWheelEvent):
+
 2012-01-26  Abhishek Arya  <inferno@chromium.org>
 
         Crash in SVGSVGElement::currentViewBoxRect.

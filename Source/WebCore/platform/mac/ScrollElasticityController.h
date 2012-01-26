@@ -64,7 +64,6 @@ public:
     explicit ScrollElasticityController(ScrollElasticityControllerClient*);
 
     void beginScrollGesture();
-    void endScrollGesture();
 
     bool handleWheelEvent(const PlatformWheelEvent&);
     void snapRubberBandTimerFired();
