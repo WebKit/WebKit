@@ -46,14 +46,6 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    bool needsSizeNegotiationWithHostDocument() const { return m_needsSizeNegotiationWithHostDocument; }
-
-    void scheduledSizeNegotiationWithHostDocument()
-    {
-        ASSERT(m_needsSizeNegotiationWithHostDocument);
-        m_needsSizeNegotiationWithHostDocument = false;
-    }
-
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesOrTransformUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsBoundariesOrTransformUpdate = true; }
@@ -108,7 +100,6 @@ private:
     AffineTransform m_localToBorderBoxTransform;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
-    bool m_needsSizeNegotiationWithHostDocument : 1;
 };
 
 inline RenderSVGRoot* toRenderSVGRoot(RenderObject* object)

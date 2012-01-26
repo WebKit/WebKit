@@ -131,9 +131,6 @@ FrameView::FrameView(Frame* frame)
     , m_fixedObjectCount(0)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
-#if ENABLE(SVG)
-    , m_inLayoutParentView(false)
-#endif
     , m_inSynchronousPostLayout(false)
     , m_postLayoutTasksTimer(this, &FrameView::postLayoutTimerFired)
     , m_isTransparent(false)
@@ -900,9 +897,6 @@ static inline void collectFrameViewChildren(FrameView* frameView, Vector<RefPtr<
 inline void FrameView::forceLayoutParentViewIfNeeded()
 {
 #if ENABLE(SVG)
-    if (m_inLayoutParentView)
-        return;
-
     RenderPart* ownerRenderer = m_frame->ownerRenderer();
     if (!ownerRenderer || !ownerRenderer->frame())
         return;
@@ -912,27 +906,20 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
         return;
 
     RenderSVGRoot* svgRoot = toRenderSVGRoot(contentBox);
-    if (!svgRoot->needsSizeNegotiationWithHostDocument())
+    if (svgRoot->everHadLayout() && !svgRoot->needsLayout())
         return;
 
+    // If the embedded SVG document appears the first time, the ownerRenderer has already finished
+    // layout without knowing about the existence of the embedded SVG document, because RenderReplaced
+    // embeddedContentBox() returns 0, as long as the embedded document isn't loaded yet. Before
+    // bothering to lay out the SVG document, mark the ownerRenderer needing layout and ask its
+    // FrameView for a layout. After that the RenderEmbeddedObject (ownerRenderer) carries the
+    // correct size, which RenderSVGRoot::computeReplacedLogicalWidth/Height rely on, when laying
+    // out for the first time, or when the RenderSVGRoot size has changed dynamically (eg. via <script>).
     RefPtr<FrameView> frameView = ownerRenderer->frame()->view();
-
-    ASSERT(!m_inLayoutParentView);
-    TemporaryChange<bool> resetInLayoutParentView(m_inLayoutParentView, true);
-
-    // Clear needs-size-negotiation flag in RenderSVGRoot, so the next call to our
-    // layout() method won't fire the size negotiation logic again.
-    svgRoot->scheduledSizeNegotiationWithHostDocument();
-    ASSERT(!svgRoot->needsSizeNegotiationWithHostDocument());
 
     // Mark the owner renderer as needing layout.
     ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
-
-    // Immediately relayout the child widgets, which can now calculate the SVG documents
-    // intrinsic size, negotiating with the parent object/embed/iframe.
-    RenderView* rootView = ownerRenderer->frame()->contentRenderer();
-    ASSERT(rootView);
-    rootView->updateWidgetPositions();
 
     // Synchronously enter layout, to layout the view containing the host object/embed/iframe.
     ASSERT(frameView);
@@ -1121,6 +1108,7 @@ void FrameView::layout(bool allowSubtree)
 
             m_inLayout = true;
             beginDeferredRepaints();
+            forceLayoutParentViewIfNeeded();
             root->layout();
             endDeferredRepaints();
             m_inLayout = false;
@@ -1208,7 +1196,6 @@ void FrameView::layout(bool allowSubtree)
         return;
 
     page->chrome()->client()->layoutUpdated(frame());
-    forceLayoutParentViewIfNeeded();
 }
 
 RenderBox* FrameView::embeddedContentBox() const

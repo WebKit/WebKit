@@ -422,9 +422,6 @@ private:
     
     bool m_layoutSchedulingEnabled;
     bool m_inLayout;
-#if ENABLE(SVG)
-    bool m_inLayoutParentView;
-#endif
     bool m_inSynchronousPostLayout;
     int m_layoutCount;
     unsigned m_nestedLayoutCount;

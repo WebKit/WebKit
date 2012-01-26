@@ -58,7 +58,6 @@ RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderReplaced(node)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
-    , m_needsSizeNegotiationWithHostDocument(false)
 {
 }
 
@@ -155,11 +154,6 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize)
 {
     return static_cast<LayoutUnit>(length.calcValue(maxSize) * (length.isFixed() ? scale : 1));
-/*
-    if (length.isFixed())
-        return static_cast<LayoutUnit>(length.calcFloatValue(maxSize) * scale);
-    return static_cast<LayoutUnit>(length.calcFloatValue(maxSize));
-*/
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
@@ -219,13 +213,6 @@ void RenderSVGRoot::layout()
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     m_isLayoutSizeChanged = needsLayout || (svg->hasRelativeLengths() && oldSize != size());
-
-    if (view() && view()->frameView() && view()->frameView()->embeddedContentBox()) {
-        if (!m_needsSizeNegotiationWithHostDocument)
-            m_needsSizeNegotiationWithHostDocument = !everHadLayout() || oldSize != size();
-    } else
-        ASSERT(!m_needsSizeNegotiationWithHostDocument);
-
     SVGRenderSupport::layoutChildren(this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(this));
     m_isLayoutSizeChanged = false;
 

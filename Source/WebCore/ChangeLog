@@ -1,3 +1,40 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVG + <object> tests are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=77099
+
+        Reviewed by Andreas Kling.
+
+        Bug 76447 changed the way RenderSVGRoot figures out its size. Previously RenderSVGRoot directly called out to the
+        ownerRenderer (RenderEmbeddedObject) to compute its replaced size when embedded through eg. <object> element,
+        which was quite hacky. It now relies on the ownerRenderers availableLogicalWidth/Height to be correctly set,
+        which requires that the ownerRenderer is always laid out before the RenderSVGRoot and not the other way round.
+
+        This is the source of current flakiness bugs.
+
+        In trunk FrameView contains several special hacks, to layout the ownerRenderers view, after the RenderSVGRoots view
+        finished layout. This worked without flakiness as RenderSVGRoot used to directly call computeReplacedLogicalWidth/Height
+        on the ownerRenderer, which is now gone. Fortunately we can keep the new design, and can remove all hacks out of
+        RenderSVGRoot/FrameView, if we can guarantee that the ownerRenderer FrameView is laid out before the RenderSVGRoot FrameView.
+
+        This is a much less error-prone approach as the previous one. This lets us run nrwt --tolerance 0 -p svg -g again,
+        without 100% reproducable failing svg/wicd tests. (There's still one unrelated error, before guard malloc mode passes fully).
+
+        Test: svg/wicd/sizing-flakiness.html (Adjusted version of the rightsizing test, made to fail with trunk w/o this patch.)
+
+        * page/FrameView.cpp: Remove m_inLayoutParentView.
+        (WebCore::FrameView::FrameView): Remove no longer needed m_inLayoutParentView.
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded): Simplify, no need to call updateWidgetPositions anymore, nor to clear/query flags in RenderSVGRoot.
+        (WebCore::FrameView::layout): Call forceLayoutParentViewIfNeeded() before laying out the embedded document, to guarantee the correct order.
+        * page/FrameView.h:
+        (FrameView): Remove m_inLayoutParentView.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot): Remove m_needsSizeNegotiationWithHostDocument.
+        (WebCore::resolveLengthAttributeForSVG): Remove outcommented code, that went in by accident.
+        (WebCore::RenderSVGRoot::layout): Remove m_needsSizeNegotiationWithHostDocument handling which is now incorrect and no longer needed.
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot): Remove m_needsSizeNegotiationWithHostDocument + accessors.
+
 2012-01-23  Andreas Kling  <awesomekling@apple.com>
 
         Make elements that don't have attributes smaller.
