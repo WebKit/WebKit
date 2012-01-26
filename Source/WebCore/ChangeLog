@@ -1,3 +1,26 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        HTMLEmbedObject should match HTMLObjectElement by stopping any load when it is removed from beforeload
+        https://bugs.webkit.org/show_bug.cgi?id=74360
+
+        Reviewed by Adam Barth.
+
+        Neither of these !renderer() checks is strictly necessary since requestObject()
+        makes the same check.  However requestObject() asserts before it makes that
+        check, so it makes sense to add the check to HTMLEmebedObject instead of
+        removing the check from HTMLObjectElement.
+        I also moved the protect RefPtr to before the beforeload dispatch since
+        beforeload can remove the whole DOM element (as this test does) and
+        thus I beleive the renderer() check could be checking free'd memory.
+
+        Updated fast/dom/beforeload/remove-flash-in-beforeload-listener.html to test
+        <embed> as well as <object>.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+
 2012-01-25  Kent Tamura  <tkent@chromium.org>
 
         Move focus/blur handling code of HTMLInputElement to InputType

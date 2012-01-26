@@ -289,18 +289,13 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     if (pluginCreationOption == CreateOnlyNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
         return;
 
+    RefPtr<HTMLObjectElement> protect(this); // beforeload and plugin loading can make arbitrary DOM mutations.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
-    // beforeload events can modify the DOM, potentially causing
-    // RenderWidget::destroy() to be called.  Ensure we haven't been
-    // destroyed before continuing.
-    // FIXME: Should this render fallback content?
-    if (!renderer())
+    if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
-    RefPtr<HTMLObjectElement> protect(this); // Loading the plugin might remove us from the document.
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
-
     if (!success && fallbackContent)
         renderFallbackContent();
 }

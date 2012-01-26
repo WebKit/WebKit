@@ -154,6 +154,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
+    RefPtr<HTMLEmbedElement> protect(this); // Loading the plugin might remove us from the document.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(m_url);
     if (!beforeLoadAllowedLoad) {
         if (document()->isPluginDocument()) {
@@ -164,8 +165,9 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
         }
         return;
     }
+    if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
+        return;
 
-    RefPtr<HTMLEmbedElement> protect(this); // Loading the plugin might remove us from the document.
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
     loader->requestObject(this, m_url, getAttribute(nameAttr), m_serviceType, paramNames, paramValues);
