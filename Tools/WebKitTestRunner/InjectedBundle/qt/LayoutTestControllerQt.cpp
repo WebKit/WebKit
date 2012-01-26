@@ -29,6 +29,7 @@
 
 #include "ActivateFonts.h"
 #include "InjectedBundle.h"
+#include <QCoreApplication>
 #include <QDir>
 #include <QFontDatabase>
 #include <QObject>
@@ -88,8 +89,21 @@ void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
 
 JSRetainPtr<JSStringRef> LayoutTestController::pathToLocalResource(JSStringRef url)
 {
-    QString path = QDir::toNativeSeparators(QString(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(url)), JSStringGetLength(url)));
-    return JSStringCreateWithCharacters(reinterpret_cast<const JSChar*>(path.constData()), path.length());
+    QString localTmpUrl(QStringLiteral("file:///tmp/LayoutTests"));
+    QString givenUrl(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(url)), JSStringGetLength(url));
+
+    // Translate a request for /tmp/LayoutTests to the repository LayoutTests directory.
+    // Do not rely on a symlink to be created via the test runner, which will not work on Windows.
+    if (givenUrl.startsWith(localTmpUrl)) {
+        // DumpRenderTree lives in WebKit/WebKitBuild/<build_mode>/bin.
+        // Translate from WebKit/WebKitBuild/Release/bin => WebKit/LayoutTests.
+        QFileInfo layoutTestsRoot(QCoreApplication::applicationDirPath() + QStringLiteral("/../../../LayoutTests/"));
+        if (layoutTestsRoot.exists()) {
+            QString path = QStringLiteral("file://") + layoutTestsRoot.absolutePath() + givenUrl.mid(localTmpUrl.length());
+            return JSStringCreateWithCharacters(reinterpret_cast<const JSChar*>(path.constData()), path.length());
+        }
+    }
+    return url;
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::platformName()

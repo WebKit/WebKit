@@ -250,12 +250,6 @@ http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 # new failing tests
 fast/events/mouseover-button.html
 
-# Tests failed after r94178
-# https://bugs.webkit.org/show_bug.cgi?id=67388
-fast/loader/local-CSS-from-local.html
-fast/loader/local-JavaScript-from-local.html
-fast/loader/local-image-from-local.html
-
 # Missing layoutTestController.dumpResourceResponseMIMETypes()
 # https://bugs.webkit.org/show_bug.cgi?id=67392
 fast/preloader/document-write-noscript.html
