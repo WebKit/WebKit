@@ -1,3 +1,10 @@
+2012-01-25  Adam Barth  <abarth@webkit.org>
+
+        Disable tests on the mac-ews while we sort out hte stability issues.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+
 2012-01-23  Dirk Pranke  <dpranke@chromium.org>
 
         investigate use of 'mac' and 'win' as fully-specified port names for the apple ports
