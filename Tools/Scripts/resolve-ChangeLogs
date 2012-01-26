@@ -248,9 +248,10 @@ sub conflictFiles($)
 
 sub findChangeLog($)
 {
-    return $_[0] if basename($_[0]) eq "ChangeLog";
+    my $changeLogFileName = changeLogFileName();
+    return $_[0] if basename($_[0]) eq $changeLogFileName;
 
-    my $file = File::Spec->catfile($_[0], "ChangeLog");
+    my $file = File::Spec->catfile($_[0], $changeLogFileName);
     return $file if -d $_[0] and -e $file;
 
     return undef;
