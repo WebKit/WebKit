@@ -4,10 +4,6 @@
 
 BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 
-// Needs ENABLE_SHADOW_DOM
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
-
 // Slow tests
 // FIXME: File bugs.
 BUG_QT_SLOW SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
