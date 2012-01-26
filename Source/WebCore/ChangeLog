@@ -1,3 +1,9 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix mac build after r105988.
+
+        * WebCore.exp.in:
+
 2012-01-26  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [WK2] WebKitTestRunner needs layoutTestController.setGeolocationPermission
