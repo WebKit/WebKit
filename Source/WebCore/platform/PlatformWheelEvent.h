@@ -77,11 +77,12 @@ namespace WebCore {
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     enum PlatformWheelEventPhase {
         PlatformWheelEventPhaseNone        = 0,
-        PlatformWheelEventPhaseBegan       = 1 << 1,
-        PlatformWheelEventPhaseStationary  = 1 << 2,
-        PlatformWheelEventPhaseChanged     = 1 << 3,
-        PlatformWheelEventPhaseEnded       = 1 << 4,
-        PlatformWheelEventPhaseCancelled   = 1 << 5,
+        PlatformWheelEventPhaseBegan       = 1 << 0,
+        PlatformWheelEventPhaseStationary  = 1 << 1,
+        PlatformWheelEventPhaseChanged     = 1 << 2,
+        PlatformWheelEventPhaseEnded       = 1 << 3,
+        PlatformWheelEventPhaseCancelled   = 1 << 4,
+        PlatformWheelEventPhaseMayBegin    = 1 << 5,
     };
 #endif
 

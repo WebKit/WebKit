@@ -1,3 +1,15 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        WebWheelEvent::Phase and PlatformWheelEvent::Phase declarations should match AppKit
+        https://bugs.webkit.org/show_bug.cgi?id=77123
+
+        Reviewed by Beth Dakin.
+
+        * platform/PlatformWheelEvent.h:
+        ():
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::phaseForEvent):
+
 2012-01-26  Daniel Cheng  <dcheng@chromium.org>
 
         Revert code changes from r105800

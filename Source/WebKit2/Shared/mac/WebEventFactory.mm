@@ -200,6 +200,11 @@ static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
         phase |= WebWheelEvent::PhaseEnded;
     if ([event phase] & NSEventPhaseCancelled)
         phase |= WebWheelEvent::PhaseCancelled;
+#if !defined(BUILDING_ON_LION)
+    if ([event phase] & NSEventPhaseMayBegin)
+        phase |= WebWheelEvent::PhaseMayBegin;
+#endif
+
     return static_cast<WebWheelEvent::Phase>(phase);
 #else
     return WebWheelEvent::PhaseNone;
