@@ -21,6 +21,9 @@
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
         },
+        "AppleMacPublicApi": {
+            "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
+        },
         "Forms": {
             "filename": r"Source/WebCore/html/HTML(FieldSet|Form|FormControl|Input|Label"
                         r"|OptGroup|Option|Select|TextArea|TextFormControl)Element\."
@@ -138,6 +141,7 @@
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
         "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "pnormand@igalia.com", "gns@gnome.org" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
@@ -162,6 +166,10 @@
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
                                "because this patch contains changes to the Chromium public API.", ],
+        "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "
+                               "of the Apple Safari Team) before submitting "
+                               "because this patch contains changes to the Apple Mac "
+                               "WebKit.framework public API.", ],
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
                                  "please make sure it follows the guidelines for new WebKit2 GTK+ API. "
                                  "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],

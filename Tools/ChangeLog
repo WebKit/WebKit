@@ -1,3 +1,16 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        Automatically CC someone from Apple on any changes to Obj-C public API
+        https://bugs.webkit.org/show_bug.cgi?id=77053
+
+        Reviewed by Timothy Hatcher.
+
+        This has long been de-facto practice, seems now that we have
+        fancy watchlist support, we should just make the tools
+        do this automatically.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-01-25  Antoine Labour  <piman@chromium.org>
 
         Updating status in committers.py.
