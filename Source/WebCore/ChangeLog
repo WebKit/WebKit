@@ -1,3 +1,9 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Try to fix Gtk build - JSShadowRoot.cpp can't be found, fix by looking for it in the derived sources.
+
+        * GNUmakefile.list.am:
+
 2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Improve user experience of advanced search panel closing.

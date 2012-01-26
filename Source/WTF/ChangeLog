@@ -1,3 +1,9 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Try to fix Qt/Win build by building OwnPtrWin.cpp into the WTF library.
+
+        * WTF.pro:
+
 2012-01-19  Joi Sigurdsson  <joi@chromium.org>
 
         Enable use of precompiled headers in Chromium port on Windows.

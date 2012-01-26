@@ -467,6 +467,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSScriptProfile.h \
 	DerivedSources/WebCore/JSScriptProfileNode.cpp \
 	DerivedSources/WebCore/JSScriptProfileNode.h \
+	DerivedSources/WebCore/JSShadowRoot.cpp \
+	DerivedSources/WebCore/JSShadowRoot.h \
 	DerivedSources/WebCore/JSSharedWorkerContext.cpp \
 	DerivedSources/WebCore/JSSharedWorkerContext.h \
 	DerivedSources/WebCore/JSSharedWorker.cpp \
@@ -1156,8 +1158,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	Source/WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	Source/WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
-	Source/WebCore/bindings/js/JSShadowRoot.h \
-	Source/WebCore/bindings/js/JSShadowRoot.cpp \
 	Source/WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.h \

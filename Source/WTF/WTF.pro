@@ -220,6 +220,7 @@ unix: SOURCES += \
     ThreadingPthreads.cpp
 
 win*|wince*: SOURCES += \
+    win/OwnPtrWin.cpp \
     OSAllocatorWin.cpp \
     ThreadSpecificWin.cpp \
     ThreadingWin.cpp
