@@ -1,3 +1,17 @@
+2012-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Reapply Daniel Bates's build fix from r105847 after the exact same issue was reintroduced in r105930.
+        
+        Attempt to fix Mac build after changeset <http://trac.webkit.org/changeset/105930>.
+        (https://bugs.webkit.org/show_bug.cgi?id=75049)
+
+        Don't include NotImplemented.h in KURL.h since NotImplemented.h includes Logging.h, which defines
+        LOG_CHANNEL_PREFIX to be "Log". And this conflicts with the inclusion of WebKitLogging.h in
+        WebHTMLView.mm (which would have defined LOG_CHANNEL_PREFIX to be "WebKitLog").
+
+        * platform/KURL.h:
+        (WebCore::KURL::innerURL):
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r105940.
