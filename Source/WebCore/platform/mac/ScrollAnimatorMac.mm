@@ -889,14 +889,14 @@ void ScrollAnimatorMac::cancelAnimations()
 
 #if ENABLE(RUBBER_BANDING)
 
-static inline bool isScrollingLeftAndShouldNotRubberBand(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
+static bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
 {
-    return wheelEvent.deltaX() > 0 && !scrollableArea->shouldRubberBandInDirection(ScrollLeft);
-}
+    if (wheelEvent.deltaX() > 0)
+        return scrollableArea->shouldRubberBandInDirection(ScrollLeft);
+    if (wheelEvent.deltaX() < 0)
+        return scrollableArea->shouldRubberBandInDirection(ScrollRight);
 
-static inline bool isScrollingRightAndShouldNotRubberBand(const PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
-{
-    return wheelEvent.deltaX() < 0 && !scrollableArea->shouldRubberBandInDirection(ScrollRight);
+    return true;
 }
 
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -919,12 +919,8 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
-        if (m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition() &&
-            isScrollingLeftAndShouldNotRubberBand(wheelEvent, m_scrollableArea))
-            return false;
-
-        if (m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition() &&
-            isScrollingRightAndShouldNotRubberBand(wheelEvent, m_scrollableArea))
+        if (pinnedInDirection(-wheelEvent.deltaX(), 0) &&
+            !shouldRubberBandInHorizontalDirection(wheelEvent, m_scrollableArea))
             return false;
 
         didBeginScrollGesture();

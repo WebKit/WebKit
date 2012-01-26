@@ -1,3 +1,17 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Simplify checking of whether we should rubberband horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=77141
+
+        Reviewed by Adam Roben.
+
+        Have a single check for horizontal rubber-banding in both directions. This is in preparation
+        for moving this code into ScrollElasticityController.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::shouldRubberBandInHorizontalDirection):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+
 2012-01-26  Scott Graham  <scottmg@chomium.org>
 
         Fix include path in gyp file for V8InternalSettings.h
