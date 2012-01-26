@@ -1,3 +1,14 @@
+2012-01-26  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Use ICU if available
+        https://bugs.webkit.org/show_bug.cgi?id=76821
+
+        Reviewed by Simon Hausmann.
+
+        Adding libicu dependencies for a Qt5 based build.
+
+        * WTF.pri:
+
 2012-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] One more speculative buildfix after r105970.

@@ -85,11 +85,6 @@ scrollbars/scroll-rtl-or-bt-layer.html
 # [WK2] [Qt] Support drag in mouse events for WebKit2 EventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=69946>
 editing/pasteboard/drag-drop-iframe-refresh-crash.html
-editing/selection/select-across-readonly-input-1.html
-editing/selection/select-across-readonly-input-2.html
-editing/selection/select-across-readonly-input-3.html
-editing/selection/select-across-readonly-input-4.html
-editing/selection/select-across-readonly-input-5.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
@@ -417,8 +412,6 @@ http/tests/workers/interrupt-database-sync-open-crash.html
 security/autocomplete-cleared-on-back.html
 # Crashing test on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 editing/execCommand/align-in-span.html
-# It made the following test(s) timeout
-editing/selection/drag-in-iframe.html
 
 # [Qt][WK2] 2 editing tests introduced in r103073 fails
 # https://bugs.webkit.org/show_bug.cgi?id=74937

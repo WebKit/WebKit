@@ -30,10 +30,9 @@ isEmpty(SQLITE3SRCDIR) {
     SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
 }
 
-contains(CONFIG, use_system_icu) {
+haveQt(5):contains(QT_CONFIG,icu) {
     DEFINES += WTF_USE_ICU_UNICODE=1
     DEFINES -= WTF_USE_QT4_UNICODE
-    LIBS += -licuuc -licui18n
 } else {
     DEFINES += WTF_USE_QT4_UNICODE=1
     DEFINES -= WTF_USE_ICU_UNICODE

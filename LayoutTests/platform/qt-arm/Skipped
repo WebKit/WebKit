@@ -180,3 +180,7 @@ http/tests/misc/empty-urls.html
 
 # fails because of missing WebGL support
 fast/events/constructors/webgl-context-event-constructor.html
+
+# Timed out Sputnik tests on ARM
+sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html

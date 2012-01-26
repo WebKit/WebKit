@@ -670,10 +670,6 @@ editing/selection/extend-to-line-boundary.html
 # https://bugs.webkit.org/show_bug.cgi?id=62821
 editing/selection/move-vertically-with-paddings-borders.html
 
-# [Qt] editing/selection/collapse-selection-in-bidi.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=66431
-editing/selection/collapse-selection-in-bidi.html
-
 # editing/selection/select-bidi-run.html fails on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=68854
 editing/selection/select-bidi-run.html
@@ -684,12 +680,7 @@ editing/selection/after-line-break.html
 
 # REGRESSION(r72861): editing/selection/click-left-of-rtl-wrapping-text.html and modify-up-on-rtl-wrapping-text.html fail on all but Mac platform
 # https://bugs.webkit.org/show_bug.cgi?id=50204
-editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/modify-up-on-rtl-wrapping-text.html
-
-# REGRESSION(r74971): [Qt] /editing/selection/caret-bidi-first-and-last-letters.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=51884
-editing/selection/caret-bidi-first-and-last-letters.html
 
 # [Qt]REGRESSION(r78846): editing/selection/mixed-editability-10.html
 # https://bugs.webkit.org/show_bug.cgi?id=54725
@@ -702,10 +693,6 @@ editing/selection/move-by-word-visually-null-box.html
 editing/selection/move-by-word-visually-single-space-inline-element.html
 editing/selection/move-by-word-visually-single-space-one-element.html
 editing/selection/move-by-word-visually-inline-block-positioned-element.html
-
-# [Qt] editing/selection/caret-at-bidi-boundary.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=66514
-editing/selection/caret-at-bidi-boundary.html
 
 # ============================================================================= #
 # Failing editing/spelling tests
@@ -780,26 +767,8 @@ sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
 sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
-sputnik/Unicode/Unicode_500/S7.6_A3.1.html
-sputnik/Unicode/Unicode_500/S7.6_A3.2.html
-sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
-sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
-sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
-sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
-sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
-sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
-sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
-sputnik/Unicode/Unicode_510/S7.6_A2.3.html
 sputnik/Unicode/Unicode_510/S7.6_A3.1.html
 sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
-sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
@@ -813,8 +782,6 @@ sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/
 # Timed out Sputnik tests on ARM
 sputnik/Unicode/Unicode_218/S7.6_A3.1.html
 sputnik/Unicode/Unicode_218/S7.6_A3.2.html
-sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
-sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
 
 # =========================================================================== #
 # Fluctuating/flakey tests
@@ -1541,21 +1508,9 @@ fast/box-sizing/percentage-height.html
 fast/dom/focus-contenteditable.html
 fast/dom/isindex-002.html
 # seems to trigger some bugs/missing features in QTextCodec
-fast/encoding/char-encoding.html
 # QUrl::from/toACE seems to be stricter than what ICU does.
 fast/encoding/idn-security.html
 fast/encoding/xmacroman-encoding-test.html
-fast/encoding/GBK/EUC-CN.html
-fast/encoding/GBK/chinese.html
-fast/encoding/GBK/cn-gb.html
-fast/encoding/GBK/csgb2312.html
-fast/encoding/GBK/csgb231280.html
-fast/encoding/GBK/gb2312.html
-fast/encoding/GBK/gb_2312-80.html
-fast/encoding/GBK/gbk.html
-fast/encoding/GBK/iso-ir-58.html
-fast/encoding/GBK/x-euc-cn.html
-fast/encoding/GBK/x-gbk.html
 fast/events/autoscroll.html
 fast/events/content-changed-during-drop.html
 fast/events/js-keyboard-event-creation.html
@@ -1624,17 +1579,12 @@ fast/dom/Range/getBoundingClientRect.html
 fast/dom/Range/getClientRects.html
 fast/dom/tabindex-clamp.html
 fast/dom/Window/webkitConvertPoint.html
-fast/encoding/char-encoding-mac.html
-fast/encoding/hebrew/8859-8-e.html
-fast/encoding/hebrew/8859-8-i.html
-fast/encoding/hebrew/logical.html
 fast/events/crash-on-mutate-during-drop.html
 fast/forms/option-mouseevents.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
 fast/dom/Range/range-expand.html
-fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
 fast/events/attempt-scroll-with-no-scrollbars.html
@@ -1663,8 +1613,6 @@ fast/css/text-overflow-ellipsis-strict.html
 fast/dom/HTMLTextAreaElement/reset-textarea.html
 fast/dom/icon-url-property.html
 fast/dynamic/008.html
-fast/encoding/char-decoding-mac.html
-fast/encoding/hebrew/csISO88598I.html
 fast/events/offsetX-offsetY.html
 fast/forms/basic-textareas.html
 fast/forms/box-shadow-override.html

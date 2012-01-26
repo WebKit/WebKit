@@ -1,3 +1,14 @@
+2012-01-26  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Use ICU if available
+        https://bugs.webkit.org/show_bug.cgi?id=76821
+
+        Reviewed by Simon Hausmann.
+
+        Adding unicode defines for a Qt 5 based build.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-01-26  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [WK2] WebKitTestRunner needs layoutTestController.setGeolocationPermission

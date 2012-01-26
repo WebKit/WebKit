@@ -17,13 +17,11 @@ INCLUDEPATH += \
     $$OLD_SOURCE_DIR/qt \
     $$OLD_SOURCE_DIR/unicode
 
-contains(CONFIG, use_system_icu) {
-    DEFINES += WTF_USE_ICU_UNICODE=1
-    DEFINES -= WTF_USE_QT4_UNICODE
-    LIBS += -licuuc -licui18n
+haveQt(5):contains(QT_CONFIG,icu) {
+    unix:!mac: LIBS += $$system(icu-config --ldflags-searchpath --ldflags-libsonly)
+    else: LIBS += -licuin
 } else {
-    DEFINES += WTF_USE_QT4_UNICODE=1
-    DEFINES -= WTF_USE_ICU_UNICODE
+    haveQt(5): error("To build QtWebKit with Qt 5 you need ICU")
 }
 
 v8 {

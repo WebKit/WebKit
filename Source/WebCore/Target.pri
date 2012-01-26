@@ -2832,7 +2832,6 @@ SOURCES += \
     platform/qt/LanguageQt.cpp \
     platform/qt/TemporaryLinkStubsQt.cpp \
     platform/text/qt/TextBoundariesQt.cpp \
-    platform/text/qt/TextBreakIteratorQt.cpp \
     platform/text/qt/TextBreakIteratorInternalICUQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \
@@ -2871,8 +2870,10 @@ mac {
         platform/text/cf/StringImplCF.cpp
 }
 
-contains (CONFIG, use_system_icu) {
+haveQt(5):contains(QT_CONFIG,icu) {
     SOURCES += platform/text/TextBreakIteratorICU.cpp
+} else {
+    SOURCES += platform/text/qt/TextBreakIteratorQt.cpp
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {

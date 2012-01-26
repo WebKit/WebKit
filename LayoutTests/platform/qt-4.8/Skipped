@@ -4,3 +4,60 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 # [Qt] Two http auth tests fail with Qt 4.7.2
 # https://bugs.webkit.org/show_bug.cgi?id=55767
 http/tests/appcache/auth.html
+
+#################################################
+# Moved from qt/Skipped after:
+# [Qt] Use ICU if available
+# https://bugs.webkit.org/show_bug.cgi?id=76821
+fast/encoding/GBK/EUC-CN.html
+fast/encoding/GBK/chinese.html
+fast/encoding/GBK/cn-gb.html
+fast/encoding/GBK/csgb2312.html
+fast/encoding/GBK/csgb231280.html
+fast/encoding/GBK/gb2312.html
+fast/encoding/GBK/gb_2312-80.html
+fast/encoding/GBK/gbk.html
+fast/encoding/GBK/iso-ir-58.html
+fast/encoding/GBK/x-euc-cn.html
+fast/encoding/GBK/x-gbk.html
+fast/encoding/char-decoding-mac.html
+fast/encoding/char-decoding.html
+fast/encoding/char-encoding-mac.html
+fast/encoding/char-encoding.html
+fast/encoding/hebrew/8859-8-e.html
+fast/encoding/hebrew/8859-8-i.html
+fast/encoding/hebrew/csISO88598I.html
+fast/encoding/hebrew/logical.html
+sputnik/Unicode/Unicode_500/S7.6_A3.1.html
+sputnik/Unicode/Unicode_500/S7.6_A3.2.html
+sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
+sputnik/Unicode/Unicode_510/S15.5.4.16_A1.html
+sputnik/Unicode/Unicode_510/S15.5.4.18_A1.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A1.1_T4.html
+sputnik/Unicode/Unicode_510/S7.6_A2.2_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A2.2_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A2.3.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T4.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T7.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T8.html
+sputnik/Unicode/Unicode_510/S7.6_A5.2_T9.html
+
+# REGRESSION(r74971): [Qt] /editing/selection/caret-bidi-first-and-last-letters.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=51884
+editing/selection/caret-bidi-first-and-last-letters.html
+
+# [Qt] editing/selection/collapse-selection-in-bidi.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=66431
+editing/selection/collapse-selection-in-bidi.html
+
+# [Qt] editing/selection/caret-at-bidi-boundary.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=66514
+editing/selection/caret-at-bidi-boundary.html
+
+editing/selection/click-left-of-rtl-wrapping-text.html
+#################################################

@@ -1,3 +1,16 @@
+2012-01-26  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Use ICU if available
+        https://bugs.webkit.org/show_bug.cgi?id=76821
+
+        Reviewed by Simon Hausmann.
+
+        Adding correct sources to a Qt 5 based build.
+
+        No new tests, it's just a build dependency change.
+
+        * Target.pri:
+
 2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix mac build after r105988.
