@@ -104,6 +104,11 @@ class SingleTestRunner:
     def _run_compare_test(self):
         driver_output = self._driver.run_test(self._driver_input())
         expected_driver_output = self._expected_driver_output()
+
+        if self._options.ignore_metrics:
+            expected_driver_output.strip_metrics()
+            driver_output.strip_metrics()
+
         test_result = self._compare_output(driver_output, expected_driver_output)
         if self._options.new_test_results:
             self._add_missing_baselines(test_result, driver_output)

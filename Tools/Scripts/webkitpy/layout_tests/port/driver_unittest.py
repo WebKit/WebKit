@@ -35,6 +35,47 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 
 
+class DriverOutputTest(unittest.TestCase):
+    def test_strip_metrics(self):
+        patterns = [
+            ('RenderView at (0,0) size 800x600', 'RenderView '),
+            ('text run at (0,0) width 100: "some text"', '"some text"'),
+            ('RenderBlock {HTML} at (0,0) size 800x600', 'RenderBlock {HTML} '),
+            ('RenderBlock {INPUT} at (29,3) size 12x12 [color=#000000]', 'RenderBlock {INPUT}'),
+
+            ('RenderBlock (floating) {DT} at (5,5) size 79x310 [border: (5px solid #000000)]',
+            'RenderBlock (floating) {DT} [border: px solid #000000)]'),
+
+            ('\n    "truncate text    "\n', '\n    "truncate text"\n'),
+
+            ('RenderText {#text} at (0,3) size 41x12\n    text run at (0,3) width 41: "whimper "\n',
+            'RenderText {#text} \n    "whimper"\n'),
+
+            ("""text run at (0,0) width 109: ".one {color: green;}"
+          text run at (109,0) width 0: " "
+          text run at (0,17) width 81: ".1 {color: red;}"
+          text run at (81,17) width 0: " "
+          text run at (0,34) width 102: ".a1 {color: green;}"
+          text run at (102,34) width 0: " "
+          text run at (0,51) width 120: "P.two {color: purple;}"
+          text run at (120,51) width 0: " "\n""",
+            '".one {color: green;}  .1 {color: red;}  .a1 {color: green;}  P.two {color: purple;}"\n'),
+
+            ('text-- other text', 'text--other text'),
+
+            (' some output   "truncate trailing spaces at end of line after text"   \n',
+            ' some output   "truncate trailing spaces at end of line after text"\n'),
+
+            (r'scrollWidth 120', r'scrollWidth'),
+            (r'scrollHeight 120', r'scrollHeight'),
+        ]
+
+        for pattern in patterns:
+            driver_output = DriverOutput(pattern[0], None, None, None)
+            driver_output.strip_metrics()
+            self.assertEqual(driver_output.text, pattern[1])
+
+
 class DriverTest(unittest.TestCase):
     def make_port(self):
         return Port(MockSystemHost())

@@ -175,6 +175,9 @@ def _set_up_derived_options(port, options):
         warnings.append("--no-http is ignored since --force is also provided")
         options.http = True
 
+    if options.ignore_metrics and (options.new_baseline or options.reset_results):
+        warnings.append("--ignore-metrics has no effect with --new-baselines or with --reset-results")
+
     return warnings
 
 
@@ -342,6 +345,9 @@ def parse_args(args=None):
             default=True, help="Run HTTP and WebSocket tests (default)"),
         optparse.make_option("--no-http", action="store_false", dest="http",
             help="Don't run HTTP and WebSocket tests"),
+        optparse.make_option("--ignore-metrics", action="store_true", dest="ignore_metrics",
+            default=False, help="Ignore rendering metrics related information from test "
+            "output, only compare the structure of the rendertree."),
     ]
 
     test_options = [
