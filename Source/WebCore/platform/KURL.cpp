@@ -68,6 +68,18 @@ static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLett
 
 #if !USE(GOOGLEURL)
 
+static const char wsScheme[] = {'w', 's'};
+static const char ftpScheme[] = {'f', 't', 'p'};
+static const char ftpPort[] = {'2', '1'};
+static const char wssScheme[] = {'w', 's', 's'};
+static const char fileScheme[] = {'f', 'i', 'l', 'e'};
+static const char httpScheme[] = {'h', 't', 't', 'p'};
+static const char httpPort[] = {'8', '0'};
+static const char httpsScheme[] = {'h', 't', 't', 'p', 's'};
+static const char httpsPort[] = {'4', '4', '3'};
+static const char gopherScheme[] = {'g', 'o', 'p', 'h', 'e', 'r'};
+static const char gopherPort[] = {'7', '0'};
+
 static inline bool isLetterMatchIgnoringCase(char character, char lowercaseLetter)
 {
     ASSERT(isASCIILower(lowercaseLetter));
@@ -1050,13 +1062,20 @@ void KURL::parse(const String& string)
     parse(buffer.data(), &string);
 }
 
-// FIXME: (lenA != lenB) is never true in the way this function is used.
-// FIXME: This is only used for short string, we should replace equal() by a recursive template comparing the strings without loop.
-static inline bool equal(const char* a, size_t lenA, const char* b, size_t lenB)
+template<size_t length>
+static inline bool equal(const char* a, const char (&b)[length])
 {
-    if (lenA != lenB)
-        return false;
-    return !strncmp(a, b, lenA);
+    for (size_t i = 0; i < length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+
+template<size_t lengthB>
+static inline bool equal(const char* stringA, size_t lengthA, const char (&stringB)[lengthB])
+{
+    return lengthA == lengthB && equal(stringA, stringB);
 }
 
 // List of default schemes is taken from google-url:
@@ -1067,19 +1086,19 @@ static inline bool isDefaultPortForScheme(const char* port, size_t portLength, c
     // the code was moved from google-url, but may be removed later.
     switch (schemeLength) {
     case 2:
-        return equal("ws", 2, scheme, schemeLength) && equal("80", 2, port, portLength);
+        return equal(scheme, wsScheme) && equal(port, portLength, httpPort);
     case 3:
-        if (equal("ftp", 3, scheme, schemeLength))
-            return equal("21", 2, port, portLength);
-        if (equal("wss", 3, scheme, schemeLength))
-            return equal("443", 3, port, portLength);
+        if (equal(scheme, ftpScheme))
+            return equal(port, portLength, ftpPort);
+        if (equal(scheme, wssScheme))
+            return equal(port, portLength, httpsPort);
         break;
     case 4:
-        return equal("http", 4, scheme, schemeLength) && equal("80", 2, port, portLength);
+        return equal(scheme, httpScheme) && equal(port, portLength, httpPort);
     case 5:
-        return equal("https", 5, scheme, schemeLength) && equal("443", 3, port, portLength);
+        return equal(scheme, httpsScheme) && equal(port, portLength, httpsPort);
     case 6:
-        return equal("gopher", 6, scheme, schemeLength) && equal("70", 2, port, portLength);
+        return equal(scheme, gopherScheme) && equal(port, portLength, gopherPort);
     }
     return false;
 }
@@ -1093,15 +1112,15 @@ static bool isNonFileHierarchicalScheme(const char* scheme, size_t schemeLength)
 {
     switch (schemeLength) {
     case 2:
-        return equal("ws", 2, scheme, schemeLength);
+        return equal(scheme, wsScheme);
     case 3:
-        return equal("ftp", 3, scheme, schemeLength) || equal("wss", 3, scheme, schemeLength);
+        return equal(scheme, ftpScheme) || equal(scheme, wssScheme);
     case 4:
-        return equal("http", 4, scheme, schemeLength);
+        return equal(scheme, httpScheme);
     case 5:
-        return equal("https", 5, scheme, schemeLength);
+        return equal(scheme, httpsScheme);
     case 6:
-        return equal("gopher", 6, scheme, schemeLength);
+        return equal(scheme, gopherScheme);
     }
     return false;
 }
@@ -1110,15 +1129,15 @@ static bool isCanonicalHostnameLowercaseForScheme(const char* scheme, size_t sch
 {
     switch (schemeLength) {
     case 2:
-        return equal("ws", 2, scheme, schemeLength);
+        return equal(scheme, wsScheme);
     case 3:
-        return equal("ftp", 3, scheme, schemeLength) || equal("wss", 3, scheme, schemeLength);
+        return equal(scheme, ftpScheme) || equal(scheme, wssScheme);
     case 4:
-        return equal("http", 4, scheme, schemeLength) || equal("file", 4, scheme, schemeLength);
+        return equal(scheme, httpScheme) || equal(scheme, fileScheme);
     case 5:
-        return equal("https", 5, scheme, schemeLength);
+        return equal(scheme, httpsScheme);
     case 6:
-        return equal("gopher", 6, scheme, schemeLength);
+        return equal(scheme, gopherScheme);
     }
     return false;
 }

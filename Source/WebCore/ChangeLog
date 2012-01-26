@@ -1,3 +1,21 @@
+2012-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Using strncmp() for comparing scheme and port numbers is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=75821
+
+        Reviewed by Darin Adler.
+
+        Replace the equal() function comparing 2 arbitrary strings by a template
+        comparing the string to an array, character by character.
+
+        This is only used for small strings: the schemes and the ports.
+
+        * platform/KURL.cpp:
+        (WebCore::equal):
+        (WebCore::isDefaultPortForScheme):
+        (WebCore::isNonFileHierarchicalScheme):
+        (WebCore::isCanonicalHostnameLowercaseForScheme):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         WebWheelEvent::Phase and PlatformWheelEvent::Phase declarations should match AppKit
