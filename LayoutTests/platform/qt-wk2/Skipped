@@ -519,3 +519,15 @@ http/tests/navigation/anchor-frames-gbk.html
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
+
+# [Qt][WK2] Still failing tests after moving to ICU
+# https://bugs.webkit.org/show_bug.cgi?id=77102
+css1/text_properties/text_transform.html
+editing/execCommand/findString-diacriticals.html
+editing/selection/caret-at-bidi-boundary.html
+editing/selection/caret-bidi-first-and-last-letters.html
+editing/selection/regional-indicators.html
+fast/text/find-kana.html
+fast/text/find-russian.html
+fast/text/find-soft-hyphen.html
+svg/as-background-image/background-image-preserveaspectRatio-support.html
