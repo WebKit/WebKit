@@ -950,15 +950,15 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         }
     }
 
-    return m_scrollElasticityController.handleWheelEvent(wheelEvent);
-}
-
-void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
-{
-    if (gestureEvent.type() == PlatformEvent::GestureScrollBegin)
+    if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
+        // We don't return after this because we still want the scroll elasticity controller to handle the wheel event.
         beginScrollGesture();
-    else if (gestureEvent.type() == PlatformEvent::GestureScrollEnd)
+    } else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
         endScrollGesture();
+        return true;
+    }
+
+    return m_scrollElasticityController.handleWheelEvent(wheelEvent);
 }
 
 bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)

@@ -84,9 +84,6 @@ private:
 
 #if ENABLE(RUBBER_BANDING)
     virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
-#if ENABLE(GESTURE_EVENTS)
-    virtual void handleGestureEvent(const PlatformGestureEvent&);
-#endif
 #endif
 
     virtual void cancelAnimations();
