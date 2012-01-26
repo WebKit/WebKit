@@ -67,7 +67,23 @@ def command_line(cmd, *args):
     return [sys.executable, __file__, '--' + cmd] + list(args)
 
 
+def script_dir():
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+
 class ExecutiveTest(unittest.TestCase):
+    def setUp(self):
+        # We need this so that we can launch 'python executive_unittests.py' directly (to test
+        # actually spawning subprocesses) and have 'from webkitpy...' imports work reliably.
+        self.orig_pythonpath = os.environ.get('PYTHONPATH')
+        os.environ['PYTHONPATH'] = script_dir()
+
+    def tearDown(self):
+        if self.orig_pythonpath is not None:
+            os.environ['PYTHONPATH'] = self.orig_pythonpath
+        else:
+            del os.environ['PYTHONPATH']
+
     def assert_interpreter_for_content(self, intepreter, content):
         fs = MockFileSystem()
         file_path = None

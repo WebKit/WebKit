@@ -1,3 +1,25 @@
+2012-01-25  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: executive_unittest fails if PYTHONPATH isn't set
+        https://bugs.webkit.org/show_bug.cgi?id=77058
+
+        Reviewed by Eric Seidel.
+
+        r105935 broke executive_unittest by changing which script we
+        were running and not ensuring that the PYTHONPATH was set up
+        properly.
+
+        This change also fixes a regression introduced recently where
+        test-webkitpy wasn't figuring out the path to Tools/Scripts
+        right, either (so running ./test-webkitpy would fail).
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (script_dir):
+        (ExecutiveTest.setUp):
+        (ExecutiveTest):
+        (ExecutiveTest.tearDown):
+
 2012-01-25  Adam Barth  <abarth@webkit.org>
 
         Disable tests on the mac-ews while we sort out hte stability issues.
