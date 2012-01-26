@@ -26,13 +26,17 @@
 #ifndef JSMainThreadExecState_h
 #define JSMainThreadExecState_h
 
+#include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
 #include <runtime/Completion.h>
+#include <runtime/Executable.h>
 #ifndef NDEBUG
 #include <wtf/MainThread.h>
 #endif
 
 namespace WebCore {
+
+class Page;
 
 class JSMainThreadExecState {
     WTF_MAKE_NONCOPYABLE(JSMainThreadExecState);
@@ -50,6 +54,29 @@ public:
         if (thisValue.isObject())
             thisValue = thisValue.toThisObject(exec);
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
+    };
+
+    static JSC::JSValue instrumentedCall(Page* page, JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
+    {
+        InspectorInstrumentationCookie cookie;
+        if (InspectorInstrumentation::hasFrontends()) {
+            String resourceName;
+            int lineNumber = 1;
+
+            if (callType == JSC::CallTypeJS) {
+                resourceName = ustringToString(callData.js.functionExecutable->sourceURL());
+                lineNumber = callData.js.functionExecutable->lineNo();
+            } else
+                resourceName = "undefined";
+
+            cookie = InspectorInstrumentation::willCallFunction(page, resourceName, lineNumber);
+        }
+
+        JSC::JSValue value = call(exec, functionObject, callType, callData, thisValue, args);
+
+        InspectorInstrumentation::didCallFunction(cookie);
+
+        return value;
     };
 
     static JSC::JSValue evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)

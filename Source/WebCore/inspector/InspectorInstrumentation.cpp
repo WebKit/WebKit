@@ -244,12 +244,6 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents* instrumen
         timelineAgent->didRemoveTimer(timerId);
 }
 
-#if USE(JSC) // It is disabled for JSC see WK-BUG 40119
-InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents*, const String&, int)
-{
-    return InspectorInstrumentationCookie();
-}
-#else
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents* instrumentingAgents, const String& scriptName, int scriptLine)
 {
     int timelineAgentId = 0;
@@ -259,7 +253,6 @@ InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(In
     }
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
-#endif
 
 void InspectorInstrumentation::didCallFunctionImpl(const InspectorInstrumentationCookie& cookie)
 {

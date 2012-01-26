@@ -1,3 +1,21 @@
+2012-01-26  Eli Fidler  <efidler@rim.com>
+
+        [JSC] Inspector instrumentation for JavaScript calls.
+        https://bugs.webkit.org/show_bug.cgi?id=40119
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by existing Chromium inspector tests
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::instrumentedCall):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+
 2012-01-26  Mike Reed  <reed@google.com>
 
         Signal to skia to force A8 text from LCD output, but only when we have to disable LCD because we're in a layer

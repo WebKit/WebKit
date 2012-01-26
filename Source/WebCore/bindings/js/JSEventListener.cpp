@@ -79,9 +79,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!globalObject)
         return;
 
+    Frame* frame = 0;
     if (scriptExecutionContext->isDocument()) {
         JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject);
-        Frame* frame = window->impl()->frame();
+        frame = window->impl()->frame();
         if (!frame)
             return;
         // The window must still be active in its frame. See <https://bugs.webkit.org/show_bug.cgi?id=21921>.
@@ -120,7 +121,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         globalData.timeoutChecker.start();
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
         JSValue retval = scriptExecutionContext->isDocument()
-            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args)
+            ? JSMainThreadExecState::instrumentedCall(frame ? frame->page() : 0, exec, handleEventFunction, callType, callData, thisValue, args)
             : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
         globalData.timeoutChecker.stop();
 
