@@ -1,3 +1,18 @@
+2012-01-26  Mike Reed  <reed@google.com>
+
+        Signal to skia to force A8 text from LCD output, but only when we have to disable LCD because we're in a layer
+        https://bugs.webkit.org/show_bug.cgi?id=76547
+
+        Reviewed by Stephen White.
+
+        Existing tests should confirm nothing is broken. Antialiased text
+        is disabled in layouttests, so they should be unaffected by the
+        difference in antialiasing quality.
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::setupPaintForFont):
+
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Use PlatformWheelEvent::phase() to determine if a scroll gesture begins or ends
