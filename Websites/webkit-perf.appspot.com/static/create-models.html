@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create new models</title>
+<style type="text/css">
+em { font-style: normal; color: red; }
+pre {border: solid 1px black; padding: 5px;}
+h3 {font-size: 1em;}
+</style>
+</head>
+<body>
+<h1>Create new models</h1>
+
+<p>Key: canonicalized name used by build bots and storage. Name: human friendly name</p>
+
+<h2>Builder</h2>
+<form method="post" action="/api/create/builder" onsubmit="return submitByXHR(this, event)">
+<label for="name">Name/Key</label><input type="text" name="name">
+<label for="password">Password</label><input type="password" name="password">
+<button type="submit">Create</button>
+</form>
+
+<h2>Branch</h2>
+<form method="post" action="/api/create/branch" onsubmit="return submitByXHR(this, event);">
+<label for="key">Key</label><input type="text" name="key">
+<label for="name">Name</label><input type="text" name="name">
+<button type="submit">Create</button>
+</form>
+
+<h2>Platform</h2>
+<form method="post" action="/api/create/platform" onsubmit="return submitByXHR(this, event)">
+<label for="key">Key</label><input type="text" name="key">
+<label for="name">Name</label><input type="text" name="name">
+<button type="submit">Create</button>
+</form>
+
+<h2>Result:</h2>
+<h3>Status code</h3>
+<p id="status"></p>
+<h3>Headers</h3>
+<pre id="headers"></pre>
+<h3>Response</h3>
+<pre id="response" name="response"></pre>
+<script>
+
+$ = function (id) { return document.getElementById(id); }
+
+function submitByXHR(form, event) {
+    event.preventDefault();
+
+    var contents = {}
+    for (var i = 0; i < form.elements.length; i++)
+        contents[form.elements[i].name] = form.elements[i].value;
+
+    var xhr = new XMLHttpRequest;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4)
+            return;
+        $('status').innerText = xhr.status;
+        $('headers').innerText = xhr.getAllResponseHeaders();
+        $('response').innerHTML = xhr.responseText;
+    }
+    xhr.open(form.method, form.action, true);
+    xhr.send(JSON.stringify(contents));
+}
+
+</script>
+</body>
+</html>

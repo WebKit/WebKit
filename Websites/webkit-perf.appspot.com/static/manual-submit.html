@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test submission of a build report</title>
+<style type="text/css">
+em { font-style: normal; color: red; }
+pre {border: solid 1px black; padding: 5px;}
+h3 {font-size: 1em;}
+</style>
+</head>
+<body>
+<h1>Test submission of a build report</h1>
+<p>Specify the payload and submit:</p>
+<textarea id="data" name="data" rows="20" cols="100"></textarea><br>
+<em id="json_error"></em><br>
+<button type="submit" onclick="submit()">Submit</button>
+
+<h2>Result:</h2>
+<h3>Status code</h3>
+<p id="status"></p>
+<h3>Headers</h3>
+<pre id="headers"></pre>
+<h3>Response</h3>
+<pre id="response" name="response"></pre>
+<script>
+
+$ = function (id) { return document.getElementById(id); }
+
+$('data').oninput = function () {
+    var payload = $('data').value;
+    try {
+        JSON.parse(payload);
+        $('json_error').innerText = '';
+    } catch (error) {
+        $('json_error').innerText = error;
+    }
+}
+
+function submit() {
+    var xhr = new XMLHttpRequest;
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState != 4)
+            return;
+        $('status').innerText = xhr.status;
+        $('headers').innerText = xhr.getAllResponseHeaders();
+        $('response').innerHTML = xhr.responseText;
+    }
+    xhr.open('POST','/admin/report/', true);
+    xhr.send($('data').value);
+}
+
+$('data').value = JSON.stringify({
+    'branch': 'webkit-trunk',
+    'platform': 'chromium-mac',
+    'builder-name': 'google-mac-2',
+    'build-number': '123',
+    'timestamp': parseInt(Date.now() / 1000),
+    'revision': 104856,
+    'results':
+        {
+            'webkit_style_test': {'avg': 100, 'median': 102, 'stdev': 5, 'min': 90, 'max': 110},
+            'some_test': 54,
+        },
+}, null, '  ');
+
+</script>
+</body>
+</html>

@@ -1,3 +1,68 @@
+2012-01-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Port Mozilla's Graph Server
+        https://bugs.webkit.org/show_bug.cgi?id=76312
+
+        Reviewed by Adam Barth.
+
+        Add the app engine backend for the Mozilla's graph server used on perf-webkit.appspot.com.
+
+        To deploy webkit-perf.appspot.com, you also need to pull index.html, embed.html, graph.html, jq,
+        js (except config.js), and css (except title.png) from https://github.com/mozilla/graphs.
+
+        * Websites/perf-webkit.appspot.com: Added.
+        * Websites/perf-webkit.appspot.com/app.yaml: Added.
+        * Websites/perf-webkit.appspot.com/create_handler.py: Added.
+        (CreateHandler):
+        (CreateHandler.post):
+        (CreateHandler._createBuilder):
+        (CreateHandler._createBuilder.execute):
+        (CreateHandler._createBranch):
+        (CreateHandler._createBranch.execute):
+        (CreateHandler._createPlatform):
+        (CreateHandler._createPlatform.execute):
+        * Websites/perf-webkit.appspot.com/dashboard_handler.py: Added.
+        (DashboardHandler):
+        (DashboardHandler.get):
+        * Websites/perf-webkit.appspot.com/index.yaml: Added.
+        * Websites/perf-webkit.appspot.com/main.py: Added.
+        (main):
+        * Websites/perf-webkit.appspot.com/manifest_handler.py: Added.
+        (ManifestHandler):
+        (ManifestHandler.get):
+        * Websites/perf-webkit.appspot.com/models.py: Added.
+        (NumericIdHolder):
+        (NumericIdHolder.whose):
+        (createInTransactionWithNumericIdHolder):
+        (modelFromNumericId):
+        (Branch):
+        (Platform):
+        (Builder):
+        (Builder.authenticate):
+        (Builder.hashedPassword):
+        (Build):
+        (Test):
+        (TestResult):
+        (ReportLog):
+        * Websites/perf-webkit.appspot.com/report_handler.py: Added.
+        (ReportHandler):
+        (ReportHandler.post):
+        (ReportHandler._modelByKeyNameInBodyOrError):
+        (ReportHandler._integerInBody):
+        (ReportHandler._timestampInBody):
+        (ReportHandler._output):
+        (ReportHandler._resultsAreValid):
+        (ReportHandler._createBuildIfPossible):
+        (ReportHandler._createBuildIfPossible.execute):
+        (ReportHandler._addTestIfNeeded):
+        (ReportHandler._addTestIfNeeded.execute):
+        * Websites/perf-webkit.appspot.com/runs_handler.py: Added.
+        (RunsHandler):
+        (RunsHandler.get):
+        * Websites/perf-webkit.appspot.com/static: Added.
+        * Websites/perf-webkit.appspot.com/static/create-models.html: Added.
+        * Websites/perf-webkit.appspot.com/static/manual-submit.html: Added.
+
 2012-01-25  Hajime Morita  <morrita@google.com>>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom
