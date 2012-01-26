@@ -42,8 +42,12 @@ from webkitpy.layout_tests.port import port_testcase
 
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.controllers import manager
 from webkitpy.layout_tests.controllers.manager import interpret_test_failures,  Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
+from webkitpy.layout_tests.models import result_summary
+from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.models.test_results import TestResult
@@ -370,6 +374,56 @@ class ResultSummaryTest(unittest.TestCase):
         self.assertTrue(test_dict['is_mismatch_reftest'])
         self.assertEqual(test_dict['ref_file'], 'foo/common.html')
 
+    def get_result(self, test_name, result_type=test_expectations.PASS, run_time=0):
+        failures = []
+        if result_type == test_expectations.TIMEOUT:
+            failures = [test_failures.FailureTimeout()]
+        elif result_type == test_expectations.CRASH:
+            failures = [test_failures.FailureCrash()]
+        return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
+
+    def get_result_summary(self, port, test_names, expectations_str):
+        expectations = test_expectations.TestExpectations(port, test_names, expectations_str, port.test_configuration(), is_lint_mode=False)
+        return test_names, result_summary.ResultSummary(expectations, test_names), expectations
+
+    # FIXME: Use this to test more of summarize_results. This was moved from printing_unittest.py.
+    def get_unexpected_results(self, port, expected, passing, flaky):
+        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html']
+        expectations = ''
+        paths, rs, exp = self.get_result_summary(port, tests, expectations)
+        if expected:
+            rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected)
+            rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected)
+            rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected)
+        elif passing:
+            rs.add(self.get_result('passes/text.html'), expected)
+            rs.add(self.get_result('failures/expected/timeout.html'), expected)
+            rs.add(self.get_result('failures/expected/crash.html'), expected)
+        else:
+            rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected)
+            rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected)
+            rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected)
+        retry = rs
+        if flaky:
+            paths, retry, exp = self.get_result_summary(port, tests, expectations)
+            retry.add(self.get_result('passes/text.html'), True)
+            retry.add(self.get_result('failures/expected/timeout.html'), True)
+            retry.add(self.get_result('failures/expected/crash.html'), True)
+        unexpected_results = manager.summarize_results(port, exp, rs, retry, test_timings={}, only_unexpected=True, interrupted=False)
+        return unexpected_results
+
+    def test_no_svn_revision(self):
+        host = MockHost()
+        port = host.port_factory.get('test')
+        results = self.get_unexpected_results(port, expected=False, passing=False, flaky=False)
+        self.assertTrue('revision' not in results)
+
+    def test_svn_revision(self):
+        host = MockHost()
+        port = host.port_factory.get('test')
+        port._options.builder_name = 'dummy builder'
+        results = self.get_unexpected_results(port, expected=False, passing=False, flaky=False)
+        self.assertTrue('revision' in results)
 
 if __name__ == '__main__':
     port_testcase.main()

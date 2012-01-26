@@ -102,6 +102,11 @@ def interpret_test_failures(port, test_name, failures):
     return test_dict
 
 
+def use_trac_links_in_results_html(port_obj):
+    # We only use trac links on the buildbots.
+    # Use existence of builder_name as a proxy for knowing we're on a bot.
+    return port_obj.get_option("builder_name")
+
 # FIXME: This should be on the Manager class (since that's the only caller)
 # or split off from Manager onto another helper class, but should not be a free function.
 # Most likely this should be made into its own class, and this super-long function
@@ -228,7 +233,10 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
     try:
-        results['revision'] = port_obj.host.scm().head_svn_revision()
+        # We only use the svn revision for using trac links in the results.html file,
+        # Don't do this by default since it takes >100ms.
+        if use_trac_links_in_results_html(port_obj):
+            results['revision'] = port_obj.host.scm().head_svn_revision()
     except Exception, e:
         _log.warn("Failed to determine svn revision for checkout (cwd: %s, webkit_base: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), port_obj.path_from_webkit_base(), e))
         # Handle cases where we're running outside of version control.
