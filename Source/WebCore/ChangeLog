@@ -1,3 +1,19 @@
+2012-01-26  Joe Thomas  <joethomas@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=76995.
+        WebKit fails IETC :indeterminate and input type=radio test.
+
+        As per the HTML spec http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#dom-input-indeterminate,
+        only checkbox input type should respect the indeterminate state.
+        Removed the support for indeterminate state for radio input types.
+
+        Reviewed by Eric Seidel.
+
+        Modified the existing test cases.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setIndeterminate): Indeterminate state is supported only for checkbox input type.
+
 2012-01-25  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Fix ClipboardChromium::validateFilename to actually operate on extensions

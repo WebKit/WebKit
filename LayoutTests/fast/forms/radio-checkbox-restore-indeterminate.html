@@ -67,8 +67,8 @@
         log('Click unselected all radio buttons: FAIL');
 
         log('<br>Checking whether default-prevented click clobbered indeterminate state:')
-        log('On checked radio button: ' + (radio3.indeterminate ? 'PASS' : 'FAIL'));
-        log('On unchecked radio button: ' + (radio4.indeterminate ? 'PASS' : 'FAIL'));
+        log('On checked radio button: ' + (!radio3.indeterminate ? 'PASS' : 'FAIL'));
+        log('On unchecked radio button: ' + (!radio4.indeterminate ? 'PASS' : 'FAIL'));
         log('On checked checkbox: ' + (check1.indeterminate ? 'PASS' : 'FAIL'));
         log('On unchecked checkbox: ' + (check2.indeterminate ? 'PASS' : 'FAIL'));
 
