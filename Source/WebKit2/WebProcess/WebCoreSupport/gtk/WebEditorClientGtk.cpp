@@ -25,7 +25,9 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DataObjectGtk.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/PasteboardHelper.h>
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -126,5 +128,39 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
 {
     notImplemented();
 }
+
+#if PLATFORM(X11)
+static Frame* frameSettingClipboard;
+static void collapseSelection(GtkClipboard* clipboard, Frame* frame)
+{
+    if (frameSettingClipboard && frameSettingClipboard == frame)
+        return;
+
+    // Collapse the selection without clearing it.
+    ASSERT(frame);
+    frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+}
+#endif
+
+void WebEditorClient::setSelectionPrimaryClipboardIfNeeded(Frame* frame)
+{
+#if PLATFORM(X11)
+    GtkClipboard* clipboard = PasteboardHelper::defaultPasteboardHelper()->getPrimarySelectionClipboard(frame);
+    DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
+
+    if (!frame->selection()->isRange())
+        return;
+
+    dataObject->clearAll();
+    dataObject->setRange(frame->selection()->toNormalizedRange());
+
+    frameSettingClipboard = frame;
+    GClosure* callback = g_cclosure_new(G_CALLBACK(collapseSelection), frame, 0);
+    g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, PasteboardHelper::DoNotIncludeSmartPaste, callback);
+    frameSettingClipboard = 0;
+#endif
+}
+
 
 }

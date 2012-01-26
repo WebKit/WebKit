@@ -195,9 +195,11 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     unsigned start;
     unsigned end;
     m_page->send(Messages::WebPageProxy::DidChangeCompositionSelection(frame->editor()->getCompositionSelection(start, end)));
+#elif PLATFORM(GTK)
+    setSelectionPrimaryClipboardIfNeeded(frame);
 #endif
 }
-    
+
 void WebEditorClient::didEndEditing()
 {
     DEFINE_STATIC_LOCAL(String, WebViewDidEndEditingNotification, ("WebViewDidEndEditingNotification"));

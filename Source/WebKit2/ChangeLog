@@ -1,3 +1,21 @@
+2012-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WK2] Primary clipboard should be updated with the current selection in X11 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=77097
+
+        Reviewed by Martin Robinson.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection): Call
+        setSelectionPrimaryClipboardIfNeeded() to update primary clipboard
+        in X11 platforms.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::collapseSelection): Callback called when clearing
+        clipboard contents.
+        (WebKit::WebEditorClient::setSelectionPrimaryClipboardIfNeeded):
+        Updaye primary clipboard with the current selection.
+
 2012-01-26  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Use QVariant for payload data in application URL schemes.
