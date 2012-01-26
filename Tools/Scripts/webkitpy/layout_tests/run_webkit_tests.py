@@ -452,7 +452,14 @@ def parse_args(args=None):
 
 def main():
     options, args = parse_args()
-    host = Host()
+    if options.platform.startswith('test'):
+        # It's a bit lame to import mocks into real code, but this allows the user
+        # to run tests against the test platform interactively, which is useful for
+        # debugging test failures.
+        from webkitpy.common.host_mock import MockHost
+        host = MockHost()
+    else:
+        host = Host()
     host._initialize_scm()
     port = host.port_factory.get(options.platform, options)
     return run(port, options, args)

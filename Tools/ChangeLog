@@ -1,5 +1,25 @@
 2012-01-25  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: should be able to run --platform test interactively
+        https://bugs.webkit.org/show_bug.cgi?id=76959
+
+        Reviewed by Adam Barth.
+
+        As part of refactoring the Port interfaces, in r103254 I made
+        passing a Host object to the Port mandatory; previously TestPort
+        objects would create their own (mock) hosts. However,
+        new-run-webkit-tests always passed a real Host, not a MockHost,
+        and so you couldn't run new-run-webkit-tests --platform test
+        interactively to debug test failures.
+
+        This change fixes that by creating a MockHost instead of a real
+        host if you say --platform test*.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
+2012-01-25  Dirk Pranke  <dpranke@chromium.org>
+
         run-webkit-tests --lint-test-files should lint all the ports by default
         https://bugs.webkit.org/show_bug.cgi?id=76749
 
