@@ -187,6 +187,7 @@ class TestExpectationParser(object):
     BUG_MODIFIER_PREFIX = 'bug'
     BUG_MODIFIER_REGEX = 'bug\d+'
     REBASELINE_MODIFIER = 'rebaseline'
+    FAIL_EXPECTATION = 'fail'
     SKIP_MODIFIER = 'skip'
     SLOW_MODIFIER = 'slow'
     WONTFIX_MODIFIER = 'wontfix'
@@ -205,15 +206,30 @@ class TestExpectationParser(object):
             self._parse_line(expectation_line)
         return expectations
 
+    def expectation_for_skipped_test(self, test_name):
+        expectation_line = TestExpectationLine()
+        expectation_line.original_string = test_name
+        expectation_line.modifiers = [TestExpectationParser.SKIP_MODIFIER]
+        expectation_line.name = test_name
+        expectation_line.expectations = [TestExpectationParser.FAIL_EXPECTATION]
+        self._parse_line(expectation_line)
+        return expectation_line
+
     def _parse_line(self, expectation_line):
         if not expectation_line.name:
             return
 
         self._check_modifiers_against_expectations(expectation_line)
-        if self._check_path_does_not_exist(expectation_line):
+
+        expectation_line.is_file = self._port.test_isfile(expectation_line.name)
+        if not expectation_line.is_file and self._check_path_does_not_exist(expectation_line):
             return
 
-        expectation_line.path = self._port.normalize_test_name(expectation_line.name)
+        if expectation_line.is_file:
+            expectation_line.path = expectation_line.name
+        else:
+            expectation_line.path = self._port.normalize_test_name(expectation_line.name)
+
         self._collect_matching_tests(expectation_line)
 
         self._parse_modifiers(expectation_line)
@@ -285,7 +301,7 @@ class TestExpectationParser(object):
             expectation_line.matching_tests = [expectation_line.path]
             return
 
-        if self._port.test_isdir(expectation_line.path):
+        if not expectation_line.is_file:
             # this is a test category, return all the tests of the category.
             expectation_line.matching_tests = [test for test in self._full_test_list if test.startswith(expectation_line.path)]
             return
@@ -702,7 +718,6 @@ class TestExpectations(object):
         self._model = TestExpectationsModel()
         self._parser = TestExpectationParser(port, tests, is_lint_mode)
         self._port = port
-        self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         self._skipped_tests_warnings = []
 
         self._expectations = self._parser.parse(expectations)
@@ -835,6 +850,5 @@ class TestExpectations(object):
         for index, test in enumerate(self._expectations, start=1):
             if test.name and test.name in tests_to_skip:
                 self._skipped_tests_warnings.append(':%d %s is also in a Skipped file.' % (index, test.name))
-        skipped_tests = '\n'.join(map(lambda test_path: 'BUG_SKIPPED SKIP : %s = FAIL' % test_path, tests_to_skip))
-        for test in self._parser.parse(skipped_tests):
-            self._model.add_expectation_line(test, overrides_allowed=True)
+        for test_name in tests_to_skip:
+            self._model.add_expectation_line(self._parser.expectation_for_skipped_test(test_name), overrides_allowed=True)
