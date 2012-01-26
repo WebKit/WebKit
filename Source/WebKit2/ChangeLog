@@ -1,3 +1,12 @@
+2012-01-26  Thiago Marcos P. Santos  <tmpsantos@gmail.com>
+
+        [Qt] Fixed build when using force_static_libs_as_shared
+        https://bugs.webkit.org/attachment.cgi?bugid=77082
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+
 2012-01-26  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [WK2] WebKitTestRunner needs layoutTestController.setGeolocationPermission
