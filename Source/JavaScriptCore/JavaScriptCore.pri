@@ -31,6 +31,7 @@ INCLUDEPATH += \
 win32-* {
     DEFINES += _HAS_TR1=0
     LIBS += -lwinmm
+    LIBS += -lgdi32
 
     win32-g++* {
         LIBS += -lpthreadGC2
