@@ -1,3 +1,9 @@
+2012-01-25  Adam Barth  <abarth@webkit.org>
+
+        Kentaro is a reviewer now.  Yay!
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-25  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: running w/ no arguments fails
