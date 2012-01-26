@@ -25,6 +25,8 @@
 #if ENABLE(SVG)
 #include "RenderSVGResource.h"
 
+#include "Frame.h"
+#include "FrameView.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceSolidColor.h"

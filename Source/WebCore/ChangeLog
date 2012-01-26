@@ -1,3 +1,9 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix non-AllInOne builds after r105978.
+
+        * rendering/svg/RenderSVGResource.cpp:
+
 2012-01-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector closure compilation fix.
