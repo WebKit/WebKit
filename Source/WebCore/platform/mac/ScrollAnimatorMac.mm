@@ -1065,8 +1065,6 @@ void ScrollAnimatorMac::beginScrollGesture()
 {
     didBeginScrollGesture();
 
-    m_haveScrolledSincePageLoad = true;
-
     m_scrollElasticityController.beginScrollGesture();
 }
 

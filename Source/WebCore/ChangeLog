@@ -1,5 +1,18 @@
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
+        No need to set m_haveScrolledSincePageLoad in beginScrollGesture
+        https://bugs.webkit.org/show_bug.cgi?id=77132
+
+        Reviewed by Andreas Kling.
+
+        m_haveScrolledSincePageLoad is already set to true in handleWheelEvent so we don't need
+        to set it to true again.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
         Simplify checking for whether we should rubberband or not when at the edge
         https://bugs.webkit.org/show_bug.cgi?id=77131
 
