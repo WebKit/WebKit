@@ -115,23 +115,6 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
 {
 }
 
-void ScrollElasticityController::beginScrollGesture()
-{
-    m_inScrollGesture = true;
-    m_momentumScrollInProgress = false;
-    m_ignoreMomentumScrolls = false;
-    m_lastMomentumScrollTimestamp = 0;
-    m_momentumVelocity = FloatSize();
-    
-    IntSize stretchAmount = m_client->stretchAmount();
-    m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
-    m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
-    
-    m_overflowScrollDelta = FloatSize();
-
-    stopSnapRubberbandTimer();
-}
-
 bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
@@ -141,6 +124,23 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
             return true;
         }
         return false;
+    }
+
+    if (wheelEvent.phase() == PlatformWheelEventPhaseBegan) {
+        m_inScrollGesture = true;
+        m_momentumScrollInProgress = false;
+        m_ignoreMomentumScrolls = false;
+        m_lastMomentumScrollTimestamp = 0;
+        m_momentumVelocity = FloatSize();
+
+        IntSize stretchAmount = m_client->stretchAmount();
+        m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
+        m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
+        m_overflowScrollDelta = FloatSize();
+
+        stopSnapRubberbandTimer();
+
+        return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {

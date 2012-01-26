@@ -1,5 +1,22 @@
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of ScrollElasticityController::beginScrollGesture()
+        https://bugs.webkit.org/show_bug.cgi?id=77138
+
+        Reviewed by Adam Roben.
+
+        ScrollElasticityController::handleWheelEvent now checks if the wheel event phase is
+        PlatformWheelEventPhaseBegan and sets up the gesture state if it is.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        * platform/mac/ScrollElasticityController.h:
+        (ScrollElasticityController):
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::handleWheelEvent):
+
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
         Get rid of ScrollElasticityController::endScrollGesture()
         https://bugs.webkit.org/show_bug.cgi?id=77134
 
