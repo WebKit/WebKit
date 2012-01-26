@@ -104,6 +104,10 @@ inspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42545>
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
+# [Qt][WK2] Crash in fast/text/regional-indicator-symobls.html
+# https://bugs.webkit.org/show_bug.cgi?id=69419
+fast/text/regional-indicator-symobls.html
+
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
@@ -151,8 +155,10 @@ storage/statement-success-callback-isolated-world.html
 storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
 storage/transaction-success-callback-isolated-world.html
+editing/pasteboard/paste-plaintext-user-select-none.html
 fast/css-generated-content/first-letter-in-nested-before.html
 fast/frames/set-parent-src-synchronously.html
+fast/text/complex-synthetic-bold-space-width.html
 
 ########################################
 
@@ -257,6 +263,7 @@ fast/preloader/document-write-noscript.html
 # New failing tests
 # https://bugs.webkit.org/show_bug.cgi?id=67485
 fast/dom/Window/window-properties.html
+fast/text/complex-preferred-logical-widths.html
 http/tests/loading/empty-urls.html
 http/tests/loading/progress-finished-callback.html
 
@@ -277,6 +284,17 @@ fast/dom/Geolocation/not-enough-arguments.html
 fast/dom/Orientation/create-event-orientationchange.html
 fast/dom/Window/window-properties-device-orientation.html
 fast/dom/Window/window-properties-geolocation.html
+
+# New editing tests introduced in r95335, r95337 and r95645 fail on Qt-WK2 platform
+editing/deleting/merge-paragraph-from-address.html
+editing/deleting/merge-paragraph-from-h6-with-style.html
+editing/deleting/merge-paragraph-from-h6.html
+editing/deleting/merge-paragraph-from-listing.html
+editing/deleting/merge-paragraph-from-p-with-style.html
+editing/deleting/merge-paragraph-into-blockquote.html
+editing/deleting/merge-paragraph-into-h1-with-style.html
+editing/deleting/merge-paragraph-into-h1.html
+editing/deleting/merge-paragraph-into-pre.html
 
 # [Qt][WK] fast/forms/submit-to-blank-multiple-times.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=68309
@@ -321,6 +339,7 @@ fast/events/drag-selects-image.html
 
 # [Qt][WK2] Metric mismatches (fast/text/justify-padding-distribution.html and svg/as-object/svg-embedded-in-html-in-iframe.html)
 # https://bugs.webkit.org/show_bug.cgi?id=70915
+fast/text/justify-padding-distribution.html
 svg/as-object/svg-embedded-in-html-in-iframe.html
 
 # [Qt][WK2] fast/css/font-face-descending-unicode-range.html fails
@@ -354,6 +373,10 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 # flakey svg tests
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml
+
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html
 
 # Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 fast/block/basic/020.html

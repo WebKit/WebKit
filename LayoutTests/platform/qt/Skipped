@@ -203,6 +203,7 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 # Hyphenation is not implemented yet.
 fast/text/hyphenate-character.html
 fast/text/hyphens.html
+fast/text/soft-hyphen-4.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
@@ -373,6 +374,7 @@ editing/pasteboard/copy-standalone-image.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-input-textarea.html
 editing/pasteboard/drag-drop-input-in-svg.svg
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
 editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-drop-url-text.html
 editing/pasteboard/drop-file-svg.html
@@ -387,6 +389,7 @@ editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/subframe-dragndrop-1.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/drop-text-events.html
+editing/pasteboard/drop-text-events-sideeffect.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
@@ -606,6 +609,8 @@ editing/pasteboard/smart-paste-008.html
 # ============================================================================= #
 
 # -- fail with --platform mac --ignore-metrics
+editing/deleting/delete-block-table.html
+editing/deleting/delete-ligature-001.html
 editing/deleting/delete-tab-001.html
 editing/deleting/delete-tab-002.html
 editing/deleting/delete-tab-003.html
@@ -668,6 +673,10 @@ editing/selection/move-vertically-with-paddings-borders.html
 # editing/selection/select-bidi-run.html fails on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=68854
 editing/selection/select-bidi-run.html
+
+# [Qt] REGRESSION (r71465): editing/selection/after-line-break.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=49127
+editing/selection/after-line-break.html
 
 # REGRESSION(r72861): editing/selection/click-left-of-rtl-wrapping-text.html and modify-up-on-rtl-wrapping-text.html fail on all but Mac platform
 # https://bugs.webkit.org/show_bug.cgi?id=50204
@@ -1490,6 +1499,10 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
 
+# Not sure why this is failing on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=37697
+fast/url/host.html
+
 # -- fail with --platform mac --ignore-metrics
 fast/box-sizing/percentage-height.html
 fast/dom/focus-contenteditable.html
@@ -1582,6 +1595,7 @@ fast/invalid/junk-data.xml
 fast/loader/text-document-wrapping.html
 fast/overflow/005.html
 fast/repaint/inline-outline-repaint.html
+fast/text/find-case-folding.html
 fast/text/large-text-composed-char.html
 fast/text/basic/014.html
 fast/text/international/cjk-segmentation.html
@@ -1839,6 +1853,7 @@ fast/text/international/bidi-mirror-he-ar.html
 fast/text/international/bold-bengali.html
 fast/text/international/hebrew-vowels.html
 fast/text/international/plane2.html
+fast/text/international/unicode-bidi-plaintext.html
 fast/text/international/vertical-text-glyph-test.html
 fast/text/international/vertical-text-metrics-test.html
 fast/writing-mode/japanese-ruby-horizontal-bt.html
@@ -1859,6 +1874,13 @@ fast/images/webp-image-decoding.html
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
 # https://bugs.webkit.org/show_bug.cgi?id=41452
 fast/dom/beforeload/remove-video-in-beforeload-listener.html
+
+# [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=41241
+fast/text/bidi-explicit-embedding-past-end.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=45194
+fast/text/decomposed-after-stacked-diacritics.html
 
 # [Qt] fast/text/emphasis-overlap.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=51324
@@ -2264,6 +2286,11 @@ fast/dom/title-directionality.html
 # fast/text/zero-width-characters-complex-script fails on Chrome and Qt on Linux
 # https://bugs.webkit.org/show_bug.cgi?id=58741
 fast/text/zero-width-characters-complex-script.html
+
+# [Qt]fast/url/idna tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=59187
+fast/url/idna2003.html
+fast/url/idna2008.html
 
 # [Qt] Migrate to Debian Squeeze
 # https://bugs.webkit.org/show_bug.cgi?id=59609
