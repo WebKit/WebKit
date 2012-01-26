@@ -112,8 +112,8 @@ void StyledElement::updateStyleAttribute() const
     ASSERT(!isStyleAttributeValid());
     setIsStyleAttributeValid();
     setIsSynchronizingStyleAttribute();
-    if (m_inlineStyleDecl)
-        const_cast<StyledElement*>(this)->setAttribute(styleAttr, m_inlineStyleDecl->cssText());
+    if (CSSMutableStyleDeclaration* inlineStyle = inlineStyleDecl())
+        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->cssText());
     clearIsSynchronizingStyleAttribute();
 }
 
@@ -125,21 +125,6 @@ StyledElement::~StyledElement()
 PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
     return Attribute::createMapped(name, value);
-}
-
-void StyledElement::createInlineStyleDecl()
-{
-    ASSERT(!m_inlineStyleDecl);
-    m_inlineStyleDecl = CSSMutableStyleDeclaration::createInline(this);
-    m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
-}
-
-void StyledElement::destroyInlineStyleDecl()
-{
-    if (!m_inlineStyleDecl)
-        return;
-    m_inlineStyleDecl->clearParentElement();
-    m_inlineStyleDecl = 0;
 }
 
 void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
@@ -238,18 +223,6 @@ void StyledElement::parseMappedAttribute(Attribute* attr)
         setIsStyleAttributeValid();
         setNeedsStyleRecalc();
     }
-}
-
-CSSMutableStyleDeclaration* StyledElement::ensureInlineStyleDecl()
-{
-    if (!m_inlineStyleDecl)
-        createInlineStyleDecl();
-    return m_inlineStyleDecl.get();
-}
-
-CSSStyleDeclaration* StyledElement::style()
-{
-    return ensureInlineStyleDecl();
 }
 
 void StyledElement::removeCSSProperty(Attribute* attribute, int id)
@@ -443,9 +416,8 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (!m_inlineStyleDecl)
-        return;
-    m_inlineStyleDecl->addSubresourceStyleURLs(urls);
+    if (CSSMutableStyleDeclaration* inlineStyle = inlineStyleDecl())
+        inlineStyle->addSubresourceStyleURLs(urls);
 }
 
 }
