@@ -1,3 +1,13 @@
+2012-01-26  Peter Varga  <pvarga@webkit.org>
+
+        Fix build when VERBOSE_SPECULATION_FAILURE is enabled in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=77104
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGOperations.cpp:
+        ():
+
 2012-01-26  Michael Saboff  <msaboff@apple.com>
 
         String::latin1() should take advantage of 8 bit strings

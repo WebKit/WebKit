@@ -1009,7 +1009,7 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
 }
 
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
+void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
