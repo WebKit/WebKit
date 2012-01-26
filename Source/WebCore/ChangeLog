@@ -1,3 +1,18 @@
+2012-01-26  Daniel Cheng  <dcheng@chromium.org>
+
+        Revert code changes from r105800
+        https://bugs.webkit.org/show_bug.cgi?id=77071
+
+        The strings are already lowercased in EventHandler.cpp:findDropZone() so there's
+        no need to call lower() again.
+
+        Reviewed by Tony Chang.
+
+        Covered by existing tests.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::hasDropZoneType):
+
 2012-01-26  Stephen Chenney  <schenney@chromium.org>
 
         REGRESSION (r91125): Polyline tool in google docs is broken
