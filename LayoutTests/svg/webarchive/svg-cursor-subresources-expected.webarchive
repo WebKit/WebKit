@@ -6,14 +6,20 @@
 	<dict>
 		<key>WebResourceData</key>
 		<string>&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
-  &lt;script&gt;
-    if (window.layoutTestController)
-        layoutTestController.dumpDOMAsWebArchive();
-  &lt;/script&gt;
   &lt;cursor id="mycursor" xlink:href="resources/green-checker.png"/&gt;
   &lt;rect style="cursor: url(#mycursor)" width="100" height="100" fill="white" stroke="blue"/&gt;
   
   &lt;text x="10" y="130"&gt;Hover over the rect, you should see a (large) custom cursor&lt;/text&gt;
+  &lt;script&gt;
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+
+        setTimeout(function() {
+            layoutTestController.dumpDOMAsWebArchive();
+            layoutTestController.notifyDone();
+        }, 0);
+    }
+ &lt;/script&gt;
 &lt;/svg&gt;</string>
 		<key>WebResourceFrameName</key>
 		<string></string>

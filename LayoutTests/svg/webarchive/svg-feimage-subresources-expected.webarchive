@@ -6,14 +6,20 @@
 	<dict>
 		<key>WebResourceData</key>
 		<string>&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
-  &lt;script&gt;
-    if (window.layoutTestController)
-        layoutTestController.dumpDOMAsWebArchive();
-  &lt;/script&gt;
   &lt;filter id="MyFilter"&gt;
     &lt;feImage xlink:href="resources/green-checker.png"/&gt;
   &lt;/filter&gt;
   &lt;rect id="rect" width="100" height="100" fill="red" filter="url(#MyFilter)"/&gt;
+  &lt;script&gt;
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+
+        setTimeout(function() {
+            layoutTestController.dumpDOMAsWebArchive();
+            layoutTestController.notifyDone();
+        }, 0);
+    }
+  &lt;/script&gt;
 &lt;/svg&gt;</string>
 		<key>WebResourceFrameName</key>
 		<string></string>
