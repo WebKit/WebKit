@@ -195,9 +195,6 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     RenderStyle* style = parentRenderer->style();
     ASSERT(style);
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    ASSERT(svgStyle);
-
     RenderStyle* selectionStyle = style;
     if (hasSelection) {
         selectionStyle = parentRenderer->getCachedPseudoStyle(SELECTION);
