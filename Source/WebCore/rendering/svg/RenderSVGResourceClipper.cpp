@@ -27,6 +27,8 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"

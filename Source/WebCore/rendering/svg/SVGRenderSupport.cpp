@@ -27,6 +27,7 @@
 #if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "NodeRenderStyle.h"

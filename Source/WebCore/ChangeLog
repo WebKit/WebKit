@@ -1,5 +1,14 @@
 2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix Qt build after r105978.
+
+        * rendering/svg/RenderSVGResourceClipper.cpp: Add missing Frame/FrameView includes.
+        * rendering/svg/RenderSVGResourceSolidColor.cpp: Ditto.
+        * rendering/svg/SVGInlineTextBox.cpp: Ditto.
+        * rendering/svg/SVGRenderSupport.cpp: Ditto.
+
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix non-AllInOne builds after r105978.
 
         * rendering/svg/RenderSVGResource.cpp:

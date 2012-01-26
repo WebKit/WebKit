@@ -25,6 +25,8 @@
 #if ENABLE(SVG)
 #include "FloatConversion.h"
 #include "FontCache.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
