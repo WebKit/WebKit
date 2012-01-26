@@ -720,6 +720,7 @@ ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length)
 WTF_EXPORT_PRIVATE bool equalIgnoringCase(StringImpl*, StringImpl*);
 WTF_EXPORT_PRIVATE bool equalIgnoringCase(StringImpl*, const LChar*);
 inline bool equalIgnoringCase(const LChar* a, StringImpl* b) { return equalIgnoringCase(b, a); }
+WTF_EXPORT_PRIVATE bool equalIgnoringCase(const LChar*, const LChar*, unsigned);
 WTF_EXPORT_PRIVATE bool equalIgnoringCase(const UChar*, const LChar*, unsigned);
 inline bool equalIgnoringCase(const UChar* a, const char* b, unsigned length) { return equalIgnoringCase(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equalIgnoringCase(const LChar* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, a, length); }

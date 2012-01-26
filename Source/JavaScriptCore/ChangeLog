@@ -1,3 +1,20 @@
+2012-01-26  Michael Saboff  <msaboff@apple.com>
+
+        Dromaeo tests usage of StringImpl find routines cause 8->16 bit conversions
+        https://bugs.webkit.org/show_bug.cgi?id=76645
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalIgnoringCase): New LChar version.
+        (WTF::findInner): New helper function.
+        (WTF::StringImpl::find): Added 8 bit path.
+        (WTF::reverseFindInner): New helper funciton.
+        (WTF::StringImpl::reverseFind): Added 8 bit path.
+        (WTF::StringImpl::reverseFindIgnoringCase): Added 8 bit path.
+        * wtf/text/StringImpl.h:
+        (WTF):
+
 2012-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] One more speculative buildfix after r105970.

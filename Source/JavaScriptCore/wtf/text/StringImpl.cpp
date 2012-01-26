@@ -715,6 +715,16 @@ float StringImpl::toFloat(bool* ok, bool* didReadNumber)
     return charactersToFloat(characters16(), m_length, ok, didReadNumber);
 }
 
+bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)
+{
+    while (length--) {
+        LChar bc = *b++;
+        if (foldCase(*a++) != foldCase(bc))
+            return false;
+    }
+    return true;
+}
+
 bool equalIgnoringCase(const UChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
@@ -849,6 +859,35 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     return index + i;
 }
 
+template <typename CharType>
+ALWAYS_INLINE static size_t findInner(const CharType* searchCharacters, const CharType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
+{
+    // Optimization: keep a running hash of the strings,
+    // only call memcmp if the hashes match.
+
+    // delta is the number of additional times to test; delta == 0 means test only once.
+    unsigned delta = searchLength - matchLength;
+
+    unsigned searchHash = 0;
+    unsigned matchHash = 0;
+
+    for (unsigned i = 0; i < matchLength; ++i) {
+        searchHash += searchCharacters[i];
+        matchHash += matchCharacters[i];
+    }
+
+    unsigned i = 0;
+    // keep looping until we match
+    while (searchHash != matchHash || memcmp(searchCharacters + i, matchCharacters, matchLength * sizeof(CharType))) {
+        if (i == delta)
+            return notFound;
+        searchHash += searchCharacters[i + matchLength];
+        searchHash -= searchCharacters[i];
+        ++i;
+    }
+    return index + i;        
+}
+
 size_t StringImpl::find(StringImpl* matchString, unsigned index)
 {
     // Check for null or empty string to match against
@@ -871,31 +910,12 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
     unsigned searchLength = length() - index;
     if (matchLength > searchLength)
         return notFound;
-    // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = searchLength - matchLength;
 
-    const UChar* searchCharacters = characters() + index;
-    const UChar* matchCharacters = matchString->characters();
+    if (is8Bit() && matchString->is8Bit())
+        return findInner(characters8() + index, matchString->characters8(), index, searchLength, matchLength);
 
-    // Optimization 2: keep a running hash of the strings,
-    // only call memcmp if the hashes match.
-    unsigned searchHash = 0;
-    unsigned matchHash = 0;
-    for (unsigned i = 0; i < matchLength; ++i) {
-        searchHash += searchCharacters[i];
-        matchHash += matchCharacters[i];
-    }
+    return findInner(characters() + index, matchString->characters(), index, searchLength, matchLength);
 
-    unsigned i = 0;
-    // keep looping until we match
-    while (searchHash != matchHash || memcmp(searchCharacters + i, matchCharacters, matchLength * sizeof(UChar))) {
-        if (i == delta)
-            return notFound;
-        searchHash += searchCharacters[i + matchLength];
-        searchHash -= searchCharacters[i];
-        ++i;
-    }
-    return index + i;
 }
 
 size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
@@ -936,33 +956,15 @@ size_t StringImpl::reverseFind(UChar c, unsigned index)
     return WTF::reverseFind(characters16(), m_length, c, index);
 }
 
-size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
+template <typename CharType>
+ALWAYS_INLINE static size_t reverseFindInner(const CharType* searchCharacters, const CharType* matchCharacters, unsigned index, unsigned length, unsigned matchLength)
 {
-    // Check for null or empty string to match against
-    if (!matchString)
-        return notFound;
-    unsigned matchLength = matchString->length();
-    if (!matchLength)
-        return min(index, length());
-
-    // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1) {
-        if (is8Bit() && matchString->is8Bit())
-            return WTF::reverseFind(characters8(), length(), matchString->characters8()[0], index);
-        return WTF::reverseFind(characters(), length(), matchString->characters()[0], index);
-    }
-
-    // Check index & matchLength are in range.
-    if (matchLength > length())
-        return notFound;
-    // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = min(index, length() - matchLength);
-
-    const UChar *searchCharacters = characters();
-    const UChar *matchCharacters = matchString->characters();
-
-    // Optimization 2: keep a running hash of the strings,
+    // Optimization: keep a running hash of the strings,
     // only call memcmp if the hashes match.
+
+    // delta is the number of additional times to test; delta == 0 means test only once.
+    unsigned delta = min(index, length - matchLength);
+    
     unsigned searchHash = 0;
     unsigned matchHash = 0;
     for (unsigned i = 0; i < matchLength; ++i) {
@@ -971,7 +973,7 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
     }
 
     // keep looping until we match
-    while (searchHash != matchHash || memcmp(searchCharacters + delta, matchCharacters, matchLength * sizeof(UChar))) {
+    while (searchHash != matchHash || memcmp(searchCharacters + delta, matchCharacters, matchLength * sizeof(CharType))) {
         if (!delta)
             return notFound;
         delta--;
@@ -979,6 +981,33 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
         searchHash += searchCharacters[delta];
     }
     return delta;
+}
+
+size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
+{
+    // Check for null or empty string to match against
+    if (!matchString)
+        return notFound;
+    unsigned matchLength = matchString->length();
+    unsigned ourLength = length();
+    if (!matchLength)
+        return min(index, ourLength);
+
+    // Optimization 1: fast case for strings of length 1.
+    if (matchLength == 1) {
+        if (is8Bit() && matchString->is8Bit())
+            return WTF::reverseFind(characters8(), ourLength, matchString->characters8()[0], index);
+        return WTF::reverseFind(characters(), ourLength, matchString->characters()[0], index);
+    }
+
+    // Check index & matchLength are in range.
+    if (matchLength > ourLength)
+        return notFound;
+
+    if (is8Bit() && matchString->is8Bit())
+        return reverseFindInner(characters8(), matchString->characters8(), index, ourLength, matchLength);
+
+    return reverseFindInner(characters(), matchString->characters(), index, ourLength, matchLength);
 }
 
 size_t StringImpl::reverseFindIgnoringCase(StringImpl* matchString, unsigned index)
@@ -995,7 +1024,20 @@ size_t StringImpl::reverseFindIgnoringCase(StringImpl* matchString, unsigned ind
         return notFound;
     // delta is the number of additional times to test; delta == 0 means test only once.
     unsigned delta = min(index, length() - matchLength);
-    
+
+    if (is8Bit() && matchString->is8Bit()) {
+        const LChar *searchCharacters = characters8();
+        const LChar *matchCharacters = matchString->characters8();
+
+        // keep looping until we match
+        while (!equalIgnoringCase(searchCharacters + delta, matchCharacters, matchLength)) {
+            if (!delta)
+                return notFound;
+            delta--;
+        }
+        return delta;
+    }
+
     const UChar *searchCharacters = characters();
     const UChar *matchCharacters = matchString->characters();
 
