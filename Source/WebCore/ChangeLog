@@ -1,3 +1,20 @@
+2012-01-25  Cris Neckar  <cdn@chromium.org>
+
+        Add a scheme registry for CORS requests. Allow simple CORS requests to be made to registered schemes.
+        https://bugs.webkit.org/show_bug.cgi?id=77041
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::CORSEnabledSchemes):
+        (WebCore):
+        (WebCore::SchemeRegistry::registerCORSEnabledScheme):
+        (WebCore::SchemeRegistry::isCORSEnabledScheme):
+        * platform/SchemeRegistry.h:
+        (SchemeRegistry):
+
 2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
 
         File extension for webp files is .webp

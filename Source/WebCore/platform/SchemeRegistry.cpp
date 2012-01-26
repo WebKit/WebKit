@@ -25,6 +25,7 @@
  */
 #include "config.h"
 #include "SchemeRegistry.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -152,6 +153,19 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
     return schemesAllowingDatabaseAccessInPrivateBrowsing;
 }
 
+static URLSchemesMap& CORSEnabledSchemes()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(URLSchemesMap, CORSEnabledSchemes, ());
+
+    if (CORSEnabledSchemes.isEmpty()) {
+        CORSEnabledSchemes.add("http");
+        CORSEnabledSchemes.add("https");
+    }
+
+    return CORSEnabledSchemes;
+}
+
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isEmpty())
@@ -271,6 +285,18 @@ bool SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(const String& scheme)
     if (scheme.isEmpty())
         return false;
     return schemesAllowingDatabaseAccessInPrivateBrowsing().contains(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsCORSEnabled(const String& scheme)
+{
+    CORSEnabledSchemes().add(scheme);
+}
+
+bool SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return CORSEnabledSchemes().contains(scheme);
 }
 
 } // namespace WebCore

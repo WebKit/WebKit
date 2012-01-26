@@ -61,6 +61,9 @@ public:
     // included by an HTTPS page.
     WEBKIT_EXPORT static void registerURLSchemeAsSecure(const WebString&);
 
+    // Registers a non-HTTP URL scheme which can be sent CORS requests. 
+    WEBKIT_EXPORT static void registerURLSchemeAsCORSEnabled(const WebString&);
+
     // Support for whitelisting access to origins beyond the same-origin policy.
     WEBKIT_EXPORT static void addOriginAccessWhitelistEntry(
         const WebURL& sourceOrigin, const WebString& destinationProtocol,

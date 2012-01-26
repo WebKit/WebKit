@@ -78,6 +78,10 @@ public:
     static bool allowsLocalStorageAccessInPrivateBrowsing(const String& scheme);
     static void registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(const String& scheme);
     static bool allowsDatabaseAccessInPrivateBrowsing(const String& scheme);
+
+    // Allow non-HTTP schemes to be registered to allow CORS requests.
+    static void registerURLSchemeAsCORSEnabled(const String& scheme);
+    static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
 };
 
 } // namespace WebCore

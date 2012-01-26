@@ -41,6 +41,7 @@
 #include "FrameLoader.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
@@ -115,9 +116,8 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
     ASSERT(m_options.preflightPolicy != ForcePreflight);
     ASSERT(m_options.preflightPolicy == PreventPreflight || isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
 
-    // Cross-origin requests are only defined for HTTP. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
-    // FIXME: Consider allowing simple CORS requests to non-HTTP URLs.
-    if (!request.url().protocolInHTTPFamily()) {
+    // Cross-origin requests are only allowed for HTTP and registered schemes. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
+    if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())) {
         m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
         return;
     }

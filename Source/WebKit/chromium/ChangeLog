@@ -1,3 +1,16 @@
+2012-01-25  Cris Neckar  <cdn@chromium.org>
+
+        Add API to register schemes which can be sent simple CORS requests.
+        https://bugs.webkit.org/show_bug.cgi?id=77041
+
+        Reviewed by Alexey Proskuryakov.
+
+        * public/WebSecurityPolicy.h:
+        (WebSecurityPolicy):
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::registerCORSEnabledScheme):
+        (WebKit):
+
 2012-01-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add enter/exitRunLoop to WebThread API
