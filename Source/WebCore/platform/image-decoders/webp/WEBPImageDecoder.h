@@ -42,7 +42,7 @@ public:
     WEBPImageDecoder(ImageSource::AlphaOption, ImageSource::GammaAndColorProfileOption);
     virtual ~WEBPImageDecoder();
 
-    virtual String filenameExtension() const { return "vp8"; }
+    virtual String filenameExtension() const { return "webp"; }
     virtual bool isSizeAvailable();
     virtual ImageFrame* frameBufferAtIndex(size_t index);
 

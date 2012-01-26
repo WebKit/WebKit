@@ -1,3 +1,15 @@
+2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
+
+        File extension for webp files is .webp
+        https://bugs.webkit.org/show_bug.cgi?id=76982
+
+        Reviewed by Adam Barth.
+
+        No new tests. No change in behavior.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+        (WebCore::WEBPImageDecoder::filenameExtension):
+
 2012-01-26  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Remove dead and unnecessary code related to LayerChromium::cleanupResources
