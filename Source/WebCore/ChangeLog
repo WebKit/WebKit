@@ -1,3 +1,45 @@
+2012-01-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts panel editor container should be based on UISourceCode objects, not SourceFrames.
+        https://bugs.webkit.org/show_bug.cgi?id=77098
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsNavigator.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.setScriptSourceIsBeingEdited):
+        (WebInspector.ScriptsPanel.prototype.get visibleView):
+        (WebInspector.ScriptsPanel.prototype.viewForFile):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeReplaced):
+        (WebInspector.EditorContainer):
+        (WebInspector.EditorContainer.prototype.get visibleView):
+        (WebInspector.EditorContainer.prototype.showFile):
+        (WebInspector.EditorContainer.prototype.setFileIsDirty):
+        (WebInspector.EditorContainer.prototype.replaceFiles):
+        (WebInspector.EditorContainer.prototype.reset):
+        (WebInspector.EditorContainerDelegate):
+        (WebInspector.EditorContainerDelegate.prototype.viewForFile):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.replaceUISourceCodes):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.get visibleView):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.showFile):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.setFileIsDirty):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.replaceFiles):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.reset):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype.get visibleView):
+        (WebInspector.TabbedEditorContainer.prototype._titleForFile):
+        (WebInspector.TabbedEditorContainer.prototype._tooltipForFile):
+        (WebInspector.TabbedEditorContainer.prototype._appendFileTab):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._tabSelected):
+        (WebInspector.TabbedEditorContainer.prototype.replaceFiles.get if):
+        (WebInspector.TabbedEditorContainer.prototype.replaceFiles):
+        (WebInspector.TabbedEditorContainer.prototype.setFileIsDirty.get if):
+        (WebInspector.TabbedEditorContainer.prototype.setFileIsDirty):
+        (WebInspector.TabbedEditorContainer.prototype.reset):
+
 2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVG + <object> tests are flakey

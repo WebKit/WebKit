@@ -27,12 +27,15 @@
  */
 
 /**
- * @implements {WebInspector.ScriptsPanel.EditorContainer}
+ * @implements {WebInspector.EditorContainer}
  * @extends {WebInspector.Object}
  * @constructor
+ * @param {WebInspector.EditorContainerDelegate} delegate
  */
-WebInspector.TabbedEditorContainer = function()
+WebInspector.TabbedEditorContainer = function(delegate)
 {
+    this._delegate = delegate;
+
     this._tabbedPane = new WebInspector.TabbedPane();
     this._tabbedPane.closeableTabs = true;
     this._tabbedPane.element.id = "scripts-editor-container-tabbed-pane";
@@ -40,9 +43,8 @@ WebInspector.TabbedEditorContainer = function()
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 
-    this._titles = new Map();
-    this._tooltips = new Map();
     this._tabIds = new Map();  
+    this._files = {};  
 }
 
 WebInspector.TabbedEditorContainer._tabId = 0;
@@ -51,7 +53,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     /**
      * @type {WebInspector.SourceFrame}
      */
-    get currentSourceFrame()
+    get visibleView()
     {
         return this._tabbedPane.visibleView;
     },
@@ -65,38 +67,55 @@ WebInspector.TabbedEditorContainer.prototype = {
     },
 
     /**
-     * @param {string} title
-     * @param {WebInspector.SourceFrame} sourceFrame
-     * @param {string} tooltip
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    showSourceFrame: function(title, sourceFrame, tooltip)
+    showFile: function(uiSourceCode)
     {
-        var tabId = this._tabIds.get(sourceFrame) || this._appendSourceFrameTab(title, sourceFrame, tooltip);
+        var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode);
         this._tabbedPane.selectTab(tabId);
     },
 
     /**
-     * @param {string} title
-     * @param {WebInspector.SourceFrame} sourceFrame
-     * @param {string} tooltip
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {string}
      */
-    _appendSourceFrameTab: function(title, sourceFrame, tooltip)
+    _titleForFile: function(uiSourceCode)
     {
+        return uiSourceCode.displayName;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {string}
+     */
+    _tooltipForFile: function(uiSourceCode)
+    {
+        return uiSourceCode.url;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _appendFileTab: function(uiSourceCode)
+    {
+        var view = this._delegate.viewForFile(uiSourceCode);
+        var title = this._titleForFile(uiSourceCode);
+        var tooltip = this._tooltipForFile(uiSourceCode);
+
         var tabId = this._generateTabId();
-        this._tabIds.put(sourceFrame, tabId)
-        this._titles.put(sourceFrame, title)
-        this._tooltips.put(sourceFrame, tooltip)
+        this._tabIds.put(uiSourceCode, tabId);
+        this._files[tabId] = uiSourceCode;
         
-        this._tabbedPane.appendTab(tabId, title, sourceFrame, tooltip);
+        this._tabbedPane.appendTab(tabId, title, view, tooltip);
         return tabId;
     },
 
     /**
-     * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _removeSourceFrameTab: function(sourceFrame)
+    _removeFileTab: function(uiSourceCode)
     {
-        var tabId = this._tabIds.get(sourceFrame);
+        var tabId = this._tabIds.get(uiSourceCode);
         
         if (tabId)
             this._tabbedPane.closeTab(tabId);
@@ -107,10 +126,9 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _tabClosed: function(event)
     {
-        var sourceFrame = /** @type {WebInspector.UISourceCode} */ event.data.view;
-        this._tabIds.remove(sourceFrame);
-        this._titles.remove(sourceFrame);
-        this._tooltips.remove(sourceFrame);
+        var tabId = /** @type {string} */ event.data.tabId;
+        this._tabIds.remove(this._files[tabId]);
+        delete this._files[tabId];
     },
 
     /**
@@ -118,77 +136,63 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _tabSelected: function(event)
     {
-        var sourceFrame = /** @type {WebInspector.UISourceCode} */ event.data.view;
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.EditorContainer.Events.EditorSelected, sourceFrame);
+        var tabId = /** @type {string} */ event.data.tabId;
+        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, this._files[tabId]);
     },
 
     /**
-     * @param {WebInspector.SourceFrame} oldSourceFrame
-     * @param {string} title
-     * @param {WebInspector.SourceFrame} sourceFrame
-     * @param {string} tooltip
+     * @param {WebInspector.UISourceCode} oldUISourceCode
+     * @param {WebInspector.UISourceCode} newUISourceCode
      */
-    _replaceSourceFrameTab: function(oldSourceFrame, title, sourceFrame, tooltip)
+    _replaceFileTab: function(oldUISourceCode, newUISourceCode)
     {
-        var tabId = this._tabIds.get(oldSourceFrame);
+        var tabId = this._tabIds.get(oldUISourceCode);
         
-        if (tabId) {
-            this._tabIds.remove(oldSourceFrame);
-            this._titles.remove(oldSourceFrame);
-            this._tooltips.remove(oldSourceFrame);
+        if (!tabId)
+            return;
+        
+        delete this._files[this._tabIds.get(oldUISourceCode)]
+        this._tabIds.remove(oldUISourceCode);
+        this._tabIds.put(newUISourceCode, tabId);
+        this._files[tabId] = newUISourceCode;
 
-            this._tabIds.put(sourceFrame, tabId);
-            this._titles.put(sourceFrame, title);
-            this._tooltips.put(sourceFrame, tooltip);
-
-            this._tabbedPane.changeTabTitle(tabId, title);
-            this._tabbedPane.changeTabView(tabId, sourceFrame);
-            this._tabbedPane.changeTabTooltip(tabId, tooltip);
-        }
+        this._tabbedPane.changeTabTitle(tabId, this._titleForFile(newUISourceCode));
+        this._tabbedPane.changeTabView(tabId, this._delegate.viewForFile(newUISourceCode));
+        this._tabbedPane.changeTabTooltip(tabId, this._tooltipForFile(newUISourceCode));
     },
 
     /**
-     * @param {WebInspector.SourceFrame} sourceFrame
-     * @return {boolean}
+     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
+     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
      */
-    isSourceFrameOpen: function(sourceFrame)
+    replaceFiles: function(oldUISourceCodeList, uiSourceCodeList)
     {
-        return !!this._tabIds.get(sourceFrame);
-    },
-
-    /**
-     * @param {Array.<WebInspector.SourceFrame>} oldSourceFrames
-     * @param {string} title
-     * @param {WebInspector.SourceFrame} sourceFrame
-     * @param {string} tooltip
-     */
-    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame, tooltip)
-    {
-        var mainSourceFrame;
-        for (var i = 0; i < oldSourceFrames.length; ++i) {
-            var tabId = this._tabIds.get(oldSourceFrames[i]);
-            if (tabId && (!mainSourceFrame || this._tabbedPane.selectedTabId === tabId)) {
-                mainSourceFrame = oldSourceFrames[i];
+        var mainFile;
+        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
+            var tabId = this._tabIds.get(oldUISourceCodeList[i]);
+            if (tabId && (!mainFile || this._tabbedPane.selectedTabId === tabId)) {
+                mainFile = oldUISourceCodeList[i];
                 break;
             } 
         }
         
-        if (mainSourceFrame)
-            this._replaceSourceFrameTab(mainSourceFrame, title, sourceFrame, tooltip);
+        if (!mainFile)
+            return;
         
-        for (var i = 0; i < oldSourceFrames.length; ++i)
-            this._removeSourceFrameTab(oldSourceFrames[i]);
+        this._replaceFileTab(mainFile, uiSourceCodeList[0]);
+        for (var i = 0; i < oldUISourceCodeList.length; ++i)
+            this._removeFileTab(oldUISourceCodeList[i]);
     },
-
+    
     /**
-     * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {boolean} isDirty
      */
-    setSourceFrameIsDirty: function(sourceFrame, isDirty)
+    setFileIsDirty: function(uiSourceCode, isDirty)
     {
-        var tabId = this._tabIds.get(sourceFrame);
+        var tabId = this._tabIds.get(uiSourceCode);
         if (tabId) {
-            var title = this._titles.get(sourceFrame);
+            var title = this._titleForFile(uiSourceCode);
             if (isDirty)
                 title += "*";
             this._tabbedPane.changeTabTitle(tabId, title);
@@ -198,9 +202,9 @@ WebInspector.TabbedEditorContainer.prototype = {
     reset: function()
     {
         this._tabbedPane.closeAllTabs();
-        this._titles = new Map();
-        this._tooltips = new Map();
-        this._tabIds = new Map();  
+        this._tabIds = new Map();
+        this._files = {};
+
     },
 
     /**
