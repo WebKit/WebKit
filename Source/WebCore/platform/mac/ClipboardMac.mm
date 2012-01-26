@@ -68,13 +68,13 @@ bool ClipboardMac::hasData()
     
 static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
 {
-    String qType = type.stripWhiteSpace();
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dom-datatransfer-setdata
+    String qType = type.lower();
 
-    // two special cases for IE compatibility
-    if (qType == "Text")
-        return NSStringPboardType;
-    if (qType == "URL")
-        return NSURLPboardType;
+    if (qType == "text")
+        qType = "text/plain";
+    if (qType == "url")
+        qType = "text/uri-list";
 
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
     if (qType == "text/plain" || qType.startsWith("text/plain;"))
@@ -82,7 +82,7 @@ static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
     if (qType == "text/uri-list")
         // special case because UTI doesn't work with Cocoa's URL type
         return NSURLPboardType; // note special case in getData to read NSFilenamesType
-    
+
     // Try UTI now
     NSString *mimeType = qType;
     RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL));
@@ -218,8 +218,8 @@ String ClipboardMac::getData(const String& type, bool& success) const
 
     // Grab the value off the pasteboard corresponding to the cocoaType
     if ([cocoaType.get() isEqualToString:NSURLPboardType]) {
-        // "URL" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "URL" only wants the first URL
-        bool onlyFirstURL = (type == "URL");
+        // "url" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "url" only wants the first URL
+        bool onlyFirstURL = (equalIgnoringCase(type, "url"));
         NSArray *absoluteURLs = absoluteURLsFromPasteboard(m_pasteboard.get(), onlyFirstURL);
         cocoaValue = [absoluteURLs componentsJoinedByString:@"\n"];
     } else if ([cocoaType.get() isEqualToString:NSStringPboardType]) {

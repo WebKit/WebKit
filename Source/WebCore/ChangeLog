@@ -1,5 +1,23 @@
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
+        "text" and "URL" legacy clipboard types should not be case sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=76947
+
+        Reviewed by Adam Barth.
+
+        This matches the HTML5 spec which says the first thing to do is to lowercase
+        the type before comparing.
+        I also removed the stripping of whitespace since that is not part of the modern spec (and no tests failed as a result of removal).
+        Turns out we already had a test for case sensitivity, but it was disabled on Mac
+        so I just re-enabled it and have added failing expectations for the parts
+        of the test we still fail.
+
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        (WebCore::ClipboardMac::getData):
+
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
         HTMLIsIndexElement should not expose HTMLInputElement properties
         https://bugs.webkit.org/show_bug.cgi?id=76095
 

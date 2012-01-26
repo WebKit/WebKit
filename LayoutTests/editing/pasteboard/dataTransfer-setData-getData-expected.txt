@@ -5,34 +5,39 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 --- Test set/get 'URL':
 PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com/"
+FAIL getDataResult should be http://test.com/. Was http://test.com.
 --- Test set/get 'URL' with multiple URLs:
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com/"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
 --- Test set/get 'text/uri-list':
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com\r\nhttp://check.com"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com
+http://check.com (of type string). Was undefined (of type undefined).
 --- Test set/get 'text/uri-list' using '\n':
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com\nhttp://check.com"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com
+http://check.com (of type string). Was undefined (of type undefined).
 --- Test set 'text/uri-list', get 'URL':
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com/"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
 --- Test set 'URL', get 'text/uri-list':
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com\r\nhttp://check.com"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com
+http://check.com (of type string). Was undefined (of type undefined).
 --- Test set 'text/uri-list', get 'URL', using only '\n':
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com/"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
 --- Test set/get 'text/uri-list' with comments:
-PASS getDataResultType is "string"
-PASS getDataResult is "# comment\r\nhttp://test.com\r\nhttp://check.com"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be # comment
+http://test.com
+http://check.com (of type string). Was undefined (of type undefined).
 --- Test set 'text/uri-list', get 'URL' with comments:
-PASS getDataResultType is "string"
-PASS getDataResult is "http://test.com/"
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
 --- Test set 'text/uri-list', get 'URL' with only comments:
-PASS getDataResultType is "string"
-PASS getDataResult is ""
+FAIL getDataResultType should be string. Was undefined.
+FAIL getDataResult should be  (of type string). Was undefined (of type undefined).
 --- Test set/get 'text/plain':
 PASS getDataResultType is "string"
 PASS getDataResult is "Lorem ipsum dolor sit amet."
