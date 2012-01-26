@@ -1,3 +1,14 @@
+2012-01-26  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [GTK] Detect cross-compilation in webkitdirs.pm to not generate gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=76138
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (isCrossCompilation):
+        (buildAutotoolsProject):
+
 2012-01-25  Adam Barth  <abarth@webkit.org>
 
         Kentaro is a reviewer now.  Yay!

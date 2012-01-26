@@ -1232,6 +1232,19 @@ sub isARM()
     return $Config{archname} =~ /^arm-/;
 }
 
+sub isCrossCompilation()
+{
+  my $compiler = $ENV{'CC'};
+  if ($compiler =~ /gcc/) {
+      my $compiler_options = `$compiler -v 2>&1`;
+      my @host = $compiler_options =~ m/--host=(.*?)\s/;
+      my @target = $compiler_options =~ m/--target=(.*?)\s/;
+
+      return ($host[0] ne "" && $target[0] ne "" && $host[0] ne $target[0]);
+  }
+  return 0;
+}
+
 sub isAppleWebKit()
 {
     return !(isQt() or isGtk() or isWx() or isChromium() or isEfl() or isWinCE() or isBlackBerry());
@@ -1907,7 +1920,7 @@ sub buildAutotoolsProject($@)
 
     chdir ".." or die;
 
-    if ($project eq 'WebKit') {
+    if ($project eq 'WebKit' && !isCrossCompilation()) {
         my @docGenerationOptions = ($runWithJhbuild, "$gtkScriptsPath/generate-gtkdoc", "--skip-html");
         if ($debug) {
             push(@docGenerationOptions, "--debug");
