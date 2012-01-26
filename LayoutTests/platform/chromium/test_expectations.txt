@@ -4016,3 +4016,6 @@ BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 BUGWK77047 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS TIMEOUT
 BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
+BUGWK77151 WIN : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK77151 WIN : svg/css/group-with-shadow.svg = IMAGE
+
