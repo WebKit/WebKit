@@ -1108,14 +1108,6 @@ IntRect PlatformSupport::screenAvailableRect(Widget* widget)
     return client->screenInfo().availableRect;
 }
 
-double PlatformSupport::screenRefreshRate(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().refreshRate;
-}
-
 bool PlatformSupport::popupsAllowed(NPP npp)
 {
     // FIXME: Give the embedder a way to control this.

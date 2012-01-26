@@ -1,3 +1,23 @@
+2012-01-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Rollout r100751, this mechanism does not work and is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=77055
+
+        Unreviewed rollout of http://trac.webkit.org/changeset/100751. The refresh rate mechanism is not implemented,
+        but it still triggers a very slow codepath and triggers races on some platforms.
+
+        * platform/PlatformScreen.h:
+        (WebCore):
+        * platform/chromium/PlatformScreenChromium.cpp:
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        ():
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (CCSettings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+
 2012-01-25  Mark Rowe  <mrowe@apple.com>
 
         Reapply Daniel Bates's build fix from r105847 after the exact same issue was reintroduced in r105930.

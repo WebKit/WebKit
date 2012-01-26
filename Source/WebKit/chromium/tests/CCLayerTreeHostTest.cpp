@@ -396,8 +396,6 @@ protected:
 
     virtual void runTest(bool threaded)
     {
-        m_settings.refreshRate = 100.0;
-
         if (threaded) {
             m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
             WebCompositor::initialize(m_webThread.get());
