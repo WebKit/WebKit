@@ -102,6 +102,7 @@ WebInspector.inspectorView;
  */
 WebInspector.showViewInDrawer = function(view) {}
 
+WebInspector.closeDrawerView = function() {}
 
 /**
  * @param {string=} messageLevel
