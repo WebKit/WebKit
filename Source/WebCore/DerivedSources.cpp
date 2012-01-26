@@ -168,6 +168,7 @@
 #include "JSHTMLIFrameElement.cpp"
 #include "JSHTMLImageElement.cpp"
 #include "JSHTMLInputElement.cpp"
+#include "JSHTMLIsIndexElement.cpp"
 #include "JSHTMLKeygenElement.cpp"
 #include "JSHTMLLabelElement.cpp"
 #include "JSHTMLLegendElement.cpp"

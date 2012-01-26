@@ -215,6 +215,7 @@ BINDING_IDLS = \
     $(WebCore)/html/HTMLIFrameElement.idl \
     $(WebCore)/html/HTMLImageElement.idl \
     $(WebCore)/html/HTMLInputElement.idl \
+    $(WebCore)/html/HTMLIsIndexElement.idl \
     $(WebCore)/html/HTMLKeygenElement.idl \
     $(WebCore)/html/HTMLLIElement.idl \
     $(WebCore)/html/HTMLLabelElement.idl \

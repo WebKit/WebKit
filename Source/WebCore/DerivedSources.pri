@@ -280,6 +280,7 @@ IDL_BINDINGS += \
     $$PWD/html/HTMLIFrameElement.idl \
     $$PWD/html/HTMLImageElement.idl \
     $$PWD/html/HTMLInputElement.idl \
+    $$PWD/html/HTMLIsIndexElement.idl \
     $$PWD/html/HTMLKeygenElement.idl \
     $$PWD/html/HTMLLabelElement.idl \
     $$PWD/html/HTMLLegendElement.idl \

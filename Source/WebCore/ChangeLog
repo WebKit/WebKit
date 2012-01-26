@@ -1,3 +1,15 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r105940.
+        http://trac.webkit.org/changeset/105940
+        https://bugs.webkit.org/show_bug.cgi?id=76095
+
+        Only half this change landed
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+
 2012-01-25  Mark Rowe  <mrowe@apple.com>
 
         Build in to an alternate location when USE_STAGING_INSTALL_PATH is set.
