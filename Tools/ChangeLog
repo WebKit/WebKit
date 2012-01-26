@@ -1,3 +1,33 @@
+2012-01-25  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: print nicer errors while linting expectations files, remove redundant tests
+        https://bugs.webkit.org/show_bug.cgi?id=76955
+
+        Reviewed by Adam Barth.
+
+        This change cleans up the errors that are printed so that the
+        are more "quickfix" compatible (path:lineno).
+
+        Also, there were a bunch of redundant tests between
+        layout_tests.models.test_expectations_unittest and
+        style.checkers.test_expectations_unittest. The latter should
+        just expect the former to do most of the testing.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_modifiers):
+        (TestExpectations._report_errors):
+        (TestExpectations._add_skipped_tests):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_parse_error_nonfatal):
+        (SemanticTests.test_bad_bugid):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.assert_lines_lint):
+        (TestExpectationsTestCase.test_valid_expectations):
+        (TestExpectationsTestCase.test_invalid_expectations):
+        (TestExpectationsTestCase.test_tab):
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         webkit-patch apply-* should always continue after failures

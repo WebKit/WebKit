@@ -76,7 +76,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._expect_port_for_expectations_path(None, "/")
         self._expect_port_for_expectations_path("ChromiumMacPort", "/mock-checkout/LayoutTests/chromium-mac/test_expectations.txt")
 
-    def assert_lines_lint(self, lines, expected):
+    def assert_lines_lint(self, lines, should_pass, expected_output=None):
         self._error_collector.reset_errors()
         checker = TestExpectationsChecker('test/test_expectations.txt',
                                           self._error_collector, host=MockHost())
@@ -84,109 +84,19 @@ class TestExpectationsTestCase(unittest.TestCase):
                                         tests=[self._test_file],
                                         overrides=None)
         checker.check_tabs(lines)
-        self.assertEqual(expected, self._error_collector.get_errors())
+        if should_pass:
+            self.assertEqual('', self._error_collector.get_errors())
+        elif expected_output:
+            self.assertEquals(expected_output, self._error_collector.get_errors())
+        else:
+            self.assertNotEquals('', self._error_collector.get_errors())
         self.assertTrue(self._error_collector.turned_off_filtering)
 
     def test_valid_expectations(self):
-        self.assert_lines_lint(
-            ["BUGCR1234 MAC : passes/text.html = PASS FAIL"],
-            "")
-        self.assert_lines_lint(
-            ["SKIP BUGCR1234 : passes/text.html = TIMEOUT PASS"],
-            "")
-        self.assert_lines_lint(
-            ["BUGCR1234 DEBUG : passes/text.html = TIMEOUT PASS"],
-            "")
-        self.assert_lines_lint(
-            ["BUGCR1234 DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
-            "")
-        self.assert_lines_lint(
-            ["BUGCR1234 MAC DEBUG SKIP : passes/text.html = TIMEOUT PASS"],
-            "")
-        self.assert_lines_lint(
-            ["BUGCR1234 DEBUG MAC : passes/text.html = TIMEOUT PASS"],
-            "")
-        self.assert_lines_lint(
-            ["SLOW BUGCR1234 : passes/text.html = PASS"],
-            "")
-        self.assert_lines_lint(
-            ["WONTFIX SKIP : passes/text.html = TIMEOUT"],
-            "")
+        self.assert_lines_lint(["BUGCR1234 MAC : passes/text.html = PASS FAIL"], should_pass=True)
 
-    def test_modifier_errors(self):
-        self.assert_lines_lint(
-            ["BUG1234 : passes/text.html = FAIL"],
-            "BUG\\d+ is not allowed, must be one of BUGCR\\d+, BUGWK\\d+, BUGV8_\\d+, or a non-numeric bug identifier. passes/text.html  [test/expectations] [5]")
-
-    def test_valid_modifiers(self):
-        self.assert_lines_lint(
-            ["INVALID-MODIFIER : passes/text.html = PASS"],
-            "Unrecognized modifier 'invalid-modifier' "
-            "passes/text.html  [test/expectations] [5]")
-        self.assert_lines_lint(
-            ["SKIP : passes/text.html = PASS"],
-            "Test lacks BUG modifier. "
-            "passes/text.html  [test/expectations] [2]")
-
-    def test_expectation_errors(self):
-        self.assert_lines_lint(
-            ["missing expectations"],
-            "Missing a ':' missing expectations  [test/expectations] [5]")
-        self.assert_lines_lint(
-            ["SLOW : passes/text.html = TIMEOUT"],
-            "A test can not be both SLOW and TIMEOUT. "
-            "If it times out indefinitely, then it should be just TIMEOUT. "
-            "passes/text.html  [test/expectations] [5]")
-        self.assert_lines_lint(
-            ["BUGWK1 : does/not/exist.html = FAIL"],
-            "Path does not exist. does/not/exist.html  [test/expectations] [2]")
-
-    def test_parse_expectations(self):
-        self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS"],
-            "")
-        self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = UNSUPPORTED"],
-            "Unsupported expectation: unsupported "
-            "passes/text.html  [test/expectations] [5]")
-        self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS UNSUPPORTED"],
-            "Unsupported expectation: unsupported "
-            "passes/text.html  [test/expectations] [5]")
-
-    def test_already_seen_test(self):
-        self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS",
-             "BUGWK1 : passes/text.html = TIMEOUT"],
-            "Duplicate or ambiguous expectation. %s  [test/expectations] [5]" % self._test_file)
-
-        self.assert_lines_lint(
-            ["BUGWK1 LEOPARD : passes/text.html = PASS",
-             "BUGWK1 MAC : passes/text.html = TIMEOUT"],
-            "More specific entry on line 1 overrides line 2 passes/text.html  [test/expectations] [5]")
-
-        self.assert_lines_lint(
-            ["BUGWK1 LEOPARD : passes/text.html = PASS",
-             "BUGWK1 LEOPARD RELEASE : passes/text.html = TIMEOUT"],
-            "More specific entry on line 2 overrides line 1 passes/text.html  [test/expectations] [5]")
-
-        self.assert_lines_lint(
-            ["BUGWK1 RELEASE : passes/text.html = PASS",
-             "BUGWK1 CPU : passes/text.html = TIMEOUT"],
-            "Entries on line 1 and line 2 match overlapping sets of configurations passes/text.html  [test/expectations] [5]")
-
-        self.assert_lines_lint(
-            ["BUGWK1 WIN : passes/text.html = PASS",
-             "BUGWK1 MAC : passes/text.html = TIMEOUT"],
-            "")
-
-        self.assert_lines_lint(
-            ["BUGWK1 LEOPARD DEBUG : passes/text.html = PASS",
-             "BUGWK1 LEOPARD RELEASE : passes/text.html = TIMEOUT"],
-            "")
-
+    def test_invalid_expectations(self):
+        self.assert_lines_lint(["BUG1234 : passes/text.html = GIVE UP"], should_pass=False)
 
     def test_tab(self):
-        self.assert_lines_lint(
-            ["\tBUGWK1 : passes/text.html = PASS"],
-            "Line contains tab character.  [whitespace/tab] [5]")
+        self.assert_lines_lint(["\tBUGWK1 : passes/text.html = PASS"], should_pass=False, expected_output="Line contains tab character.  [whitespace/tab] [5]")

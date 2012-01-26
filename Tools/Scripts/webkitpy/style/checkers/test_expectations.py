@@ -64,7 +64,7 @@ class TestExpectationsChecker(object):
         self._handle_style_error = handle_style_error
         self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
-        self._output_regex = re.compile('Line:(?P<line>\d+)\s*(?P<message>.+)')
+        self._output_regex = re.compile('.*test_expectations.txt:(?P<line>\d+)\s*(?P<message>.+)')
 
         # FIXME: host should be a required parameter, not an optional one.
         host = host or Host()

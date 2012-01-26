@@ -199,11 +199,10 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertTrue(e.fatal)
-            exp_errors = [u"FAILURES IN %s" % self._port.path_to_test_expectations_file(),
-                          u"Line:1 Unrecognized modifier 'foo' failures/expected/text.html",
-                          u"Line:2 Missing expectations SKIP : failures/expected/image.html"]
-            self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
-            self.assertEqual(e.errors, exp_errors)
+            exp_errors = [u":1 Test lacks BUG modifier. failures/expected/text.html",
+                          u":1 Unrecognized modifier 'foo' failures/expected/text.html",
+                          u":2 Missing expectations SKIP : failures/expected/image.html"]
+            self.assertEqual(str(e), '\n'.join(self._port.path_to_test_expectations_file() + str(error) for error in exp_errors))
 
     def test_parse_error_nonfatal(self):
         try:
@@ -211,10 +210,8 @@ SKIP : failures/expected/image.html""")
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
             self.assertFalse(e.fatal)
-            exp_errors = [u'FAILURES IN %s' % self._port.path_to_test_expectations_file(),
-                          u'Line:1 Test lacks BUG modifier. failures/expected/text.html']
-            self.assertEqual(str(e), '\n'.join(map(str, exp_errors)))
-            self.assertEqual(e.errors, exp_errors)
+            exp_errors = [u':1 Test lacks BUG modifier. failures/expected/text.html']
+            self.assertEqual(str(e), '\n'.join(self._port.path_to_test_expectations_file() + str(error) for error in exp_errors))
 
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
@@ -314,6 +311,14 @@ BUG_TEST WIN : failures/expected/text.html = TEXT
 class SemanticTests(Base):
     def test_bug_format(self):
         self.assertRaises(ParseError, self.parse_exp, 'BUG1234 : failures/expected/text.html = TEXT')
+
+    def test_bad_bugid(self):
+        try:
+            self.parse_exp('BUG1234 SLOW : failures/expected/text.html = TEXT')
+            self.fail('should have raised an error about a bad bug identifier')
+        except ParseError, exp:
+            self.assertEquals(exp.fatal, True)
+            self.assertEquals(len(exp.errors), 1)
 
     def test_missing_bugid(self):
         # This should log a non-fatal error.

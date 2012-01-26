@@ -221,6 +221,7 @@ class TestExpectationParser(object):
 
     def _parse_modifiers(self, expectation_line):
         has_wontfix = False
+        has_bugid = False
         parsed_specifiers = set()
         for modifier in expectation_line.modifiers:
             if modifier in TestExpectations.MODIFIERS:
@@ -228,6 +229,7 @@ class TestExpectationParser(object):
                 if modifier == self.WONTFIX_MODIFIER:
                     has_wontfix = True
             elif modifier.startswith(self.BUG_MODIFIER_PREFIX):
+                has_bugid = True
                 if re.match(self.BUG_MODIFIER_REGEX, modifier):
                     expectation_line.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
                 else:
@@ -235,7 +237,7 @@ class TestExpectationParser(object):
             else:
                 parsed_specifiers.add(modifier)
 
-        if not expectation_line.parsed_bug_modifiers and not has_wontfix:
+        if not expectation_line.parsed_bug_modifiers and not has_wontfix and not has_bugid:
             expectation_line.warnings.append('Test lacks BUG modifier.')
 
         if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
@@ -783,25 +785,25 @@ class TestExpectations(object):
     def _report_errors(self):
         errors = []
         warnings = []
+        test_expectation_path = self._port.path_to_test_expectations_file()
+        if test_expectation_path.startswith(self._port.path_from_webkit_base()):
+            test_expectation_path = self._port.host.filesystem.relpath(test_expectation_path, self._port.path_from_webkit_base())
         for expectation in self._expectations:
             for error in expectation.errors:
-                errors.append("Line:%s %s %s" % (expectation.line_number, error, expectation.name if expectation.expectations else expectation.original_string))
+                errors.append('%s:%d %s %s' % (test_expectation_path, expectation.line_number, error, expectation.name if expectation.expectations else expectation.original_string))
             for warning in expectation.warnings:
-                warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
+                warnings.append('%s:%d %s %s' % (test_expectation_path, expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
 
         for warning in self._skipped_tests_warnings:
-            warnings.append(warning)
+            warnings.append('%s%s' % (test_expectation_path, warning))
 
         if errors or warnings:
-            test_expectation_path = self._port.path_to_test_expectations_file()
-            failure_title = "FAILURES IN %s" % test_expectation_path
-
             if errors:
-                raise ParseError(fatal=True, errors=[failure_title] + errors)
+                raise ParseError(fatal=True, errors=sorted(errors + warnings))
             if warnings:
                 self._has_warnings = True
                 if self._is_lint_mode:
-                    raise ParseError(fatal=False, errors=[failure_title] + warnings)
+                    raise ParseError(fatal=False, errors=warnings)
 
     def _process_tests_without_expectations(self):
         if self._full_test_list:
@@ -832,8 +834,7 @@ class TestExpectations(object):
             return
         for index, test in enumerate(self._expectations, start=1):
             if test.name and test.name in tests_to_skip:
-                self._skipped_tests_warnings.append('The %s test from test_expectations.txt in line %d is also in Skipped!' %
-                            (test.name, index))
+                self._skipped_tests_warnings.append(':%d %s is also in a Skipped file.' % (index, test.name))
         skipped_tests = '\n'.join(map(lambda test_path: 'BUG_SKIPPED SKIP : %s = FAIL' % test_path, tests_to_skip))
         for test in self._parser.parse(skipped_tests):
             self._model.add_expectation_line(test, overrides_allowed=True)
