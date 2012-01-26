@@ -1,3 +1,11 @@
+2012-01-25  Antoine Labour  <piman@chromium.org>
+
+        Updating status in committers.py.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-25  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: executive_unittest fails if PYTHONPATH isn't set
