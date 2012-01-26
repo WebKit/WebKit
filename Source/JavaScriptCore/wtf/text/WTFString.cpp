@@ -687,6 +687,13 @@ CString String::latin1() const
     // preserved, characters outside of this range are converted to '?'.
 
     unsigned length = this->length();
+
+    if (!length)
+        return CString("", 0);
+
+    if (is8Bit())
+        return CString(reinterpret_cast<const char*>(this->characters8()), length);
+
     const UChar* characters = this->characters();
 
     char* characterBuffer;

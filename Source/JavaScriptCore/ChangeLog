@@ -1,5 +1,16 @@
 2012-01-26  Michael Saboff  <msaboff@apple.com>
 
+        String::latin1() should take advantage of 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=76646
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::latin1): For 8 bit strings, use existing buffer
+        without conversion.
+
+2012-01-26  Michael Saboff  <msaboff@apple.com>
+
         Dromaeo tests usage of StringImpl find routines cause 8->16 bit conversions
         https://bugs.webkit.org/show_bug.cgi?id=76645
 
