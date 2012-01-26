@@ -31,7 +31,6 @@ using namespace WebKit;
 QQuickNetworkReply::QQuickNetworkReply(QObject* parent)
     : QObject(parent)
     , m_networkReplyData(adoptRef(new WebKit::QtRefCountedNetworkReplyData))
-    , m_dataLength(0)
 {
     Q_ASSERT(parent);
 }
@@ -46,118 +45,54 @@ void QQuickNetworkReply::setContentType(const QString& contentType)
     m_networkReplyData->data().m_contentType = contentType;
 }
 
-QNetworkAccessManager::Operation QQuickNetworkReply::operation() const
+QVariant QQuickNetworkReply::data() const
 {
-    return m_networkReplyData->data().m_operation;
+    return m_data;
 }
 
-void QQuickNetworkReply::setOperation(QNetworkAccessManager::Operation operation)
+void QQuickNetworkReply::setData(const QVariant& data)
 {
-    m_networkReplyData->data().m_operation = operation;
-}
-
-QString QQuickNetworkReply::contentDisposition() const
-{
-    return m_networkReplyData->data().m_contentDisposition;
-}
-
-void QQuickNetworkReply::setContentDisposition(const QString& disposition)
-{
-    m_networkReplyData->data().m_contentDisposition = disposition;
-}
-
-QString QQuickNetworkReply::location() const
-{
-    return m_networkReplyData->data().m_location;
-}
-
-void QQuickNetworkReply::setLocation(const QString& location)
-{
-    m_networkReplyData->data().m_location = location;
-}
-
-QString QQuickNetworkReply::lastModified() const
-{
-    return QDateTime::fromMSecsSinceEpoch(m_networkReplyData->data().m_lastModified).toString(Qt::ISODate);
-}
-
-void QQuickNetworkReply::setLastModified(const QString& lastModified)
-{
-    m_networkReplyData->data().m_lastModified = QDateTime::fromString(lastModified, Qt::ISODate).toMSecsSinceEpoch();
-}
-
-QString QQuickNetworkReply::cookie() const
-{
-    return m_networkReplyData->data().m_cookie;
-}
-
-void QQuickNetworkReply::setCookie(const QString& cookie)
-{
-    m_networkReplyData->data().m_cookie = cookie;
-}
-
-QString QQuickNetworkReply::userAgent() const
-{
-    return m_networkReplyData->data().m_userAgent;
-}
-
-void QQuickNetworkReply::setUserAgent(const QString& userAgent)
-{
-    m_networkReplyData->data().m_userAgent = userAgent;
-}
-
-QString QQuickNetworkReply::server() const
-{
-    return m_networkReplyData->data().m_server;
-}
-
-void QQuickNetworkReply::setServer(const QString& server)
-{
-    m_networkReplyData->data().m_server = server;
-}
-
-QString QQuickNetworkReply::data() const
-{
-    if (!m_sharedMemory)
-        return QString();
-
-    uint64_t stringLength = m_dataLength / sizeof(QChar);
-    return QString(reinterpret_cast<const QChar*>(m_sharedMemory->data()), stringLength);
-}
-
-void QQuickNetworkReply::setData(const QString& data)
-{
-    // This function can be called several times. In this case the previously allocated SharedMemory
-    // will be released automatically and new memory will be allocated.
-    m_dataLength = 0;
-
-    if (data.isNull())
-        return;
-
-    uint64_t smLength = sizeof(QChar) * data.length();
-    m_sharedMemory = SharedMemory::create(smLength);
-    if (!m_sharedMemory)
-        return;
-
-    // The size of the allocated shared memory can be bigger than requested.
-    // Usually the size will be rounded up to the next multiple of a page size.
-    memcpy(m_sharedMemory->data(), data.constData(), smLength);
-    m_dataLength = smLength;
+    m_data = data;
 }
 
 void QQuickNetworkReply::send()
 {
-    if (!m_sharedMemory || !m_sharedMemory->createHandle(m_networkReplyData->data().m_dataHandle, SharedMemory::ReadOnly))
+    if (m_data.isNull())
         return;
-    m_networkReplyData->data().m_contentLength = m_dataLength;
 
-    QObject* schemeParent = parent()->parent();
-    if (!schemeParent)
+    uint64_t smLength = 0;
+    const void* ptrData = 0;
+    QString stringData;
+    QByteArray byteArrayData;
+    if (m_data.type() == QVariant::String) {
+        stringData = m_data.toString();
+        ptrData = reinterpret_cast<const void*>(stringData.constData());
+        smLength = sizeof(QChar) * stringData.length();
+    } else {
+        if (!m_data.canConvert<QByteArray>())
+            return;
+        byteArrayData = m_data.toByteArray();
+        ptrData = byteArrayData.data();
+        smLength = byteArrayData.size();
+    }
+
+    WTF::RefPtr<WebKit::SharedMemory> sharedMemory = SharedMemory::create(smLength);
+    if (!sharedMemory)
         return;
-    QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(schemeParent->parent());
-    if (!webViewExperimental)
-        return;
-    webViewExperimental->sendApplicationSchemeReply(this);
+    // The size of the allocated shared memory can be bigger than requested.
+    // Usually the size will be rounded up to the next multiple of a page size.
+    memcpy(sharedMemory->data(), ptrData, smLength);
+
+    if (sharedMemory->createHandle(m_networkReplyData->data().m_dataHandle, SharedMemory::ReadOnly)) {
+        m_networkReplyData->data().m_contentLength = smLength;
+
+        QObject* schemeParent = parent()->parent();
+        if (schemeParent) {
+            QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(schemeParent->parent());
+            if (webViewExperimental)
+                webViewExperimental->sendApplicationSchemeReply(this);
+        }
+    }
 
     // After sending the reply data, we have to reinitialize the m_networkReplyData,
     // to make sure we have a fresh SharesMemory::Handle.

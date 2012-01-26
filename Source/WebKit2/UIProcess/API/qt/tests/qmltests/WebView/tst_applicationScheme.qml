@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
 import QtWebKit.experimental 3.0
+import Test 1.0
 
 WebView {
     id: webView
@@ -42,7 +43,21 @@ WebView {
                         reply.data = "<html><head><title>Should not happen</title></head><body>A test page.</body></html>"
                     reply.send()
                 }
+            },
+            UrlSchemeDelegate {
+                scheme: "schemeCharset"
+                onReceivedRequest: {
+                    if (request.url == "schemecharset://latin1") {
+                        reply.data = byteArrayHelper.latin1Data
+                        reply.contentType = "text/html; charset=iso-8859-1"
+                    } else if (request.url == "schemecharset://utf-8") {
+                        reply.data = byteArrayHelper.utf8Data
+                        reply.contentType = "text/html; charset=utf-8"
+                    }
+                    reply.send()
+                }
             }
+
         ]
     }
 
@@ -50,6 +65,10 @@ WebView {
         id: spyTitle
         target: webView
         signalName: "titleChanged"
+    }
+
+    ByteArrayTestData {
+        id: byteArrayHelper
     }
 
     TestCase {
@@ -95,6 +114,20 @@ WebView {
             compare(webView.title, "Scheme3 Reply2")
 
             compare(spyTitle.count, 2)
+        }
+
+        function test_charsets() {
+            spyTitle.clear()
+            compare(spyTitle.count, 0)
+            var testUrl = "schemeCharset://latin1"
+            webView.load(testUrl)
+            spyTitle.wait()
+            compare(webView.title, "title with copyright ©")
+
+            testUrl = "schemeCharset://utf-8"
+            webView.load(testUrl)
+            spyTitle.wait()
+            compare(webView.title, "title with copyright ©")
         }
     }
 }

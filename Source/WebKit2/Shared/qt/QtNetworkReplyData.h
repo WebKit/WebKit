@@ -47,15 +47,8 @@ struct QtNetworkReplyData {
 
     WTF::String m_urlString;
 
-    QNetworkAccessManager::Operation m_operation;
-    WTF::String m_contentDisposition;
     WTF::String m_contentType;
     uint64_t m_contentLength;
-    WTF::String m_location;
-    uint64_t m_lastModified;
-    WTF::String m_cookie;
-    WTF::String m_userAgent;
-    WTF::String m_server;
     String m_replyUuid;
 
     SharedMemory::Handle m_dataHandle;

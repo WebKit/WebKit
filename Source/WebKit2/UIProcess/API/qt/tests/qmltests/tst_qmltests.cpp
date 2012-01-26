@@ -17,6 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "../bytearraytestdata.h"
 #include "../util.h"
 
 #include <QVarLengthArray>
@@ -41,5 +42,6 @@ int main(int argc, char** argv)
     // Instantiate QApplication to prevent quick_test_main to instantiate a QGuiApplication.
     // This can be removed as soon as we do not use QtWidgets any more.
     QApplication app(argc, argv);
+    qmlRegisterType<ByteArrayTestData>("Test", 1, 0, "ByteArrayTestData");
     return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
 }

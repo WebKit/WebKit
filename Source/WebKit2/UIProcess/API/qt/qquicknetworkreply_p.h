@@ -33,30 +33,16 @@
 class QWEBKIT_EXPORT QQuickNetworkReply : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString contentType READ contentType WRITE setContentType)
-    Q_PROPERTY(QString data READ data WRITE setData)
+    Q_PROPERTY(QVariant data READ data WRITE setData)
     Q_ENUMS(QNetworkAccessManager::Operation)
 
 public:
     QQuickNetworkReply(QObject* parent);
     QString contentType() const;
     void setContentType(const QString&);
-    QNetworkAccessManager::Operation operation() const;
-    void setOperation(QNetworkAccessManager::Operation);
-    QString contentDisposition() const;
-    void setContentDisposition(const QString&);
-    QString location() const;
-    void setLocation(const QString&);
-    QString lastModified() const;
-    void setLastModified(const QString&);
-    QString cookie() const;
-    void setCookie(const QString&);
-    QString userAgent() const;
-    void setUserAgent(const QString&);
-    QString server() const;
-    void setServer(const QString&);
 
-    QString data() const;
-    void setData(const QString& data);
+    QVariant data() const;
+    void setData(const QVariant& data);
 
     WebKit::QtRefCountedNetworkRequestData* networkRequestData() const;
     void setNetworkRequestData(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData> data);
@@ -68,8 +54,7 @@ public Q_SLOTS:
 private:
     WTF::RefPtr<WebKit::QtRefCountedNetworkRequestData> m_networkRequestData;
     WTF::RefPtr<WebKit::QtRefCountedNetworkReplyData> m_networkReplyData;
-    WTF::RefPtr<WebKit::SharedMemory> m_sharedMemory;
-    uint64_t m_dataLength;
+    QVariant m_data;
 };
 
 QML_DECLARE_TYPE(QQuickNetworkReply)

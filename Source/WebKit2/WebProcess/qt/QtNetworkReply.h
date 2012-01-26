@@ -42,12 +42,12 @@ public:
 
     virtual qint64 readData(char *data, qint64 maxlen);
     virtual qint64 bytesAvailable() const;
-    void setHeader(QNetworkRequest::KnownHeaders, const QVariant &value);
-    void setData(const SharedMemory::Handle&, qint64 dataSize);
     void setReplyData(const QtNetworkReplyData&);
     void finalize();
 
 protected:
+    void setData(const SharedMemory::Handle&, qint64 dataSize);
+
     virtual void abort();
     virtual void close();
     virtual void setReadBufferSize(qint64);
@@ -55,7 +55,6 @@ protected:
 
 private:
     qint64 m_bytesAvailable;
-    QByteArray m_buffer;
     RefPtr<SharedMemory> m_sharedMemory;
     qint64 m_sharedMemorySize;
 };

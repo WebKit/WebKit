@@ -39,21 +39,13 @@ namespace WebKit {
 
 QtNetworkReplyData::QtNetworkReplyData()
     : m_contentLength(0)
-    , m_lastModified(0)
 { }
 
 void QtNetworkReplyData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_urlString);
-    encoder->encodeEnum(m_operation);
-    encoder->encode(m_contentDisposition);
     encoder->encode(m_contentType);
     encoder->encodeUInt64(m_contentLength);
-    encoder->encode(m_location);
-    encoder->encodeUInt64(m_lastModified);
-    encoder->encode(m_cookie);
-    encoder->encode(m_userAgent);
-    encoder->encode(m_server);
     encoder->encode(m_replyUuid);
     encoder->encode(m_dataHandle);
 }
@@ -62,23 +54,9 @@ bool QtNetworkReplyData::decode(CoreIPC::ArgumentDecoder* decoder, QtNetworkRepl
 {
     if (!decoder->decode(destination.m_urlString))
         return false;
-    if (!decoder->decodeEnum(destination.m_operation))
-        return false;
-    if (!decoder->decode(destination.m_contentDisposition))
-        return false;
     if (!decoder->decode(destination.m_contentType))
         return false;
     if (!decoder->decodeUInt64(destination.m_contentLength))
-        return false;
-    if (!decoder->decode(destination.m_location))
-        return false;
-    if (!decoder->decodeUInt64(destination.m_lastModified))
-        return false;
-    if (!decoder->decode(destination.m_cookie))
-        return false;
-    if (!decoder->decode(destination.m_userAgent))
-        return false;
-    if (!decoder->decode(destination.m_server))
         return false;
     if (!decoder->decode(destination.m_replyUuid))
         return false;

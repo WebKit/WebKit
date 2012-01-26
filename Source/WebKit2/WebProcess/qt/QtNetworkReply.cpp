@@ -62,22 +62,8 @@ void QtNetworkReply::setData(const SharedMemory::Handle& handle, qint64 dataSize
 
 void QtNetworkReply::setReplyData(const QtNetworkReplyData& replyData)
 {
-    if (replyData.m_operation)
-        setOperation(replyData.m_operation);
-    if (!replyData.m_contentDisposition.isNull())
-        setHeader(QNetworkRequest::ContentDispositionHeader, QString(replyData.m_contentDisposition));
     if (!replyData.m_contentType.isNull())
         setHeader(QNetworkRequest::ContentTypeHeader, QString(replyData.m_contentType));
-    if (!replyData.m_location.isNull())
-        setHeader(QNetworkRequest::LocationHeader, QString(replyData.m_location));
-    if (replyData.m_lastModified)
-        setHeader(QNetworkRequest::LastModifiedHeader, QDateTime::fromMSecsSinceEpoch(replyData.m_lastModified));
-    if (!replyData.m_cookie.isNull())
-        setHeader(QNetworkRequest::SetCookieHeader, QVariant::fromValue(QNetworkCookie::parseCookies(QString(replyData.m_cookie).toAscii())));
-    if (!replyData.m_userAgent.isNull())
-        setHeader(QNetworkRequest::UserAgentHeader, QString(replyData.m_userAgent));
-    if (!replyData.m_server.isNull())
-        setHeader(QNetworkRequest::ServerHeader, QString(replyData.m_server));
     setHeader(QNetworkRequest::ContentLengthHeader, QVariant::fromValue(replyData.m_contentLength));
     setData(replyData.m_dataHandle, replyData.m_contentLength);
 }
@@ -98,11 +84,6 @@ qint64 QtNetworkReply::readData(char* data, qint64 maxlen)
 qint64 QtNetworkReply::bytesAvailable() const
 {
     return m_bytesAvailable + QNetworkReply::bytesAvailable();
-}
-
-void QtNetworkReply::setHeader(QNetworkRequest::KnownHeaders header, const QVariant &value)
-{
-    QNetworkReply::setHeader(header, value);
 }
 
 void QtNetworkReply::abort() { }
