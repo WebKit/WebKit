@@ -946,7 +946,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 
 void HTMLInputElement::setIndeterminate(bool newValue)
 {
-    if (!isCheckbox() || indeterminate() == newValue)
+    if (!m_inputType->isCheckable() || indeterminate() == newValue)
         return;
 
     m_isIndeterminate = newValue;
