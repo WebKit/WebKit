@@ -87,7 +87,7 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
     AffineTransform savedContentTransformation = contentTransformation;
     contentTransformation = subtreeContentTransformation * contentTransformation;
 
-    item->layoutIfNeeded();
+    ASSERT(!item->needsLayout());
     item->paint(info, IntPoint());
 
     contentTransformation = savedContentTransformation;

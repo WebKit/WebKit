@@ -56,7 +56,8 @@ enum PaintBehaviorFlags {
     PaintBehaviorNormal = 0,
     PaintBehaviorSelectionOnly = 1 << 0,
     PaintBehaviorForceBlackText = 1 << 1,
-    PaintBehaviorFlattenCompositingLayers = 1 << 2
+    PaintBehaviorFlattenCompositingLayers = 1 << 2,
+    PaintBehaviorRenderingSVGMask = 1 << 3
 };
 
 typedef unsigned PaintBehavior;

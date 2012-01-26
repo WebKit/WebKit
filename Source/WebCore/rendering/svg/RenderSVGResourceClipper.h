@@ -69,7 +69,6 @@ private:
     bool drawContentIntoMaskImage(ClipperData*, const FloatRect& objectBoundingBox);
     void calculateClipContentRepaintRect();
 
-    bool m_invalidationBlocked;
     FloatRect m_clipBoundaries;
     HashMap<RenderObject*, ClipperData*> m_clipper;
 };

@@ -54,15 +54,25 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
     const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
     ColorSpace colorSpace = style ? style->colorSpace() : ColorSpaceDeviceRGB;
 
+    bool isRenderingMask = false;
+    if (object->frame() && object->frame()->view())
+        isRenderingMask = object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
+
     if (resourceMode & ApplyToFillMode) {
-        context->setAlpha(svgStyle ? svgStyle->fillOpacity() : 1.0f);
+        if (!isRenderingMask && svgStyle)
+            context->setAlpha(svgStyle->fillOpacity());
+        else
+            context->setAlpha(1);
         context->setFillColor(m_color, colorSpace);
-        context->setFillRule(svgStyle ? svgStyle->fillRule() : RULE_NONZERO);
+        if (!isRenderingMask)
+            context->setFillRule(svgStyle ? svgStyle->fillRule() : RULE_NONZERO);
 
         if (resourceMode & ApplyToTextMode)
             context->setTextDrawingMode(TextModeFill);
     } else if (resourceMode & ApplyToStrokeMode) {
-        context->setAlpha(svgStyle ? svgStyle->strokeOpacity() : 1.0f);
+        // When rendering the mask for a RenderSVGResourceClipper, the stroke code path is never hit.
+        ASSERT(!isRenderingMask);
+        context->setAlpha(svgStyle ? svgStyle->strokeOpacity() : 1);
         context->setStrokeColor(m_color, colorSpace);
 
         if (style)

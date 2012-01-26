@@ -117,7 +117,10 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         maskImageContext->translate(-clampedAbsoluteTargetRect.x(), -clampedAbsoluteTargetRect.y());
         maskImageContext->concatCTM(absoluteTransform);
 
-        drawContentIntoMaskImage(maskerData, colorSpace, maskElement, object);
+        if (!drawContentIntoMaskImage(maskerData, colorSpace, maskElement, object)) {
+            maskImageContext->restore();
+            maskerData->maskImage.clear();
+        }
     }
 
     if (!maskerData->maskImage)
@@ -127,7 +130,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     return true;
 }
 
-void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, ColorSpace colorSpace, const SVGMaskElement* maskElement, RenderObject* object)
+bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, ColorSpace colorSpace, const SVGMaskElement* maskElement, RenderObject* object)
 {
     GraphicsContext* maskImageContext = maskerData->maskImage->context();
     ASSERT(maskImageContext);
@@ -146,6 +149,8 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
         RenderObject* renderer = node->renderer();
         if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !renderer)
             continue;
+        if (renderer->needsLayout())
+            return false;
         RenderStyle* style = renderer->style();
         if (!style || style->display() == NONE || style->visibility() != VISIBLE)
             continue;
@@ -162,6 +167,7 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
 
     // Create the luminance mask.
     maskerData->maskImage->convertToLuminanceMask();
+    return true;
 }
 
 void RenderSVGResourceMasker::calculateMaskContentRepaintRect()

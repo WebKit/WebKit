@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<g>
+    <linearGradient>
+        <stop id="stop"/>
+    </linearGradient>
+</g>
+<g>
+    <defs>
+        <filter id="filter"/>
+    </defs>
+
+    <mask id="mask">
+        <g filter="url(#filter)">
+            <linearGradient id="gradient"/>
+            <path fill="url(#gradient)" d="M147.231,26.23c70.188,0,127.086,57.77,127.086,129.032c0"/>
+        </g>
+    </mask>
+
+    <path mask="url(#mask)" d="M147.231,26.23c70.188,0,127.086,57.77,127.086,129.032"/>
+</g>
+
+<text>PASS, if it doesn't crash.</text>
+<script><![CDATA[
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+document.execCommand("SelectAll");
+range = document.createRange();
+range.setStartBefore(document.getElementById("stop"));
+range.insertNode(document.getElementById("mask"));
+
+/* What does this do? It moves the whole <mask> element as child of the <linearGradient>.
+The final DOM looks like:
+
+<g>
+    <linearGradient>
+        <mask id="mask">
+            <g filter="url(#filter)">
+                <linearGradient id="gradient"/>
+                <path fill="url(#gradient)" d="..."/>
+            </g>
+        </mask>
+        <stop id="stop"/>
+    </linearGradient>
+</g>
+<g>
+    <defs>
+        <filter id="filter"/>
+    </defs>
+    <path mask="url(#mask)" d="...."/>
+</g>
+*/
+]]></script>
+</svg>

@@ -3918,6 +3918,9 @@ BUGWK76800 : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE
 BUGWK76800 : svg/filters/feImage-reference-invalidation.svg = IMAGE
 BUGWK76800 : svg/filters/feImage-reference-svg-primitive.svg = IMAGE
 
+// Just needs a rebaseline.
+BUGWK69714 : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
+
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
 BUG_CARYCLARK MAC : editing/deleting/delete-3959464-fix.html = IMAGE

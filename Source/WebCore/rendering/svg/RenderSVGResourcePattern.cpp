@@ -258,6 +258,8 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
     for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement() || !static_cast<SVGElement*>(node)->isStyled() || !node->renderer())
             continue;
+        if (node->renderer()->needsLayout())
+            return nullptr;
         SVGImageBufferTools::renderSubtreeToImageBuffer(tileImage.get(), node->renderer(), contentTransformation);
     }
 

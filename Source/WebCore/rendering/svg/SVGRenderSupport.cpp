@@ -87,8 +87,12 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
+    bool isRenderingMask = false;
+    if (object->frame() && object->frame()->view())
+        isRenderingMask = object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
+
     // Setup transparency layers before setting up SVG resources!
-    float opacity = style->opacity();
+    float opacity = isRenderingMask ? 1 : style->opacity();
     const ShadowData* shadow = svgStyle->shadow();
     if (opacity < 1 || shadow) {
         FloatRect repaintRect = object->repaintRectInLocalCoordinates();
@@ -114,9 +118,11 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
         return true;
     }
 
-    if (RenderSVGResourceMasker* masker = resources->masker()) {
-        if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-            return false;
+    if (!isRenderingMask) {
+        if (RenderSVGResourceMasker* masker = resources->masker()) {
+            if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+                return false;
+        }
     }
 
     if (RenderSVGResourceClipper* clipper = resources->clipper()) {
@@ -125,9 +131,11 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     }
 
 #if ENABLE(FILTERS)
-    if (RenderSVGResourceFilter* filter = resources->filter()) {
-        if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-            return false;
+    if (!isRenderingMask) {
+        if (RenderSVGResourceFilter* filter = resources->filter()) {
+            if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
+                return false;
+        }
     }
 #endif
 
