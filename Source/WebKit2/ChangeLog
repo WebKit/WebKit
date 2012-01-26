@@ -1,3 +1,16 @@
+2012-01-26  Andras Becsi  <andras.becsi@nokia.com>
+
+        ASSERT(!m_overlay) reached in TapHighlightController.cpp:73
+        https://bugs.webkit.org/show_bug.cgi?id=77117
+
+        Reviewed by Tor Arne Vestbø.
+
+        The PageOverlay does only get uninstalled after the fade-out animation finishes,
+        so do not assert on !m_overlay after the uninstallPageOverlay call.
+
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::hideHighlight):
+
 2012-01-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         WebPreferencesStore: use DEFINE_STATIC_LOCAL for overrides HashMap

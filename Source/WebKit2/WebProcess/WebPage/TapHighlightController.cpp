@@ -70,7 +70,6 @@ void TapHighlightController::hideHighlight()
 {
     if (m_overlay)
         m_webPage->uninstallPageOverlay(m_overlay, /* fadeout */ true);
-    ASSERT(!m_overlay);
 }
 
 void TapHighlightController::pageOverlayDestroyed(PageOverlay*)
