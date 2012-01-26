@@ -1,3 +1,13 @@
+2012-01-25  Eli Fidler  <efidler@rim.com>
+
+        Implement Date.toLocaleString() using ICU
+        https://bugs.webkit.org/show_bug.cgi?id=76714
+
+        Reviewed by Darin Adler.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2012-01-25  Hajime Morita  <morrita@google.com>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom

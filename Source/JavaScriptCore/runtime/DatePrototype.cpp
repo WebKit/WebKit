@@ -64,6 +64,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if USE(ICU_UNICODE)
+#include <unicode/udat.h>
+#endif
+
 #if OS(WINCE) && !PLATFORM(QT)
 extern "C" size_t strftime(char * const s, const size_t maxsize, const char * const format, const struct tm * const t); //provided by libce
 #endif
@@ -195,7 +199,29 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     return jsNontrivialString(exec, UString(buffer, length));
 }
 
-#else // !PLATFORM(MAC) && !PLATFORM(IOS)
+#elif USE(ICU_UNICODE) && !UCONFIG_NO_FORMATTING
+
+static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, double timeInMilliseconds, LocaleDateTimeFormat format)
+{
+    UDateFormatStyle timeStyle = (format != LocaleDate ? UDAT_LONG : UDAT_NONE);
+    UDateFormatStyle dateStyle = (format != LocaleTime ? UDAT_LONG : UDAT_NONE);
+
+    UErrorCode status = U_ZERO_ERROR;
+    UDateFormat* df = udat_open(timeStyle, dateStyle, 0, 0, -1, 0, 0, &status);
+    if (!df)
+        return jsEmptyString(exec);
+
+    UChar buffer[128];
+    int32_t length;
+    length = udat_format(df, timeInMilliseconds, buffer, 128, 0, &status);
+    udat_close(df);
+    if (status != U_ZERO_ERROR)
+        return jsEmptyString(exec);
+
+    return jsNontrivialString(exec, UString(buffer, length));
+}
+
+#else
 
 static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, LocaleDateTimeFormat format)
 {
