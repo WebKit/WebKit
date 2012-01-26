@@ -41,59 +41,6 @@
 
 namespace WebCore {
 
-// A class to provide an isEmpty test that considers a one-element path with only a MoveTo element
-// to be empty. This behavior is consistent with other platforms in WebKit, and is needed to prevent
-// incorrect (according to the spec) linecap stroking for zero length paths in SVG.
-class PathIsEmptyOrSingleMoveTester {
-public:
-    PathIsEmptyOrSingleMoveTester() : m_moveCount(0) { }
-
-    bool isEmpty() const
-    {
-        return m_moveCount <= 1;
-    }
-
-    static void testPathElement(void* info, const CGPathElement* element)
-    {
-        PathIsEmptyOrSingleMoveTester* tester = static_cast<PathIsEmptyOrSingleMoveTester*>(info);
-        if (element->type == kCGPathElementMoveToPoint)
-            ++tester->m_moveCount;
-        else {
-            // Any non move element implies a non-empty path; set the count to 2 to force
-            // isEmpty to return false.
-            tester->m_moveCount = 2;
-        }
-    }
-
-private:
-    // Any non-move-to element, or more than one move-to element, will make the count >= 2.
-    unsigned m_moveCount;
-};
-
-// Paths with only move-to elements do not draw under any circumstances, so their bound should
-// be empty. Currently, CoreGraphics returns non-empty bounds for such paths. Radar 10450621
-// tracks this. This class reports paths that have only move-to elements, allowing the
-// bounding box code to work around the CoreGraphics problem.
-class PathHasOnlyMoveToTester {
-public:
-    PathHasOnlyMoveToTester() : m_hasSeenOnlyMoveTo(true) { }
-
-    bool hasOnlyMoveTo() const
-    {
-        return m_hasSeenOnlyMoveTo;
-    }
-
-    static void testPathElement(void* info, const CGPathElement* element)
-    {
-        PathHasOnlyMoveToTester* tester = static_cast<PathHasOnlyMoveToTester*>(info);
-        if (tester->m_hasSeenOnlyMoveTo && element->type != kCGPathElementMoveToPoint)
-            tester->m_hasSeenOnlyMoveTo = false;
-    }
-
-private:
-    bool m_hasSeenOnlyMoveTo;
-};
-
 static size_t putBytesNowhere(void*, const void*, size_t count)
 {
     return count;
@@ -218,32 +165,20 @@ FloatRect Path::boundingRect() const
 {
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
     // does not, but only exists on 10.6 and above.
-    // A bug in CoreGraphics leads to an incorrect bound on paths containing only move-to elements
-    // with a linecap style that is non-butt. All paths with only move-to elements (regardless of
-    // linecap) are effectively empty for bounding purposes and here we make it so.
-    PathHasOnlyMoveToTester tester;
-    CGPathApply(m_path, &tester, PathHasOnlyMoveToTester::testPathElement);
-    if (tester.hasOnlyMoveTo())
-        return FloatRect(0, 0, 0, 0);
 
+    CGRect bound = CGRectZero;
 #if !defined(BUILDING_ON_LEOPARD)
-    return CGPathGetPathBoundingBox(m_path);
+    bound = CGPathGetPathBoundingBox(m_path);
 #else
-    return CGPathGetBoundingBox(m_path);
+    bound = CGPathGetBoundingBox(m_path);
 #endif
+    return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 
 FloatRect Path::fastBoundingRect() const
 {
-    // A bug in CoreGraphics leads to an incorrect bound on paths containing only move-to elements
-    // with a linecap style that is non-butt. All paths with only move-to elements (regardless of
-    // linecap) are effectively empty for bounding purposes and here we make it so.
-    PathHasOnlyMoveToTester tester;
-    CGPathApply(m_path, &tester, PathHasOnlyMoveToTester::testPathElement);
-    if (tester.hasOnlyMoveTo())
-        return FloatRect(0, 0, 0, 0);
-
-    return CGPathGetBoundingBox(m_path);
+    CGRect bound = CGPathGetBoundingBox(m_path);
+    return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
@@ -263,7 +198,7 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
     CGRect box = CGContextIsPathEmpty(context) ? CGRectZero : CGContextGetPathBoundingBox(context);
     CGContextRestoreGState(context);
 
-    return box;
+    return CGRectIsNull(box) ? CGRectZero : box;
 }
 
 void Path::moveTo(const FloatPoint& point)
@@ -321,18 +256,12 @@ void Path::clear()
 
 bool Path::isEmpty() const
 {
-    // The SVG rendering code that uses this method relies on paths with a single move-to
-    // element, and nothing else, as being empty. Until that code is refactored to avoid
-    // the dependence on isEmpty, we match the behavior of other platforms.
-    // When the SVG code is refactored, we could use CGPathIsEmpty(m_path);
-    PathIsEmptyOrSingleMoveTester tester;
-    CGPathApply(m_path, &tester, PathIsEmptyOrSingleMoveTester::testPathElement);
-    return tester.isEmpty();
+    return CGPathIsEmpty(m_path);
 }
 
 bool Path::hasCurrentPoint() const
 {
-    return !CGPathIsEmpty(m_path);
+    return !isEmpty();
 }
     
 FloatPoint Path::currentPoint() const 
@@ -386,7 +315,7 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& transform)
 {
-    if (transform.isIdentity() || CGPathIsEmpty(m_path))
+    if (transform.isIdentity() || isEmpty())
         return;
 
     CGMutablePathRef path = CGPathCreateMutable();

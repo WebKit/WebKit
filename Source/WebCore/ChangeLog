@@ -1,3 +1,27 @@
+2012-01-26  Stephen Chenney  <schenney@chromium.org>
+
+        REGRESSION (r91125): Polyline tool in google docs is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65796
+
+        Reviewed by Nikolas Zimmermann.
+
+        It turns out that the CG problem is a design decision. The bounding code
+        returns CGRectNull for cases where a bound is ill-defined, rather than the
+        empty bound as expected.
+
+        I'm also removing the workaround for isEmpty to get correct zero length paths.
+        It is no longer necessary.
+
+        Tested by existing layout tests.
+
+        * platform/graphics/cg/PathCG.cpp: Removed path empty and path bound testing classes.
+        (WebCore::Path::boundingRect): Added check for CGRectNull
+        (WebCore::Path::fastBoundingRect): Added check for CGRectNull
+        (WebCore::Path::strokeBoundingRect): Added check for CGRectNull
+        (WebCore::Path::isEmpty): Reverted to former behavior, just using CGPathIsEmpty.
+        (WebCore::Path::hasCurrentPoint): Reverted to former behavior, using isEmpty.
+        (WebCore::Path::transform): Reverted to former behavior, using isEmpty.
+
 2012-01-26  Andreas Kling  <awesomekling@apple.com>
 
         Refactor application of additional style attributes for table elements.
