@@ -4010,3 +4010,5 @@ BUGABARTH : media/audio-garbage-collect.html = PASS TIMEOUT
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77047 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html = PASS TIMEOUT
+BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
+BUGCR111431 : storage/indexeddb/prefetch-bugfix-108071.html = PASS FAIL
