@@ -1,3 +1,21 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Simplify checking for whether we should rubberband or not when at the edge
+        https://bugs.webkit.org/show_bug.cgi?id=77131
+
+        Reviewed by Beth Dakin.
+
+        We only need to check once if we're pinned at either edge whether we should rubber-band
+        or not. Do this when the wheel event phase is PlatformWheelEventPhaseBegan. This lets us
+        remove a bunch of code that would keep track of the current horizontal scroll direction.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+
 2012-01-26  Eli Fidler  <efidler@rim.com>
 
         [JSC] Inspector instrumentation for JavaScript calls.

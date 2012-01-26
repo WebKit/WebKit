@@ -138,11 +138,6 @@ private:
 
     ScrollElasticityController m_scrollElasticityController;
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
-
-    bool m_scrollerInitiallyPinnedOnLeft;
-    bool m_scrollerInitiallyPinnedOnRight;
-    int m_cumulativeHorizontalScroll;
-    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
 #endif
 
     bool m_haveScrolledSincePageLoad;
