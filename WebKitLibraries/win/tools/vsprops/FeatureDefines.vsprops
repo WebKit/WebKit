@@ -238,7 +238,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_SHADOW_DOM"
-		Value="ENABLE_SHADOW_DOM"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

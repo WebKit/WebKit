@@ -1,3 +1,10 @@
+2012-01-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix win build, by disabling ENABLE_SHADOW_DOM by default.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2012-01-25  Hajime Morita  <morrita@google.com>>
 
         ENABLE_SHADOW_DOM should be available via build-webkit --shadow-dom
