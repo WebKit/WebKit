@@ -28,7 +28,7 @@
 #ifndef WTF_OwnPtrCommon_h
 #define WTF_OwnPtrCommon_h
 
-#if OS(WIN)
+#if OS(WINDOWS)
 typedef struct HBITMAP__* HBITMAP;
 typedef struct HBRUSH__* HBRUSH;
 typedef struct HDC__* HDC;
@@ -54,7 +54,7 @@ namespace WTF {
             delete ptr;
     }
 
-#if OS(WIN)
+#if OS(WINDOWS)
     void deleteOwnedPtr(HBITMAP);
     void deleteOwnedPtr(HBRUSH);
     void deleteOwnedPtr(HDC);
