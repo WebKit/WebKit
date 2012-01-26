@@ -40,4 +40,7 @@ linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
     }
 }
 
-win32-*: LIBS += -lwinmm
+win32-* {
+    LIBS += -lwinmm
+    LIBS += -lgdi32
+}

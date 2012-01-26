@@ -1,5 +1,11 @@
 2012-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Win] One more speculative buildfix after r105970.
+
+        * JavaScriptCore.pri:
+
+2012-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][Win] Speculative buildfix after r105970.
 
         * JavaScriptCore.pri: Link lgdi for DeleteObject() and DeleteDC().
