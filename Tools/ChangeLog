@@ -1,5 +1,18 @@
 2012-01-26  Alexander Færøy  <alexander.faeroy@nokia.com>
 
+        [Qt] Support opening multiple URL's from the command line in the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=77100
+
+        Reviewed by Simon Hausmann.
+
+        This patch makes the MiniBrowser read multiple URL's from the command
+        line such that there will be one browser window opened for each URL.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+
+2012-01-26  Alexander Færøy  <alexander.faeroy@nokia.com>
+
         [Qt] The Qt MiniBrowser crashes when given multiple URL's
         https://bugs.webkit.org/show_bug.cgi?id=77009
 

@@ -250,8 +250,9 @@ void MiniBrowserApplication::handleUserOptions()
         m_robotTimeoutSeconds = takeOptionValue(&args, "--robot-timeout").toInt();
         m_robotExtraTimeSeconds = takeOptionValue(&args, "--robot-extra-time").toInt();
     } else {
-        int urlArg = args.indexOf(QRegExp("^[^-].*"));
-        if (urlArg != -1)
+        int urlArg;
+
+        while ((urlArg = args.indexOf(QRegExp("^[^-].*"))) != -1)
             m_urls += args.takeAt(urlArg);
     }
 
