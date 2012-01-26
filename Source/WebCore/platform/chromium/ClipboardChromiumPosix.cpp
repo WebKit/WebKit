@@ -27,15 +27,32 @@
 #include "config.h"
 #include "ClipboardChromium.h"
 
-#include "ChromiumDataObject.h"
-#include "NotImplemented.h"
-
 namespace WebCore {
 
-String ClipboardChromium::validateFileName(const String& title, ChromiumDataObject* dataObject)
+// On POSIX systems, the typical filename length limit is 255 character units. HFS+'s limit is
+// actually 255 Unicode characters using Apple's modification of Normzliation Form D, but the
+// differences aren't really worth dealing with here.
+static const unsigned maxFilenameLength = 255;
+
+static bool isInvalidFileCharacter(UChar c)
 {
-    notImplemented();
-    return title;
+    // HFS+ disallows '/' and Linux systems also disallow null. For sanity's sake we'll also
+    // disallow control characters.
+    return c < ' ' || c == 0x7F || c == '/';
 }
 
-}  // namespace WebCore
+void ClipboardChromium::validateFilename(String& name, String& extension)
+{
+    // Remove any invalid file system characters, especially "/".
+    name = name.removeCharacters(&isInvalidFileCharacter);
+    extension = extension.removeCharacters(&isInvalidFileCharacter);
+
+    // Remove a ridiculously-long extension.
+    if (extension.length() >= maxFilenameLength)
+        extension = String();
+
+    // Truncate an overly-long filename, reserving one character for a dot.
+    name.truncate(maxFilenameLength - extension.length() - 1);
+}
+
+} // namespace WebCore

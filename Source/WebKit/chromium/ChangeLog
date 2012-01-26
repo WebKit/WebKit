@@ -1,3 +1,15 @@
+2012-01-25  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix ClipboardChromium::validateFilename to actually operate on extensions
+        https://bugs.webkit.org/show_bug.cgi?id=76996
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gypi:
+        * tests/ClipboardChromiumTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2012-01-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Rollout r100751, this mechanism does not work and is very slow

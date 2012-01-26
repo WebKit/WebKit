@@ -1,3 +1,29 @@
+2012-01-25  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix ClipboardChromium::validateFilename to actually operate on extensions
+        https://bugs.webkit.org/show_bug.cgi?id=76996
+
+        As it turns out, we were always calling validateFilename on a data object with an empty
+        extension. Now we call it on an actual extension so that it's sanitized.
+
+        Reviewed by Tony Chang.
+
+        Unit test: webkit_unit_tests --gtest_filter=ClipboardChromium.*
+
+        * WebCore.gypi:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+        * platform/chromium/ClipboardChromium.h:
+        (ClipboardChromium):
+        * platform/chromium/ClipboardChromiumLinux.cpp: Removed.
+        * platform/chromium/ClipboardChromiumPosix.cpp: Renamed from Source/WebCore/platform/chromium/ClipboardChromiumMac.cpp.
+        (WebCore):
+        (WebCore::isInvalidFileCharacter):
+        (WebCore::ClipboardChromium::validateFilename):
+        * platform/chromium/ClipboardChromiumWin.cpp:
+        (WebCore):
+        (WebCore::ClipboardChromium::validateFilename):
+
 2012-01-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Rollout r100751, this mechanism does not work and is very slow

@@ -403,13 +403,15 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
         if (extensionIndex != -1)
             filename.truncate(extensionIndex);
     }
-    filename = ClipboardChromium::validateFileName(filename, dataObject);
 
     String extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
         cachedImage->response().mimeType());
-    dataObject->setFileExtension(extension.isEmpty() ? emptyString() : "." + extension);
+    extension = extension.isEmpty() ? emptyString() : "." + extension;
 
-    dataObject->setFileContentFilename(filename + dataObject->fileExtension());
+    ClipboardChromium::validateFilename(filename, extension);
+
+    dataObject->setFileContentFilename(filename + extension);
+    dataObject->setFileExtension(extension);
 }
 
 void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)

@@ -51,11 +51,10 @@ namespace WebCore {
         static PassRefPtr<ClipboardChromium> create(
             ClipboardType, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy, Frame*);
 
-        // Returns the file name (not including the extension). This removes any
-        // invalid file system characters as well as making sure the
-        // path + extension is not bigger than allowed by the file system.
-        // This may change the file extension in dataObject.
-        static String validateFileName(const String& title, ChromiumDataObject* dataObject);
+        // Validates a filename (without the extension) and the extension. This removes any invalid
+        // file system characters as well as making sure the path + extension is not bigger than
+        // allowed by the file system.
+        static void validateFilename(String& name, String& extension);
 
         virtual void clearData(const String& type);
         void clearAllData();

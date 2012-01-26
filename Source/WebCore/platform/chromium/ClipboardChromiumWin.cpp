@@ -27,11 +27,12 @@
 #include "config.h"
 #include "ClipboardChromium.h"
 
-#include "ChromiumDataObject.h"
-
 #include <shlwapi.h>
 
 namespace WebCore {
+
+// FAT32 and NTFS both limit filenames to a maximum of 255 characters.
+static const unsigned maxFilenameLength = 255;
 
 // Returns true if the specified character is not valid in a file name. This
 // is intended for use with removeCharacters.
@@ -40,17 +41,17 @@ static bool isInvalidFileCharacter(UChar c)
     return (PathGetCharType(c) & (GCT_LFNCHAR | GCT_SHORTCHAR)) == 0;
 }
 
-String ClipboardChromium::validateFileName(const String& title, ChromiumDataObject* dataObject)
+void ClipboardChromium::validateFilename(String& name, String& extension)
 {
     // Remove any invalid file system characters.
-    String result = title.removeCharacters(&isInvalidFileCharacter);
-    if (result.length() + dataObject->fileExtension().length() + 1 >= MAX_PATH) {
-        if (dataObject->fileExtension().length() + 1 >= MAX_PATH)
-            dataObject->setFileExtension("");
-        if (result.length() + dataObject->fileExtension().length() + 1 >= MAX_PATH)
-            result = result.substring(0, MAX_PATH - dataObject->fileExtension().length() - 1);
-    }
-    return result;
+    name = name.removeCharacters(&isInvalidFileCharacter);
+    extension = extension.removeCharacters(&isInvalidFileCharacter);
+
+    if (extension.length() >= maxFilenameLength)
+        extension = String();
+
+    // Truncate overly-long filenames, reserving one character for a dot.
+    name.truncate(maxFilenameLength - extension.length() - 1);
 }
 
 }  // namespace WebCore
