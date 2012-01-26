@@ -3534,6 +3534,7 @@ void ewk_view_download_request(Evas_Object* ewkView, Ewk_Download* download)
     evas_object_smart_callback_call(ewkView, "download,request", download);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 /**
  * @internal
  * Reports the JS window object was cleared.
@@ -3545,6 +3546,7 @@ void ewk_view_js_window_object_clear(Evas_Object* ewkView, Evas_Object* frame)
 {
     evas_object_smart_callback_call(ewkView, "js,windowobject,clear", frame);
 }
+#endif
 
 /**
  * @internal
