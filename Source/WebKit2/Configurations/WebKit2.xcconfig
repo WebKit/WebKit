@@ -26,8 +26,8 @@
 PRODUCT_NAME = WebKit2;
 INFOPLIST_FILE = Info.plist;
 
-// The framework location specified in mac/MainMac.cpp needs to be kept in sync with the install path.
-INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+INSTALL_PATH = $(WEBKIT2_FRAMEWORKS_DIR);
+DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT2_FRAMEWORKS_DIR);
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME)) $(OTHER_LDFLAGS);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
