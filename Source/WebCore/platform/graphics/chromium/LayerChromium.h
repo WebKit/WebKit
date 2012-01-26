@@ -196,7 +196,6 @@ public:
     virtual void contentChanged() { }
 
     CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
-    void cleanupResourcesRecursive();
 
 protected:
     LayerChromium();

@@ -1,3 +1,18 @@
+2012-01-26  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Remove dead and unnecessary code related to LayerChromium::cleanupResources
+        https://bugs.webkit.org/show_bug.cgi?id=77137
+
+        Reviewed by James Robinson.
+
+        No new test needed. Only removing dead code.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::layerTreeHost):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Move horizontal rubber-band checks to ScrollElasticityController::handleWheelEvent

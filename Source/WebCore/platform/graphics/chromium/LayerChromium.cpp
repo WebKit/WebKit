@@ -94,19 +94,6 @@ void LayerChromium::cleanupResources()
 {
 }
 
-void LayerChromium::cleanupResourcesRecursive()
-{
-    for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->cleanupResourcesRecursive();
-
-    if (maskLayer())
-        maskLayer()->cleanupResourcesRecursive();
-    if (replicaLayer())
-        replicaLayer()->cleanupResourcesRecursive();
-
-    cleanupResources();
-}
-
 void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
 {
     m_isNonCompositedContent = isNonCompositedContent;

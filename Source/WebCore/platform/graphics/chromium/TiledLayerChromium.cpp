@@ -178,9 +178,6 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
     if (host == layerTreeHost())
         return;
 
-    if (layerTreeHost())
-        cleanupResources();
-
     LayerChromium::setLayerTreeHost(host);
 
     if (!host)
