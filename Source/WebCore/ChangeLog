@@ -1,3 +1,21 @@
+2012-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Build in to an alternate location when USE_STAGING_INSTALL_PATH is set.
+
+        <rdar://problem/10609417> Adopt USE_STAGING_INSTALL_PATH
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebCore.xcconfig: Define NORMAL_WEBCORE_FRAMEWORKS_DIR, which contains
+        the path where WebCore is normally installed. Update WEBCORE_FRAMEWORKS_DIR to point to
+        the staged frameworks directory when USE_STAGING_INSTALL_PATH is set. Define
+        NORMAL_PRODUCTION_FRAMEWORKS_DIR, which contains the path where our public frameworks
+        are normally installed. Update PRODUCTION_FRAMEWORKS_DIR to point to the staged frameworks
+        directory when USE_STAGING_INSTALL_PATH is set. Always set the framework's install name
+        based on the normal framework location. This prevents an incorrect install name from being
+        used when installing in to the staged frameworks directory. Look for our other frameworks
+        in the staged frameworks directory when USE_STAGING_INSTALL_PATH is set.
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         "text" and "URL" legacy clipboard types should not be case sensitive

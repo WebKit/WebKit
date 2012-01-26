@@ -26,4 +26,4 @@
 GCC_ENABLE_OBJC_GC = NO;
 PRODUCT_NAME = PluginProcess;
 INFOPLIST_FILE = PluginProcess/Info.plist;
-INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKit2.framework;
+INSTALL_PATH = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework;
