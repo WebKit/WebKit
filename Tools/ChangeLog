@@ -1,3 +1,17 @@
+2012-01-25  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: running w/ no arguments fails
+        https://bugs.webkit.org/show_bug.cgi?id=77064
+
+        Unreviewed, build fix.
+
+        This change fixes a regression introduced in r105944
+        where running without --platform <foo> or one of the other
+        platform switches would cause a null deref :(.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
 2012-01-25  Eric Seidel  <eric@webkit.org>
 
         Automatically CC someone from Apple on any changes to Obj-C public API

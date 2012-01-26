@@ -452,7 +452,7 @@ def parse_args(args=None):
 
 def main():
     options, args = parse_args()
-    if options.platform.startswith('test'):
+    if options.platform and options.platform.startswith('test'):
         # It's a bit lame to import mocks into real code, but this allows the user
         # to run tests against the test platform interactively, which is useful for
         # debugging test failures.
