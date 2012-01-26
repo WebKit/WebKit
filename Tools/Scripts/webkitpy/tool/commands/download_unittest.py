@@ -82,7 +82,6 @@ class DownloadCommandsTest(CommandsTest):
         options.clean = True
         options.close_bug = True
         options.force_clean = False
-        options.force_patch = True
         options.non_interactive = False
         options.parent_command = 'MOCK parent command'
         options.quiet = False

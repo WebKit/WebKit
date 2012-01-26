@@ -1,3 +1,35 @@
+2012-01-25  Eric Seidel  <eric@webkit.org>
+
+        webkit-patch apply-* should always continue after failures
+        https://bugs.webkit.org/show_bug.cgi?id=77057
+
+        Reviewed by Adam Barth.
+
+        As far as I can tell there is only one potential drawback to always
+        forcing: that if you're somehow in the wrong directory it will create new
+        directories for new files.  Since webkit-patch always cd's to the root
+        it seems that's not a drawback.  The drawback of not using --force for
+        svn-apply, is that it will stop after the first failure, which is rarely
+        (if ever) the desired behavior.  This just removes the force option
+        (which was strangely hidden behind --non-interactive).  This should
+        make for a better user experiance.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.apply_patch):
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        (MockCheckout.apply_patch):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_chromium_deps):
+        (CheckoutTest):
+        (CheckoutTest.test_apply_patch):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest._default_options):
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        (ApplyPatch.options):
+        (ApplyPatch.run):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2012-01-25  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: should be able to run --platform test interactively

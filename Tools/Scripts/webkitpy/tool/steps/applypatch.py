@@ -35,9 +35,8 @@ class ApplyPatch(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.non_interactive,
-            Options.force_patch,
         ]
 
     def run(self, state):
         log("Processing patch %s from bug %s." % (state["patch"].id(), state["patch"].bug_id()))
-        self._tool.checkout().apply_patch(state["patch"], force=self._options.non_interactive or self._options.force_patch)
+        self._tool.checkout().apply_patch(state["patch"])

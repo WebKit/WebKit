@@ -84,7 +84,7 @@ class MockCheckout(object):
     def chromium_deps(self):
         return MockDEPS()
 
-    def apply_patch(self, patch, force=False):
+    def apply_patch(self, patch):
         pass
 
     def apply_reverse_diffs(self, revision):
