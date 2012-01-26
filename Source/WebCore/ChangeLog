@@ -1,5 +1,17 @@
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
+        Inline beginScrollGesture/endScrollGesture in handleWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=77133
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
         No need to set m_haveScrolledSincePageLoad in beginScrollGesture
         https://bugs.webkit.org/show_bug.cgi?id=77132
 

@@ -133,8 +133,6 @@ private:
 
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
-    void beginScrollGesture();
-    void endScrollGesture();
 
     ScrollElasticityController m_scrollElasticityController;
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;

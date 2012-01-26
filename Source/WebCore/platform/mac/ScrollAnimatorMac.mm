@@ -927,11 +927,11 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             isScrollingRightAndShouldNotRubberBand(wheelEvent, m_scrollableArea))
             return false;
 
-        // We don't return after this because we still want the scroll elasticity controller to handle the wheel event.
-        beginScrollGesture();
-
+        didBeginScrollGesture();
+        m_scrollElasticityController.beginScrollGesture();
     } else if (wheelEvent.phase() == PlatformWheelEventPhaseEnded) {
-        endScrollGesture();
+        didEndScrollGesture();
+        m_scrollElasticityController.endScrollGesture();
         return true;
     }
 
@@ -1059,20 +1059,6 @@ void ScrollAnimatorMac::startSnapRubberbandTimer()
 void ScrollAnimatorMac::stopSnapRubberbandTimer()
 {
     m_snapRubberBandTimer.stop();
-}
-
-void ScrollAnimatorMac::beginScrollGesture()
-{
-    didBeginScrollGesture();
-
-    m_scrollElasticityController.beginScrollGesture();
-}
-
-void ScrollAnimatorMac::endScrollGesture()
-{
-    didEndScrollGesture();
-
-    m_scrollElasticityController.endScrollGesture();
 }
 
 void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
