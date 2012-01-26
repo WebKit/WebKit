@@ -518,14 +518,6 @@ class Port(object):
         return filter(lambda x: self._filesystem.isdir(self._filesystem.join(layout_tests_dir, x)),
                       self._filesystem.listdir(layout_tests_dir))
 
-    @memoized
-    def test_isfile(self, test_name):
-        """Return True if the test name refers to a directory of tests."""
-        # Used by test_expectations.py to apply rules to whole directories.
-        test_path = self.abspath_for_test(test_name)
-        return self._filesystem.isfile(test_path)
-
-    @memoized
     def test_isdir(self, test_name):
         """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
@@ -548,9 +540,7 @@ class Port(object):
 
     def normalize_test_name(self, test_name):
         """Returns a normalized version of the test name or test directory."""
-        if test_name.endswith('/'):
-            return test_name
-        if self.test_isdir(test_name):
+        if self.test_isdir(test_name) and not test_name.endswith('/'):
             return test_name + '/'
         return test_name
 
@@ -570,10 +560,9 @@ class Port(object):
         """
         self._filesystem.write_binary_file(baseline_path, data)
 
-    @memoized
     def layout_tests_dir(self):
         """Return the absolute path to the top of the LayoutTests directory."""
-        return self._filesystem.normpath(self.path_from_webkit_base('LayoutTests'))
+        return self.path_from_webkit_base('LayoutTests')
 
     def perf_tests_dir(self):
         """Return the absolute path to the top of the PerformanceTests directory."""
@@ -708,11 +697,10 @@ class Port(object):
         assert filename.startswith(self.perf_tests_dir()), "%s did not start with %s" % (filename, self.perf_tests_dir())
         return filename[len(self.perf_tests_dir()) + 1:]
 
-    @memoized
     def abspath_for_test(self, test_name):
         """Returns the full path to the file for a given test name. This is the
         inverse of relative_test_filename()."""
-        return self._filesystem.join(self.layout_tests_dir(), test_name)
+        return self._filesystem.normpath(self._filesystem.join(self.layout_tests_dir(), test_name))
 
     def results_directory(self):
         """Absolute path to the place to store the test results (uses --results-directory)."""
