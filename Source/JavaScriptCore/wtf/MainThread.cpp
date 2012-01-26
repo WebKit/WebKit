@@ -34,7 +34,6 @@
 #include "Functional.h"
 #include "StdLibExtras.h"
 #include "Threading.h"
-#include <wtf/ThreadSpecific.h>
 
 #if PLATFORM(CHROMIUM)
 #error Chromium uses a different main thread implementation
@@ -247,35 +246,6 @@ void setMainThreadCallbacksPaused(bool paused)
 bool isMainThread()
 {
     return currentThread() == mainThreadIdentifier;
-}
-#endif
-
-#if ENABLE(PARALLEL_GC)
-static ThreadSpecific<bool>* isGCThread;
-
-void registerGCThread()
-{
-    if (!isGCThread) {
-        // This happens if we're running in a process that doesn't care about
-        // MainThread.
-        return;
-    }
-
-    **isGCThread = true;
-}
-
-bool isMainThreadOrGCThread()
-{
-    if (isGCThread->isSet() && **isGCThread)
-        return true;
-
-    return isMainThread();
-}
-#elif PLATFORM(MAC)
-// This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
-bool isMainThreadOrGCThread()
-{
-    return isMainThread();
 }
 #endif
 
