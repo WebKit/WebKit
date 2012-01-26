@@ -60,4 +60,37 @@ editing/selection/collapse-selection-in-bidi.html
 editing/selection/caret-at-bidi-boundary.html
 
 editing/selection/click-left-of-rtl-wrapping-text.html
+
+# Not sure why this is failing on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=37697
+fast/url/host.html
+
+# [Qt]fast/url/idna tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=59187
+fast/url/idna2003.html
+fast/url/idna2008.html
+
+# [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=41241
+fast/text/bidi-explicit-embedding-past-end.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=45194
+fast/text/decomposed-after-stacked-diacritics.html
+
+fast/text/find-case-folding.html
+
+fast/text/international/unicode-bidi-plaintext.html
+
+fast/text/soft-hyphen-4.html
+
+editing/deleting/delete-block-table.html
+editing/deleting/delete-ligature-001.html
+
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+editing/pasteboard/drop-text-events-sideeffect.html
+
+# [Qt] REGRESSION (r71465): editing/selection/after-line-break.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=49127
+editing/selection/after-line-break.html
+
 #################################################

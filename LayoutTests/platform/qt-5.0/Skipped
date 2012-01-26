@@ -61,16 +61,11 @@ http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html
 fast/multicol/pagination-h-vertical-lr.html
 fast/multicol/pagination-v-horizontal-tb.html
 fast/multicol/pagination-v-vertical-rl.html
-fast/text/justify-padding-distribution.html
 fast/css-generated-content/nested-tables-with-before-after-content-crash.html
 
 # [Qt] editing/selection/click-in-margins-inside-editable-div.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=73418
 editing/selection/click-in-margins-inside-editable-div.html
-
-# Frame::findString does nothing on pages that prevent selection
-# https://bugs.webkit.org/show_bug.cgi?id=40361
-editing/text-iterator/findString-selection-disabled.html
 
 # [Qt] fast/events/clear-edit-drag-state.html fails with timeout with Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=76897
