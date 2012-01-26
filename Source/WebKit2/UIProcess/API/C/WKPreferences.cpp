@@ -731,3 +731,10 @@ bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->notificationsEnabled();
 }
+
+void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
+{
+    // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences
+    // are usually always the same (in the UI process), they are not sent to web process, not triggering the reset.
+    toImpl(preferencesRef)->forceUpdate();
+}

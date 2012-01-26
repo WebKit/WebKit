@@ -214,7 +214,8 @@ struct WebPreferencesStore {
     bool setDoubleValueForKey(const String& key, double value);
     double getDoubleValueForKey(const String& key) const;
 
-    static void overrideXSSAuditorEnabledForTestRunner(bool);
+    // For WebKitTestRunner usage.
+    static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();
 
     HashMap<String, String> m_stringValues;

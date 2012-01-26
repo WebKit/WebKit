@@ -64,7 +64,8 @@ WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundlePageGro
 WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGroupRef pageGroup);
 
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
-WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
+WK_EXPORT void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKStringRef preference, bool enabled);
+
 WK_EXPORT void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);

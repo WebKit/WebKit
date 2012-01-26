@@ -31,6 +31,7 @@
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleScriptWorld.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "LayerTreeHost.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebApplicationCacheManager.h"
@@ -117,10 +118,52 @@ void InjectedBundle::removeAllVisitedLinks()
     PageGroup::removeAllVisitedLinks();
 }
 
+void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* pageGroup, const String& preference, bool enabled)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+
+    // FIXME: Need an explicit way to set "WebKitTabToLinksPreferenceKey" directly in WebPage.
+
+    // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
+#define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
+    macro(WebKitAcceleratedCompositingEnabled, AcceleratedCompositingEnabled, acceleratedCompositingEnabled) \
+    macro(WebKitCSSCustomFilterEnabled, CSSCustomFilterEnabled, cssCustomFilterEnabled) \
+    macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
+    macro(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled) \
+    macro(WebKitLoadSiteIconsKey, LoadsSiteIconsIgnoringImageLoadingSetting, loadsSiteIconsIgnoringImageLoadingPreference) \
+    macro(WebKitOfflineWebApplicationCacheEnabled, OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled) \
+    macro(WebKitPageCacheSupportsPluginsPreferenceKey, PageCacheSupportsPlugins, pageCacheSupportsPlugins) \
+    macro(WebKitPluginsEnabled, PluginsEnabled, pluginsEnabled) \
+    macro(WebKitUsesPageCachePreferenceKey, UsesPageCache, usesPageCache) \
+    macro(WebKitWebAudioEnabled, WebAudioEnabled, webAudioEnabled) \
+    macro(WebKitWebGLEnabled, WebGLEnabled, webGLEnabled) \
+    macro(WebKitXSSAuditorEnabled, XSSAuditorEnabled, xssAuditorEnabled)
+
+    if (preference == "WebKitAcceleratedCompositingEnabled")
+        enabled = enabled && LayerTreeHost::supportsAcceleratedCompositing();
+
+#define OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(TestRunnerName, SettingsName, WebPreferencesName) \
+    if (preference == #TestRunnerName) { \
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::WebPreferencesName##Key(), enabled); \
+        for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter) \
+            (*iter)->settings()->set##SettingsName(enabled); \
+        return; \
+    }
+
+    FOR_EACH_OVERRIDE_BOOL_PREFERENCE(OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES)
+
+#if ENABLE(WEB_SOCKETS)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES("WebKitHixie76WebSocketProtocolEnabled", UseHixie76WebSocketProtocol, hixie76WebSocketProtocolEnabled)
+#endif
+
+#undef OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES
+#undef FOR_EACH_OVERRIDE_BOOL_PREFERENCE
+}
+
 void InjectedBundle::overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled)
 {
     // Override the preference for all future pages.
-    WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner(enabled);
+    WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey(), enabled);
 
     // Change the setting for existing ones.
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

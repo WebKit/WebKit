@@ -1,3 +1,22 @@
+2012-01-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Implement overridePreference for boolean preferences in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=77033
+
+        Reviewed by Alexey Proskuryakov.
+
+        For now overridePreference supports boolean values.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setXSSAuditorEnabled):
+        (WTR::LayoutTestController::overridePreference):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Reset the overrides
+        explicitly and properly disable the use of PageCache when resetting the
+        state. Tests that use PageCache can now enable it via overridePreference.
+
 2012-01-26  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Support opening multiple URL's from the command line in the Qt MiniBrowser

@@ -192,6 +192,8 @@ public:
     void callFocusWebViewCallback();
     void callSetBackingScaleFactorCallback();
 
+    void overridePreference(JSStringRef preference, bool value);
+
     JSRetainPtr<JSStringRef> platformName();
     
 private:

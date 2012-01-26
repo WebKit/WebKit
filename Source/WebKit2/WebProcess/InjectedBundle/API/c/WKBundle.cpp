@@ -126,9 +126,9 @@ void WKBundleRemoveAllUserContent(WKBundleRef bundleRef, WKBundlePageGroupRef pa
     toImpl(bundleRef)->removeAllUserContent(toImpl(pageGroupRef));
 }
 
-void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef preference, bool enabled)
 {
-    toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(toImpl(pageGroupRef), enabled);
+    toImpl(bundleRef)->overrideBoolPreferenceForTestRunner(toImpl(pageGroupRef), toImpl(preference)->string(), enabled);
 }
 
 void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)

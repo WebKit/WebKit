@@ -69,6 +69,9 @@ public:
 
 #undef DECLARE_PREFERENCE_GETTER_AND_SETTERS
 
+    // Exposed for WebKitTestRunner use only.
+    void forceUpdate() { update(); }
+
 private:
     WebPreferences();
     WebPreferences(const String& identifier);

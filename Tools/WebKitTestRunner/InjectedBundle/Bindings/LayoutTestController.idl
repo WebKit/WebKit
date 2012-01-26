@@ -133,7 +133,10 @@ module WTR {
         void setBackingScaleFactor(in double backingScaleFactor, in object callback);
 
         void setWindowIsKey(in boolean isKey);
-        
+
+        // FIXME: handle non-boolean preferences.
+        void overridePreference(in DOMString preference, in boolean value);
+
         readonly attribute DOMString platformName;
     };
 

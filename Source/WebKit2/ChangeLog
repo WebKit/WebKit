@@ -1,3 +1,52 @@
+2012-01-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Implement overridePreference for boolean preferences in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=77033
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement a way to WebKitTestRunner override preferences for the pages
+        loaded. Follows the same approach taken by
+        overrideXSSAuditorEnabledForTestRunner() from r66551, but generalizing to many
+        preferences.
+
+        Preferences are stored in the UI process using WebPreferencesStore, and when
+        there's a change, this data is sent to Web process, triggering
+        WebPage::preferencesDidChange(), which take a WebPreferencesStore and apply it's
+        data to the WebCore::Settings object.
+
+        The overridePreference() is executed on the Web process, and set the preferences
+        without communicating to the UI process. The overriden preferences are stored in
+        a static map and WebPreferencesStore query this map before returning the values
+        of each preference. This static map is used only on the Web process.
+
+        To clear the overrides we need to clear the map. Since WTR only sets preferences
+        when resetting the page, we hook the clearing at WebPage::preferencesDidChange().
+        A WKPreferences private function was exposed to WTR force the update, in case
+        there's no effective change at UI process (all the properties remains the same).
+
+        This clearing could be improved by creating a proper message instead of hooking
+        at WebPage::preferencesDidChange().
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        (WebKit::WebPreferencesStore::overrideBoolValueForKey):
+        (WebKit::WebPreferencesStore::removeTestRunnerOverrides):
+        (WebKit::WebPreferencesStore::getBoolValueForKey):
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesResetTestRunnerOverrides):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebPreferences.h:
+        (WebKit::WebPreferences::forceUpdate):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleOverrideBoolPreferenceForTestRunner):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        (WebKit::InjectedBundle::overrideXSSAuditorEnabledForTestRunner):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2012-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WK2] Primary clipboard should be updated with the current selection in X11 platforms

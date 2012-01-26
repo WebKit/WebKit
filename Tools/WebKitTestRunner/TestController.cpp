@@ -415,6 +415,7 @@ bool TestController::resetStateToConsistentValues()
 
     // Reset preferences
     WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
+    WKPreferencesResetTestRunnerOverrides(preferences);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
@@ -427,6 +428,7 @@ bool TestController::resetStateToConsistentValues()
 #if ENABLE(FULLSCREEN_API)
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
+    WKPreferencesSetPageCacheEnabled(preferences, false);
 
 // [Qt][WK2]REGRESSION(r104881):It broke hundreds of tests
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=76247
