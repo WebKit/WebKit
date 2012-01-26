@@ -1,3 +1,12 @@
+2012-01-26  John Bates  <jbates@google.com>
+
+        Roll chromium_rev to 119248
+        https://bugs.webkit.org/show_bug.cgi?id=77124
+
+        Reviewed by James Robinson.
+
+        * DEPS:
+
 2012-01-25  Greg Billock  <gbillock@google.com>
 
         Add IntentRequest include for FrameLoaderClientImpl.
