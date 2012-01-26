@@ -1,3 +1,18 @@
+2012-01-26  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in SVGSVGElement::currentViewBoxRect.
+        https://bugs.webkit.org/show_bug.cgi?id=77121
+
+        Reviewed by Nikolas Zimmermann.
+
+        Symbols shouldn't be rendered. Revert the ASSERT
+        from r105513 into a hard check.
+
+        Test: svg/custom/symbol-viewport-element-crash.svg
+
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Inline beginScrollGesture/endScrollGesture in handleWheelEvent
