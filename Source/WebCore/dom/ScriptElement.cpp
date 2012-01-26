@@ -287,8 +287,6 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
             // Note: This is where the script is compiled and actually executed.
             frame->script()->evaluate(sourceCode);
         }
-
-        Document::updateStyleForAllDocuments();
     }
 }
 

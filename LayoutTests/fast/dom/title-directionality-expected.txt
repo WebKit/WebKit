@@ -3,3 +3,4 @@
 <html><title dir=rtl>foo</title></html> should have title direction "rtl". PASS
 <html dir=rtl><title>foo</title></html> should have title direction "rtl". PASS
 <html dir=rtl><title dir=ltr>foo</title></html> should have title direction "ltr". PASS
+

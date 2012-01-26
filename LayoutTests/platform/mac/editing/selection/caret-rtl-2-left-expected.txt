@@ -14,4 +14,5 @@ layer at (0,0) size 800x140
         RenderText {#text} at (0,0) size 39x18
           text run at (0,0) width 39: "PASS"
         RenderBR {BR} at (39,0) size 0x18
+        RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 3 {DIV} of body

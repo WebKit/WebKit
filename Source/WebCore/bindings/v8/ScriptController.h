@@ -187,8 +187,6 @@ private:
     Frame* m_frame;
     const String* m_sourceURL;
 
-    bool m_inExecuteScript;
-
     bool m_paused;
 
     OwnPtr<V8Proxy> m_proxy;

@@ -58,8 +58,7 @@ bool InspectorClient::doDispatchMessageOnFrontendPage(Page* frontendPage, const 
     dispatchToFrontend += message;
     dispatchToFrontend += ");";
 
-    // Do not call executeInWorld here since it will end up calling Document::updateStyleForAllDocuments().
-    // As a result we might re-enter CSSStyleSelector::styleForElement() which is terrible.
+    // FIXME: This should execute the script in the appropriate world.
     scriptController->evaluate(ScriptSourceCode(dispatchToFrontend));
     return true;
 }

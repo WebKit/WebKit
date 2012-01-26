@@ -1,3 +1,36 @@
+2012-01-26  James Robinson  <jamesr@chromium.org>
+
+        We shouldn't synchronously update styles on all documents after running script
+        https://bugs.webkit.org/show_bug.cgi?id=46761
+
+        Reviewed by Simon Fraser.
+
+        Currently we call Document::updateStyleForAllDocuments() after invoking any event or timeout handler. This is
+        slow since it iterates over the entire document tree and defeats our recalcStyle timer batching. It is
+        unnecessary as any code that depends on styles or the render tree being up to date must call
+        updateStyleIfNeeded() on the document it is accessing.
+
+        The first reference I can find to this code is in r798 in the file WebCore/khtml/xml/domnode_impl.cpp. It's been
+        cargo culted forward ever since.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::executeScriptInWorld):
+        * bindings/js/ScriptController.h:
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        * bindings/v8/ScriptController.h:
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeScript):
+        * inspector/InspectorClient.cpp:
+        (WebCore::InspectorClient::doDispatchMessageOnFrontendPage):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Get rid of ScrollElasticityController::beginScrollGesture()

@@ -63,19 +63,9 @@ ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return ScriptValue();
 
-    bool wasInExecuteScript = m_inExecuteScript;
-    m_inExecuteScript = true;
-
     RefPtr<Frame> protect(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
 
-    ScriptValue result = evaluate(sourceCode);
-
-    if (!wasInExecuteScript) {
-        m_inExecuteScript = false;
-        Document::updateStyleForAllDocuments();
-    }
-
-    return result;
+    return evaluate(sourceCode);
 }
 
 bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)

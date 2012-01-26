@@ -126,10 +126,9 @@ void ScheduledAction::execute(Document* document)
     if (!frame || !frame->script()->canExecuteScripts(AboutToExecuteScript))
         return;
 
-    if (m_function) {
+    if (m_function)
         executeFunctionInContext(window, window->shell(), document);
-        Document::updateStyleForAllDocuments();
-    } else
+    else
         frame->script()->executeScriptInWorld(m_isolatedWorld.get(), m_code);
 }
 
