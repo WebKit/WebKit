@@ -124,8 +124,18 @@ var WebInspector = {
 
     _escPressed: function()
     {
-        // If drawer was open with some view other than console then just close it.
-        if (!this._consoleWasShown && WebInspector.drawer.visible)
+        
+        // If drawer is open with some view other than console then close it.
+        if (!this._toggleConsoleButton.toggled && WebInspector.drawer.visible)
+            this.closeDrawerView();
+        else
+            this._toggleConsoleButtonClicked();
+    },
+
+    closeDrawerView: function()
+    {
+        // Once drawer is closed console should be shown if it was shown before current view replaced it in drawer. 
+        if (!this._consoleWasShown)
             this.drawer.hide(WebInspector.Drawer.AnimationType.Immediately);
         else
             this._toggleConsoleButtonClicked();            

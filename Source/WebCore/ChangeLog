@@ -1,3 +1,26 @@
+2012-01-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Improve user experience of advanced search panel closing.
+        https://bugs.webkit.org/show_bug.cgi?id=76983
+
+        Reviewed by Pavel Feldman.
+
+        Added close button to search panel.
+        Esc now closes the panel even when search filed has focus.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.AdvancedSearchController.prototype.close):
+        (WebInspector.SearchView):
+        (WebInspector.SearchView.prototype._onKeyDown):
+        (WebInspector.SearchView.prototype._closeButtonPressed):
+        * inspector/front-end/inspector.css:
+        (.search-view .search-panel):
+        (.search-view .search-panel button.search-close-button):
+        * inspector/front-end/inspector.js:
+        (WebInspector._escPressed):
+        (WebInspector.closeDrawerView):
+
 2012-01-26  Joe Thomas  <joethomas@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=76995.

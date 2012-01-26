@@ -2329,9 +2329,10 @@ body.platform-mac .soft-context-menu-item-mouse-over {
     right: 0;
     padding-top: 2px;
     padding-left: 10px;
+    padding-right: 10px;
     background-color: #EBEBEB;
     border-bottom: 1px solid #BBB;
-
+    overflow: hidden;
     font-size: 11px;
 }
 
@@ -2356,6 +2357,11 @@ body:not(.platform-mac) .search-view .search-panel input[type="checkbox"].search
 
 body.platform-mac .search-view .search-panel input[type="checkbox"].search-config-checkbox {
     margin-bottom: 4px;
+}
+
+.search-view .search-panel button.search-close-button {
+    font-size: 11px;
+    float: right;
 }
 
 #drawer-status-bar .search-status-bar-item {

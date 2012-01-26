@@ -83,7 +83,13 @@ WebInspector.AdvancedSearchController.prototype = {
         else
             WebInspector.showViewInDrawer(this._searchView);
     },
-    
+
+    close: function()
+    {
+        this.stopSearch();
+        WebInspector.closeDrawerView();
+    },
+
     /**
      * @param {number} searchId
      * @param {Object} searchResult
@@ -192,6 +198,11 @@ WebInspector.SearchView = function(controller)
     this._regexCheckbox.setAttribute("type", "checkbox");
     this._regexCheckbox.addStyleClass("search-config-checkbox");
     this._regexLabel.appendChild(document.createTextNode(WebInspector.UIString("Regular expression")));
+    
+    this._searchDoneButton = this._searchPanelElement.createChild("button");
+    this._searchDoneButton.textContent = WebInspector.UIString("Close");
+    this._searchDoneButton.addStyleClass("search-close-button");
+    this._searchDoneButton.addEventListener("click", this._closeButtonPressed.bind(this));
     
     this._searchStatusBarElement = document.createElement("div");
     this._searchStatusBarElement.className = "search-status-bar-item";
@@ -359,8 +370,16 @@ WebInspector.SearchView.prototype = {
      */
     _onKeyDown: function(event)
     {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Enter.code)
+        switch (event.keyCode) {
+        case WebInspector.KeyboardShortcut.Keys.Enter.code:
             this._onAction();
+            break;
+        case WebInspector.KeyboardShortcut.Keys.Esc.code:
+            this._controller.close();
+            event.stopPropagation();
+            event.preventDefault();
+            break;
+        }        
     },
     
     _save: function()
@@ -376,7 +395,12 @@ WebInspector.SearchView.prototype = {
         this._ignoreCaseCheckbox.checked = searchConfig.ignoreCase;
         this._regexCheckbox.checked = searchConfig.isRegex;
     },
-    
+
+    _closeButtonPressed: function()
+    {
+        this._controller.close();
+    },
+
     _searchStopButtonPressed: function()
     {
         this._controller.stopSearch();
