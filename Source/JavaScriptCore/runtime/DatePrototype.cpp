@@ -62,9 +62,7 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 #include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#if USE(ICU_UNICODE)
+#elif USE(ICU_UNICODE)
 #include <unicode/udat.h>
 #endif
 
