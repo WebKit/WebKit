@@ -389,10 +389,10 @@ mach_port_t PluginControllerProxy::compositingRenderServerPort()
 String PluginControllerProxy::proxiesForURL(const String& urlString)
 {
     String proxyString;
-    
-    if (!m_connection->connection()->sendSync(Messages::PluginProxy::CookiesForURL(urlString), Messages::PluginProxy::CookiesForURL::Reply(proxyString), m_pluginInstanceID))
+
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::ProxiesForURL(urlString), Messages::PluginProxy::ProxiesForURL::Reply(proxyString), m_pluginInstanceID))
         return String();
-    
+
     return proxyString;
 }
 

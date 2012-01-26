@@ -1,3 +1,16 @@
+2011-01-25  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 102819
+
+    2011-12-14  Mark Rowe  <mrowe@apple.com>
+
+            <rdar://problem/10573872> NPN_GetValueForURL returns wrong value for NPNURLVProxy
+
+            Reviewed by Anders Carlsson.
+
+            * PluginProcess/PluginControllerProxy.cpp:
+            (WebKit::PluginControllerProxy::proxiesForURL): Fix a copy-paste error.
+
 2011-01-24  Lucas Forschler  <lforschler@apple.com>
 
     Merge 105558
