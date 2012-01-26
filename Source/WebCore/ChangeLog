@@ -1,3 +1,16 @@
+2012-01-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove setLayerTreeHost nonsense on lost context
+        https://bugs.webkit.org/show_bug.cgi?id=76675
+
+        Reviewed by Kenneth Russell.
+
+        This code isn't needed any more. On a lost context event, we drop all TextureManager-managed textures through
+        the proxy and no layer types need special lost context handling.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Simplify checking of whether we should rubberband horizontally

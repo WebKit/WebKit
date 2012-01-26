@@ -185,10 +185,6 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayer
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 {
-    if (m_rootLayer) {
-        m_rootLayer->setLayerTreeHost(0);
-        m_rootLayer->setLayerTreeHost(this);
-    }
     m_client->didRecreateGraphicsContext(success);
 }
 
