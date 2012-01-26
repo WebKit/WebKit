@@ -42,7 +42,6 @@
 #include "platform/WebThread.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -298,16 +297,10 @@ protected:
 
     void doBeginTest();
 
-    static void onBeginTest(void* self)
-    {
-        static_cast<CCLayerTreeHostTest*>(self)->doBeginTest();
-    }
-
     static void onEndTest(void* self)
     {
         ASSERT(isMainThread());
-        webkit_support::QuitMessageLoop();
-        webkit_support::RunAllPendingMessages();
+        webKitPlatformSupport()->currentThread()->exitRunLoop();
     }
 
     static void dispatchSetNeedsAnimate(void* self)
@@ -366,7 +359,7 @@ protected:
           test->m_layerTreeHost->setVisible(false);
     }
 
-    class TimeoutTask : public webkit_support::TaskAdaptor {
+    class TimeoutTask : public WebThread::Task {
     public:
         explicit TimeoutTask(CCLayerTreeHostTest* test)
             : m_test(test)
@@ -384,12 +377,28 @@ protected:
                 m_test->clearTimeout();
         }
 
-        virtual void Run()
+        virtual void run()
         {
             if (m_test)
                 m_test->timeout();
         }
 
+    private:
+        CCLayerTreeHostTest* m_test;
+    };
+
+    class BeginTask : public WebThread::Task {
+    public:
+        explicit BeginTask(CCLayerTreeHostTest* test)
+            : m_test(test)
+        {
+        }
+
+        virtual ~BeginTask() { }
+        virtual void run()
+        {
+            m_test->doBeginTest();
+        }
     private:
         CCLayerTreeHostTest* m_test;
     };
@@ -405,11 +414,11 @@ protected:
         ASSERT(CCProxy::isMainThread());
         m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
 
-        webkit_support::PostDelayedTask(CCLayerTreeHostTest::onBeginTest, static_cast<void*>(this), 0);
+        m_beginTask = new BeginTask(this);
+        webKitPlatformSupport()->currentThread()->postDelayedTask(m_beginTask, 0); // postDelayedTask takes ownership of the task
         m_timeoutTask = new TimeoutTask(this);
-        webkit_support::PostDelayedTask(m_timeoutTask, 5000); // webkit_support takes ownership of the task
-        webkit_support::RunMessageLoop();
-        webkit_support::RunAllPendingMessages();
+        webKitPlatformSupport()->currentThread()->postDelayedTask(m_timeoutTask, 5000);
+        webKitPlatformSupport()->currentThread()->enterRunLoop();
 
         if (m_layerTreeHost && m_layerTreeHost->rootLayer())
             m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
@@ -441,6 +450,7 @@ private:
     OwnPtr<WebThread> m_webThread;
     RefPtr<CCScopedThreadProxy> m_mainThreadProxy;
     TimeoutTask* m_timeoutTask;
+    BeginTask* m_beginTask;
 };
 
 void CCLayerTreeHostTest::doBeginTest()

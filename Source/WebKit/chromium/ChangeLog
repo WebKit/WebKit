@@ -1,3 +1,24 @@
+2012-01-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add enter/exitRunLoop to WebThread API
+        https://bugs.webkit.org/show_bug.cgi?id=76012
+
+        Reviewed by Darin Fisher.
+
+        This adds those two APIs to WebKit::WebThread and converts CCLayerTreeHostTest over to use these APIs instead
+        of webkit_support. The immediate motivation is that we can't use webkit_support in webkit_unit_tests in the
+        component build.
+
+        * WebKit.gyp:
+        * public/platform/WebThread.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::TimeoutTask::run):
+        (WTF::CCLayerTreeHostTest::BeginTask::BeginTask):
+        (WTF::CCLayerTreeHostTest::BeginTask::~BeginTask):
+        (WTF::CCLayerTreeHostTest::BeginTask::run):
+        (WTF::CCLayerTreeHostTest::runTest):
+
 2012-01-26  John Bates  <jbates@google.com>
 
         Roll chromium_rev to 119248
