@@ -197,11 +197,6 @@ BUGWK74888 : fast/dom/HTMLTableElement/createCaption.html = TEXT
 BUGWK74888 : fast/repaint/table-section-repaint.html = TEXT
 BUGWK74888 : fast/table/frame-and-rules.html = TEXT
 
-// Rebaseline after WebKit Bug 71820 is committed
-BUGWK71820 : svg/stroke/zero-length-subpaths-linecap-rendering.svg = IMAGE+TEXT
-BUGWK71820 : svg/stroke/zero-length-path-linecap-rendering.svg = IMAGE+TEXT
-BUGWK71820 : svg/custom/subpaths-moveto-only-rendering.svg = TEXT
-
 // New test, needs image results added.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 
