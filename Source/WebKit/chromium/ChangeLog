@@ -1,3 +1,12 @@
+2012-01-25  Greg Billock  <gbillock@google.com>
+
+        Add IntentRequest include for FrameLoaderClientImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=77039
+
+        Reviewed by Darin Fisher.
+
+        * src/FrameLoaderClientImpl.cpp:
+
 2012-01-25  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Fix ClipboardChromium::validateFilename to actually operate on extensions

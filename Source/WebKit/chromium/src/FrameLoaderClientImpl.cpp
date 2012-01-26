@@ -47,6 +47,7 @@
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"  // needed by FormState.h
 #include "HTMLNames.h"
+#include "IntentRequest.h"
 #include "MessageEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
