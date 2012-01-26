@@ -1,3 +1,44 @@
+2012-01-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105935 and r105954.
+        http://trac.webkit.org/changeset/105935
+        http://trac.webkit.org/changeset/105954
+        https://bugs.webkit.org/show_bug.cgi?id=77080
+
+        test-webkitpy is still broken (Requested by abarth on
+        #webkit).
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (never_ending_command):
+        (ExecutiveTest.test_run_command_args_type):
+        (ExecutiveTest.test_run_command_with_unicode):
+        (ExecutiveTest.test_running_pids):
+        * Scripts/webkitpy/common/system/fileutils.py:
+        (make_stdout_binary):
+        * Scripts/webkitpy/test/cat.py:
+        (command_arguments):
+        (main):
+        * Scripts/webkitpy/test/cat_unittest.py:
+        (CatTest):
+        (CatTest.assert_cat):
+        (CatTest.test_basic):
+        (CatTest.test_no_newline):
+        (CatTest.test_unicode):
+        (CatTest.test_as_command):
+        * Scripts/webkitpy/test/echo.py:
+        (command_arguments):
+        (main):
+        * Scripts/webkitpy/test/echo_unittest.py:
+        (EchoTest):
+        (EchoTest.test_basic):
+        (EchoTest.test_no_newline):
+        (EchoTest.test_unicode):
+        (EchoTest.test_argument_order):
+        (EchoTest.test_empty_arguments):
+        (EchoTest.test_no_arguments):
+        (EchoTest.test_as_command):
+
 2012-01-26  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [GTK] Detect cross-compilation in webkitdirs.pm to not generate gtkdoc

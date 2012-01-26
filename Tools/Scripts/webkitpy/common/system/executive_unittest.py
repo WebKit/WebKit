@@ -35,6 +35,7 @@ import unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.test import cat, echo
 
 
 class ScriptErrorTest(unittest.TestCase):
@@ -63,26 +64,7 @@ def never_ending_command():
     return ['yes']
 
 
-def command_line(cmd, *args):
-    return [sys.executable, __file__, '--' + cmd] + list(args)
-
-
-def script_dir():
-    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-
 class ExecutiveTest(unittest.TestCase):
-    def setUp(self):
-        # We need this so that we can launch 'python executive_unittests.py' directly (to test
-        # actually spawning subprocesses) and have 'from webkitpy...' imports work reliably.
-        self.orig_pythonpath = os.environ.get('PYTHONPATH')
-        os.environ['PYTHONPATH'] = script_dir()
-
-    def tearDown(self):
-        if self.orig_pythonpath is not None:
-            os.environ['PYTHONPATH'] = self.orig_pythonpath
-        else:
-            del os.environ['PYTHONPATH']
 
     def assert_interpreter_for_content(self, intepreter, content):
         fs = MockFileSystem()
@@ -120,8 +102,8 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
         self.assertRaises(AssertionError, executive.run_command, "echo")
         self.assertRaises(AssertionError, executive.run_command, u"echo")
-        executive.run_command(command_line('echo', 'foo'))
-        executive.run_command(tuple(command_line('echo', 'foo')))
+        executive.run_command(echo.command_arguments('foo'))
+        executive.run_command(tuple(echo.command_arguments('foo')))
 
     def test_run_command_with_unicode(self):
         """Validate that it is safe to pass unicode() objects
@@ -142,24 +124,24 @@ class ExecutiveTest(unittest.TestCase):
 
         executive = Executive()
 
-        output = executive.run_command(command_line('cat'), input=unicode_tor_input)
+        output = executive.run_command(cat.command_arguments(), input=unicode_tor_input)
         self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_command(command_line('echo', unicode_tor_input))
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor_input))
         self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_command(command_line('echo', unicode_tor_input), decode_output=False)
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor_input), decode_output=False)
         self.assertEquals(output, encoded_tor)
 
         # Make sure that str() input also works.
-        output = executive.run_command(command_line('cat'), input=encoded_tor, decode_output=False)
+        output = executive.run_command(cat.command_arguments(), input=encoded_tor, decode_output=False)
         self.assertEquals(output, encoded_tor)
 
         # FIXME: We should only have one run* method to test
-        output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor_input), quiet=True)
         self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True, decode_output=False)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor_input), quiet=True, decode_output=False)
         self.assertEquals(output, encoded_tor)
 
     def test_kill_process(self):
@@ -225,17 +207,3 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
         pids = executive.running_pids()
         self.assertTrue(os.getpid() in pids)
-
-
-def main(platform, stdin, stdout, cmd, args):
-    if platform == 'win32' and hasattr(stdout, 'fileno'):
-        import msvcrt
-        msvcrt.setmode(stdout.fileno(), os.O_BINARY)
-    if cmd == '--cat':
-        stdout.write(stdin.read())
-    elif cmd == '--echo':
-        stdout.write(' '.join(args))
-    return 0
-
-if __name__ == '__main__' and len(sys.argv) > 1 and sys.argv[1] in ('--cat', '--echo'):
-    sys.exit(main(sys.platform, sys.stdin, sys.stdout, sys.argv[1], sys.argv[2:]))
