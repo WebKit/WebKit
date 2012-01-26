@@ -56,8 +56,7 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document*);
 
-    virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }
-    virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&);
+    virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() OVERRIDE;
 };
 
 } //namespace

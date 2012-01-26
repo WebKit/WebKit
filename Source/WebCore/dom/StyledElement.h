@@ -55,8 +55,7 @@ public:
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
     static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
 
-    virtual bool canHaveAdditionalAttributeStyleDecls() const { return false; }
-    virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&) { }
+    virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
     CSSMutableStyleDeclaration* inlineStyleDecl() const { return attributeMap() ? attributeMap()->inlineStyleDecl() : 0; }

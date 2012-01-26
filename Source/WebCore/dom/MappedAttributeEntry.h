@@ -31,7 +31,6 @@ namespace WebCore {
 enum MappedAttributeEntry {
       eNone
     , eUniversal
-    , ePersistent
     , eReplaced
     , eBlock
     , eHR

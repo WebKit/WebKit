@@ -47,15 +47,14 @@ PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const Qualif
     return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
 
-// used by table row groups to share style decls created by the enclosing table.
-void HTMLTableSectionElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
+PassRefPtr<CSSMutableStyleDeclaration> HTMLTableSectionElement::additionalAttributeStyle()
 {
     ContainerNode* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
     if (!p)
-        return;
-    static_cast<HTMLTableElement*>(p)->addSharedGroupDecls(true, results);
+        return 0;
+    return static_cast<HTMLTableElement*>(p)->additionalGroupStyle(true);
 }
 
 // these functions are rather slow, since we need to get the row at

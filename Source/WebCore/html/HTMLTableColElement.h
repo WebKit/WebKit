@@ -44,9 +44,8 @@ private:
 
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
-    virtual bool canHaveAdditionalAttributeStyleDecls() const { return true; }
-    virtual void additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>&);
-   
+    virtual PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle() OVERRIDE;
+
     int m_span;
 };
 

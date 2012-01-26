@@ -852,19 +852,14 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        if (m_styledElement->canHaveAdditionalAttributeStyleDecls()) {
-            Vector<CSSMutableStyleDeclaration*> additionalAttributeStyleDecls;
-            m_styledElement->additionalAttributeStyleDecls(additionalAttributeStyleDecls);
-            if (!additionalAttributeStyleDecls.isEmpty()) {
-                unsigned additionalDeclsSize = additionalAttributeStyleDecls.size();
-                if (result.ranges.firstAuthorRule == -1)
-                    result.ranges.firstAuthorRule = m_matchedDecls.size();
-                result.ranges.lastAuthorRule = m_matchedDecls.size() + additionalDeclsSize - 1;
-                for (unsigned i = 0; i < additionalDeclsSize; ++i)
-                    addMatchedDeclaration(additionalAttributeStyleDecls[i]);
-                result.isCacheable = false;
-            }
+        if (RefPtr<CSSMutableStyleDeclaration> additionalStyle = m_styledElement->additionalAttributeStyle()) {
+            if (result.ranges.firstAuthorRule == -1)
+                result.ranges.firstAuthorRule = m_matchedDecls.size();
+            result.ranges.lastAuthorRule = m_matchedDecls.size();
+            addMatchedDeclaration(additionalStyle.get());
+            result.isCacheable = false;
         }
+
         if (m_styledElement->isHTMLElement()) {
             bool isAuto;
             TextDirection textDirection = toHTMLElement(m_styledElement)->directionalityIfhasDirAutoAttribute(isAuto);

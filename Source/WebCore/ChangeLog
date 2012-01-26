@@ -1,3 +1,61 @@
+2012-01-26  Andreas Kling  <awesomekling@apple.com>
+
+        Refactor application of additional style attributes for table elements.
+        <http://webkit.org/b/77095>
+
+        Reviewed by Darin Adler.
+
+        The primary purpose of this change is to reduce usage of CSSMappedAttributeDeclaration.
+        Instead of using the mapped attribute decl table for additional table style, just use
+        regular CSSMutableStyleDeclarations. We cache them all globally, except for the style
+        that's shared between a table's cells. That one is cached per-table since it depends
+        on the table's border and padding.
+
+        * dom/CSSMappedAttributeDeclaration.cpp:
+        (WebCore::CSSMappedAttributeDeclaration::~CSSMappedAttributeDeclaration):
+        * dom/MappedAttributeEntry.h:
+
+            Remove the concept of persistent CSSMappedAttributeDeclarations. The hunk in
+            ~CSSMappedAttributeDeclaration was wildly wrong since it would leave stale pointers
+            in the decl table, but unreachable since we always leaked one ref to those decls.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::additionalAttributeStyle):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::additionalAttributeStyle):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalAttributeStyle):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        (WebCore::leakBorderStyle):
+        (WebCore::HTMLTableElement::additionalAttributeStyle):
+        (WebCore::HTMLTableElement::createSharedCellStyle):
+        (WebCore::HTMLTableElement::additionalCellStyle):
+        (WebCore::leakGroupBorderStyle):
+        (WebCore::HTMLTableElement::additionalGroupStyle):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalAttributeStyle):
+        * html/HTMLTableSectionElement.h:
+        (HTMLTableSectionElement):
+
+            Instead of collecting additional style decls into a vector, switch over to a
+            "PassRefPtr<CSSMutableStyleDeclaration> additionalAttributeStyle()".
+            All style declarations that can be reused for all elements are cached at the return
+            sites, leaving only the shared table cell style which we cache on HTMLTableElement.
+            Also removed the canHaveAdditionalAttributeStyleDecls() virtual since the default
+            additionalAttributeStyle() will just return 0.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchAllRules):
+
+            Updated for the new additional style conventions.
+
 2012-01-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts panel editor container should be based on UISourceCode objects, not SourceFrames.
