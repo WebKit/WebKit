@@ -41,14 +41,14 @@ public:
 
     static PassRefPtr<IDBKey> createInvalid()
     {
-        RefPtr<IDBKey> idbKey(new IDBKey());
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
         idbKey->m_type = InvalidType;
         return idbKey.release();
     }
 
     static PassRefPtr<IDBKey> createNumber(double number)
     {
-        RefPtr<IDBKey> idbKey(new IDBKey());
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
         idbKey->m_type = NumberType;
         idbKey->m_number = number;
         idbKey->m_sizeEstimate += sizeof(double);
@@ -57,7 +57,7 @@ public:
 
     static PassRefPtr<IDBKey> createString(const String& string)
     {
-        RefPtr<IDBKey> idbKey(new IDBKey());
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
         idbKey->m_type = StringType;
         idbKey->m_string = string;
         idbKey->m_sizeEstimate += string.length() * sizeof(UChar);
@@ -66,7 +66,7 @@ public:
 
     static PassRefPtr<IDBKey> createDate(double date)
     {
-        RefPtr<IDBKey> idbKey(new IDBKey());
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
         idbKey->m_type = DateType;
         idbKey->m_date = date;
         idbKey->m_sizeEstimate += sizeof(double);
@@ -75,7 +75,7 @@ public:
 
     static PassRefPtr<IDBKey> createArray(const KeyArray& array)
     {
-        RefPtr<IDBKey> idbKey(new IDBKey());
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
         idbKey->m_type = ArrayType;
         idbKey->m_array = array;
 

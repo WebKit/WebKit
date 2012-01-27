@@ -1,3 +1,19 @@
+2012-01-26  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: WebCore::IDBKey objects are leaked
+        https://bugs.webkit.org/show_bug.cgi?id=77114
+
+        Reviewed by Tony Chang.
+
+        Fixing memory leaks, no new tests.
+
+        * storage/IDBKey.h:
+        (WebCore::IDBKey::createInvalid):
+        (WebCore::IDBKey::createNumber):
+        (WebCore::IDBKey::createString):
+        (WebCore::IDBKey::createDate):
+        (WebCore::IDBKey::createArray):
+
 2012-01-25  Cris Neckar  <cdn@chromium.org>
 
         Add a scheme registry for CORS requests. Allow simple CORS requests to be made to registered schemes.
