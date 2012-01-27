@@ -162,7 +162,6 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT3));
 
         // Initialize ArgumentCount.
-        store32(TrustedImm32(JSValue::Int32Tag), tagFor(RegisterFile::ArgumentCount, regT3));
         store32(regT2, payloadFor(RegisterFile::ArgumentCount, regT3));
 
         // Initialize 'this'.
@@ -244,7 +243,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
         addPtr(TrustedImm32(registerOffset * sizeof(Register)), callFrameRegister, regT3);
 
-        store32(TrustedImm32(JSValue::Int32Tag), tagFor(RegisterFile::ArgumentCount, regT3));
         store32(TrustedImm32(argCount), payloadFor(RegisterFile::ArgumentCount, regT3));
     } // regT3 holds newCallFrame with ArgumentCount initialized.
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.

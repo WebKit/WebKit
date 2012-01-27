@@ -75,6 +75,10 @@ namespace JSC {
         int32_t unboxedInt32() const;
         bool unboxedBoolean() const;
         JSCell* unboxedCell() const;
+        int32_t payload() const;
+        int32_t tag() const;
+        int32_t& payload();
+        int32_t& tag();
 
         static Register withInt(int32_t i)
         {
@@ -176,12 +180,12 @@ namespace JSC {
         
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
     {
-        return u.encodedValue.asBits.payload;
+        return payload();
     }
 
     ALWAYS_INLINE bool Register::unboxedBoolean() const
     {
-        return !!u.encodedValue.asBits.payload;
+        return !!payload();
     }
 
     ALWAYS_INLINE JSCell* Register::unboxedCell() const
@@ -189,8 +193,28 @@ namespace JSC {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;
 #else
-        return bitwise_cast<JSCell*>(u.encodedValue.asBits.payload);
+        return bitwise_cast<JSCell*>(payload());
 #endif
+    }
+
+    ALWAYS_INLINE int32_t Register::payload() const
+    {
+        return u.encodedValue.asBits.payload;
+    }
+
+    ALWAYS_INLINE int32_t Register::tag() const
+    {
+        return u.encodedValue.asBits.tag;
+    }
+
+    ALWAYS_INLINE int32_t& Register::payload()
+    {
+        return u.encodedValue.asBits.payload;
+    }
+
+    ALWAYS_INLINE int32_t& Register::tag()
+    {
+        return u.encodedValue.asBits.tag;
     }
 
 } // namespace JSC
