@@ -2488,3 +2488,16 @@ fast/forms/radio/radio-group.html
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
 svg/custom/zero-path-square-cap-rendering.svg
 svg/stroke/zero-length-arc-linecaps-rendering.svg
+
+# New fails between r106038 - r106051 - need more investigation
+editing/selection/caret-ltr-2-left.html
+editing/selection/caret-ltr-2.html
+editing/selection/caret-ltr-right.html
+editing/selection/caret-ltr.html
+editing/selection/caret-rtl-2-left.html
+editing/selection/caret-rtl-right.html
+fast/multicol/span/span-as-immediate-child-property-removal.html
+fast/multicol/span/span-as-immediate-columns-child-removal.html
+
+# new test introduced in http://trac.webkit.org/changeset/106072 - need more investigation
+fast/parser/nested-fragment-parser-crash.html

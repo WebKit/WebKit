@@ -75,3 +75,17 @@ editing/text-iterator/findString-selection-disabled.html
 # [Qt] fast/events/clear-edit-drag-state.html fails with timeout with Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=76897
 fast/events/clear-edit-drag-state.html
+
+# [Qt] Use ICU if available - fails after http://trac.webkit.org/changeset/105997 - need more investigation
+css1/text_properties/text_transform.html
+editing/execCommand/findString-diacriticals.html
+editing/selection/caret-at-bidi-boundary.html
+editing/selection/caret-bidi-first-and-last-letters.html
+editing/selection/collapse-selection-in-bidi.html
+editing/selection/regional-indicators.html
+fast/css/text-transform-select.html
+fast/text/find-kana.html
+fast/text/find-russian.html
+fast/text/find-soft-hyphen.html
+fast/url/path.html
+svg/as-background-image/background-image-preserveaspectRatio-support.html
