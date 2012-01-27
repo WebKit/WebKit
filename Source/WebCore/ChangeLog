@@ -1,3 +1,26 @@
+2012-01-27  Tony Chang  <tony@chromium.org>
+
+        flexbox scrollbars don't take flex-direction into account
+        https://bugs.webkit.org/show_bug.cgi?id=70772
+
+        Reviewed by Darin Adler.
+
+        This fixes a bug where we always used the logicalScrollbarHeight.
+        For column flow, this was incorrect.
+
+        Also fix a bug where we didn't include the trailing border+padding+scrollbar when computing the
+        height of a column flow.
+
+        Tests: css3/flexbox/cross-axis-scrollbar-expected.html
+               css3/flexbox/cross-axis-scrollbar.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::crossAxisScrollbarExtent): Add a direction aware method for getting the scrollbar size.
+        (WebCore):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Use crossAxisScrollbarExtent.
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-01-27  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebasedlined run-bindings-tests results.

@@ -416,6 +416,11 @@ LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(RenderBox* child) co
     return isHorizontalFlow() ? child->marginTop() + child->marginBottom() : child->marginLeft() + child->marginRight();
 }
 
+LayoutUnit RenderFlexibleBox::crossAxisScrollbarExtent() const
+{
+    return isHorizontalFlow() ? horizontalScrollbarHeight() : verticalScrollbarWidth();
+}
+
 LayoutPoint RenderFlexibleBox::flowAwareLocationForChild(RenderBox* child) const
 {
     return isHorizontalFlow() ? child->location() : child->location().transposedPoint();
@@ -675,11 +680,10 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
             maxAscent = std::max(maxAscent, ascent);
             maxDescent = std::max(maxDescent, descent);
 
-            // FIXME: add flowAwareScrollbarLogicalHeight.
             if (crossAxisLength().isAuto())
-                setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + maxAscent + maxDescent + scrollbarLogicalHeight()));
+                setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + maxAscent + maxDescent + crossAxisScrollbarExtent()));
         } else if (crossAxisLength().isAuto())
-            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child) + scrollbarLogicalHeight()));
+            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child) + crossAxisScrollbarExtent()));
 
         mainAxisOffset += flowAwareMarginStartForChild(child);
 
@@ -694,7 +698,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
         mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, totalPositiveFlexibility, style()->flexPack(), childSizes.size());
 
         if (isColumnFlow())
-            setLogicalHeight(mainAxisOffset);
+            setLogicalHeight(mainAxisOffset + flowAwareBorderEnd() + flowAwarePaddingEnd() + scrollbarLogicalHeight());
     }
 
     if (style()->flexDirection() == FlowColumnReverse) {
