@@ -33,15 +33,11 @@
 #include <glib.h>
 #include <wtf/Assertions.h>
 
-G_BEGIN_DECLS
-
 #define WEBKIT_PARAM_READABLE (static_cast<GParamFlags>(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_WRITABLE (static_cast<GParamFlags>(G_PARAM_WRITABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 #define WEBKIT_PARAM_READWRITE (static_cast<GParamFlags>(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkitName, webcoreName) \
-        COMPILE_ASSERT(int(webkitName) == int(WebCore::webcoreName), mismatchingEnums)
-
-G_END_DECLS
+        COMPILE_ASSERT(int(webkitName) == int(webcoreName), mismatchingEnums)
 
 #endif // WebKitPrivate_h

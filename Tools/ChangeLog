@@ -1,3 +1,13 @@
+2012-01-27  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WK2] Implement the policy client
+        https://bugs.webkit.org/show_bug.cgi?id=76343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Update the list of skipped source files to include all clients.
+
 2012-01-27  Ada Chan  <adachan@apple.com>
 
         Add test for WKBundleFrameGetParentFrame().

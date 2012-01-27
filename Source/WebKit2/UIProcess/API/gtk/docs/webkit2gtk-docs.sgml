@@ -21,6 +21,8 @@
     <xi:include href="xml/WebKitURIResponse.xml"/>
     <xi:include href="xml/WebKitWindowProperties.xml"/>
     <xi:include href="xml/WebKitDownload.xml"/>
+    <xi:include href="xml/WebKitPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
     <xi:include href="xml/WebKitError.xml"/>
   </chapter>
 

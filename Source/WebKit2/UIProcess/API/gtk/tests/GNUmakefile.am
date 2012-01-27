@@ -4,7 +4,8 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestLoaderClient \
 	Programs/WebKit2APITests/TestWebKitSettings \
 	Programs/WebKit2APITests/TestBackForwardList \
-	Programs/WebKit2APITests/TestDownloads
+	Programs/WebKit2APITests/TestDownloads \
+	Programs/WebKit2APITests/TestWebKitPolicyClient
 
 noinst_PROGRAMS += $(TEST_PROGS)
 
@@ -85,6 +86,12 @@ Programs_WebKit2APITests_TestBackForwardList_CPPFLAGS = $(webkit2_tests_cppflags
 Programs_WebKit2APITests_TestBackForwardList_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestBackForwardList_LDFLAGS = $(webkit2_tests_ldflags)
 
+Programs_WebKit2APITests_TestWebKitPolicyClient_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp
+Programs_WebKit2APITests_TestWebKitPolicyClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitPolicyClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitPolicyClient_LDFLAGS = $(webkit2_tests_ldflags)
+
 if HAVE_ATSPI2
 Programs_WebKit2APITests_AccessibilityTestServer_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/AccessibilityTestServer.cpp
@@ -104,4 +111,3 @@ Programs_WebKit2APITests_TestDownloads_SOURCES = \
 Programs_WebKit2APITests_TestDownloads_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestDownloads_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestDownloads_LDFLAGS = $(webkit2_tests_ldflags)
-

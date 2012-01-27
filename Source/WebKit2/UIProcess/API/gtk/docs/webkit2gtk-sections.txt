@@ -48,6 +48,7 @@ webkit_web_context_get_type
 <TITLE>WebKitWebView</TITLE>
 WebKitWebView
 WebKitLoadEvent
+WebKitPolicyDecisionType
 webkit_web_view_new
 webkit_web_view_new_with_context
 webkit_web_view_get_context
@@ -309,6 +310,51 @@ WEBKIT_DOWNLOAD_GET_CLASS
 <SUBSECTION Private>
 WebKitDownloadPrivate
 webkit_download_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitPolicyDecision</FILE>
+WebKitPolicyDecision
+webkit_policy_decision_download
+webkit_policy_decision_ignore
+webkit_policy_decision_use
+
+<SUBSECTION Standard>
+WebKitPolicyDecisionClass
+WEBKIT_TYPE_POLICY_DECISION
+WEBKIT_POLICY_DECISION
+WEBKIT_IS_POLICY_DECISION
+WEBKIT_POLICY_DECISION_CLASS
+WEBKIT_IS_POLICY_DECISION_CLASS
+WEBKIT_POLICY_DECISION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitPolicyDecisionPrivate
+webkit_policy_decision_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitNavigationPolicyDecision</FILE>
+WebKitNavigationPolicyDecision
+WebKitNavigationType
+webkit_navigation_policy_decision_get_frame_name
+webkit_navigation_policy_decision_get_modifiers
+webkit_navigation_policy_decision_get_mouse_button
+webkit_navigation_policy_decision_get_navigation_type
+webkit_navigation_policy_decision_get_request
+
+<SUBSECTION Standard>
+WebKitNavigationPolicyDecisionClass
+WEBKIT_TYPE_NAVIGATION_POLICY_DECISION
+WEBKIT_NAVIGATION_POLICY_DECISION
+WEBKIT_IS_NAVIGATION_POLICY_DECISION
+WEBKIT_NAVIGATION_POLICY_DECISION_CLASS
+WEBKIT_IS_NAVIGATION_POLICY_DECISION_CLASS
+WEBKIT_NAVIGATION_POLICY_DECISION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitNavigationPolicyDecisionPrivate
+webkit_navigation_policy_decision_get_type
 </SECTION>
 
 <SECTION>

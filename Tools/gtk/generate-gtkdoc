@@ -59,10 +59,7 @@ def get_webkit2_options():
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + src_path(),
         'ignored_files': glob.glob(src_path('*Private.h')) + \
-                         glob.glob(src_path('PageClientImpl.*')) + \
-                         glob.glob(src_path('WebKitDownloadClient.*')) + \
-                         glob.glob(src_path('WebKitUIClient.*')) + \
-                         glob.glob(src_path('WebKitLoaderClient.*')) + \
+                         glob.glob(src_path('*Client*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('tests/*.h'))
     })

@@ -1,3 +1,38 @@
+2012-01-27  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WK2] Implement the policy client
+        https://bugs.webkit.org/show_bug.cgi?id=76343
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Implement the abstract WebKitPolicyDecision, WebKitNavigationPolicyDecision,
+        and add the decide-policy signal to WebKitWebView.
+
+        * GNUmakefile.am: Add new files to the source list.
+        * UIProcess/API/gtk/WebKitError.cpp: Use the WebCore namespace because
+        of changes to ASSERT_MATCHING_ENUMS.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp: Added.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.h: Added.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp: Added.
+        * UIProcess/API/gtk/WebKitPolicyClientPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPolicyDecision.cpp: Added.
+        * UIProcess/API/gtk/WebKitPolicyDecision.h: Added.
+        * UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPrivate.h: Modify ASSERT_MATCHING_ENUMS to make
+        it useful for non-WebCore enums.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Attach the policy client callbacks to the page.
+        (webkit_web_view_class_init): Add the decide-policy signal definition.
+        (webkitWebViewMakePolicyDecision): Added this private method to fire the signal.
+        * UIProcess/API/gtk/WebKitWebView.h: Added new signal to the list.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Added new method declaration.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Added new classes to the docs.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Added new test to the source list.
+        * UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp: Added.
+        * UIProcess/API/gtk/webkit2marshal.list: decide-policy has a new signature.
+
 2012-01-27  Ada Chan  <adachan@apple.com>
 
         Add API to get the parent frame in WKBundleFrameRef

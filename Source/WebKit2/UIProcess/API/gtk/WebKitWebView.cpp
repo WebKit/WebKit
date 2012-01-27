@@ -26,6 +26,7 @@
 #include "WebKitError.h"
 #include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
+#include "WebKitPolicyClient.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
@@ -54,6 +55,8 @@ enum {
     SCRIPT_ALERT,
     SCRIPT_CONFIRM,
     SCRIPT_PROMPT,
+
+    DECIDE_POLICY,
 
     LAST_SIGNAL
 };
@@ -144,6 +147,12 @@ static gboolean webkitWebViewScriptPrompt(WebKitWebView* webView, const char* me
     return TRUE;
 }
 
+static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType)
+{
+    webkit_policy_decision_use(decision);
+    return TRUE;
+}
+
 static void webkitWebViewConstructed(GObject* object)
 {
     if (G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed)
@@ -157,6 +166,7 @@ static void webkitWebViewConstructed(GObject* object)
 
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
+    attachPolicyClientToPage(webView);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
@@ -243,6 +253,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->script_alert = webkitWebViewScriptAlert;
     webViewClass->script_confirm = webkitWebViewScriptConfirm;
     webViewClass->script_prompt = webkitWebViewScriptPrompt;
+    webViewClass->decide_policy = webkitWebViewDecidePolicy;
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
@@ -541,6 +552,66 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                          G_TYPE_BOOLEAN, 3,
                          G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
+    /**
+     * WebKitPolicyClient::decide-policy
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @decision: the #WebKitNavigationPolicyDecision
+     * @decision_type: a #WebKitPolicyDecisionType denoting the type of @decision
+     *
+     * This signal is emitted when WebKit is requesting the client to decide a policy
+     * decision, such as whether to navigate to a page, open a new window or whether or
+     * not to download a resource. The #WebKitNavigationPolicyDecision passed in the
+     * @decision argument is a generic type, but should be casted to a more
+     * specific type when making the decision. For example:
+     *
+     * <informalexample><programlisting>
+     * static gboolean
+     * decide_policy_cb (WebKitWebView *web_view,
+     *                   WebKitPolicyDecision *decision,
+     *                   WebKitPolicyDecisionType type)
+     * {
+     *     switch (type) {
+     *     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
+     *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         break;
+     *     case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION:
+     *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         break;
+     *     case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
+     *         WebKitResponsePolicyDecision *response = WEBKIT_RESPONSE_POLICY_DECISION (decision);
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         break;
+     *     default:
+     *         /<!-- -->* Making no decision results in webkit_policy_decision_use(). *<!-- -->/
+     *         return FALSE;
+     *     }
+     *     return TRUE;
+     * }
+     * </programlisting></informalexample>
+     *
+     * It is possible to make policy decision asynchronously, by simply calling g_object_ref()
+     * on the @decision argument and returning %TRUE to block the default signal handler.
+     * If the last reference is removed on a #WebKitPolicyDecision and no decision has been
+     * made explicitly, webkit_policy_decision_use() will be the default policy decision. The
+     * default signal handler will simply call webkit_policy_decision_use(). Only the first
+     * policy decision chosen for a given #WebKitPolicyDecision will have any affect.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     */
+    signals[DECIDE_POLICY] =
+        g_signal_new("decide-policy",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, decide_policy),
+                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
+                     webkit_marshal_BOOLEAN__OBJECT_ENUM,
+                     G_TYPE_BOOLEAN, 2, /* number of parameters */
+                     WEBKIT_TYPE_POLICY_DECISION,
+                     WEBKIT_TYPE_POLICY_DECISION_TYPE);
 }
 
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -644,6 +715,12 @@ WKStringRef webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CStri
     GOwnPtr<char> text;
     g_signal_emit(webView, signals[SCRIPT_PROMPT], 0, message.data(), defaultText.data(), &text.outPtr(), &returnValue);
     return text ? WKStringCreateWithUTF8CString(text.get()) : 0;
+}
+
+void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisionType type, WebKitPolicyDecision* decision)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[DECIDE_POLICY], 0, decision, type, &returnValue);
 }
 
 /**

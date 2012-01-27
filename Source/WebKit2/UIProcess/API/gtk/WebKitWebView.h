@@ -35,8 +35,43 @@
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWindowProperties.h>
+#include <webkit2/WebKitPolicyDecision.h>
 
 G_BEGIN_DECLS
+
+/**
+ * WebKitPolicyDecisionType:
+ * @WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION: This type of policy decision
+ *   is requested when WebKit is about to navigate to a new page in either the
+ *   main frame or a subframe. Acceptable policy decisions are either
+ *   webkit_policy_decision_use() or webkit_policy_decision_ignore(). This
+ *   type of policy decision is always a #WebKitNavigationPolicyDecision.
+ * @WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION: This type of policy decision
+ *   is requested when WebKit is about to create a new window. Acceptable policy
+ *   decisions are either webkit_policy_decision_use() or
+ *   webkit_policy_decision_ignore(). This type of policy decision is always
+ *   a #WebKitNavigationPolicyDecision. These decisions are useful for implementing
+ *   special actions for new windows, such as forcing the new window to open
+ *   in a tab when a keyboard modifier is active or handling a special
+ *   target attribute on &lt;a&gt; elements.
+ * @WEBKIT_POLICY_DECISION_TYPE_RESPONSE: This type of decision is used when WebKit has
+ *   received a response for a network resource and is about to start the load.
+ *   Note that these resources include all subresources of a page such as images
+ *   and stylesheets as well as main documents. Appropriate policy responses to
+ *   this decision are webkit_policy_decision_use(), webkit_policy_decision_ignore(),
+ *   or webkit_policy_decision_download(). This type of policy decision is always
+ *   a #WebKitResponsePolicyDecision. This decision is useful for forcing
+ *   some types of resources to be downloaded rather than rendered in the WebView
+ *   or to block the transfer of resources entirely.
+ *
+ * Enum values used for determining the type of a policy decision during
+ * WebKitWebView::decide-policy.
+ */
+typedef enum {
+    WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION,
+    WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION,
+    WEBKIT_POLICY_DECISION_TYPE_RESPONSE,
+} WebKitPolicyDecisionType;
 
 #define WEBKIT_TYPE_WEB_VIEW            (webkit_web_view_get_type())
 #define WEBKIT_WEB_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_VIEW, WebKitWebView))
@@ -81,26 +116,29 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    void       (* load_changed)   (WebKitWebView  *web_view,
-                                   WebKitLoadEvent load_event);
-    gboolean   (* load_failed)    (WebKitWebView  *web_view,
-                                   WebKitLoadEvent load_event,
-                                   const gchar    *failing_uri,
-                                   GError         *error);
+    void       (* load_changed)   (WebKitWebView             *web_view,
+                                   WebKitLoadEvent            load_event);
+    gboolean   (* load_failed)    (WebKitWebView             *web_view,
+                                   WebKitLoadEvent            load_event,
+                                   const gchar               *failing_uri,
+                                   GError                    *error);
 
-    GtkWidget *(* create)         (WebKitWebView  *web_view);
-    void       (* ready_to_show)  (WebKitWebView  *web_view);
-    void       (* close)          (WebKitWebView  *web_view);
+    GtkWidget *(* create)         (WebKitWebView             *web_view);
+    void       (* ready_to_show)  (WebKitWebView             *web_view);
+    void       (* close)          (WebKitWebView             *web_view);
 
-    gboolean   (* script_alert)   (WebKitWebView  *web_view,
-                                   const gchar    *message);
-    gboolean   (* script_confirm) (WebKitWebView  *web_view,
-                                   const gchar    *message,
-                                   gboolean       *confirmed);
-    gboolean   (* script_prompt)  (WebKitWebView  *web_view,
-                                   const gchar    *message,
-                                   const gchar    *default_text,
-                                   gchar         **text);
+    gboolean   (* script_alert)   (WebKitWebView             *web_view,
+                                   const gchar               *message);
+    gboolean   (* script_confirm) (WebKitWebView             *web_view,
+                                   const gchar               *message,
+                                   gboolean                  *confirmed);
+    gboolean   (* script_prompt)  (WebKitWebView             *web_view,
+                                   const gchar               *message,
+                                   const gchar               *default_text,
+                                   gchar                    **text);
+    gboolean   (* decide_policy)  (WebKitWebView             *web_view,
+                                   WebKitPolicyDecision      *decision,
+                                   WebKitPolicyDecisionType  type);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
