@@ -1,0 +1,2 @@
+Tests sending an array buffer.
+0 1 2 48 49 50 128 129 130 253 254 255
