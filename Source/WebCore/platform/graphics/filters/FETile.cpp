@@ -67,7 +67,7 @@ void FETile::platformApplySoftware()
     }
 
     OwnPtr<ImageBuffer> tileImage;
-    if (!SVGImageBufferTools::createImageBuffer(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
+    if (!SVGImageBufferTools::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
         return;
 
     GraphicsContext* tileImageContext = tileImage->context();

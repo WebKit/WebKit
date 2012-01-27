@@ -94,10 +94,9 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     AffineTransform absoluteTransform;
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
 
-    FloatRect absoluteTargetRect = absoluteTransform.mapRect(object->repaintRectInLocalCoordinates());
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRect(absoluteTargetRect);
+    FloatRect repaintRect = object->repaintRectInLocalCoordinates();
 
-    if (!maskerData->maskImage && !clampedAbsoluteTargetRect.isEmpty()) {
+    if (!maskerData->maskImage && !repaintRect.isEmpty()) {
         SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());
         if (!maskElement)
             return false;
@@ -106,19 +105,10 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         const SVGRenderStyle* svgStyle = style()->svgStyle();
         ASSERT(svgStyle);
         ColorSpace colorSpace = svgStyle->colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
-        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskerData->maskImage, colorSpace, Unaccelerated))
+        if (!SVGImageBufferTools::createImageBuffer(repaintRect, absoluteTransform, maskerData->maskImage, colorSpace, Unaccelerated))
             return false;
 
-        GraphicsContext* maskImageContext = maskerData->maskImage->context();
-        ASSERT(maskImageContext);
-
-        // The save/restore pair is needed for clipToImageBuffer - it doesn't work without it on non-Cg platforms.
-        maskImageContext->save();
-        maskImageContext->translate(-clampedAbsoluteTargetRect.x(), -clampedAbsoluteTargetRect.y());
-        maskImageContext->concatCTM(absoluteTransform);
-
         if (!drawContentIntoMaskImage(maskerData, colorSpace, maskElement, object)) {
-            maskImageContext->restore();
             maskerData->maskImage.clear();
         }
     }
@@ -126,7 +116,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     if (!maskerData->maskImage)
         return false;
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, clampedAbsoluteTargetRect, maskerData->maskImage);
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, maskerData->maskImage);
     return true;
 }
 
@@ -156,8 +146,6 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
             continue;
         SVGImageBufferTools::renderSubtreeToImageBuffer(maskerData->maskImage.get(), renderer, maskContentTransformation);
     }
-
-    maskImageContext->restore();
 
 #if !USE(CG)
     maskerData->maskImage->transformColorSpace(ColorSpaceDeviceRGB, colorSpace);

@@ -170,40 +170,38 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     AffineTransform absoluteTransform;
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
 
-    FloatRect absoluteTargetRect = absoluteTransform.mapRect(repaintRect);
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRect(absoluteTargetRect);
-
-    if (shouldCreateClipData && !clampedAbsoluteTargetRect.isEmpty()) {
-        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, clipperData->clipMaskImage, ColorSpaceDeviceRGB, Unaccelerated))
+    if (shouldCreateClipData && !repaintRect.isEmpty()) {
+        if (!SVGImageBufferTools::createImageBuffer(repaintRect, absoluteTransform, clipperData->clipMaskImage, ColorSpaceDeviceRGB, Unaccelerated))
             return false;
 
         GraphicsContext* maskContext = clipperData->clipMaskImage->context();
         ASSERT(maskContext);
 
-        // The save/restore pair is needed for clipToImageBuffer - it doesn't work without it on non-Cg platforms.
-        GraphicsContextStateSaver stateSaver(*maskContext);
-        maskContext->translate(-clampedAbsoluteTargetRect.x(), -clampedAbsoluteTargetRect.y());
         maskContext->concatCTM(animatedLocalTransform);
-        maskContext->concatCTM(absoluteTransform);
 
         // clipPath can also be clipped by another clipPath.
-        if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this)) {
-            if (RenderSVGResourceClipper* clipper = resources->clipper()) {
-                if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext))
-                    return false;
-            }
-        }
+        SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(this);
+        RenderSVGResourceClipper* clipper;
+        bool succeeded;
+        if (resources && (clipper = resources->clipper())) {
+            GraphicsContextStateSaver stateSaver(*maskContext);
 
-        if (!drawContentIntoMaskImage(clipperData, objectBoundingBox)) {
-            stateSaver.restore();
+            if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext))
+                return false;
+
+            succeeded = drawContentIntoMaskImage(clipperData, objectBoundingBox);
+            // The context restore applies the clipping on non-CG platforms.
+        } else
+            succeeded = drawContentIntoMaskImage(clipperData, objectBoundingBox);
+
+        if (!succeeded)
             clipperData->clipMaskImage.clear();
-        }
     }
 
     if (!clipperData->clipMaskImage)
         return false;
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, clampedAbsoluteTargetRect, clipperData->clipMaskImage);
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage);
     return true;
 }
 

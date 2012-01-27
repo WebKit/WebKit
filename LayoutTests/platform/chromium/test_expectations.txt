@@ -39,7 +39,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-pare
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
-BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
+// BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
 BUGWK77184 DEBUG SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
@@ -3694,6 +3694,45 @@ BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-per
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 
 BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
+
+// Tests needing rebaseline after bug 73643 patch
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
+//BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
+//BUGWK73643 WIN MAC : svg/batik/filters/feTile.svg = IMAGE
+BUGWK73643 MAC : svg/batik/filters/feTile.svg = IMAGE
+BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
+//BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
+BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
+BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
+BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Linear.svg = IMAGE
+BUGWK73643 WIN MAC : svg/custom/feComponentTransfer-Table.svg = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-dom-height-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-dom-width-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-dom-x-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-dom-y-attr.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-svgdom-height-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-svgdom-x-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/dynamic-updates/SVGMaskElement-svgdom-y-prop.html = IMAGE
+BUGWK73643 WIN MAC : svg/filters/feDropShadow.svg = IMAGE
+BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
+BUGWK73643 SLOW DEBUG WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
+BUGWK73643 SLOW DEBUG LINUX : svg/filters/big-sized-filter.svg = PASS
+BUGWK73643 RELEASE WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
+BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
+//BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
+BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
+BUGWK73643 WIN MAC : svg/as-background-image/svg-as-background-2.html = IMAGE
+BUGWK73643 WIN MAC : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 
 BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
 

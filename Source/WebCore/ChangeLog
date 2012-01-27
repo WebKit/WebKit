@@ -1,3 +1,47 @@
+2012-01-27  Branimir Lambov  <blambov@google.com>
+
+        SVG filters incorrectly move elements
+        https://bugs.webkit.org/show_bug.cgi?id=73643
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fixes SVG image buffer creation to use the enclosing integer rect
+        instead of unstable rounded coordinates with scaling which was causing
+        animated images to jump around under filters. The image buffer was not 
+        aligned on a pixel boundary, and thus the positions and sizes of anything
+        drawn under that filter changed by 1-2 pixels compared to the same
+        elements drawn without an intermediate buffer, or drawn with a buffer
+        with a different target rectangle. 
+        
+        The change improves the positioning of clip paths, masks and filters.
+
+        Tests: svg/clip-path/clip-in-clip.svg
+               svg/clip-path/clipper-placement-issue.svg
+               svg/filters/filter-placement-issue.svg
+
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::createImageBuffer):
+        (WebCore::SVGImageBufferTools::createImageBufferForPattern):
+        (WebCore::SVGImageBufferTools::clipToImageBuffer):
+        (WebCore::SVGImageBufferTools::clampedAbsoluteTargetRect):
+        (WebCore::SVGImageBufferTools::clampedAbsoluteSize):
+        * rendering/svg/SVGImageBufferTools.h:
+        (WebCore::SVGImageBufferTools::calcImageBufferRect):
+
 2012-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: should be possible to open function declaration from script popover

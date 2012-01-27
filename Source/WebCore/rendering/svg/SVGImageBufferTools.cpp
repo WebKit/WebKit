@@ -28,7 +28,7 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGRoot.h"
 
-static float kMaxImageBufferSize = 4096;
+static int kMaxImageBufferSize = 4096;
 
 namespace WebCore {
 
@@ -52,10 +52,38 @@ void SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(
     }
 }
 
-bool SVGImageBufferTools::createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+bool SVGImageBufferTools::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
 {
-    IntSize imageSize(roundedImageBufferSize(clampedAbsoluteTargetRect.size()));
-    IntSize unclampedImageSize(SVGImageBufferTools::roundedImageBufferSize(absoluteTargetRect.size()));
+    IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
+    // Don't create empty ImageBuffers.
+    if (paintRect.isEmpty())
+        return false;
+
+    IntSize clampedSize = clampedAbsoluteSize(paintRect.size());
+    OwnPtr<ImageBuffer> image = ImageBuffer::create(clampedSize, colorSpace, renderingMode);
+    if (!image)
+        return false;
+
+    GraphicsContext* imageContext = image->context();
+    ASSERT(imageContext);
+
+    // This is done in absolute coordinates.
+    imageContext->translate(-paintRect.x(), -paintRect.y());
+
+    imageContext->concatCTM(absoluteTransform);
+
+    // This happens in local coordinates.
+    imageContext->scale(FloatSize(static_cast<float>(clampedSize.width()) / paintRect.width(),
+                                  static_cast<float>(clampedSize.height()) / paintRect.height()));
+
+    imageBuffer = image.release();
+    return true;
+}
+
+bool SVGImageBufferTools::createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+{
+    IntSize imageSize(roundedIntSize(clampedAbsoluteTargetRect.size()));
+    IntSize unclampedImageSize(roundedIntSize(absoluteTargetRect.size()));
 
     // Don't create empty ImageBuffers.
     if (imageSize.isEmpty())
@@ -93,15 +121,17 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
     contentTransformation = savedContentTransformation;
 }
 
-void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer)
+void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>& imageBuffer)
 {
     ASSERT(context);
     ASSERT(imageBuffer);
 
+    FloatRect absoluteTargetRect = calculateImageBufferRect(targetRect, absoluteTransform);
+
     // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the absolute coordinate space as well.
     context->concatCTM(absoluteTransform.inverse());
-    context->clipToImageBuffer(imageBuffer.get(), clampedAbsoluteTargetRect);
+    context->clipToImageBuffer(imageBuffer.get(), absoluteTargetRect);
     context->concatCTM(absoluteTransform);
 
     // When nesting resources, with objectBoundingBox as content unit types, there's no use in caching the
@@ -110,22 +140,16 @@ void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const Affi
         imageBuffer.clear();
 }
 
-IntSize SVGImageBufferTools::roundedImageBufferSize(const FloatSize& size)
-{
-    return IntSize(static_cast<int>(lroundf(size.width())), static_cast<int>(lroundf(size.height())));
-}
-
 FloatRect SVGImageBufferTools::clampedAbsoluteTargetRect(const FloatRect& absoluteTargetRect)
 {
-    FloatRect clampedAbsoluteTargetRect = absoluteTargetRect;
+    const FloatSize maxImageBufferSize(kMaxImageBufferSize, kMaxImageBufferSize);
+    return FloatRect(absoluteTargetRect.location(), absoluteTargetRect.size().shrunkTo(maxImageBufferSize));
+}
 
-    if (clampedAbsoluteTargetRect.width() > kMaxImageBufferSize)
-        clampedAbsoluteTargetRect.setWidth(kMaxImageBufferSize);
-
-    if (clampedAbsoluteTargetRect.height() > kMaxImageBufferSize)
-        clampedAbsoluteTargetRect.setHeight(kMaxImageBufferSize);
-
-    return clampedAbsoluteTargetRect;
+IntSize SVGImageBufferTools::clampedAbsoluteSize(const IntSize& absoluteSize)
+{
+    const IntSize maxImageBufferSize(kMaxImageBufferSize, kMaxImageBufferSize);
+    return absoluteSize.shrunkTo(maxImageBufferSize);
 }
 
 void SVGImageBufferTools::clear2DRotation(AffineTransform& transform)
