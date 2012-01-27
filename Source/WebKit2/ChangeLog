@@ -1,3 +1,22 @@
+2012-01-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Fade out tap highlighting when starting to pan
+        https://bugs.webkit.org/show_bug.cgi?id=77202
+
+        Reviewed by Simon Hausmann.
+
+        Basically we need to fade out the potential tap highlighting
+        when ever the gesture recognition fails or another gesture
+        is recognized. We do that with this change.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::QtTapGestureRecognizer):
+        (WebKit::QtTapGestureRecognizer::recognize):
+        (WebKit::QtTapGestureRecognizer::reset):
+
+            Remove reset as it does nothing but call code before the
+            event handler is installed.
+
 2012-01-26  No'am Rosenthal  <noam.rosenthal@nokia.com> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] WKTR: Use a software rendering pipiline when running tests.
