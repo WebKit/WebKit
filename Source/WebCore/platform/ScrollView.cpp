@@ -991,6 +991,7 @@ void ScrollView::scrollbarStyleChanged(int, bool forceUpdate)
 
     contentsResized();
     updateScrollbars(scrollOffset());
+    positionScrollbarLayers();
 }
 
 void ScrollView::updateScrollCorner()

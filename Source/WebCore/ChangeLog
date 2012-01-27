@@ -1,3 +1,19 @@
+2012-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Scrollbars disappear when switching from legacy to overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=77166
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarStyleChanged):
+        Call positionScrollbarLayers to make sure that the new scrollbar layers are positioned correctly.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        Call ScrollbarThemeMac::setNewPainterForScrollbar after making the call to the scrollbar painter controller
+        to set the horizontal or vertical imp, since setting the imp will reset the knob style.
+
 2012-01-26  Adam Barth  <abarth@webkit.org>
 
         NULL ptr in WebCore::ContainerNode::parserAddChild
