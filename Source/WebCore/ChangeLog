@@ -1,3 +1,14 @@
+2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
+
+        Cleanup JPEGImageDecoder includes
+        https://bugs.webkit.org/show_bug.cgi?id=77171
+
+        Reviewed by Adam Barth.
+
+        No new tests. Refactoring cleanup only.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+
 2012-01-26  Tim Horton  <hortont424@gmail.com>
 
         3D transformed elements hide when showing the print dialog

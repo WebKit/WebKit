@@ -56,16 +56,12 @@
 #endif
 
 extern "C" {
-
 #include "jpeglib.h"
-
 #if USE(ICCJPEG)
 #include "iccjpeg.h"
 #endif
-
-}
-
 #include <setjmp.h>
+}
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
 #define ASSUME_LITTLE_ENDIAN 0
