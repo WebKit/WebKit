@@ -3920,6 +3920,7 @@ BUGWK76800 : svg/filters/feImage-reference-svg-primitive.svg = IMAGE
 
 // Just needs a rebaseline.
 BUGWK69714 : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
+BUGWK77103 : svg/repaint/image-href-change.svg = IMAGE
 
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
