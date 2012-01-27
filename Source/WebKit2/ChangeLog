@@ -1,5 +1,17 @@
 2012-01-26  Mark Rowe  <mrowe@apple.com>
 
+        Merge r102507.
+
+    2011-12-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Snow Leopard build some more.
+
+        Move the #if to a location where it will do some good.
+
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+
+2012-01-26  Mark Rowe  <mrowe@apple.com>
+
         Merge r102504.
 
     2011-12-09  Mark Rowe  <mrowe@apple.com>
