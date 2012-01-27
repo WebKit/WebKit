@@ -62,7 +62,7 @@ PassOwnPtr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
 
 void QtPageClient::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    m_webView->page()->update();
+    QQuickWebViewPrivate::get(m_webView)->setNeedsDisplay();
 }
 
 void QtPageClient::pageDidRequestScroll(const IntPoint& pos)

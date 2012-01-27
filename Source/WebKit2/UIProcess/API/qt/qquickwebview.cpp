@@ -67,6 +67,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , isTransitioningToNewPage(false)
     , pageIsSuspended(false)
     , m_navigatorQtObjectEnabled(false)
+    , m_renderToOffscreenBuffer(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
@@ -152,6 +153,20 @@ void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
     QObject::connect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
     updateTouchViewportSize();
+}
+
+void QQuickWebViewPrivate::setNeedsDisplay()
+{
+    Q_Q(QQuickWebView);
+    if (renderToOffscreenBuffer()) {
+        // TODO: we can maintain a real image here and use it for pixel tests. Right now this is used only for running the rendering code-path while running tests.
+        QImage dummyImage(1, 1, QImage::Format_ARGB32);
+        QPainter painter(&dummyImage);
+        q->page()->d->paint(&painter);
+        return;
+    }
+
+    q->page()->update();
 }
 
 void QQuickWebViewPrivate::loadDidCommit()
@@ -657,6 +672,18 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
         return;
 
     d->setUseTraditionalDesktopBehaviour(enable);
+}
+
+void QQuickWebViewExperimental::setRenderToOffscreenBuffer(bool enable)
+{
+    Q_D(QQuickWebView);
+    d->setRenderToOffscreenBuffer(enable);
+}
+
+bool QQuickWebViewExperimental::renderToOffscreenBuffer() const
+{
+    Q_D(const QQuickWebView);
+    return d->renderToOffscreenBuffer();
 }
 
 void QQuickWebViewExperimental::postMessage(const QString& message)

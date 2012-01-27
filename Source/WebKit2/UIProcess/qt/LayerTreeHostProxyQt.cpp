@@ -27,6 +27,7 @@
 #include "MessageID.h"
 #include "ShareableBitmap.h"
 #include "TextureMapperGL.h"
+#include "TextureMapperQt.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLayerTreeInfo.h"
@@ -171,6 +172,7 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapperGL::create();
+    ASSERT(dynamic_cast<TextureMapperGL*>(m_textureMapper.get()));
 
     syncRemoteContent();
     GraphicsLayer* currentRootLayer = rootLayer();
@@ -203,6 +205,28 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
         m_viewportUpdateTimer.startOneShot(0);
     }
 }
+
+void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
+{
+    if (!m_textureMapper)
+        m_textureMapper = TextureMapperQt::create();
+    ASSERT(dynamic_cast<TextureMapperQt*>(m_textureMapper.get()));
+
+    syncRemoteContent();
+    TextureMapperNode* node = toTextureMapperNode(rootLayer());
+
+    if (!node)
+        return;
+
+    GraphicsContext graphicsContext(painter);
+    m_textureMapper->setGraphicsContext(&graphicsContext);
+    m_textureMapper->beginPainting();
+    m_textureMapper->bindSurface(0);
+    node->paint();
+    m_textureMapper->endPainting();
+    m_textureMapper->setGraphicsContext(0);
+}
+
 
 void LayerTreeHostProxy::didFireViewportUpdateTimer(Timer<LayerTreeHostProxy>*)
 {

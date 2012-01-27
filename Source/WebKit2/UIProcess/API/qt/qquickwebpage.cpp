@@ -100,6 +100,12 @@ void QQuickWebPagePrivate::setDrawingAreaSize(const QSize& size)
     drawingArea->setSize(WebCore::IntSize(size), WebCore::IntSize());
 }
 
+void QQuickWebPagePrivate::paint(QPainter* painter)
+{
+    if (webPageProxy->drawingArea())
+        webPageProxy->drawingArea()->paintLayerTree(painter);
+}
+
 void QQuickWebPagePrivate::paintToCurrentGLContext()
 {
     if (!q->isVisible())

@@ -45,7 +45,6 @@ public:
         : QQuickView(QUrl("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }"))
         , m_view(view)
     {
-        QQuickWebViewExperimental(view).setUseTraditionalDesktopBehaviour(true);
         connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
     }
 
@@ -75,6 +74,9 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     , m_windowIsKey(true)
     , m_modalEventLoop(0)
 {
+    QQuickWebViewExperimental experimental(m_view);
+    experimental.setUseTraditionalDesktopBehaviour(true);
+    experimental.setRenderToOffscreenBuffer(true);
 }
 
 PlatformWebView::~PlatformWebView()
