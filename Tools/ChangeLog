@@ -1,5 +1,17 @@
 2012-01-26  Ojan Vafai  <ojan@chromium.org>
 
+        Decrease sleep time when killing server_process on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=77169
+
+        Reviewed by Eric Seidel.
+
+        This shaves another ~70ms off single test runtime.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.stop):
+
+2012-01-26  Ojan Vafai  <ojan@chromium.org>
+
         Remove builder name so http://trac.webkit.org/changeset/106035 actually works.
         https://bugs.webkit.org/show_bug.cgi?id=77164
 
