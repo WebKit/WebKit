@@ -1,3 +1,16 @@
+2012-01-26  Oliver Hunt  <oliver@apple.com>
+
+        MSVC bug fix.
+        <rdar://problem/10703671> MSVC generates bad code for enum compare.
+
+        RS=Geoff
+
+        Make bitfield large enough to work around MSVC's desire to make enums
+        signed types.
+
+        * bytecode/CallLinkInfo.h:
+        (CallLinkInfo):
+
 2012-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         All DFG helpers that may call out to arbitrary JS code must know where they
