@@ -1,3 +1,14 @@
+2012-01-27  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] Build fails after adding ICU support (r105997).
+        https://bugs.webkit.org/show_bug.cgi?id=77118
+
+        Define WTF_USE_ICU_UNICODE if we are on mac.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-01-27  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
 
         Update committers.py with new contributors.

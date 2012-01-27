@@ -30,7 +30,8 @@ isEmpty(SQLITE3SRCDIR) {
     SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
 }
 
-haveQt(5):contains(QT_CONFIG,icu) {
+# For Mac we do not rely on QT_CONFIG, because icu is not officially supported for all of qt.
+haveQt(5):if(contains(QT_CONFIG,icu)|mac) {
     DEFINES += WTF_USE_ICU_UNICODE=1
     DEFINES -= WTF_USE_QT4_UNICODE
 } else {

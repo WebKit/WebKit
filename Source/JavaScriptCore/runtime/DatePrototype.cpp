@@ -60,7 +60,7 @@
 #include <sys/timeb.h>
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WX)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WX) || (PLATFORM(QT) && OS(DARWIN))
 #include <CoreFoundation/CoreFoundation.h>
 #elif USE(ICU_UNICODE)
 #include <unicode/udat.h>
@@ -130,7 +130,7 @@ namespace JSC {
 
 enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
  
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WX)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WX) || (PLATFORM(QT) && OS(DARWIN))
 
 // FIXME: Since this is superior to the strftime-based version, why limit this to PLATFORM(MAC)?
 // Instead we should consider using this whenever USE(CF) is true.

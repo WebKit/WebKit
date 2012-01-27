@@ -1,3 +1,14 @@
+2012-01-27  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] Build fails after adding ICU support (r105997).
+        https://bugs.webkit.org/show_bug.cgi?id=77118
+
+        Link to libicucore if platform Mac.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WTF.pri:
+
 2012-01-26  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Use ICU if available

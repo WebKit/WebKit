@@ -17,11 +17,20 @@ INCLUDEPATH += \
     $$OLD_SOURCE_DIR/qt \
     $$OLD_SOURCE_DIR/unicode
 
-haveQt(5):contains(QT_CONFIG,icu) {
-    unix:!mac: LIBS += $$system(icu-config --ldflags-searchpath --ldflags-libsonly)
-    else: LIBS += -licuin
-} else {
-    haveQt(5): error("To build QtWebKit with Qt 5 you need ICU")
+haveQt(5) {
+    mac {
+        # Mac OS does ship libicu but not the associated header files.
+        # Therefore WebKit provides adequate header files.
+        INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WTF/icu
+        LIBS += -licucore
+    } else {
+        contains(QT_CONFIG,icu) {
+            unix: LIBS += $$system(icu-config --ldflags-searchpath --ldflags-libsonly)
+            else: LIBS += -licuin
+        } else {
+            error("To build QtWebKit with Qt 5 you need ICU")
+        }
+    }
 }
 
 v8 {

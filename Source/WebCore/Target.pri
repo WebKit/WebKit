@@ -629,7 +629,6 @@ SOURCES += \
     editing/ReplaceSelectionCommand.cpp \
     editing/SetNodeAttributeCommand.cpp \
     editing/SetSelectionCommand.cpp \
-    editing/SmartReplaceICU.cpp \
     editing/SpellChecker.cpp \
     editing/SpellingCorrectionCommand.cpp \
     editing/SpellingCorrectionController.cpp \
@@ -2795,7 +2794,6 @@ SOURCES += \
     platform/network/qt/QtMIMETypeSniffer.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \
-    editing/qt/SmartReplaceQt.cpp \
     platform/Cursor.cpp \
     platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
@@ -2870,10 +2868,18 @@ mac {
         platform/text/cf/StringImplCF.cpp
 }
 
-haveQt(5):contains(QT_CONFIG,icu) {
-    SOURCES += platform/text/TextBreakIteratorICU.cpp
+haveQt(5) {
+    contains(QT_CONFIG,icu)|mac: SOURCES += platform/text/TextBreakIteratorICU.cpp
+    mac {
+        # For Mac we use the same SmartReplace implementation as the Apple port.
+        SOURCES += editing/SmartReplaceCF.cpp
+        INCLUDEPATH += $$PWD/icu
+    } else {
+        SOURCES += editing/SmartReplaceICU.cpp
+    }
 } else {
-    SOURCES += platform/text/qt/TextBreakIteratorQt.cpp
+    SOURCES += platform/text/qt/TextBreakIteratorQt.cpp \
+               editing/qt/SmartReplaceQt.cpp
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
