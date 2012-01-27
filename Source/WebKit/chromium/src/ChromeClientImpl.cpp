@@ -773,7 +773,7 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
         // transparent to the WebView.
         m_webView->popupOpened(popupContainer);
     }
-    static_cast<WebPopupMenuImpl*>(webwidget)->Init(popupContainer, bounds);
+    static_cast<WebPopupMenuImpl*>(webwidget)->init(popupContainer, bounds);
 }
 
 void ChromeClientImpl::popupClosed(WebCore::PopupContainer* popupContainer)

@@ -1,3 +1,39 @@
+2012-01-26  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Cleanup of WebPopupMenuImpl
+        https://bugs.webkit.org/show_bug.cgi?id=76441
+
+        Reviewed by Kentaro Hara.
+
+        Removed WebPopupMenuImpl::invalidateContents() and scrollRectIntoView()
+        because they were removed from HostWindow in r58445 and r55864. They
+        were found by OVERRIDE.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened): Rename WebPopupMenuImpl::Init().
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl): Update a comment.
+        (WebKit::WebPopupMenuImpl::init): Renamed from Init(). Update a comment.
+        (WebKit::WebPopupMenuImpl::handleMouseMove): Prepend "handle" to the name.
+        (WebKit::WebPopupMenuImpl::handleMouseLeave): ditto.
+        (WebKit::WebPopupMenuImpl::handleMouseDown): ditto.
+        (WebKit::WebPopupMenuImpl::handleMouseUp): ditto.
+        (WebKit::WebPopupMenuImpl::handleMouseWheel): ditto.
+        (WebKit::WebPopupMenuImpl::handleGestureEvent): ditto.
+        (WebKit::WebPopupMenuImpl::handleTouchEvent): ditto.
+        (WebKit::WebPopupMenuImpl::handleKeyEvent): ditto.
+        (WebKit::WebPopupMenuImpl::close): Update a comment.
+        (WebKit::WebPopupMenuImpl::composite): Remove a unused argument name.
+        (WebKit::WebPopupMenuImpl::handleInputEvent): Update a comment. Update callsites for handle*().
+        (WebKit::WebPopupMenuImpl::setFocus): Remove a unused argument name.
+        (WebKit::WebPopupMenuImpl::setComposition): ditto.
+        (WebKit::WebPopupMenuImpl::confirmComposition): ditto.
+        (WebKit::WebPopupMenuImpl::setTextDirection): ditto.
+        (WebKit::WebPopupMenuImpl::scroll): Unfold folded lines.
+        * src/WebPopupMenuImpl.h:
+         - Remove useless argument names.
+         - Add OVERRIDE.
+
 2012-01-26  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Allow modification of size of partially occluded quads.
