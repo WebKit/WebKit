@@ -1,3 +1,15 @@
+2012-01-27  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [EFL] SVG_FONT is not disabled when SVG is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=77174
+
+        Reviewed by Eric Seidel.
+
+        SVG_FONTS should be disabled when SVG is disabled. Or else it causes build-break.
+        Relocated checking ENABLE_GLIB_SUPPORT & ENABLE_VIDEO to avoid duplication.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-01-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fix, don't build some sources
