@@ -27,7 +27,7 @@
 #include <webkit2/webkit2.h>
 
 // Back forward list limit is 100 by default.
-static const size_t kBackForwardListLimit = 100;
+static const int kBackForwardListLimit = 100;
 
 static WebKitTestServer* kServer;
 
@@ -240,7 +240,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
 
 static void testBackForwardListLimitAndCache(BackForwardListTest* test, gconstpointer)
 {
-    for (size_t i = 0; i < kBackForwardListLimit; i++) {
+    for (int i = 0; i < kBackForwardListLimit; i++) {
         GOwnPtr<char> path(g_strdup_printf("/Page%d", i));
         test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
         test->loadURI(kServer->getURIForPath(path.get()).data());
