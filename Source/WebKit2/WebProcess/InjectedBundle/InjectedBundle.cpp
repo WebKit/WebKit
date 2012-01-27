@@ -153,7 +153,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     FOR_EACH_OVERRIDE_BOOL_PREFERENCE(OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES)
 
 #if ENABLE(WEB_SOCKETS)
-    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES("WebKitHixie76WebSocketProtocolEnabled", UseHixie76WebSocketProtocol, hixie76WebSocketProtocolEnabled)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitHixie76WebSocketProtocolEnabled, UseHixie76WebSocketProtocol, hixie76WebSocketProtocolEnabled)
 #endif
 
 #undef OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES
