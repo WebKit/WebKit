@@ -320,6 +320,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/PlatformCertificateInfo.h \
+	Source/WebKit2/Shared/gtk/PrintInfoGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.h \
@@ -902,6 +903,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.h \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/gtk/WebPrintOperationGtk.h \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.cpp \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.h \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp \
@@ -1006,6 +1009,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	$(COVERAGE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GTK_UNIX_PRINTING_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(XT_CFLAGS)
@@ -1059,6 +1063,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(GLIB_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GTK_LIBS) \
+	$(GTK_UNIX_PRINTING_LIBS) \
 	$(JPEG_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(LIBXML_LIBS) \
@@ -1224,6 +1229,7 @@ Programs_WebKitWebProcess_CFLAGS = \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GTK_UNIX_PRINTING_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(ZLIB_CFLAGS)
 
@@ -1234,6 +1240,7 @@ Programs_WebKitWebProcess_LDADD = \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
+	$(GTK_UNIX_PRINTING_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(ZLIB_CFLAGS)
 

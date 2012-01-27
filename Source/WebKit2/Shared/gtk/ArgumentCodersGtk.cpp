@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArgumentCodersGtk.h"
 
+#include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DataObjectGtk.h>
@@ -33,6 +34,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/PlatformContextCairo.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -214,6 +216,85 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder* decoder, DragData& dragDat
                         static_cast<DragApplicationFlags>(flags));
 
     return true;
+}
+
+static void encodeGKeyFile(ArgumentEncoder* encoder, GKeyFile* keyFile)
+{
+    gsize dataSize;
+    GOwnPtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
+    DataReference dataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
+    encoder->encode(dataReference);
+}
+
+static bool decodeGKeyFile(ArgumentDecoder* decoder, GKeyFile** keyFile)
+{
+    DataReference dataReference;
+    if (!decoder->decode(dataReference))
+        return false;
+
+    if (!dataReference.size()) {
+        *keyFile = 0;
+        return true;
+    }
+
+    *keyFile = g_key_file_new();
+    if (!g_key_file_load_from_data(*keyFile, reinterpret_cast<const gchar*>(dataReference.data()), dataReference.size(), G_KEY_FILE_NONE, 0)) {
+        g_key_file_free(*keyFile);
+        *keyFile = 0;
+        return false;
+    }
+
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, GtkPrintSettings* printSettings)
+{
+    GKeyFile* keyFile = g_key_file_new();
+    gtk_print_settings_to_key_file(printSettings, keyFile, "Print Settings");
+    encodeGKeyFile(encoder, keyFile);
+    g_key_file_free(keyFile);
+}
+
+bool decode(ArgumentDecoder* decoder, GRefPtr<GtkPrintSettings>& printSettings)
+{
+    GKeyFile* keyFile;
+    if (!decodeGKeyFile(decoder, &keyFile))
+        return false;
+
+    printSettings = adoptGRef(gtk_print_settings_new());
+    if (!keyFile)
+        return true;
+
+    if (!gtk_print_settings_load_key_file(printSettings.get(), keyFile, "Print Settings", 0))
+        printSettings = 0;
+    g_key_file_free(keyFile);
+
+    return printSettings;
+}
+
+void encode(ArgumentEncoder* encoder, GtkPageSetup* pageSetup)
+{
+    GKeyFile* keyFile = g_key_file_new();
+    gtk_page_setup_to_key_file(pageSetup, keyFile, "Page Setup");
+    encodeGKeyFile(encoder, keyFile);
+    g_key_file_free(keyFile);
+}
+
+bool decode(ArgumentDecoder* decoder, GRefPtr<GtkPageSetup>& pageSetup)
+{
+    GKeyFile* keyFile;
+    if (!decodeGKeyFile(decoder, &keyFile))
+        return false;
+
+    pageSetup = adoptGRef(gtk_page_setup_new());
+    if (!keyFile)
+        return true;
+
+    if (!gtk_page_setup_load_key_file(pageSetup.get(), keyFile, "Page Setup", 0))
+        pageSetup = 0;
+    g_key_file_free(keyFile);
+
+    return pageSetup;
 }
 
 }

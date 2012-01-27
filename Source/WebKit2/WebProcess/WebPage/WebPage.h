@@ -72,6 +72,7 @@
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
 #include "WebPageAccessibilityObject.h"
+#include "WebPrintOperationGtk.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -445,6 +446,8 @@ public:
 #if PLATFORM(MAC) || PLATFORM(WIN)
     void drawRectToPDF(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, uint64_t callbackID);
     void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
+#elif PLATFORM(GTK)
+    void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
 #endif
 
     void setMediaVolume(float);
@@ -736,6 +739,9 @@ private:
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
     OwnPtr<WebCore::PrintContext> m_printContext;
+#if PLATFORM(GTK)
+    RefPtr<WebPrintOperationGtk> m_printOperation;
+#endif
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;

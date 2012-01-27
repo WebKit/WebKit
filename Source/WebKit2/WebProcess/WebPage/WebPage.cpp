@@ -134,7 +134,9 @@
 #endif
 
 #if PLATFORM(GTK)
+#include <gtk/gtk.h>
 #include "DataObjectGtk.h"
+#include "WebPrintOperationGtk.h"
 #endif
 
 #ifndef NDEBUG
@@ -2684,11 +2686,19 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 
     float fullPageHeight;
     m_printContext->computePageRects(FloatRect(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
+
+#if PLATFORM(GTK)
+    if (!m_printOperation)
+        m_printOperation = WebPrintOperationGtk::create(this, printInfo);
+#endif
 }
 
 void WebPage::endPrinting()
 {
     drawingArea()->setLayerTreeStateIsFrozen(false);
+#if PLATFORM(GTK)
+    m_printOperation = 0;
+#endif
     m_printContext = nullptr;
 }
 
@@ -2867,6 +2877,17 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
     }
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
+}
+#elif PLATFORM(GTK)
+void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
+{
+    beginPrinting(frameID, printInfo);
+    if (m_printContext && m_printOperation) {
+        m_printOperation->startPrint(m_printContext.get(), callbackID);
+        return;
+    }
+
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 #endif
 

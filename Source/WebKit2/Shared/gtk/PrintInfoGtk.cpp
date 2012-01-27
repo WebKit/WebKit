@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentCodersGtk_h
-#define ArgumentCodersGtk_h
+#include "config.h"
+#include "PrintInfo.h"
 
-#include "ArgumentCoders.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <gtk/gtk.h>
 
-typedef struct _GtkPrintSettings GtkPrintSettings;
-typedef struct _GtkPageSetup GtkPageSetup;
+namespace WebKit {
 
-namespace WebCore {
-class DataObjectGtk;
-class DragData;
+PrintInfo::PrintInfo(GtkPrintSettings* settings, GtkPageSetup* pageSetup)
+    : pageSetupScaleFactor(gtk_print_settings_get_scale(settings) / 100.0)
+    , availablePaperWidth(gtk_page_setup_get_paper_width(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_left_margin(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_right_margin(pageSetup, GTK_UNIT_POINTS))
+    , availablePaperHeight(gtk_page_setup_get_paper_height(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_top_margin(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_bottom_margin(pageSetup, GTK_UNIT_POINTS))
+    , printSettings(settings)
+    , pageSetup(pageSetup)
+{
+    ASSERT(settings);
+    ASSERT(pageSetup);
 }
 
-namespace CoreIPC {
-
-template<> struct ArgumentCoder<WebCore::DragData> {
-    static void encode(ArgumentEncoder*, const WebCore::DragData&);
-    static bool decode(ArgumentDecoder*, WebCore::DragData&);
-};
-
-void encode(ArgumentEncoder*, GtkPrintSettings*);
-bool decode(ArgumentDecoder*, GRefPtr<GtkPrintSettings>&);
-
-void encode(ArgumentEncoder*, GtkPageSetup*);
-bool decode(ArgumentDecoder*, GRefPtr<GtkPageSetup>&);
-
-} // namespace CoreIPC
-
-#endif // ArgumentCodersGtk_h
+}

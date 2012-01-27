@@ -1,3 +1,12 @@
+2012-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add basic printing support to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=76172
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac: Check whether GTK+ UNIX printing is available.
+
 2012-01-27  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] SVG_FONT is not disabled when SVG is disabled.

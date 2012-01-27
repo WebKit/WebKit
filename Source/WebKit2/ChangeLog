@@ -1,3 +1,73 @@
+2012-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add basic printing support to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=76172
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode): Encode also GtkPrintSettings and
+        GtkPageSetup for the GTK+ port.
+        (WebKit::PrintInfo::decode): Decode also GtkPrintSettings and
+        GtkPageSetup for the GTK+ port.
+        * Shared/PrintInfo.h: Add GtkPrintSettings and GtkPageSetup member
+        for the GTK+ port.
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (CoreIPC::encodeGKeyFile): Helper function to encode a GKeyFile as
+        a DataReference object.
+        (CoreIPC::decodeGKeyFile): Helper function to decode a GKeyFile to
+        a DataReference object.
+        (CoreIPC::encode): Encode GtkPrintSettings and GtkPageSetup using
+        the GKeyFile representation.
+        (CoreIPC::decode): Decode GtkPrintSettings and GtkPageSetup using
+        the GKeyFile representation.
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/PrintInfoGtk.cpp: Copied from Source/WebKit2/Shared/PrintInfo.cpp.
+        (WebKit::PrintInfo::PrintInfo): Add PrintInfo constructor that
+        takes GtkPrintSettings and GtkPageSetup instances.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawPagesForPrinting): Send
+        DrawPagesForPrinting message to Web process to start printing.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::beginPrinting): Create a WebPrintOperationGtk.
+        (WebKit::WebPage::endPrinting): Delete the WebPrintOperationGtk
+        object.
+        (WebKit::WebPage::drawPagesForPrinting): Start printing pages.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add DrawPagesForPrinting message.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp: Added.
+        (WebKit::PrintPagesData::PrintPagesData): Struct to store all data
+        used to render pages for printing.
+        (WebKit::PrintPagesData::incrementPageSequence): Helper function
+        to increment the page sequence.
+        (WebKit::WebPrintOperationGtk::create): Create a
+        WebPrintOperationGtkUnix or WebPrintOperationGtkWin32 depending on
+        the platform.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk):
+        (WebKit::WebPrintOperationGtk::~WebPrintOperationGtk):
+        (WebKit::WebPrintOperationGtk::pageCount): Return the total pages
+        of the document to print.
+        (WebKit::WebPrintOperationGtk::rotatePage): Helper function to
+        transform the context according to orientation.
+        (WebKit::WebPrintOperationGtk::renderPage): Render the given page
+        into the printing context.
+        (WebKit::WebPrintOperationGtk::printPagesIdle): Idle function used
+        to print pages.
+        (WebKit::WebPrintOperationGtk::printPagesIdleDone): Callback
+        called when printPagesIdle finishes.
+        (WebKit::WebPrintOperationGtk::printDone): Helper function to
+        finish the print operation, called when all pages have been rendered.
+        (WebKit::WebPrintOperationGtk::print): Start printing the document
+        using the given cairo surface.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h: Added.
+        (WebKit::WebPrintOperationGtk::printSettings):
+        (WebKit::WebPrintOperationGtk::pageSetup):
+        (WebKit::WebPrintOperationGtk::pagesToPrint):
+        (WebKit::WebPrintOperationGtk::pageRanges):
+        (WebKit::WebPrintOperationGtk::pageRangesCount):
+
 2012-01-26  Tim Horton  <hortont424@gmail.com>
 
         3D transformed elements hide when showing the print dialog

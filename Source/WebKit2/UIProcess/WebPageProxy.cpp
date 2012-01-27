@@ -3503,6 +3503,20 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printIn
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
+#elif PLATFORM(GTK)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<VoidCallback> didPrintCallback)
+{
+    RefPtr<VoidCallback> callback = didPrintCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.get());
+    m_isInPrintingMode = true;
+    process()->send(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+}
 #endif
 
 void WebPageProxy::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)

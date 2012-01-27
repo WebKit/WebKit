@@ -585,6 +585,8 @@ public:
 #if PLATFORM(MAC) || PLATFORM(WIN)
     void drawRectToPDF(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, PassRefPtr<DataCallback>);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, PassRefPtr<DataCallback>);
+#elif PLATFORM(GTK)
+    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<VoidCallback>);
 #endif
 
     const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }

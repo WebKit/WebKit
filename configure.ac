@@ -1101,6 +1101,16 @@ if test "$enable_webkit2" = "yes"; then
    if test "$GTK_API_VERSION" = "2.0"; then
       AC_MSG_ERROR([WebKit2 requires GTK+ 3.x, use --with-gtk=3.0])
    fi
+
+   # Check Unix printing
+   PKG_CHECK_MODULES(GTK_UNIX_PRINTING, gtk+-unix-print-3.0,
+                     [have_gtk_unix_printing=yes],
+                     [have_gtk_unix_printing=no])
+   AC_SUBST(GTK_UNIX_PRINTING_CFLAGS)
+   AC_SUBST(GTK_UNIX_PRINTING_LIBS)
+   if test "$have_gtk_unix_printing" = "yes"; then
+       AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
+   fi
 fi
 
 # Plugin Process

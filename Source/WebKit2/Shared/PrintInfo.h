@@ -30,6 +30,10 @@
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSPrintInfo;
+#elif PLATFORM(GTK)
+typedef struct _GtkPrintSettings GtkPrintSettings;
+typedef struct _GtkPageSetup GtkPageSetup;
+#include <wtf/gobject/GRefPtr.h>
 #else
 // FIXME: This should use the windows equivalent.
 class NSPrintInfo;
@@ -44,11 +48,20 @@ namespace WebKit {
 
 struct PrintInfo {
     PrintInfo();
+#if PLATFORM(GTK)
+    explicit PrintInfo(GtkPrintSettings*, GtkPageSetup*);
+#else
     explicit PrintInfo(NSPrintInfo *);
+#endif
 
     float pageSetupScaleFactor;
     float availablePaperWidth;
     float availablePaperHeight;
+
+#if PLATFORM(GTK)
+    GRefPtr<GtkPrintSettings> printSettings;
+    GRefPtr<GtkPageSetup> pageSetup;
+#endif
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, PrintInfo&);

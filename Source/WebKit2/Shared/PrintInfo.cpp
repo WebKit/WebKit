@@ -30,6 +30,10 @@
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
 
+#if PLATFORM(GTK)
+#include "ArgumentCodersGtk.h"
+#endif
+
 namespace WebKit {
 
 PrintInfo::PrintInfo()
@@ -42,11 +46,25 @@ PrintInfo::PrintInfo()
 void PrintInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(CoreIPC::In(pageSetupScaleFactor, availablePaperWidth, availablePaperHeight));
+#if PLATFORM(GTK)
+    CoreIPC::encode(encoder, printSettings.get());
+    CoreIPC::encode(encoder, pageSetup.get());
+#endif
 }
 
 bool PrintInfo::decode(CoreIPC::ArgumentDecoder* decoder, PrintInfo& info)
 {
-    return decoder->decode(CoreIPC::Out(info.pageSetupScaleFactor, info.availablePaperWidth, info.availablePaperHeight));
+    if (!decoder->decode(CoreIPC::Out(info.pageSetupScaleFactor, info.availablePaperWidth, info.availablePaperHeight)))
+        return false;
+
+#if PLATFORM(GTK)
+    if (!CoreIPC::decode(decoder, info.printSettings))
+        return false;
+    if (!CoreIPC::decode(decoder, info.pageSetup))
+        return false;
+#endif
+
+    return true;
 }
 
 }
