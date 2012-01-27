@@ -111,7 +111,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
             "mhtml",  # Requires MHTMLArchive
         ])
 
-        result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features())
+        result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features(test_list=['mathml/foo.html']))
         self.assertEqual(result_directories, expected_directories)
 
         # Test that the nm string parsing actually works:
@@ -122,7 +122,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
 """
         # Note 'compositing' is not in the list of skipped directories (hence the parsing of GraphicsLayer worked):
         expected_directories = set(['mathml', 'transforms/3d', 'compositing/webgl', 'fast/canvas/webgl', 'animations/3d', 'mhtml', 'http/tests/canvas/webgl'])
-        result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features())
+        result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features(test_list=['mathml/foo.html']))
         self.assertEqual(result_directories, expected_directories)
 
     def test_runtime_feature_list(self):
@@ -136,11 +136,17 @@ class WebKitPortTest(port_testcase.PortTestCase):
     def test_skipped_directories_for_features(self):
         supported_features = ["Accelerated Compositing", "Foo Feature"]
         expected_directories = set(["animations/3d", "transforms/3d"])
-        result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features())
+        result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features(test_list=["animations/3d/foo.html"]))
+        self.assertEqual(result_directories, expected_directories)
+
+    def test_skipped_directories_for_features_no_matching_tests_in_test_list(self):
+        supported_features = ["Accelerated Compositing", "Foo Feature"]
+        expected_directories = set([])
+        result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features(test_list=['foo.html']))
         self.assertEqual(result_directories, expected_directories)
 
     def test_skipped_layout_tests(self):
-        self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(), set(['media']))
+        self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(test_list=[]), set(['media']))
 
     def test_skipped_file_search_paths(self):
         port = TestWebKitPort()

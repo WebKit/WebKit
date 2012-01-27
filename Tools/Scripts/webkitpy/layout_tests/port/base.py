@@ -600,7 +600,7 @@ class Port(object):
     def skipped_perf_tests(self):
         return self._expectations_from_skipped_files([self.perf_tests_dir()])
 
-    def skipped_tests(self):
+    def skipped_tests(self, test_list):
         return []
 
     def skips_layout_test(self, test_name):

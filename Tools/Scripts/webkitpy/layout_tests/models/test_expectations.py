@@ -707,7 +707,7 @@ class TestExpectations(object):
 
         self._expectations = self._parser.parse(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
-        self._add_skipped_tests(port.skipped_tests())
+        self._add_skipped_tests(port.skipped_tests(tests))
 
         if overrides:
             overrides_expectations = self._parser.parse(overrides)

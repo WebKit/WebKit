@@ -32,6 +32,7 @@
 """WebKit implementations of the Port interface."""
 
 import base64
+import itertools
 import logging
 import operator
 import os
@@ -305,20 +306,34 @@ class WebKitPort(Port):
             "MHTMLArchive": ["mhtml"],
         }
 
-    def _skipped_tests_for_unsupported_features(self):
-        # If the port supports runtime feature detection, disable any tests
-        # for features missing from the runtime feature list.
-        supported_feature_list = self._runtime_feature_list()
-        # If _runtime_feature_list returns a non-None value, then prefer
-        # runtime feature detection over static feature detection.
-        if supported_feature_list is not None:
-            return reduce(operator.add, [directories for feature, directories in self._missing_feature_to_skipped_tests().items() if feature not in supported_feature_list])
+    def _has_test_in_directories(self, directory_lists, test_list):
+        directories = itertools.chain.from_iterable(directory_lists)
+        for directory, test in itertools.product(directories, test_list):
+            if test.startswith(directory):
+                return True
+        return False
 
-        # Runtime feature detection not supported, fallback to static dectection:
-        # Disable any tests for symbols missing from the webcore symbol string.
-        webcore_symbols_string = self._webcore_symbols_string()
-        if webcore_symbols_string is not None:
-            return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in webcore_symbols_string], [])
+    def _skipped_tests_for_unsupported_features(self, test_list):
+        # Only check the runtime feature list of there are tests in the test_list that might get skipped.
+        # This is a performance optimization to avoid the subprocess call to DRT.
+        if self._has_test_in_directories(self._missing_feature_to_skipped_tests().values(), test_list):
+            # If the port supports runtime feature detection, disable any tests
+            # for features missing from the runtime feature list.
+            supported_feature_list = self._runtime_feature_list()
+            # If _runtime_feature_list returns a non-None value, then prefer
+            # runtime feature detection over static feature detection.
+            if supported_feature_list is not None:
+                return reduce(operator.add, [directories for feature, directories in self._missing_feature_to_skipped_tests().items() if feature not in supported_feature_list])
+
+        # Only check the symbols of there are tests in the test_list that might get skipped.
+        # This is a performance optimization to avoid the calling nm.
+        if self._has_test_in_directories(self._missing_symbol_to_skipped_tests().values(), test_list):
+            # Runtime feature detection not supported, fallback to static dectection:
+            # Disable any tests for symbols missing from the webcore symbol string.
+            webcore_symbols_string = self._webcore_symbols_string()
+            if webcore_symbols_string is not None:
+                return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in webcore_symbols_string], [])
+
         # Failed to get any runtime or symbol information, don't skip any tests.
         return []
 
@@ -350,16 +365,15 @@ class WebKitPort(Port):
             expectations = self._filesystem.read_text_file(expectations_path)
         return expectations
 
-    @memoized
-    def skipped_layout_tests(self):
+    def skipped_layout_tests(self, test_list):
         # Use a set to allow duplicates
         tests_to_skip = set(self._expectations_from_skipped_files(self._skipped_file_search_paths()))
         tests_to_skip.update(self._tests_for_other_platforms())
-        tests_to_skip.update(self._skipped_tests_for_unsupported_features())
+        tests_to_skip.update(self._skipped_tests_for_unsupported_features(test_list))
         return tests_to_skip
 
-    def skipped_tests(self):
-        return self.skipped_layout_tests()
+    def skipped_tests(self, test_list):
+        return self.skipped_layout_tests(test_list)
 
     def _build_path(self, *comps):
         # --root is used for running with a pre-built root (like from a nightly zip).

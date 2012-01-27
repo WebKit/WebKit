@@ -1,3 +1,34 @@
+2012-01-26  Ojan Vafai  <ojan@chromium.org>
+
+        run-webkit-tests calls "nm" when it doesn't need to
+        https://bugs.webkit.org/show_bug.cgi?id=77143
+
+        Reviewed by Dirk Pranke.
+
+        If we are not running any test that can be skipped by checking
+        the DRT feature list or looking at the list of symbols, avoid calling
+        out to DRT or calling "nm".
+
+        This saves ~700ms on my Mac Pro. In cases where you still have to call out
+        to "nm" it's only a couple ms slower.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._should_check_for_missing_features):
+        (WebKitPort):
+        (WebKitPort._should_check_for_missing_symbols):
+        (WebKitPort._skipped_tests_for_unsupported_features):
+        (WebKitPort.skipped_layout_tests):
+        (WebKitPort.skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitPortTest.test_skipped_directories_for_symbols):
+        (test_skipped_directories_for_features):
+        (test_skipped_directories_for_features_no_matching_tests_in_test_list):
+        (test_skipped_layout_tests):
+
 2012-01-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Support a suffix on ChangeLog filenames based on a configuration file
