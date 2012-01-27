@@ -4018,3 +4018,5 @@ BUGWK77047 WIN DEBUG : http/tests/workers/terminate-during-sync-operation.html =
 BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
 BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = PASS TIMEOUT
+
+BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
