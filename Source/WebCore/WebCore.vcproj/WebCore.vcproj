@@ -48906,6 +48906,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\GenericEventQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\GenericEventQueue.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\HashChangeEvent.h"
 				>
 			</File>

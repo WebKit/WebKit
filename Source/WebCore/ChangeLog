@@ -1,3 +1,50 @@
+2012-01-27  Victor Carbune  <victor@rosedu.org>
+
+        Added the GenericEventQueue class in order to generalize asynchronous
+        event dispatching in HTMLMediaElement.
+
+        In order to support asynchronous events dispatched by HTMLTrackElement
+        there is a need for a generalized implementation of an event queue to
+        be used for both HTMLMediaElement and Text Tracks.
+
+        https://bugs.webkit.org/show_bug.cgi?id=76110
+
+        Reviewed by Eric Carlson.
+
+        No new tests. No new functionality, only refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/GenericEventQueue.cpp: Added. Implements the abstract class EventQueue.
+        (WebCore::GenericEventQueue::GenericEventQueue):
+        (WebCore::GenericEventQueue::~GenericEventQueue):
+        (WebCore::GenericEventQueue::enqueueEvent): Append an event to the current
+        pending event list.
+        (WebCore::GenericEventQueue::cancelEvent): Removes an event from the current
+        pending event list.
+        (WebCore::GenericEventQueue::timerFired): Callback method when the timer fires.
+        Dispatches all events that are currently pending.
+        (WebCore::GenericEventQueue::close): Closes the event queue such that it cannot
+        be used anymore.
+        (WebCore::GenericEventQueue::cancelAllEvents): Removes all pending events.
+        (WebCore::GenericEventQueue::hasPendingEvents): True if there are pending events.
+        * dom/GenericEventQueue.h: Added.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleEvent): Refactored method to enqueue
+        the scheduled event on the GenericEventQueue instance.
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks): Ditto.
+        (WebCore::HTMLMediaElement::hasPendingActivity): Ditto.
+        (WebCore::HTMLMediaElement::dispatchEvent): This method is overriden
+        to keep an evidence when a canPlay event is fired.
+        * html/HTMLMediaElement.h:
+
 2012-01-27  Martin Robinson  <mrobinson@igalia.com>
 
         Fix a warning in the GTK+ build.

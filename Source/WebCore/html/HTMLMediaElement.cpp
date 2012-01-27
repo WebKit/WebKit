@@ -174,7 +174,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document, this)
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
-    , m_asyncEventTimer(this, &HTMLMediaElement::asyncEventTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_playedTimeRanges()
@@ -541,29 +540,10 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 #if LOG_MEDIA_EVENTS
     LOG(Media, "HTMLMediaElement::scheduleEvent - scheduling '%s'", eventName.string().ascii().data());
 #endif
-    m_pendingEvents.append(Event::create(eventName, false, true));
-    if (!m_asyncEventTimer.isActive())
-        m_asyncEventTimer.startOneShot(0);
-}
+    RefPtr<Event> event = Event::create(eventName, false, true);
+    event->setTarget(this);
 
-void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
-{
-    Vector<RefPtr<Event> > pendingEvents;
-    ExceptionCode ec = 0;
-
-    m_pendingEvents.swap(pendingEvents);
-    unsigned count = pendingEvents.size();
-    for (unsigned ndx = 0; ndx < count; ++ndx) {
-#if LOG_MEDIA_EVENTS
-        LOG(Media, "HTMLMediaElement::asyncEventTimerFired - dispatching '%s'", pendingEvents[ndx]->type().string().ascii().data());
-#endif
-        if (pendingEvents[ndx]->type() == eventNames().canplayEvent) {
-            m_dispatchingCanPlayEvent = true;
-            dispatchEvent(pendingEvents[ndx].release(), ec);
-            m_dispatchingCanPlayEvent = false;
-        } else
-            dispatchEvent(pendingEvents[ndx].release(), ec);
-    }
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
@@ -1192,8 +1172,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
 {
     LOG(Media, "HTMLMediaElement::cancelPendingEventsAndCallbacks");
-
-    m_pendingEvents.clear();
+    m_asyncEventQueue.cancelAllEvents();
 
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(sourceTag))
@@ -3177,11 +3156,7 @@ void HTMLMediaElement::resume()
 
 bool HTMLMediaElement::hasPendingActivity() const
 {
-    // Return true when we have pending events so we can't fire events after the JS 
-    // object gets collected.
-    bool pending = m_pendingEvents.size();
-    LOG(Media, "HTMLMediaElement::hasPendingActivity -> %s", boolString(pending));
-    return pending;
+    return m_asyncEventQueue.hasPendingEvents();
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()
@@ -3690,6 +3665,24 @@ void HTMLMediaElement::updateMediaController()
 {
     if (m_mediaController)
         m_mediaController->reportControllerState();
+}
+
+bool HTMLMediaElement::dispatchEvent(PassRefPtr<Event> event)
+{
+    bool dispatchResult;
+    bool isCanPlayEvent;
+
+    isCanPlayEvent = (event->type() == eventNames().canplayEvent);
+
+    if (isCanPlayEvent)
+        m_dispatchingCanPlayEvent = true;
+
+    dispatchResult = HTMLElement::dispatchEvent(event);
+
+    if (isCanPlayEvent)
+        m_dispatchingCanPlayEvent = false;
+
+    return dispatchResult;
 }
 
 bool HTMLMediaElement::isBlocked() const

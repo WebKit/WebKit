@@ -30,6 +30,7 @@
 
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
+#include "GenericEventQueue.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
@@ -205,7 +206,7 @@ public:
 
     virtual void trackWasAdded(HTMLTrackElement*);
     virtual void trackWasRemoved(HTMLTrackElement*);
-    
+
     void configureTextTrack(HTMLTrackElement*);
     void configureTextTracks();
     bool textTracksAreReady() const;
@@ -272,6 +273,8 @@ public:
 
     MediaController* controller() const;
     void setController(PassRefPtr<MediaController>);
+
+    virtual bool dispatchEvent(PassRefPtr<Event>);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document*, bool);
@@ -365,7 +368,6 @@ private:
 #endif
 
     void loadTimerFired(Timer<HTMLMediaElement>*);
-    void asyncEventTimerFired(Timer<HTMLMediaElement>*);
     void progressEventTimerFired(Timer<HTMLMediaElement>*);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>*);
     void startPlaybackProgressTimer();
@@ -470,11 +472,10 @@ private:
 #endif
 
     Timer<HTMLMediaElement> m_loadTimer;
-    Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
-    Vector<RefPtr<Event> > m_pendingEvents;
     RefPtr<TimeRanges> m_playedTimeRanges;
+    GenericEventQueue m_asyncEventQueue;
 
     float m_playbackRate;
     float m_defaultPlaybackRate;

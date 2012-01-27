@@ -5012,6 +5012,8 @@
             'dom/ExceptionBase.cpp',
             'dom/ExceptionBase.h',
             'dom/ExceptionCodePlaceholder.cpp',
+            'dom/GenericEventQueue.cpp',
+            'dom/GenericEventQueue.h',
             'dom/HashChangeEvent.h',
             'dom/IgnoreDestructiveWriteCountIncrementer.h',
             'dom/IconURL.cpp',
