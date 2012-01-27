@@ -319,6 +319,14 @@ def build(bld):
         excludes.append('WebDOMScriptProfileNode.cpp')
         excludes.append('WebNativeEventListener.cpp')
         
+        # FIXME: It appears these are no longer needed by any port, once this is confirmed,
+        # we should remove these sources from the tree.
+        excludes.append('WebDOMDOMWindowCustom.cpp')
+        excludes.append('WebDOMHTMLOptionsCollectionCustom.cpp')
+        excludes.append('WebDOMNodeCustom.cpp')
+        excludes.append('WebDOMHTMLDocumentCustom.cpp')
+        excludes.append('WebDOMHTMLCollectionCustom.cpp')
+        
         # this file is unused by any port, not sure why it was
         # left in the tree
         excludes.append('GeneratedImage.cpp')
