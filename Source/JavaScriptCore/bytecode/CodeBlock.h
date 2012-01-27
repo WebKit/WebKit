@@ -140,7 +140,7 @@ namespace JSC {
         WriteBarrier<JSFunction> lastSeenCallee;
         bool hasSeenShouldRepatch : 1;
         bool isDFG : 1;
-        CallType callType : 2;
+        CallType callType : 6;
         unsigned bytecodeIndex;
 
         bool isLinked() { return callee; }
