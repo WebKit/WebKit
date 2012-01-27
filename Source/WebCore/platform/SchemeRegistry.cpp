@@ -155,7 +155,7 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 
 static URLSchemesMap& CORSEnabledSchemes()
 {
-    ASSERT(isMainThread());
+    // FIXME: http://bugs.webkit.org/show_bug.cgi?id=77160  
     DEFINE_STATIC_LOCAL(URLSchemesMap, CORSEnabledSchemes, ());
 
     if (CORSEnabledSchemes.isEmpty()) {

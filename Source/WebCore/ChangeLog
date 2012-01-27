@@ -1,3 +1,17 @@
+2012-01-26  Cris Neckar  <cdn@chromium.org>
+
+        The registration of schemes is currently racey as they are not registered from the main thread. 
+        Getting rid of the assert that ensures that we are registering from the main thread until we can fix this.
+
+        Thank you ap@webkit for helping us identify this.
+
+        https://bugs.webkit.org/show_bug.cgi?id=77160
+
+        Reviewed by Adam Barth.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::CORSEnabledSchemes):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         We don't need to always repaint overlay scrollbars if they're in layers
