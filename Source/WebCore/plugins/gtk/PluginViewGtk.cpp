@@ -905,14 +905,14 @@ bool PluginView::platformStart()
         if (m_needsXEmbed) {
             GtkWidget* widget = platformPluginWidget();
             gtk_widget_realize(widget);
-            m_npWindow.window = (void*)gtk_socket_get_id(GTK_SOCKET(platformPluginWidget()));
+            m_npWindow.window = reinterpret_cast<void*>(gtk_socket_get_id(GTK_SOCKET(platformPluginWidget())));
             GdkWindow* window = gtk_widget_get_window(widget);
             ws->display = GDK_WINDOW_XDISPLAY(window);
             ws->visual = GDK_VISUAL_XVISUAL(gdk_window_get_visual(window));
             ws->depth = gdk_visual_get_depth(gdk_window_get_visual(window));
             ws->colormap = XCreateColormap(ws->display, GDK_ROOT_WINDOW(), ws->visual, AllocNone);
         } else {
-            m_npWindow.window = (void*)GTK_XTBIN(platformPluginWidget())->xtwindow;
+            m_npWindow.window = reinterpret_cast<void*>((GTK_XTBIN(platformPluginWidget())->xtwindow));
             ws->display = GTK_XTBIN(platformPluginWidget())->xtdisplay;
             ws->visual = GTK_XTBIN(platformPluginWidget())->xtclient.xtvisual;
             ws->depth = GTK_XTBIN(platformPluginWidget())->xtclient.xtdepth;
