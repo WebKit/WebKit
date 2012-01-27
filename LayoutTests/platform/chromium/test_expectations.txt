@@ -941,10 +941,6 @@ BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
-// May need new baseline after 76559 lands.
-BUGWK76559 : svg/custom/relative-sized-image.xhtml = IMAGE+TEXT
-BUGWK76559 : svg/repaint/image-with-clip-path.svg = IMAGE
-
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
