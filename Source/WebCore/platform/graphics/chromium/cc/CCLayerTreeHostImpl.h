@@ -61,7 +61,7 @@ public:
     static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
     virtual ~CCLayerTreeHostImpl();
 
-    // CCInputHandlerTarget implementation
+    // CCInputHandlerClient implementation
     virtual void setNeedsRedraw();
     virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&);
     virtual void scrollBy(const IntSize&);
@@ -70,6 +70,7 @@ public:
     virtual void pinchGestureBegin();
     virtual void pinchGestureUpdate(float, const IntPoint&);
     virtual void pinchGestureEnd();
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs);
 
     // Virtual for testing
     virtual void beginCommit();
@@ -112,8 +113,6 @@ public:
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }
 
-    void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs);
-
     const CCSettings& settings() const { return m_settings; }
 
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
@@ -134,6 +133,7 @@ private:
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
     void calculateRenderPasses(CCRenderPassList&);
     void optimizeRenderPasses(CCRenderPassList&);
+    IntSize contentSize() const;
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;

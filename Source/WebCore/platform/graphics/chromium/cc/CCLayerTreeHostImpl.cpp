@@ -122,7 +122,7 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
     scrollTotal.scale(m_pageScaleDelta);
     float scaleTotal = m_pageScale * m_pageScaleDelta;
-    IntSize scaledContentSize = m_scrollLayerImpl->children()[0]->contentBounds();
+    IntSize scaledContentSize = contentSize();
     scaledContentSize.scale(m_pageScaleDelta);
 
     m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, startTimeMs);
@@ -242,6 +242,15 @@ void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
 {
     for (unsigned i = 0; i < passes.size(); ++i)
         passes[i]->optimizeQuads();
+}
+
+IntSize CCLayerTreeHostImpl::contentSize() const
+{
+    // TODO(aelias): Hardcoding the first child here is weird. Think of
+    // a cleaner way to get the contentBounds on the Impl side.
+    if (!m_scrollLayerImpl || m_scrollLayerImpl->children().isEmpty())
+        return IntSize();
+    return m_scrollLayerImpl->children()[0]->contentBounds();
 }
 
 void CCLayerTreeHostImpl::drawLayers()
@@ -440,9 +449,7 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
     FloatSize viewBounds = m_viewportSize;
     viewBounds.scale(1 / m_pageScaleDelta);
 
-    // TODO(aelias): Hardcoding the first child here is weird. Think of
-    // a cleaner way to get the contentBounds on the Impl side.
-    IntSize maxScroll = m_scrollLayerImpl->children()[0]->contentBounds() - expandedIntSize(viewBounds);
+    IntSize maxScroll = contentSize() - expandedIntSize(viewBounds);
     // The viewport may be larger than the contents in some cases, such as
     // having a vertical scrollbar but no horizontal overflow.
     maxScroll.clampNegativeToZero();

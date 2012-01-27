@@ -1,3 +1,23 @@
+2012-01-27  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] CCLayerTreeHostImpl minor code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=77181
+
+        Fix a typo in comments and group functions properly.
+        Replace duplicated content size code with function.
+
+        Reviewed by James Robinson.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::startPageScaleAnimation):
+        (WebCore::CCLayerTreeHostImpl::contentSize):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::updateMaxScrollPosition):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+
 2012-01-27  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fix, add missing header.
