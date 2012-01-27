@@ -1,3 +1,145 @@
+2012-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+        All DFG helpers that may call out to arbitrary JS code must know where they
+        were called from due to inlining and call stack walking
+        https://bugs.webkit.org/show_bug.cgi?id=77070
+        <rdar://problem/10750834>
+
+        Reviewed by Geoff Garen.
+        
+        Changed the DFG to always record a code origin index in the tag of the argument
+        count (which we previously left blank for the benefit of LLInt, but is still
+        otherwise unused by the DFG), so that if we ever need to walk the stack accurately
+        we know where to start. In particular, if the current ExecState* points several
+        semantic call frames away from the true semantic call frame because we had
+        performed inlining, having the code origin index recorded means that we can reify
+        those call frames as necessary to give runtime/library code an accurate view of
+        the current JS state.
+        
+        This required several large but mechanical changes:
+        
+        - Calling a function from the DFG now plants a store32 instruction to store the
+          code origin index. But the indices of code origins were previously picked by
+          the DFG::JITCompiler after code generation completed. I changed this somewhat;
+          even though the code origins are put into the CodeBlock after code gen, the
+          code gen now knows a priori what their indices will be. Extensive assertions
+          are in place to ensure that the two don't get out of sync, in the form of the
+          DFG::CallBeginToken. Note that this mechanism has almost no effect on JS calls;
+          those don't need the code origin index set in the call frame because we can get
+          it by doing a binary search on the return PC.
+
+        - Stack walking now always calls trueCallFrame() first before beginning the walk,
+          since even the top call frame may be wrong. It still calls trueCallerFrame() as
+          before to get to the next frame, though trueCallerFrame() is now mostly a
+          wrapper around callerFrame()->trueCallFrame().
+          
+        - Because the mechanism for getting the code origin of a call frame is bimodal
+          (either the call frame knows its code origin because the code origin index was
+          set, or it's necessary to use the callee frame's return PC), I put in extra
+          mechanisms to determine whether your caller, or your callee, corresponds to
+          a call out of C++ code. Previously we just had the host call flag, but this is
+          insufficient as it does not cover the case of someone calling JSC::call(). But
+          luckily we can determine this just by looking at the return PC: if the return
+          PC is in range of the ctiTrampiline, then two things are true: this call
+          frame's PC will tell you nothing about where you came from in your caller, and
+          the caller already knows where it's at because it must have set the code origin
+          index (unless it's not DFG code, in which case we don't care because there is
+          no inlining to worry about).
+          
+        - During testing this revealed a simple off-by-one goof in DFG::ByteCodeParser's
+          inlining code, so I fixed it.
+
+        - Finally because I was tired of doing random #if's for checking if I should be
+          passing around an Instruction* or a ReturnAddressPtr, I created a class called
+          AbstractPC that holds whatever notion of a PC is appropriate for the current
+          execution environment. It's designed to work gracefully even if both the
+          interpreter and the JIT are compiled in, and should integrate nicely with the
+          LLInt.
+          
+        This is neutral on all benchmarks and fixes some nasty corner-case regressions of
+        evil code that uses combinations of getters/setters and function.arguments.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOrigin):
+        (CodeBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (CallBeginToken):
+        (JSC::DFG::CallBeginToken::CallBeginToken):
+        (JSC::DFG::CallBeginToken::assertCodeOriginIndex):
+        (JSC::DFG::CallBeginToken::assertNoCodeOriginIndex):
+        (DFG):
+        (JSC::DFG::CallExceptionRecord::CallExceptionRecord):
+        (CallExceptionRecord):
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::nextCallBeginToken):
+        (JSC::DFG::JITCompiler::beginCall):
+        (JSC::DFG::JITCompiler::notifyCall):
+        (JSC::DFG::JITCompiler::addExceptionCheck):
+        (JSC::DFG::JITCompiler::addFastExceptionCheck):
+        * dfg/DFGOperations.cpp:
+        ():
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * interpreter/AbstractPC.cpp: Added.
+        (JSC):
+        (JSC::AbstractPC::AbstractPC):
+        * interpreter/AbstractPC.h: Added.
+        (JSC):
+        (AbstractPC):
+        (JSC::AbstractPC::AbstractPC):
+        (JSC::AbstractPC::hasJITReturnAddress):
+        (JSC::AbstractPC::jitReturnAddress):
+        (JSC::AbstractPC::hasInterpreterReturnAddress):
+        (JSC::AbstractPC::interpreterReturnAddress):
+        (JSC::AbstractPC::isSet):
+        (JSC::AbstractPC::operator!):
+        ():
+        * interpreter/CallFrame.cpp:
+        (JSC):
+        (JSC::CallFrame::trueCallFrame):
+        (JSC::CallFrame::trueCallerFrame):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::abstractReturnPC):
+        (JSC::ExecState::codeOriginIndexForDFGWithInlining):
+        (ExecState):
+        (JSC::ExecState::trueCallFrame):
+        (JSC::ExecState::trueCallFrameFromVMCode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::retrieveArgumentsFromVMCode):
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+        (JSC::Interpreter::findFunctionCallFrameFromVMCode):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        ():
+        * jit/JITStubs.cpp:
+        (JSC):
+        ():
+        * jit/JITStubs.h:
+        (JSC):
+        (JSC::returnAddressIsInCtiTrampoline):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+
 2012-01-26  Peter Varga  <pvarga@webkit.org>
 
         Fix build when VERBOSE_SPECULATION_FAILURE is enabled in DFG

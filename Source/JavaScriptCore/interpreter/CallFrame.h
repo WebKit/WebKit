@@ -23,6 +23,7 @@
 #ifndef CallFrame_h
 #define CallFrame_h
 
+#include "AbstractPC.h"
 #include "JSGlobalData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterFile.h"
@@ -104,8 +105,10 @@ namespace JSC  {
 #if ENABLE(JIT)
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
 #endif
+        AbstractPC abstractReturnPC(JSGlobalData& globalData) { return AbstractPC(globalData, this); }
 #if ENABLE(DFG_JIT)
         InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].asInlineCallFrame(); }
+        unsigned codeOriginIndexForDFGWithInlining() const { return this[RegisterFile::ArgumentCount].tag(); }
 #else
         // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
         // isInlineCallFrame(). But to make it easier to write code without having a bunch of
@@ -185,14 +188,30 @@ namespace JSC  {
         
         void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = inlineCallFrame; }
         
-        // Call this to get the semantically correct JS CallFrame*. This resolves issues
-        // surrounding inlining and the HostCallFrameFlag stuff.
+        // Call this to get the semantically correct JS CallFrame* for the
+        // currently executing function.
+        CallFrame* trueCallFrame(AbstractPC);
+        
+        // Call this to get the semantically correct JS CallFrame* corresponding
+        // to the caller. This resolves issues surrounding inlining and the
+        // HostCallFrameFlag stuff.
         CallFrame* trueCallerFrame();
 #else
         bool isInlineCallFrame() { return false; }
         
+        CallFrame* trueCallFrame(AbstractPC) { return this; }
         CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
 #endif
+        
+        // Call this to get the true call frame (accounted for inlining and any
+        // other optimizations), when you have entered into VM code through one
+        // of the "blessed" entrypoints (JITStubs or DFGOperations). This means
+        // that if you're pretty much anywhere in the VM you can safely call this;
+        // though if you were to magically get an ExecState* by, say, interrupting
+        // a thread that is running JS code and brutishly scraped the call frame
+        // register, calling this method would probably lead to horrible things
+        // happening.
+        CallFrame* trueCallFrameFromVMCode() { return trueCallFrame(AbstractPC()); }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;

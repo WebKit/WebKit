@@ -89,6 +89,7 @@ SET(JavaScriptCore_SOURCES
     debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
     
+    interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp
     interpreter/Interpreter.cpp
     interpreter/RegisterFile.cpp

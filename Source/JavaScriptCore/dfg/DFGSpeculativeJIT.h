@@ -1387,7 +1387,11 @@ private:
     // These methods add call instructions, with optional exception checks & setting results.
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        return m_jit.addExceptionCheck(m_jit.appendCall(function), at(m_compileIndex).codeOrigin);
+        CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
+        CallBeginToken token = m_jit.beginCall(codeOrigin);
+        JITCompiler::Call call = m_jit.appendCall(function);
+        m_jit.addExceptionCheck(call, codeOrigin, token);
+        return call;
     }
     JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, GPRReg result)
     {

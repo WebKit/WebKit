@@ -101,6 +101,7 @@ SOURCES += \
     dfg/DFGSpeculativeJIT32_64.cpp \
     dfg/DFGSpeculativeJIT64.cpp \
     dfg/DFGThunks.cpp \
+    interpreter/AbstractPC.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \

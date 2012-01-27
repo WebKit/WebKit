@@ -151,6 +151,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
                 unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
                 codeOrigins[j].codeOrigin = record.m_codeOrigin;
                 codeOrigins[j].callReturnOffset = returnAddressOffset;
+                record.m_token.assertCodeOriginIndex(j);
                 j++;
             }
         }

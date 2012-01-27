@@ -71,6 +71,8 @@
 		0F431738146BAC69007E3890 /* ListableHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F431736146BAC65007E3890 /* ListableHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F46808014BA572700BFE272 /* JITExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F46808314BA573100BFE272 /* JITExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F46807F14BA572700BFE272 /* JITExceptions.cpp */; };
+		0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F55F0F114D1063600AC7649 /* AbstractPC.cpp */; };
+		0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55F0F214D1063600AC7649 /* AbstractPC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620175143FCD370068B77C /* DFGOperands.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620171143FCD2F0068B77C /* DFGOperands.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -860,6 +862,8 @@
 		0F431736146BAC65007E3890 /* ListableHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListableHandler.h; sourceTree = "<group>"; };
 		0F46807F14BA572700BFE272 /* JITExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITExceptions.cpp; sourceTree = "<group>"; };
 		0F46808014BA572700BFE272 /* JITExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITExceptions.h; sourceTree = "<group>"; };
+		0F55F0F114D1063600AC7649 /* AbstractPC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPC.cpp; sourceTree = "<group>"; };
+		0F55F0F214D1063600AC7649 /* AbstractPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPC.h; sourceTree = "<group>"; };
 		0F5F08CC146BE602000472A9 /* DFGByteCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeCache.h; path = dfg/DFGByteCodeCache.h; sourceTree = "<group>"; };
 		0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnconditionalFinalizer.h; sourceTree = "<group>"; };
 		0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractState.cpp; path = dfg/DFGAbstractState.cpp; sourceTree = "<group>"; };
@@ -1721,6 +1725,8 @@
 		1429D77A0ED20D7300B89619 /* interpreter */ = {
 			isa = PBXGroup;
 			children = (
+				0F55F0F114D1063600AC7649 /* AbstractPC.cpp */,
+				0F55F0F214D1063600AC7649 /* AbstractPC.h */,
 				A7F8690E0F9584A100558697 /* CachedCall.h */,
 				1429D8DB0ED2205B00B89619 /* CallFrame.cpp */,
 				1429D8DC0ED2205B00B89619 /* CallFrame.h */,
@@ -3097,6 +3103,7 @@
 				0F9332A214CA7DD30085F3C6 /* MethodCallLinkStatus.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */,
+				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3640,6 +3647,7 @@
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
 				0F9332A114CA7DD10085F3C6 /* MethodCallLinkStatus.cpp in Sources */,
 				0F9332A314CA7DD70085F3C6 /* PutByIdStatus.cpp in Sources */,
+				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

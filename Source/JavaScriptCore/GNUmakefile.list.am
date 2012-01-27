@@ -264,6 +264,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/icu/unicode/utf_old.h \
 	Source/JavaScriptCore/icu/unicode/utypes.h \
 	Source/JavaScriptCore/icu/unicode/uversion.h \
+	Source/JavaScriptCore/interpreter/AbstractPC.cpp \
+	Source/JavaScriptCore/interpreter/AbstractPC.h \
 	Source/JavaScriptCore/interpreter/CachedCall.h \
 	Source/JavaScriptCore/interpreter/CallFrameClosure.h \
 	Source/JavaScriptCore/interpreter/CallFrame.cpp \

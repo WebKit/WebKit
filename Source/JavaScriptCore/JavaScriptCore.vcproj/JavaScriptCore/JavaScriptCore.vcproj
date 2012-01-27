@@ -1818,6 +1818,14 @@
 			Name="interpreter"
 			>
 			<File
+				RelativePath="..\..\interpreter\AbstractPC.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\interpreter\AbstractPC.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\interpreter\CachedCall.h"
 				>
 			</File>

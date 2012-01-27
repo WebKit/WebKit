@@ -291,7 +291,7 @@ EXPORTS
     ?resize@StringBuilder@WTF@@QAEXI@Z
     ?resolveRope@JSString@JSC@@ABEXPAVExecState@2@@Z
     ?restoreAll@Profile@JSC@@QAEXXZ
-    ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
+    ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
     ?s_globalObjectMethodTable@JSGlobalObject@JSC@@1UGlobalObjectMethodTable@2@B
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z

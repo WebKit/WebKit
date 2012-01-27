@@ -5110,9 +5110,9 @@ skip_id_custom_self:
 #endif // ENABLE(INTERPRETER)
 }
 
-JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* function) const
+JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunction* function) const
 {
-    CallFrame* functionCallFrame = findFunctionCallFrame(callFrame, function);
+    CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
     if (!functionCallFrame)
         return jsNull();
 
@@ -5134,9 +5134,9 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
     return JSValue(arguments);
 }
 
-JSValue Interpreter::retrieveCaller(CallFrame* callFrame, JSFunction* function) const
+JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* function) const
 {
-    CallFrame* functionCallFrame = findFunctionCallFrame(callFrame, function);
+    CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
     if (!functionCallFrame)
         return jsNull();
 
@@ -5181,9 +5181,9 @@ void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intp
     function = callerFrame->callee();
 }
 
-CallFrame* Interpreter::findFunctionCallFrame(CallFrame* callFrame, JSFunction* function)
+CallFrame* Interpreter::findFunctionCallFrameFromVMCode(CallFrame* callFrame, JSFunction* function)
 {
-    for (CallFrame* candidate = callFrame; candidate; candidate = candidate->trueCallerFrame()) {
+    for (CallFrame* candidate = callFrame->trueCallFrameFromVMCode(); candidate; candidate = candidate->trueCallerFrame()) {
         if (candidate->callee() == function)
             return candidate;
     }

@@ -681,6 +681,12 @@ namespace JSC {
             return true;
         }
         
+        CodeOrigin codeOrigin(unsigned index)
+        {
+            ASSERT(m_rareData);
+            return m_rareData->m_codeOrigins[index].codeOrigin;
+        }
+        
         bool addFrequentExitSite(const DFG::FrequentExitSite& site)
         {
             ASSERT(getJITType() == JITCode::BaselineJIT);

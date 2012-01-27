@@ -175,14 +175,14 @@ JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, const Ide
 {
     JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    return exec->interpreter()->retrieveArguments(exec, thisObj);
+    return exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObj);
 }
 
 JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    return exec->interpreter()->retrieveCaller(exec, thisObj);
+    return exec->interpreter()->retrieveCallerFromVMCode(exec, thisObj);
 }
 
 JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
@@ -269,7 +269,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, thisObject), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
@@ -288,7 +288,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, thisObject), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(exec->interpreter()->retrieveCallerFromVMCode(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     

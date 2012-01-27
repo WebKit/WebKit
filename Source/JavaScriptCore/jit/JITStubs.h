@@ -281,6 +281,15 @@ namespace JSC {
     extern "C" void ctiVMThrowTrampoline();
     extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*);
+#if ENABLE(DFG_JIT)
+    extern "C" void ctiTrampolineEnd();
+
+    inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
+    {
+        return returnAddress.value() >= bitwise_cast<void*>(&ctiTrampoline)
+            && returnAddress.value() < bitwise_cast<void*>(&ctiTrampolineEnd);
+    }
+#endif
 
     class JITThunks {
     public:
