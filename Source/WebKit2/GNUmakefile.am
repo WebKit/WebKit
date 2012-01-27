@@ -1155,9 +1155,9 @@ stamp-webkit2enumtypes: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.a
 		$(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' | \
 		sed 's,WEBKIT_TYPE_KIT,WEBKIT_TYPE,' \
-		> xgen-gth \
-	&& (cmp -s xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h || cp xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h) \
-	&& rm -f xgen-gth \
+		> wk2-xgen-gth \
+	&& (cmp -s wk2-xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h || cp wk2-xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h) \
+	&& rm -f wk2-xgen-gth \
 	&& echo timestamp > $(@F)
 
 $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(libwebkit2gtkinclude_HEADERS) $(WebKit2)/GNUmakefile.am
@@ -1179,9 +1179,9 @@ $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(libwebkit2gtkinc
 			--ftail "}\n" \
 		$(libwebkit2gtkinclude_HEADERS) | \
 		sed 's,web_kit,webkit,' \
-		> xgen-gtc \
-	&& cp xgen-gtc $@ \
-	&& rm -f xgen-gtc
+		> wk2-xgen-gtc \
+	&& cp wk2-xgen-gtc $@ \
+	&& rm -f wk2-xgen-gtc
 
 WEBKIT2_MARSHAL_LIST = $(WebKit2)/UIProcess/API/gtk/webkit2marshal.list
 

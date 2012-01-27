@@ -1,3 +1,14 @@
+2012-01-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Sometimes fails to build when using make -j
+        https://bugs.webkit.org/show_bug.cgi?id=77226
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: use a different name for the scripts used to
+        generate enum files for WebKitGTK+ and WebKit2GTK+, so they do not
+        clash;
+
 2012-01-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Fix overridePreference for WebKitHixie76WebSocketProtocolEnabled in WebKitTestRunner.
