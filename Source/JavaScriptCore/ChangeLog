@@ -1,3 +1,13 @@
+2012-01-27  Hajime Morita  <morrita@google.com>
+
+        [JSC] ThunkGenerators.cpp should hide its asm-defined symbols
+        https://bugs.webkit.org/show_bug.cgi?id=77244
+
+        Reviewed by Filip Pizlo.
+
+        * jit/ThunkGenerators.cpp: Added HIDE_SYMBOLS()
+        * wtf/InlineASM.h: Moved some duplicated macros from ThunkGenerators.cpp
+
 2012-01-27  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [JSC] Asm-originated symbols should be marked as hidden

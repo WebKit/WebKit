@@ -27,8 +27,9 @@
 #include "ThunkGenerators.h"
 
 #include "CodeBlock.h"
-#include <wtf/text/StringImpl.h>
+#include "InlineASM.h"
 #include "SpecializedThunkJIT.h"
+#include <wtf/text/StringImpl.h>
 
 #if ENABLE(JIT)
 
@@ -111,21 +112,6 @@ MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData* globalData)
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
-#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
-#define SYMBOL_STRING(name) "_" #name
-#else
-#define SYMBOL_STRING(name) #name
-#endif
-    
-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
-#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
-#elif OS(DARWIN) || (CPU(X86_64) && COMPILER(MINGW) && !GCC_VERSION_AT_LEAST(4, 5, 0))
-#define SYMBOL_STRING_RELOCATION(name) "_" #name
-#elif CPU(X86) && COMPILER(MINGW)
-#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
-#else
-#define SYMBOL_STRING_RELOCATION(name) #name
-#endif
 
 #define UnaryDoubleOpWrapper(function) function##Wrapper
 enum MathThunkCallingConvention { };
@@ -147,6 +133,7 @@ double jsRound(double d)
     asm( \
         ".text\n" \
         ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        HIDE_SYMBOL(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "call " SYMBOL_STRING_RELOCATION(function) "\n" \
         "ret\n" \
@@ -161,6 +148,7 @@ double jsRound(double d)
     asm( \
         ".text\n" \
         ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        HIDE_SYMBOL(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "subl $8, %esp\n" \
         "movsd %xmm0, (%esp) \n" \
