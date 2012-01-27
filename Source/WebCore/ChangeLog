@@ -1,3 +1,14 @@
+2012-01-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix a warning in the GTK+ build.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This should not change behavior.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformStart): Use reinterpet_cast to convert X11 Windows into void pointers.
+
 2012-01-27  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] CCLayerTreeHostImpl minor code cleanup
