@@ -356,6 +356,14 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
                     MacroAssembler::TrustedImmPtr(const_cast<Identifier*>(&ident)));
                 operationFunction = operationCallCustomGetter;
             }
+            
+            // Need to make sure that whenever this call is made in the future, we remember the
+            // place that we made it from. It just so happens to be the place that we are at
+            // right now!
+            stubJit.store32(
+                MacroAssembler::TrustedImm32(exec->codeOriginIndexForDFGWithInlining()),
+                CCallHelpers::tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
+            
             operationCall = stubJit.call();
 #if USE(JSVALUE64)
             stubJit.move(GPRInfo::returnValueGPR, resultGPR);

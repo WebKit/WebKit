@@ -1,3 +1,45 @@
+2011-01-27  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 106067
+
+    2012-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+            All DFG helpers that may call out to arbitrary JS code must know where they
+            were called from due to inlining and call stack walking
+            https://bugs.webkit.org/show_bug.cgi?id=77070
+            <rdar://problem/10750834>
+
+            Reviewed by Geoff Garen.
+
+            * fast/js/dfg-inline-arguments-use-directly-from-inlined-code-expected.txt: Added.
+            * fast/js/dfg-inline-arguments-use-directly-from-inlined-code.html: Added.
+            * fast/js/dfg-inline-arguments-use-from-all-the-places-broken-expected.txt: Added.
+            * fast/js/dfg-inline-arguments-use-from-all-the-places-broken.html: Added.
+            * fast/js/dfg-inline-arguments-use-from-all-the-places-expected.txt: Added.
+            * fast/js/dfg-inline-arguments-use-from-all-the-places.html: Added.
+            * fast/js/dfg-inline-arguments-use-from-getter-expected.txt: Added.
+            * fast/js/dfg-inline-arguments-use-from-getter.html: Added.
+            * fast/js/script-tests/dfg-inline-arguments-use-directly-from-inlined-code.js: Added.
+            (foo):
+            (bar):
+            (argsToStr):
+            * fast/js/script-tests/dfg-inline-arguments-use-from-all-the-places-broken.js: Added.
+            (foo):
+            (fuzz):
+            (getter):
+            (bar):
+            (argsToStr):
+            * fast/js/script-tests/dfg-inline-arguments-use-from-all-the-places.js: Added.
+            (foo):
+            (fuzz):
+            (getter):
+            (bar):
+            (argsToStr):
+            * fast/js/script-tests/dfg-inline-arguments-use-from-getter.js: Added.
+            (foo):
+            (bar):
+            (argsToStr):
+
 2011-01-25  Lucas Forschler  <lforschler@apple.com>
 
     Merge 105894
