@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "ImageBuffer.h"
+#include "IntRect.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

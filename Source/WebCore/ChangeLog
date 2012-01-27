@@ -1,3 +1,9 @@
+2012-01-27  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fix, add missing header.
+
+        * rendering/svg/SVGImageBufferTools.h:
+
 2012-01-27  Victor Carbune  <victor@rosedu.org>
 
         Added the GenericEventQueue class in order to generalize asynchronous
