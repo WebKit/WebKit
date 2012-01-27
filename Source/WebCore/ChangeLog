@@ -1,3 +1,23 @@
+2012-01-26  Adam Barth  <abarth@webkit.org>
+
+        NULL ptr in WebCore::ContainerNode::parserAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=76258
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/parser/nested-fragment-parser-crash.html
+
+        We always need a parent element to attach to.  In crazy cases, we can
+        have elements in the stack of open elements that are already detached
+        from the DOM.  In those cases, they don't have a parent, so we aren't
+        able to enforce the maximum DOM depth.  (Fortunately, they're not
+        attached to the DOM anymore so we don't need to enforce the maximum DOM
+        depth!)
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachLater):
+        (WebCore::HTMLConstructionSite::fosterParent):
+
 2012-01-26  Cris Neckar  <cdn@chromium.org>
 
         The registration of schemes is currently racey as they are not registered from the main thread. 
