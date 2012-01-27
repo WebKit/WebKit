@@ -210,7 +210,7 @@ GrContext* GraphicsContext3DPrivate::grContext()
     // Limit the number of textures we hold in the bitmap->texture cache.
     static const int maxTextureCacheCount = 512;
     // Limit the bytes allocated toward textures in the bitmap->texture cache.
-    static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
+    static const size_t maxTextureCacheBytes = 96 * 1024 * 1024;
 
     if (!m_grContext) {
         SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
