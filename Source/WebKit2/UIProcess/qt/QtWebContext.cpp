@@ -69,7 +69,7 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
     if (s_defaultContext)
         return PassRefPtr<QtWebContext>(s_defaultContext);
 
-    RefPtr<WebContext> context = WebContext::create(String());
+    RefPtr<WebContext> context = WebContext::sharedProcessContext();
     RefPtr<QtWebContext> defaultContext = QtWebContext::create(context.get());
     s_defaultContext = defaultContext.get();
     defaultContext->initialize();
