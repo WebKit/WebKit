@@ -392,7 +392,10 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
                 m_skipsIdlePaint = true;
                 if (!idle) {
-                    m_skipsDraw = true;
+                    // If the background covers the viewport, always draw this
+                    // layer so that checkerboarded tiles will still draw.
+                    if (!backgroundCoversViewport())
+                        m_skipsDraw = true;
                     cleanupResources();
                 }
                 return;

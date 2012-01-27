@@ -1,3 +1,17 @@
+2012-01-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Don't ever skip drawing the non-composited content layer
+        https://bugs.webkit.org/show_bug.cgi?id=77236
+
+        Reviewed by James Robinson.
+
+        This is a tiny fix. If the non-composited content layer never gets
+        painted, then the background color never gets set and it is just
+        opaque black.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-01-27  Fady Samuel  <fsamuel@chromium.org>
 
         Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting

@@ -1,3 +1,23 @@
+2012-01-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Don't ever skip drawing the non-composited content layer
+        https://bugs.webkit.org/show_bug.cgi?id=77236
+
+        Reviewed by James Robinson.
+
+        Since the root layer has its textures potentially reserved last in a
+        front-to-back iteration, don't ever skip drawing it if we can't
+        reserve its textures. Instead, checkerboard and draw background color
+        quads instead to fill the viewport. This behavior is tied to the
+        backgroundFillsViewport setting.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::reset):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2012-01-27  Martin Robinson  <mrobinson@igalia.com>
 
         Fix a warning in the GTK+ build.

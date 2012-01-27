@@ -127,7 +127,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState
 
     appendGutterQuads(quadList, sharedQuadState);
 
-    if (!m_tiler || m_tiler->isEmpty() || layerRect.isEmpty())
+    if (!m_tiler || !m_tiler->numTiles() || layerRect.isEmpty())
         return;
 
     int left, top, right, bottom;

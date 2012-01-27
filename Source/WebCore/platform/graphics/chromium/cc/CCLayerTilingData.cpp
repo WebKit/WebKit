@@ -96,7 +96,6 @@ CCLayerTilingData::Tile* CCLayerTilingData::tileAt(int i, int j) const
 void CCLayerTilingData::reset()
 {
     m_tiles.clear();
-    m_tilingData.setTotalSize(0, 0);
 }
 
 void CCLayerTilingData::layerRectToTileIndices(const IntRect& layerRect, int& left, int& top, int& right, int& bottom) const
