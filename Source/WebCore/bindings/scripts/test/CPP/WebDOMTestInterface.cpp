@@ -115,7 +115,7 @@ void WebDOMTestInterface::supplementalMethod1()
     if (!impl())
         return;
 
-    TestSupplemental::supplementalMethod1(impl());
+    WebCore::TestSupplemental::supplementalMethod1(impl());
 }
 
 #endif
@@ -128,7 +128,7 @@ WebDOMTestObj WebDOMTestInterface::supplementalMethod2(const WebDOMString& strAr
         return WebDOMTestObj();
 
     WebCore::ExceptionCode ec = 0;
-    WebDOMTestObj result = toWebKit(WTF::getPtr(TestSupplemental::supplementalMethod2(impl(), strArg, toWebCore(objArg), ec)));
+    WebDOMTestObj result = toWebKit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl(), strArg, toWebCore(objArg), ec)));
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
     return result;
 }

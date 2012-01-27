@@ -1,3 +1,11 @@
+2012-01-27  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebasedlined run-bindings-tests results.
+
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        (WebDOMTestInterface::supplementalMethod1):
+        (WebDOMTestInterface::supplementalMethod2):
+
 2012-01-27  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Child layers appear in wrong position when scrolling
