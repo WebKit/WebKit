@@ -758,11 +758,11 @@ JSValue jsTestObjCachedAttribute1(ExecState* exec, JSValue slotBase, const Ident
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    if (JSValue cachedValue = m_cachedAttribute1.get())
+    if (JSValue cachedValue = castedThis->m_cachedAttribute1.get())
         return cachedValue;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = impl->cachedAttribute1() ? impl->cachedAttribute1()->deserialize(exec, castedThis->globalObject()) : jsNull();
-    m_cachedAttribute1.set(exec->globalData(), this, result);
+    JSValue result = impl->cachedAttribute1() ? impl->cachedAttribute1()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
+    castedThis->m_cachedAttribute1.set(exec->globalData(), castedThis, result);
     return result;
 }
 
@@ -771,11 +771,11 @@ JSValue jsTestObjCachedAttribute2(ExecState* exec, JSValue slotBase, const Ident
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    if (JSValue cachedValue = m_cachedAttribute2.get())
+    if (JSValue cachedValue = castedThis->m_cachedAttribute2.get())
         return cachedValue;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = impl->cachedAttribute2() ? impl->cachedAttribute2()->deserialize(exec, castedThis->globalObject()) : jsNull();
-    m_cachedAttribute2.set(exec->globalData(), this, result);
+    JSValue result = impl->cachedAttribute2() ? impl->cachedAttribute2()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
+    castedThis->m_cachedAttribute2.set(exec->globalData(), castedThis, result);
     return result;
 }
 

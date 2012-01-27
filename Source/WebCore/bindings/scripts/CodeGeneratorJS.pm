@@ -1751,7 +1751,7 @@ sub GenerateImplementation
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                         $cacheIndex = $currentCachedAttribute;
                         $currentCachedAttribute++;
-                        push(@implContent, "    if (JSValue cachedValue = m_" . $attribute->signature->name . ".get())\n");
+                        push(@implContent, "    if (JSValue cachedValue = castedThis->m_" . $attribute->signature->name . ".get())\n");
                         push(@implContent, "        return cachedValue;\n");
                     }
 
@@ -1794,7 +1794,7 @@ sub GenerateImplementation
                         }
                     }
 
-                    push(@implContent, "    m_" . $attribute->signature->name . ".set(exec->globalData(), this, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
+                    push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(exec->globalData(), castedThis, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
                     push(@implContent, "    return result;\n");
 
                 } else {
@@ -2997,7 +2997,7 @@ sub NativeToJSValue
         AddToImplIncludes("$joinedName.h", $conditional);
     } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
-        return "$value ? $value->deserialize(exec, castedThis->globalObject()) : jsNull()";
+        return "$value ? $value->deserialize(exec, castedThis->globalObject(), 0) : jsNull()";
     } else {
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);
