@@ -63,7 +63,7 @@ public:
     virtual void* mapTexSubImage2DCHROMIUM(WGC3Denum target, WGC3Dint level, WGC3Dint xoffset, WGC3Dint yoffset, WGC3Dsizei width, WGC3Dsizei height, WGC3Denum format, WGC3Denum type, WGC3Denum access) { return 0; }
     virtual void unmapTexSubImage2DCHROMIUM(const void*) { }
 
-    virtual void setResourceUsageCHROMIUM(ResourceUsage) { }
+    virtual void setVisibilityCHROMIUM(bool visible) { }
 
     virtual WebString getRequestableExtensionsCHROMIUM() { return WebString(); }
     virtual void requestExtensionCHROMIUM(const char*) { }

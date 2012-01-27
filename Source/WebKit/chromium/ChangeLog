@@ -1,3 +1,17 @@
+2012-01-26  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Revert changes which added setResourceUsageCHROMIUM gl extension since feature changed directions
+        https://bugs.webkit.org/show_bug.cgi?id=77120
+
+        Reviewed by Kenneth Russell.
+
+        * public/platform/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore):
+        * tests/FakeWebGraphicsContext3D.h:
+        (WebKit::FakeWebGraphicsContext3D::setVisibilityCHROMIUM):
+
 2012-01-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Add GestureTapDown and GestureDoubleTap gesture types to WebGestureEvent.
