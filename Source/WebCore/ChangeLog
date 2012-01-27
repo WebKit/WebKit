@@ -1,3 +1,61 @@
+2012-01-24  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Implement pointer interface
+        https://bugs.webkit.org/show_bug.cgi?id=75762
+
+        Reviewed by Julien Chaffraix.
+
+        Implement the navigator.pointer interface via a new
+        PointerLockController class, as per
+        http://dvcs.w3.org/hg/webevents/raw-file/default/mouse-lock.html.
+
+        The implementation is being made in steps, the feature is still behind
+        compile-time and run-time flags, 'webkit' prefixed, and not yet enabled
+        in any browser. (Chromium has a developer flag required.) Follow-up
+        work will include handling DOM elements being removed, making all
+        callbacks asynchronous, iframe permissions (similar to Full Screen),
+        etc.
+
+        PointerLockController maintains state of which Element is the current
+        lock target and the success and failure callbacks. ChromeClient has
+        methods added to expose the required state change requests.
+
+        Tests: pointer-lock/lock-already-locked.html
+               pointer-lock/lock-fail-responses.html
+               pointer-lock/mouse-event-delivery.html
+               pointer-lock/pointerlocklost-event.html
+
+        * WebCore.gypi:
+        * dom/EventNames.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::requestPointerLock):
+        (WebCore::ChromeClient::requestPointerUnlock):
+        (WebCore::ChromeClient::isPointerLocked):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitPointer):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::pointerLockController):
+        * page/PointerLock.cpp:
+        (WebCore::PointerLock::PointerLock):
+        (WebCore::PointerLock::create):
+        (WebCore::PointerLock::lock):
+        (WebCore::PointerLock::unlock):
+        (WebCore::PointerLock::isLocked):
+        * page/PointerLock.h:
+        (WebCore::PointerLock::create):
+        * page/PointerLockController.cpp: Added.
+        (WebCore::PointerLockController::PointerLockController):
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::requestPointerUnlock):
+        (WebCore::PointerLockController::isLocked):
+        (WebCore::PointerLockController::didAcquirePointerLock):
+        (WebCore::PointerLockController::didNotAcquirePointerLock):
+        (WebCore::PointerLockController::didLosePointerLock):
+        (WebCore::PointerLockController::dispatchLockedMouseEvent):
+        * page/PointerLockController.h: Copied from Source/WebCore/page/PointerLock.h.
+
 2012-01-27  Abhishek Arya  <inferno@chromium.org>
 
         Crash in DocumentLoader::detachFromFrame.

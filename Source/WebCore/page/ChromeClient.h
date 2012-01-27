@@ -328,6 +328,12 @@ namespace WebCore {
         
         virtual bool isSVGImageChromeClient() const { return false; }
 
+#if ENABLE(POINTER_LOCK)
+        virtual bool requestPointerLock() { return false; }
+        virtual void requestPointerUnlock() { }
+        virtual bool isPointerLocked() { return false; }
+#endif
+
     protected:
         virtual ~ChromeClient() { }
     };

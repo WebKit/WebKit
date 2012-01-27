@@ -1,3 +1,17 @@
+2012-01-24  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock: Implement pointer interface
+        https://bugs.webkit.org/show_bug.cgi?id=75762
+
+        Add calls to the PointerLockController added in this patch to WebCore.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::close):
+        (WebKit::WebViewImpl::didAcquirePointerLock):
+        (WebKit::WebViewImpl::didNotAcquirePointerLock):
+        (WebKit::WebViewImpl::didLosePointerLock):
+        (WebKit::WebViewImpl::pointerLockMouseEvent):
+
 2012-01-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Cleanup of WebPopupMenuImpl

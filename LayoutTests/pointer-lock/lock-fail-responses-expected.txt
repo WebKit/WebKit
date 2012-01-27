@@ -1,0 +1,12 @@
+Test asynchronous results of calling lock.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.layoutTestController is defined.
+PASS Lock failed (after we called layoutTestController.setPointerLockWillFailSynchronously)
+PASS Lock failed (after we called layoutTestController.setPointerLockWillFailAsynchronously)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+  <div id="target"></div>
+</div>
+<script>
+    description("Test that pointerlocklost event is dispatched.")
+    window.jsTestIsAsync = true;
+    shouldBeDefined("window.layoutTestController");
+
+    targetdiv = document.getElementById("target");
+
+    document.addEventListener("webkitpointerlocklost", locklostHandler);
+    targetdiv.addEventListener("webkitpointerlocklost", locklostHandler);
+    locklosthandlers = 2;
+
+    locklostreceipts = 0;
+    function locklostHandler() {
+        testPassed("webkitpointerlocklost handler call " + locklostreceipts);
+        locklostreceipts++;
+        if (locklostreceipts == locklosthandlers) {
+            testPassed("All expected webkitpointerlocklost events received.");
+            doNextStep();
+        }
+    }
+
+    currentStep = 0;
+    function doNextStep() {
+      todo[currentStep++]();
+    }
+    todo = [
+        function () {
+            navigator.webkitPointer.lock(targetdiv,
+                function () {
+                    shouldBe("navigator.webkitPointer.isLocked", "true");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+        },
+        function () {
+            debug("JavaScript initiated unlock.")
+            locklostreceipts = 0;
+            navigator.webkitPointer.unlock();
+        },
+        function () {
+            // locklostHandler will catch unlocks and call doNextStep to bring us here.
+            shouldBe("navigator.webkitPointer.isLocked", "false");
+            doNextStep();
+        },
+        function () {
+            navigator.webkitPointer.lock(targetdiv,
+                function () {
+                    shouldBe("navigator.webkitPointer.isLocked", "true");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+        },
+        function () {
+            debug("Host initiated unlock.")
+            locklostreceipts = 0;
+            layoutTestController.didLosePointerLock();
+        },
+        function () {
+            // locklostHandler will catch unlocks and call doNextStep to bring us here.
+            shouldBe("navigator.webkitPointer.isLocked", "false");
+            doNextStep();
+        },
+        finishJSTest
+    ];
+    doNextStep();
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

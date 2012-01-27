@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+  <div id="target2"></div>
+</div>
+<script>
+    description("Test calling lock when already in a locked state.")
+    window.jsTestIsAsync = true;
+
+    targetdiv1 = document.getElementById("target1");
+    targetdiv2 = document.getElementById("target2");
+
+    var expectTarget1Unlock = false;
+    targetdiv1.addEventListener("webkitpointerlocklost",
+        function () { shouldBe("expectTarget1Unlock", "true"); });
+
+    targetdiv2.addEventListener("webkitpointerlocklost",
+        function () { testFailed("Unexpected targetdiv2 pointerlocklost."); });
+
+    currentStep = 0;
+    function doNextStep() {
+      todo[currentStep++]();
+    }
+    todo = [
+        function () {
+            shouldBe("navigator.webkitPointer.isLocked", "false");
+            navigator.webkitPointer.lock(targetdiv1,
+                function () {
+                    testPassed("Lock target1 succeeded.");
+                    shouldBe("navigator.webkitPointer.isLocked", "true");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+        },
+        function () {
+            navigator.webkitPointer.lock(targetdiv1,
+                function () {
+                    testPassed("Lock target1 succeeded again.");
+                    shouldBe("navigator.webkitPointer.isLocked", "true");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+
+        },
+        function () {
+            expectTarget1Unlock = true;
+            navigator.webkitPointer.lock(targetdiv2,
+                function () {
+                    testPassed("Lock target2 succeeded.");
+                    shouldBe("navigator.webkitPointer.isLocked", "true");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+
+        },
+        finishJSTest
+    ];
+    doNextStep();
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

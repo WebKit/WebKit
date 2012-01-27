@@ -197,6 +197,8 @@ namespace WebCore {
     \
     macro(show) \
     \
+    macro(webkitpointerlocklost) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

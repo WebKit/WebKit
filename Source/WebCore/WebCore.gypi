@@ -2647,6 +2647,8 @@
             'page/PerformanceTiming.h',
             'page/PointerLock.cpp',
             'page/PointerLock.h',
+            'page/PointerLockController.cpp',
+            'page/PointerLockController.h',
             'page/PrintContext.cpp',
             'page/Screen.cpp',
             'page/Screen.h',

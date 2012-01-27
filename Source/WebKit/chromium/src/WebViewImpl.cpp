@@ -89,6 +89,8 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformThemeChromiumLinux.h"
 #include "PlatformWheelEvent.h"
+#include "PointerLock.h"
+#include "PointerLockController.h"
 #include "PopupContainer.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
@@ -1752,17 +1754,26 @@ bool WebViewImpl::isAcceleratedCompositingActive() const
 
 void WebViewImpl::didAcquirePointerLock()
 {
-    // FIXME: Implement when PointerLockController lands.
+#if ENABLE(POINTER_LOCK)
+    if (page())
+        page()->pointerLockController()->didAcquirePointerLock();
+#endif
 }
 
 void WebViewImpl::didNotAcquirePointerLock()
 {
-    // FIXME: Implement when PointerLockController lands.
+#if ENABLE(POINTER_LOCK)
+    if (page())
+        page()->pointerLockController()->didNotAcquirePointerLock();
+#endif
 }
 
 void WebViewImpl::didLosePointerLock()
 {
-    // FIXME: Implement when PointerLockController lands.
+#if ENABLE(POINTER_LOCK)
+    if (page())
+        page()->pointerLockController()->didLosePointerLock();
+#endif
 }
 
 // WebView --------------------------------------------------------------------
@@ -3211,7 +3222,27 @@ bool WebViewImpl::isPointerLocked()
 
 void WebViewImpl::pointerLockMouseEvent(const WebInputEvent& event)
 {
-    // FIXME: Implement when PointerLockController lands.
+    AtomicString eventType;
+    switch (event.type) {
+    case WebInputEvent::MouseDown:
+        eventType = eventNames().mousedownEvent;
+        break;
+    case WebInputEvent::MouseUp:
+        eventType = eventNames().mouseupEvent;
+        break;
+    case WebInputEvent::MouseMove:
+        eventType = eventNames().mousemoveEvent;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    const WebMouseEvent& mouseEvent = static_cast<const WebMouseEvent&>(event);
+
+    if (page())
+        page()->pointerLockController()->dispatchLockedMouseEvent(
+            PlatformMouseEventBuilder(mainFrameImpl()->frameView(), mouseEvent),
+            eventType);
 }
 #endif
 

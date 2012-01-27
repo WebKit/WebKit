@@ -59,6 +59,7 @@
 #include "PluginData.h"
 #include "PluginView.h"
 #include "PluginViewBase.h"
+#include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -145,6 +146,9 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(NOTIFICATIONS)
     , m_notificationController(NotificationController::create(this, pageClients.notificationClient))
+#endif
+#if ENABLE(POINTER_LOCK)
+    , m_pointerLockController(PointerLockController::create(this))
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)

@@ -25,32 +25,48 @@
 #include "config.h"
 #include "PointerLock.h"
 
+#include "Frame.h"
+#include "Page.h"
+#include "PointerLockController.h"
+
 #if ENABLE(POINTER_LOCK)
 
 namespace WebCore {
 
-PointerLock::PointerLock()
+PointerLock::PointerLock(Frame* frame)
+    : DOMWindowProperty(frame)
+    , m_controller(0)
 {
+    ASSERT(m_frame);
+    m_controller = frame->page()->pointerLockController();
 }
 
 PointerLock::~PointerLock()
 {
+    ASSERT(!m_controller);
+}
+
+void PointerLock::disconnectFrame()
+{
+    DOMWindowProperty::disconnectFrame();
+    m_controller = 0;
 }
 
 void PointerLock::lock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
 {
-    // FIXME: Implement
+    if (m_controller)
+        m_controller->requestPointerLock(target, successCallback, failureCallback);
 }
 
 void PointerLock::unlock()
 {
-    // FIXME: Implement
+    if (m_controller)
+        m_controller->requestPointerUnlock();
 }
 
 bool PointerLock::isLocked()
 {
-    // FIXME: Implement
-    return false;
+    return m_controller && m_controller->isLocked();
 }
 
 }

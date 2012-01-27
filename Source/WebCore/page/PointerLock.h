@@ -27,6 +27,7 @@
 
 #if ENABLE(POINTER_LOCK)
 
+#include "DOMWindowProperty.h"
 #include "VoidCallback.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,19 +35,26 @@
 namespace WebCore {
 
 class Element;
+class Frame;
+class PointerLockController;
 
-class PointerLock : public RefCounted<PointerLock> {
+class PointerLock : public RefCounted<PointerLock>, public DOMWindowProperty {
 public:
-    static PassRefPtr<PointerLock> create() { return adoptRef(new PointerLock()); }
+    static PassRefPtr<PointerLock> create(Frame* frame) { return adoptRef(new PointerLock(frame)); }
 
     ~PointerLock();
+
+    // DOMWindowProperty Interface
+    virtual void disconnectFrame() OVERRIDE;
 
     void lock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
     void unlock();
     bool isLocked();
 
 private:
-    PointerLock();
+    explicit PointerLock(Frame*);
+
+    PointerLockController* m_controller;
 };
 
 } // namespace WebCore

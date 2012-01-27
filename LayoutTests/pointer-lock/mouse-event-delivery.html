@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div>
+  <div id="target1"></div>
+  <div id="target2"></div>
+</div>
+<script>
+    description("Test mouse events are routed to lock target.")
+    window.jsTestIsAsync = true;
+    shouldBeDefined("window.eventSender");
+
+    targetdiv1 = document.getElementById("target1");
+    targetdiv2 = document.getElementById("target2");
+
+    function eventNotExpected(e) {
+        testFailed("Unexpected event " + e.type + " on " + e.currentTarget.id);
+        finishJSTest();
+    }
+    function eventExpected(e) {
+      testPassed("event type: " + e.type + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
+    }
+
+    currentStep = 0;
+    function doNextStep() {
+      todo[currentStep++]();
+    }
+    todo = [
+        function () {
+            navigator.webkitPointer.lock(targetdiv1,
+                function () {
+                    testPassed("Lock target1 succeeded.");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+        },
+        function () {
+            debug("With a lock in place send a click.")
+            targetdiv1.onmousedown = eventExpected;
+            targetdiv2.onmousedown = eventNotExpected;
+            document.body.onmousedown = eventExpected;
+            window.eventSender.leapForward(1000);
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            targetdiv1.onmousedown = undefined;
+            targetdiv2.onmousedown = undefined;
+            document.body.onmousedown = undefined;
+            doNextStep();
+        },
+        function () {
+            navigator.webkitPointer.lock(targetdiv2,
+                function () {
+                    testPassed("Lock target2 succeeded.");
+                    doNextStep();
+                },
+                function () {
+                    testFailed("Lock failed.");
+                    finishJSTest();
+                });
+        },
+        function () {
+            debug("With a lock in place send a click.")
+            targetdiv1.onmousedown = eventNotExpected;
+            targetdiv2.onmousedown = eventExpected;
+            document.body.onmousedown = eventExpected;
+            window.eventSender.leapForward(1000);
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            targetdiv1.onmousedown = undefined;
+            targetdiv2.onmousedown = undefined;
+            document.body.onmousedown = undefined;
+            doNextStep();
+        },
+        function () {
+            debug("Ensure double clicks work as expected, sending 4 clicks.")
+            targetdiv2.onmousedown = eventExpected;
+            targetdiv2.onmouseup = eventExpected;
+            targetdiv2.onclick = eventExpected;
+            targetdiv2.ondblclick = eventExpected;
+            debug("Creating a click and dblclick.");
+            window.eventSender.leapForward(1000);
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            debug("Ensuring no false dblclicks if we continue.");
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+            targetdiv2.onmousedown = undefined;
+            targetdiv2.onmouseup = undefined;
+            targetdiv2.onclick = undefined;
+            targetdiv2.ondblclick = undefined;
+            doNextStep();
+        },
+        finishJSTest
+    ];
+    doNextStep();
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

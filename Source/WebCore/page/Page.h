@@ -76,6 +76,7 @@ namespace WebCore {
     class NotificationPresenter;
     class PageGroup;
     class PluginData;
+    class PointerLockController;
     class ProgressTracker;
     class Range;
     class RenderTheme;
@@ -189,6 +190,9 @@ namespace WebCore {
 #endif
 #if ENABLE(NOTIFICATIONS)
         NotificationController* notificationController() const { return m_notificationController.get(); }
+#endif
+#if ENABLE(POINTER_LOCK)
+        PointerLockController* pointerLockController() const { return m_pointerLockController.get(); }
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInput* speechInput();
@@ -385,6 +389,9 @@ namespace WebCore {
 #endif
 #if ENABLE(NOTIFICATIONS)
         OwnPtr<NotificationController> m_notificationController;
+#endif
+#if ENABLE(POINTER_LOCK)
+        OwnPtr<PointerLockController> m_pointerLockController;
 #endif
 #if ENABLE(INPUT_SPEECH)
         SpeechInputClient* m_speechInputClient;
