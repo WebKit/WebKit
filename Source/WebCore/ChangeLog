@@ -1,3 +1,29 @@
+2012-01-26  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Allow modification of size of partially occluded quads during culling to reduce pixel overdraw.
+        https://bugs.webkit.org/show_bug.cgi?id=76349
+
+        Reviewed by James Robinson.
+
+        Prior to this patch, draw culling either rejects a DrawQuad because it is completely
+        occluded, or draws the entire quad (even if it is largely occluded). This patch
+        attempts to reduce the number of pixels drawn by determining if a partially
+        occluded DrawQuad can be resized to a smaller quad, based on what portion of the
+        DrawQuad is actually visible, and performing that resizing where possible.
+
+        Added cases to existing unit tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::CCDrawQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::setQuadVisibleRect):
+        (WebCore::CCDrawQuad::quadVisibleRect):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::rectSubtractRegion):
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+
 2012-01-26  Anders Carlsson  <andersca@apple.com>
 
         Scrollbars disappear when switching from legacy to overlay scrollbars

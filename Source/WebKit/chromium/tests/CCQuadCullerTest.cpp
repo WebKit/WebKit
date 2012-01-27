@@ -26,6 +26,7 @@
 
 #include "cc/CCQuadCuller.h"
 
+#include "cc/CCTileDrawQuad.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -36,37 +37,29 @@ namespace {
 class CCQuadCullerTest : public testing::Test {
 };
 
-class TestDrawQuad : public CCDrawQuad {
-public:
-    TestDrawQuad(const CCSharedQuadState* state, Material m, const IntRect& rect)
-    : CCDrawQuad(state, m, rect)
-    {
-    }
-
-    static PassOwnPtr<TestDrawQuad> create(const CCSharedQuadState* state, Material m, const IntRect& rect)
-    {
-        return adoptPtr(new TestDrawQuad(state, m, rect));
-    }
-};
+static PassOwnPtr<CCDrawQuad> MakeTileQuad(CCSharedQuadState* state, const IntRect& rect)
+{
+    return CCTileDrawQuad::create(state, rect, 1, IntPoint(1, 1), IntSize(100, 100), 0, false, false, false, false, false);
+}
 
 void setQuads(CCSharedQuadState* rootState, CCSharedQuadState* childState, CCQuadList& quadList)
 {
     quadList.clear();
 
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(100, 0), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(200, 0), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(0, 100), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(100, 100), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(200, 100), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(0, 200), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(100, 200), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(rootState, CCDrawQuad::TiledContent, IntRect(IntPoint(200, 200), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 0), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 0), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(0, 200), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(100, 200), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(rootState, IntRect(IntPoint(200, 200), IntSize(100, 100))));
 
-    quadList.append(TestDrawQuad::create(childState, CCDrawQuad::TiledContent, IntRect(IntPoint(), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(childState, CCDrawQuad::TiledContent, IntRect(IntPoint(100, 0), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(childState, CCDrawQuad::TiledContent, IntRect(IntPoint(0, 100), IntSize(100, 100))));
-    quadList.append(TestDrawQuad::create(childState, CCDrawQuad::TiledContent, IntRect(IntPoint(100, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 0), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(0, 100), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState, IntRect(IntPoint(100, 100), IntSize(100, 100))));
 }
 
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
@@ -129,6 +122,67 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
     EXPECT_EQ(quadList.size(), 13u);
     CCQuadCuller::cullOccludedQuads(quadList);
     EXPECT_EQ(quadList.size(), 12u);
+
+    IntRect quadVisibleRect1 = quadList[1].get()->quadVisibleRect();
+    EXPECT_EQ(quadVisibleRect1.height(), 50);
+
+    IntRect quadVisibleRect3 = quadList[3].get()->quadVisibleRect();
+    EXPECT_EQ(quadVisibleRect3.width(), 50);
+
+    // Next index is 4, not 5, since centre quad culled.
+    IntRect quadVisibleRect4 = quadList[4].get()->quadVisibleRect();
+    EXPECT_EQ(quadVisibleRect4.width(), 50);
+    EXPECT_EQ(quadVisibleRect4.x(), 250);
+
+    IntRect quadVisibleRect6 = quadList[6].get()->quadVisibleRect();
+    EXPECT_EQ(quadVisibleRect6.height(), 50);
+    EXPECT_EQ(quadVisibleRect6.y(), 250);
+}
+
+TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    childTransform.translate(100, 100);
+
+    // Create root layer tile with extent (99.1, 99.1) -> (200.9, 200.9) to make
+    // sure it doesn't get culled due to transform rounding.
+    TransformationMatrix rootTransform;
+    rootTransform.translate(99.1, 99.1);
+    rootTransform.scale(1.018);
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(rootTransform, TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    quadList.append(MakeTileQuad(rootState.get(), IntRect(IntPoint(), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
+
+    EXPECT_EQ(quadList.size(), 2u);
+    CCQuadCuller::cullOccludedQuads(quadList);
+    EXPECT_EQ(quadList.size(), 2u);
+}
+
+TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    // Make the child quad slightly smaller than, and centred over, the root layer tile.
+    // Verify the child does not cause the quad below to be culled due to rounding.
+    childTransform.translate(100.1, 100.1);
+    childTransform.scale(0.982);
+
+    TransformationMatrix rootTransform;
+    rootTransform.translate(100, 100);
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(rootTransform, TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    quadList.append(MakeTileQuad(rootState.get(), IntRect(IntPoint(), IntSize(100, 100))));
+    quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
+
+    EXPECT_EQ(quadList.size(), 2u);
+    CCQuadCuller::cullOccludedQuads(quadList);
+    EXPECT_EQ(quadList.size(), 2u);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)

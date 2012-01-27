@@ -544,7 +544,7 @@ static void findTileProgramUniforms(LayerRendererChromium* layerRenderer, const 
 
 void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 {
-    const IntRect& tileRect = quad->quadRect();
+    const IntRect& tileRect = quad->quadVisibleRect();
 
     FloatRect clampRect(tileRect);
     // Clamp texture coordinates to avoid sampling outside the layer
@@ -560,7 +560,8 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     clampRect.inflateY(-clampY);
     FloatSize clampOffset = clampRect.minXMinYCorner() - FloatRect(tileRect).minXMinYCorner();
 
-    FloatPoint textureOffset = quad->textureOffset() + clampOffset;
+    FloatPoint textureOffset = quad->textureOffset() + clampOffset +
+                               IntPoint(quad->quadVisibleRect().location() - quad->quadRect().location());
 
     // Map clamping rectangle to unit square.
     float vertexTexTranslateX = -clampRect.x() / clampRect.width();
@@ -623,13 +624,14 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
         CCLayerQuad::Edge topEdge(topLeft, topRight);
         CCLayerQuad::Edge rightEdge(topRight, bottomRight);
 
-        if (quad->topEdgeAA())
+        // Only apply anti-aliasing to edges not clipped during culling.
+        if (quad->topEdgeAA() && quad->quadVisibleRect().y() == quad->quadRect().y())
             topEdge = deviceLayerEdges.top();
-        if (quad->leftEdgeAA())
+        if (quad->leftEdgeAA() && quad->quadVisibleRect().x() == quad->quadRect().x())
             leftEdge = deviceLayerEdges.left();
-        if (quad->rightEdgeAA())
+        if (quad->rightEdgeAA() && quad->quadVisibleRect().maxX() == quad->quadRect().maxX())
             rightEdge = deviceLayerEdges.right();
-        if (quad->bottomEdgeAA())
+        if (quad->bottomEdgeAA() && quad->quadVisibleRect().maxY() == quad->quadRect().maxY())
             bottomEdge = deviceLayerEdges.bottom();
 
         float sign = FloatQuad(tileRect).isCounterclockwise() ? -1 : 1;

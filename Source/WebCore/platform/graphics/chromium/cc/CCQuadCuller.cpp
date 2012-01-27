@@ -50,16 +50,29 @@ void swap(OwnPtr<WebCore::CCDrawQuad>& a, OwnPtr<WebCore::CCDrawQuad>& b)
 
 namespace WebCore {
 
-static bool regionContainsRect(const Region& region, const IntRect& rect)
+// Determines what portion of rect, if any, is visible (not occluded by region). If
+// the resulting visible region is not rectangular, we just return the original rect.
+static IntRect rectSubtractRegion(const Region& region, const IntRect& rect)
 {
     Region rectRegion(rect);
     Region intersectRegion(intersect(region, rectRegion));
 
     if (intersectRegion.isEmpty())
-        return false;
+        return rect;
 
+    // Test if intersectRegion = rectRegion, if so return empty rect.
     rectRegion.subtract(intersectRegion);
-    return rectRegion.isEmpty();
+    IntRect boundsRect = rectRegion.bounds();
+    if (boundsRect.isEmpty())
+        return boundsRect;
+
+    // Test if rectRegion is still a rectangle. If it is, it will be identical to its bounds.
+    Region boundsRegion(boundsRect);
+    boundsRegion.subtract(rectRegion);
+    if (boundsRegion.isEmpty())
+        return boundsRect;
+
+    return rect;
 }
 
 static IntRect enclosedIntRect(const FloatRect& rect)
@@ -87,14 +100,21 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
     for (int i = quadList.size() - 1; i >= 0; --i) {
         CCDrawQuad* drawQuad = quadList[i].get();
 
-        IntRect quadRect(drawQuad->quadTransform().mapRect(drawQuad->quadRect()));
+        FloatRect floatTransformedRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->quadRect()));
+        // Inflate rect to be tested to stay conservative.
+        IntRect transformedQuadRect(enclosingIntRect(floatTransformedRect));
 
-        bool keepQuad = !regionContainsRect(opaqueCoverageThusFar, quadRect);
+        IntRect transformedVisibleQuadRect = rectSubtractRegion(opaqueCoverageThusFar, transformedQuadRect);
+        bool keepQuad = !transformedVisibleQuadRect.isEmpty();
 
-        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect()) {
-            IntRect opaqueRect = enclosedIntRect(drawQuad->quadTransform().mapRect(FloatRect(drawQuad->quadRect())));
-            opaqueCoverageThusFar.unite(opaqueRect);
-        }
+        // See if we can reduce the number of pixels to draw by reducing the size of the draw
+        // quad - we do this by changing its visible rect.
+        if (keepQuad && transformedVisibleQuadRect != transformedQuadRect && drawQuad->isLayerAxisAlignedIntRect())
+            drawQuad->setQuadVisibleRect(drawQuad->quadTransform().inverse().mapRect(transformedVisibleQuadRect));
+
+        // When adding rect to opaque region, deflate it to stay conservative.
+        if (keepQuad && drawQuad->drawsOpaque() && drawQuad->isLayerAxisAlignedIntRect())
+            opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatTransformedRect)));
 
         if (keepQuad)
             culledList.append(quadList[i].release());

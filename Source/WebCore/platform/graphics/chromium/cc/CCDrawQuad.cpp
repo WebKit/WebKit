@@ -42,11 +42,18 @@ CCDrawQuad::CCDrawQuad(const CCSharedQuadState* sharedQuadState, Material materi
     : m_sharedQuadState(sharedQuadState)
     , m_material(material)
     , m_quadRect(quadRect)
+    , m_quadVisibleRect(quadRect)
     , m_quadOpaque(true)
     , m_needsBlending(false)
 {
     ASSERT(m_sharedQuadState);
     ASSERT(m_material != Invalid);
+}
+
+void CCDrawQuad::setQuadVisibleRect(const IntRect& quadVisibleRect)
+{
+    m_quadVisibleRect = quadVisibleRect;
+    m_quadVisibleRect.intersect(m_quadRect);
 }
 
 const CCDebugBorderDrawQuad* CCDrawQuad::toDebugBorderDrawQuad() const

@@ -56,6 +56,11 @@ public:
     bool needsBlending() const { return !m_sharedQuadState->isOpaque() || m_needsBlending || opacity() != 1; }
     bool isLayerAxisAlignedIntRect() const { return m_sharedQuadState->isLayerAxisAlignedIntRect(); }
 
+    // Allows changing the rect that gets drawn to make it smaller. Parameter passed
+    // in will be clipped to quadRect().
+    void setQuadVisibleRect(const IntRect&);
+    const IntRect& quadVisibleRect() const { return m_quadVisibleRect; }
+
     enum Material {
         Invalid,
         DebugBorder,
@@ -84,6 +89,7 @@ protected:
 
     Material m_material;
     IntRect m_quadRect;
+    IntRect m_quadVisibleRect;
 
     // By default, the shared quad state determines whether or not this quad is
     // opaque or needs blending. Derived classes can override with these
