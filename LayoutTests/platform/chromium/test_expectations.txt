@@ -42,6 +42,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
+BUGWK77184 DEBUG SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGWK77069 DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking.html = FAIL
