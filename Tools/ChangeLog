@@ -1,3 +1,10 @@
+2012-01-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fix, add WebCore/testing/js
+        to the list of source directories we build.
+
+        * waf/build/settings.py:
+
 2012-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         Tools/Scripts/commit-log-editor is broken due to $_ getting clobbered
