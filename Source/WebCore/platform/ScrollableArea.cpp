@@ -181,7 +181,7 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     // Tell the scrollbars to update their thumb postions.
     if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar()) {
         horizontalScrollbar->offsetDidChange();
-        if (horizontalScrollbar->isOverlayScrollbar()) {
+        if (horizontalScrollbar->isOverlayScrollbar() && !hasLayerForHorizontalScrollbar()) {
             if (!verticalScrollbar)
                 horizontalScrollbar->invalidate();
             else {
@@ -195,7 +195,7 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     }
     if (verticalScrollbar) {
         verticalScrollbar->offsetDidChange();
-        if (verticalScrollbar->isOverlayScrollbar())
+        if (verticalScrollbar->isOverlayScrollbar() && !hasLayerForVerticalScrollbar())
             verticalScrollbar->invalidate();
     }
 }
