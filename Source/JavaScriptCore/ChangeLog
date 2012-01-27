@@ -1,5 +1,24 @@
 2012-01-27  MORITA Hajime  <morrita@google.com>
 
+        [JSC] Some JS_EXPORTDATA may not be necessary.
+        https://bugs.webkit.org/show_bug.cgi?id=77145
+
+        Reviewed by Darin Adler.
+
+        Removed JS_EXPORTDATA attributes whose attributing symbols are
+        not exported on Mac port.
+        
+        * runtime/ExceptionHelpers.h:
+        (InterruptedExecutionError):
+        * runtime/JSBoundFunction.h:
+        (JSBoundFunction):
+        * runtime/RegExp.h:
+        (RegExp):
+        * runtime/RegExpMatchesArray.h:
+        (RegExpMatchesArray):
+
+2012-01-27  MORITA Hajime  <morrita@google.com>
+
         [WTF] WTFString.h has some extra JS_EXPORT_PRIVATEs
         https://bugs.webkit.org/show_bug.cgi?id=77113
 
