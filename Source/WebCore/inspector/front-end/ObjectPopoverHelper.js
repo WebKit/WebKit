@@ -34,8 +34,9 @@
  */
 WebInspector.ObjectPopoverHelper = function(panelElement, getAnchor, queryObject, onHide, disableOnClick)
 {
-    WebInspector.PopoverHelper.call(this, panelElement, getAnchor, this._showObjectPopover.bind(this), onHide, disableOnClick);
+    WebInspector.PopoverHelper.call(this, panelElement, getAnchor, this._showObjectPopover.bind(this), this._onHideObjectPopover.bind(this), disableOnClick);
     this._queryObject = queryObject;
+    this._onHideCallback = onHide;
     panelElement.addEventListener("scroll", this.hidePopover.bind(this), true);
 };
 
@@ -56,6 +57,32 @@ WebInspector.ObjectPopoverHelper.prototype = {
                 popoverContentElement.className = "monospace console-formatted-" + result.type;
                 popoverContentElement.style.whiteSpace = "pre";
                 popoverContentElement.textContent = result.description;
+                if (result.type === "function") {
+                    function didGetDetails(error, response)
+                    {
+                        if (error) {
+                            console.error(error);
+                            return;
+                        }
+                        var container = document.createElement("div");
+                        container.style.display = "inline-block";
+
+                        var title = container.createChild("div", "function-popover-title source-code");
+                        var functionName = title.createChild("span", "function-name");
+                        functionName.textContent = response.name || response.inferredName || response.displayName || WebInspector.UIString("(anonymous function)");
+
+                        this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+                        var link = this._linkifier.linkifyFunctionLocation(response.location, "function-location-link");
+                        if (link)
+                            title.appendChild(link);
+
+                        container.appendChild(popoverContentElement);
+
+                        popover.show(container, element);
+                    }
+                    DebuggerAgent.getFunctionDetails(result.objectId, didGetDetails.bind(this));
+                    return;
+                }
                 if (result.type === "string")
                     popoverContentElement.textContent = "\"" + popoverContentElement.textContent + "\"";
                 popover.show(popoverContentElement, element);
@@ -84,6 +111,16 @@ WebInspector.ObjectPopoverHelper.prototype = {
             }
         }
         this._queryObject(element, showObjectPopover.bind(this));
+    },
+
+    _onHideObjectPopover: function()
+    {
+        if (this._linkifier) {
+            this._linkifier.reset();
+            delete this._linkifier;
+        }
+        if (this._onHideCallback)
+            this._onHideCallback();
     },
 
     _updateHTMLId: function(properties, rootTreeElementConstructor, rootPropertyComparer)

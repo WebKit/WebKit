@@ -78,7 +78,7 @@ public:
                              bool returnByValue,
                              RefPtr<InspectorObject>* result,
                              bool* wasThrown);
-    void getFunctionLocation(ErrorString*, const String& functionId, RefPtr<InspectorObject>* result);
+    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<InspectorObject>* result);
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
     void releaseObject(const String& objectId);

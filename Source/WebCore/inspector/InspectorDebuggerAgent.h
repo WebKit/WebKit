@@ -89,7 +89,7 @@ public:
     void searchInContent(ErrorString*, const String& scriptId, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>&);
     void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>& newCallFrames, RefPtr<InspectorObject>& result);
     void getScriptSource(ErrorString*, const String& scriptId, String* scriptSource);
-    void getFunctionLocation(ErrorString*, const String& functionId, RefPtr<InspectorObject>& location);
+    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<InspectorObject>& details);
     void schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
     void breakProgram(const String& breakReason, PassRefPtr<InspectorObject> data);

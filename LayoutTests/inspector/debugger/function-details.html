@@ -1,0 +1,112 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>  function firstLineFunction()
+
+{
+}
+
+   function notFirstLineFunction()
+
+{
+}
+
+var obj = {
+    m: function() {}
+}
+
+function functionWithDisplayName() {}
+functionWithDisplayName.displayName = "user-friendly name";
+
+function test()
+{
+    function dumpFunctionDetails(details)
+    {
+        InspectorTest.addResult("Function details: ");
+        InspectorTest.addResult("lineNumber: " + details.location.lineNumber);
+        InspectorTest.addResult("columnNumber: " + details.location.columnNumber);
+        InspectorTest.addResult("scriptId is valid: " + !!details.location.scriptId);
+        InspectorTest.addResult("name: " + details.name);
+        InspectorTest.addResult("displayName: " + details.displayName);
+        InspectorTest.addResult("inferredName: " + details.inferredName);
+    }
+
+
+    InspectorTest.runDebuggerTestSuite([
+        function testGetFirstLineFunctionDetails(next)
+        {
+            InspectorTest.evaluateInPage("firstLineFunction", didEvaluate);
+
+            function didEvaluate(remote)
+            {
+                InspectorTest.addResult("firstLineFunction type = " + remote.type);
+                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
+            }
+            function didGetDetails(error, response)
+            {
+                dumpFunctionDetails(response);
+                next();
+            }
+        },
+        function testGetNonFirstLineFunctionDetails(next)
+        {
+            InspectorTest.evaluateInPage("notFirstLineFunction", didEvaluate);
+
+            function didEvaluate(remote)
+            {
+                InspectorTest.addResult("nonFirstLineFunction type = " + remote.type);
+                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
+            }
+            function didGetDetails(error, response)
+            {
+                dumpFunctionDetails(response);
+                next();
+            }
+        },
+        function testGetDetailsOfFunctionWithInferredName(next)
+        {
+            InspectorTest.evaluateInPage("obj.m", didEvaluate);
+
+            function didEvaluate(remote)
+            {
+                InspectorTest.addResult("obj.m type = " + remote.type);
+                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
+            }
+            function didGetDetails(error, response)
+            {
+                dumpFunctionDetails(response);
+                next();
+            }
+        },
+        function testGetDetailsOfFunctionWithDisplayName(next)
+        {
+            InspectorTest.evaluateInPage("functionWithDisplayName", didEvaluate);
+
+            function didEvaluate(remote)
+            {
+                InspectorTest.addResult("functionWithDisplayName type = " + remote.type);
+                DebuggerAgent.getFunctionDetails(remote.objectId, didGetDetails);
+            }
+            function didGetDetails(error, response)
+            {
+                dumpFunctionDetails(response);
+                next();
+            }
+        }
+
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests that Debugger.getFunctionDetails command returns correct location.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=71808">Bug 71808</a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+Tests that Debugger.getFunctionDetails command returns correct location. Bug 71808
+
+Debugger was enabled.
+
+Running: testGetFirstLineFunctionDetails
+firstLineFunction type = function
+Function details: 
+lineNumber: 7
+columnNumber: undefined
+scriptId is valid: true
+name: firstLineFunction
+displayName: undefined
+inferredName: undefined
+
+Running: testGetNonFirstLineFunctionDetails
+nonFirstLineFunction type = function
+Function details: 
+lineNumber: 12
+columnNumber: undefined
+scriptId is valid: true
+name: notFirstLineFunction
+displayName: undefined
+inferredName: undefined
+
+Running: testGetDetailsOfFunctionWithInferredName
+obj.m type = function
+Function details: 
+lineNumber: 16
+columnNumber: undefined
+scriptId is valid: true
+name: undefined
+displayName: undefined
+inferredName: undefined
+
+Running: testGetDetailsOfFunctionWithDisplayName
+functionWithDisplayName type = function
+Function details: 
+lineNumber: 19
+columnNumber: undefined
+scriptId is valid: true
+name: functionWithDisplayName
+displayName: user-friendly name
+inferredName: undefined
+Debugger was disabled.
+

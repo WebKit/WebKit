@@ -367,7 +367,8 @@
                     { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
                     { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                     { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
-                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." }
+                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
+                    { "name": "functionName", "type": "string", "optional": true, "description": "User-friendly name of the function represented by this object." }
                 ]
             },
             {
@@ -1981,6 +1982,18 @@
                 "description": "Location in the source code."
             },
             {
+                "id": "FunctionDetails",
+                "hidden": true,
+                "type": "object",
+                "properties": [
+                    { "name": "location", "$ref": "Location", "description": "Location of the function." },
+                    { "name": "name", "type": "string", "optional": true, "description": "Name of the function. Not present for anonymous functions." },
+                    { "name": "displayName", "type": "string", "optional": true, "description": "Display name of the function(specified in 'displayName' property on the function object)." },
+                    { "name": "inferredName", "type": "string", "optional": true, "description": "Name of the function inferred from its initial assignment." }
+                ],
+                "description": "Information about the function."
+            },
+            {
                 "id": "CallFrame",
                 "type": "object",
                 "properties": [
@@ -2139,14 +2152,15 @@
                 "description": "Returns source for the script with given id."
             },
             {
-                "name": "getFunctionLocation",
+                "name": "getFunctionDetails",
+                "hidden": true,
                 "parameters": [
                     { "name": "functionId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the function to get location for." }
                 ],
                 "returns": [
-                    { "name": "location", "$ref": "Location", "description": "Function location." }
+                    { "name": "details", "$ref": "FunctionDetails", "description": "Information about the function." }
                 ],
-                "description": "Returns location of given function."
+                "description": "Returns detailed informtation on given function."
             },
             {
                 "name": "setPauseOnExceptions",

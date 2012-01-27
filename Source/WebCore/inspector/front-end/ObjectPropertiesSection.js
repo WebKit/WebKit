@@ -259,18 +259,18 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     _functionContextMenuEventFired: function(event)
     {
-        function didGetLocation(error, response)
+        function didGetDetails(error, response)
         {
             if (error) {
                 console.error(error);
                 return;
             }
-            WebInspector.panels.scripts.showFunctionDefinition(response);
+            WebInspector.panels.scripts.showFunctionDefinition(response.location);
         }
 
         function revealFunction()
         {
-            DebuggerAgent.getFunctionLocation(this.property.value.objectId, didGetLocation.bind(this));
+            DebuggerAgent.getFunctionDetails(this.property.value.objectId, didGetDetails.bind(this));
         }
 
         var contextMenu = new WebInspector.ContextMenu();

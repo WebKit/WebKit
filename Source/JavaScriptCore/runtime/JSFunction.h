@@ -65,7 +65,7 @@ namespace JSC {
         static void destroy(JSCell*);
 
         JS_EXPORT_PRIVATE const UString& name(ExecState*);
-        const UString displayName(ExecState*);
+        JS_EXPORT_PRIVATE const UString displayName(ExecState*);
         const UString calculatedDisplayName(ExecState*);
 
         ScopeChainNode* scope()

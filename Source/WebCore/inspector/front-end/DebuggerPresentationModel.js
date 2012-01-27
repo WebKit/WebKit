@@ -987,6 +987,14 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
         return anchor;
     },
 
+    linkifyFunctionLocation: function(functionLocation, classes)
+    {
+        var rawSourceCode = this._model._rawSourceCodeForScriptId[functionLocation.scriptId];
+        if (!rawSourceCode)
+            return undefined;
+        return this.linkifyRawSourceCode(rawSourceCode, functionLocation.lineNumber, functionLocation.columnNumber, classes);
+    },
+
     reset: function()
     {
         for (var id in this._anchorsForRawSourceCode) {

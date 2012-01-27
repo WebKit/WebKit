@@ -157,7 +157,7 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSInjectedScriptHost::functionLocation(ExecState* exec)
+JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
@@ -174,9 +174,18 @@ JSValue JSInjectedScriptHost::functionLocation(ExecState* exec)
         lineNumber -= 1; // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
     UString scriptId = UString::number(sourceCode->provider()->asID());
 
+    JSObject* location = constructEmptyObject(exec);
+    location->putDirect(exec->globalData(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
+    location->putDirect(exec->globalData(), Identifier(exec, "scriptId"), jsString(exec, scriptId));
+
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->globalData(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
-    result->putDirect(exec->globalData(), Identifier(exec, "scriptId"), jsString(exec, scriptId));
+    result->putDirect(exec->globalData(), Identifier(exec, "location"), location);
+    UString name = function->name(exec);
+    if (!name.isEmpty())
+        result->putDirect(exec->globalData(), Identifier(exec, "name"), jsString(exec, name));
+    UString displayName = function->displayName(exec);
+    if (!displayName.isEmpty())
+        result->putDirect(exec->globalData(), Identifier(exec, "displayName"), jsString(exec, displayName));
     return result;
 }
 

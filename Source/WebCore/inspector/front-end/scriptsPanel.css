@@ -295,3 +295,18 @@
     padding-left: 2px;
     top: 1px;
 }
+
+.function-location-link {
+    float: right;
+    margin-left: 10px;
+}
+
+.function-popover-title {
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 3px;
+    padding-bottom: 2px;
+}
+
+.function-popover-title .function-name {
+    font-weight: bold;
+}

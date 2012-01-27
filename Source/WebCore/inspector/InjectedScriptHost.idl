@@ -44,7 +44,7 @@ module core {
         [Custom] DOMObject internalConstructorName(in DOMObject object);
         [Custom] boolean isHTMLAllCollection(in DOMObject object);
         [Custom] DOMString type(in DOMObject object);
-        [Custom] DOMObject functionLocation(in DOMObject object);
+        [Custom] DOMObject functionDetails(in DOMObject object);
 
         [Custom] int databaseId(in DOMObject database);
         [Custom] int storageId(in DOMObject storage);

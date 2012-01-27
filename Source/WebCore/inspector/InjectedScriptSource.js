@@ -194,13 +194,13 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
-    getFunctionLocation: function(functionId)
+    getFunctionDetails: function(functionId)
     {
         var parsedFunctionId = this._parseObjectId(functionId);
         var func = this._objectForId(parsedFunctionId);
         if (typeof func !== "function")
             return "Cannot resolve function by id.";
-        return InjectedScriptHost.functionLocation(func);
+        return InjectedScriptHost.functionDetails(func);
     },
 
     releaseObject: function(objectId)

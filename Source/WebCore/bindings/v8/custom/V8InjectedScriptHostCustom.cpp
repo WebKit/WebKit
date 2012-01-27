@@ -150,9 +150,9 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::functionLocationCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Arguments& args)
 {
-    INC_STATS("InjectedScriptHost.typeCallback()");
+    INC_STATS("InjectedScriptHost.functionDetailsCallback()");
     if (args.Length() < 1)
         return v8::Undefined();
 
@@ -164,10 +164,22 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionLocationCallback(const v8::A
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(value);
     int lineNumber = function->GetScriptLineNumber();
     int columnNumber = function->GetScriptColumnNumber();
+
+    v8::Local<v8::Object> location = v8::Object::New();
+    location->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
+    location->Set(v8::String::New("columnNumber"), v8::Integer::New(columnNumber));
+    location->Set(v8::String::New("scriptId"), function->GetScriptId()->ToString());
+
     v8::Local<v8::Object> result = v8::Object::New();
-    result->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
-    result->Set(v8::String::New("columnNumber"), v8::Integer::New(columnNumber));
-    result->Set(v8::String::New("scriptId"), function->GetScriptId()->ToString());
+    result->Set(v8::String::New("location"), location);
+
+    v8::Handle<v8::Value> name = function->GetName();
+    if (name->IsString() && v8::Handle<v8::String>::Cast(name)->Length())
+        result->Set(v8::String::New("name"), name);
+
+    v8::Handle<v8::Value> inferredName = function->GetInferredName();
+    if (inferredName->IsString() && v8::Handle<v8::String>::Cast(inferredName)->Length())
+        result->Set(v8::String::New("inferredName"), inferredName);
     return result;
 }
 

@@ -88,9 +88,9 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::getFunctionLocation(ErrorString* errorString, const String& functionId, RefPtr<InspectorObject>* result)
+void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<InspectorObject>* result)
 {
-    ScriptFunctionCall function(m_injectedScriptObject, "getFunctionLocation");
+    ScriptFunctionCall function(m_injectedScriptObject, "getFunctionDetails");
     function.appendArgument(functionId);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);

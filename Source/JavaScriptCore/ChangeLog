@@ -1,3 +1,18 @@
+2012-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: should be possible to open function declaration from script popover
+        https://bugs.webkit.org/show_bug.cgi?id=76913
+
+        Added display function name and source location to the popover in scripts panel.
+        Now when a function is hovered user can navigate to its definition.
+
+        Reviewed by Pavel Feldman.
+
+        * JavaScriptCore/JavaScriptCore.exp
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSFunction.h:
+        (JSFunction):
+
 2012-01-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fix, wx uses the Mac ICU headers so we must match Mac behavior.

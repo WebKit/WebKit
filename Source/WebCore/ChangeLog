@@ -1,3 +1,50 @@
+2012-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: should be possible to open function declaration from script popover
+        https://bugs.webkit.org/show_bug.cgi?id=76913
+
+        Added inferred/display function name and source location to the popover in scripts panel.
+        Now when a function is hovered user can navigate to its definition.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/function-details.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::functionDetails):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::functionDetailsCallback):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getFunctionDetails):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getFunctionDetails):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.Linkifier.prototype.linkifyFunctionLocation):
+        * inspector/front-end/ObjectPopoverHelper.js:
+        (WebInspector.ObjectPopoverHelper):
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover.showObjectPopover.):
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover):
+        (WebInspector.ObjectPopoverHelper.prototype._onHideObjectPopover):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype._functionContextMenuEventFired.revealFunction):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get functionName):
+        * inspector/front-end/scriptsPanel.css:
+        (.function-location-link):
+        (.function-popover-title):
+        (.function-popover-title .function-name):
+
 2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
 
         Remove FIXME: ColorProfile encapsulation as a Vector<char> works well 
