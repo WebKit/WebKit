@@ -15,6 +15,8 @@ context = canvas.getContext("2d");
 imageData = context.createImageData(10,10);
 data = imageData.data;
 
+shouldBe("data.length", "400");
+
 for (var i = 0; i < 1000; ++i) {
     doPut(data, i % 100, i - 100);
     var expectedValue;

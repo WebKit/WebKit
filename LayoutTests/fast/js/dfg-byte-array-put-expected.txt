@@ -3,6 +3,7 @@ This tests that the DFG JIT's optimizations for byte arrays work as expected.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS data.length is 400
 PASS doGet(data, 0) is 0
 PASS doGet(data, 1) is 0
 PASS doGet(data, 2) is 0
