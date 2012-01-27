@@ -1,3 +1,20 @@
+2012-01-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: detailed heap snapshot: Replace (Native objects) root element
+        with '(Detached DOM trees)' and '(Document DOM trees)'
+        https://bugs.webkit.org/show_bug.cgi?id=77201
+
+        I think it'd be nice to replace one group containing all native objects with
+        separate groups for different types of native objects.
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/v8/RetainedDOMInfo.cpp:
+        (WebCore::RetainedDOMInfo::GetGroupLabel):
+        (WebCore):
+        * bindings/v8/RetainedDOMInfo.h:
+        (RetainedDOMInfo):
+
 2012-01-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         <feImage> doesn't work with local references when using primitiveUnits="objectBoundingBox"

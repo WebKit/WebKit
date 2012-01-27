@@ -45,6 +45,7 @@ public:
     virtual void Dispose();
     virtual bool IsEquivalent(v8::RetainedObjectInfo* other);
     virtual intptr_t GetHash();
+    virtual const char* GetGroupLabel();
     virtual const char* GetLabel();
     virtual intptr_t GetElementCount();
     virtual intptr_t GetEquivalenceClass();
