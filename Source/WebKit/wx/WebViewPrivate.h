@@ -30,10 +30,10 @@
 #define WXWEBVIEWPRIVATE_H
 
 #include "config.h"
-#include "EditCommand.h"
-#include "EditCommandWx.h"
+#include "UndoStep.h"
 #include "Page.h"
-#include "wtf/Vector.h"
+#include "wtf/Deque.h"
+#include "wtf/RefPtr.h"
 
 #include <wx/timer.h>
 
@@ -49,8 +49,8 @@ public:
     wxTimer tripleClickTimer;
     wxPoint tripleClickPos;
     
-    WTF::Vector<EditCommandWx> undoStack;
-    WTF::Vector<EditCommandWx> redoStack;
+    WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > undoStack;
+    WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > redoStack;
 };
 
 #endif

@@ -384,8 +384,10 @@ wxString wxWebFrame::RunScript(const wxString& javascript)
             wxASSERT_MSG(jsEnabled, wxT("RunScript requires JavaScript to be enabled."));
             if (jsEnabled) {
                 JSC::JSValue result = controller->executeScript(javascript, true).jsValue();
-                if (result)
-                    returnValue = wxString(result.toString(m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec()).utf8().data(), wxConvUTF8);        
+                if (result) {
+                    JSC::ExecState* exec = m_impl->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec();
+                    returnValue = wxString(result.toString(exec)->value(exec).utf8().data(), wxConvUTF8);
+                }
             }
         }
     }

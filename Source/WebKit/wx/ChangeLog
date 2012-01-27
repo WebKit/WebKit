@@ -1,3 +1,25 @@
+2012-01-26  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. 
+        Build fixes after UndoStep and ChromeClient changes.
+
+        * WebFrame.cpp:
+        (wxWebFrame::RunScript):
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore):
+        (WebCore::ChromeClientWx::hasOpenedPopup):
+        * WebKitSupport/ChromeClientWx.h:
+        (ChromeClientWx):
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::registerUndoStep):
+        (WebCore::EditorClientWx::registerRedoStep):
+        (WebCore::EditorClientWx::undo):
+        (WebCore::EditorClientWx::redo):
+        * WebKitSupport/EditorClientWx.h:
+        (EditorClientWx):
+        * WebViewPrivate.h:
+        (WebViewPrivate):
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename registerCommandFor(Undo|Redo) to register(Undo|Redo)Step

@@ -77,8 +77,8 @@ public:
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();
 
-    virtual void registerUndoStep(PassRefPtr<EditCommand>);
-    virtual void registerRedoStep(PassRefPtr<EditCommand>);
+    virtual void registerUndoStep(PassRefPtr<UndoStep>);
+    virtual void registerRedoStep(PassRefPtr<UndoStep>);
     virtual void clearUndoRedoOperations();
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const;

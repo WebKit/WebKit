@@ -151,6 +151,8 @@ public:
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
+    
+    virtual bool hasOpenedPopup() const;
 
 private:
     wxWebView* m_webView;

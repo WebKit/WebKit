@@ -490,5 +490,11 @@ PassRefPtr<SearchPopupMenu> ChromeClientWx::createSearchPopupMenu(PopupMenuClien
 {
     return adoptRef(new SearchPopupMenuWx(client));
 }
+    
+bool ChromeClientWx::hasOpenedPopup() const
+{
+    notImplemented();
+    return false;
+}
 
 }

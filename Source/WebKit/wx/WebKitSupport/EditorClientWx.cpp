@@ -276,27 +276,25 @@ void EditorClientWx::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientWx::registerUndoStep(PassRefPtr<EditCommand> command)
+void EditorClientWx::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     if (frame) {
         wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
-        if (webKitWin) {
-            webKitWin->m_impl->undoStack.append(EditCommandWx(command));
-        }
+        if (webKitWin)
+            webKitWin->m_impl->undoStack.append(step);
     }
 }
 
-void EditorClientWx::registerRedoStep(PassRefPtr<EditCommand> command)
+void EditorClientWx::registerRedoStep(PassRefPtr<UndoStep> step)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     if (frame) {
         wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
-        if (webKitWin) {
-            webKitWin->m_impl->redoStack.insert(0, EditCommandWx(command));
-        }
+        if (webKitWin)
+            webKitWin->m_impl->redoStack.append(step);
     }
 }
 
@@ -356,8 +354,8 @@ void EditorClientWx::undo()
     if (frame) {
         wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
         if (webKitWin) {
-            webKitWin->m_impl->undoStack.last().editCommand()->unapply();
-            webKitWin->m_impl->undoStack.removeLast();
+            webKitWin->m_impl->undoStack.last()->unapply();
+            webKitWin->m_impl->undoStack.remove(--webKitWin->m_impl->undoStack.end());
         }
     }
 }
@@ -369,8 +367,8 @@ void EditorClientWx::redo()
     if (frame) {    
         wxWebView* webKitWin = dynamic_cast<wxWebView*>(frame->view()->hostWindow()->platformPageClient());
         if (webKitWin) {
-            webKitWin->m_impl->redoStack.last().editCommand()->reapply();
-            webKitWin->m_impl->redoStack.removeLast();
+            webKitWin->m_impl->redoStack.last()->reapply();
+            webKitWin->m_impl->redoStack.remove(--webKitWin->m_impl->redoStack.end());
         }
     }
 }
