@@ -103,6 +103,7 @@ BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 // Currently Web Intents is disabled. Tests pass with the proper
 // build flag turned on.
 BUGGBILLOCK SKIP : webintents = FAIL
+BUGWK77227 : fast/dom/navigator-detached-no-crash.html = TEXT
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
