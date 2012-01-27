@@ -56,6 +56,9 @@ public:
 
     void pageDestroyed();
 
+    // Return whether this scrolling coordinator handles scrolling for the given frame view.
+    bool coordinatesScrollingForFrameView(FrameView*) const;
+
     // Should be called whenever the scroll layer for the given frame view changes.
     void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
 

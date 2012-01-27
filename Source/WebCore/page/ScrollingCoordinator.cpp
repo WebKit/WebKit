@@ -62,6 +62,18 @@ void ScrollingCoordinator::pageDestroyed()
     m_page = 0;
 }
 
+bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView) const
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    // We currently only handle the main frame.
+    if (frameView->frame() != m_page->mainFrame())
+        return false;
+
+    return true;
+}
+
 void ScrollingCoordinator::syncFrameViewGeometry(FrameView* frameView)
 {
     ASSERT(isMainThread());

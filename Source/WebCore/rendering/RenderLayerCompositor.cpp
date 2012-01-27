@@ -1677,10 +1677,18 @@ bool RenderLayerCompositor::keepLayersPixelAligned() const
     return true;
 }
 
-static bool shouldCompositeOverflowControls(ScrollView* view)
+static bool shouldCompositeOverflowControls(FrameView* view)
 {
     if (view->platformWidget())
         return false;
+
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = view->frame()->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            return scrollingCoordinator->coordinatesScrollingForFrameView(view);
+    }
+#endif
+
 #if !PLATFORM(CHROMIUM)
     if (!view->hasOverlayScrollbars())
         return false;
@@ -1690,19 +1698,19 @@ static bool shouldCompositeOverflowControls(ScrollView* view)
 
 bool RenderLayerCompositor::requiresHorizontalScrollbarLayer() const
 {
-    ScrollView* view = m_renderView->frameView();
+    FrameView* view = m_renderView->frameView();
     return shouldCompositeOverflowControls(view) && view->horizontalScrollbar();
 }
 
 bool RenderLayerCompositor::requiresVerticalScrollbarLayer() const
 {
-    ScrollView* view = m_renderView->frameView();
+    FrameView* view = m_renderView->frameView();
     return shouldCompositeOverflowControls(view) && view->verticalScrollbar();
 }
 
 bool RenderLayerCompositor::requiresScrollCornerLayer() const
 {
-    ScrollView* view = m_renderView->frameView();
+    FrameView* view = m_renderView->frameView();
     return shouldCompositeOverflowControls(view) && view->isScrollCornerVisible();
 }
 

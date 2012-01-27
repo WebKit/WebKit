@@ -1,3 +1,25 @@
+2012-01-27  Anders Carlsson  <andersca@apple.com>
+
+        When threaded scrolling is enabled for a FrameView, always put scrollbars in layers
+        https://bugs.webkit.org/show_bug.cgi?id=77232
+        <rdar://problem/10766708>
+
+        Reviewed by Beth Dakin.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+        * page/ScrollingCoordinator.h:
+        Add a new helper function.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::shouldCompositeOverflowControls):
+        Make this take a FrameView, check with the scrolling coordinator if the overflow controls should be composited.
+
+        (WebCore::RenderLayerCompositor::requiresHorizontalScrollbarLayer):
+        (WebCore::RenderLayerCompositor::requiresVerticalScrollbarLayer):
+        (WebCore::RenderLayerCompositor::requiresScrollCornerLayer):
+        Update for the change to make shouldCompositeOverflowControls take a FrameView.
+
 2012-01-24  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Implement pointer interface
