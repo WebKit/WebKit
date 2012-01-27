@@ -44,7 +44,7 @@ WebInspector.TabbedEditorContainer = function(delegate)
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 
     this._tabIds = new Map();  
-    this._files = {};  
+    this._files = {};
 }
 
 WebInspector.TabbedEditorContainer._tabId = 0;
@@ -71,6 +71,10 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     showFile: function(uiSourceCode)
     {
+        if (this._currentFile === uiSourceCode)
+            return;
+        
+        this._currentFile = uiSourceCode;
         var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode);
         this._tabbedPane.selectTab(tabId);
     },
@@ -127,8 +131,12 @@ WebInspector.TabbedEditorContainer.prototype = {
     _tabClosed: function(event)
     {
         var tabId = /** @type {string} */ event.data.tabId;
-        this._tabIds.remove(this._files[tabId]);
+
+        var uiSourceCode = this._files[tabId];
+        this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
+
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.EditorContainer.Events.EditorClosed, uiSourceCode);
     },
 
     /**
@@ -137,7 +145,11 @@ WebInspector.TabbedEditorContainer.prototype = {
     _tabSelected: function(event)
     {
         var tabId = /** @type {string} */ event.data.tabId;
-        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, this._files[tabId]);
+        var uiSourceCode = this._files[tabId];
+        
+        if (this._currentFile === uiSourceCode)
+            return;
+        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, uiSourceCode);
     },
 
     /**
@@ -204,7 +216,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabbedPane.closeAllTabs();
         this._tabIds = new Map();
         this._files = {};
-
+        delete this._currentFile;
     },
 
     /**

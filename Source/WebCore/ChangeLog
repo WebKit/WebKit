@@ -1,3 +1,31 @@
+2012-01-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts panel: fix event dispatching between FileSelector and EditorContainer.
+        https://bugs.webkit.org/show_bug.cgi?id=77126
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded.get if):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._showSourceLine):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._editorClosed):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.revealUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.revealUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._innerRevealUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect.insertOrdered):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goBack):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goForward):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._filesSelectChanged):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._tabSelected):
+        (WebInspector.TabbedEditorContainer.prototype.reset):
+
 2012-01-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         <feImage> DOM mutation problems
