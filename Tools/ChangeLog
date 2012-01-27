@@ -1,3 +1,33 @@
+2012-01-26  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: re-land cleanup of test scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=77153
+
+        Reviewed by Eric Seidel.
+
+        This is an attempt to reland the change in bug 76973 / 
+        r105935. My earlier attempt to manipulate PYTHONPATH
+        seems to only work some of the time, for reasons that
+        elude me. Directly adding Tools/Scripts to sys.path from
+        inside the test script appears to work (more?) reliably.
+
+        Also, it seemed like the files didn't actually get deleted
+        the last time; I don't know why.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (command_line):
+        (ExecutiveTest):
+        (ExecutiveTest.test_run_command_args_type):
+        (ExecutiveTest.test_run_command_with_unicode):
+        (ExecutiveTest.test_running_pids):
+        (main):
+        * Scripts/webkitpy/common/system/fileutils.py: Removed.
+        * Scripts/webkitpy/test/cat.py: Removed.
+        * Scripts/webkitpy/test/cat_unittest.py: Removed.
+        * Scripts/webkitpy/test/echo.py: Removed.
+        * Scripts/webkitpy/test/echo_unittest.py: Removed.
+
 2012-01-26  Ojan Vafai  <ojan@chromium.org>
 
         run-webkit-tests calls "nm" when it doesn't need to

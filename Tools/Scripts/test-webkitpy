@@ -42,7 +42,7 @@ _log = logging.getLogger("test-webkitpy")
 
 
 if __name__ == "__main__":
-    webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     # FIXME: We should probably test each package separately to avoid naming conflicts.
     dirs = [
