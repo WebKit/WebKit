@@ -249,7 +249,7 @@ class PerfTestsRunner(object):
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
-        re.compile(r'^\d+$'),
+        re.compile(r'^\d+(.\d+)?$'),
     ]
 
     def _should_ignore_line_in_parser_test_result(self, line):
@@ -281,7 +281,7 @@ class PerfTestsRunner(object):
 
         if test_failed or set(keys) != set(results.keys()):
             return True
-        self._results[test_name] = results
+        self._results[filesystem.join(category, test_name).replace('\\', '/')] = results
         self._buildbot_output.write('RESULT %s: %s= %s ms\n' % (category, test_name, results['avg']))
         self._buildbot_output.write(', '.join(['%s= %s ms' % (key, results[key]) for key in keys[1:]]) + '\n')
         return False

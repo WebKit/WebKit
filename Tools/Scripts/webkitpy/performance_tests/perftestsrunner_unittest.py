@@ -189,7 +189,7 @@ max 1120
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
-            {"event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
             "revision": 1234})
 
@@ -209,7 +209,7 @@ max 1120
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
-            {"event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46},
             "group_name:test_name": 42},
             "revision": 1234,
             "key": "value"})

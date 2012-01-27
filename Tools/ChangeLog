@@ -1,3 +1,20 @@
+2012-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-test should include relative file paths in test names
+        https://bugs.webkit.org/show_bug.cgi?id=77144
+
+        Reviewed by Adam Birth.
+
+        Include all directory names in the test name separated by "/".
+        e.g. Bindings/event-target-wrapper.html translates to Bindings/event-target-wrapper
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner._process_parser_test_result):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_set_with_json_output):
+        (test_run_test_set_with_json_source):
+
 2012-01-26  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: re-land cleanup of test scaffolding
