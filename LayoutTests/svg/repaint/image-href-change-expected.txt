@@ -1,0 +1,2 @@
+200x200 green rect should be visible
+

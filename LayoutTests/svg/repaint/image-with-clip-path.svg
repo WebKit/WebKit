@@ -6,8 +6,7 @@
                 <rect id="r" x="-10" y="-10" width="20" height="20" />
             </clipPath>
         </defs>
-        <image x="-30" y="-30" width="60" height="60" clip-path="url(#p)"
-            xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="/>
+        <image x="-30" y="-30" width="60" height="60"  externalResourcesRequired="true" clip-path="url(#p)" xlink:href="initially-broken"/>
     </g>
 <script>
     var green = "data:image/gif;base64,R0lGODlhAQABAIAAAAD/AAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
@@ -30,20 +29,23 @@
         layoutTestController.waitUntilDone();
     }
 
-    setTimeout(function() {
+    function finishTest() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+	}
+
+    function nextStep() {
+        if (window.layoutTestController)
+            layoutTestController.display();
+
+        i.onload = function() { setTimeout(finishTest, 0); };
+        update(200, 50, green);
+    }
+
+    function runTest() {
+        i.onload = function() { setTimeout(nextStep, 0); };
         update(50, 100, red);
-
-        setTimeout(function() {
-            if (window.layoutTestController)
-                layoutTestController.display();
-
-            update(200, 50, green);
-
-            setTimeout(function() {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 0);
-        }, 0);
-    }, 0);
+    }
+	setTimeout(runTest, 0);
 </script>
 </svg>
