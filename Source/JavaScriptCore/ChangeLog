@@ -1,3 +1,15 @@
+2012-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a GKeyFile especialization to GOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=77191
+
+        Reviewed by Martin Robinson.
+
+        * wtf/gobject/GOwnPtr.cpp:
+        (WTF::GKeyFile): Implement freeOwnedGPtr for GKeyFile.
+        * wtf/gobject/GOwnPtr.h: Add GKeyFile template.
+        * wtf/gobject/GTypedefs.h: Add forward declaration for GKeyFile.
+
 2012-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: should be possible to open function declaration from script popover

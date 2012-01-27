@@ -226,21 +226,18 @@ static void encodeGKeyFile(ArgumentEncoder* encoder, GKeyFile* keyFile)
     encoder->encode(dataReference);
 }
 
-static bool decodeGKeyFile(ArgumentDecoder* decoder, GKeyFile** keyFile)
+static bool decodeGKeyFile(ArgumentDecoder* decoder, GOwnPtr<GKeyFile>& keyFile)
 {
     DataReference dataReference;
     if (!decoder->decode(dataReference))
         return false;
 
-    if (!dataReference.size()) {
-        *keyFile = 0;
+    if (!dataReference.size())
         return true;
-    }
 
-    *keyFile = g_key_file_new();
-    if (!g_key_file_load_from_data(*keyFile, reinterpret_cast<const gchar*>(dataReference.data()), dataReference.size(), G_KEY_FILE_NONE, 0)) {
-        g_key_file_free(*keyFile);
-        *keyFile = 0;
+    keyFile.set(g_key_file_new());
+    if (!g_key_file_load_from_data(keyFile.get(), reinterpret_cast<const gchar*>(dataReference.data()), dataReference.size(), G_KEY_FILE_NONE, 0)) {
+        keyFile.clear();
         return false;
     }
 
@@ -249,50 +246,46 @@ static bool decodeGKeyFile(ArgumentDecoder* decoder, GKeyFile** keyFile)
 
 void encode(ArgumentEncoder* encoder, GtkPrintSettings* printSettings)
 {
-    GKeyFile* keyFile = g_key_file_new();
-    gtk_print_settings_to_key_file(printSettings, keyFile, "Print Settings");
-    encodeGKeyFile(encoder, keyFile);
-    g_key_file_free(keyFile);
+    GOwnPtr<GKeyFile> keyFile(g_key_file_new());
+    gtk_print_settings_to_key_file(printSettings, keyFile.get(), "Print Settings");
+    encodeGKeyFile(encoder, keyFile.get());
 }
 
 bool decode(ArgumentDecoder* decoder, GRefPtr<GtkPrintSettings>& printSettings)
 {
-    GKeyFile* keyFile;
-    if (!decodeGKeyFile(decoder, &keyFile))
+    GOwnPtr<GKeyFile> keyFile;
+    if (!decodeGKeyFile(decoder, keyFile))
         return false;
 
     printSettings = adoptGRef(gtk_print_settings_new());
     if (!keyFile)
         return true;
 
-    if (!gtk_print_settings_load_key_file(printSettings.get(), keyFile, "Print Settings", 0))
+    if (!gtk_print_settings_load_key_file(printSettings.get(), keyFile.get(), "Print Settings", 0))
         printSettings = 0;
-    g_key_file_free(keyFile);
 
     return printSettings;
 }
 
 void encode(ArgumentEncoder* encoder, GtkPageSetup* pageSetup)
 {
-    GKeyFile* keyFile = g_key_file_new();
-    gtk_page_setup_to_key_file(pageSetup, keyFile, "Page Setup");
-    encodeGKeyFile(encoder, keyFile);
-    g_key_file_free(keyFile);
+    GOwnPtr<GKeyFile> keyFile(g_key_file_new());
+    gtk_page_setup_to_key_file(pageSetup, keyFile.get(), "Page Setup");
+    encodeGKeyFile(encoder, keyFile.get());
 }
 
 bool decode(ArgumentDecoder* decoder, GRefPtr<GtkPageSetup>& pageSetup)
 {
-    GKeyFile* keyFile;
-    if (!decodeGKeyFile(decoder, &keyFile))
+    GOwnPtr<GKeyFile> keyFile;
+    if (!decodeGKeyFile(decoder, keyFile))
         return false;
 
     pageSetup = adoptGRef(gtk_page_setup_new());
     if (!keyFile)
         return true;
 
-    if (!gtk_page_setup_load_key_file(pageSetup.get(), keyFile, "Page Setup", 0))
+    if (!gtk_page_setup_load_key_file(pageSetup.get(), keyFile.get(), "Page Setup", 0))
         pageSetup = 0;
-    g_key_file_free(keyFile);
 
     return pageSetup;
 }

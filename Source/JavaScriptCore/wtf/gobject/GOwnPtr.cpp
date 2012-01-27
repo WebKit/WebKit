@@ -55,6 +55,12 @@ template <> void freeOwnedGPtr<GTimer>(GTimer* ptr)
         g_timer_destroy(ptr);
 }
 
+template <> void freeOwnedGPtr<GKeyFile>(GKeyFile* ptr)
+{
+    if (ptr)
+        g_key_file_free(ptr);
+}
+
 } // namespace WTF
 
 #endif // ENABLE(GLIB_SUPPORT)

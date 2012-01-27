@@ -59,6 +59,7 @@ typedef struct _GSource GSource;
 typedef struct _GVariant GVariant;
 typedef union _GdkEvent GdkEvent;
 typedef struct _GTimer GTimer;
+typedef struct _GKeyFile GKeyFile;
 
 #if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;
