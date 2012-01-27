@@ -64,41 +64,37 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
 
 FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {
-    FloatRect uniteRect;
-    FloatRect subregion = effect->effectBoundaries();
     SVGFilter* filter = static_cast<SVGFilter*>(effect->filter());
     ASSERT(filter);
 
-    if (effect->filterEffectType() != FilterEffectTypeTile) {
-        // FETurbulence, FEImage and FEFlood don't have input effects, take the filter region as unite rect.
-        if (unsigned numberOfInputEffects = effect->inputEffects().size()) {
-            for (unsigned i = 0; i < numberOfInputEffects; ++i)
-                uniteRect.unite(determineFilterPrimitiveSubregion(effect->inputEffect(i)));
-        } else
-            uniteRect = filter->filterRegionInUserSpace();
-    } else {
-        determineFilterPrimitiveSubregion(effect->inputEffect(0));
-        uniteRect = filter->filterRegionInUserSpace();
-    }
+    // FETile, FETurbulence, FEFlood don't have input effects, take the filter region as unite rect.
+    FloatRect subregion;
+    if (unsigned numberOfInputEffects = effect->inputEffects().size()) {
+        subregion = determineFilterPrimitiveSubregion(effect->inputEffect(0));
+        for (unsigned i = 1; i < numberOfInputEffects; ++i)
+            subregion.unite(determineFilterPrimitiveSubregion(effect->inputEffect(i)));
+    } else
+        subregion = filter->filterRegionInUserSpace();
 
-    if (!effect->hasX())
-        subregion.setX(uniteRect.x());
-    if (!effect->hasY())
-        subregion.setY(uniteRect.y());
-    if (!effect->hasWidth())
-        subregion.setWidth(uniteRect.width());
-    if (!effect->hasHeight())
-        subregion.setHeight(uniteRect.height());
+    // After calling determineFilterPrimitiveSubregion on the target effect, reset the subregion again for <feTile>.
+    if (effect->filterEffectType() == FilterEffectTypeTile)
+        subregion = filter->filterRegionInUserSpace();
+
+    FloatRect effectBoundaries = effect->effectBoundaries();
+    if (effect->hasX())
+        subregion.setX(effectBoundaries.x());
+    if (effect->hasY())
+        subregion.setY(effectBoundaries.y());
+    if (effect->hasWidth())
+        subregion.setWidth(effectBoundaries.width());
+    if (effect->hasHeight())
+        subregion.setHeight(effectBoundaries.height());
+
     effect->setFilterPrimitiveSubregion(subregion);
 
     FloatRect absoluteSubregion = filter->absoluteTransform().mapRect(subregion);
     FloatSize filterResolution = filter->filterResolution();
     absoluteSubregion.scale(filterResolution.width(), filterResolution.height());
-
-    // FEImage needs the unclipped subregion in absolute coordinates to determine the correct
-    // destination rect in combination with preserveAspectRatio.
-    if (effect->filterEffectType() == FilterEffectTypeImage)
-        static_cast<FEImage*>(effect)->setAbsoluteSubregion(absoluteSubregion);
 
     // Clip every filter effect to the filter region.
     FloatRect absoluteScaledFilterRegion = filter->filterRegion();

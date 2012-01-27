@@ -3965,6 +3965,14 @@ BUGWK77198 : svg/filters/feImage-target-add-to-document.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-reappend-to-document.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-changes-id.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-id-change.svg = IMAGE
+BUGWK77205 : svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-position.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-subregions-preseveAspectRatio-none.svg = IMAGE+TEXT IMAGE
+BUGWK77205 : svg/filters/feImage-subregions.svg = IMAGE+TEXT IMAGE
 
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE

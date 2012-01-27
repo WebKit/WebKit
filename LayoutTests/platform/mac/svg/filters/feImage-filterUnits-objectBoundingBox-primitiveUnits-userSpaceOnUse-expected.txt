@@ -1,0 +1,55 @@
+layer at (0,0) size 800x800
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 800x800
+  RenderSVGRoot {svg} at (0,0) size 650x520
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {circle} at (200,200) size 400x400 [fill={[type=SOLID] [color=#008000]}] [cx=400.00] [cy=400.00] [r=200.00]
+      RenderSVGPath {circle} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
+      RenderSVGResourceFilter {filter} [id="filter1a-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="400x400"]
+      RenderSVGResourceFilter {filter} [id="filter1b-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="400x400"]
+      RenderSVGResourceFilter {filter} [id="filter2a-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="400x400"]
+      RenderSVGResourceFilter {filter} [id="filter2b-rel"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="400x400"]
+      RenderSVGResourceFilter {filter} [id="filter1a-abs"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter1b-abs"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter2a-abs"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="filter2b-abs"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+    RenderSVGContainer {g} at (0,0) size 650x200
+      RenderSVGRect {rect} at (49,49) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+        [filter="filter1a-rel"] RenderSVGResourceFilter {filter} at (0,0) size 200x200
+      RenderSVGContainer {g} at (150,0) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+        RenderSVGRect {rect} at (199,49) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (150,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          [filter="filter1a-abs"] RenderSVGResourceFilter {filter} at (0,0) size 200x200
+      RenderSVGContainer {g} at (300,0) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
+        RenderSVGRect {rect} at (349,49) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (300,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          [filter="filter1b-rel"] RenderSVGResourceFilter {filter} at (0,0) size 200x200
+      RenderSVGContainer {g} at (450,0) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(450.00,0.00)}]
+        RenderSVGRect {rect} at (499,49) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (450,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          [filter="filter1b-abs"] RenderSVGResourceFilter {filter} at (0,0) size 200x200
+    RenderSVGContainer {g} at (0,130) size 370x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+      RenderSVGRect {rect} at (39,189) size 122x122 [stroke={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=40.00] [width=120.00] [height=120.00]
+      RenderSVGRect {rect} at (0,130) size 221x240 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+        [filter="filter2a-rel"] RenderSVGResourceFilter {filter} at (-20,-20) size 240x240
+      RenderSVGContainer {g} at (130,130) size 240x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+        RenderSVGRect {rect} at (189,189) size 122x122 [stroke={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=40.00] [width=120.00] [height=120.00]
+        RenderSVGRect {rect} at (130,130) size 240x240 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          [filter="filter2b-rel"] RenderSVGResourceFilter {filter} at (-20,-20) size 240x240
+    RenderSVGContainer {g} at (0,280) size 370x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+      RenderSVGRect {rect} at (29,329) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=30.00] [y=30.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,280) size 221x240 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+        [filter="filter2a-abs"] RenderSVGResourceFilter {filter} at (-20,-20) size 240x240
+      RenderSVGContainer {g} at (130,280) size 240x240 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+        RenderSVGRect {rect} at (179,329) size 102x102 [stroke={[type=SOLID] [color=#FF0000]}] [x=30.00] [y=30.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (130,280) size 240x240 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+          [filter="filter2b-abs"] RenderSVGResourceFilter {filter} at (-20,-20) size 240x240

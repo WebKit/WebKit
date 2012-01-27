@@ -68,6 +68,8 @@ public:
     float convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit, ExceptionCode&) const;
     float convertValueFromUserUnits(float, SVGLengthMode, SVGLengthType toUnit, ExceptionCode&) const;
 
+    bool determineViewport(float& width, float& height) const;
+
 private:
     SVGLengthContext(const SVGElement*, const FloatRect& viewport);
 
@@ -79,8 +81,6 @@ private:
 
     float convertValueFromUserUnitsToEXS(float value, ExceptionCode&) const;
     float convertValueFromEXSToUserUnits(float value, ExceptionCode&) const;
-
-    bool determineViewport(float& width, float& height) const;
 
     const SVGElement* m_context;
     FloatRect m_overridenViewport;

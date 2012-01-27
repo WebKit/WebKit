@@ -1,3 +1,69 @@
+2012-01-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        <feImage> doesn't work with local references when using primitiveUnits="objectBoundingBox"
+        https://bugs.webkit.org/show_bug.cgi?id=77205
+
+        Reviewed by Antti Koivisto.
+
+        Consider following testcase:
+        <svg width="1000" height="500">
+        <defs>
+            <circle id="c" cx="50%" cy="50%" r="10%"/>
+            <filter id="f" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100" primitiveUnits="objectBoundingBox">
+                <feImage xlink:href="#c"/>
+            </filter>
+        </defs>
+        <rect width="100" height="100" filter="url(#f)"/>
+        </svg>
+
+        The <svg> has a viewport of 1000x50. The <circle> in the <defs> element is resolved as <circle cx="500" cy="250" r="79"/>,
+        as the context for this element (looking at it isolated!) is the viewport of the <svg>. We then setup a 0x0 - 100x100 rect
+        in user space, which gets filtered, by a filter, also defined in user space (for simplicity), but with primitiveUnits="objectBoundingBox".
+
+        That means that the default subregion of the filter effect <feImage/> which has no inputs, is defined in the SVG 1.1 spec to be equal to
+        the filter region, which is 0x0-100x100 in user space. This <feImage/> is supposed to produce a 100x100 image, containing a circle in the
+        middle (aka. <circle cx="50" cy="50".../>), but it doesn't, as the <circle> it's trying to paint, is laid out at 500x250, and thus outside
+        the 100x100 sized image buffer.
+
+        So how to resolve this?
+        The RenderSVGShape thats owned by the <circle> generates its Path value by calling cx().value(lengthContext) and the SVGLengthContext here
+        resolves to the <svg>. That happens on _layout_. If we would want to change the SVGLengthContext in this case (what I originally planned!)
+        to carry a custom 100x100 viewport, we'd need to relayout. Unfortunately this is not an option, as this would mean that
+        SVGImageBufferTools::renderSubtreeToImageBuffer, would need to relayout its children first, but we produce the filter images when painting.
+        This is very dangerous and has just recently been fixed so that SVGImageBufferTools can ASSERT(!item->needsLayout()) when painting the
+        subtree to an image buffer.
+
+        The only sane solution I see, that does not require relayouts, is to make a map between the <circle> bounding box in user space (500x250
+        center point) to the filter primitive subregion space (here: 100x100 center point), and concat that transformation before painting the
+        subtree to the image buffer. Of course this approach only works if all values of the <circle> are relative. If someone uses
+        <circle id="c" cx="50%" cy="666"> the transformation that I'm looking for is undefined. We'd really need to create a new Path here, to
+        resolve only cx against the new viewport, and not cy.
+
+        Though in practice it turns out this is not a problem. All use cases of feImage + primitiveUnits="objectBoundingBox" link to elements
+        that are completely defined in percentual values, as this is really the only thing which makes sense - otherwise you can always switch
+        back to primtiveUnits="userSpaceOnUse". Anyhow, I'm going to fix all known wild-life test cases by my approach, and say we don't support
+        using mixed length units when referencing those elements from feImages with primitiveUnits="objectBoundingBox".
+
+        Adding lots of new testcases, trying all the different feImage modes.
+
+        Tests: svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg
+               svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg
+               svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg
+               svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg
+               svg/filters/feImage-position.svg
+               svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg
+               svg/filters/feImage-subregions-preseveAspectRatio-none.svg
+               svg/filters/feImage-subregions.svg
+
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion): Reverse logic, simplifying the code a bit. Remove FEImage special cases (absoluteSubregion).
+        * svg/SVGLengthContext.h: Make determineViewport() public, for use in FEImage.
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::determineAbsolutePaintRect): Don't apply preserveAspectRatio transformation for local elements, it's not defined and breaks content.
+        (WebCore::FEImage::platformApplySoftware): Figure out the absolute subregion by utilizing filterPrimitiveSubregion() as FETurbulence does.
+                                                   Map between filter primitive subregion and target object space for primitiveUnits="objectBoundingBox" support on SVG element references.
+        * svg/graphics/filters/SVGFEImage.h: Remove absoluteSubregion member & setter, it's no longer needed.
+
 2012-01-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts panel: fix event dispatching between FileSelector and EditorContainer.

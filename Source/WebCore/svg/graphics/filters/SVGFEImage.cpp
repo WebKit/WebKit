@@ -33,6 +33,7 @@
 #include "SVGFilter.h"
 #include "SVGImageBufferTools.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "TextStream.h"
 
@@ -66,14 +67,16 @@ PassRefPtr<FEImage> FEImage::createWithIRIReference(Filter* filter, Document* do
 
 void FEImage::determineAbsolutePaintRect()
 {
-    FloatRect srcRect;
-    if (m_image)
-        srcRect.setSize(m_image->size());
-    else if (RenderObject* renderer = referencedRenderer())
-        srcRect = static_cast<SVGFilter*>(filter())->absoluteTransform().mapRect(renderer->repaintRectInLocalCoordinates());
+    SVGFilter* svgFilter = static_cast<SVGFilter*>(filter());
 
-    FloatRect paintRect(m_absoluteSubregion);
-    m_preserveAspectRatio.transformRect(paintRect, srcRect);
+    FloatRect paintRect = svgFilter->absoluteTransform().mapRect(filterPrimitiveSubregion());
+    FloatRect srcRect;
+    if (m_image) {
+        srcRect.setSize(m_image->size());
+        m_preserveAspectRatio.transformRect(paintRect, srcRect);
+    } else if (RenderObject* renderer = referencedRenderer())
+        srcRect = svgFilter->absoluteTransform().mapRect(renderer->repaintRectInLocalCoordinates());
+
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
     else
@@ -101,23 +104,40 @@ void FEImage::platformApplySoftware()
     if (!resultImage)
         return;
 
-    if (renderer) {
-        const AffineTransform& absoluteTransform = static_cast<SVGFilter*>(filter())->absoluteTransform();
-        resultImage->context()->concatCTM(absoluteTransform);
+    SVGFilter* svgFilter = static_cast<SVGFilter*>(filter());
+    FloatRect destRect = svgFilter->absoluteTransform().mapRect(filterPrimitiveSubregion());
 
-        AffineTransform contentTransformation;
-        SVGImageBufferTools::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
-
-        resultImage->context()->concatCTM(absoluteTransform.inverse());
-        return;
+    FloatRect srcRect;
+    if (renderer)
+        srcRect = svgFilter->absoluteTransform().mapRect(renderer->repaintRectInLocalCoordinates());
+    else {
+        srcRect = FloatRect(FloatPoint(), m_image->size());
+        m_preserveAspectRatio.transformRect(destRect, srcRect);
     }
-
-    FloatRect srcRect(FloatPoint(), m_image->size());
-    FloatRect destRect(m_absoluteSubregion);
-    m_preserveAspectRatio.transformRect(destRect, srcRect);
 
     IntPoint paintLocation = absolutePaintRect().location();
     destRect.move(-paintLocation.x(), -paintLocation.y());
+
+    if (renderer) {
+        const AffineTransform& absoluteTransform = svgFilter->absoluteTransform();
+        resultImage->context()->concatCTM(absoluteTransform);
+
+        SVGElement* contextNode = static_cast<SVGElement*>(renderer->node());
+        if (contextNode->isStyled() && static_cast<SVGStyledElement*>(contextNode)->hasRelativeLengths()) {
+            SVGLengthContext lengthContext(contextNode);
+            float width = 0;
+            float height = 0;
+
+            // If we're referencing an element with percentage units, eg. <rect with="30%"> those values were resolved against the viewport.
+            // Build up a transformation that maps from the viewport space to the filter primitive subregion.
+            if (lengthContext.determineViewport(width, height))
+                resultImage->context()->concatCTM(makeMapBetweenRects(FloatRect(0, 0, width, height), destRect));
+        }
+
+        AffineTransform contentTransformation;
+        SVGImageBufferTools::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
+        return;
+    }
 
     resultImage->context()->drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }

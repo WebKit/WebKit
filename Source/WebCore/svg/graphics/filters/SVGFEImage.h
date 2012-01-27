@@ -38,8 +38,6 @@ public:
     static PassRefPtr<FEImage> createWithImage(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
     static PassRefPtr<FEImage> createWithIRIReference(Filter*, Document*, const String&, const SVGPreserveAspectRatio&);
 
-    void setAbsoluteSubregion(const FloatRect& absoluteSubregion) { m_absoluteSubregion = absoluteSubregion; }
-
     virtual void platformApplySoftware();
     virtual void dump();
 
@@ -59,7 +57,6 @@ private:
     Document* m_document;
     String m_href;
     SVGPreserveAspectRatio m_preserveAspectRatio;
-    FloatRect m_absoluteSubregion;
 };
 
 } // namespace WebCore
