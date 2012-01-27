@@ -364,10 +364,20 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event.GetKeyCode());
     m_nativeVirtualKeyCode = event.GetKeyCode();
     m_isKeypad = (event.GetKeyCode() >= WXK_NUMPAD_SPACE) && (event.GetKeyCode() <= WXK_NUMPAD_DIVIDE);
-    m_shiftKey = event.ShiftDown();
-    m_ctrlKey = event.CmdDown();
-    m_altKey = event.AltDown();
-    m_metaKey = event.MetaDown();
+    
+    m_modifiers = 0;
+    if (event.ShiftDown())
+        m_modifiers |= ShiftKey;
+    
+    if (event.CmdDown())
+        m_modifiers |= CtrlKey;
+    
+    if (event.AltDown())
+        m_modifiers |= AltKey;
+    
+    if (event.MetaDown())
+        m_modifiers |= MetaKey;
+    
     m_timestamp = WTF::currentTime();
 }
 
