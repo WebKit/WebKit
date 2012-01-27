@@ -405,7 +405,8 @@ void DocumentLoader::attachToFrame()
 void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
-    RefPtr<Frame> protector(m_frame);
+    RefPtr<Frame> protectFrame(m_frame);
+    RefPtr<DocumentLoader> protectLoader(this);
 
     // It never makes sense to have a document loader that is detached from its
     // frame have any loads active, so go ahead and kill all the loads.
