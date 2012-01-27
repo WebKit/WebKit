@@ -43,6 +43,7 @@
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
     asm( \
     ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%rsp), %" STRINGIZE(register) "\n" \
         "jmp " SYMBOL_STRING_RELOCATION(function##WithReturnAddress) "\n" \
@@ -57,6 +58,7 @@
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, offset) \
     asm( \
     ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%esp), %eax\n" \
         "mov %eax, " STRINGIZE(offset) "(%esp)\n" \
@@ -677,6 +679,7 @@ EncodedJSValue DFG_OPERATION getHostCallReturnValueWithExecState(ExecState*);
 #if CPU(X86_64)
 asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%r13), %r13\n"
     "mov %r13, %rdi\n"
@@ -685,6 +688,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
 #elif CPU(X86)
 asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
     "mov %edi, 4(%esp)\n"
