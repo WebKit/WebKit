@@ -1,3 +1,33 @@
+2012-01-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        <feImage> DOM mutation problems
+        https://bugs.webkit.org/show_bug.cgi?id=77198
+
+        Reviewed by Antti Koivisto.
+
+        Consider <feImage xlink:href="#rect"/>, where <rect> gets dynamically added to the tree.
+        Currently <feImage> doesn't notice this, as it doesn't register itself pending on "#rect".
+
+        Integrate <feImage> properly within the pending resources concept, fixing the bug.
+
+        Tests: svg/filters/feImage-target-add-to-document.svg
+               svg/filters/feImage-target-changes-id.svg
+               svg/filters/feImage-target-id-change.svg
+               svg/filters/feImage-target-reappend-to-document.svg
+               svg/filters/feImage-target-remove-from-document.svg
+
+        * svg/SVGFEImageElement.cpp: Rename invalidateImageResource to clearResourceReferences.
+        (WebCore::SVGFEImageElement::~SVGFEImageElement): Call clearResourceReferences.
+        (WebCore::SVGFEImageElement::clearResourceReferences): Remove any occurence of m_targetImage, it's no longer used.
+        (WebCore::SVGFEImageElement::requestImageResource): requestImageResource is now called by buildPendingResource.
+        (WebCore::SVGFEImageElement::buildPendingResource): Called whenever any element that we depend on gets resolved - now invalidates the <filter>.
+        (WebCore::SVGFEImageElement::parseMappedAttribute): Don't start loading from parseMappedAttribute.
+        (WebCore::SVGFEImageElement::svgAttributeChanged): Start loading from here, for consistency with SVGImageElement.
+        (WebCore::SVGFEImageElement::insertedIntoDocument): Invoke buildPendingResource(), if we enter the tree.
+        (WebCore::SVGFEImageElement::removedFromDocument): Clear m_cachedImage as soon as we get removed from the tree.
+        (WebCore::SVGFEImageElement::build): Clean up this function, m_targetImage is no longer exist.
+        * svg/SVGFEImageElement.h: Remove OwnPtr<ImageBuffer> m_targetImage, which is no longer used.
+
 2012-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] WKTR: Use a software rendering pipiline when running tests.

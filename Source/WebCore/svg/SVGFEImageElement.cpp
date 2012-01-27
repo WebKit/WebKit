@@ -64,39 +64,47 @@ PassRefPtr<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tag
 
 SVGFEImageElement::~SVGFEImageElement()
 {
-    if (m_cachedImage)
-        m_cachedImage->removeClient(this);
+    clearResourceReferences();
 }
 
-void SVGFEImageElement::invalidateImageResource()
+void SVGFEImageElement::clearResourceReferences()
 {
     if (m_cachedImage) {
         m_cachedImage->removeClient(this);
         m_cachedImage = 0;
     }
-
-    m_targetImage.clear();
 }
 
 void SVGFEImageElement::requestImageResource()
 {
-    invalidateImageResource();
-
-    String fragmentIdentifier;
-    Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document(), &fragmentIdentifier);
-
-    if (hrefElement && hrefElement->isSVGElement() && hrefElement->renderer())
-        return;
-
-    // We have what appears to be a local fragment identifier, but it didn't resolve yet.
-    if (!fragmentIdentifier.isEmpty())
-        return;
-
     ResourceRequest request(ownerDocument()->completeURL(href()));
-    m_cachedImage = ownerDocument()->cachedResourceLoader()->requestImage(request);
+    m_cachedImage = document()->cachedResourceLoader()->requestImage(request);
 
     if (m_cachedImage)
         m_cachedImage->addClient(this);
+}
+
+void SVGFEImageElement::buildPendingResource()
+{
+    clearResourceReferences();
+    if (!inDocument())
+        return;
+
+    String id;
+    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    if (!target) {
+        if (hasPendingResources())
+            return;
+
+        if (id.isEmpty())
+            requestImageResource();
+        else {
+            document()->accessSVGExtensions()->addPendingResource(id, this);
+            ASSERT(hasPendingResources());
+        }
+    }
+
+    invalidate();
 }
 
 bool SVGFEImageElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -124,11 +132,8 @@ void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
         return;
     }
 
-    if (SVGURIReference::parseMappedAttribute(attr)) {
-        requestImageResource();
+    if (SVGURIReference::parseMappedAttribute(attr))
         return;
-    }
-
     if (SVGLangSpace::parseMappedAttribute(attr))
         return;
     if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
@@ -152,8 +157,7 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        invalidateImageResource();
-        invalidate();
+        buildPendingResource();
         return;
     }
 
@@ -161,6 +165,18 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     ASSERT_NOT_REACHED();
+}
+
+void SVGFEImageElement::insertedIntoDocument()
+{
+    SVGFilterPrimitiveStandardAttributes::insertedIntoDocument();
+    buildPendingResource();
+}
+
+void SVGFEImageElement::removedFromDocument()
+{
+    SVGFilterPrimitiveStandardAttributes::removedFromDocument();
+    clearResourceReferences();
 }
 
 void SVGFEImageElement::notifyFinished(CachedResource*)
@@ -179,12 +195,9 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
 
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)
 {
-    if (!m_cachedImage && !m_targetImage)
-        requestImageResource();
-
-    if (!m_cachedImage && !m_targetImage)
-        return FEImage::createWithIRIReference(filter, document(), href(), preserveAspectRatio());
-    return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
+    if (m_cachedImage)
+        return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
+    return FEImage::createWithIRIReference(filter, document(), href(), preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

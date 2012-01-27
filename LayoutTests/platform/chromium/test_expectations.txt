@@ -3960,6 +3960,11 @@ BUGWK76800 : svg/filters/feImage-reference-svg-primitive.svg = IMAGE
 // Just needs a rebaseline.
 BUGWK69714 : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
 BUGWK77103 : svg/repaint/image-href-change.svg = IMAGE
+BUGWK77198 : svg/filters/feImage-target-remove-from-document.svg = IMAGE
+BUGWK77198 : svg/filters/feImage-target-add-to-document.svg = IMAGE
+BUGWK77198 : svg/filters/feImage-target-reappend-to-document.svg = IMAGE
+BUGWK77198 : svg/filters/feImage-target-changes-id.svg = IMAGE
+BUGWK77198 : svg/filters/feImage-target-id-change.svg = IMAGE
 
 // Change error (misspelling) underlines from Windows look to Mac look.
 BUG_CARYCLARK MAC : editing/deleting/delete-3928305-fix.html = IMAGE
