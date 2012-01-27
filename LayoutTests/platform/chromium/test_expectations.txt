@@ -889,10 +889,7 @@ BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
-BUGCR52692 LINUX WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT
-BUGCR52692 BUGWK74788 LINUX WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT CRASH
-BUGCR52692 BUGWK74788 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-60-t.svg = PASS CRASH
-BUGWK74788 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS CRASH
+BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT
 
 // Windows and Mac need rebaselining after 53378 patch.
 BUGWK53378 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
@@ -1508,46 +1505,26 @@ BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-81-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-82-t.svg = IMAGE
-BUGCR99500 WIN RELEASE : svg/W3C-SVG-1.1/animate-elem-83-t.svg = IMAGE
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-81-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-82-t.svg = IMAGE CRASH
-BUGWK74788 BUGCR99500 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-83-t.svg = IMAGE CRASH
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-81-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-82-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-83-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-04-b.svg = IMAGE
@@ -3294,9 +3271,6 @@ BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = PASS TIMEOU
 BUGWK70888 MAC DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
 BUGWK70887 DEBUG : jquery/css.html = PASS TIMEOUT
 
-BUGWK64940 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH
-BUGWK64940 MAC DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH IMAGE
-
 BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
 BUGWK64976 BUGWK75042 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = FAIL
@@ -3355,8 +3329,6 @@ BUGV8_1634 : fast/js/const.html = TEXT
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
 BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
-
-BUGWK64671 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
@@ -3801,18 +3773,6 @@ BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
 BUGWK75161 GPU : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 BUGWK75161 CPU : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
-BUGWK74788 DEBUG : svg/W3C-SVG-1.1/animate-elem-44-t.svg = PASS CRASH
-
-// Conflicts with BUGCR99500 above, so split out expectations
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-41-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-46-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-52-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-63-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-64-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-65-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-81-t.svg = PASS CRASH
-BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-82-t.svg = PASS CRASH
-
 BUGWK75237 SNOWLEOPARD CPU : compositing/reflections/reflection-on-composited.html = PASS IMAGE
 
 BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
@@ -3850,8 +3810,6 @@ BUGWK75933 WIN : webaudio/convolution-mono-mono.html = TEXT
 BUGWK76280 : media/W3C/video/networkState/networkState_during_progress.html = PASS TEXT
 BUGV81900 SLOW LINUX DEBUG : inspector/debugger/watch-expressions-panel-switch.html = PASS CRASH
 BUGV81900 SLOW LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = PASS CRASH
-
-BUGWK73710 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-62-t.svg = PASS CRASH
 
 // New test, image results added but it is timing out on Leopard.
 BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
