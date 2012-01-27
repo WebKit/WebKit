@@ -93,6 +93,7 @@ public:
     bool hasDocument();
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
+    size_t currentSampleFrame() { return m_destinationNode->currentSampleFrame(); }
     double currentTime() { return m_destinationNode->currentTime(); }
     float sampleRate() { return m_destinationNode->sampleRate(); }
 

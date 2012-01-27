@@ -1,3 +1,55 @@
+2012-01-27  Raymond Toy  <rtoy@google.com>
+
+        Round time to sample frame
+        https://bugs.webkit.org/show_bug.cgi?id=76659
+
+        Three major changes:
+
+        1. Modify timeToSampleFrame to round the time to the sample frame
+        and add support for Visual Studio to round the time in the same
+        way as on gcc. (The issue is that Visual Studio uses x87
+        instructions with 80-bit floats.)  This makes Visual Studio more
+        consistent with the results with gcc.
+
+        2. Change the current time variable from keeping time in seconds
+        to keeping time in sample frames.  This minimizes rounding except
+        when needed for the Javascript API.
+
+        3. Update AudioBufferSourceNode::process to use samples (instead
+        of time) as much as possible to reduce round-off effects.
+
+        Reviewed by Kenneth Russell.
+
+        Tests: Added note-grain-on test to exercise precise
+        timing. Existing tests (gain and audiobuffersource-playbackrate)
+        also cover some of these changes, and the equalpower panner test is
+        modified to enable the tests for the offset of the impulses.
+
+        * platform/audio/AudioUtilities.cpp:
+        (WebCore::AudioUtilities::timeToSampleFrame): Moved from
+        AudioParamTimeLine and slightly modified, and updated to round
+        operations consistently.  Add special flags for Visual Studio to
+        generate code with rounding that is consistent with gcc.
+        * platform/audio/AudioUtilities.h: Declare new function.
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process): Use new functions to
+        convert time to sample frame.  Update code to use integer
+        arithmetic as much as possible.
+        (WebCore::AudioBufferSourceNode::renderFromBuffer): Use
+        timeToSampleFrame to convert time to sample frame.
+        * webaudio/AudioContext.h: Define new currentSample method to get
+        the current sample.
+        * webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::provideInput): Use new function to
+        convert sample frame to time.  Update
+        * webaudio/AudioDestiationNode.h: Rename m_currentTime to
+        m_currentSample, add method to return current Sample.  Update
+        currentTime() method to compute time from the current sample.
+        * webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl): Remove
+        timeToSampleFrame and use new function in AudioUtilities to
+        convert time to sample frame.
+
 2012-01-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Don't ever skip drawing the non-composited content layer

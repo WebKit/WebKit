@@ -41,12 +41,13 @@ public:
     
     // AudioNode   
     virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
+    virtual void reset() { m_currentSampleFrame = 0; };
     
     // The audio hardware calls here periodically to gets its input stream.
     virtual void provideInput(AudioBus*, size_t numberOfFrames);
 
-    double currentTime() { return m_currentTime; }
+    size_t currentSampleFrame() { return m_currentSampleFrame; }
+    double currentTime() { return currentSampleFrame() / static_cast<double>(sampleRate()); }
 
     virtual float sampleRate() const = 0;
 
@@ -55,7 +56,8 @@ public:
     virtual void startRendering() = 0;
     
 protected:
-    double m_currentTime;
+    // Counts the number of sample-frames processed by the destination.
+    size_t m_currentSampleFrame;
 };
 
 } // namespace WebCore

@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test timing of noteGrainOn.");
+
+      var sampleRate = 44100.0;
+
+      // HRTF extra frames.  This is a magic constant currently in
+      // AudioBufferSourceNode::process that always extends the
+      // duration by this number of samples.  See bug 77224
+      // (https://bugs.webkit.org/show_bug.cgi?id=77224).
+      var extraFramesHRTF = 512;
+      
+      // How many square pulses to play.
+      var numberOfTests = 100;
+
+      // Duration of the square pulse to be played
+      var duration = 0.01;
+
+      // Time step between the start of each square pulse.  We need to
+      // add a little bit of silence so we can detect pulse boundaries
+      // and also account for the extra frames for HRTF.
+      var timeStep = duration + .005 + extraFramesHRTF / sampleRate;
+
+      // Time step between the grain start for each square pulse.
+      var grainOffsetStep = 0.005;
+
+      // How long to render to cover all of the pulses.
+      var renderTime = (numberOfTests + 1) * timeStep;
+
+      var context;
+      var squarePulseBuffer;
+      var renderedData;
+
+      function createSquarePulse(context) {
+          // Create a square pulse that is long enough so that all the
+          // possible grain offsets still results in a square pulse of
+          // of the requested duration.  (The extra 1 is for any
+          // round-off.) 
+
+          var pulseLength = Math.floor(1 + extraFramesHRTF + sampleRate * (numberOfTests * grainOffsetStep + duration));
+
+          squarePulseBuffer = context.createBuffer(2, pulseLength, sampleRate);
+          var data = squarePulseBuffer.getChannelData(0);
+          for (var k = 0; k < pulseLength; ++k) {
+              data[k] = 1;
+          }
+      }
+
+      function trueGrainLength(grainOffset, duration) {
+          var startFrame = timeToSampleFrame(grainOffset, sampleRate);
+          var endFrame = timeToSampleFrame(grainOffset + duration, sampleRate);
+
+          return endFrame - startFrame;
+      }
+      
+      function checkResult(event) {
+          var buffer = event.renderedBuffer;
+          renderedData = buffer.getChannelData(0);
+          var nSamples = renderedData.length;
+
+          var success = true;
+          var errorCountStart = 0;
+          var errorCountEnd = 0;
+      
+          var startTime = [];
+          var endTime = [];
+          var lookForStart = true;
+      
+          // Look through the rendered data to find the start and stop
+          // times of each pulse.
+          for (var k = 0; k < nSamples; ++k) {
+              if (lookForStart) {
+                  // Find a non-zero point and record it.  We're not
+                  // concerned with the value in this test, only that
+                  // the pulse started here.  Other tests should cover
+                  // this case.
+                  if (renderedData[k] > 0) {
+                      startTime.push(k);
+                      lookForStart = false;
+                  }
+              } else {
+                  // Find a zero and record it.
+                  if (renderedData[k] == 0) {
+                      endTime.push(k);
+                      lookForStart = true;
+                  }
+              }
+          }
+
+          if (startTime.length != endTime.length) {
+              testFailed("Could not find the beginning or end of a square pulse.");
+              success = false;
+          }
+
+          if (startTime.length == numberOfTests && endTime.length == numberOfTests) {
+              testPassed("Found all " + numberOfTests + " pulses.");
+          } else {
+              testFailed("Did not find all " + numberOfTests + " pulses.");
+          }
+
+          // Examine the start and stop times to see if they match our
+          // expectations.
+          for (var k = 0; k < startTime.length; ++k) {
+              var expectedStart = timeToSampleFrame(k * timeStep, sampleRate);
+              // The end point is the duration, plus the extra frames
+              // for HRTF.
+              var expectedEnd = extraFramesHRTF + expectedStart + trueGrainLength(k * grainOffsetStep, duration);
+
+              if (startTime[k] != expectedStart) {
+                  testFailed("Pulse " + k + " started at " + startTime[k] + " but expected at " + expectedStart);
+                  ++errorCountStart;
+                  success = false;
+              }
+
+              if (endTime[k] != expectedEnd) {
+                  testFailed("Pulse " + k + " ended at " + endTime[k] + " but expected at " + expectedEnd);
+                  ++errorCountEnd;
+                  success = false;
+              }
+          }
+
+          if (!errorCountStart) {
+              if (startTime.length == numberOfTests) {
+                  testPassed("All " + numberOfTests + " square pulses started at the correct time.");
+              } else {
+                  testFailed("All pulses started at the correct time, but only " + startTime.length + " pulses found.");
+                  success = false;
+              }
+          } else {
+              testFailed(errorCountStart + " out of " + numberOfTests + " square pulses started at the wrong time.");
+              success = false;
+          }
+
+          if (!errorCountEnd) {
+              if (endTime.length == numberOfTests) {
+                  testPassed("All " + numberOfTests + " square pulses ended at the correct time.");
+              } else {
+                  testFailed("All pulses ended at the correct time, but only " + endTime.length + " pulses found.");
+                  success = false;
+              }
+          } else {
+              testFailed(errorCountEnd + " out of " + numberOfTests + " square pulses ended at the wrong time.");
+              success = false;
+          }
+
+      
+          if (success) {
+              testPassed("noteGrainOn timing tests passed.");
+          } else {
+              testFailed("noteGrainOn timing tests failed.");
+          }
+
+          finishJSTest();
+      }
+
+      function playNote(time, grainOffset, duration) {
+          var bufferSource = context.createBufferSource();
+          bufferSource.buffer = squarePulseBuffer;
+          bufferSource.connect(context.destination);
+          // We're only testing that the source starts and ends at a
+          // particular time.  See bug 77225
+          // (https://bugs.webkit.org/show_bug.cgi?id=77225).
+          bufferSource.noteGrainOn(time, grainOffset, duration);
+      }
+
+      function runTest() {
+          if (window.layoutTestController) {
+              layoutTestController.dumpAsText();
+              layoutTestController.waitUntilDone();
+          }
+
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitAudioContext(2, sampleRate * renderTime, sampleRate);
+          createSquarePulse(context);    
+
+          for (var i = 0; i < numberOfTests; ++i) {
+              var timeOffset = timeStep * i;
+              playNote(timeOffset, i * grainOffsetStep, duration);
+          }
+
+          context.oncomplete = checkResult;
+          context.startRendering();
+      }
+      
+      runTest();
+      successfullyParsed = true;
+
+    </script>
+
+    <script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

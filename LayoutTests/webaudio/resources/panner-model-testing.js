@@ -133,8 +133,9 @@ function checkResult(event) {
 
             // Keep track of the impulses that didn't show up where we
             // expected them to be.
-            if (k != Math.round(sampleRate * time[impulseCount])) {
-                timeErrors[timeCount] = { actual : k, expected : Math.round(sampleRate * time[impulseCount])};
+            var expectedOffset = timeToSampleFrame(time[impulseCount], sampleRate);
+            if (k != expectedOffset) {
+                timeErrors[timeCount] = { actual : k, expected : expectedOffset};
                 ++timeCount;
             }
             ++impulseCount;
@@ -148,32 +149,29 @@ function checkResult(event) {
         success = false;
     }
 
+    if (timeErrors.length > 0) {
+        success = false;
+        testFailed(timeErrors.length + " timing errors found in " + nodesToCreate + " panner nodes.");
+        for (var k = 0; k < timeErrors.length; ++k) {
+            testFailed("Impulse at sample " + timeErrors[k].actual + " but expected " + timeErrors[k].expected);
+        }
+    } else {
+        testPassed("All impulses at expected offsets.");
+    }
+
     if (maxErrorL <= maxAllowedError) {
         testPassed("Left channel gain values are correct.");
     } else {
-        testFailed("Left channel gain values are incorrect.  Max error = " + maxErrorL + " at time " + maxErrorIndexL / sampleRate + " (threshold = " + maxAllowedError + ")");
+        testFailed("Left channel gain values are incorrect.  Max error = " + maxErrorL + " at time " + time[maxErrorIndexL] + " (threshold = " + maxAllowedError + ")");
         success = false;
     }
     
     if (maxErrorR <= maxAllowedError) {
         testPassed("Right channel gain values are correct.");
     } else {
-        testFailed("Right channel gain values are incorrect.  Max error = " + maxErrorR + " at time " + maxErrorIndexR / sampleRate + " (threshold = " + maxAllowedError + ")");
+        testFailed("Right channel gain values are incorrect.  Max error = " + maxErrorR + " at time " + time[maxErrorIndexR] + " (threshold = " + maxAllowedError + ")");
         success = false;
     }
-
-    // See bug 75996 (https://bugs.webkit.org/show_bug.cgi?id=75996)
-    // and 76073 (https://bugs.webkit.org/show_bug.cgi?id=76073).
-    // When those bugs are fixed, uncomment the if statement below to
-    // enable this check.
-
-//    if (timeErrors.length > 0) {
-//        success = false;
-//        testFailed(timeErrors.length + " timing errors found in " + nodesToCreate + " panner nodes.");
-//        for (var k = 0; k < timeErrors.length; ++k) {
-//            testFailed("Impulse at sample " + timeErrors[k].actual + " but expected " + timeErrors[k].expected);
-//        }
-//    }
 
     if (success) {
         testPassed("EqualPower panner test passed");

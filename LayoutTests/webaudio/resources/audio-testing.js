@@ -119,3 +119,9 @@ function createImpulseBuffer(context, sampleFrameLength) {
 
     return audioBuffer;
 }
+
+// Convert time (in seconds) to sample frames.
+function timeToSampleFrame(time, sampleRate) {
+    return Math.floor(0.5 + time * sampleRate);
+}
+

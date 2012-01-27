@@ -32,13 +32,14 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include "DenormalDisabler.h"
 
 namespace WebCore {
     
 AudioDestinationNode::AudioDestinationNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
-    , m_currentTime(0.0)
+    , m_currentSampleFrame(0)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     
@@ -82,8 +83,8 @@ void AudioDestinationNode::provideInput(AudioBus* destinationBus, size_t numberO
     // Let the context take care of any business at the end of each render quantum.
     context()->handlePostRenderTasks();
     
-    // Advance current time.
-    m_currentTime += numberOfFrames / sampleRate();
+    // Advance current sample-frame.
+    m_currentSampleFrame += numberOfFrames;
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "AudioUtilities.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "ScriptCallStack.h"
@@ -101,26 +102,27 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     // Careful - this is a tryLock() and not an autolocker, so we must unlock() before every return.
     if (m_processLock.tryLock()) {
         // Check if it's time to start playing.
-        float sampleRate = this->sampleRate();
-        double quantumStartTime = context()->currentTime();
-        double quantumEndTime = quantumStartTime + framesToProcess / sampleRate;
+        double sampleRate = this->sampleRate();
+        size_t quantumStartFrame = context()->currentSampleFrame();
+        size_t quantumEndFrame = quantumStartFrame + framesToProcess;
+        size_t startFrame = AudioUtilities::timeToSampleFrame(m_startTime, sampleRate);
+        size_t endFrame = m_endTime == UnknownTime ? 0 : AudioUtilities::timeToSampleFrame(m_endTime, sampleRate);
 
         // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
-        if (m_endTime != UnknownTime && m_endTime <= quantumStartTime) {
+        if (m_endTime != UnknownTime && endFrame <= quantumStartFrame) {
             m_isPlaying = false;
             m_virtualReadIndex = 0;
             finish();
         }
         
-        if (!m_isPlaying || m_hasFinished || !buffer() || m_startTime >= quantumEndTime) {
+        if (!m_isPlaying || m_hasFinished || !buffer() || startFrame >= quantumEndFrame) {
             // FIXME: can optimize here by propagating silent hint instead of forcing the whole chain to process silence.
             outputBus->zero();
             m_processLock.unlock();
             return;
         }
 
-        double quantumTimeOffset = m_startTime > quantumStartTime ? m_startTime - quantumStartTime : 0;
-        size_t quantumFrameOffset = static_cast<unsigned>(quantumTimeOffset * sampleRate);
+        size_t quantumFrameOffset = startFrame > quantumStartFrame ? startFrame - quantumStartFrame : 0;
         quantumFrameOffset = min(quantumFrameOffset, framesToProcess); // clamp to valid range
         size_t bufferFramesToProcess = framesToProcess - quantumFrameOffset;
 
@@ -133,8 +135,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
         // If the end time is somewhere in the middle of this time quantum, then simply zero out the
         // frames starting at the end time.
-        if (m_endTime != UnknownTime && m_endTime >= quantumStartTime && m_endTime < quantumEndTime) {
-            size_t zeroStartFrame = narrowPrecisionToFloat((m_endTime - quantumStartTime) * sampleRate);
+        if (m_endTime != UnknownTime && endFrame >= quantumStartFrame && endFrame < quantumEndFrame) {
+            size_t zeroStartFrame = endFrame - quantumStartFrame;
             size_t framesToZero = framesToProcess - zeroStartFrame;
 
             bool isSafe = zeroStartFrame < framesToProcess && framesToZero <= framesToProcess && zeroStartFrame + framesToZero <= framesToProcess;
@@ -237,8 +239,11 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     // Calculate the start and end frames in our buffer that we want to play.
     // If m_isGrain is true, then we will be playing a portion of the total buffer.
-    unsigned startFrame = m_isGrain ? static_cast<unsigned>(m_grainOffset * bufferSampleRate) : 0;
-    unsigned endFrame = m_isGrain ? static_cast<unsigned>(startFrame + m_grainDuration * bufferSampleRate) : bufferLength;
+    unsigned startFrame = m_isGrain ? AudioUtilities::timeToSampleFrame(m_grainOffset, bufferSampleRate) : 0;
+
+    // Avoid converting from time to sample-frames twice by computing
+    // the grain end time first before computing the sample frame.
+    unsigned endFrame = m_isGrain ? AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate) : bufferLength;
     
     ASSERT(endFrame >= startFrame);
     if (endFrame < startFrame)
@@ -431,11 +436,11 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
     m_isGrain = true;
     m_startTime = when;
 
-    // We call floor() here since at playbackRate == 1 we don't want to go through linear interpolation
+    // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
     // at a sub-sample position since it will degrade the quality.
     // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
     // Since playbackRate == 1 is very common, it's worth considering quality.
-    m_virtualReadIndex = floor(m_grainOffset * buffer()->sampleRate());
+    m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer()->sampleRate());
     
     m_isPlaying = true;
 }

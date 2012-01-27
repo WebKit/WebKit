@@ -157,13 +157,6 @@ float AudioParamTimeline::valuesForTimeRange(float startTime,
     return value;
 }
 
-// Returns the rounded down integer sample-frame for the time and sample-rate.
-static unsigned timeToSampleFrame(double time, float sampleRate)
-{
-    double k = 0.5 / sampleRate;
-    return static_cast<unsigned>((time + k) * sampleRate);
-}
-
 float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                                                  float endTime,
                                                  float defaultValue,
@@ -193,7 +186,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
     float firstEventTime = m_events[0].time();
     if (firstEventTime > startTime) {
         float fillToTime = min(endTime, firstEventTime);
-        unsigned fillToFrame = timeToSampleFrame(fillToTime - startTime, sampleRate);
+        unsigned fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
         fillToFrame = min(fillToFrame, numberOfValues);
         for (; writeIndex < fillToFrame; ++writeIndex)
             values[writeIndex] = defaultValue;
@@ -226,7 +219,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
         float sampleFrameTimeIncr = 1 / sampleRate;
 
         float fillToTime = min(endTime, time2);
-        unsigned fillToFrame = timeToSampleFrame(fillToTime - startTime, sampleRate);
+        unsigned fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
         fillToFrame = min(fillToFrame, numberOfValues);
 
         ParamEvent::Type nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
@@ -313,7 +306,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     unsigned nextEventFillToFrame = fillToFrame;
                     float nextEventFillToTime = fillToTime;
                     fillToTime = min(endTime, time1 + duration);
-                    fillToFrame = timeToSampleFrame(fillToTime - startTime, sampleRate);
+                    fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
                     fillToFrame = min(fillToFrame, numberOfValues);
 
                     // Index into the curve data using a floating-point value.
