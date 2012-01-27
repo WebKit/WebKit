@@ -76,6 +76,7 @@ volatile bool done;
 static bool printSeparators;
 static int dumpPixels;
 static int dumpTree = 1;
+static int useTimeoutWatchdog = 1;
 
 AccessibilityController* axController = 0;
 RefPtr<LayoutTestController> gLayoutTestController;
@@ -368,6 +369,16 @@ static void dumpBackForwardListForAllWebViews()
         dumpBackForwardListForWebView(WEBKIT_WEB_VIEW(currentView->data));
 }
 
+void setWaitToDumpWatchdog(guint timer)
+{
+    waitToDumpWatchdog = timer;
+}
+
+bool shouldSetWaitToDumpWatchdog()
+{
+    return !waitToDumpWatchdog && useTimeoutWatchdog;
+}
+
 static void invalidateAnyPreviousWaitToDumpWatchdog()
 {
     if (waitToDumpWatchdog) {
@@ -487,6 +498,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, char *argv[])
         {"notree", no_argument, &dumpTree, false},
         {"pixel-tests", no_argument, &dumpPixels, true},
         {"tree", no_argument, &dumpTree, true},
+        {"no-timeout", no_argument, &useTimeoutWatchdog, false},
         {NULL, 0, NULL, 0}
     };
     

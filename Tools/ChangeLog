@@ -1,3 +1,23 @@
+2012-01-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] DumpRenderTree lacks --no-timeout command line option
+        https://bugs.webkit.org/show_bug.cgi?id=77196
+
+        Reviewed by Martin Robinson.
+
+        Add the --no-timeout command line option and reorganize
+        watchdog code to make running DumpRenderTree without
+        timeout possible.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (setWaitToDumpWatchdog):
+        (shouldSetWaitToDumpWatchdog):
+        (initializeGlobalsFromCommandLineOptions):
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (waitToDumpWatchdogFired):
+        (LayoutTestController::setWaitToDump):
+
 2012-01-27  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Enable the automatic touch->mouse mocking on the new Qt5 hashes

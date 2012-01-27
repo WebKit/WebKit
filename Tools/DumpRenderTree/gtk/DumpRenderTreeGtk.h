@@ -36,11 +36,13 @@
 
 extern WebKitWebFrame* mainFrame;
 extern WebKitWebFrame* topLoadingFrame;
-extern guint waitToDumpWatchdog;
 extern bool waitForPolicy;
 extern GSList* webViewList;
 
 gchar* JSStringCopyUTF8CString(JSStringRef jsString);
 CString getTopLevelPath();
+
+void setWaitToDumpWatchdog(guint timer);
+bool shouldSetWaitToDumpWatchdog();
 
 #endif // DumpRenderTreeGtk_h
