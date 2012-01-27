@@ -1,3 +1,26 @@
+2012-01-27  Ada Chan  <adachan@apple.com>
+
+        Add test for WKBundleFrameGetParentFrame().
+        https://bugs.webkit.org/show_bug.cgi?id=77161
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add ParentFrame.cpp and ParentFrame_Bundle.cpp.
+        * TestWebKitAPI/Tests/WebKit2/ParentFrame.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Get the check result from the injected bundle.
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST): Load simple-iframe.html and then wait for the injected bundle to post result.
+        Make sure the check is successful.
+        * TestWebKitAPI/Tests/WebKit2/ParentFrame_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (ParentFrameTest):
+        (TestWebKitAPI::ParentFrameTest::ParentFrameTest):
+        (TestWebKitAPI::didFinishLoadForFrame): If the frame is a subframe, store it off for checking later.
+        If the frame is the main frame, check whether it's indeed the subframe's parent frame and post the result
+        to the test controller.
+        (TestWebKitAPI::ParentFrameTest::didCreatePage): Set the page loader client on this page.
+
 2012-01-27  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] DumpRenderTree lacks --no-timeout command line option

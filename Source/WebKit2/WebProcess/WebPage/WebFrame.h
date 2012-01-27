@@ -86,6 +86,7 @@ public:
     String url() const;
     String innerText() const;
     bool isFrameSet() const;
+    WebFrame* parentFrame() const;
     PassRefPtr<ImmutableArray> childFrames();
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();

@@ -47,6 +47,11 @@ bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
     return toImpl(frameRef)->isMainFrame();
 }
 
+WKBundleFrameRef WKBundleFrameGetParentFrame(WKBundleFrameRef frameRef)
+{
+    return toAPI(toImpl(frameRef)->parentFrame());
+}
+
 WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frameRef)
 {
     return toCopiedURLAPI(toImpl(frameRef)->url());

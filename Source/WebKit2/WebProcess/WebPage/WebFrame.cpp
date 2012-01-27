@@ -357,6 +357,14 @@ String WebFrame::innerText() const
     return m_coreFrame->document()->documentElement()->innerText();
 }
 
+WebFrame* WebFrame::parentFrame() const
+{
+    if (!m_coreFrame || !m_coreFrame->ownerElement() || !m_coreFrame->ownerElement()->document())
+        return 0;
+
+    return static_cast<WebFrameLoaderClient*>(m_coreFrame->ownerElement()->document()->frame()->loader()->client())->webFrame();
+}
+
 PassRefPtr<ImmutableArray> WebFrame::childFrames()
 {
     if (!m_coreFrame)

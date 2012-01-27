@@ -1,3 +1,18 @@
+2012-01-27  Ada Chan  <adachan@apple.com>
+
+        Add API to get the parent frame in WKBundleFrameRef
+        https://bugs.webkit.org/show_bug.cgi?id=77161
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetParentFrame): Get the parent frame by calling WebFrame::parentFrame().
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::parentFrame): Return null if the frame does not have an owner element.
+        Otherwise, return the owner element's frame.
+        * WebProcess/WebPage/WebFrame.h:
+
 2012-01-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Sometimes fails to build when using make -j
