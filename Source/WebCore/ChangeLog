@@ -1,3 +1,31 @@
+2012-01-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Speed up the prefix matching of cssPropertyName()
+        https://bugs.webkit.org/show_bug.cgi?id=77158
+
+        Reviewed by Geoffrey Garen.
+
+        This patch improves the performance by:
+        -not checking the PropertyName with all 7 prefix
+         (now, in the worse case, 2 prefixes are checked)
+        -avoiding the conversion 8bits->16bits by using String::operator[]
+         instead of ::characters()
+
+        To avoid checking every prefix, the code branch based on the first
+        characters of the propertyName.
+        The remaining of the prefix is checked character by characters like before.
+
+        When accessing CSS property, this gives a 13% improvement when there is no prefix.
+        There is no performance regression for the matching of prefix, including for the first one
+        of the previous matching code ("css").
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        ():
+        (WebCore::matchesCSSPropertyNamePrefix):
+        (WebCore):
+        (WebCore::getCSSPropertyNamePrefix):
+        (WebCore::cssPropertyName):
+
 2012-01-27  Ken Buchanan  <kenrb@chromium.org>
 
         Crash in updateFirstLetter() from unnecessary anonymous block
