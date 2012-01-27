@@ -241,7 +241,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
     ColorSpace colorSpace = (destContext == m_context) ? ColorSpaceDeviceRGB : styleColorSpace;
 
     RetainPtr<CGImageRef> image;
-    if (destContext == m_context)
+    if (destContext == m_context || destContext->isAcceleratedContext())
         image.adoptCF(copyNativeImage(CopyBackingStore)); // Drawing into our own buffer, need to deep copy.
     else
         image.adoptCF(copyNativeImage(DontCopyBackingStore));
@@ -249,19 +249,19 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
     destContext->drawNativeImage(image.get(), m_size, colorSpace, destRect, srcRect, op);
 }
 
-void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
     if (!m_context->isAcceleratedContext()) {
-        if (context == m_context) {
+        if (destContext == m_context || destContext->isAcceleratedContext()) {
             RefPtr<Image> copy = copyImage(CopyBackingStore); // Drawing into our own buffer, need to deep copy.
-            copy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+            copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
         } else {
             RefPtr<Image> imageForRendering = copyImage(DontCopyBackingStore);
-            imageForRendering->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+            imageForRendering->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
         }
     } else {
         RefPtr<Image> copy = copyImage(CopyBackingStore);
-        copy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
+        copy->drawPattern(destContext, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
     }
 }
 

@@ -1,3 +1,17 @@
+2012-01-26  Matthew Delaney  <mdelaney@apple.com>
+
+        ImageBuffer::draw should deep copy if drawing to an accelerated context
+        https://bugs.webkit.org/show_bug.cgi?id=77185
+
+        Reviewed by Simon Fraser.
+
+        No new tests since any test for this issue would be flaky at best.
+
+        * platform/graphics/cg/ImageBufferCG.cpp: Deep copy when drawing ourself into
+            an accelerated context for both draw and drawPattern.
+        (WebCore::ImageBuffer::draw):
+        (WebCore::ImageBuffer::drawPattern):
+
 2012-01-26  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fixes.
