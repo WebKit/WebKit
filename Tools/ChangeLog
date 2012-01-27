@@ -1,3 +1,17 @@
+2012-01-26  Ojan Vafai  <ojan@chromium.org>
+
+        Remove builder name so http://trac.webkit.org/changeset/106035 actually works.
+        https://bugs.webkit.org/show_bug.cgi?id=77164
+
+        Reviewed by Dirk Pranke.
+
+        http://trac.webkit.org/changeset/106035 depends on builder_name being
+        falsey by default. There's other code that requires it to be iterable
+        by default. So, make it be the empty string.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-test should include relative file paths in test names

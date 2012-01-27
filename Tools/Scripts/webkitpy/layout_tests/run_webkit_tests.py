@@ -435,7 +435,7 @@ def parse_args(args=None):
     # FIXME: Move these into json_results_generator.py
     results_json_options = [
         optparse.make_option("--master-name", help="The name of the buildbot master."),
-        optparse.make_option("--builder-name", default="DUMMY_BUILDER_NAME",
+        optparse.make_option("--builder-name", default="",
             help=("The name of the builder shown on the waterfall running "
                   "this script e.g. WebKit.")),
         optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
