@@ -1,3 +1,19 @@
+2012-01-27  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        Update committers.py with new contributors.
+        https://bugs.webkit.org/show_bug.cgi?id=77207
+
+        I added six new contributors into committers.py:
+
+        - Adam Kallai
+        - Balazs Ankes
+        - Janos Badics
+        - Nandor Huszka
+        - Roland Takacs
+        - Szilard Ledan-Muntean
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Add Vsevolod Vlasov to reviewers list.
