@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
+
 #include "config.h"
 #include "DynamicLinkerEnvironmentExtractor.h"
 
@@ -198,3 +200,5 @@ void DynamicLinkerEnvironmentExtractor::getExtractedEnvironmentVariables(Environ
 }
 
 } // namespace WebKit
+
+#endif // BUILDING_ON_SNOW_LEOPARD
