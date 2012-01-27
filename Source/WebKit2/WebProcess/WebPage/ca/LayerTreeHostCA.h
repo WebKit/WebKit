@@ -54,6 +54,7 @@ protected:
 
     // LayerTreeHostCA
     virtual void didPerformScheduledLayerFlush();
+    virtual bool flushPendingLayerChanges();
 
     bool m_layerFlushSchedulingEnabled;
 
@@ -80,8 +81,6 @@ private:
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&) = 0;
-
-    bool flushPendingLayerChanges();
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();

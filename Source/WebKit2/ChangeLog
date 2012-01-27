@@ -1,3 +1,23 @@
+2012-01-26  Tim Horton  <hortont424@gmail.com>
+
+        3D transformed elements hide when showing the print dialog
+        https://bugs.webkit.org/show_bug.cgi?id=45894
+        <rdar://problem/7441593>
+
+        Reviewed by Andy Estes.
+
+        Suspend updates of the compositing layer tree while printing is taking place,
+        preventing on-screen layers from moving to their print-mode positions.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::endPrinting):
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::forceRepaint):
+        (WebKit::LayerTreeHostCAMac::flushPendingLayerChanges):
+
 2012-01-26  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Add the componentComplete method to WebView

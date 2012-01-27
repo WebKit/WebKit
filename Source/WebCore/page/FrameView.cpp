@@ -742,7 +742,7 @@ bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
     root->compositor()->flushPendingLayerChanges(rootFrameForSync == m_frame);
 
 #if ENABLE(FULLSCREEN_API)
-    // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState
+    // The fullScreenRenderer's graphicsLayer has been re-parented, and the above recursive syncCompositingState
     // call will not cause the subtree under it to repaint.  Explicitly call the syncCompositingState on 
     // the fullScreenRenderer's graphicsLayer here:
     Document* document = m_frame->document();
@@ -2848,7 +2848,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     FontCachePurgePreventer fontCachePurgePreventer;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (!p->paintingDisabled())
+    if (!p->paintingDisabled() && !document->printing())
         syncCompositingStateForThisFrame(m_frame.get());
 #endif
 

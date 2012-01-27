@@ -46,6 +46,8 @@ public:
     void suspend();
     void resume();
 
+    bool isSuspended() const { return m_isSuspended; }
+
 private:
     bool m_isSuspended;
     LayerFlushSchedulerClient* m_client;

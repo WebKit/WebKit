@@ -133,4 +133,12 @@ void LayerTreeHostCAMac::didPerformScheduledLayerFlush()
     LayerTreeHostCA::didPerformScheduledLayerFlush();
 }
 
+bool LayerTreeHostCAMac::flushPendingLayerChanges()
+{
+    if (m_layerFlushScheduler.isSuspended())
+        return false;
+
+    return LayerTreeHostCA::flushPendingLayerChanges();
+}
+
 } // namespace WebKit

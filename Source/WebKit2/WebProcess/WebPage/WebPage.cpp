@@ -2679,6 +2679,7 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
     if (!m_printContext)
         m_printContext = adoptPtr(new PrintContext(coreFrame));
 
+    drawingArea()->setLayerTreeStateIsFrozen(true);
     m_printContext->begin(printInfo.availablePaperWidth, printInfo.availablePaperHeight);
 
     float fullPageHeight;
@@ -2687,6 +2688,7 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 
 void WebPage::endPrinting()
 {
+    drawingArea()->setLayerTreeStateIsFrozen(false);
     m_printContext = nullptr;
 }
 

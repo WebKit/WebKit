@@ -55,7 +55,9 @@ private:
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
     virtual void didPerformScheduledLayerFlush();
-    
+
+    virtual bool flushPendingLayerChanges();
+
     // LayerFlushSchedulerClient
     virtual bool flushLayers();
 
