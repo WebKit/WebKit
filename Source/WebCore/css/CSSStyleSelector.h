@@ -203,7 +203,6 @@ public:
     void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
 
     void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
-    void addPageStyle(PassRefPtr<CSSPageRule>);
 
     bool checkRegionStyle(Element* regionElement);
 
