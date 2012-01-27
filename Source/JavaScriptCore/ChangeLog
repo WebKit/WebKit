@@ -1,3 +1,13 @@
+2012-01-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Hang in parallel GC caused by incorrect GCC asm codegen
+        Reviewed by Filip Pizlo.
+
+        <rdar://problem/10742649>
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap): Mark the argument volatile to force GCC to do the right thing.
+
 2012-01-25  Mark Rowe  <mrowe@apple.com>
 
         Merge r105942.

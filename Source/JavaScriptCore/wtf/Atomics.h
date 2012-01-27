@@ -118,7 +118,7 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 
 #endif
 
-inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned newValue)
+inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, unsigned newValue)
 {
 #if ENABLE(COMPARE_AND_SWAP)
     bool result;
