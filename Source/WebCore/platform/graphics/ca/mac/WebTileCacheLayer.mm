@@ -62,6 +62,16 @@ using namespace WebCore;
     _tileCache->setNeedsDisplayInRect(enclosingIntRect(rect));
 }
 
+- (void)setAcceleratesDrawing:(BOOL)acceleratesDrawing
+{
+    _tileCache->setAcceleratesDrawing(acceleratesDrawing);
+}
+
+- (BOOL)acceleratesDrawing
+{
+    return _tileCache->acceleratesDrawing();
+}
+
 - (CALayer *)tileContainerLayer
 {
     return _tileCache->tileContainerLayer();

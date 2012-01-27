@@ -1,3 +1,30 @@
+2012-01-27  Anders Carlsson  <andersca@apple.com>
+
+        WebTileLayers should honor the acceleratesDrawing flag
+        https://bugs.webkit.org/show_bug.cgi?id=77242
+        <rdar://problem/10622128>
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        (WebCore::TileCache::acceleratesDrawing):
+        Add getter.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache):
+        Initialize m_acceleratesDrawing.
+
+        (WebCore::TileCache::setAcceleratesDrawing):
+        Set m_acceleratesDrawing and go through all tile layers and update the flag.
+
+        (WebCore::TileCache::createTileLayer):
+        Call -[CALayer setAcceleratesDrawing:] on the newly created layer.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setAcceleratesDrawing:]):
+        (-[WebTileCacheLayer acceleratesDrawing]):
+        Call through to the TileCache object.
+
 2012-01-27  Raymond Toy  <rtoy@google.com>
 
         Round time to sample frame

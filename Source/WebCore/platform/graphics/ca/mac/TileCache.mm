@@ -35,6 +35,12 @@
 
 using namespace std;
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+@interface CALayer (WebCALayerDetails)
+- (void)setAcceleratesDrawing:(BOOL)flag;
+@end
+#endif
+
 namespace WebCore {
 
 PassOwnPtr<TileCache> TileCache::create(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
@@ -46,6 +52,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     : m_tileCacheLayer(tileCacheLayer)
     , m_tileSize(tileSize)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
+    , m_acceleratesDrawing(false)
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -102,6 +109,21 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
     drawLayerContents(context, layer, platformLayer);
 
     CGContextRestoreGState(context);
+}
+
+void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
+{
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (acceleratesDrawing == m_acceleratesDrawing)
+        return;
+
+    m_acceleratesDrawing = acceleratesDrawing;
+
+    for (WebTileLayer* tileLayer in [m_tileContainerLayer.get() sublayers])
+        [tileLayer setAcceleratesDrawing:m_acceleratesDrawing];
+#else
+    UNUSED_PARAM(acceleratesDrawing);
+#endif
 }
 
 IntRect TileCache::bounds() const
@@ -171,6 +193,10 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer()
     [layer.get() setBounds:CGRectMake(0, 0, m_tileSize.width(), m_tileSize.height())];
     [layer.get() setAnchorPoint:CGPointZero];
     [layer.get() setTileCache:this];
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
+#endif
 
     return layer;
 }

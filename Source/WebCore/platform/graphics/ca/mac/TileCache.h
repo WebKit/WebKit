@@ -52,6 +52,9 @@ public:
     void setNeedsDisplayInRect(const IntRect&);
     void drawLayer(WebTileLayer*, CGContextRef);
 
+    bool acceleratesDrawing() const { return m_acceleratesDrawing; }
+    void setAcceleratesDrawing(bool);
+
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
 
 private:
@@ -73,6 +76,8 @@ private:
 
     // Number of tiles in each dimension.
     IntSize m_numTilesInGrid;
+
+    bool m_acceleratesDrawing;
 };
 
 } // namespace WebCore
