@@ -1,3 +1,11 @@
+2012-01-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Add Vsevolod Vlasov to reviewers list.
+
+        Reviewed by Pavel Feldman.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-01-26  No'am Rosenthal  <noam.rosenthal@nokia.com> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] WKTR: Use a software rendering pipiline when running tests.
