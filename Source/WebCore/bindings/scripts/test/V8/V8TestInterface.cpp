@@ -146,6 +146,23 @@ static const BatchedCallback TestInterfaceCallbacks[] = {
 #endif
 };
 
+static const BatchedConstant TestInterfaceConsts[] = {
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    {"SUPPLEMENTALCONSTANT1", static_cast<signed int>(1)},
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    {"SUPPLEMENTALCONSTANT2", static_cast<signed int>(2)},
+#endif
+};
+
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+COMPILE_ASSERT(1 == TestInterface::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPLEMENTALCONSTANT1IsWrongUseDontCheckEnums);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+COMPILE_ASSERT(2 == TestInterface::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDontCheckEnums);
+#endif
+
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestInterface.Constructor");
@@ -202,6 +219,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 #if ENABLE(Condition11) || ENABLE(Condition12)
     proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceInternal::supplementalMethod2Callback, v8::Handle<v8::Value>(), supplementalMethod2Signature));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
+    batchConfigureConstants(desc, proto, TestInterfaceConsts, WTF_ARRAY_LENGTH(TestInterfaceConsts));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

@@ -31,6 +31,16 @@
 @class DOMTestObj;
 @class NSString;
 
+enum {
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    DOM_SUPPLEMENTALCONSTANT1 = 1,
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    DOM_SUPPLEMENTALCONSTANT2 = 2
+#endif
+
+};
+
 @interface DOMTestInterface : DOMObject
 #if ENABLE(Condition11) || ENABLE(Condition12)
 - (NSString *)supplementalStr1;

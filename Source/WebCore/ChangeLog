@@ -1,3 +1,35 @@
+2012-01-27  Kentaro Hara  <haraken@chromium.org>
+
+        Support the [Supplemental] IDL for constants
+        https://bugs.webkit.org/show_bug.cgi?id=77228
+
+        Reviewed by Adam Barth.
+
+        We have supported the [Supplemental] IDL for attributes and methods.
+        This patch supports it for constants.
+
+        Test: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/generate-bindings.pl:
+        Supported [Supplemental] constants.
+        Updated some comments.
+
+        * bindings/scripts/test/TestSupplemental.idl:
+        Added test cases for [Supplemental] constants.
+
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Updated the test results.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        (WebCore::JSTestInterfacePrototype::getOwnPropertySlot):
+        (WebCore::JSTestInterfacePrototype::getOwnPropertyDescriptor):
+        (WebCore):
+        (WebCore::jsTestInterfaceSUPPLEMENTAL_CONSTANT1):
+        (WebCore::jsTestInterfaceSUPPLEMENTAL_CONSTANT2):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+
 2012-01-27  Anders Carlsson  <andersca@apple.com>
 
         When threaded scrolling is enabled for a FrameView, always put scrollbars in layers
