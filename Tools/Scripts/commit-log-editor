@@ -132,24 +132,24 @@ my @changeLogs = ();
 my $logContents = "";
 my $existingLog = 0;
 open LOG, $log or die "Could not open the log file.";
-while (<LOG>) {
+while (my $curLine = <LOG>) {
     if (isGit()) {
-        if (/^# Changes to be committed:$/) {
+        if ($curLine =~ /^# Changes to be committed:$/) {
             $inChangesToBeCommitted = 1;
-        } elsif ($inChangesToBeCommitted && /^# \S/) {
+        } elsif ($inChangesToBeCommitted && $curLine =~ /^# \S/) {
             $inChangesToBeCommitted = 0;
         }
     }
 
-    if (!isGit() || /^#/) { #
-        $logContents .= $_;
+    if (!isGit() || $curLine =~ /^#/) {
+        $logContents .= $curLine;
     } else {
         # $_ contains the current git log message
         # (without the log comment info). We don't need it.
     }
-    $existingLog = isGit() && !(/^#/ || /^\s*$/) unless $existingLog;
+    $existingLog = isGit() && !($curLine =~ /^#/ || $curLine =~ /^\s*$/) unless $existingLog;
     my $changeLogFileName = changeLogFileName();
-    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^(?:M|A)....(.*$changeLogFileName)\r?\n?$/ || /^#\t(?:modified|new file):   (.*$changeLogFileName)$/) && !/-$changeLogFileName$/;
+    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && ($curLine =~ /^(?:M|A)....(.*$changeLogFileName)\r?\n?$/ || $curLine =~ /^#\t(?:modified|new file):   (.*$changeLogFileName)$/) && $curLine !~ /-$changeLogFileName$/;
 }
 close LOG;
 
