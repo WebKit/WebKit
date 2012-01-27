@@ -85,10 +85,15 @@ function runLoop()
 }
 
 function run() {
-    var start = new Date();
-    for (var i = 0; i < window.loopsPerRun; ++i)
-        window.runFunction();
-    var time = new Date() - start;
+    if (window.customRunFunction)
+        var time = window.customRunFunction();
+    else {
+        var start = new Date();
+        for (var i = 0; i < window.loopsPerRun; ++i)
+            window.runFunction();
+        var time = new Date() - start;
+    }
+
     window.completedRuns++;
     if (window.completedRuns <= 0) {
         log("Ignoring warm-up run (" + time + ")");
@@ -103,6 +108,16 @@ function start(runCount, runFunction, loopsPerRun, doneFunction) {
     window.runCount = runCount;
     window.runFunction = runFunction;
     window.loopsPerRun = loopsPerRun || 10;
+    window.doneFunction = doneFunction || function() {};
+
+    log("Running " + runCount + " times");
+    runLoop();
+}
+
+function startCustom(runCount, customRunFunction, doneFunction) {
+    window.runCount = runCount;
+    window.customRunFunction = customRunFunction;
+    window.loopsPerRun = 1;
     window.doneFunction = doneFunction || function() {};
 
     log("Running " + runCount + " times");

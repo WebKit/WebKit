@@ -1,3 +1,42 @@
+2012-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import Chromium's dom_perf test
+        https://bugs.webkit.org/show_bug.cgi?id=77175
+
+        Reviewed by Adam Barth.
+
+        Import dom_perf.
+
+        Note resources/dom/suites.js isn't used by any html file yet but it will be used by Chromium port
+        once its perf bots start pulling test files from WebKit repository instead of Google's internal repository.
+
+        * DOM: Added.
+        * DOM/Accessors.html: Added.
+        * DOM/CloneNodes.html: Added.
+        * DOM/CreateNodes.html: Added.
+        * DOM/DOMDivWalk.html: Added.
+        * DOM/DOMTable.html: Added.
+        * DOM/DOMWalk.html: Added.
+        * DOM/Events.html: Added.
+        * DOM/GetElement.html: Added.
+        * DOM/GridSort.html: Added.
+        * DOM/Template.html: Added.
+        * DOM/resources: Added.
+        * DOM/resources/dom-perf.js: Added.
+        * DOM/resources/dom-perf: Added.
+        * DOM/resources/dom-perf/accessors.js: Added.
+        * DOM/resources/dom-perf/clonenodes.js: Added.
+        * DOM/resources/dom-perf/createnodes.js: Added.
+        * DOM/resources/dom-perf/domdivwalk.js: Added.
+        * DOM/resources/dom-perf/domtable.js: Added.
+        * DOM/resources/dom-perf/domwalk.js: Added.
+        * DOM/resources/dom-perf/events.js: Added.
+        * DOM/resources/dom-perf/getelement.js: Added.
+        * DOM/resources/dom-perf/gridsort.js: Added.
+        * DOM/resources/dom-perf/suites.js: Added.
+        * DOM/resources/dom-perf/template.js: Added.
+        * resources/runner.js:
+
 2012-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         html5-full-render.html fails due to a log
