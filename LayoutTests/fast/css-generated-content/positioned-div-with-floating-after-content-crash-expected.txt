@@ -1,0 +1,6 @@
+
+
+--------
+Frame: 'frame'
+--------
+PASS, if no exception or crash

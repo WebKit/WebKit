@@ -1,0 +1,11 @@
+<script>
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpChildFramesAsText();
+    }
+}
+window.onload = runTest;
+</script>
+<iframe id="frame" src="resources/positioned-div-with-floating-after-content-crash-frame1.html"></iframe>
