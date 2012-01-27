@@ -1,3 +1,14 @@
+2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
+
+        Remove FIXME: ColorProfile encapsulation as a Vector<char> works well 
+        https://bugs.webkit.org/show_bug.cgi?id=77176
+
+        Reviewed by Adam Barth.
+
+        No new tests. No change in behavior.
+
+        * platform/image-decoders/ImageDecoder.h:
+
 2012-01-26  Matthew Delaney  <mdelaney@apple.com>
 
         ImageBuffer::draw should deep copy if drawing to an accelerated context

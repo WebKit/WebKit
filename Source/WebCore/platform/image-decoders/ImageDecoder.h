@@ -47,7 +47,6 @@
 
 namespace WebCore {
 
-    // FIXME: Do we want better encapsulation?
     typedef Vector<char> ColorProfile;
 
     // ImageFrame represents the decoded image data.  This buffer is what all
