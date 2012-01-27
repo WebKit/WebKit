@@ -242,13 +242,6 @@ public:
     // Sets the ratio as computed by computeViewportAttributes.
     virtual void setDeviceScaleFactor(float) = 0;
 
-    // Indicates whether position:fixed elements should be laid out relative
-    // to the frame or relative to the page.
-    virtual bool shouldLayoutFixedElementsRelativeToFrame() const = 0;
-
-    // Sets the relative layout of position:fixed elements.
-    virtual void setShouldLayoutFixedElementsRelativeToFrame(bool) = 0;
-
 
     // Fixed Layout --------------------------------------------------------
 

@@ -1,3 +1,47 @@
+2012-01-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting
+        https://bugs.webkit.org/show_bug.cgi?id=76459
+
+        Reviewed by Darin Fisher.
+
+        This should be a setting because it is independent of a particular frame and
+        should be preserved even if the mainframe changes.
+
+        Renamed (set)ShouldLayoutFixedElementsRelativeToFrame to 
+        (set)FixedElementsLayoutRelativeToFrame due to the connotation
+        the word "should" may have in this context: If set, 
+        position:fixed elements will ALWAYS be laid out relative to the frame.
+
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::scrollXForFixedPosition):
+        (WebCore::FrameView::scrollYForFixedPosition):
+        (WebCore::FrameView::fixedElementsLayoutRelativeToFrame):
+        (WebCore):
+        * page/FrameView.h:
+        (FrameView):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFixedElementsLayoutRelativeToFrame):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::fixedElementsLayoutRelativeToFrame):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::fixedElementLaysOutRelativeToFrame):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setFixedElementsLayoutRelativeToFrame):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-01-27  Kentaro Hara  <haraken@chromium.org>
 
         Support the [Supplemental] IDL for constants

@@ -462,7 +462,7 @@ protected:
     void paintRootBoxFillLayers(const PaintInfo&);
 
 private:
-    bool shouldLayoutFixedElementRelativeToFrame(Frame*, FrameView*) const;
+    bool fixedElementLaysOutRelativeToFrame(Frame*, FrameView*) const;
 
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;

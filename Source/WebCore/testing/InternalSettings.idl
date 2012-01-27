@@ -39,7 +39,7 @@ module window {
         void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
         void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
-        void setShouldLayoutFixedElementsRelativeToFrame(in boolean enabled) raises(DOMException);
+        void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
         void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
         boolean unifiedTextCheckingEnabled() raises (DOMException);
         float pageScaleFactor() raises(DOMException);

@@ -1,3 +1,13 @@
+2012-01-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting
+        https://bugs.webkit.org/show_bug.cgi?id=76459
+
+        Reviewed by Darin Fisher.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-01-27  Martin Robinson  <mrobinson@igalia.com>
 
         Fix a compilation warning in a WebKit2 GTK+ API test.

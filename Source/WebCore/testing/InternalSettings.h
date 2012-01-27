@@ -58,7 +58,7 @@ public:
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
     void setPasswordEchoEnabled(bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode&);
-    void setShouldLayoutFixedElementsRelativeToFrame(bool, ExceptionCode&);
+    void setFixedElementsLayoutRelativeToFrame(bool, ExceptionCode&);
     void setUnifiedTextCheckingEnabled(bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(ExceptionCode&);
     float pageScaleFactor(ExceptionCode&);

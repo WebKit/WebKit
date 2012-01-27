@@ -235,10 +235,10 @@ void InternalSettings::setPasswordEchoDurationInSeconds(double durationInSeconds
     settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
 }
 
-void InternalSettings::setShouldLayoutFixedElementsRelativeToFrame(bool enabled, ExceptionCode& ec)
+void InternalSettings::setFixedElementsLayoutRelativeToFrame(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForFrameView();
-    frame()->view()->setShouldLayoutFixedElementsRelativeToFrame(enabled);
+    settings()->setFixedElementsLayoutRelativeToFrame(enabled);
 }
 
 void InternalSettings::setUnifiedTextCheckingEnabled(bool enabled, ExceptionCode& ec)

@@ -1,3 +1,23 @@
+2012-01-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting
+        https://bugs.webkit.org/show_bug.cgi?id=76459
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        ():
+        * public/WebView.h:
+        (WebView):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setFixedElementsLayoutRelativeToFrame):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-01-24  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock: Implement pointer interface

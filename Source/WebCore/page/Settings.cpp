@@ -213,6 +213,7 @@ Settings::Settings(Page* page)
     , m_crossOriginCheckInGetMatchedCSSRulesDisabled(false)
     , m_forceCompositingMode(false)
     , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
+    , m_fixedElementsLayoutRelativeToFrame(false)
     , m_allowDisplayOfInsecureContent(true)
     , m_allowRunningOfInsecureContent(true)
 #if ENABLE(SMOOTH_SCROLLING)
@@ -484,6 +485,11 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
     m_userStyleSheetLocation = userStyleSheetLocation;
 
     m_page->userStyleSheetLocationChanged();
+}
+
+void Settings::setFixedElementsLayoutRelativeToFrame(bool fixedElementsLayoutRelativeToFrame)
+{
+    m_fixedElementsLayoutRelativeToFrame = fixedElementsLayoutRelativeToFrame;
 }
 
 void Settings::setShouldPrintBackgrounds(bool shouldPrintBackgrounds)

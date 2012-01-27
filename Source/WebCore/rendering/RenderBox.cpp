@@ -634,9 +634,9 @@ LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
     return result;
 }
 
-bool RenderBox::shouldLayoutFixedElementRelativeToFrame(Frame* frame, FrameView* frameView) const
+bool RenderBox::fixedElementLaysOutRelativeToFrame(Frame* frame, FrameView* frameView) const
 {
-    return style() && style()->position() == FixedPosition && container()->isRenderView() && frame && frameView && frameView->shouldLayoutFixedElementsRelativeToFrame();
+    return style() && style()->position() == FixedPosition && container()->isRenderView() && frame && frameView && frameView->fixedElementsLayoutRelativeToFrame();
 }
 
 bool RenderBox::includeVerticalScrollbarSize() const
@@ -2308,7 +2308,7 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     // Container for position:fixed is the frame.
     Frame* frame = view() ? view()->frame(): 0;
     FrameView* frameView = view() ? view()->frameView() : 0;
-    if (shouldLayoutFixedElementRelativeToFrame(frame, frameView))
+    if (fixedElementLaysOutRelativeToFrame(frame, frameView))
         return (view()->isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frame->frameScaleFactor();
 
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
@@ -2365,7 +2365,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
 {
     Frame* frame = view() ? view()->frame(): 0;
     FrameView* frameView = view() ? view()->frameView() : 0;
-    if (shouldLayoutFixedElementRelativeToFrame(frame, frameView))
+    if (fixedElementLaysOutRelativeToFrame(frame, frameView))
         return (view()->isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frame->frameScaleFactor();
 
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())

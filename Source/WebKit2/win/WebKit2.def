@@ -175,7 +175,6 @@ EXPORTS
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
-        ?setShouldLayoutFixedElementsRelativeToFrame@FrameView@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
@@ -186,6 +185,7 @@ EXPORTS
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
+        ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
