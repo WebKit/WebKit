@@ -1,3 +1,39 @@
+2012-01-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r105486.
+        http://trac.webkit.org/changeset/105486
+        https://bugs.webkit.org/show_bug.cgi?id=77182
+
+        This patch doesn't take web workers into account. (Requested
+        by dave_levin on #webkit).
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::DOMURL):
+        (WebCore::DOMURL::~DOMURL):
+        (WebCore::DOMURL::contextDestroyed):
+        (WebCore):
+        (WebCore::DOMURL::createObjectURL):
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/DOMURL.h:
+        (WebCore::DOMURL::create):
+        (DOMURL):
+        * html/DOMURL.idl:
+        * page/DOMWindow.cpp:
+        (WebCore):
+        (WebCore::DOMWindow::webkitURL):
+        * page/DOMWindow.h:
+        (DOMWindow):
+        ():
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.cpp:
+        (WebCore):
+        (WebCore::WorkerContext::webkitURL):
+        (WebCore::WorkerContext::webkitRequestFileSystem):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+        ():
+        * workers/WorkerContext.idl:
+
 2012-01-26  Noel Gordon  <noel.gordon@gmail.com>
 
         Cleanup JPEGImageDecoder includes

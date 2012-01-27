@@ -783,7 +783,7 @@ module window {
 
         attribute [Conditional=BLOB] WebKitBlobBuilderConstructor WebKitBlobBuilder;
 
-        attribute [Conditional=BLOB] DOMURLConstructor webkitURL;
+        readonly attribute [Conditional=BLOB] DOMURL webkitURL;
 
 #if defined(ENABLE_QUOTA) && ENABLE_QUOTA
         readonly attribute [EnabledAtRuntime=Quota] StorageInfo webkitStorageInfo;

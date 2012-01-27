@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011 Motorola Mobility Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +26,15 @@
 module html {
     interface [
         Conditional=BLOB,
+        OmitConstructor,
         GenerateNativeConverter,
         GenerateToJS,
-        Constructor
+        NoStaticTables
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-        static [ConvertNullStringTo=Undefined,CallWith=ScriptExecutionContext] DOMString createObjectURL(in MediaStream stream);
+        [ConvertNullStringTo=Undefined] DOMString createObjectURL(in MediaStream stream);
 #endif
-        static [ConvertNullStringTo=Undefined,CallWith=ScriptExecutionContext] DOMString createObjectURL(in Blob blob);
-        static [CallWith=ScriptExecutionContext] void revokeObjectURL(in DOMString url);
+        [ConvertNullStringTo=Undefined] DOMString createObjectURL(in Blob blob);
+        void revokeObjectURL(in DOMString url);
     };
 }
