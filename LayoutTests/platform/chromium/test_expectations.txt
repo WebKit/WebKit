@@ -2765,8 +2765,6 @@ BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE
 
 BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
-BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = PASS CRASH
-
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
