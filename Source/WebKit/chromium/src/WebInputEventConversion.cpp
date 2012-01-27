@@ -149,6 +149,12 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     case WebInputEvent::GestureTap:
         m_type = PlatformEvent::GestureTap;
         break;
+    case WebInputEvent::GestureTapDown:
+        m_type = PlatformEvent::GestureTapDown;
+        break;
+    case WebInputEvent::GestureDoubleTap:
+        m_type = PlatformEvent::GestureDoubleTap;
+        break;
     default:
         ASSERT_NOT_REACHED();
     }

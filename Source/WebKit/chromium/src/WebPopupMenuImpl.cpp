@@ -278,6 +278,8 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::GestureFlingStart:
     case WebInputEvent::GestureFlingCancel:
     case WebInputEvent::GestureTap:
+    case WebInputEvent::GestureTapDown:
+    case WebInputEvent::GestureDoubleTap:
         return GestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
 
     case WebInputEvent::Undefined:

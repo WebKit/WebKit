@@ -1413,6 +1413,8 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::GestureFlingStart:
     case WebInputEvent::GestureFlingCancel:
     case WebInputEvent::GestureTap:
+    case WebInputEvent::GestureTapDown:
+    case WebInputEvent::GestureDoubleTap:
         handled = gestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
         break;
 #endif

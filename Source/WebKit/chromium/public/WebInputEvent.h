@@ -107,6 +107,8 @@ public:
         GestureFlingStart,
         GestureFlingCancel,
         GestureTap,
+        GestureTapDown,
+        GestureDoubleTap,
 
         // WebTouchEvent
         TouchStart,
