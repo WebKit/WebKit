@@ -24,6 +24,7 @@
 
 #include "MachineStackMarker.h"
 #include "MarkedBlock.h"
+#include "MarkedBlockSet.h"
 #include "PageAllocationAligned.h"
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
@@ -61,22 +62,36 @@ public:
     MarkedSpace(Heap*);
 
     SizeClass& sizeClassFor(size_t);
+    void* allocate(size_t);
     void* allocate(SizeClass&);
     
     void resetAllocator();
 
     void addBlock(SizeClass&, MarkedBlock*);
     void removeBlock(MarkedBlock*);
+    MarkedBlockSet& blocks() { return m_blocks; }
     
     void canonicalizeCellLivenessData();
 
     size_t waterMark();
     size_t nurseryWaterMark();
 
-    template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&); // Safe to remove the current item while iterating.
+    typedef HashSet<MarkedBlock*>::iterator BlockIterator;
+    
+    template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
+    template<typename Functor> typename Functor::ReturnType forEachCell();
+    template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
+    
+    void shrink();
+    void freeBlocks(MarkedBlock* head);
 
 private:
+    void* allocateSlowCase(SizeClass&);
+    void* tryAllocateHelper(MarkedSpace::SizeClass&);
+    void* tryAllocate(MarkedSpace::SizeClass&);
+    MarkedBlock* allocateBlock(size_t, AllocationEffort);
+
     // [ 32... 256 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
     static const size_t preciseCutoff = 256;
@@ -92,6 +107,7 @@ private:
     size_t m_waterMark;
     size_t m_nurseryWaterMark;
     Heap* m_heap;
+    MarkedBlockSet m_blocks;
 };
 
 inline size_t MarkedSpace::waterMark()
@@ -104,6 +120,22 @@ inline size_t MarkedSpace::nurseryWaterMark()
     return m_nurseryWaterMark;
 }
 
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachCell(Functor& functor)
+{
+    canonicalizeCellLivenessData();
+
+    BlockIterator end = m_blocks.set().end();
+    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
+        (*it)->forEachCell(functor);
+    return functor.returnValue();
+}
+
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachCell()
+{
+    Functor functor;
+    return forEachCell(functor);
+}
+
 inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
 {
     ASSERT(bytes && bytes <= maxCellSize);
@@ -112,25 +144,19 @@ inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
     return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
 }
 
+inline void* MarkedSpace::allocate(size_t bytes)
+{
+    SizeClass& sizeClass = sizeClassFor(bytes);
+    return allocate(sizeClass);
+}
+
 inline void* MarkedSpace::allocate(SizeClass& sizeClass)
 {
+    // This is a light-weight fast path to cover the most common case.
     MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
-    if (!firstFreeCell) {
-        for (MarkedBlock*& block = sizeClass.currentBlock; block; block = static_cast<MarkedBlock*>(block->next())) {
-            firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
-            if (firstFreeCell)
-                break;
-            m_nurseryWaterMark += block->capacity() - block->size();
-            m_waterMark += block->capacity();
-            block->didConsumeFreeList();
-        }
-
-        if (!firstFreeCell)
-            return 0;
-    }
-
-    ASSERT(firstFreeCell);
-
+    if (UNLIKELY(!firstFreeCell))
+        return allocateSlowCase(sizeClass);
+    
     sizeClass.firstFreeCell = firstFreeCell->next;
     return firstFreeCell;
 }

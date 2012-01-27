@@ -73,7 +73,6 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGThunks.cpp
 
-    heap/AllocationSpace.cpp
     heap/BumpSpace.cpp
     heap/DFGCodeBlocks.cpp
     heap/Heap.cpp

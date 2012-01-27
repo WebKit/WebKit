@@ -64,7 +64,7 @@ EXPORTS
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXAAVJSGlobalData@2@II@Z
-    ?allocateSlowCase@AllocationSpace@JSC@@AAEPAXAAUSizeClass@MarkedSpace@2@@Z
+    ?allocateSlowCase@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
     ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ

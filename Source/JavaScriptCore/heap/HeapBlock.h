@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
+
 class HeapBlock : public DoublyLinkedListNode<HeapBlock> {
 public:
     HeapBlock(PageAllocationAligned& allocation)

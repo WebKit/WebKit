@@ -1,3 +1,55 @@
+2012-01-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Merge AllocationSpace into MarkedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=77116
+
+        Reviewed by Geoffrey Garen.
+
+        Merging AllocationSpace and MarkedSpace in preparation for future refactoring/enhancement to 
+        MarkedSpace allocation.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/AllocationSpace.cpp: Removed.
+        * heap/AllocationSpace.h: Removed.
+        * heap/BumpSpace.h:
+        (BumpSpace):
+        * heap/Heap.h:
+        (JSC::Heap::objectSpace):
+        (Heap):
+        ():
+        * heap/HeapBlock.h:
+        ():
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::tryAllocateHelper):
+        (JSC):
+        (JSC::MarkedSpace::tryAllocate):
+        (JSC::MarkedSpace::allocateSlowCase):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::freeBlocks):
+        (TakeIfUnmarked):
+        (JSC::TakeIfUnmarked::TakeIfUnmarked):
+        (JSC::TakeIfUnmarked::operator()):
+        (JSC::TakeIfUnmarked::returnValue):
+        (JSC::MarkedSpace::shrink):
+        (GatherDirtyCells):
+        (JSC::GatherDirtyCells::returnValue):
+        (JSC::GatherDirtyCells::GatherDirtyCells):
+        (JSC::GatherDirtyCells::operator()):
+        (JSC::MarkedSpace::gatherDirtyCells):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC::MarkedSpace::blocks):
+        (JSC::MarkedSpace::forEachCell):
+        (JSC):
+        (JSC::MarkedSpace::allocate):
+
 2012-01-26  Oliver Hunt  <oliver@apple.com>
 
         MSVC bug fix.

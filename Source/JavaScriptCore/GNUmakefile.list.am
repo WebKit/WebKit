@@ -178,8 +178,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
-	Source/JavaScriptCore/heap/AllocationSpace.cpp \
-	Source/JavaScriptCore/heap/AllocationSpace.h \
 	Source/JavaScriptCore/heap/BumpBlock.h \
 	Source/JavaScriptCore/heap/BumpSpace.cpp \
 	Source/JavaScriptCore/heap/BumpSpace.h \

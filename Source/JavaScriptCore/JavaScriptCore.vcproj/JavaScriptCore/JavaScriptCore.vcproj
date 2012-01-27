@@ -2006,14 +2006,6 @@
 			Name="heap"
 			>
                             <File
-                                    RelativePath="..\..\heap\AllocationSpace.cpp"
-                                    >
-                            </File>
-                            <File
-                                    RelativePath="..\..\heap\AllocationSpace.h"
-                                    >
-                            </File>
-                            <File
                                     RelativePath="..\..\heap\BumpBlock.h"
                                     >
                             </File>

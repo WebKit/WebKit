@@ -26,6 +26,7 @@
 #ifndef BumpSpace_h
 #define BumpSpace_h
 
+#include "HeapBlock.h"
 #include "TinyBloomFilter.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedBoolean.h>
@@ -66,8 +67,6 @@ public:
     static BumpBlock* blockFor(void*);
 
 private:
-    enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
-
     CheckedBoolean tryAllocateSlowCase(size_t, void**);
     CheckedBoolean addNewBlock();
     CheckedBoolean allocateNewBlock(BumpBlock**);

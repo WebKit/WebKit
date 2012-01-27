@@ -22,7 +22,6 @@
 #ifndef Heap_h
 #define Heap_h
 
-#include "AllocationSpace.h"
 #include "DFGCodeBlocks.h"
 #include "HandleHeap.h"
 #include "HandleStack.h"
@@ -86,7 +85,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
         JSGlobalData* globalData() const { return m_globalData; }
-        AllocationSpace& objectSpace() { return m_objectSpace; }
+        MarkedSpace& objectSpace() { return m_objectSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
@@ -136,8 +135,8 @@ namespace JSC {
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     private:
+        friend class MarkedSpace;
         friend class MarkedBlock;
-        friend class AllocationSpace;
         friend class BumpSpace;
         friend class SlotVisitor;
         friend class CodeBlock;
@@ -191,7 +190,7 @@ namespace JSC {
         size_t m_highWaterMark;
         
         OperationInProgress m_operationInProgress;
-        AllocationSpace m_objectSpace;
+        MarkedSpace m_objectSpace;
         BumpSpace m_storageSpace;
 
         DoublyLinkedList<HeapBlock> m_freeBlocks;
