@@ -1583,6 +1583,10 @@ bool RenderLayerCompositor::needsContentsCompositingLayer(const RenderLayer* lay
 
 bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) const
 {
+    // This applies when the application UI handles scrolling, in which case RenderLayerCompositor doesn't need to manage it.
+    if (m_renderView->frameView()->delegatesScrolling())
+        return false;
+
     // We need to handle our own scrolling if we're:
     return !m_renderView->frameView()->platformWidget() // viewless (i.e. non-Mac, or Mac in WebKit2)
         || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac

@@ -346,6 +346,8 @@ private:
     virtual void contentsResized() OVERRIDE;
     virtual void visibleContentsResized();
 
+    virtual void delegatesScrollingDidChange();
+
     // Override ScrollView methods to do point conversion via renderers, in order to
     // take transforms into account.
     virtual IntRect convertToContainingView(const IntRect&) const;

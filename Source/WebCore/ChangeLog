@@ -1,3 +1,28 @@
+2012-01-27  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Child layers appear in wrong position when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=77063
+
+        Reviewed by Simon Fraser.
+
+        When using the delegatesScrolling mode in FrameView, the compositor doesn't need
+        to control the special clip/scroll layers. Also, when we change that mode, we need to let
+        the compositor reset its backing-stores and rebuild them without scrolling/clipping.
+
+        This is tested by compositing tests, when run with Qt in touch mode.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::delegatesScrollingDidChange):
+        (WebCore):
+        * page/FrameView.h:
+        (FrameView):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setDelegatesScrolling):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::delegatesScrollingDidChange):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresScrollLayer):
+
 2012-01-27  Thiago Marcos P. Santos  <tmpsantos@gmail.com>
 
         Removed unused method from CSSStyleSelector

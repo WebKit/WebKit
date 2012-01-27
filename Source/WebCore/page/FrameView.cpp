@@ -1702,6 +1702,14 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
     ScrollView::setScrollPosition(scrollPoint);
 }
 
+void FrameView::delegatesScrollingDidChange()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    // When we switch to delgatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
+    clearBackingStores();
+#endif
+}
+
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {
     IntSize offset = scrollOffset();

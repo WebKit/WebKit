@@ -301,6 +301,7 @@ protected:
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
     virtual void visibleContentsResized() = 0;
+    virtual void delegatesScrollingDidChange() { }
 
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
 
