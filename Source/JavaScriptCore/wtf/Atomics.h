@@ -181,10 +181,12 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
 #endif // ENABLE(COMPARE_AND_SWAP)
 }
 
+#if CPU(X86_64)
 inline bool weakCompareAndSwap(volatile uintptr_t* location, uintptr_t expected, uintptr_t newValue)
 {
     return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
 }
+#endif
 
 } // namespace WTF
 

@@ -1,3 +1,13 @@
+2012-01-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        32-bit Windows build fix
+
+        Unreviewed build fix
+
+        <rdar://problem/10742649>
+
+        * wtf/Atomics.h:
+
 2011-01-27  Lucas Forschler  <lforschler@apple.com>
 
     Merge 106075
