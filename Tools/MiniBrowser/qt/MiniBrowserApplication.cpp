@@ -75,9 +75,6 @@ MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     setApplicationVersion("0.1");
 
     handleUserOptions();
-
-    // FIXME: This should be removed as soon as we can flag touch mock events as synthesized throuch QWindowSystemInterface
-    qApp->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, false);
 }
 
 bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
