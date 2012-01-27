@@ -3846,6 +3846,8 @@ BUGWK76562 : fast/canvas/webgl/drawingbuffer-test.html = TEXT
 // This test is passing, but it doesn't seem possible to add GPU+Leopard specific baselines.
 BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
+BUGWK77187 WIN GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
+
 BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
