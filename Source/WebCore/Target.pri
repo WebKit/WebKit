@@ -1509,9 +1509,7 @@ v8 {
 HEADERS += \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
-    css/CSSBorderImageValue.h \
     css/CSSBorderImage.h \
-    css/CSSBorderImageValue.h \
     css/CSSCalculationValue.h \
     css/CSSCanvasValue.h \
     css/CSSCharsetRule.h \

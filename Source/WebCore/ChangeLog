@@ -1,3 +1,14 @@
+2012-01-28  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] Remove references to CSSBorderImageValue.h in Target.pri
+        https://bugs.webkit.org/show_bug.cgi?id=77277
+
+        Reviewed by Antonio Gomes.
+
+        CSSBorderImageValue.h was removed in r105502.
+
+        * Target.pri:
+
 2012-01-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r94016): Element with visibility:hidden but visible descendant may not be properly repainted
