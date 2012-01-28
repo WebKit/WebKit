@@ -363,8 +363,6 @@ PassRefPtr<StringImpl> StringImpl::upper()
         CRASH();
     int32_t length = m_length;
 
-    const UChar* source16;
-
     if (is8Bit()) {
         LChar* data8;
         RefPtr<StringImpl> newImpl = createUninitialized(m_length, data8);
@@ -380,30 +378,19 @@ PassRefPtr<StringImpl> StringImpl::upper()
             return newImpl.release();
 
         // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
-        for (int32_t i = 0; i < length; i++) {
-            UChar upper = Unicode::toUpper(m_data8[i]);
-            if (UNLIKELY(upper > 0xff)) {
-                // Have a character that is 16bit when converted to uppercase.
-                source16 = characters();
-                goto upconvert;
-            }
-                
-            data8[i] = static_cast<LChar>(upper);
-        }
+        for (int32_t i = 0; i < length; i++)
+            data8[i] = static_cast<LChar>(Unicode::toUpper(m_data8[i]));
 
         return newImpl.release();
     }
 
-    source16 = m_data16;
-
-upconvert:
     UChar* data16;
     RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
     
     // Do a faster loop for the case where all the characters are ASCII.
     UChar ored = 0;
     for (int i = 0; i < length; i++) {
-        UChar c = source16[i];
+        UChar c = m_data16[i];
         ored |= c;
         data16[i] = toASCIIUpper(c);
     }
@@ -413,11 +400,11 @@ upconvert:
     // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
     newImpl = createUninitialized(m_length, data16);
-    int32_t realLength = Unicode::toUpper(data16, length, source16, m_length, &error);
+    int32_t realLength = Unicode::toUpper(data16, length, m_data16, m_length, &error);
     if (!error && realLength == length)
         return newImpl;
     newImpl = createUninitialized(realLength, data16);
-    Unicode::toUpper(data16, realLength, source16, m_length, &error);
+    Unicode::toUpper(data16, realLength, m_data16, m_length, &error);
     if (error)
         return this;
     return newImpl.release();

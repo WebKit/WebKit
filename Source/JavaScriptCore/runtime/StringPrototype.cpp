@@ -1180,7 +1180,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
     if (!sSize)
         return JSValue::encode(sVal);
 
-    StringImpl* ourImpl = s.impl();
+    StringImpl* ourImpl = s.impl();   
     RefPtr<StringImpl> lower = ourImpl->lower();
     if (ourImpl == lower.get())
         return JSValue::encode(sVal);
@@ -1199,11 +1199,32 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
     if (!sSize)
         return JSValue::encode(sVal);
 
-    StringImpl* ourImpl = s.impl();
-    RefPtr<StringImpl> upper = ourImpl->upper();
-    if (ourImpl == upper.get())
-        return JSValue::encode(sVal);
-    return JSValue::encode(jsString(exec, UString(upper.release())));
+    const UChar* sData = s.characters();
+    Vector<UChar> buffer(sSize);
+
+    UChar ored = 0;
+    for (int i = 0; i < sSize; i++) {
+        UChar c = sData[i];
+        ored |= c;
+        buffer[i] = toASCIIUpper(c);
+    }
+    if (!(ored & ~0x7f))
+        return JSValue::encode(jsString(exec, UString::adopt(buffer)));
+
+    bool error;
+    int length = Unicode::toUpper(buffer.data(), sSize, sData, sSize, &error);
+    if (error) {
+        buffer.resize(length);
+        length = Unicode::toUpper(buffer.data(), length, sData, sSize, &error);
+        if (error)
+            return JSValue::encode(sVal);
+    }
+    if (length == sSize) {
+        if (memcmp(buffer.data(), sData, length * sizeof(UChar)) == 0)
+            return JSValue::encode(sVal);
+    } else
+        buffer.resize(length);
+    return JSValue::encode(jsString(exec, UString::adopt(buffer)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)

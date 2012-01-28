@@ -1,3 +1,18 @@
+2012-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106167.
+        http://trac.webkit.org/changeset/106167
+        https://bugs.webkit.org/show_bug.cgi?id=77264
+
+        broke LayoutTests/fast/js/string-capitalization.html
+        (Requested by msaboff on #webkit).
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::upper):
+
 2012-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         Build fix for interpreter platforms.
