@@ -1,3 +1,21 @@
+2012-01-28  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r94016): Element with visibility:hidden but visible descendant may not be properly repainted
+        https://bugs.webkit.org/show_bug.cgi?id=76126
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/layers/scroll-no-visible-content-but-visible-descendant-expected.html
+               fast/layers/scroll-no-visible-content-but-visible-descendant.html
+
+        The optimization missed out that if the current layer does not have some visible content
+        (m_hasVisibleContent is false), a descendant could totally be visible and would need to
+        have its repaint rectangles recomputed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        Bail out only if the layer doesn't have visible content AND no visible descendants.
+
 2012-01-27  Chris Marrin  <cmarrin@apple.com>
 
         Get rid of TransformOperationList

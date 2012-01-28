@@ -451,12 +451,13 @@ void RenderLayer::clearRepaintRects()
 
 void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrollFlags flags)
 {
+    ASSERT(!m_visibleDescendantStatusDirty);
     ASSERT(!m_visibleContentStatusDirty);
 
-    // If we have no visible content, there is no point recomputing our rectangles as
-    // they will be empty. If our visibility changes, we are expected to recompute all
-    // our positions anyway.
-    if (!m_hasVisibleContent)
+    // If we have no visible content and no visible descendants, there is no point recomputing
+    // our rectangles as they will be empty. If our visibility changes, we are expected to
+    // recompute all our positions anyway.
+    if (!m_hasVisibleDescendant && !m_hasVisibleContent)
         return;
 
     updateLayerPosition();
