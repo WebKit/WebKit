@@ -1,12 +1,12 @@
-layer at (0,0) size 785x2321
+layer at (0,0) size 785x2319
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2321
-  RenderBlock {HTML} at (0,0) size 785x2321
-    RenderBody {BODY} at (8,8) size 769x2305 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 769x19
+layer at (0,0) size 785x2319
+  RenderBlock {HTML} at (0,0) size 785x2319
+    RenderBody {BODY} at (8,8) size 769x2303 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x19
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 769x270
+      RenderBlock {PRE} at (0,34) size 769x270
         RenderText {#text} at (0,0) size 536x270
           text run at (0,0) width 344: "P.one {font-size: 14px; line-height: 20px;}"
           text run at (344,0) width 0: " "
@@ -41,8 +41,8 @@ layer at (0,0) size 785x2321
           text run at (0,240) width 320: "     border-width: 10px; margin: -10px;}"
           text run at (320,240) width 0: " "
           text run at (0,255) width 0: " "
-      RenderBlock {HR} at (0,318) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,334) size 769x463
+      RenderBlock {HR} at (0,317) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,333) size 769x463
         RenderText {#text} at (0,1) size 767x239
           text run at (0,1) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
           text run at (420,1) width 347: "This means that the lines of text within it should be separated"
@@ -58,7 +58,7 @@ layer at (0,0) size 785x2321
           text run at (732,223) width 25: "This"
           text run at (0,424) width 744: "is additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-top"
           text run at (0,444) width 45: "aligned."
-      RenderBlock {P} at (0,811) size 769x483
+      RenderBlock {P} at (0,810) size 769x483
         RenderText {#text} at (0,1) size 767x199
           text run at (0,1) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
           text run at (420,1) width 347: "This means that the lines of text within it should be separated"
@@ -81,18 +81,18 @@ layer at (0,0) size 785x2321
           text run at (235,423) width 8: ". "
           text run at (243,423) width 512: "The last image in this paragraph has -10px margins set on it, so that should pull the text in"
           text run at (0,464) width 443: "toward the image in the vertical direction, and also in the horizontal direction."
-      RenderTable {TABLE} at (0,1308) size 769x997 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x995
-          RenderTableRow {TR} at (0,0) size 767x27
-            RenderTableCell {TD} at (0,0) size 767x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,1307) size 769x996 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x994
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x19
                 RenderText {#text} at (4,4) size 163x19
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 767x968
-            RenderTableCell {TD} at (0,497) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x968
+            RenderTableCell {TD} at (0,497) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 755x968 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x968 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x463
                 RenderText {#text} at (0,1) size 729x239
                   text run at (0,1) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "

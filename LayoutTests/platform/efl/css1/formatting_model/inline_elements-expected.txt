@@ -1,12 +1,12 @@
-layer at (0,0) size 785x781
+layer at (0,0) size 785x779
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x781
-  RenderBlock {HTML} at (0,0) size 785x781
-    RenderBody {BODY} at (8,8) size 769x765 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 769x19
+layer at (0,0) size 785x779
+  RenderBlock {HTML} at (0,0) size 785x779
+    RenderBody {BODY} at (8,8) size 769x763 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x19
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 769x105
+      RenderBlock {PRE} at (0,34) size 769x105
         RenderText {#text} at (0,0) size 560x105
           text run at (0,0) width 208: "P.one {line-height: 200%;}"
           text run at (208,0) width 0: " "
@@ -21,8 +21,8 @@ layer at (0,0) size 785x781
           text run at (0,75) width 192: "          padding: 2pt;}"
           text run at (192,75) width 0: " "
           text run at (0,90) width 0: " "
-      RenderBlock {HR} at (0,153) size 769x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,171) size 769x192
+      RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,170) size 769x192
         RenderText {#text} at (0,6) size 187x19
           text run at (0,6) width 187: "This is a paragraph that has a "
         RenderInline {SPAN} at (0,0) size 761x171 [border: (10px solid #FF0000)]
@@ -39,7 +39,7 @@ layer at (0,0) size 785x781
           text run at (637,134) width 4: " "
           text run at (641,134) width 120: "The line spacing in"
           text run at (0,166) width 336: "the whole paragraph should be 200% of the font size."
-      RenderBlock {P} at (0,379) size 769x64
+      RenderBlock {P} at (0,378) size 769x64
         RenderText {#text} at (0,0) size 159x15
           text run at (0,0) width 159: "This is a paragraph that has a "
         RenderInline {SPAN} at (0,0) size 764x91 [border: (12px solid #FF0000)]
@@ -52,18 +52,18 @@ layer at (0,0) size 785x781
         RenderText {#text} at (83,48) size 415x15
           text run at (83,48) width 3: " "
           text run at (86,48) width 412: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
-      RenderTable {TABLE} at (0,456) size 769x309 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x307
-          RenderTableRow {TR} at (0,0) size 767x27
-            RenderTableCell {TD} at (0,0) size 767x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,455) size 769x308 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x306
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x19
                 RenderText {#text} at (4,4) size 163x19
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 767x280
-            RenderTableCell {TD} at (0,153) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x280
+            RenderTableCell {TD} at (0,153) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 755x280 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x280 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x192
                 RenderText {#text} at (0,6) size 187x19
                   text run at (0,6) width 187: "This is a paragraph that has a "

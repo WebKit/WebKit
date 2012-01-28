@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 355x19
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 784x60
+      RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 176x60
           text run at (0,0) width 160: ".one {color: green;}"
           text run at (160,0) width 0: " "
@@ -16,58 +16,58 @@ layer at (0,0) size 800x600
           text run at (152,30) width 0: " "
           text run at (0,45) width 176: "P.two {color: purple;}"
           text run at (176,45) width 0: " "
-      RenderBlock {HR} at (0,108) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,126) size 784x19 [color=#008000]
+      RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,125) size 784x18 [color=#008000]
         RenderText {#text} at (0,0) size 194x19
           text run at (0,0) width 194: "This sentence should be green."
-      RenderBlock {P} at (0,161) size 784x19
+      RenderBlock {P} at (0,159) size 784x18
         RenderText {#text} at (0,0) size 559x19
           text run at (0,0) width 559: "This sentence should be black, not red-- class selectors cannot begin with digits in CSS1."
-      RenderBlock {P} at (0,196) size 784x19 [color=#008000]
+      RenderBlock {P} at (0,193) size 784x18 [color=#008000]
         RenderText {#text} at (0,0) size 194x19
           text run at (0,0) width 194: "This sentence should be green."
-      RenderBlock {P} at (0,231) size 784x19 [color=#800080]
+      RenderBlock {P} at (0,227) size 784x18 [color=#800080]
         RenderText {#text} at (0,0) size 199x19
           text run at (0,0) width 199: "This sentence should be purple."
-      RenderBlock {PRE} at (0,266) size 784x15
+      RenderBlock {PRE} at (0,261) size 784x15
         RenderText {#text} at (0,0) size 280x15
           text run at (0,0) width 280: "This sentence should NOT be purple."
           text run at (280,0) width 0: " "
-      RenderBlock {UL} at (0,297) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
+      RenderBlock {UL} at (0,292) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 237x19
             text run at (0,0) width 237: "This sentence should NOT be purple."
-      RenderTable {TABLE} at (0,332) size 581x243 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 579x241
-          RenderTableRow {TR} at (0,0) size 579x27
-            RenderTableCell {TD} at (0,0) size 579x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,326) size 581x237 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 579x235
+          RenderTableRow {TR} at (0,0) size 579x26
+            RenderTableCell {TD} at (0,0) size 579x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x19
                 RenderText {#text} at (4,4) size 163x19
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 579x214
-            RenderTableCell {TD} at (0,120) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 579x209
+            RenderTableCell {TD} at (0,117) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 567x214 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 559x19 [color=#008000]
+            RenderTableCell {TD} at (12,26) size 567x209 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 559x18 [color=#008000]
                 RenderText {#text} at (0,0) size 194x19
                   text run at (0,0) width 194: "This sentence should be green."
-              RenderBlock {P} at (4,39) size 559x19
+              RenderBlock {P} at (4,38) size 559x18
                 RenderText {#text} at (0,0) size 559x19
                   text run at (0,0) width 559: "This sentence should be black, not red-- class selectors cannot begin with digits in CSS1."
-              RenderBlock {P} at (4,74) size 559x19 [color=#008000]
+              RenderBlock {P} at (4,72) size 559x18 [color=#008000]
                 RenderText {#text} at (0,0) size 194x19
                   text run at (0,0) width 194: "This sentence should be green."
-              RenderBlock {P} at (4,109) size 559x19 [color=#800080]
+              RenderBlock {P} at (4,106) size 559x18 [color=#800080]
                 RenderText {#text} at (0,0) size 199x19
                   text run at (0,0) width 199: "This sentence should be purple."
-              RenderBlock {PRE} at (4,144) size 559x15
+              RenderBlock {PRE} at (4,140) size 559x15
                 RenderText {#text} at (0,0) size 280x15
                   text run at (0,0) width 280: "This sentence should NOT be purple."
                   text run at (280,0) width 0: " "
-              RenderBlock {UL} at (4,175) size 559x19
-                RenderListItem {LI} at (40,0) size 519x19
+              RenderBlock {UL} at (4,171) size 559x18
+                RenderListItem {LI} at (40,0) size 519x18
                   RenderListMarker at (-18,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 237x19
                     text run at (0,0) width 237: "This sentence should NOT be purple."

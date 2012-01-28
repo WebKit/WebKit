@@ -3,57 +3,57 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 355x19
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 784x45
+      RenderBlock {PRE} at (0,34) size 784x45
         RenderText {#text} at (0,0) size 328x45
           text run at (0,0) width 328: ".one {border-bottom: purple double 10px;}"
           text run at (328,0) width 0: " "
           text run at (0,15) width 320: ".two {border-bottom: purple thin solid;}"
           text run at (320,15) width 0: " "
           text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,93) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,111) size 784x57 [bgcolor=#C0C0C0]
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,110) size 784x54 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 666x19
           text run at (0,0) width 666: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
         RenderInline {SPAN} at (0,0) size 57x29 [border: (10px double #800080) none]
           RenderText {#text} at (666,0) size 57x19
             text run at (666,0) width 57: "class one"
-        RenderText {#text} at (723,0) size 770x38
+        RenderText {#text} at (723,0) size 770x37
           text run at (723,0) width 47: ", which"
-          text run at (0,19) width 362: "should have a 10-pixel purple double bottom border; and "
+          text run at (0,18) width 362: "should have a 10-pixel purple double bottom border; and "
         RenderInline {SPAN} at (0,0) size 58x20 [border: (1px solid #800080) none]
-          RenderText {#text} at (362,19) size 58x19
-            text run at (362,19) width 58: "class two"
-        RenderText {#text} at (420,19) size 761x38
-          text run at (420,19) width 341: ", which should have a thin solid purple bottom border."
-          text run at (0,38) width 429: "The line-height of the parent element should not change on any line."
-      RenderTable {TABLE} at (0,184) size 784x94 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x92
-          RenderTableRow {TR} at (0,0) size 782x27
-            RenderTableCell {TD} at (0,0) size 782x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+          RenderText {#text} at (362,18) size 58x19
+            text run at (362,18) width 58: "class two"
+        RenderText {#text} at (420,18) size 761x37
+          text run at (420,18) width 341: ", which should have a thin solid purple bottom border."
+          text run at (0,36) width 429: "The line-height of the parent element should not change on any line."
+      RenderTable {TABLE} at (0,180) size 784x90 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x88
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x19
                 RenderText {#text} at (4,4) size 163x19
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 782x65
-            RenderTableCell {TD} at (0,46) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 782x62
+            RenderTableCell {TD} at (0,44) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 770x65 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x57 [bgcolor=#C0C0C0]
+            RenderTableCell {TD} at (12,26) size 770x62 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x54 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 666x19
                   text run at (0,0) width 666: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
                 RenderInline {SPAN} at (0,0) size 57x29 [border: (10px double #800080) none]
                   RenderText {#text} at (666,0) size 57x19
                     text run at (666,0) width 57: "class one"
-                RenderText {#text} at (723,0) size 727x38
+                RenderText {#text} at (723,0) size 727x37
                   text run at (723,0) width 4: ","
-                  text run at (0,19) width 405: "which should have a 10-pixel purple double bottom border; and "
+                  text run at (0,18) width 405: "which should have a 10-pixel purple double bottom border; and "
                 RenderInline {SPAN} at (0,0) size 58x20 [border: (1px solid #800080) none]
-                  RenderText {#text} at (405,19) size 58x19
-                    text run at (405,19) width 58: "class two"
-                RenderText {#text} at (463,19) size 755x38
-                  text run at (463,19) width 292: ", which should have a thin solid purple bottom"
-                  text run at (0,38) width 49: "border. "
-                  text run at (49,38) width 429: "The line-height of the parent element should not change on any line."
+                  RenderText {#text} at (405,18) size 58x19
+                    text run at (405,18) width 58: "class two"
+                RenderText {#text} at (463,18) size 755x37
+                  text run at (463,18) width 292: ", which should have a thin solid purple bottom"
+                  text run at (0,36) width 49: "border. "
+                  text run at (49,36) width 429: "The line-height of the parent element should not change on any line."
