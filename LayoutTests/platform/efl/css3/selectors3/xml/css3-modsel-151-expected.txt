@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x19
-  RenderBlock {test} at (0,0) size 800x19
+layer at (0,0) size 800x18
+  RenderBlock {test} at (0,0) size 800x18
     RenderBlock {address} at (0,0) size 800x16 [bgcolor=#00FF00]
-    RenderBlock {div} at (0,0) size 800x19
+    RenderBlock {div} at (0,0) size 800x18
       RenderText {#text} at (0,0) size 268x19
         text run at (0,0) width 268: "This line should have a green background."

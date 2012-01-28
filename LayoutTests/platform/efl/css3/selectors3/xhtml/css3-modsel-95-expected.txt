@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x191
-  RenderBlock {html} at (0,0) size 800x191
-    RenderBody {body} at (8,16) size 784x159
-      RenderBlock {div} at (0,0) size 784x159
-        RenderBlock {p} at (0,0) size 784x19 [bgcolor=#00FF00]
+layer at (0,0) size 800x186
+  RenderBlock {html} at (0,0) size 800x186
+    RenderBody {body} at (8,16) size 784x154
+      RenderBlock {div} at (0,0) size 784x154
+        RenderBlock {p} at (0,0) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 264x19
             text run at (0,0) width 105: "This line should "
             text run at (105,0) width 159: "have a green background"
-        RenderBlock {p} at (0,35) size 784x19 [bgcolor=#00FF00]
+        RenderBlock {p} at (0,34) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 264x19
             text run at (0,0) width 264: "This line should have a green background"
-        RenderBlock {q} at (0,70) size 784x19 [bgcolor=#00FF00]
+        RenderBlock {q} at (0,68) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 264x19
             text run at (0,0) width 264: "This line should have a green background"
-        RenderBlock {p} at (0,105) size 784x19 [bgcolor=#00FF00]
+        RenderBlock {p} at (0,102) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 264x19
             text run at (0,0) width 264: "This line should have a green background"
-        RenderBlock {foo} at (0,140) size 784x19 [bgcolor=#00FF00]
+        RenderBlock {foo} at (0,136) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 264x19
             text run at (0,0) width 264: "This line should have a green background"

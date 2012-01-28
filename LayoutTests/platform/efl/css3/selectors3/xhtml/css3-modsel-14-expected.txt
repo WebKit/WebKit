@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x139
-  RenderBlock {html} at (0,0) size 800x139
-    RenderBody {body} at (8,16) size 784x115
-      RenderBlock {p} at (0,0) size 784x80 [bgcolor=#00FF00] [border: (5px solid #008000)]
-        RenderText {#text} at (21,21) size 728x38
+layer at (0,0) size 800x136
+  RenderBlock {html} at (0,0) size 800x136
+    RenderBody {body} at (8,16) size 784x112
+      RenderBlock {p} at (0,0) size 784x78 [bgcolor=#00FF00] [border: (5px solid #008000)]
+        RenderText {#text} at (21,21) size 728x37
           text run at (21,21) width 728: "This paragraph should have a green background and a green thick solid border because it carries both classes t1 and"
-          text run at (21,40) width 16: "t2."
-      RenderBlock {div} at (0,96) size 784x19 [color=#FFFFFF] [bgcolor=#008000]
+          text run at (21,39) width 16: "t2."
+      RenderBlock {div} at (0,94) size 784x18 [color=#FFFFFF] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This line should be green."

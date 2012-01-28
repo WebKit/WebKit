@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {html} at (0,0) size 800x86
-    RenderBody {body} at (8,16) size 784x54
-      RenderBlock {p} at (0,0) size 784x19 [color=#00FF00]
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18 [color=#00FF00]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This text should be green."
-      RenderBlock {p} at (0,35) size 784x19 [color=#00FF00]
+      RenderBlock {p} at (0,34) size 784x18 [color=#00FF00]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This text should be green."

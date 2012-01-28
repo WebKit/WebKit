@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x97
-  RenderBlock {html} at (0,0) size 800x97
-    RenderBody {body} at (8,16) size 784x73
-      RenderBlock {p} at (0,0) size 784x19 [color=#FFFFFF] [bgcolor=#008000]
+layer at (0,0) size 800x94
+  RenderBlock {html} at (0,0) size 800x94
+    RenderBody {body} at (8,16) size 784x70
+      RenderBlock {p} at (0,0) size 784x18 [color=#FFFFFF] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This line should be green."
-      RenderBlock {div} at (0,35) size 784x19 [color=#FFFFFF] [bgcolor=#008000]
+      RenderBlock {div} at (0,34) size 784x18 [color=#FFFFFF] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This line should be green."
-      RenderBlock {address} at (0,54) size 784x19 [color=#FFFFFF] [bgcolor=#008000]
+      RenderBlock {address} at (0,52) size 784x18 [color=#FFFFFF] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "This line should be green."

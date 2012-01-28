@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x191
-  RenderBlock {test} at (0,0) size 800x191
-    RenderBlock {div} at (0,16) size 800x159
-      RenderBlock {p} at (0,0) size 800x19 [bgcolor=#00FF00]
+layer at (0,0) size 800x186
+  RenderBlock {test} at (0,0) size 800x186
+    RenderBlock {div} at (0,16) size 800x154
+      RenderBlock {p} at (0,0) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This paragraph should have a green background."
-      RenderBlock {p} at (0,35) size 800x19
+      RenderBlock {p} at (0,34) size 800x18
         RenderText {#text} at (0,0) size 202x19
           text run at (0,0) width 202: "But this one should be unstyled."
-      RenderBlock {p} at (0,70) size 800x19
+      RenderBlock {p} at (0,68) size 800x18
         RenderText {#text} at (0,0) size 236x19
           text run at (0,0) width 236: "And this one should also be unstyled."
-      RenderBlock {address} at (0,105) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {address} at (0,102) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 675x19
           text run at (0,0) width 675: "This address is only here to fill some space between two paragraphs and should have a green background."
-      RenderBlock {p} at (0,140) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {p} at (0,136) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 332x19
           text run at (0,0) width 332: "This paragraph should have a green background too."

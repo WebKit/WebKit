@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x226
-  RenderBlock {test} at (0,0) size 800x226
-    RenderBlock {div} at (0,16) size 800x194
-      RenderBlock {p} at (0,0) size 800x19
+layer at (0,0) size 800x220
+  RenderBlock {test} at (0,0) size 800x220
+    RenderBlock {div} at (0,16) size 800x188
+      RenderBlock {p} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 221x19
           text run at (0,0) width 221: "This paragraph should be unstyled."
-      RenderBlock {p} at (0,35) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {p} at (0,34) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This paragraph should have a green background."
-      RenderBlock {q} at (0,70) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {q} at (0,68) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This paragraph should have a green background."
-      RenderBlock {q} at (0,105) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {q} at (0,102) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This paragraph should have a green background."
-      RenderBlock {r} at (0,140) size 800x19
+      RenderBlock {r} at (0,136) size 800x18
         RenderText {#text} at (0,0) size 221x19
           text run at (0,0) width 221: "This paragraph should be unstyled."
-      RenderBlock {s} at (0,175) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {s} at (0,170) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 308x19
           text run at (0,0) width 308: "This paragraph should have a green background."

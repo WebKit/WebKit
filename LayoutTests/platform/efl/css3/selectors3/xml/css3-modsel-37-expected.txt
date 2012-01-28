@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x121
-  RenderBlock {test} at (0,0) size 800x121
-    RenderBlock {div} at (0,16) size 800x89
-      RenderBlock {p} at (0,0) size 800x19
+layer at (0,0) size 800x118
+  RenderBlock {test} at (0,0) size 800x118
+    RenderBlock {div} at (0,16) size 800x86
+      RenderBlock {p} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 302x19
           text run at (0,0) width 302: "This paragraph should have normal background"
-      RenderBlock {address} at (0,35) size 800x19 [bgcolor=#00FF00]
+      RenderBlock {address} at (0,34) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 301x19
           text run at (0,0) width 301: "But this address should have green background"
-      RenderBlock {p} at (0,70) size 800x19
+      RenderBlock {p} at (0,68) size 800x18
         RenderText {#text} at (0,0) size 302x19
           text run at (0,0) width 302: "This paragraph should have normal background"

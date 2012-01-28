@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x51
-  RenderBlock {test} at (0,0) size 800x51
-    RenderBlock {p} at (0,16) size 800x19
+layer at (0,0) size 800x50
+  RenderBlock {test} at (0,0) size 800x50
+    RenderBlock {p} at (0,16) size 800x18
       RenderText {#text} at (0,0) size 161x19
         text run at (0,0) width 161: "The background color of "
       RenderInline {a} at (0,0) size 49x19 [color=#0000EE]

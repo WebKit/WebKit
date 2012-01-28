@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x93
-  RenderBlock {HTML} at (0,0) size 800x93
-    RenderBody {BODY} at (8,16) size 784x61
-      RenderBlock {P} at (0,0) size 784x61
-        RenderButton {BUTTON} at (2,2) size 316x28 [color=#808080] [bgcolor=#00FF00] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 300x19
+layer at (0,0) size 800x91
+  RenderBlock {HTML} at (0,0) size 800x91
+    RenderBody {BODY} at (8,16) size 784x59
+      RenderBlock {P} at (0,0) size 784x59
+        RenderButton {BUTTON} at (2,2) size 316x27 [color=#808080] [bgcolor=#00FF00] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 300x18
             RenderText {#text} at (0,0) size 300x19
               text run at (0,0) width 300: "A button (disabled) with green background"
         RenderText {#text} at (320,6) size 4x19
           text run at (320,6) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,34) size 338x25 [bgcolor=#00FF00] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,33) size 338x24 [bgcolor=#00FF00] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-layer at (13,53) size 332x19
-  RenderBlock {DIV} at (3,3) size 332x19 [color=#545454]
+layer at (13,52) size 332x18 scrollHeight 19
+  RenderBlock {DIV} at (3,3) size 332x18 [color=#545454]
     RenderText {#text} at (1,0) size 315x19
       text run at (1,0) width 315: "a text area (disabled) with green background"

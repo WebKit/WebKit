@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x70
-  RenderBlock {HTML} at (0,0) size 800x70
-    RenderBody {BODY} at (8,16) size 784x38
-      RenderBlock {P} at (0,0) size 784x38
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,16) size 784x36
+      RenderBlock {P} at (0,0) size 784x36
         RenderInline (generated) at (0,0) size 184x19 [bgcolor=#00FF00]
           RenderText at (0,0) size 184x19
             text run at (0,0) width 184: "GENERATED CONTENT "
-        RenderText {#text} at (184,0) size 740x38
+        RenderText {#text} at (184,0) size 740x37
           text run at (184,0) width 556: "You should see before this paragraph the words GENERATED CONTENT over green"
-          text run at (0,19) width 75: "background"
+          text run at (0,18) width 75: "background"

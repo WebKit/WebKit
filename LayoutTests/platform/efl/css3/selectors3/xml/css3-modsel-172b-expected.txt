@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x133
-  RenderBlock {test} at (0,0) size 800x133
-    RenderBlock {tests} at (0,0) size 800x133 [color=#008000]
-      RenderBlock {testA} at (0,0) size 800x19
+layer at (0,0) size 800x126
+  RenderBlock {test} at (0,0) size 800x126
+    RenderBlock {tests} at (0,0) size 800x126 [color=#008000]
+      RenderBlock {testA} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testB} at (0,19) size 800x19
+      RenderBlock {testB} at (0,18) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testC} at (0,38) size 800x19
+      RenderBlock {testC} at (0,36) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testD} at (0,57) size 800x19
+      RenderBlock {testD} at (0,54) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testE} at (0,76) size 800x19
+      RenderBlock {testE} at (0,72) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testF} at (0,95) size 800x19
+      RenderBlock {testF} at (0,90) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."
-      RenderBlock {testG} at (0,114) size 800x19
+      RenderBlock {testG} at (0,108) size 800x18
         RenderText {#text} at (0,0) size 136x19
           text run at (0,0) width 136: "This should be green."

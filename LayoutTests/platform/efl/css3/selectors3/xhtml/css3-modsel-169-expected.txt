@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {html} at (0,0) size 800x86
-    RenderBody {body} at (8,16) size 784x54
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 82x19
           text run at (0,0) width 82: "This test has "
         RenderInline {span} at (0,0) size 61x19
@@ -12,6 +12,6 @@ layer at (0,0) size 800x86
               text run at (82,0) width 61: "PASSED"
         RenderText {#text} at (143,0) size 4x19
           text run at (143,0) width 4: "."
-      RenderBlock {p} at (0,35) size 784x19
+      RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 445x19
           text run at (0,0) width 445: "(If the previous line just reads \"This test has .\" then this test has failed.)"

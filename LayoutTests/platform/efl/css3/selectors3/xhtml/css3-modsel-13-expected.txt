@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x89
-  RenderBlock {html} at (0,0) size 800x89
-    RenderBody {body} at (8,16) size 784x57
-      RenderBlock {ul} at (0,0) size 784x57
-        RenderListItem {li} at (40,0) size 744x19 [bgcolor=#00FF00]
+layer at (0,0) size 800x86
+  RenderBlock {html} at (0,0) size 800x86
+    RenderBody {body} at (8,16) size 784x54
+      RenderBlock {ul} at (0,0) size 784x54
+        RenderListItem {li} at (40,0) size 744x18 [bgcolor=#00FF00]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 429x19
             text run at (0,0) width 429: "This list item should have green background because its class is \"t1\""
-        RenderListItem {li} at (40,19) size 744x19 [bgcolor=#00FF00]
+        RenderListItem {li} at (40,18) size 744x18 [bgcolor=#00FF00]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 429x19
             text run at (0,0) width 429: "This list item should have green background because its class is \"t2\""
-        RenderListItem {li} at (40,38) size 744x19 [bgcolor=#00FF00]
+        RenderListItem {li} at (40,36) size 744x18 [bgcolor=#00FF00]
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderInline {span} at (0,0) size 599x19
             RenderText {#text} at (0,0) size 599x19

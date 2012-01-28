@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x19
-  RenderBlock {test} at (0,0) size 800x19
-    RenderBlock {address} at (0,0) size 800x19 [bgcolor=#00FF00]
+layer at (0,0) size 800x18
+  RenderBlock {test} at (0,0) size 800x18
+    RenderBlock {address} at (0,0) size 800x18 [bgcolor=#00FF00]
       RenderText {#text} at (0,0) size 349x19
         text run at (0,0) width 349: "This address element should have a green background."

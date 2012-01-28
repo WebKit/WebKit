@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x78
-  RenderBlock {HTML} at (0,0) size 800x78
-    RenderBody {BODY} at (8,8) size 784x54
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76
+    RenderBody {BODY} at (8,8) size 784x52
       RenderBlock {ADDRESS} at (0,0) size 784x16 [bgcolor=#00FF00]
-      RenderBlock {DIV} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 268x19
           text run at (0,0) width 268: "This line should have a green background."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 300x19
           text run at (0,0) width 300: "(Note: This test is based on unpublished errata.)"

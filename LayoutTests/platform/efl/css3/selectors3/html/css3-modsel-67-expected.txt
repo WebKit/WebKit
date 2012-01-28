@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x121
-  RenderBlock {HTML} at (0,0) size 800x121
-    RenderBody {BODY} at (8,16) size 784x89
-      RenderBlock {DIV} at (0,0) size 784x89
-        RenderBlock {P} at (0,0) size 784x19 [bgcolor=#008000]
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,16) size 784x86
+      RenderBlock {DIV} at (0,0) size 784x86
+        RenderBlock {P} at (0,0) size 784x18 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 552x19
             text run at (0,0) width 385: "This paragraph should have a green background because the "
             text run at (385,0) width 167: "enclosing div is in english."
-        RenderBlock {P} at (0,35) size 784x19 [bgcolor=#008000]
+        RenderBlock {P} at (0,34) size 784x18 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 453x19
             text run at (0,0) width 362: "This paragraph should have a green background because "
             text run at (362,0) width 91: "it is in english."
-        RenderBlock {DIV} at (0,70) size 784x19 [bgcolor=#FF0000]
-          RenderBlock {P} at (0,0) size 784x19 [bgcolor=#008000]
+        RenderBlock {DIV} at (0,68) size 784x18 [bgcolor=#FF0000]
+          RenderBlock {P} at (0,0) size 784x18 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 453x19
               text run at (0,0) width 308: "This paragraph should have a green background "
               text run at (308,0) width 145: "because it is in english."

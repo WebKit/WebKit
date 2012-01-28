@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {html} at (0,0) size 800x54
-    RenderBody {body} at (8,8) size 784x38
-      RenderBlock {div} at (0,0) size 784x19
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,8) size 784x36
+      RenderBlock {div} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "This should be unstyled."
-      RenderBlock {div} at (0,19) size 784x19 [bgcolor=#00FF00]
+      RenderBlock {div} at (0,18) size 784x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 241x19
           text run at (0,0) width 241: "This should have a green background."
