@@ -1,3 +1,20 @@
+2012-01-27  Michael Saboff  <msaboff@apple.com>
+
+        StringProtoFuncToUpperCase should call StringImpl::upper similar to StringProtoToLowerCase
+        https://bugs.webkit.org/show_bug.cgi?id=76647
+
+        Reviewed by Geoffrey Garen.
+
+        Changed stringProtoFuncToUpperCase to call StringImpl::upper() is a manor similar
+        to stringProtoFuncToLowerCase().  Fixed StringImpl::upper() to handle the two
+        8 bit characters that when converted to upper case become 16 bit characters.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncToLowerCase): Removed extra trailing whitespace.
+        (JSC::stringProtoFuncToUpperCase):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::upper):
+
 2012-01-27  Hajime Morita  <morrita@google.com>
 
         [JSC] ThunkGenerators.cpp should hide its asm-defined symbols
