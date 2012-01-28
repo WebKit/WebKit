@@ -102,11 +102,12 @@ if __name__ == '__main__':
   if sys.platform not in ('darwin',):
     args.append('--no-circular-check')
 
-  # On linux, we want gyp to output a makefile (default is scons).
-  if (sys.platform.startswith('linux') or
+  generators = os.environ.get('GYP_GENERATORS', '')
+  if 'ninja' in generators:
+    args.extend([ '--toplevel-dir=../../..' ])
+  elif (sys.platform.startswith('linux') or
       'WEBKIT_ANDROID_BUILD' in os.environ or
-      (sys.platform == 'darwin' and
-          os.environ.get('GYP_GENERATORS', '').find('make') != -1)):
+      (sys.platform == 'darwin' and 'make' in generators)):
     args.extend(['-fmake',
                  '--suffix=.chromium',
                  '--toplevel-dir=../../..',

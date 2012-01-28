@@ -95,6 +95,7 @@ my $isBlackBerry;
 my $isChromium;
 my $isChromiumAndroid;
 my $isChromiumMacMake;
+my $isChromiumNinja;
 my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
@@ -1137,6 +1138,37 @@ sub determineIsChromiumMacMake()
         }
     }
     $isChromiumMacMake = isDarwin() && $hasUpToDateMakefile;
+}
+
+sub isChromiumNinja()
+{
+    determineIsChromiumNinja();
+    return $isChromiumNinja;
+}
+
+sub determineIsChromiumNinja()
+{
+    return if defined($isChromiumNinja);
+
+    my $config = configuration();
+
+    my $hasUpToDateNinjabuild = 0;
+    if (-e "out/$config/build.ninja") {
+        my $statNinja = stat("out/$config/build.ninja");
+
+        my $statXcode = 0;
+        if (-e 'Source/WebKit/chromium/WebKit.xcodeproj') {
+          $statXcode = stat('Source/WebKit/chromium/WebKit.xcodeproj')->mtime;
+        }
+
+        my $statMake = 0;
+        if (-e 'Makefile.chromium') {
+          $statXcode = stat('Makefile.chromium')->mtime;
+        }
+
+        $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake;
+    }
+    $isChromiumNinja = $hasUpToDateNinjabuild;
 }
 
 sub forceChromiumUpdate()
@@ -2266,6 +2298,19 @@ sub buildChromiumMakefile($$@)
     return system $command;
 }
 
+sub buildChromiumNinja($$@)
+{
+    # rm -rf out requires rerunning gyp, so don't support --clean for now.
+    my ($target, @options) = @_;
+    my $config = configuration();
+    my $command = "";
+
+    $command .= "ninja -C out/$config $target";
+
+    print "$command\n";
+    return system $command;
+}
+
 sub buildChromiumVisualStudioProject($$)
 {
     my ($projectPath, $clean) = @_;
@@ -2316,12 +2361,14 @@ sub buildChromium($@)
     }
 
     my $result = 1;
-    if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake()) {
+    if (isDarwin() && !isChromiumAndroid() && !isChromiumMacMake() && !isChromiumNinja()) {
         # Mac build - builds the root xcode project.
         $result = buildXCodeProject("Source/WebKit/chromium/All", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/All.sln", $clean);
+    } elsif (isChromiumNinja()) {
+        $result = buildChromiumNinja("all", $clean, @options);
     } elsif (isLinux() || isChromiumAndroid() || isChromiumMacMake()) {
         # Linux build - build using make.
         $result = buildChromiumMakefile("all", $clean, @options);

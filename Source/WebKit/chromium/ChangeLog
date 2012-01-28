@@ -1,3 +1,12 @@
+2012-01-28  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Add support for building standalone webkit/chromium checkouts with ninja.
+        https://bugs.webkit.org/show_bug.cgi?id=77243
+
+        Reviewed by Adam Barth.
+
+        * gyp_webkit:
+
 2012-01-27  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Increase the size of the Ganesh texture cache to prevent performance problems on advanced Canvas2D pages.
