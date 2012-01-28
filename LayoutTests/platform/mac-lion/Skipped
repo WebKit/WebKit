@@ -1,9 +1,5 @@
 # --- Canvas ---
 
-# Failing due to minor differences between accelerated canvas and CG
-# <rdar://problem/9308701>
-canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
-
 # <rdar://problem/9259704>
 canvas/philip/tests/2d.line.cap.round.html
 
@@ -16,23 +12,20 @@ canvas/philip/tests/2d.strokeRect.zero.5.html
 # <rdar://problem/9356215>
 fast/canvas/canvas-fillRect-gradient-shadow.html
 
-# These canvas tests are faulty, need to be fixed
+# <rdar://problem/10763064>
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+
+# This test incorrectly checks the shadow blur's distance and needs to be fixed
 # <rdar://problem/9326220>
 fast/canvas/canvas-scale-shadowBlur.html
 
-# <rdar://problem/9359442>
-fast/canvas/canvas-strokeRect-gradient-shadow.html
-
-# <rdar://problem/9348555>
-fast/canvas/set-colors.html
-
-# <rdar://problem/9924676>
-fast/canvas/canvas-scale-strokePath-shadow.html
-
-# Unknown canvas test failures
-fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+# These tests are potentially broken in the same way as "canvas-scale-shadowBlur"
 fast/canvas/canvas-strokePath-gradient-shadow.html
 fast/canvas/canvas-strokeRect-alpha-shadow.html
+# <rdar://problem/9924676>
+fast/canvas/canvas-scale-strokePath-shadow.html
+# <rdar://problem/9359442>
+fast/canvas/canvas-strokeRect-gradient-shadow.html
 
 # --- WebGL ---
 

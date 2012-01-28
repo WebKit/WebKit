@@ -1,0 +1,71 @@
+Test of various canvas graphics context calls for setting colors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testFillStyle('transparent') is transparent
+PASS testFillStyle('blue') is blue
+PASS testFillStyle('#FF0000') is red
+PASS testFillStyle('#f00') is red
+PASS testFillStyle('rgb(255, 0, 0)') is red
+PASS testFillStyle('rgba(255, 0, 0, 1)') is red
+PASS testFillStyle('rgba(255, 0, 0, 0.8)') is translucentRed
+PASS testFillStyle('rgba(255, 0, 0, 0)') is transparent
+PASS testFillGradient('transparent') is transparent
+PASS testFillGradient('blue') is blue
+PASS testFillGradient('#FF0000') is red
+PASS testFillGradient('#f00') is red
+PASS testFillGradient('rgb(255, 0, 0)') is red
+PASS testFillGradient('rgba(255, 0, 0, 1)') is red
+PASS testFillGradient('rgba(255, 0, 0, 0.8)') is translucentRed
+PASS testFillGradient('rgba(255, 0, 0, 0)') is transparent
+PASS testSetFillColor('"blue"') is blue
+PASS testSetFillColor('"#FF0000"') is red
+PASS testSetFillColor('"#f00"') is red
+PASS testSetFillColor('"rgb(255, 0, 0)"') is red
+PASS testSetFillColor('"rgba(255, 0, 0, 1)"') is red
+PASS testSetFillColor('"rgba(255, 0, 0, 0.8)"') is translucentRed
+PASS testSetFillColor('"rgba(255, 0, 0, 0)"') is transparent
+PASS testSetFillColor('"blue", 0.8') is translucentBlue
+PASS testSetFillColor('1') is white
+PASS testSetFillColor('1, 0.8') is translucentWhite
+PASS testSetFillColor('0, 1, 0, 1') is green
+PASS testSetFillColor('0, 1, 0, 0.8') is translucentGreen
+FAIL testSetFillColor('0, 0, 0, 1, 1') should be #1a1a1a. Was #141414.
+FAIL testSetFillColor('0, 0, 0, 1, 0.8') should be rgba(25, 25, 25, 0.8). Was rgba(20, 20, 20, 0.8).
+PASS testSetFillColor('0, 0, 0, 1, 0') is transparent
+PASS testStrokeStyle('transparent') is transparent
+PASS testStrokeStyle('blue') is blue
+PASS testStrokeStyle('#FF0000') is red
+PASS testStrokeStyle('#f00') is red
+PASS testStrokeStyle('rgb(255, 0, 0)') is red
+PASS testStrokeStyle('rgba(255, 0, 0, 1)') is red
+PASS testStrokeStyle('rgba(255, 0, 0, 0.8)') is translucentRed
+PASS testStrokeStyle('rgba(255, 0, 0, 0)') is transparent
+PASS testStrokeGradient('transparent') is transparent
+PASS testStrokeGradient('blue') is blue
+PASS testStrokeGradient('#FF0000') is red
+PASS testStrokeGradient('#f00') is red
+PASS testStrokeGradient('rgb(255, 0, 0)') is red
+PASS testStrokeGradient('rgba(255, 0, 0, 1)') is red
+PASS testStrokeGradient('rgba(255, 0, 0, 0.8)') is translucentRed
+PASS testStrokeGradient('rgba(255, 0, 0, 0)') is transparent
+PASS testSetStrokeColor('"blue"') is blue
+PASS testSetStrokeColor('"#FF0000"') is red
+PASS testSetStrokeColor('"#f00"') is red
+PASS testSetStrokeColor('"rgb(255, 0, 0)"') is red
+PASS testSetStrokeColor('"rgba(255, 0, 0, 1)"') is red
+PASS testSetStrokeColor('"rgba(255, 0, 0, 0.8)"') is translucentRed
+PASS testSetStrokeColor('"rgba(255, 0, 0, 0)"') is transparent
+PASS testSetStrokeColor('"blue", 0.8') is translucentBlue
+PASS testSetStrokeColor('1') is white
+PASS testSetStrokeColor('1, 0.8') is translucentWhite
+PASS testSetStrokeColor('0, 1, 0, 1') is green
+PASS testSetStrokeColor('0, 1, 0, 0.8') is translucentGreen
+FAIL testSetStrokeColor('0, 0, 0, 1, 1') should be #1a1a1a. Was #141414.
+FAIL testSetStrokeColor('0, 0, 0, 1, 0.8') should be rgba(25, 25, 25, 0.8). Was rgba(20, 20, 20, 0.8).
+PASS testSetStrokeColor('0, 0, 0, 1, 0') is transparent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
