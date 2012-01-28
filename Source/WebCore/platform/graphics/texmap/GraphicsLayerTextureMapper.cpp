@@ -365,14 +365,13 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyOpacity))
         return false;
 
-    bool listsMatch;
+    bool listsMatch = false;
     bool hasBigRotation;
-    Vector<TransformOperation::OperationType> functionList;
 
     if (valueList.property() == AnimatedPropertyWebkitTransform)
-        fetchTransformOperationList(valueList, functionList, listsMatch, hasBigRotation);
+        listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
-    m_animations.add(keyframesName, TextureMapperAnimation(valueList, boxSize, anim, timeOffset, functionList, listsMatch));
+    m_animations.add(keyframesName, TextureMapperAnimation(valueList, boxSize, anim, timeOffset, listsMatch));
     notifyChange(TextureMapperNode::AnimationChange);
     m_animationStartedTimer.startOneShot(0);
     return true;

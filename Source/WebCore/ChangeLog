@@ -1,3 +1,33 @@
+2012-01-27  Chris Marrin  <cmarrin@apple.com>
+
+        Get rid of TransformOperationList
+        https://bugs.webkit.org/show_bug.cgi?id=77249
+
+        Reviewed by Dan Bernstein.
+
+        Changed fetchTransformOperationList to validateTransformOperations and got rid of separately generated list
+        of transform operations. These are not needed, they are already available in the keyframe lists and they
+        make it more difficult to add support for hardware animated filters. No behavior changes.
+
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::validateTransformOperations):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        ():
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::applyTransformAnimation):
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        (WebCore::TextureMapperAnimation::applyInternal):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        (TextureMapperAnimation):
+
 2012-01-27  Raymond Toy  <rtoy@google.com>
 
         AudioPannerNode::setPanningModel() does not update m_panningModel properly

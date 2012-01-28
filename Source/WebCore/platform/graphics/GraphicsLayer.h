@@ -423,10 +423,12 @@ protected:
     void clearFilters() { m_filters.clear(); }
 #endif
 
-    typedef Vector<TransformOperation::OperationType> TransformOperationList;
-    // Given a list of TransformAnimationValues, return an array of transform operations.
-    // On return, if hasBigRotation is true, functions contain rotations of >= 180 degrees
-    static void fetchTransformOperationList(const KeyframeValueList&, TransformOperationList&, bool& isValid, bool& hasBigRotation);
+    // Given a list of TransformAnimationValues, see if all the operations for each keyframe match. If so
+    // return the index of the KeyframeValueList entry that has that list of operations (it may not be
+    // the first entry because some keyframes might have an empty transform and those match any list).
+    // If the lists don't match return -1. On return, if hasBigRotation is true, functions contain 
+    // rotations of >= 180 degrees
+    static int validateTransformOperations(const KeyframeValueList&, bool& hasBigRotation);
 
     virtual void setOpacityInternal(float) { }
 

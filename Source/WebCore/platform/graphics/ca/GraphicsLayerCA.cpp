@@ -1756,9 +1756,9 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperationList& functionList, const Animation* animation, const String& animationName, const IntSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperations* operations, const Animation* animation, const String& animationName, const IntSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation)
 {
-    TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[animationIndex];
+    TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations->operations().at(animationIndex)->getOperationType();
     bool additive = animationIndex > 0;
     bool isKeyframe = valueList.size() > 2;
 
@@ -1783,23 +1783,23 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 {
     ASSERT(valueList.property() == AnimatedPropertyWebkitTransform);
 
-    TransformOperationList functionList;
-    bool listsMatch, hasBigRotation;
-    fetchTransformOperationList(valueList, functionList, listsMatch, hasBigRotation);
+    bool hasBigRotation;
+    int listIndex = validateTransformOperations(valueList, hasBigRotation);
+    const TransformOperations* operations = (listIndex >= 0) ? static_cast<const TransformAnimationValue*>(valueList.at(listIndex))->value() : 0;
 
     // We need to fall back to software animation if we don't have setValueFunction:, and
     // we would need to animate each incoming transform function separately. This is the
     // case if we have a rotation >= 180 or we have more than one transform function.
-    if ((hasBigRotation || functionList.size() > 1) && !PlatformCAAnimation::supportsValueFunction())
+    if ((hasBigRotation || (operations && operations->size() > 1)) && !PlatformCAAnimation::supportsValueFunction())
         return false;
 
     bool validMatrices = true;
 
-    // If functionLists don't match we do a matrix animation, otherwise we do a component hardware animation.
+    // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
     // Also, we can't do component animation unless we have valueFunction, so we need to do matrix animation
     // if that's not true as well.
-    bool isMatrixAnimation = !listsMatch || !PlatformCAAnimation::supportsValueFunction();
-    int numAnimations = isMatrixAnimation ? 1 : functionList.size();
+    bool isMatrixAnimation = listIndex < 0 || !PlatformCAAnimation::supportsValueFunction();
+    int numAnimations = isMatrixAnimation ? 1 : operations->size();
 
     bool reverseAnimationList = true;
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(WIN)
@@ -1814,14 +1814,14 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 #endif
     if (reverseAnimationList) {
         for (int animationIndex = numAnimations - 1; animationIndex >= 0; --animationIndex) {
-            if (!appendToUncommittedAnimations(valueList, functionList, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
+            if (!appendToUncommittedAnimations(valueList, operations, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
                 validMatrices = false;
                 break;
             }
         }
     } else {
         for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
-            if (!appendToUncommittedAnimations(valueList, functionList, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
+            if (!appendToUncommittedAnimations(valueList, operations, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation)) {
                 validMatrices = false;
                 break;
             }

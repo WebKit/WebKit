@@ -41,7 +41,7 @@ public:
     TextureMapperAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    TextureMapperAnimation(const KeyframeValueList&, const IntSize&, const Animation*, double, const Vector<TransformOperation::OperationType>&, bool);
+    TextureMapperAnimation(const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
     void apply(TextureMapperAnimationClient*);
     void pause(double);
     AnimationState state() const { return m_state; }
@@ -55,7 +55,6 @@ private:
     IntSize m_boxSize;
     RefPtr<Animation> m_animation;
     String m_name;
-    Vector<TransformOperation::OperationType> m_functionList;
     bool m_listsMatch;
     bool m_hasBigRotation;
     double m_startTime;

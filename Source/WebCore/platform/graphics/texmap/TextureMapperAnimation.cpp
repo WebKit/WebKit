@@ -85,7 +85,7 @@ static inline float applyTimingFunction(const TimingFunction* timingFunction, fl
     return progress;
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations* from, const TransformOperations* to, double progress, const IntSize& boxSize, const Vector<TransformOperation::OperationType> functionList, bool listsMatch)
+static TransformationMatrix applyTransformAnimation(const TransformOperations* from, const TransformOperations* to, double progress, const IntSize& boxSize, bool listsMatch)
 {
     TransformationMatrix matrix;
 
@@ -134,11 +134,10 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations* f
 }
 
 
-TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double timeOffset, const Vector<TransformOperation::OperationType>& functionList, bool listsMatch)
+TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double timeOffset, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(animation))
-    , m_functionList(functionList)
     , m_listsMatch(listsMatch)
     , m_startTime(WTF::currentTime() - timeOffset)
     , m_pauseTime(0)
@@ -153,7 +152,7 @@ void TextureMapperAnimation::applyInternal(TextureMapperAnimationClient* client,
         client->setOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue*>(from)->value()), (static_cast<const FloatAnimationValue*>(to)->value()), progress));
         return;
     case AnimatedPropertyWebkitTransform:
-        client->setTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_functionList, m_listsMatch));
+        client->setTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_listsMatch));
         return;
     default:
         ASSERT_NOT_REACHED();
