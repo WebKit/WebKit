@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 312x19
           text run at (0,0) width 312: "The controls should not depend on preload value."
-      RenderBlock (anonymous) at (0,35) size 784x240
+      RenderBlock (anonymous) at (0,34) size 784x240
         RenderText {#text} at (0,0) size 0x0
-layer at (8,43) size 320x240
+layer at (8,42) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,43) size 320x240
+layer at (8,42) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,263) size 320x20 scrollHeight 28
+layer at (8,262) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
@@ -29,5 +29,5 @@ layer at (8,263) size 320x20 scrollHeight 28
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (91,267) size 12x12
+layer at (91,266) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

@@ -1,23 +1,23 @@
-layer at (0,0) size 785x763
+layer at (0,0) size 785x762
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock {P} at (0,0) size 769x19
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 153x19
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock {DIV} at (0,35) size 769x240
+      RenderBlock {DIV} at (0,34) size 769x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,275) size 769x240
+      RenderBlock {DIV} at (0,274) size 769x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,515) size 769x0
-layer at (8,43) size 320x240
+      RenderBlock {DIV} at (0,514) size 769x0
+layer at (8,42) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,283) size 320x240
+layer at (8,282) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,43) size 320x240
+layer at (8,42) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,263) size 320x20 scrollHeight 28
+layer at (8,262) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
@@ -34,11 +34,11 @@ layer at (8,263) size 320x20 scrollHeight 28
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (91,267) size 12x12
+layer at (91,266) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (8,283) size 320x240
+layer at (8,282) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,503) size 320x20 scrollHeight 28
+layer at (8,502) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
@@ -55,13 +55,13 @@ layer at (8,503) size 320x20 scrollHeight 28
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (91,507) size 12x12
+layer at (91,506) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (8,523) size 320x240
-  RenderVideo {VIDEO} at (8,523) size 320x240
-layer at (8,523) size 320x240
+layer at (8,522) size 320x240
+  RenderVideo {VIDEO} at (8,522) size 320x240
+layer at (8,522) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,743) size 320x20 scrollHeight 28
+layer at (8,742) size 320x20 scrollHeight 28
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
@@ -78,5 +78,5 @@ layer at (8,743) size 320x20 scrollHeight 28
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
     RenderButton {INPUT} at (300,0) size 20x20
-layer at (91,747) size 12x12
+layer at (91,746) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

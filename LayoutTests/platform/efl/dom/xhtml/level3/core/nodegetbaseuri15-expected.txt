@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x51
-  RenderBlock {html} at (0,0) size 800x51
-    RenderBody {body} at (8,16) size 784x19
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x50
+  RenderBlock {html} at (0,0) size 800x50
+    RenderBody {body} at (8,16) size 784x18
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 20x19
           text run at (0,0) width 20: "bar"
