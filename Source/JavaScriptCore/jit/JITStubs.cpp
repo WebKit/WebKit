@@ -1490,7 +1490,8 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
 
     JSValue baseValue = stackFrame.args[0].jsValue();
     int32_t oldSize = stackFrame.args[3].int32();
-    int32_t newSize = stackFrame.args[4].int32();
+    Structure* newStructure = stackFrame.args[4].structure();
+    int32_t newSize = newStructure->propertyStorageCapacity();
 
     ASSERT(baseValue.isObject());
     JSObject* base = asObject(baseValue);

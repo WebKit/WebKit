@@ -59,6 +59,7 @@ namespace JSC {
     class PutPropertySlot;
     class RegisterFile;
     class RegExp;
+    class Structure;
 
     template <typename T> class Weak;
 
@@ -78,6 +79,7 @@ namespace JSC {
         JSPropertyNameIterator* propertyNameIterator() { return static_cast<JSPropertyNameIterator*>(asPointer); }
         JSGlobalObject* globalObject() { return static_cast<JSGlobalObject*>(asPointer); }
         JSString* jsString() { return static_cast<JSString*>(asPointer); }
+        Structure* structure() { return static_cast<Structure*>(asPointer); }
         ReturnAddressPtr returnAddress() { return ReturnAddressPtr(asPointer); }
     };
     

@@ -517,7 +517,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         stubCall.skipArgument(); // ident
         stubCall.skipArgument(); // value
         stubCall.addArgument(TrustedImm32(oldStructure->propertyStorageCapacity()));
-        stubCall.addArgument(TrustedImm32(newStructure->propertyStorageCapacity()));
+        stubCall.addArgument(TrustedImmPtr(newStructure));
         stubCall.call(regT0);
 
         restoreReturnAddressBeforeReturn(regT3);

@@ -1,3 +1,28 @@
+2012-01-28  Filip Pizlo  <fpizlo@apple.com>
+
+        GC invoked while doing an old JIT property storage reallocation may lead
+        to an object that refers to a dead structure
+        https://bugs.webkit.org/show_bug.cgi?id=77273
+        <rdar://problem/10770565>
+
+        Reviewed by Gavin Barraclough.
+        
+        The put_by_id transition was already saving the old structure by virtue of
+        having the object on the stack, so that wasn't going to get deleted. But the
+        new structure was unprotected in the transition. I've now changed the
+        transition code to save the new structure, ensuring that the GC will know it
+        to be marked if invoked from within put_by_id_transition_realloc.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC):
+        ():
+
 2012-01-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106167.
