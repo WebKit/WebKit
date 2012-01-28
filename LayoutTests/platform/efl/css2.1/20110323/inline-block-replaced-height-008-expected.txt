@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x199
-  RenderBlock {HTML} at (0,0) size 800x199
-    RenderBody {BODY} at (8,16) size 784x175
-      RenderBlock {P} at (0,0) size 784x38
+layer at (0,0) size 800x196
+  RenderBlock {HTML} at (0,0) size 800x196
+    RenderBody {BODY} at (8,16) size 784x172
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 106x19
           text run at (0,0) width 106: "There should be "
         RenderInline {STRONG} at (0,0) size 143x19
@@ -17,11 +17,11 @@ layer at (0,0) size 800x199
         RenderText {#text} at (514,0) size 236x19
           text run at (514,0) width 236: ". The 5 filled green squares should be"
         RenderInline {STRONG} at (0,0) size 57x19
-          RenderText {#text} at (0,19) size 57x19
-            text run at (0,19) width 57: "identical"
-        RenderText {#text} at (57,19) size 445x19
-          text run at (57,19) width 445: " to each other. This should still remain true even after a window resize."
-      RenderBlock {DIV} at (0,54) size 784x121
+          RenderText {#text} at (0,18) size 57x19
+            text run at (0,18) width 57: "identical"
+        RenderText {#text} at (57,18) size 445x19
+          text run at (57,18) width 445: " to each other. This should still remain true even after a window resize."
+      RenderBlock {DIV} at (0,52) size 784x120
         RenderImage {OBJECT} at (0,0) size 117x117
         RenderText {#text} at (117,102) size 4x19
           text run at (117,102) width 4: " "

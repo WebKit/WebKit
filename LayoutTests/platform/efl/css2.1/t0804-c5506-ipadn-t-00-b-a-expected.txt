@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x119
-  RenderBlock {HTML} at (0,0) size 800x119
-    RenderBody {BODY} at (8,16) size 784x95
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,16) size 784x94
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 223x19
           text run at (0,0) width 223: "There should be a green bar below:"
-      RenderBlock {DIV} at (0,35) size 120x60 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,34) size 120x60 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 100x20
           text run at (0,0) width 100: "xx xx"
         RenderInline {SPAN} at (0,0) size 40x20 [color=#FF0000]

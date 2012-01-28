@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x38
-  RenderBlock {HTML} at (0,0) size 800x38
-    RenderBody {BODY} at (8,8) size 784x22
-      RenderBlock {DIV} at (0,0) size 784x22 [color=#000080]
-        RenderBlock {DIV} at (0,0) size 784x22 [border: none (3px solid #000080)]
+layer at (0,0) size 800x37
+  RenderBlock {HTML} at (0,0) size 800x37
+    RenderBody {BODY} at (8,8) size 784x21
+      RenderBlock {DIV} at (0,0) size 784x21 [color=#000080]
+        RenderBlock {DIV} at (0,0) size 784x21 [border: none (3px solid #000080)]
           RenderText {#text} at (3,0) size 264x19
             text run at (3,0) width 264: "This box should be open ended at the top."

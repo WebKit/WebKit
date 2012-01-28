@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x193
-  RenderBlock {HTML} at (0,0) size 800x193
-    RenderBody {BODY} at (8,16) size 784x145
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+layer at (0,0) size 800x191
+  RenderBlock {HTML} at (0,0) size 800x191
+    RenderBody {BODY} at (8,16) size 784x143
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 268x19
           text run at (0,0) width 268: "The two sweets below should be identical:"
-      RenderBlock {DIV} at (0,49) size 105x15 [bgcolor=#FF0000]
+      RenderBlock {DIV} at (0,48) size 105x15 [bgcolor=#FF0000]
         RenderBlock {P} at (0,0) size 105x15 [color=#008000] [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 30x15
             text run at (0,0) width 30: "x "
@@ -15,5 +15,5 @@ layer at (0,0) size 800x193
               text run at (45,0) width 15: "x"
           RenderText {#text} at (75,0) size 30x15
             text run at (75,0) width 30: " x"
-      RenderBlock {DIV} at (0,96) size 784x49
+      RenderBlock {DIV} at (0,95) size 784x48
         RenderImage {IMG} at (0,0) size 105x45

@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x351
-  RenderBlock {HTML} at (0,0) size 800x351
-    RenderBody {BODY} at (0,16) size 800x335
-      RenderBlock {P} at (0,0) size 800x19
+layer at (0,0) size 800x350
+  RenderBlock {HTML} at (0,0) size 800x350
+    RenderBody {BODY} at (0,16) size 800x334
+      RenderBlock {P} at (0,0) size 800x18
         RenderText {#text} at (0,0) size 230x19
           text run at (0,0) width 230: "There should be no red on this page."
-      RenderBlock {DIV} at (0,35) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,34) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "
           text run at (0,30) width 165: "           "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "          X"
-      RenderBlock {DIV} at (0,110) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,109) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "
           text run at (0,30) width 165: "X          "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "           "
-      RenderBlock {DIV} at (0,185) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,184) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "        X  "
           text run at (0,30) width 165: "           "
           text run at (0,45) width 165: "           "
           text run at (0,60) width 165: "           "
-      RenderBlock {DIV} at (0,260) size 165x75 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,259) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75
           text run at (0,0) width 165: "           "
           text run at (0,15) width 165: "           "

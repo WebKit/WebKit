@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x256
-  RenderBlock {HTML} at (0,0) size 800x256
-    RenderBody {BODY} at (8,16) size 784x190
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 755x38
+layer at (0,0) size 800x254
+  RenderBlock {HTML} at (0,0) size 800x254
+    RenderBody {BODY} at (8,16) size 784x188
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 755x37
           text run at (0,0) width 755: "There should be four identical white boxes in the teal block below, all the same size, each one a little lower down on the"
-          text run at (0,19) width 134: "line, in a step pattern."
-      RenderBlock {DIV} at (50,88) size 684x102 [color=#FFFFFF] [bgcolor=#008080]
+          text run at (0,18) width 134: "line, in a step pattern."
+      RenderBlock {DIV} at (50,86) size 684x102 [color=#FFFFFF] [bgcolor=#008080]
         RenderInline {SPAN} at (0,0) size 50x50
           RenderText {#text} at (12,12) size 50x50
             text run at (12,12) width 50: "X"

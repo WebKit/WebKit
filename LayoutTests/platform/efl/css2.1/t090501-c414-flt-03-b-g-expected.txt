@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x238
-  RenderBlock {HTML} at (0,0) size 800x238
-    RenderBody {BODY} at (8,16) size 784x127
-      RenderBlock {P} at (0,0) size 784x38 [color=#000080]
+layer at (0,0) size 800x237
+  RenderBlock {HTML} at (0,0) size 800x237
+    RenderBody {BODY} at (8,16) size 784x123
+      RenderBlock {P} at (0,0) size 784x37 [color=#000080]
         RenderText {#text} at (0,0) size 396x19
           text run at (0,0) width 246: "In the following test, the purple square "
           text run at (246,0) width 150: "should be on the left (\x{21E6}"
@@ -14,12 +14,12 @@ layer at (0,0) size 800x238
         RenderText {#text} at (649,0) size 738x38
           text run at (649,0) width 89: "\x{21E8}) of the blue"
           text run at (0,19) width 61: "rectangle."
-      RenderBlock {DIV} at (0,54) size 784x73
-        RenderBlock {DIV} at (16,0) size 752x73 [color=#0000FF] [bgcolor=#000080]
+      RenderBlock {DIV} at (0,53) size 784x70
+        RenderBlock {DIV} at (16,0) size 752x70 [color=#0000FF] [bgcolor=#000080]
           RenderImage {IMG} at (8,8) size 160x160
           RenderImage {IMG} at (584,8) size 160x160
-          RenderText {#text} at (168,8) size 392x57
+          RenderText {#text} at (168,8) size 392x55
             text run at (168,8) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
-            text run at (168,27) width 198: "Blue rectangle. Blue rectangle. "
-            text run at (366,27) width 194: "Blue rectangle. Blue rectangle."
-            text run at (168,46) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (168,26) width 198: "Blue rectangle. Blue rectangle. "
+            text run at (366,26) width 194: "Blue rectangle. Blue rectangle."
+            text run at (168,44) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."

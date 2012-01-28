@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x97
-  RenderBlock {HTML} at (0,0) size 800x97
-    RenderBody {BODY} at (8,16) size 784x73
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 279x19
           text run at (0,0) width 279: "The following two lines should be the same:"
-      RenderBlock {DIV} at (0,35) size 784x19
+      RenderBlock {DIV} at (0,34) size 784x18
         RenderInline {SPAN} at (0,0) size 491x19
           RenderInline (generated) at (0,0) size 24x19
             RenderText at (0,0) size 11x19
@@ -112,6 +112,6 @@ layer at (0,0) size 800x97
               text run at (478,0) width 8: "3"
             RenderText at (486,0) size 5x19
               text run at (486,0) width 5: "-"
-      RenderBlock {DIV} at (0,54) size 784x19
+      RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 491x19
           text run at (0,0) width 491: "B1-B2-B2.1-B2.2-A2.3-B2.4-A2.5-A2.6-B2.7-B2.8-A2.9-A2.10-A2.11-A3-"

@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x211
-  RenderBlock {HTML} at (0,0) size 800x211
-    RenderBody {BODY} at (8,16) size 784x187
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+layer at (0,0) size 800x202
+  RenderBlock {HTML} at (0,0) size 800x202
+    RenderBody {BODY} at (8,16) size 784x178
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 757x19
           text run at (0,0) width 757: "There should be eight numbered lines below, all identical except for the numbering, which should match the description."
-      RenderListItem {DIV} at (0,35) size 784x19 [color=#000080]
+      RenderListItem {DIV} at (0,34) size 784x18 [color=#000080]
         RenderListMarker at (0,0) size 16x19: "1"
         RenderText {#text} at (16,0) size 151x19
           text run at (16,0) width 151: "This should be line one."
-      RenderBlock {DIV} at (0,54) size 784x19 [color=#000080]
+      RenderBlock {DIV} at (0,52) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 168x19
           text run at (0,0) width 168: "2. This should be line two."
-      RenderBlock (anonymous) at (0,73) size 784x19
+      RenderBlock (anonymous) at (0,70) size 784x18
         RenderInline {DIV} at (0,0) size 94x19 [color=#000080]
           RenderText {#text} at (0,0) size 94x19
             text run at (0,0) width 94: "3. This should "
@@ -22,20 +22,20 @@ layer at (0,0) size 800x211
           RenderText {#text} at (94,0) size 81x19
             text run at (94,0) width 81: "be line three."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,92) size 784x19 [color=#000080]
+      RenderBlock {DIV} at (0,88) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 170x19
           text run at (0,0) width 170: "4. This should be line four."
-      RenderBlock {DIV} at (0,111) size 784x19 [color=#000080]
+      RenderBlock {DIV} at (0,106) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 168x19
           text run at (0,0) width 168: "5. This should be line five."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,130) size 784x57 [color=#000080]
-        RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock {DIV} at (0,124) size 784x54 [color=#000080]
+        RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 162x19
             text run at (0,0) width 162: "6. This should be line six."
-        RenderBlock {A} at (0,19) size 784x19
+        RenderBlock {A} at (0,18) size 784x18
           RenderText {#text} at (0,0) size 180x19
             text run at (0,0) width 180: "7. This should be line seven."
-        RenderBlock (anonymous) at (0,38) size 784x19
+        RenderBlock (anonymous) at (0,36) size 784x18
           RenderText {#text} at (0,0) size 175x19
             text run at (0,0) width 175: "8. This should be line eight."

@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x467
-  RenderBlock {HTML} at (0,0) size 800x467
-    RenderBody {BODY} at (8,16) size 784x435
-      RenderBlock {P} at (0,0) size 784x57 [color=#000080]
-        RenderText {#text} at (0,0) size 778x57
+layer at (0,0) size 800x464
+  RenderBlock {HTML} at (0,0) size 800x464
+    RenderBody {BODY} at (8,16) size 784x432
+      RenderBlock {P} at (0,0) size 784x54 [color=#000080]
+        RenderText {#text} at (0,0) size 778x55
           text run at (0,0) width 408: "The big coloured boxes should be level with the top of the small "
           text run at (408,0) width 329: "coloured boxes of the same color (unless there is not"
-          text run at (0,19) width 88: "enough room "
-          text run at (88,19) width 398: "for the big box to fit on the small box's line after the small box, "
-          text run at (486,19) width 292: "in which case the big box should be as high as"
-          text run at (0,38) width 121: "possible below the "
-          text run at (121,38) width 70: "small box)."
-      RenderBlock {DIV} at (16,73) size 752x362 [color=#C0C0C0] [border: (5px solid #800080)]
+          text run at (0,18) width 88: "enough room "
+          text run at (88,18) width 398: "for the big box to fit on the small box's line after the small box, "
+          text run at (486,18) width 292: "in which case the big box should be as high as"
+          text run at (0,36) width 121: "possible below the "
+          text run at (121,36) width 70: "small box)."
+      RenderBlock {DIV} at (16,70) size 752x362 [color=#C0C0C0] [border: (5px solid #800080)]
         RenderText {#text} at (171,21) size 316x19
           text run at (171,21) width 316: "dummy text dummy text dummy text dummy text "
         RenderInline {SPAN} at (0,0) size 18x25 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]

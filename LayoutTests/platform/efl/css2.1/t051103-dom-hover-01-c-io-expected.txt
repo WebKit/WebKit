@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {HTML} at (0,0) size 800x54
-    RenderBody {BODY} at (8,8) size 784x38
-      RenderBlock {DIV} at (0,0) size 784x19
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 496x19
           text run at (0,0) width 101: "Hover this text, "
           text run at (101,0) width 168: "then wait till it disappears. "
           text run at (269,0) width 227: "At that point there should be no red."
-      RenderBlock {DIV} at (0,19) size 784x19 [color=#FF0000]
+      RenderBlock {DIV} at (0,18) size 784x18 [color=#FF0000]
         RenderText {#text} at (0,0) size 164x19
           text run at (0,0) width 164: "This should end up green."

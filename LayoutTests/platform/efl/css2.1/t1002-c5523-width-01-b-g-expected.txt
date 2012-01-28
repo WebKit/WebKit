@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x495
-  RenderBlock {HTML} at (0,0) size 800x495
-    RenderBody {BODY} at (8,16) size 784x471
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x493
+  RenderBlock {HTML} at (0,0) size 800x493
+    RenderBody {BODY} at (8,16) size 784x469
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 461x19
           text run at (0,0) width 461: "The square below should be exactly 50% wide on the ruler at the bottom."
-      RenderBlock {DIV} at (0,35) size 784x396
+      RenderBlock {DIV} at (0,34) size 784x395
         RenderImage {IMG} at (0,0) size 392x392

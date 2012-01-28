@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x104
-  RenderBlock {HTML} at (0,0) size 800x104
-    RenderBody {BODY} at (8,16) size 784x80
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,16) size 784x79
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 413x19
           text run at (0,0) width 413: "There should be a single small column of blue below with no red:"
-      RenderBlock {DIV} at (0,35) size 784x15
+      RenderBlock {DIV} at (0,34) size 784x15
         RenderImage {IMG} at (384,0) size 15x15
-      RenderBlock {DIV} at (0,50) size 784x15
+      RenderBlock {DIV} at (0,49) size 784x15
         RenderImage {IMG} at (385,0) size 15x15
-      RenderBlock {DIV} at (0,65) size 784x15 [color=#0000FF]
+      RenderBlock {DIV} at (0,64) size 784x15 [color=#0000FF]
         RenderText {#text} at (384,0) size 16x15
           text run at (384,0) width 16: "X"

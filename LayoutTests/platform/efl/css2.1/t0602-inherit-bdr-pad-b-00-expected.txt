@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {HTML} at (0,0) size 800x86
-    RenderBody {BODY} at (8,16) size 784x54
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x84
+  RenderBlock {HTML} at (0,0) size 800x84
+    RenderBody {BODY} at (8,16) size 784x52
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 239x19
           text run at (0,0) width 239: "This sentence should have no border. "
         RenderInline {SPAN} at (0,0) size 275x29 [border: (5px solid #00FF00)]
           RenderText {#text} at (244,0) size 265x19
             text run at (244,0) width 265: "This sentence should have a green border."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderInline {SPAN} at (0,0) size 374x35 [bgcolor=#FF0000]
           RenderInline {SPAN} at (0,0) size 374x35 [bgcolor=#00FF00]
             RenderText {#text} at (0,0) size 374x19

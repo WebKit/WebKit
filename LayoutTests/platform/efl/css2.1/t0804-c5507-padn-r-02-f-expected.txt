@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x89
-  RenderBlock {HTML} at (0,0) size 800x89
-    RenderBody {BODY} at (8,16) size 784x57
-      RenderBlock {P} at (0,0) size 176x57 [bgcolor=#FFFFFF] [border: (16px solid #008000) none]
-        RenderText {#text} at (0,0) size 152x57
+layer at (0,0) size 800x86
+  RenderBlock {HTML} at (0,0) size 800x86
+    RenderBody {BODY} at (8,16) size 784x54
+      RenderBlock {P} at (0,0) size 176x54 [bgcolor=#FFFFFF] [border: (16px solid #008000) none]
+        RenderText {#text} at (0,0) size 152x55
           text run at (0,0) width 152: "There should be a green"
-          text run at (0,19) width 150: "block to the right of this"
-          text run at (0,38) width 27: "text."
+          text run at (0,18) width 150: "block to the right of this"
+          text run at (0,36) width 27: "text."

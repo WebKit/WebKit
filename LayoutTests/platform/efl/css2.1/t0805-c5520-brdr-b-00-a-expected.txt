@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x97
-  RenderBlock {HTML} at (0,0) size 800x97
-    RenderBody {BODY} at (8,16) size 784x65
-      RenderBlock {P} at (0,0) size 784x29 [color=#0000FF] [border: (10px double #0000FF) none]
+layer at (0,0) size 800x95
+  RenderBlock {HTML} at (0,0) size 800x95
+    RenderBody {BODY} at (8,16) size 784x63
+      RenderBlock {P} at (0,0) size 784x28 [color=#0000FF] [border: (10px double #0000FF) none]
         RenderText {#text} at (0,0) size 374x19
           text run at (0,0) width 374: "This paragraph should have two blue lines directly under it."
-      RenderBlock {P} at (0,45) size 784x20 [color=#0000FF] [border: (1px solid #0000FF) none]
+      RenderBlock {P} at (0,44) size 784x19 [color=#0000FF] [border: (1px solid #0000FF) none]
         RenderText {#text} at (0,0) size 420x19
           text run at (0,0) width 420: "This paragraph should have a single thin blue line directly under it."

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x183
-  RenderBlock {HTML} at (0,0) size 800x183
-    RenderBody {BODY} at (8,8) size 784x159
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+layer at (0,0) size 800x182
+  RenderBlock {HTML} at (0,0) size 800x182
+    RenderBody {BODY} at (8,8) size 784x158
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 318x19
           text run at (0,0) width 318: "The following two diagrams should look identical."
-      RenderBlock {DIV} at (16,35) size 166x54 [color=#008080] [bgcolor=#FFA500] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (16,34) size 166x54 [color=#008080] [bgcolor=#FFA500] [border: (3px solid #000000)]
         RenderBlock {UL} at (35,3) size 128x48 [bgcolor=#FFFF00]
           RenderListItem {LI} at (0,0) size 128x16
             RenderText {#text} at (0,0) size 16x17
@@ -17,7 +17,7 @@ layer at (0,0) size 800x183
           RenderListItem {LI} at (0,32) size 128x16
             RenderText {#text} at (0,0) size 16x17
               text run at (0,0) width 16: "-"
-      RenderBlock {DIV} at (16,105) size 166x54 [bgcolor=#FF0000] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (16,104) size 166x54 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {DIV} at (3,3) size 160x16 [border: none (112px solid #FFFF00) none (32px solid #FFA500)]
           RenderBlock {DIV} at (32,0) size 16x16 [border: none none none (16px solid #008080)]
         RenderBlock {DIV} at (3,19) size 160x16 [border: none (80px solid #00FFFF) none (32px solid #FFA500)]

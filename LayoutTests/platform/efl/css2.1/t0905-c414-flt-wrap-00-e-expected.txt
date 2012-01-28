@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x200
-  RenderBlock {HTML} at (0,0) size 800x200
-    RenderBody {BODY} at (8,16) size 784x168
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+layer at (0,0) size 800x192
+  RenderBlock {HTML} at (0,0) size 800x192
+    RenderBody {BODY} at (8,16) size 784x160
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 263x19
           text run at (0,0) width 263: "The word \"fail\" should not appear below."
-      RenderBlock {DIV} at (16,35) size 240x133 [color=#FFFFFF] [bgcolor=#FFFFFF]
-        RenderBlock (floating) {P} at (0,0) size 43x19 [color=#000080]
+      RenderBlock {DIV} at (16,34) size 240x126 [color=#FFFFFF] [bgcolor=#FFFFFF]
+        RenderBlock (floating) {P} at (0,0) size 43x18 [color=#000080]
           RenderText {#text} at (0,0) size 43x19
             text run at (0,0) width 43: "TEST:"
-        RenderBlock (floating) {P} at (1,19) size 239x19 [color=#00FFFF] [bgcolor=#008080]
+        RenderBlock (floating) {P} at (1,18) size 239x18 [color=#00FFFF] [bgcolor=#008080]
           RenderText {#text} at (100,0) size 39x19
             text run at (100,0) width 39: "PASS"
-        RenderText {#text} at (43,0) size 236x133
+        RenderText {#text} at (43,0) size 236x127
           text run at (43,0) width 188: "fail fail fail fail fail fail fail fail"
-          text run at (0,38) width 48: "fail fail "
-          text run at (48,38) width 188: "fail fail fail fail fail fail fail fail"
-          text run at (0,57) width 48: "fail fail "
-          text run at (48,57) width 188: "fail fail fail fail fail fail fail fail"
-          text run at (0,76) width 48: "fail fail "
-          text run at (48,76) width 188: "fail fail fail fail fail fail fail fail"
-          text run at (0,95) width 48: "fail fail "
-          text run at (48,95) width 188: "fail fail fail fail fail fail fail fail"
-          text run at (0,114) width 44: "fail fail"
+          text run at (0,36) width 48: "fail fail "
+          text run at (48,36) width 188: "fail fail fail fail fail fail fail fail"
+          text run at (0,54) width 48: "fail fail "
+          text run at (48,54) width 188: "fail fail fail fail fail fail fail fail"
+          text run at (0,72) width 48: "fail fail "
+          text run at (48,72) width 188: "fail fail fail fail fail fail fail fail"
+          text run at (0,90) width 48: "fail fail "
+          text run at (48,90) width 188: "fail fail fail fail fail fail fail fail"
+          text run at (0,108) width 44: "fail fail"

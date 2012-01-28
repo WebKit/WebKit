@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x65
-  RenderBlock {HTML} at (0,0) size 800x65
-    RenderBody {BODY} at (8,8) size 784x49
-      RenderBlock {DIV} at (0,0) size 784x49
-        RenderBlock {DIV} at (0,0) size 784x49 [color=#008000] [border: (15px solid #008000)]
-          RenderBlock {P} at (15,15) size 754x19 [color=#000000] [bgcolor=#FFFFFF]
+layer at (0,0) size 800x64
+  RenderBlock {HTML} at (0,0) size 800x64
+    RenderBody {BODY} at (8,8) size 784x48
+      RenderBlock {DIV} at (0,0) size 784x48
+        RenderBlock {DIV} at (0,0) size 784x48 [color=#008000] [border: (15px solid #008000)]
+          RenderBlock {P} at (15,15) size 754x18 [color=#000000] [bgcolor=#FFFFFF]
             RenderText {#text} at (0,0) size 230x19
               text run at (0,0) width 230: "There should be no red on this page."

@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x475
-  RenderBlock {HTML} at (0,0) size 800x475
-    RenderBody {BODY} at (8,16) size 784x451
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x474
+  RenderBlock {HTML} at (0,0) size 800x474
+    RenderBody {BODY} at (8,16) size 784x450
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 444x19
           text run at (0,0) width 444: "There should be no red below, just two 300x200 pixel lime rectangles."
-layer at (8,51) size 300x200
-  RenderBlock (relative positioned) {DIV} at (0,35) size 300x200 [bgcolor=#FF0000]
+layer at (8,50) size 300x200
+  RenderBlock (relative positioned) {DIV} at (0,34) size 300x200 [bgcolor=#FF0000]
     RenderBlock {DIV} at (0,0) size 300x100 [bgcolor=#00FF00]
       RenderBlock {P} at (0,0) size 375x100
         RenderImage {IMG} at (0,0) size 100x100
         RenderImage {IMG} at (0,100) size 300x100
         RenderText {#text} at (0,0) size 0x0
-layer at (8,267) size 300x200
-  RenderBlock (relative positioned) {DIV} at (0,251) size 300x200 [bgcolor=#FF0000]
+layer at (8,266) size 300x200
+  RenderBlock (relative positioned) {DIV} at (0,250) size 300x200 [bgcolor=#FF0000]
     RenderBlock {DIV} at (0,0) size 300x100 [bgcolor=#00FF00]
       RenderBlock {P} at (0,0) size 375x100
         RenderImage {IMG} at (0,0) size 100x100
         RenderImage {IMG} at (0,100) size 300x100
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,367) size 300x100
+layer at (8,366) size 300x100
   RenderBlock (positioned) {SPAN} at (0,100) size 300x100 [bgcolor=#00FF00]

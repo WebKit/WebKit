@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x271
-  RenderBlock {HTML} at (0,0) size 800x271
-    RenderBody {BODY} at (8,16) size 784x245
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+layer at (0,0) size 800x270
+  RenderBlock {HTML} at (0,0) size 800x270
+    RenderBody {BODY} at (8,16) size 784x244
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 766x19
           text run at (0,0) width 766: "There should be a complete unbroken drawing of a yin-yang (\x{262F}) symbol below, slightly on the left (\x{21E6}) inside a blue box."
-      RenderBlock {DIV} at (10,35) size 260x210 [border: (5px solid #0000FF)]
+      RenderBlock {DIV} at (10,34) size 260x210 [border: (5px solid #0000FF)]
         RenderBlock (floating) {P} at (5,5) size 100x100 [color=#000080]
           RenderImage {IMG} at (0,0) size 100x100
           RenderText {#text} at (0,0) size 0x0

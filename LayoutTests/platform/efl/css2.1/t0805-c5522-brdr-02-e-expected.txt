@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x82
-  RenderBlock {HTML} at (0,0) size 800x82
-    RenderBody {BODY} at (8,8) size 784x66 [color=#0000FF]
-      RenderTable {TABLE} at (0,0) size 708x66
-        RenderTableSection {TBODY} at (0,0) size 708x66
-          RenderTableRow {TR} at (0,2) size 708x25
-            RenderTableCell {TD} at (2,2) size 704x25 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=2]
+layer at (0,0) size 800x80
+  RenderBlock {HTML} at (0,0) size 800x80
+    RenderBody {BODY} at (8,8) size 784x64 [color=#0000FF]
+      RenderTable {TABLE} at (0,0) size 708x64
+        RenderTableSection {TBODY} at (0,0) size 708x64
+          RenderTableRow {TR} at (0,2) size 708x24
+            RenderTableCell {TD} at (2,2) size 704x24 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (3,3) size 325x19
                 text run at (3,3) width 325: "There should be a blue border around this sentence."
-          RenderTableRow {TR} at (0,29) size 708x35
-            RenderTableCell {TD} at (2,34) size 331x25 [border: (2px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,28) size 708x34
+            RenderTableCell {TD} at (2,33) size 331x24 [border: (2px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 325x19
                 text run at (3,3) width 325: "There should be a blue border around this sentence."
-            RenderTableCell {TD} at (335,29) size 371x35 [border: (2px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (3,3) size 365x29
-                RenderTableSection {TBODY} at (0,0) size 365x29
-                  RenderTableRow {TR} at (0,2) size 365x25
-                    RenderTableCell {TD} at (2,2) size 361x25 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (335,28) size 371x34 [border: (2px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (3,3) size 365x28
+                RenderTableSection {TBODY} at (0,0) size 365x28
+                  RenderTableRow {TR} at (0,2) size 365x24
+                    RenderTableCell {TD} at (2,2) size 361x24 [border: (2px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (3,3) size 106x19
                         text run at (3,3) width 106: "There should be "
                       RenderInline {STRONG} at (0,0) size 113x19
