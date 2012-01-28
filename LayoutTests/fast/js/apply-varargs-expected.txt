@@ -1,0 +1,18 @@
+Test that we properly fill in missing args with "undefined" in JIT code.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caller(0) is undefined
+PASS caller(1) is undefined
+PASS caller(2) is undefined
+PASS caller(3) is undefined
+PASS caller(4) is undefined
+PASS caller(5) is undefined
+PASS caller(6) is undefined
+PASS caller(7) is undefined
+PASS caller(8) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
