@@ -3,7 +3,7 @@ layer at (0,0) size 785x1150
 layer at (0,0) size 785x1150
   RenderBlock {HTML} at (0,0) size 785x1150
     RenderBody {BODY} at (0,150) size 785x1000
-      RenderBlock {P} at (0,250) size 785x19
+      RenderBlock {P} at (0,250) size 785x18
         RenderText {#text} at (0,0) size 546x19
           text run at (0,0) width 546: "Tests fixed position elements combined with transforms. You should see no red above."
 layer at (50,200) size 100x100

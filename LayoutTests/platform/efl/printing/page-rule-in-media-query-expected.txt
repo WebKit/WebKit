@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (1,1) size 798x69
-  RenderBlock {HTML} at (1,1) size 798x69
-    RenderBody {BODY} at (1,1) size 796x67
-      RenderBlock {DIV} at (1,0) size 794x67 [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 792x19
+layer at (1,1) size 798x66
+  RenderBlock {HTML} at (1,1) size 798x66
+    RenderBody {BODY} at (1,1) size 796x64
+      RenderBlock {DIV} at (1,0) size 794x64 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 792x18
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "DIV 1"
-        RenderBlock {DIV} at (2,21) size 790x44 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 788x19
+        RenderBlock {DIV} at (2,20) size 790x42 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 788x18
             RenderText {#text} at (0,0) size 41x19
               text run at (0,0) width 41: "DIV 2"
-          RenderBlock {DIV} at (2,21) size 786x21 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (2,20) size 786x20 [border: (1px solid #000000)]
             RenderText {#text} at (1,1) size 320x19
               text run at (1,1) width 320: "The margins of divs should remain 1px in printing."
