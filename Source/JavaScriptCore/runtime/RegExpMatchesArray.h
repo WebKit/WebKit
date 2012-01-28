@@ -39,7 +39,7 @@ namespace JSC {
         }
         static void destroy(JSCell*);
 
-        static JS_EXPORTDATA const ClassInfo s_info;
+        static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
