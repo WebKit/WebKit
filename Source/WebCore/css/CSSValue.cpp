@@ -29,6 +29,7 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSCalculationValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
@@ -149,6 +150,8 @@ String CSSValue::cssText() const
         return static_cast<const CSSLineBoxContainValue*>(this)->customCssText();
     case FlexClass:
         return static_cast<const CSSFlexValue*>(this)->customCssText();
+    case CalculationClass:
+        return static_cast<const CSSCalcValue*>(this)->customCssText();
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
@@ -248,6 +251,9 @@ void CSSValue::destroy()
         return;
     case FlexClass:
         delete static_cast<CSSFlexValue*>(this);
+        return;
+    case CalculationClass:
+        delete static_cast<CSSCalcValue*>(this);
         return;
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:

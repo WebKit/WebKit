@@ -1228,6 +1228,10 @@
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49AE2D8E134EE50C0072920A /* CSSCalculationValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AE2D8C134EE50C0072920A /* CSSCalculationValue.cpp */; };
+		49AE2D8F134EE50C0072920A /* CSSCalculationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AE2D8D134EE50C0072920A /* CSSCalculationValue.h */; };
+		49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AE2D94134EE5F90072920A /* CalculationValue.cpp */; };
+		49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AE2D95134EE5F90072920A /* CalculationValue.h */; };
 		49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */; };
 		49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
@@ -8034,6 +8038,10 @@
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayerCA.cpp; path = ca/GraphicsLayerCA.cpp; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsLayerCA.h; path = ca/GraphicsLayerCA.h; sourceTree = "<group>"; };
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAAnimation.h; path = ca/PlatformCAAnimation.h; sourceTree = "<group>"; };
+		49AE2D8C134EE50C0072920A /* CSSCalculationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalculationValue.cpp; sourceTree = "<group>"; };
+		49AE2D8D134EE50C0072920A /* CSSCalculationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCalculationValue.h; sourceTree = "<group>"; };
+		49AE2D94134EE5F90072920A /* CalculationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CalculationValue.cpp; sourceTree = "<group>"; };
+		49AE2D95134EE5F90072920A /* CalculationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculationValue.h; sourceTree = "<group>"; };
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
@@ -19594,6 +19602,8 @@
 				89D08D9D12228451001241DF /* AsyncFileSystem.h */,
 				89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
+				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
+				49AE2D95134EE5F90072920A /* CalculationValue.h */,
 				CDEA76331460B462008B31F1 /* Clock.cpp */,
 				CDEA762C14608224008B31F1 /* Clock.h */,
 				CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */,
@@ -19905,6 +19915,8 @@
 				E16A84F814C85CCC002977DF /* CSSBorderImage.h */,
 				BC274B30140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp */,
 				BC274B2E140EBEB200EADFA6 /* CSSBorderImageSliceValue.h */,
+				49AE2D8C134EE50C0072920A /* CSSCalculationValue.cpp */,
+				49AE2D8D134EE50C0072920A /* CSSCalculationValue.h */,
 				BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */,
 				BC6049CB0DB560C200204739 /* CSSCanvasValue.h */,
 				E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */,
@@ -21144,6 +21156,7 @@
 				0753860314489E9800B78452 /* CachedTextTrack.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
+				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
 				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
@@ -21232,6 +21245,7 @@
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
+				49AE2D8F134EE50C0072920A /* CSSCalculationValue.h in Headers */,
 				BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */,
 				A80E6CF90A1989CA007FB8C5 /* CSSCharsetRule.h in Headers */,
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
@@ -24169,6 +24183,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
@@ -24559,6 +24574,7 @@
 				5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */,
 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */,
 				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
@@ -24634,6 +24650,7 @@
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
+				49AE2D8E134EE50C0072920A /* CSSCalculationValue.cpp in Sources */,
 				BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */,
 				E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */,
 				BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */,

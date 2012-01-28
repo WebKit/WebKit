@@ -395,6 +395,7 @@ SOURCES += \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
+    css/CSSCalculationValue.cpp \
     css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
@@ -1027,6 +1028,7 @@ SOURCES += \
     platform/text/LocalizedDateNone.cpp \
     platform/text/LocalizedNumberNone.cpp \
     platform/text/QuotedPrintable.cpp \
+    platform/CalculationValue.cpp \
     platform/Clock.cpp \
     platform/ClockGeneric.cpp \
     platform/ContentType.cpp \
@@ -1507,7 +1509,10 @@ v8 {
 HEADERS += \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
+    css/CSSBorderImageValue.h \
     css/CSSBorderImage.h \
+    css/CSSBorderImageValue.h \
+    css/CSSCalculationValue.h \
     css/CSSCanvasValue.h \
     css/CSSCharsetRule.h \
     css/CSSComputedStyleDeclaration.h \
@@ -2077,6 +2082,7 @@ HEADERS += \
     platform/animation/AnimationUtilities.h \
     platform/Arena.h \
     platform/AsyncFileStream.h \
+    platform/CalculationValue.h \
     platform/Clock.h \
     platform/ClockGeneric.h \
     platform/ContentType.h \

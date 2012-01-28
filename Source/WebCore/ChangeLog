@@ -1,3 +1,104 @@
+2012-01-27  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS calc parsing stage
+        https://bugs.webkit.org/show_bug.cgi?id=57082
+
+        This is the parsing stage of calc. The expressions are evaluated and 
+        expression trees are generated. CSS values are not created yet - that
+        will happen in a subsequent commit. 
+
+        Reviewed by David Hyatt.
+
+        No functional change - covered by existing tests in LayoutTests/css3/calc.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCalculationValue.cpp: Added.
+        (WebCore):
+        (WebCore::unitCategory):
+        (WebCore::CSSCalcValue::customCssText):
+        (WebCore::CSSCalcExpressionNode::~CSSCalcExpressionNode):
+        (CSSCalcPrimitiveValue):
+        (WebCore::CSSCalcPrimitiveValue::create):
+        (WebCore::CSSCalcPrimitiveValue::cssText):
+        (WebCore::CSSCalcPrimitiveValue::CSSCalcPrimitiveValue):
+        ():
+        (CSSCalcBinaryOperation):
+        (WebCore::CSSCalcBinaryOperation::create):
+        (WebCore::CSSCalcBinaryOperation::CSSCalcBinaryOperation):
+        (WebCore::checkDepthAndIndex):
+        (CSSCalcExpressionNodeParser):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (Value):
+        (WebCore::CSSCalcExpressionNodeParser::operatorValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueTerm):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueExpression):
+        (WebCore::CSSCalcValue::create):
+        * css/CSSCalculationValue.h: Added.
+        (WebCore):
+        ():
+        (CSSCalcExpressionNode):
+        (WebCore::CSSCalcExpressionNode::category):
+        (WebCore::CSSCalcExpressionNode::isInt):
+        (WebCore::CSSCalcExpressionNode::isZero):
+        (WebCore::CSSCalcExpressionNode::CSSCalcExpressionNode):
+        (CSSCalcValue):
+        (WebCore::CSSCalcValue::category):
+        (WebCore::CSSCalcValue::isInt):
+        (WebCore::CSSCalcValue::CSSCalcValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validCalculationUnit):
+        (WebCore):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parsedDouble):
+        (WebCore::CSSParser::isCalculation):
+        (WebCore::CSSParser::colorIntFromValue):
+        (WebCore::CSSParser::parseColorParameters):
+        (WebCore::CSSParser::parseHSLParameters):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitStyle):
+        (ShadowParseContext):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (BorderImageSliceParseContext):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        (WebCore::BorderImageQuadParseContext::BorderImageQuadParseContext):
+        (WebCore::BorderImageQuadParseContext::commitNumber):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (BorderImageQuadParseContext):
+        (WebCore::CSSParser::parseBorderImageQuad):
+        (WebCore::CSSParser::parseCalculation):
+        * css/CSSParser.h:
+        ():
+        (CSSParser):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCalculationValue):
+        ():
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * platform/CalculationValue.cpp: Added.
+        (WebCore):
+        * platform/CalculationValue.h: Added.
+        (WebCore):
+        ():
+
 2012-01-27  Anders Carlsson  <andersca@apple.com>
 
         WebTileLayers should honor the acceleratesDrawing flag

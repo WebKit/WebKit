@@ -23,6 +23,7 @@
 #ifndef CSSParser_h
 #define CSSParser_h
 
+#include "CSSCalculationValue.h"
 #include "CSSGradientValue.h"
 #include "CSSParserValues.h"
 #include "CSSPropertySourceData.h"
@@ -211,6 +212,7 @@ public:
     bool parseTextEmphasisStyle(bool important);
 
     bool parseLineBoxContain(bool important);
+    bool parseCalculation(CSSParserValue*);
 
     bool parseFontFeatureTag(CSSValueList*);
     bool parseFontFeatureSettings(bool important);
@@ -322,6 +324,9 @@ public:
     void countLines();
     int lex();
 
+    PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
+    PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
+        
 private:
     void setStyleSheet(CSSStyleSheet*);
     void ensureCSSValuePool();
@@ -388,6 +393,8 @@ private:
     Vector<OwnPtr<CSSParserSelector> > m_reusableSelectorVector;
     Vector<OwnPtr<CSSParserSelector> > m_reusableRegionSelectorVector;
 
+    RefPtr<CSSCalcValue> m_parsedCalculation;
+
     // defines units allowed for a certain property, used in parseUnit
     enum Units {
         FUnknown   = 0x0000,
@@ -407,13 +414,19 @@ private:
         return static_cast<Units>(static_cast<unsigned>(a) | static_cast<unsigned>(b));
     }
 
-    static bool validUnit(CSSParserValue*, Units, bool strict);
+    bool validCalculationUnit(CSSParserValue*, Units);
+    bool validUnit(CSSParserValue*, Units, bool strict);
 
     bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
+    int colorIntFromValue(CSSParserValue*);
 
-    PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
-    PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
-
+    enum ReleaseParsedCalcValueCondition {
+        ReleaseParsedCalcValue,
+        DoNotReleaseParsedCalcValue
+    };    
+    double parsedDouble(CSSParserValue*, ReleaseParsedCalcValueCondition releaseCalc = DoNotReleaseParsedCalcValue);
+    bool isCalculation(CSSParserValue*);
+    
     friend class TransformOperationInfo;
 #if ENABLE(CSS_FILTERS)
     friend class FilterOperationInfo;

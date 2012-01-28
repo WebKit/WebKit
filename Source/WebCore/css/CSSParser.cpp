@@ -692,13 +692,54 @@ Document* CSSParser::findDocument() const
     return m_styleSheet->findDocument();
 }
 
+bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
+{
+    if (!parseCalculation(value))
+        return false;
+
+    bool b = false;
+    switch (m_parsedCalculation->category()) {
+    case CalcLength:
+        b = (unitflags & FLength);
+        break;
+    case CalcPercent:
+        b = (unitflags & FPercent);
+        // FIXME calc (http://webkit.org/b/16662): test FNonNeg here, eg
+        // if (b && (unitflags & FNonNeg) && m_parsedCalculation->doubleValue() < 0)
+        //    b = false;
+        break;
+    case CalcNumber:
+        b = (unitflags & FNumber);
+        if (!b && (unitflags & FInteger) && m_parsedCalculation->isInt())
+            b = true;
+        // FIXME calc (http://webkit.org/b/16662): test FNonNeg here, eg
+        // if (b && (unitflags & FNonNeg) && m_parsedCalculation->doubleValue() < 0)
+        //    b = false;
+        break;
+    case CalcPercentLength:
+        b = (unitflags & FPercent) && (unitflags & FLength);
+        break;
+    case CalcPercentNumber:
+        b = (unitflags & FPercent) && (unitflags & FNumber);
+        break;
+    case CalcOther:
+        break;
+    }
+    if (!b)
+        m_parsedCalculation.release();
+    return b;    
+}
+
 bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
 {
+    if (isCalculation(value))
+        return validCalculationUnit(value, unitflags);
+        
     bool b = false;
     switch (value->unit) {
     case CSSPrimitiveValue::CSS_NUMBER:
         b = (unitflags & FNumber);
-        if (!b && ((unitflags & (FLength | FAngle | FTime)) && (value->fValue == 0 || !strict))) {
+        if (!b && ((unitflags & (FLength | FAngle | FTime)) && (!value->fValue || !strict))) {
             value->unit = (unitflags & FLength) ? CSSPrimitiveValue::CSS_PX :
                           ((unitflags & FAngle) ? CSSPrimitiveValue::CSS_DEG : CSSPrimitiveValue::CSS_MS);
             b = true;
@@ -744,6 +785,14 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
 
 inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSParserValue* value)
 {
+    if (m_parsedCalculation) {
+        ASSERT(isCalculation(value));
+        // FIXME calc() http://webkit.org/b/16662: create a CSSPrimitiveValue here, ie
+        // return CSSPrimitiveValue::create(m_parsedCalculation.release());
+        m_parsedCalculation.release();
+        return 0;
+    }
+               
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS));
     return cssValuePool()->createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
@@ -841,6 +890,11 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int id, CSSP
         return createPrimitiveNumericValue(value);
     if (value->unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
+    if (isCalculation(value))
+        // FIXME calc()  http://webkit.org/b/16662: create a primitive value here, ie
+        // return CSSPrimitiveValue::create(m_parsedCalculation.release());
+        m_parsedCalculation.release();
+
     return 0;
 }
 
@@ -854,6 +908,10 @@ bool CSSParser::parseValue(int propId, bool important)
     if (!value)
         return false;
 
+    // Note: m_parsedCalculation is used to pass the calc value to validUnit and then cleared at the end of this function.
+    // FIXME: This is to avoid having to pass parsedCalc to all validUnit callers.
+    ASSERT(!m_parsedCalculation);
+    
     int id = value->id;
 
     // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
@@ -2281,6 +2339,7 @@ bool CSSParser::parseValue(int propId, bool important)
         parsedValue = parseValidPrimitive(id, value);
         m_valueList->next();
     }
+    ASSERT(!m_parsedCalculation);
     if (parsedValue) {
         if (!m_valueList->current() || inShorthand()) {
             addProperty(propId, parsedValue.release(), important);
@@ -2988,8 +3047,11 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionComponent(CSSParserValueList* v
         } else if (cumulativeFlags & (XFillPosition | AmbiguousFillPosition)) {
             cumulativeFlags |= YFillPosition;
             individualFlag = YFillPosition;
-        } else
+        } else {
+            if (m_parsedCalculation)
+                m_parsedCalculation.release();
             return 0;
+        }
         return createPrimitiveNumericValue(valueList->current());
     }
     return 0;
@@ -4871,22 +4933,49 @@ bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
     }
     return false;
 }
-
-static inline int colorIntFromValue(CSSParserValue* v)
+    
+inline double CSSParser::parsedDouble(CSSParserValue *v, ReleaseParsedCalcValueCondition releaseCalc)
 {
-    if (v->fValue <= 0.0)
+    // FIXME calc (http://webkit.org/b/16662): evaluate calc here, eg
+    // const double result = m_parsedCalculation ? m_parsedCalculation->doubleValue() : v->fValue;
+    const double result = m_parsedCalculation ? 0 : v->fValue;
+    if (releaseCalc == ReleaseParsedCalcValue)
+        m_parsedCalculation.release();
+    return result;
+}
+
+bool CSSParser::isCalculation(CSSParserValue* value) 
+{
+    return (value->unit == CSSParserValue::Function) 
+        && (equalIgnoringCase(value->function->name, "-webkit-calc(")
+            || equalIgnoringCase(value->function->name, "-webkit-min(")
+            || equalIgnoringCase(value->function->name, "-webkit-max("));
+}
+
+inline int CSSParser::colorIntFromValue(CSSParserValue* v)
+{
+    bool isPercent;
+    
+    if (m_parsedCalculation)
+        isPercent = m_parsedCalculation->category() == CalcPercent;
+    else
+        isPercent = v->unit == CSSPrimitiveValue::CSS_PERCENTAGE;
+
+    const double value = parsedDouble(v, ReleaseParsedCalcValue);
+    
+    if (value <= 0.0)
         return 0;
 
-    if (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE) {
-        if (v->fValue >= 100.0)
+    if (isPercent) {
+        if (value >= 100.0)
             return 255;
-        return static_cast<int>(v->fValue * 256.0 / 100.0);
+        return static_cast<int>(value * 256.0 / 100.0);
     }
 
-    if (v->fValue >= 255.0)
+    if (value >= 255.0)
         return 255;
 
-    return static_cast<int>(v->fValue);
+    return static_cast<int>(value);
 }
 
 bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, bool parseAlpha)
@@ -4901,6 +4990,7 @@ bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, boo
         unitType = FPercent;
     else
         return false;
+    
     colorArray[0] = colorIntFromValue(v);
     for (int i = 1; i < 3; i++) {
         v = args->next();
@@ -4918,9 +5008,10 @@ bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, boo
         v = args->next();
         if (!validUnit(v, FNumber, true))
             return false;
+        const double value = parsedDouble(v, ReleaseParsedCalcValue);
         // Convert the floating pointer number of alpha to an integer in the range [0, 256),
         // with an equal distribution across all 256 values.
-        colorArray[3] = static_cast<int>(max(0.0, min(1.0, v->fValue)) * nextafter(256.0, 0.0));
+        colorArray[3] = static_cast<int>(max(0.0, min(1.0, value)) * nextafter(256.0, 0.0));
     }
     return true;
 }
@@ -4938,7 +5029,7 @@ bool CSSParser::parseHSLParameters(CSSParserValue* value, double* colorArray, bo
     if (!validUnit(v, FNumber, true))
         return false;
     // normalize the Hue value and change it to be between 0 and 1.0
-    colorArray[0] = (((static_cast<int>(v->fValue) % 360) + 360) % 360) / 360.0;
+    colorArray[0] = (((static_cast<int>(parsedDouble(v, ReleaseParsedCalcValue)) % 360) + 360) % 360) / 360.0;
     for (int i = 1; i < 3; i++) {
         v = args->next();
         if (v->unit != CSSParserValue::Operator && v->iValue != ',')
@@ -4946,7 +5037,7 @@ bool CSSParser::parseHSLParameters(CSSParserValue* value, double* colorArray, bo
         v = args->next();
         if (!validUnit(v, FPercent, true))
             return false;
-        colorArray[i] = max(0.0, min(100.0, v->fValue)) / 100.0; // needs to be value between 0 and 1.0
+        colorArray[i] = max(0.0, min(100.0, parsedDouble(v, ReleaseParsedCalcValue))) / 100.0; // needs to be value between 0 and 1.0
     }
     if (parseAlpha) {
         v = args->next();
@@ -4955,7 +5046,7 @@ bool CSSParser::parseHSLParameters(CSSParserValue* value, double* colorArray, bo
         v = args->next();
         if (!validUnit(v, FNumber, true))
             return false;
-        colorArray[3] = max(0.0, min(1.0, v->fValue));
+        colorArray[3] = max(0.0, min(1.0, parsedDouble(v, ReleaseParsedCalcValue)));
     }
     return true;
 }
@@ -5023,9 +5114,9 @@ bool CSSParser::parseColorFromValue(CSSParserValue* value, RGBA32& c)
 // This class tracks parsing state for shadow values.  If it goes out of scope (e.g., due to an early return)
 // without the allowBreak bit being set, then it will clean up all of the objects and destroy them.
 struct ShadowParseContext {
-    ShadowParseContext(CSSPropertyID prop, CSSValuePool* cssValuePool)
+    ShadowParseContext(CSSPropertyID prop, CSSParser* parser)
         : property(prop)
-        , m_cssValuePool(cssValuePool)
+        , m_parser(parser)
         , allowX(true)
         , allowY(false)
         , allowBlur(false)
@@ -5068,7 +5159,7 @@ struct ShadowParseContext {
 
     void commitLength(CSSParserValue* v)
     {
-        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
+        RefPtr<CSSPrimitiveValue> val = m_parser->createPrimitiveNumericValue(v);
 
         if (allowX) {
             x = val.release();
@@ -5110,7 +5201,7 @@ struct ShadowParseContext {
 
     void commitStyle(CSSParserValue* v)
     {
-        style = m_cssValuePool->createIdentifierValue(v->id);
+        style = m_parser->cssValuePool()->createIdentifierValue(v->id);
         allowStyle = false;
         if (allowX)
             allowBreak = false;
@@ -5122,7 +5213,7 @@ struct ShadowParseContext {
     }
 
     CSSPropertyID property;
-    CSSValuePool* m_cssValuePool;
+    CSSParser* m_parser;
 
     RefPtr<CSSValueList> values;
     RefPtr<CSSPrimitiveValue> x;
@@ -5143,7 +5234,7 @@ struct ShadowParseContext {
 
 PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, int propId)
 {
-    ShadowParseContext context(static_cast<CSSPropertyID>(propId), cssValuePool());
+    ShadowParseContext context(static_cast<CSSPropertyID>(propId), this);
     CSSParserValue* val;
     while ((val = valueList->current())) {
         // Check for a comma break first.
@@ -5527,8 +5618,8 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
 
 class BorderImageSliceParseContext {
 public:
-    BorderImageSliceParseContext(CSSValuePool* cssValuePool)
-    : m_cssValuePool(cssValuePool)
+    BorderImageSliceParseContext(CSSParser* parser)
+    : m_parser(parser)
     , m_allowNumber(true)
     , m_allowFill(false)
     , m_allowFinalCommit(false)
@@ -5542,7 +5633,7 @@ public:
 
     void commitNumber(CSSParserValue* v)
     {
-        RefPtr<CSSPrimitiveValue> val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
+        RefPtr<CSSPrimitiveValue> val = m_parser->createPrimitiveNumericValue(v);
         if (!m_top)
             m_top = val;
         else if (!m_right)
@@ -5588,11 +5679,11 @@ public:
         quad->setLeft(m_left);
 
         // Make our new border image value now.
-        return CSSBorderImageSliceValue::create(m_cssValuePool->createValue(quad.release()), m_fill);
+        return CSSBorderImageSliceValue::create(m_parser->cssValuePool()->createValue(quad.release()), m_fill);
     }
 
 private:
-    CSSValuePool* m_cssValuePool;
+    CSSParser* m_parser;
 
     bool m_allowNumber;
     bool m_allowFill;
@@ -5608,10 +5699,11 @@ private:
 
 bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValue>& result)
 {
-    BorderImageSliceParseContext context(cssValuePool());
+    BorderImageSliceParseContext context(this);
     CSSParserValue* val;
     while ((val = m_valueList->current())) {
-        if (context.allowNumber() && validUnit(val, FInteger | FNonNeg | FPercent, true)) {
+        // FIXME calc() http://webkit.org/b/16662 : calc is parsed but values are not created yet.
+        if (context.allowNumber() && !isCalculation(val) && validUnit(val, FInteger | FNonNeg | FPercent, true)) {
             context.commitNumber(val);
         } else if (context.allowFill() && val->id == CSSValueFill)
             context.commitFill();
@@ -5644,8 +5736,8 @@ bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValu
 
 class BorderImageQuadParseContext {
 public:
-    BorderImageQuadParseContext(CSSValuePool* cssValuePool)
-    : m_cssValuePool(cssValuePool)
+    BorderImageQuadParseContext(CSSParser* parser)
+    : m_parser(parser)
     , m_allowNumber(true)
     , m_allowFinalCommit(false)
     { }
@@ -5658,9 +5750,9 @@ public:
     {
         RefPtr<CSSPrimitiveValue> val;
         if (v->id == CSSValueAuto)
-            val = m_cssValuePool->createIdentifierValue(v->id);
+            val = m_parser->cssValuePool()->createIdentifierValue(v->id);
         else
-            val = m_cssValuePool->createValue(v->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(v->unit));
+            val = m_parser->createPrimitiveNumericValue(v);
 
         if (!m_top)
             m_top = val;
@@ -5704,11 +5796,11 @@ public:
         quad->setLeft(m_left);
 
         // Make our new value now.
-        return m_cssValuePool->createValue(quad.release());
+        return m_parser->cssValuePool()->createValue(quad.release());
     }
 
 private:
-    CSSValuePool* m_cssValuePool;
+    CSSParser* m_parser;
 
     bool m_allowNumber;
     bool m_allowFinalCommit;
@@ -5721,7 +5813,7 @@ private:
 
 bool CSSParser::parseBorderImageQuad(Units validUnits, RefPtr<CSSPrimitiveValue>& result)
 {
-    BorderImageQuadParseContext context(cssValuePool());
+    BorderImageQuadParseContext context(this);
     CSSParserValue* val;
     while ((val = m_valueList->current())) {
         if (context.allowNumber() && (validUnit(val, validUnits, true) || val->id == CSSValueAuto)) {
@@ -7325,6 +7417,23 @@ bool CSSParser::parseFontVariantLigatures(bool important)
     return true;
 }
 
+bool CSSParser::parseCalculation(CSSParserValue* value) 
+{
+    ASSERT(isCalculation(value));
+    
+    CSSParserValueList* args = value->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    ASSERT(!m_parsedCalculation);
+    m_parsedCalculation = CSSCalcValue::create(value->function->name, args);
+    
+    if (!m_parsedCalculation)
+        return false;
+    
+    return true;
+}
+    
 static inline int yyerror(const char*) { return 1; }
 
 #define END_TOKEN 0

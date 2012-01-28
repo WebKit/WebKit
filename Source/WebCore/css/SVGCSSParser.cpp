@@ -314,6 +314,12 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             parsedValue = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSParserValue::Q_EMS)
             parsedValue = CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
+        if (isCalculation(value)) {
+            // FIXME calc() http://webkit.org/b/16662 : actually create a CSSPrimitiveValue here, ie
+            // parsedValue = CSSPrimitiveValue::create(m_parsedCalculation.release());
+            m_parsedCalculation.release();
+            parsedValue = 0;
+        }
         m_valueList->next();
     }
     if (!parsedValue || (m_valueList->current() && !inShorthand()))

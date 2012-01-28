@@ -26462,6 +26462,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\CalculationValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\CalculationValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Clock.cpp"
 				>
 			</File>
@@ -32803,6 +32811,14 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSBorderImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSCalculationValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSCalculationValue.h"
 				>
 			</File>
 			<File

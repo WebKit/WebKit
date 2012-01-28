@@ -1291,6 +1291,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSCanvasValue.h \
 	Source/WebCore/css/CSSCharsetRule.cpp \
 	Source/WebCore/css/CSSCharsetRule.h \
+	Source/WebCore/css/CSSCalculationValue.cpp \
+	Source/WebCore/css/CSSCalculationValue.h \
 	Source/WebCore/css/CSSComputedStyleDeclaration.cpp \
 	Source/WebCore/css/CSSComputedStyleDeclaration.h \
 	Source/WebCore/css/CSSCrossfadeValue.cpp \
@@ -2796,6 +2798,8 @@ webcore_sources += \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
 	Source/WebCore/platform/AsyncFileSystem.h \
 	Source/WebCore/platform/AutodrainedPool.h \
+	Source/WebCore/platform/CalculationValue.cpp \
+	Source/WebCore/platform/CalculationValue.h \
 	Source/WebCore/platform/Clock.cpp \
 	Source/WebCore/platform/Clock.h \
 	Source/WebCore/platform/ClockGeneric.cpp \

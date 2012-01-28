@@ -432,6 +432,7 @@ SET(WebCore_SOURCES
     css/CSSAspectRatioValue.cpp
     css/CSSBorderImage.cpp
     css/CSSBorderImageSliceValue.cpp
+    css/CSSCalculationValue.cpp
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp
     css/CSSComputedStyleDeclaration.cpp
@@ -1045,6 +1046,7 @@ SET(WebCore_SOURCES
     page/animation/KeyframeAnimation.cpp
 
     platform/Arena.cpp
+    platform/CalculationValue.cpp
     platform/Clock.cpp
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp
