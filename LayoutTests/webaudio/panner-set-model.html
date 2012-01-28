@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <title>Test Panner setPanningModel values.</title>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test if panningModel can be set and read.");
+
+      // Test to see if we panningModel is updated when we set it.
+      function runTest() {
+          if (window.layoutTestController) {
+              layoutTestController.dumpAsText();
+              layoutTestController.waitUntilDone();
+          }
+
+          window.jsTestIsAsync = true;
+
+          var context = new webkitAudioContext();
+          var success = true;
+          var panner = context.createPanner();
+
+          // Set the panning model and see if it can be read back
+          // correctly.
+          panner.panningModel = panner.EQUALPOWER;
+          if (panner.panningModel == 0) {
+              testPassed("Panner set to EQUALPOWER model and read correctly.");
+          } else {
+              testFailed("Panner model set to EQUALPOWER (0) but returned " + panner.panningModel);
+              success = false;
+          }
+      
+          panner.panningModel = panner.HRTF;
+          if (panner.panningModel == 1) {
+              testPassed("Panner set to HRTF model and read correctly.");
+          } else {
+              testFailed("Panner model set to HRTF (1) but returned " + panner.panningModel);
+              success = false;
+          }
+      
+          panner.panningModel = panner.SOUNDFIELD;
+          if (panner.panningModel == 2) {
+              testPassed("Panner set to SOUNDFIELD model and read correctly.");
+          } else {
+              testFailed("Panner model set to SOUNDFIELD (2) but returned " + panner.panningModel);
+              success = false;
+          }
+
+          // Set to invalid value and make sure it didn't change from
+          // it's previous setting (of 2).
+          panner.panningModel = 99;
+          if (panner.panningModel == 2) {
+              testPassed("Panner set to invalid model and panningModel did not change.");
+          } else {
+              testFailed("Panner set to invalid model, but the panningModel changed from 2 to " + panner.panningModel);
+              success = false;
+          }
+          
+          if (success) {
+              testPassed("Panning model tests passed.");
+          } else {
+              testFailed("Panning model tests failed.");
+          }
+
+          finishJSTest();
+      }
+
+      runTest();
+      successfullyParsed = true;
+
+    </script>
+
+    <script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

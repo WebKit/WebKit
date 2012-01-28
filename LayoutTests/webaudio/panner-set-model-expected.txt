@@ -1,0 +1,13 @@
+Test if panningModel can be set and read.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Panner set to EQUALPOWER model and read correctly.
+PASS Panner set to HRTF model and read correctly.
+PASS Panner set to SOUNDFIELD model and read correctly.
+PASS Panner set to invalid model and panningModel did not change.
+PASS Panning model tests passed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

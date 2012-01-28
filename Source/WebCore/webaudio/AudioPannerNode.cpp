@@ -152,9 +152,19 @@ AudioListener* AudioPannerNode::listener()
 
 void AudioPannerNode::setPanningModel(unsigned short model)
 {
-    if (!m_panner.get() || model != m_panningModel) {
-        OwnPtr<Panner> newPanner = Panner::create(model, sampleRate());
-        m_panner = newPanner.release();
+    switch (model) {
+    case EQUALPOWER:
+    case HRTF:
+    case SOUNDFIELD:
+        if (!m_panner.get() || model != m_panningModel) {
+            OwnPtr<Panner> newPanner = Panner::create(model, sampleRate());
+            m_panner = newPanner.release();
+            m_panningModel = model;
+        }
+        break;
+    default:
+        // FIXME: consider throwing an exception for illegal model values.
+        break;
     }
 }
 
