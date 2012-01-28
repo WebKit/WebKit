@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 773x38
+      RenderText {#text} at (0,0) size 773x37
         text run at (0,0) width 773: "This is a initial test for simple ruby. There should be 2 ruby annotations on below line, one with a ruby text shorter than the"
-        text run at (0,19) width 36: "base, "
-        text run at (36,19) width 291: "and one with a ruby text longer than the base. "
-      RenderBR {BR} at (327,34) size 0x0
-      RenderBR {BR} at (0,38) size 0x19
-      RenderText {#text} at (0,67) size 155x19
-        text run at (0,67) width 155: "<ruby> is defined in the "
+        text run at (0,18) width 36: "base, "
+        text run at (36,18) width 291: "and one with a ruby text longer than the base. "
+      RenderBR {BR} at (327,33) size 0x0
+      RenderBR {BR} at (0,36) size 0x19
+      RenderText {#text} at (0,64) size 155x19
+        text run at (0,64) width 155: "<ruby> is defined in the "
       RenderRuby (inline) {RUBY} at (0,0) size 184x19
-        RenderRubyRun (anonymous) at (155,67) size 184x19
-          RenderRubyText {RT} at (0,-10) size 184x10
+        RenderRubyRun (anonymous) at (155,64) size 184x18
+          RenderRubyText {RT} at (0,-10) size 184x9
             RenderText {#text} at (78,0) size 28x10
               text run at (78,0) width 28: "HTML5"
-          RenderRubyBase (anonymous) at (0,0) size 184x19
+          RenderRubyBase (anonymous) at (0,0) size 184x18
             RenderText {#text} at (0,0) size 184x19
               text run at (0,0) width 184: "Hypertext Markup Language"
-      RenderText {#text} at (339,67) size 31x19
-        text run at (339,67) width 31: " and "
+      RenderText {#text} at (339,64) size 31x19
+        text run at (339,64) width 31: " and "
       RenderRuby (inline) {RUBY} at (0,0) size 67x19
-        RenderRubyRun (anonymous) at (366,67) size 75x19
-          RenderRubyText {RT} at (0,-10) size 75x10
+        RenderRubyRun (anonymous) at (366,64) size 75x18
+          RenderRubyText {RT} at (0,-10) size 75x9
             RenderText {#text} at (0,0) size 75x10
               text run at (0,0) width 75: "Cascading Style Sheets"
-          RenderRubyBase (anonymous) at (0,0) size 75x19
+          RenderRubyBase (anonymous) at (0,0) size 75x18
             RenderText {#text} at (19,0) size 37x19
               text run at (19,0) width 37: "CSS3"
-      RenderText {#text} at (437,67) size 42x19
-        text run at (437,67) width 42: " specs."
+      RenderText {#text} at (437,64) size 42x19
+        text run at (437,64) width 42: " specs."

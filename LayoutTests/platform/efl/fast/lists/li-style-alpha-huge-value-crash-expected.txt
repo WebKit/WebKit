@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {BLOCKQUOTE} at (40,0) size 704x57
-        RenderBlock {BLOCKQUOTE} at (40,0) size 624x57
-          RenderBlock {OL} at (0,0) size 624x57
-            RenderListItem {LI} at (40,0) size 584x57
+      RenderBlock {BLOCKQUOTE} at (40,0) size 704x54
+        RenderBlock {BLOCKQUOTE} at (40,0) size 624x54
+          RenderBlock {OL} at (0,0) size 624x54
+            RenderListItem {LI} at (40,0) size 584x54
               RenderListMarker at (-93,0) size 88x19: "CYWOQVJ"
               RenderBR {BR} at (0,0) size 0x19
-              RenderText {#text} at (0,19) size 487x38
-                text run at (0,19) width 189: "SUCCESS (you didn't crash) "
-                text run at (189,19) width 298: "Our behavior here matches WinIE not FireFox."
-                text run at (0,38) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8542"
+              RenderText {#text} at (0,18) size 487x37
+                text run at (0,18) width 189: "SUCCESS (you didn't crash) "
+                text run at (189,18) width 298: "Our behavior here matches WinIE not FireFox."
+                text run at (0,36) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8542"

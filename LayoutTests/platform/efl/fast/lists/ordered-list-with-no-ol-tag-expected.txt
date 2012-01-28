@@ -1,102 +1,102 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x560
-  RenderBlock {HTML} at (0,0) size 800x560
-    RenderBody {BODY} at (8,19) size 784x533
+layer at (0,0) size 800x538
+  RenderBlock {HTML} at (0,0) size 800x538
+    RenderBody {BODY} at (8,19) size 784x511
       RenderBlock {H2} at (0,0) size 784x28
         RenderText {#text} at (0,0) size 305x28
           text run at (0,0) width 305: "A regular two level nested list"
-      RenderBlock {P} at (0,47) size 784x19
+      RenderBlock {P} at (0,47) size 784x18
         RenderText {#text} at (0,0) size 551x19
           text run at (0,0) width 551: "The outer list is numbered using decimal numerals, the inner lists with lower case letters"
-      RenderBlock {DIV} at (24,82) size 760x451 [border: (1px solid #000000)]
-        RenderListItem {DIV} at (33,1) size 726x21 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (24,81) size 760x430 [border: (1px solid #000000)]
+        RenderListItem {DIV} at (33,1) size 726x20 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "1"
           RenderText {#text} at (33,1) size 40x19
             text run at (33,1) width 40: "Item 1"
-        RenderListItem {DIV} at (33,22) size 726x145 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (33,1) size 692x19
+        RenderListItem {DIV} at (33,21) size 726x138 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (33,1) size 692x18
             RenderListMarker at (-54,0) size 16x19: "2"
             RenderText {#text} at (0,0) size 40x19
               text run at (0,0) width 40: "Item 2"
-          RenderListItem {DIV} at (33,20) size 692x40 [border: (1px solid #000000)]
+          RenderListItem {DIV} at (33,19) size 692x38 [border: (1px solid #000000)]
             RenderListMarker at (-20,1) size 15x19: "a"
             RenderText {#text} at (33,1) size 39x19
               text run at (33,1) width 39: "Item a"
             RenderBR {BR} at (72,1) size 0x19
-            RenderText {#text} at (33,20) size 88x19
-              text run at (33,20) width 88: "Item a, Line 2"
-          RenderListItem {DIV} at (33,60) size 692x21 [border: (1px solid #000000)]
+            RenderText {#text} at (33,19) size 88x19
+              text run at (33,19) width 88: "Item a, Line 2"
+          RenderListItem {DIV} at (33,57) size 692x20 [border: (1px solid #000000)]
             RenderListMarker at (-21,1) size 16x19: "b"
             RenderText {#text} at (33,1) size 40x19
               text run at (33,1) width 40: "Item b"
-          RenderListItem {DIV} at (33,81) size 692x21 [border: (1px solid #000000)]
+          RenderListItem {DIV} at (33,77) size 692x20 [border: (1px solid #000000)]
             RenderListMarker at (-20,1) size 15x19: "c"
             RenderText {#text} at (33,1) size 39x19
               text run at (33,1) width 39: "Item c"
-          RenderBlock {DIV} at (33,102) size 692x21 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (33,97) size 692x20 [border: (1px solid #000000)]
             RenderText {#text} at (33,1) size 88x19
               text run at (33,1) width 88: "Not a list item"
-          RenderListItem {DIV} at (33,123) size 692x21 [border: (1px solid #000000)]
+          RenderListItem {DIV} at (33,117) size 692x20 [border: (1px solid #000000)]
             RenderListMarker at (-21,1) size 16x19: "d"
             RenderText {#text} at (33,1) size 40x19
               text run at (33,1) width 40: "Item d"
-        RenderListItem {DIV} at (33,167) size 726x21 [border: (1px solid #000000)]
+        RenderListItem {DIV} at (33,159) size 726x20 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "3"
           RenderText {#text} at (33,1) size 40x19
             text run at (33,1) width 40: "Item 3"
-        RenderBlock {DIV} at (33,188) size 726x103 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (33,1) size 692x19
+        RenderBlock {DIV} at (33,179) size 726x98 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (33,1) size 692x18
             RenderText {#text} at (0,0) size 88x19
               text run at (0,0) width 88: "Not a list item"
-          RenderListItem {DIV} at (33,20) size 692x40 [border: (1px solid #000000)]
+          RenderListItem {DIV} at (33,19) size 692x38 [border: (1px solid #000000)]
             RenderListMarker at (-20,1) size 15x19: "a"
             RenderText {#text} at (33,1) size 39x19
               text run at (33,1) width 39: "Item a"
             RenderBR {BR} at (72,1) size 0x19
-            RenderText {#text} at (33,20) size 88x19
-              text run at (33,20) width 88: "Item a, Line 2"
-          RenderBlock {DIV} at (33,60) size 692x21 [border: (1px solid #000000)]
+            RenderText {#text} at (33,19) size 88x19
+              text run at (33,19) width 88: "Item a, Line 2"
+          RenderBlock {DIV} at (33,57) size 692x20 [border: (1px solid #000000)]
             RenderText {#text} at (33,1) size 88x19
               text run at (33,1) width 88: "Not a list item"
-          RenderListItem {DIV} at (33,81) size 692x21 [border: (1px solid #000000)]
+          RenderListItem {DIV} at (33,77) size 692x20 [border: (1px solid #000000)]
             RenderListMarker at (-21,1) size 16x19: "b"
             RenderText {#text} at (33,1) size 40x19
               text run at (33,1) width 40: "Item b"
-        RenderListItem {DIV} at (33,291) size 726x21 [border: (1px solid #000000)]
+        RenderListItem {DIV} at (33,277) size 726x20 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "4"
           RenderText {#text} at (33,1) size 40x19
             text run at (33,1) width 40: "Item 4"
-        RenderListItem {DIV} at (33,312) size 726x117 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (33,1) size 692x19
+        RenderListItem {DIV} at (33,297) size 726x112 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (33,1) size 692x18
             RenderListMarker at (-54,0) size 16x19: "5"
             RenderText {#text} at (0,0) size 40x19
               text run at (0,0) width 40: "Item 5"
-          RenderListItem {TABLE} at (33,20) size 692x48 [border: (1px dashed #000000)]
-            RenderBlock (anonymous) at (1,1) size 690x19
+          RenderListItem {TABLE} at (33,19) size 692x46 [border: (1px dashed #000000)]
+            RenderBlock (anonymous) at (1,1) size 690x18
               RenderListMarker at (-21,0) size 15x19: "a"
-            RenderTable at (1,20) size 193x27
-              RenderTableSection {TBODY} at (0,0) size 193x27
-                RenderTableRow {TR} at (0,2) size 193x23
-                  RenderTableCell {TD} at (2,2) size 94x23 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTable at (1,19) size 193x26
+              RenderTableSection {TBODY} at (0,0) size 193x26
+                RenderTableRow {TR} at (0,2) size 193x22
+                  RenderTableCell {TD} at (2,2) size 94x22 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 90x19
                       text run at (2,2) width 90: "Table Cell A1"
-                  RenderTableCell {TD} at (98,2) size 93x23 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (98,2) size 93x22 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 89x19
                       text run at (2,2) width 89: "Table Cell B1"
-          RenderListItem {TABLE} at (33,68) size 692x48 [border: (1px dashed #000000)]
-            RenderBlock (anonymous) at (1,1) size 690x19
+          RenderListItem {TABLE} at (33,65) size 692x46 [border: (1px dashed #000000)]
+            RenderBlock (anonymous) at (1,1) size 690x18
               RenderListMarker at (-22,0) size 16x19: "b"
-            RenderTable at (1,20) size 217x27
-              RenderTableSection {TBODY} at (0,0) size 217x27
-                RenderTableRow {TR} at (0,2) size 217x23
-                  RenderTableCell {TD} at (2,2) size 106x23 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTable at (1,19) size 217x26
+              RenderTableSection {TBODY} at (0,0) size 217x26
+                RenderTableRow {TR} at (0,2) size 217x22
+                  RenderTableCell {TD} at (2,2) size 106x22 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 102x19
                       text run at (2,2) width 102: "Table 2 Cell A1"
-                  RenderTableCell {TD} at (110,2) size 105x23 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (110,2) size 105x22 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 101x19
                       text run at (2,2) width 101: "Table 2 Cell B1"
-        RenderListItem {DIV} at (33,429) size 726x21 [border: (1px solid #000000)]
+        RenderListItem {DIV} at (33,409) size 726x20 [border: (1px solid #000000)]
           RenderListMarker at (-21,1) size 16x19: "6"
           RenderText {#text} at (33,1) size 40x19
             text run at (33,1) width 40: "Item 6"

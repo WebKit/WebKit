@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x410
-  RenderBlock {HTML} at (0,0) size 800x410
-    RenderBody {BODY} at (8,8) size 784x394
-      RenderBlock {DIV} at (0,0) size 385x394
-        RenderBlock {DIV} at (0,0) size 385x19
+layer at (0,0) size 800x409
+  RenderBlock {HTML} at (0,0) size 800x409
+    RenderBody {BODY} at (8,8) size 784x393
+      RenderBlock {DIV} at (0,0) size 385x393
+        RenderBlock {DIV} at (0,0) size 385x18
           RenderText {#text} at (0,0) size 324x19
             text run at (0,0) width 324: "The yellow block should be below the green block."
-        RenderBlock (floating) {DIV} at (0,19) size 100x100 [bgcolor=#008000]
-        RenderImage {IMG} at (0,119) size 395x275 [bgcolor=#FFFF00]
+        RenderBlock (floating) {DIV} at (0,18) size 100x100 [bgcolor=#008000]
+        RenderImage {IMG} at (0,118) size 395x275 [bgcolor=#FFFF00]

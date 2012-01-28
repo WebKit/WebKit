@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
             text run at (53,0) width 68: "bug 15263"
         RenderText {#text} at (121,0) size 394x19
           text run at (121,0) width 394: ": REGRESSION: scrolldelay=0 causes marquee not to display"
-      RenderBlock {P} at (0,35) size 784x38
-        RenderText {#text} at (0,0) size 776x38
+      RenderBlock {P} at (0,34) size 784x36
+        RenderText {#text} at (0,0) size 776x37
           text run at (0,0) width 776: "The marquee below is defined with a scrollDelay value of zero and with the truespeed attribute assigned to an empty string."
-          text run at (0,19) width 557: "It should scroll until the text, \"The marquee scroll test passed\" is visible and left justified."
-      RenderBlock (anonymous) at (0,89) size 784x19
+          text run at (0,18) width 557: "It should scroll until the text, \"The marquee scroll test passed\" is visible and left justified."
+      RenderBlock (anonymous) at (0,86) size 784x18
         RenderText {#text} at (0,0) size 0x0
-layer at (8,97) size 392x19 scrollX -392
-  RenderBlock {MARQUEE} at (0,0) size 392x19 [bgcolor=#00FFFF]
+layer at (8,94) size 392x18 scrollX -392 scrollHeight 19
+  RenderBlock {MARQUEE} at (0,0) size 392x18 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 192x19
       text run at (0,0) width 192: "The marquee scroll test passed"

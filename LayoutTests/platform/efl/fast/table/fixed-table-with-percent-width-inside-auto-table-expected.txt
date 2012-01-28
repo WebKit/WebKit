@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x37 [bgcolor=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 784x37
-          RenderTableRow {TR} at (0,2) size 784x33
-            RenderTableCell {TD} at (2,2) size 780x33 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 778x31 [bgcolor=#0000FF]
-                RenderTableSection {TBODY} at (0,0) size 778x31
-                  RenderTableRow {TR} at (0,2) size 778x27
-                    RenderTableCell {TD} at (2,2) size 774x27 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 772x25 [bgcolor=#008000]
-                        RenderTableSection {TBODY} at (0,0) size 772x25
-                          RenderTableRow {TR} at (0,2) size 772x21
-                            RenderTableCell {TD} at (2,2) size 768x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x36 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 784x36
+          RenderTableRow {TR} at (0,2) size 784x32
+            RenderTableCell {TD} at (2,2) size 780x32 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 778x30 [bgcolor=#0000FF]
+                RenderTableSection {TBODY} at (0,0) size 778x30
+                  RenderTableRow {TR} at (0,2) size 778x26
+                    RenderTableCell {TD} at (2,2) size 774x26 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 772x24 [bgcolor=#008000]
+                        RenderTableSection {TBODY} at (0,0) size 772x24
+                          RenderTableRow {TR} at (0,2) size 772x20
+                            RenderTableCell {TD} at (2,2) size 768x20 [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (1,1) size 50x19
                                 text run at (1,1) width 50: "Content"

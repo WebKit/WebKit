@@ -7,8 +7,8 @@ layer at (0,0) size 785x3016 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 785x3016
     RenderBody {BODY} at (8,8) size 769x3000
       RenderBlock {DIV} at (0,0) size 769x0
-layer at (8,226) size 531x19
-  RenderBlock (positioned) {P} at (8,226) size 531x19
+layer at (8,226) size 531x18
+  RenderBlock (positioned) {P} at (8,226) size 531x18
     RenderText {#text} at (0,0) size 531x19
       text run at (0,0) width 531: "You should see a yellow rect on the left, and a green one on the right. No red pixels."
 layer at (150,270) size 100x100

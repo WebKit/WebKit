@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 207x19
           text run at (0,0) width 207: "This tests for regressions against "
         RenderInline {I} at (0,0) size 542x19
@@ -14,18 +14,18 @@ layer at (0,0) size 800x600
             text run at (555,0) width 194: " Layer outline does not repaint"
         RenderText {#text} at (749,0) size 4x19
           text run at (749,0) width 4: "."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-layer at (18,193) size 100x100 clip at (19,194) size 98x98
-  RenderBlock {DIV} at (10,185) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (8,53) size 784x130
-  RenderBlock (relative positioned) {DIV} at (0,45) size 784x130
-layer at (18,63) size 100x100
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+layer at (18,192) size 100x100 clip at (19,193) size 98x98
+  RenderBlock {DIV} at (10,184) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (8,52) size 784x130
+  RenderBlock (relative positioned) {DIV} at (0,44) size 784x130
+layer at (18,62) size 100x100
   RenderBlock (positioned) {DIV} at (10,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (148,63) size 100x100 backgroundClip at (148,63) size 90x90 clip at (138,53) size 100x100 outlineClip at (138,53) size 100x100
+layer at (148,62) size 100x100 backgroundClip at (148,62) size 90x90 clip at (138,52) size 100x100 outlineClip at (138,52) size 100x100
   RenderBlock (positioned) {DIV} at (140,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (408,63) size 100x100
+layer at (408,62) size 100x100
   RenderBlock (positioned) {DIV} at (400,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (538,63) size 100x100 backgroundClip at (548,73) size 90x90 clip at (548,73) size 100x100 outlineClip at (548,73) size 100x100
+layer at (538,62) size 100x100 backgroundClip at (548,72) size 90x90 clip at (548,72) size 100x100 outlineClip at (548,72) size 100x100
   RenderBlock (positioned) {DIV} at (530,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-layer at (18,323) size 100x100
-  RenderBlock (relative positioned) {DIV} at (0,295) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (18,322) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,294) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]

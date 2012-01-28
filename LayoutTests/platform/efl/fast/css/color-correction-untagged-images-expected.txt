@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 772x38
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 772x37
           text run at (0,0) width 772: "The two squares below should not match each other. On the left is an uncorrected image and border, and on the right is the"
-          text run at (0,19) width 362: "same image and same border color corrected from sRGB."
-      RenderImage {IMG} at (0,54) size 140x140 [border: (20px solid #560063)]
-      RenderImage {IMG} at (140,54) size 140x140 [border: (20px solid #560063)]
+          text run at (0,18) width 362: "same image and same border color corrected from sRGB."
+      RenderImage {IMG} at (0,52) size 140x140 [border: (20px solid #560063)]
+      RenderImage {IMG} at (140,52) size 140x140 [border: (20px solid #560063)]

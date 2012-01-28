@@ -6,42 +6,42 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 462x19
         text run at (0,0) width 462: "This tests that empty select controls and buttons have the correct baseline."
       RenderBR {BR} at (462,15) size 0x0
-      RenderMenuList {SELECT} at (2,21) size 56x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 0x19
+      RenderMenuList {SELECT} at (2,20) size 56x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 0x18
           RenderBR at (0,0) size 0x19
-      RenderText {#text} at (60,31) size 29x19
-        text run at (60,31) width 29: " test "
-      RenderMenuList {SELECT} at (91,21) size 81x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 25x19
+      RenderText {#text} at (60,30) size 29x19
+        text run at (60,30) width 29: " test "
+      RenderMenuList {SELECT} at (91,20) size 81x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"
-      RenderText {#text} at (174,31) size 4x19
-        text run at (174,31) width 4: " "
-      RenderMenuList {SELECT} at (180,21) size 56x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 0x19
+      RenderText {#text} at (174,30) size 4x19
+        text run at (174,30) width 4: " "
+      RenderMenuList {SELECT} at (180,20) size 56x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 0x18
           RenderBR at (0,0) size 0x19
-      RenderText {#text} at (238,31) size 29x19
-        text run at (238,31) width 29: " test "
-      RenderMenuList {SELECT} at (269,21) size 81x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 25x19
+      RenderText {#text} at (238,30) size 29x19
+        text run at (238,30) width 29: " test "
+      RenderMenuList {SELECT} at (269,20) size 81x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"
-      RenderText {#text} at (352,31) size 4x19
-        text run at (352,31) width 4: " "
-      RenderButton {BUTTON} at (358,21) size 34x41 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-      RenderText {#text} at (394,31) size 4x19
-        text run at (394,31) width 4: " "
-      RenderButton {BUTTON} at (400,21) size 59x41 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (17,10) size 25x19
+      RenderText {#text} at (352,30) size 4x19
+        text run at (352,30) width 4: " "
+      RenderButton {BUTTON} at (358,20) size 34x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (394,30) size 4x19
+        text run at (394,30) width 4: " "
+      RenderButton {BUTTON} at (400,20) size 59x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (17,10) size 25x18
           RenderText {#text} at (0,0) size 25x19
             text run at (0,0) width 25: "test"
-      RenderText {#text} at (461,31) size 4x19
-        text run at (461,31) width 4: " "
-      RenderButton {BUTTON} at (467,27) size 16x28 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
-      RenderText {#text} at (485,31) size 4x19
-        text run at (485,31) width 4: " "
-      RenderButton {BUTTON} at (491,27) size 41x28 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 25x19
+      RenderText {#text} at (461,30) size 4x19
+        text run at (461,30) width 4: " "
+      RenderButton {BUTTON} at (467,26) size 16x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (485,30) size 4x19
+        text run at (485,30) width 4: " "
+      RenderButton {BUTTON} at (491,26) size 41x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 25x18
           RenderText {#text} at (0,0) size 25x19
             text run at (0,0) width 25: "test"
       RenderText {#text} at (0,0) size 0x0

@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x80
-        RenderTableSection {TBODY} at (0,0) size 784x80
+      RenderTable {TABLE} at (0,0) size 784x76
+        RenderTableSection {TBODY} at (0,0) size 784x76
           RenderTableRow {TR} at (0,2) size 784x0
-            RenderTableCell {TD} at (2,1) size 780x78 [r=0 c=0 rs=8190 cs=1]
-              RenderText {#text} at (1,1) size 778x76
+            RenderTableCell {TD} at (2,1) size 780x74 [r=0 c=0 rs=8190 cs=1]
+              RenderText {#text} at (1,1) size 778x73
                 text run at (1,1) width 673: "This test succeeds if it does not crash. We implemented a heuristic a while back to prevent giant rowspans. "
                 text run at (674,1) width 82: "The heuristic"
-                text run at (1,20) width 696: "did not, however, fix this case. This rowpsan was small enough so that we thought it was okay to allocate, but "
-                text run at (697,20) width 82: "large enough"
-                text run at (1,39) width 684: "so that it actually wasn't okay, and we crashed. Firefox seems to hold 8k as the maximum size for rowspans. "
-                text run at (685,39) width 92: "So this change"
-                text run at (1,58) width 413: "matches Firefox and clamps all rowspans to 8k right in the DOM."
+                text run at (1,19) width 696: "did not, however, fix this case. This rowpsan was small enough so that we thought it was okay to allocate, but "
+                text run at (697,19) width 82: "large enough"
+                text run at (1,37) width 684: "so that it actually wasn't okay, and we crashed. Firefox seems to hold 8k as the maximum size for rowspans. "
+                text run at (685,37) width 92: "So this change"
+                text run at (1,55) width 413: "matches Firefox and clamps all rowspans to 8k right in the DOM."

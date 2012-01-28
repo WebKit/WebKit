@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x572
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 776x57
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 776x55
           text run at (0,0) width 775: "This file tests capitalisation with all sorts of odd things. There is some RTL text, some text with an inlined-div placed inside"
-          text run at (0,19) width 776: "a word, an image between words as well as a div between words. Each word below should be capitalised, and there should"
-          text run at (0,38) width 232: "be no capitals n the middle of words."
-      RenderBlock {DIV} at (20,77) size 744x117 [border: (5px solid #FF0000)]
-        RenderBlock {DIV} at (25,25) size 694x19
+          text run at (0,18) width 776: "a word, an image between words as well as a div between words. Each word below should be capitalised, and there should"
+          text run at (0,36) width 232: "be no capitals n the middle of words."
+      RenderBlock {DIV} at (20,74) size 744x114 [border: (5px solid #FF0000)]
+        RenderBlock {DIV} at (25,25) size 694x18
           RenderText {#text} at (664,0) size 30x19
             text run at (664,0) width 30 RTL override: "Capi"
           RenderInline {SPAN} at (0,0) size 15x19
@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
               text run at (649,0) width 15 RTL override: "tal"
           RenderText {#text} at (632,0) size 17x19
             text run at (632,0) width 17 RTL override: "ise"
-        RenderBlock {DIV} at (25,44) size 694x48
-          RenderBlock (anonymous) at (0,0) size 694x29
+        RenderBlock {DIV} at (25,43) size 694x46
+          RenderBlock (anonymous) at (0,0) size 694x28
             RenderText {#text} at (0,10) size 31x19
               text run at (0,10) width 31: "A W"
             RenderInline {DIV} at (0,0) size 13x19
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
             RenderImage {IMG} at (87,0) size 25x25
             RenderText {#text} at (112,10) size 63x19
               text run at (112,10) width 63: "An Image"
-          RenderBlock {DIV} at (0,29) size 694x0
-          RenderBlock (anonymous) at (0,29) size 694x19
+          RenderBlock {DIV} at (0,28) size 694x0
+          RenderBlock (anonymous) at (0,28) size 694x18
             RenderText {#text} at (0,0) size 35x19
               text run at (0,0) width 35: "In Be"
             RenderInline {SPAN} at (0,0) size 16x19

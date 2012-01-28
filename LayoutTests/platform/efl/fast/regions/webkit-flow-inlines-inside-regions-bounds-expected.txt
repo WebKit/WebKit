@@ -11,30 +11,30 @@ Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x400
       RenderFlowThread at (0,0) size 300x400
-        RenderBlock {DIV} at (0,0) size 300x389
-          RenderBlock {DIV} at (5,5) size 290x379 [border: (1px solid #0000FF)]
-            RenderBlock {DIV} at (11,11) size 268x357 [border: (1px solid #008000)]
-              RenderBlock {P} at (1,17) size 266x124
-                RenderText {#text} at (0,0) size 266x124
+        RenderBlock {DIV} at (0,0) size 300x385
+          RenderBlock {DIV} at (5,5) size 290x375 [border: (1px solid #0000FF)]
+            RenderBlock {DIV} at (11,11) size 268x353 [border: (1px solid #008000)]
+              RenderBlock {P} at (1,17) size 266x121
+                RenderText {#text} at (0,0) size 266x122
                   text run at (0,0) width 166: "This line of text should"
-                  text run at (0,19) width 166: "not get out of the region."
-                  text run at (0,38) width 166: "This line of text should"
+                  text run at (0,18) width 166: "not get out of the region."
+                  text run at (0,36) width 166: "This line of text should"
                   text run at (0,67) width 266: "not get out of the region. This line of text"
-                  text run at (0,86) width 266: "should not get out of the region. This line"
-                  text run at (0,105) width 245: "of text should not get out of the region."
-              RenderBlock {P} at (1,157) size 266x95
-                RenderText {#text} at (0,0) size 266x95
+                  text run at (0,85) width 266: "should not get out of the region. This line"
+                  text run at (0,103) width 245: "of text should not get out of the region."
+              RenderBlock {P} at (1,154) size 266x90
+                RenderText {#text} at (0,0) size 266x91
                   text run at (0,0) width 266: "This line of text should not get out of the"
-                  text run at (0,19) width 266: "region. This line of text should not get out"
-                  text run at (0,38) width 266: "of the region. This line of text should not"
-                  text run at (0,57) width 266: "get out of the region. This line of text"
-                  text run at (0,76) width 201: "should not get out of the region."
-              RenderBlock {P} at (1,264) size 266x76
-                RenderText {#text} at (0,0) size 86x76
+                  text run at (0,18) width 266: "region. This line of text should not get out"
+                  text run at (0,36) width 266: "of the region. This line of text should not"
+                  text run at (0,54) width 266: "get out of the region. This line of text"
+                  text run at (0,72) width 201: "should not get out of the region."
+              RenderBlock {P} at (1,264) size 266x72
+                RenderText {#text} at (0,0) size 86x73
                   text run at (0,0) width 86: "This line of"
-                  text run at (0,19) width 86: "text should"
-                  text run at (0,38) width 86: "not get out of"
-                  text run at (0,57) width 67: "the region."
+                  text run at (0,18) width 86: "text should"
+                  text run at (0,36) width 86: "not get out of"
+                  text run at (0,54) width 67: "the region."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1
     RenderRegion {DIV} #region2

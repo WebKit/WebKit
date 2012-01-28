@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderBlock (floating) {DIV} at (0,0) size 76x500 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 76x19
             text run at (0,0) width 76: "Hello world"
-      RenderBlock {DIV} at (0,204) size 784x38
-        RenderText {#text} at (76,0) size 693x38
+      RenderBlock {DIV} at (0,204) size 784x36
+        RenderText {#text} at (76,0) size 693x37
           text run at (76,0) width 286: "This text should not overlap the purple float? "
           text run at (362,0) width 407: "Will this happen? I'm really not sure. This is a test of some of the"
-          text run at (76,19) width 443: "strange behavior you will find when using overflow auto or scroll, etc."
+          text run at (76,18) width 443: "strange behavior you will find when using overflow auto or scroll, etc."
 layer at (84,108) size 708x104 clip at (86,110) size 704x100 scrollHeight 400
   RenderBlock {DIV} at (76,100) size 708x104 [border: (2px solid #000000)]
     RenderText {#text} at (2,2) size 143x19

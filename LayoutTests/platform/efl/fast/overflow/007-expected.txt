@@ -44,27 +44,27 @@ layer at (143,32) size 514x146 clip at (144,33) size 497x144 scrollHeight 316
         text run at (0,135) width 449: "nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit"
         text run at (0,150) width 465: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem"
         text run at (0,165) width 220: "eum fugiat quo voluptas nulla pariatur?"
-layer at (0,0) size 40x35
-  RenderBlock (positioned) {P} at (0,0) size 40x35 [bgcolor=#FF0000]
+layer at (0,0) size 40x34
+  RenderBlock (positioned) {P} at (0,0) size 40x34 [bgcolor=#FF0000]
     RenderText {#text} at (8,8) size 24x19
       text run at (8,8) width 24: "hi 1"
-layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 370
+layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 365
   RenderBlock (relative positioned) {DIV} at (111,178) size 514x146 [bgcolor=#FFFFFF] [border: (1px solid #999999)]
-    RenderBlock {P} at (17,17) size 465x38
-      RenderText {#text} at (0,0) size 462x38
+    RenderBlock {P} at (17,17) size 465x36
+      RenderText {#text} at (0,0) size 462x37
         text run at (0,0) width 462: "Safari v1.2.2 incorrectly scrolls the 'hi 1' div when its parent is scrolled. If"
-        text run at (0,19) width 327: "you resize the page even a little, this bug fixes itself."
-    RenderBlock {P} at (17,71) size 465x76
+        text run at (0,18) width 327: "you resize the page even a little, this bug fixes itself."
+    RenderBlock {P} at (17,69) size 465x73
       RenderText {#text} at (0,0) size 401x19
         text run at (0,0) width 401: "Safari v1.2.2 also (really odd) causes the entire second div to be"
       RenderInline {CODE} at (0,0) size 88x15
-        RenderText {#text} at (0,23) size 88x15
-          text run at (0,23) width 88: "opacity:0.5"
-      RenderText {#text} at (88,19) size 440x57
-        text run at (88,19) width 347: ", despite the fact that this property is only applied to the"
-        text run at (0,38) width 440: "child item. This problem fixes itself if you resize the window and then"
-        text run at (0,57) width 85: "scroll the div."
-    RenderBlock {P} at (17,163) size 465x180 [color=#999999]
+        RenderText {#text} at (0,22) size 88x15
+          text run at (0,22) width 88: "opacity:0.5"
+      RenderText {#text} at (88,18) size 440x56
+        text run at (88,18) width 347: ", despite the fact that this property is only applied to the"
+        text run at (0,37) width 440: "child item. This problem fixes itself if you resize the window and then"
+        text run at (0,55) width 85: "scroll the div."
+    RenderBlock {P} at (17,158) size 465x180 [color=#999999]
       RenderText {#text} at (0,0) size 465x180
         text run at (0,0) width 457: "Following extra content exists to ensure that the parent box overflows properly. Sed"
         text run at (0,15) width 449: "ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque"
@@ -78,7 +78,7 @@ layer at (143,210) size 514x146 clip at (144,211) size 497x144 scrollHeight 370
         text run at (0,135) width 449: "nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit"
         text run at (0,150) width 465: "qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem"
         text run at (0,165) width 220: "eum fugiat quo voluptas nulla pariatur?"
-layer at (144,211) size 40x35
-  RenderBlock (positioned) {P} at (1,1) size 40x35 [bgcolor=#FF0000]
+layer at (144,211) size 40x34
+  RenderBlock (positioned) {P} at (1,1) size 40x34 [bgcolor=#FF0000]
     RenderText {#text} at (8,8) size 24x19
       text run at (8,8) width 24: "hi 2"

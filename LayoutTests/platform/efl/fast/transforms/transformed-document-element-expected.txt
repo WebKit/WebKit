@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x51
-  RenderBlock {HTML} at (0,0) size 800x51
-    RenderBody {BODY} at (8,16) size 784x19 [bgcolor=#808080]
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18 [bgcolor=#808080]
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 553x19
           text run at (0,0) width 553: "The portions of the view exposed by the transformed document should be painted white"

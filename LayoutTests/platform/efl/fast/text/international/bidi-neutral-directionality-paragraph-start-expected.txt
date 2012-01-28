@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 569x19
           text run at (0,0) width 569: "Mitz Pettel contributed this fix to KDE, and now we're rolling it in. Here's his explanation:"
-      RenderBlock {P} at (0,35) size 784x76
-        RenderText {#text} at (0,0) size 777x76
+      RenderBlock {P} at (0,34) size 784x72
+        RenderText {#text} at (0,0) size 777x73
           text run at (0,0) width 766: "The directionality of a neutral character at the beginning of a paragraph (or after a hard line break) is decided incorrectly if"
-          text run at (0,19) width 777: "the first non-neutral character in the paragraph has directionality opposite to the paragraph directionality. For example, if the"
-          text run at (0,38) width 768: "paragraph direction is LTR, the first character on the paragraph is a question mark and the next one is a Hebrew character,"
-          text run at (0,57) width 643: "then the question mark will is considered right-to-left and appears to the right of the Hebrew character."
-      RenderBlock {P} at (0,127) size 784x38
+          text run at (0,18) width 777: "the first non-neutral character in the paragraph has directionality opposite to the paragraph directionality. For example, if the"
+          text run at (0,36) width 768: "paragraph direction is LTR, the first character on the paragraph is a question mark and the next one is a Hebrew character,"
+          text run at (0,54) width 643: "then the question mark will is considered right-to-left and appears to the right of the Hebrew character."
+      RenderBlock {P} at (0,122) size 784x36
         RenderText {#text} at (0,0) size 508x19
           text run at (0,0) width 508: "The rule to follow is 3.3.4.N2 in the Unicode Standard's Bidirectional Algorithm"
         RenderInline {A} at (0,0) size 397x19 [color=#0000EE]
-          RenderText {#text} at (0,19) size 397x19
-            text run at (0,19) width 397: "http://www.unicode.org/reports/tr9/#Resolving_Neutral_Types"
-        RenderText {#text} at (397,19) size 4x19
-          text run at (397,19) width 4: "."
-      RenderBlock {P} at (0,181) size 784x19
+          RenderText {#text} at (0,18) size 397x19
+            text run at (0,18) width 397: "http://www.unicode.org/reports/tr9/#Resolving_Neutral_Types"
+        RenderText {#text} at (397,18) size 4x19
+          text run at (397,18) width 4: "."
+      RenderBlock {P} at (0,174) size 784x18
         RenderText {#text} at (0,0) size 676x19
           text run at (0,0) width 676: "If the test is successful, the question marks should be on the far left and far right of the next two paragraphs."
-      RenderBlock {P} at (0,216) size 784x19
+      RenderBlock {P} at (0,208) size 784x18
         RenderText {#text} at (0,0) size 74x19
           text run at (0,0) width 11: "? "
           text run at (11,0) width 32 RTL: "\x{FEB2} \x{FEED}"
           text run at (43,0) width 31: "hello"
-      RenderBlock {P} at (0,251) size 784x19
+      RenderBlock {P} at (0,242) size 784x18
         RenderText {#text} at (706,0) size 78x19
           text run at (706,0) width 36 RTL: " \x{FEB2} \x{FEED}"
           text run at (742,0) width 31: "hello"

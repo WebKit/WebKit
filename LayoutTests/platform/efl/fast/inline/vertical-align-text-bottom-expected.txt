@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x300
-  RenderBlock {HTML} at (0,0) size 800x300
-    RenderBody {BODY} at (8,8) size 784x284
-      RenderBlock {DIV} at (0,0) size 784x35 [bgcolor=#CCCCCC]
+layer at (0,0) size 800x299
+  RenderBlock {HTML} at (0,0) size 800x299
+    RenderBody {BODY} at (8,8) size 784x283
+      RenderBlock {DIV} at (0,0) size 784x34 [bgcolor=#CCCCCC]
         RenderInline {SPAN} at (0,0) size 45x18 [bgcolor=#FF0000]
           RenderText {#text} at (0,17) size 45x18
             text run at (0,17) width 45: "small"
-        RenderText {#text} at (45,16) size 10x19
-          text run at (45,16) width 10: " "
+        RenderText {#text} at (45,15) size 10x19
+          text run at (45,15) width 10: " "
         RenderInline {SPAN} at (0,0) size 54x35 [bgcolor=#FF0000]
           RenderText {#text} at (55,0) size 54x35
             text run at (55,0) width 54: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,39) size 784x141 [bgcolor=#CCCCCC]
+      RenderBlock {DIV} at (0,38) size 784x141 [bgcolor=#CCCCCC]
         RenderInline {SPAN} at (0,0) size 45x18 [bgcolor=#FF0000]
           RenderText {#text} at (0,41) size 45x18
             text run at (0,41) width 45: "small"
@@ -23,12 +23,12 @@ layer at (0,0) size 800x300
           RenderText {#text} at (55,32) size 54x35
             text run at (55,32) width 54: "BIG"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,184) size 784x100 [bgcolor=#CCCCCC]
+      RenderBlock {DIV} at (0,183) size 784x100 [bgcolor=#CCCCCC]
         RenderInline {SPAN} at (0,0) size 45x18 [bgcolor=#FF0000]
           RenderText {#text} at (0,17) size 45x18
             text run at (0,17) width 45: "small"
-        RenderText {#text} at (45,16) size 10x19
-          text run at (45,16) width 10: " "
+        RenderText {#text} at (45,15) size 10x19
+          text run at (45,15) width 10: " "
         RenderInline {SPAN} at (0,0) size 54x35 [bgcolor=#FF0000]
           RenderText {#text} at (55,0) size 54x35
             text run at (55,0) width 54: "BIG"

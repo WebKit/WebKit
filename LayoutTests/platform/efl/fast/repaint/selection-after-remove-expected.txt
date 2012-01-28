@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x562
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 768x38
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 768x37
           text run at (0,0) width 650: "This tests to see if selection gaps are invalidated properly when content inside the selection is removed. "
           text run at (650,0) width 114: "Only 'hello world'"
           text run at (764,0) width 4: " "
-          text run at (0,19) width 229: "should have a selecton tint behind it."
-      RenderBlock {DIV} at (30,68) size 152x21 [border: (1px solid #FF0000)]
+          text run at (0,18) width 229: "should have a selecton tint behind it."
+      RenderBlock {DIV} at (30,66) size 152x20 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 35x19
           text run at (1,1) width 35: "hello "
         RenderText {#text} at (36,1) size 37x19

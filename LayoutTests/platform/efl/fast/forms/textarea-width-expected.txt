@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 778x38
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 778x37
           text run at (0,0) width 778: "This text area should be drawn with a reasonable width. To match IE, using GDI fonts it should wrap at 66 characters (after"
-          text run at (0,19) width 532: "the X in the third set of digits). See https://bugs.webkit.org/show_bug.cgi?id=15312."
-      RenderBlock (anonymous) at (0,38) size 784x289
+          text run at (0,18) width 532: "the X in the third set of digits). See https://bugs.webkit.org/show_bug.cgi?id=15312."
+      RenderBlock (anonymous) at (0,36) size 784x268
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,0) size 0x0
-layer at (8,65) size 550x270
-  RenderTextControl {TEXTAREA} at (0,19) size 550x270 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 543x39
-      RenderText {#text} at (0,0) size 541x26
+layer at (8,62) size 550x250
+  RenderTextControl {TEXTAREA} at (0,18) size 550x250 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 543x36
+      RenderText {#text} at (0,0) size 541x25
         text run at (0,0) width 541: "1234567890abcdefghijABCDEFGHIJ1234567890abcdefghijABCDEFGHIJ12345X7890abcdefghijABCDEFGXIJ1234"
-        text run at (0,13) width 148: "567890abcdefghijABCDEFGHIJ"
-        text run at (148,13) width 0: " "
-      RenderBR {BR} at (0,26) size 0x13
+        text run at (0,12) width 148: "567890abcdefghijABCDEFGHIJ"
+        text run at (148,12) width 0: " "
+      RenderBR {BR} at (0,24) size 0x13

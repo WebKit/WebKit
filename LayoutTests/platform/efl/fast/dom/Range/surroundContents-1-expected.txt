@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 563x19
           text run at (0,0) width 563: "This tests for HIERARCHY_REQUEST_ERRs when calling Range::surroundContents."
-      RenderBlock {DIV} at (0,35) size 784x23 [border: (1px solid #0000FF)]
-        RenderBlock {DIV} at (1,1) size 782x21 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (0,34) size 784x22 [border: (1px solid #0000FF)]
+        RenderBlock {DIV} at (1,1) size 782x20 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,1) size 80x19
             text run at (1,1) width 80: "Hello world."
-      RenderBlock {UL} at (0,74) size 784x0
+      RenderBlock {UL} at (0,72) size 784x0

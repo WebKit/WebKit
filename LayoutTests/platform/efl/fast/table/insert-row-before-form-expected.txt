@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 652x19
@@ -14,16 +14,16 @@ layer at (0,0) size 800x600
             text run at (207,0) width 498: " Repro crash in WebKit!WebCore::RenderContainer::destroyLeftoverChildren"
         RenderText {#text} at (705,0) size 4x19
           text run at (705,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 270x19
           text run at (0,0) width 270: "There should be a line of green text below."
-      RenderTable {TABLE} at (0,70) size 148x31 [color=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 148x31
-          RenderTableRow {TR} at (0,2) size 148x27
-            RenderTableCell {TD} at (2,2) size 144x27 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 142x25 [color=#008000]
-                RenderTableSection {TBODY} at (0,0) size 142x25
-                  RenderTableRow {TR} at (0,2) size 142x21
-                    RenderTableCell {TD} at (2,2) size 138x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,68) size 148x30 [color=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 148x30
+          RenderTableRow {TR} at (0,2) size 148x26
+            RenderTableCell {TD} at (2,2) size 144x26 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 142x24 [color=#008000]
+                RenderTableSection {TBODY} at (0,0) size 142x24
+                  RenderTableRow {TR} at (0,2) size 142x20
+                    RenderTableCell {TD} at (2,2) size 138x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 136x19
                         text run at (1,1) width 136: "This should be green."

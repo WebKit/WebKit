@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x534
-  RenderBlock {HTML} at (0,0) size 800x534
-    RenderBody {BODY} at (8,16) size 784x510
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 767x38
+layer at (0,0) size 800x532
+  RenderBlock {HTML} at (0,0) size 800x532
+    RenderBody {BODY} at (8,16) size 784x508
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 767x37
           text run at (0,0) width 767: "The green positioned object should only be as tall as the first region it is contained in. It should fill the right half of the first"
-          text run at (0,19) width 229: "region, and no red should be visible."
-      RenderBlock {DIV} at (0,54) size 784x456
+          text run at (0,18) width 229: "region, and no red should be visible."
+      RenderBlock {DIV} at (0,52) size 784x456
         RenderRegion {DIV} at (0,0) size 202x152 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,152) size 302x182 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,334) size 122x122 [border: (1px solid #000000)]

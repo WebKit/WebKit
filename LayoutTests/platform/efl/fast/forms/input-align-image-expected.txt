@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 579x19
           text run at (0,0) width 579: "The following 4 images should be all be rendered exactly the same, aligned to the right side."
-      RenderImage {INPUT} at (767,35) size 17x19
-      RenderBlock (anonymous) at (0,35) size 784x114
+      RenderImage {INPUT} at (767,34) size 17x19
+      RenderBlock (anonymous) at (0,34) size 784x108
         RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,19) size 0x19
-        RenderImage {INPUT} at (767,38) size 17x19
-        RenderBR {BR} at (0,38) size 0x19
-        RenderBR {BR} at (0,57) size 0x19
-        RenderImage {INPUT} at (767,76) size 17x19
+        RenderBR {BR} at (0,18) size 0x19
+        RenderImage {INPUT} at (767,36) size 17x19
+        RenderBR {BR} at (0,36) size 0x19
+        RenderBR {BR} at (0,54) size 0x19
+        RenderImage {INPUT} at (767,72) size 17x19
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (0,76) size 0x19
-        RenderBR {BR} at (0,95) size 0x19
-      RenderBlock {DIV} at (0,149) size 784x0
+        RenderBR {BR} at (0,72) size 0x19
+        RenderBR {BR} at (0,90) size 0x19
+      RenderBlock {DIV} at (0,142) size 784x0
         RenderImage {INPUT} at (767,0) size 17x19

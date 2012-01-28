@@ -3,82 +3,82 @@ layer at (0,0) size 785x600
 layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock (anonymous) at (0,0) size 769x19
+      RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 312x19
           text run at (0,0) width 312: "The body should always have a vertical scrollbar."
-      RenderBlock (anonymous) at (0,219) size 769x71
-        RenderText {#text} at (206,52) size 4x19
-          text run at (206,52) width 4: " "
+      RenderBlock (anonymous) at (0,218) size 769x68
+        RenderText {#text} at (206,50) size 4x19
+          text run at (206,50) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-layer at (8,27) size 300x100 clip at (8,27) size 285x100 scrollHeight 342
-  RenderBlock {DIV} at (0,19) size 300x100
+layer at (8,26) size 300x100 clip at (8,26) size 285x100 scrollHeight 325
+  RenderBlock {DIV} at (0,18) size 300x100
     RenderText {#text} at (0,0) size 50x19
       text run at (0,0) width 50: "Y scroll"
     RenderBR {BR} at (50,15) size 0x0
-    RenderText {#text} at (0,19) size 50x19
-      text run at (0,19) width 50: "Y scroll"
-    RenderBR {BR} at (50,34) size 0x0
-    RenderText {#text} at (0,38) size 50x19
-      text run at (0,38) width 50: "Y scroll"
-    RenderBR {BR} at (50,53) size 0x0
-    RenderText {#text} at (0,57) size 50x19
-      text run at (0,57) width 50: "Y scroll"
-    RenderBR {BR} at (50,72) size 0x0
-    RenderText {#text} at (0,76) size 50x19
-      text run at (0,76) width 50: "Y scroll"
-    RenderBR {BR} at (50,91) size 0x0
-    RenderText {#text} at (0,95) size 50x19
-      text run at (0,95) width 50: "Y scroll"
-    RenderBR {BR} at (50,110) size 0x0
-    RenderText {#text} at (0,114) size 50x19
-      text run at (0,114) width 50: "Y scroll"
-    RenderBR {BR} at (50,129) size 0x0
-    RenderText {#text} at (0,133) size 50x19
-      text run at (0,133) width 50: "Y scroll"
-    RenderBR {BR} at (50,148) size 0x0
-    RenderText {#text} at (0,152) size 50x19
-      text run at (0,152) width 50: "Y scroll"
-    RenderBR {BR} at (50,167) size 0x0
-    RenderText {#text} at (0,171) size 50x19
-      text run at (0,171) width 50: "Y scroll"
-    RenderBR {BR} at (50,186) size 0x0
-    RenderText {#text} at (0,190) size 50x19
-      text run at (0,190) width 50: "Y scroll"
-    RenderBR {BR} at (50,205) size 0x0
-    RenderText {#text} at (0,209) size 50x19
-      text run at (0,209) width 50: "Y scroll"
-    RenderBR {BR} at (50,224) size 0x0
-    RenderText {#text} at (0,228) size 50x19
-      text run at (0,228) width 50: "Y scroll"
-    RenderBR {BR} at (50,243) size 0x0
-    RenderText {#text} at (0,247) size 50x19
-      text run at (0,247) width 50: "Y scroll"
-    RenderBR {BR} at (50,262) size 0x0
-    RenderText {#text} at (0,266) size 50x19
-      text run at (0,266) width 50: "Y scroll"
-    RenderBR {BR} at (50,281) size 0x0
-    RenderText {#text} at (0,285) size 50x19
-      text run at (0,285) width 50: "Y scroll"
-    RenderBR {BR} at (50,300) size 0x0
-    RenderText {#text} at (0,304) size 50x19
-      text run at (0,304) width 50: "Y scroll"
-    RenderBR {BR} at (50,319) size 0x0
-    RenderText {#text} at (0,323) size 50x19
-      text run at (0,323) width 50: "Y scroll"
-    RenderBR {BR} at (50,338) size 0x0
-layer at (8,127) size 300x100 clip at (8,127) size 300x85 scrollWidth 1184
-  RenderBlock {DIV} at (0,119) size 300x100
+    RenderText {#text} at (0,18) size 50x19
+      text run at (0,18) width 50: "Y scroll"
+    RenderBR {BR} at (50,33) size 0x0
+    RenderText {#text} at (0,36) size 50x19
+      text run at (0,36) width 50: "Y scroll"
+    RenderBR {BR} at (50,51) size 0x0
+    RenderText {#text} at (0,54) size 50x19
+      text run at (0,54) width 50: "Y scroll"
+    RenderBR {BR} at (50,69) size 0x0
+    RenderText {#text} at (0,72) size 50x19
+      text run at (0,72) width 50: "Y scroll"
+    RenderBR {BR} at (50,87) size 0x0
+    RenderText {#text} at (0,90) size 50x19
+      text run at (0,90) width 50: "Y scroll"
+    RenderBR {BR} at (50,105) size 0x0
+    RenderText {#text} at (0,108) size 50x19
+      text run at (0,108) width 50: "Y scroll"
+    RenderBR {BR} at (50,123) size 0x0
+    RenderText {#text} at (0,126) size 50x19
+      text run at (0,126) width 50: "Y scroll"
+    RenderBR {BR} at (50,141) size 0x0
+    RenderText {#text} at (0,144) size 50x19
+      text run at (0,144) width 50: "Y scroll"
+    RenderBR {BR} at (50,159) size 0x0
+    RenderText {#text} at (0,162) size 50x19
+      text run at (0,162) width 50: "Y scroll"
+    RenderBR {BR} at (50,177) size 0x0
+    RenderText {#text} at (0,180) size 50x19
+      text run at (0,180) width 50: "Y scroll"
+    RenderBR {BR} at (50,195) size 0x0
+    RenderText {#text} at (0,198) size 50x19
+      text run at (0,198) width 50: "Y scroll"
+    RenderBR {BR} at (50,213) size 0x0
+    RenderText {#text} at (0,216) size 50x19
+      text run at (0,216) width 50: "Y scroll"
+    RenderBR {BR} at (50,231) size 0x0
+    RenderText {#text} at (0,234) size 50x19
+      text run at (0,234) width 50: "Y scroll"
+    RenderBR {BR} at (50,249) size 0x0
+    RenderText {#text} at (0,252) size 50x19
+      text run at (0,252) width 50: "Y scroll"
+    RenderBR {BR} at (50,267) size 0x0
+    RenderText {#text} at (0,270) size 50x19
+      text run at (0,270) width 50: "Y scroll"
+    RenderBR {BR} at (50,285) size 0x0
+    RenderText {#text} at (0,288) size 50x19
+      text run at (0,288) width 50: "Y scroll"
+    RenderBR {BR} at (50,303) size 0x0
+    RenderText {#text} at (0,306) size 50x19
+      text run at (0,306) width 50: "Y scroll"
+    RenderBR {BR} at (50,321) size 0x0
+layer at (8,126) size 300x100 clip at (8,126) size 300x85 scrollWidth 1184
+  RenderBlock {DIV} at (0,118) size 300x100
     RenderText {#text} at (0,0) size 1184x19
       text run at (0,0) width 486: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (486,0) width 324: "X scroll X scroll X scroll X scroll X scroll X scroll "
       text run at (810,0) width 374: "X scroll X scroll X scroll X scroll X scroll X scroll X scroll"
-layer at (10,244) size 202x48 clip at (10,244) size 187x48
-  RenderTextControl {TEXTAREA} at (2,17) size 202x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 180x19
+layer at (10,243) size 202x46 clip at (10,243) size 187x46
+  RenderTextControl {TEXTAREA} at (2,17) size 202x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 180x18
       RenderText {#text} at (0,0) size 118x19
         text run at (0,0) width 118: "Textarea y-scroll"
-layer at (220,229) size 202x63 clip at (220,229) size 202x48
-  RenderTextControl {TEXTAREA} at (212,2) size 202x63 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 195x19
+layer at (220,228) size 202x61 clip at (220,228) size 202x46
+  RenderTextControl {TEXTAREA} at (212,2) size 202x61 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 195x18
       RenderText {#text} at (0,0) size 118x19
         text run at (0,0) width 118: "Textarea x-scroll"

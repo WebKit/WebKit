@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x492
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 497x19
           text run at (0,0) width 497: "In the example below you should a y-skewed block (45 degree angle of skew)."
-layer at (108,127) size 120x120
-  RenderBlock {DIV} at (100,119) size 120x120 [bgcolor=#87CEEB] [border: (10px solid #000000)]
+layer at (108,126) size 120x120
+  RenderBlock {DIV} at (100,118) size 120x120 [bgcolor=#87CEEB] [border: (10px solid #000000)]

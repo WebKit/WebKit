@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x124
+      RenderBlock {DIV} at (0,0) size 784x123
         RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#FFFFE0] [border: (10px solid #008000)]
         RenderText {#text} at (120,105) size 4x19
           text run at (120,105) width 4: " "
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (492,105) width 4: " "
         RenderBlock {DIV} at (506,10) size 100x100 [bgcolor=#FFFFE0] [border: (10px solid #008000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,124) size 784x124
+      RenderBlock {DIV} at (0,123) size 784x123
         RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#FFFFE0] [border: (10px solid #008000)]
         RenderText {#text} at (120,105) size 4x19
           text run at (120,105) width 4: " "
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
           text run at (492,105) width 4: " "
         RenderBlock {DIV} at (506,10) size 100x100 [bgcolor=#FFFFE0] [border: (10px dashed #008000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,248) size 600x324
+      RenderBlock {DIV} at (0,246) size 600x324
         RenderInline {SPAN} at (0,0) size 590x307 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
           RenderText {#text} at (25,13) size 570x297
             text run at (25,13) width 570: "This sentence is too"

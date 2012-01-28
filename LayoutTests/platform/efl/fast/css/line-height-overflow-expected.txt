@@ -1,13 +1,13 @@
-layer at (0,0) size 785x32803
+layer at (0,0) size 785x32802
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x32803
-  RenderBlock {HTML} at (0,0) size 785x32803
-    RenderBody {BODY} at (8,8) size 769x32787
-      RenderBlock (anonymous) at (0,0) size 769x19
+layer at (0,0) size 785x32802
+  RenderBlock {HTML} at (0,0) size 785x32802
+    RenderBody {BODY} at (8,8) size 769x32786
+      RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 559x19
           text run at (0,0) width 559: "You should see a large green block below that is 32,768px tall. No red should be visible."
         RenderBR {BR} at (559,15) size 0x0
-      RenderBlock {DIV} at (0,19) size 769x32768 [bgcolor=#FF0000]
+      RenderBlock {DIV} at (0,18) size 769x32768 [bgcolor=#FF0000]
         RenderPartObject {IFRAME} at (0,0) size 769x32768 [bgcolor=#008000]
           layer at (0,0) size 769x32768
             RenderView at (0,0) size 769x32768

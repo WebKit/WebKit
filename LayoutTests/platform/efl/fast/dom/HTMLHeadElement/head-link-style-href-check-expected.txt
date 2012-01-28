@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x286
-  RenderBlock {HTML} at (0,0) size 800x286
-    RenderBody {BODY} at (8,16) size 784x262
-      RenderBlock {P} at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 782x76
+layer at (0,0) size 800x280
+  RenderBlock {HTML} at (0,0) size 800x280
+    RenderBody {BODY} at (8,16) size 784x256
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 782x73
           text run at (0,0) width 782: "This is a test to check if the loading of a stylesheet is properly cancelled (count of pending style sheets is decremented) when"
-          text run at (0,19) width 552: "its link tag is changed through the DOM after the link tag is appended to the document. "
-          text run at (552,19) width 227: "When the div with style is moved, it"
-          text run at (0,38) width 777: "appears on the screen if the style was loaded properly, and doesn't appear when there are out-standing stylesheets according"
-          text run at (0,57) width 119: "to the DocLoader. "
-          text run at (119,57) width 27: "See "
+          text run at (0,18) width 552: "its link tag is changed through the DOM after the link tag is appended to the document. "
+          text run at (552,18) width 227: "When the div with style is moved, it"
+          text run at (0,36) width 777: "appears on the screen if the style was loaded properly, and doesn't appear when there are out-standing stylesheets according"
+          text run at (0,54) width 119: "to the DocLoader. "
+          text run at (119,54) width 27: "See "
         RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
-          RenderText {#text} at (146,57) size 32x19
-            text run at (146,57) width 32: "6999"
-      RenderBlock {P} at (0,92) size 784x19
+          RenderText {#text} at (146,54) size 32x19
+            text run at (146,54) width 32: "6999"
+      RenderBlock {P} at (0,88) size 784x18
         RenderInline {SPAN} at (0,0) size 32x19 [color=#FF0000]
           RenderText {#text} at (0,0) size 32x19
             text run at (0,0) width 32: "Fails"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x286
             text run at (84,0) width 31: "is no"
         RenderText {#text} at (115,0) size 151x19
           text run at (115,0) width 151: " pink box on the screen."
-      RenderBlock {P} at (0,127) size 784x19
+      RenderBlock {P} at (0,122) size 784x18
         RenderInline {SPAN} at (0,0) size 43x19 [color=#008000]
           RenderText {#text} at (0,0) size 43x19
             text run at (0,0) width 43: "Passes"
@@ -36,4 +36,4 @@ layer at (0,0) size 800x286
             text run at (95,0) width 10: "is"
         RenderText {#text} at (105,0) size 162x19
           text run at (105,0) width 162: " a pink box on the screen."
-      RenderBlock {DIV} at (0,162) size 100x100 [bgcolor=#FFCCFF]
+      RenderBlock {DIV} at (0,156) size 100x100 [bgcolor=#FFCCFF]

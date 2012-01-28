@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 579x19
           text run at (0,0) width 353: "In this test case you should only see one line green text. "
           text run at (353,0) width 226: "If there is any red the test has failed."
-layer at (8,43) size 128x19
-  RenderBlock (positioned) {DIV} at (0,0) size 128x19 [color=#008000]
+layer at (8,42) size 128x18
+  RenderBlock (positioned) {DIV} at (0,0) size 128x18 [color=#008000]
     RenderText {#text} at (0,0) size 128x19
       text run at (0,0) width 128: "You should see this."

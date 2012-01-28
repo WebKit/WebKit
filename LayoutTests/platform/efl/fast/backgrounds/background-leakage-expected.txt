@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x128
+      RenderBlock {DIV} at (0,0) size 784x127
         RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
         RenderText {#text} at (132,107) size 4x19
           text run at (132,107) width 4: " "
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           text run at (400,107) width 4: " "
         RenderBlock {DIV} at (414,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF) (20px double #FFFFFF) (20px solid #FFFFFF)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,128) size 784x128 [bgcolor=#808080]
+      RenderBlock {DIV} at (0,127) size 784x127 [bgcolor=#808080]
         RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F)]
         RenderText {#text} at (132,107) size 4x19
           text run at (132,107) width 4: " "
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
           text run at (400,107) width 4: " "
         RenderBlock {DIV} at (414,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F) (20px double #0000FF7F) (20px solid #0000FF7F)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,256) size 784x128
+      RenderBlock {DIV} at (0,254) size 784x127
         RenderBlock {DIV} at (12,12) size 110x100 [bgcolor=#000000] [border: (20px solid #FFFFFF)]
         RenderText {#text} at (132,107) size 4x19
           text run at (132,107) width 4: " "

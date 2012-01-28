@@ -11,24 +11,24 @@ Flow Threads
   Thread with flow-name 'flow'
     layer at (0,0) size 200x180
       RenderFlowThread at (0,0) size 200x180
-        RenderBlock {DIV} at (0,30) size 200x119
-          RenderBlock {P} at (0,0) size 200x119
+        RenderBlock {DIV} at (0,30) size 200x118
+          RenderBlock {P} at (0,0) size 200x118
             RenderInline {B} at (0,0) size 111x19
               RenderText {#text} at (0,0) size 111x19
                 text run at (0,0) width 111: "Text in region 2."
-            RenderText {#text} at (111,0) size 143x38
+            RenderText {#text} at (111,0) size 143x37
               text run at (111,0) width 32: " This"
-              text run at (0,19) width 99: "paragraph has \""
-            RenderInline {I} at (0,0) size 196x50
-              RenderText {#text} at (99,19) size 196x50
-                text run at (99,19) width 97: "-webkit-region-"
+              text run at (0,18) width 99: "paragraph has \""
+            RenderInline {I} at (0,0) size 196x51
+              RenderText {#text} at (99,18) size 196x51
+                text run at (99,18) width 97: "-webkit-region-"
                 text run at (0,50) width 123: "break-after: always"
             RenderText {#text} at (123,50) size 15x19
               text run at (123,50) width 15: "\". "
             RenderInline {B} at (0,0) size 179x69
               RenderText {#text} at (138,50) size 179x69
                 text run at (138,50) width 41: "There"
-                text run at (0,69) width 166: "should be nothing in this"
+                text run at (0,68) width 166: "should be nothing in this"
                 text run at (0,100) width 139: "region after this line."
   Regions for flow 'flow'
     RenderRegion {DIV} #region1

@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x28 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 58x28
           text run at (0,0) width 58: "PASS"
-layer at (8,55) size 760x205
-  RenderBlock {DIV} at (0,47) size 760x205 [border: (5px solid #800000)]
+layer at (8,55) size 760x199
+  RenderBlock {DIV} at (0,47) size 760x199 [border: (5px solid #800000)]
     RenderBlock (anonymous multi-column span) at (5,13) size 750x66
       RenderBlock {H2} at (0,19) size 750x28 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 58x28
@@ -15,20 +15,20 @@ layer at (8,55) size 760x205
 layer at (13,60) size 750x8
   RenderBlock (anonymous multi-column) at (5,5) size 750x8
     RenderBlock {SPAN} at (0,8) size 367x0
-layer at (13,134) size 750x121
-  RenderBlock (anonymous multi-column) at (5,79) size 750x121
-    RenderBlock {SPAN} at (0,16) size 367x210
-      RenderBlock (anonymous) at (0,0) size 367x219
-        RenderText {#text} at (0,0) size 362x219
+layer at (13,134) size 750x115
+  RenderBlock (anonymous multi-column) at (5,79) size 750x115
+    RenderBlock {SPAN} at (0,16) size 367x198
+      RenderBlock (anonymous) at (0,0) size 367x207
+        RenderText {#text} at (0,0) size 362x208
           text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
-          text run at (0,19) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
-          text run at (0,38) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
-          text run at (0,57) width 358: "purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae"
-          text run at (0,76) width 343: "felis vel orci sagittis aliquam. Cras convallis adipiscing"
-          text run at (0,105) width 340: "sem. Nam nonummy enim. Nullam bibendum lobortis"
-          text run at (0,124) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
-          text run at (0,143) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
-          text run at (0,162) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
-          text run at (0,181) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
-          text run at (0,200) width 229: "sit amet, consectetuer adipiscing elit."
-      RenderBlock {DL} at (0,226) size 367x0
+          text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
+          text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
+          text run at (0,54) width 358: "purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae"
+          text run at (0,72) width 343: "felis vel orci sagittis aliquam. Cras convallis adipiscing"
+          text run at (0,99) width 340: "sem. Nam nonummy enim. Nullam bibendum lobortis"
+          text run at (0,117) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
+          text run at (0,135) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
+          text run at (0,153) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
+          text run at (0,171) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
+          text run at (0,189) width 229: "sit amet, consectetuer adipiscing elit."
+      RenderBlock {DL} at (0,214) size 367x0

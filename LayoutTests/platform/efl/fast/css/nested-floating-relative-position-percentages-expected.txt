@@ -3,30 +3,30 @@ layer at (0,0) size 1030x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock {DIV} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 388x19
           text run at (0,0) width 388: "The six boxes below should be centered in two rows of three."
-layer at (400,27) size 630x420
-  RenderBlock (floating) {DIV} at (0,19) size 630x420
+layer at (400,26) size 630x420
+  RenderBlock (floating) {DIV} at (0,18) size 630x420
     RenderBR {BR} at (630,0) size 0x19
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
-layer at (90,32) size 200x200
+layer at (90,31) size 200x200
   RenderBlock (floating) {DIV} at (5,5) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200
-layer at (300,32) size 200x200
+layer at (300,31) size 200x200
   RenderBlock (floating) {DIV} at (215,5) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200
-layer at (510,32) size 200x200
+layer at (510,31) size 200x200
   RenderBlock (floating) {DIV} at (425,5) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200
-layer at (90,242) size 200x200
+layer at (90,241) size 200x200
   RenderBlock (floating) {DIV} at (5,215) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200
-layer at (300,242) size 200x200
+layer at (300,241) size 200x200
   RenderBlock (floating) {DIV} at (215,215) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200
-layer at (510,242) size 200x200
+layer at (510,241) size 200x200
   RenderBlock (floating) {DIV} at (425,215) size 200x200 [bgcolor=#000000]
     RenderImage {IMG} at (0,0) size 200x200

@@ -9,14 +9,14 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (484,100) size 100x50 [bgcolor=#0000FF]
       RenderBlock (floating) {DIV} at (0,100) size 160x200 [bgcolor=#FF0000]
       RenderBlock (floating) {DIV} at (384,100) size 100x100 [bgcolor=#808000]
-      RenderText {#text} at (492,0) size 415x171
+      RenderText {#text} at (492,0) size 415x163
         text run at (492,0) width 67: "Some text."
-        text run at (492,19) width 74: "This should"
-        text run at (492,38) width 83: "find a way to"
-        text run at (492,57) width 79: "wrap among"
-        text run at (492,76) width 76: "all the floats"
-        text run at (492,95) width 48: "without"
-        text run at (160,114) width 162: "overlapping any of them. "
-        text run at (322,114) width 55: "It should"
-        text run at (160,133) width 201: "start just under the blue box and"
-        text run at (160,152) width 133: "wrap to several lines."
+        text run at (492,18) width 74: "This should"
+        text run at (492,36) width 83: "find a way to"
+        text run at (492,54) width 79: "wrap among"
+        text run at (492,72) width 76: "all the floats"
+        text run at (492,90) width 48: "without"
+        text run at (160,108) width 162: "overlapping any of them. "
+        text run at (322,108) width 55: "It should"
+        text run at (160,126) width 201: "start just under the blue box and"
+        text run at (160,144) width 133: "wrap to several lines."

@@ -1,41 +1,41 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x255
-  RenderBlock {HTML} at (0,0) size 800x255
-    RenderBody {BODY} at (8,8) size 784x239
-      RenderBlock {DIV} at (0,0) size 784x36
+layer at (0,0) size 800x250
+  RenderBlock {HTML} at (0,0) size 800x250
+    RenderBody {BODY} at (8,8) size 784x234
+      RenderBlock {DIV} at (0,0) size 784x35
         RenderSlider {INPUT} at (2,2) size 129x30 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x30
             RenderBlock {DIV} at (0,9) size 117x12
             RenderBlock {DIV} at (117,9) size 12x12
-      RenderBlock {DIV} at (0,36) size 784x19
+      RenderBlock {DIV} at (0,35) size 784x18
         RenderSlider {INPUT} at (2,4) size 129x11 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x11
             RenderBlock {DIV} at (0,0) size 117x12
             RenderBlock {DIV} at (117,0) size 12x12
-      RenderBlock {DIV} at (0,55) size 784x19
+      RenderBlock {DIV} at (0,53) size 784x18
         RenderSlider {INPUT} at (2,4) size 129x11 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x11
             RenderBlock {DIV} at (0,0) size 117x12
             RenderBlock {DIV} at (117,0) size 12x12
-      RenderBlock {DIV} at (0,74) size 784x146
+      RenderBlock {DIV} at (0,71) size 784x145
         RenderSlider {INPUT} at (64,2) size 129x140 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x140
             RenderBlock {DIV} at (58,0) size 12x128
             RenderBlock {DIV} at (58,128) size 12x12
-      RenderBlock {DIV} at (0,220) size 784x19
+      RenderBlock {DIV} at (0,216) size 784x18
 layer at (68,19) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (10,48) size 12x12
+layer at (10,47) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (127,67) size 12x12
+layer at (127,65) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (130,148) size 12x12
+layer at (130,145) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (10,232) size 129x11
+layer at (10,228) size 129x11
   RenderSlider {INPUT} at (2,4) size 129x11 [bgcolor=#FFFFFF]
     RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x11
       RenderBlock {DIV} at (0,0) size 117x12
       RenderBlock {DIV} at (117,0) size 12x12
-layer at (97,232) size 12x12
+layer at (97,228) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,50) size 784x542
-layer at (58,50) size 734x19
-  RenderBlock {DIV} at (50,0) size 734x19
+layer at (58,50) size 734x18
+  RenderBlock {DIV} at (50,0) size 734x18
     RenderText {#text} at (0,0) size 7x19
       text run at (0,0) width 7: "a"
 layer at (58,50) size 100x100

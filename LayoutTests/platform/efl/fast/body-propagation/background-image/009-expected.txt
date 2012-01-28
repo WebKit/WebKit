@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (50,50) size 700x155
-  RenderBlock {HTML} at (50,50) size 700x155 [border: (1px solid #000000)]
-    RenderBody {BODY} at (51,51) size 598x53 [color=#000080] [border: (1px solid #000080)]
-      RenderBlock {P} at (1,17) size 596x19
+layer at (50,50) size 700x154
+  RenderBlock {HTML} at (50,50) size 700x154 [border: (1px solid #000000)]
+    RenderBody {BODY} at (51,51) size 598x52 [color=#000080] [border: (1px solid #000080)]
+      RenderBlock {P} at (1,17) size 596x18
         RenderText {#text} at (0,0) size 345x19
           text run at (0,0) width 345: "There should be a yellow square in the top-left corner, "
         RenderInline {EM} at (0,0) size 52x19

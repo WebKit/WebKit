@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x562
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 172x19
           text run at (0,0) width 172: "This is a regression test for "
         RenderInline {I} at (0,0) size 598x19
@@ -15,25 +15,25 @@ layer at (0,0) size 800x600
             text run at (524,0) width 246: "Text shadow does not repaint correctly"
         RenderText {#text} at (770,0) size 4x19
           text run at (770,0) width 4: "."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (30,67) size 724x21
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (30,66) size 724x21
         RenderInline {SPAN} at (0,0) size 202x21 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 202x21
             text run at (0,0) width 202: "Lorem ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,118) size 724x21
+      RenderBlock {DIV} at (30,117) size 724x21
         RenderInline {SPAN} at (0,0) size 202x21 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 202x21
             text run at (0,0) width 202: "Lorem ipsum dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,169) size 724x21
+      RenderBlock {DIV} at (30,168) size 724x21
         RenderText {#text} at (0,2) size 88x19
           text run at (0,2) width 88: "Lorem ipsum "
         RenderInline {SPAN} at (0,0) size 100x21 [bgcolor=#C0C0C0]
           RenderText {#text} at (88,0) size 100x21
             text run at (88,0) width 100: "dolor sit amet"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,220) size 724x21
+      RenderBlock {DIV} at (30,219) size 724x21
         RenderInline {SPAN} at (0,0) size 97x21 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 97x21
             text run at (0,0) width 97: "Lorem ipsum"

@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 536x19
           text run at (0,0) width 536: "The slider thumb below has a height specified as 50%. It should be a 10 pixel square."
-      RenderBlock (anonymous) at (0,35) size 784x24
+      RenderBlock (anonymous) at (0,34) size 784x24
         RenderSlider {INPUT} at (2,2) size 200x20 [bgcolor=#C0C0C0]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 200x20
             RenderBlock {DIV} at (0,5) size 190x10
             RenderBlock {DIV} at (190,5) size 10x10 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
-layer at (105,50) size 10x10
+layer at (105,49) size 10x10
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x10 [bgcolor=#008000]

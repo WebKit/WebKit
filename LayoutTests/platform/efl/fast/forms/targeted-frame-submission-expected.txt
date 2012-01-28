@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {FORM} at (0,0) size 784x41
-        RenderButton {INPUT} at (2,2) size 61x37 [color=#202020]
-          RenderBlock (anonymous) at (15,8) size 31x19
+      RenderBlock {FORM} at (0,0) size 784x40
+        RenderButton {INPUT} at (2,2) size 61x36 [color=#202020]
+          RenderBlock (anonymous) at (15,8) size 31x18
             RenderText at (0,0) size 31x19
               text run at (0,0) width 31: "form"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,57) size 784x38
-        RenderText {#text} at (0,0) size 765x38
+      RenderBlock {DIV} at (0,56) size 784x36
+        RenderText {#text} at (0,0) size 765x37
           text run at (0,0) width 288: "This tests Targetted frame submission works. "
           text run at (288,0) width 477: "If the test is successful, the text \"SUCCESS\" should be shown in the iframe"
-          text run at (0,19) width 43: "below."
-      RenderBlock (anonymous) at (0,95) size 784x154
+          text run at (0,18) width 43: "below."
+      RenderBlock (anonymous) at (0,92) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150

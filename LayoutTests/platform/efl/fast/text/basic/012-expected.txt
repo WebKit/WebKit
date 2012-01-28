@@ -6,31 +6,31 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (0,0) size 784x28
         RenderText {#text} at (0,0) size 357x28
           text run at (0,0) width 357: "Safari Whitespace/Non-ASCII Bug"
-      RenderBlock {P} at (0,47) size 784x38
-        RenderText {#text} at (0,0) size 765x38
+      RenderBlock {P} at (0,47) size 784x36
+        RenderText {#text} at (0,0) size 765x37
           text run at (0,0) width 641: "Apart from whitespace (tab and linefeed characters), the two lists below (in red) use identical HTML. "
           text run at (641,0) width 124: "Both lists should be"
-          text run at (0,19) width 581: "rendered on a single line. In Safari, however, the first list shows each item on a separate line."
-      RenderBlock {P} at (0,101) size 784x38
-        RenderText {#text} at (0,0) size 751x38
+          text run at (0,18) width 581: "rendered on a single line. In Safari, however, the first list shows each item on a separate line."
+      RenderBlock {P} at (0,99) size 784x36
+        RenderText {#text} at (0,0) size 751x37
           text run at (0,0) width 751: "This bug only seems to occur if the bullet character is non-ASCII (has a Unicode value higher than 127). Non-breaking"
-          text run at (0,19) width 281: "spaces (&#160;), however, are an exception."
-      RenderBlock (anonymous) at (0,155) size 784x76
+          text run at (0,18) width 281: "spaces (&#160;), however, are an exception."
+      RenderBlock (anonymous) at (0,151) size 784x72
         RenderBR {BR} at (0,0) size 0x19
-        RenderInline {FONT} at (0,0) size 334x57 [color=#CC0000]
-          RenderText {#text} at (0,19) size 334x19
-            text run at (0,19) width 69: "\x{BB} England "
-            text run at (69,19) width 60: "\x{BB} Ireland "
-            text run at (129,19) width 71: "\x{BB} Scotland "
-            text run at (200,19) width 75: "\x{BB} Germany "
-            text run at (275,19) width 59: "\x{BB} France "
-          RenderBR {BR} at (334,34) size 0x0
-          RenderBR {BR} at (0,38) size 0x19
-          RenderText {#text} at (0,57) size 334x19
-            text run at (0,57) width 69: "\x{BB} England "
-            text run at (69,57) width 60: "\x{BB} Ireland "
-            text run at (129,57) width 71: "\x{BB} Scotland "
-            text run at (200,57) width 75: "\x{BB} Germany "
-            text run at (275,57) width 59: "\x{BB} France "
+        RenderInline {FONT} at (0,0) size 334x55 [color=#CC0000]
+          RenderText {#text} at (0,18) size 334x19
+            text run at (0,18) width 69: "\x{BB} England "
+            text run at (69,18) width 60: "\x{BB} Ireland "
+            text run at (129,18) width 71: "\x{BB} Scotland "
+            text run at (200,18) width 75: "\x{BB} Germany "
+            text run at (275,18) width 59: "\x{BB} France "
+          RenderBR {BR} at (334,33) size 0x0
+          RenderBR {BR} at (0,36) size 0x19
+          RenderText {#text} at (0,54) size 334x19
+            text run at (0,54) width 69: "\x{BB} England "
+            text run at (69,54) width 60: "\x{BB} Ireland "
+            text run at (129,54) width 71: "\x{BB} Scotland "
+            text run at (200,54) width 75: "\x{BB} Germany "
+            text run at (275,54) width 59: "\x{BB} France "
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0

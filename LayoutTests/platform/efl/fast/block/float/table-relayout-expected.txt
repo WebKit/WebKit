@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x19
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 744x38
+        RenderInline {I} at (0,0) size 744x37
           RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x19
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7395"
-          RenderText {#text} at (520,0) size 744x38
+          RenderText {#text} at (520,0) size 744x37
             text run at (520,0) width 4: " "
             text run at (524,0) width 220: "Table not properly re-flowed when"
-            text run at (0,19) width 202: "floated div removed from layout"
-        RenderText {#text} at (202,19) size 4x19
-          text run at (202,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 202: "floated div removed from layout"
+        RenderText {#text} at (202,18) size 4x19
+          text run at (202,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 263x19
           text run at (0,0) width 263: "The two boxes below should be identical."
-      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,99) size 200x63 [bgcolor=#C0C0C0]
-        RenderTable {TABLE} at (0,0) size 200x63
-          RenderTableSection {TBODY} at (0,0) size 200x63
-            RenderTableRow {TR} at (0,2) size 200x59
-              RenderTableCell {TD} at (2,2) size 196x59 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 177x57
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,96) size 200x60 [bgcolor=#C0C0C0]
+        RenderTable {TABLE} at (0,0) size 200x60
+          RenderTableSection {TBODY} at (0,0) size 200x60
+            RenderTableRow {TR} at (0,2) size 200x56
+              RenderTableCell {TD} at (2,2) size 196x56 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 177x55
                   text run at (1,1) width 177: "Lorem ipsum dolor sit amet,"
-                  text run at (1,20) width 173: "consectetuer adipiscing elit."
-                  text run at (1,39) width 81: "Nunc neque."
-      RenderBlock (anonymous) at (0,162) size 784x19
+                  text run at (1,19) width 173: "consectetuer adipiscing elit."
+                  text run at (1,37) width 81: "Nunc neque."
+      RenderBlock (anonymous) at (0,156) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {DIV} at (0,181) size 200x63 [bgcolor=#C0C0C0]
-        RenderTable {TABLE} at (0,0) size 200x63
-          RenderTableSection {TBODY} at (0,0) size 200x63
-            RenderTableRow {TR} at (0,2) size 200x59
-              RenderTableCell {TD} at (2,2) size 196x59 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 177x57
+      RenderBlock {DIV} at (0,174) size 200x60 [bgcolor=#C0C0C0]
+        RenderTable {TABLE} at (0,0) size 200x60
+          RenderTableSection {TBODY} at (0,0) size 200x60
+            RenderTableRow {TR} at (0,2) size 200x56
+              RenderTableCell {TD} at (2,2) size 196x56 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 177x55
                   text run at (1,1) width 177: "Lorem ipsum dolor sit amet,"
-                  text run at (1,20) width 173: "consectetuer adipiscing elit."
-                  text run at (1,39) width 81: "Nunc neque."
+                  text run at (1,19) width 173: "consectetuer adipiscing elit."
+                  text run at (1,37) width 81: "Nunc neque."

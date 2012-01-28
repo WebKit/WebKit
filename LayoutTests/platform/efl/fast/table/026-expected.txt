@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (715,0) size 69x31
-        RenderTableSection {TBODY} at (0,0) size 69x31
-          RenderTableRow {TR} at (0,2) size 69x27
-            RenderTableCell {TD} at (2,2) size 65x27 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (floating) {DIV} at (1,1) size 63x25
-                RenderTable {TABLE} at (0,0) size 63x25
-                  RenderTableSection {TBODY} at (0,0) size 63x25
-                    RenderTableRow {TR} at (0,2) size 63x21
-                      RenderTableCell {TD} at (2,2) size 9x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (715,0) size 69x30
+        RenderTableSection {TBODY} at (0,0) size 69x30
+          RenderTableRow {TR} at (0,2) size 69x26
+            RenderTableCell {TD} at (2,2) size 65x26 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (floating) {DIV} at (1,1) size 63x24
+                RenderTable {TABLE} at (0,0) size 63x24
+                  RenderTableSection {TBODY} at (0,0) size 63x24
+                    RenderTableRow {TR} at (0,2) size 63x20
+                      RenderTableCell {TD} at (2,2) size 9x20 [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 7x19
                           text run at (1,1) width 7: "a"
-                      RenderTableCell {TD} at (13,2) size 37x21 [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (13,2) size 37x20 [r=0 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 35x19
                           text run at (1,1) width 35: "Hello"
-                      RenderTableCell {TD} at (52,2) size 9x21 [r=0 c=2 rs=1 cs=1]
+                      RenderTableCell {TD} at (52,2) size 9x20 [r=0 c=2 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 7x19
                           text run at (1,1) width 7: "c"

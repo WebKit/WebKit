@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {HTML} at (0,0) size 800x54
-    RenderBody {BODY} at (8,8) size 784x38
-      RenderText {#text} at (0,0) size 753x38
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderText {#text} at (0,0) size 753x37
         text run at (0,0) width 304: "You should see a 100x100 green square below. "
         text run at (304,0) width 237: "If you see any red, the test has failed. "
         text run at (541,0) width 212: "This test is checking to make sure"
-        text run at (0,19) width 148: "overflow is done using "
-        text run at (148,19) width 163: "a containing block model."
+        text run at (0,18) width 148: "overflow is done using "
+        text run at (148,18) width 163: "a containing block model."
       RenderText {#text} at (0,0) size 0x0
-layer at (8,46) size 100x100 scrollWidth 200 scrollHeight 400
-  RenderBlock (positioned) {DIV} at (8,46) size 100x100 [bgcolor=#008000]
+layer at (8,44) size 100x100 scrollWidth 200 scrollHeight 400
+  RenderBlock (positioned) {DIV} at (8,44) size 100x100 [bgcolor=#008000]
     RenderBlock {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]

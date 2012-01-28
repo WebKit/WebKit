@@ -3,44 +3,44 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 730x38
+        RenderInline {I} at (0,0) size 730x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 301x19
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=12910"
-          RenderText {#text} at (354,0) size 730x38
+          RenderText {#text} at (354,0) size 730x37
             text run at (354,0) width 4: " "
             text run at (358,0) width 372: "REGRESSION (r18756-r18765): list-bullet doesn't redraw"
-            text run at (0,19) width 368: "properly when changing the list's content using JavaScript"
-        RenderText {#text} at (368,19) size 4x19
-          text run at (368,19) width 4: "."
-      RenderBlock {UL} at (0,54) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderBlock (anonymous) at (0,0) size 744x19
+            text run at (0,18) width 368: "properly when changing the list's content using JavaScript"
+        RenderText {#text} at (368,18) size 4x19
+          text run at (368,18) width 4: "."
+      RenderBlock {UL} at (0,52) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderBlock (anonymous) at (0,0) size 744x18
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 21x19
               text run at (0,0) width 21: "foo"
-          RenderBlock {DIV} at (10,29) size 724x0
-      RenderBlock {UL} at (0,89) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderBlock (anonymous) at (0,0) size 744x19
+          RenderBlock {DIV} at (10,28) size 724x0
+      RenderBlock {UL} at (0,86) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderBlock (anonymous) at (0,0) size 744x18
             RenderListMarker at (-1,0) size 7x19: bullet
             RenderText {#text} at (15,0) size 20x19
               text run at (15,0) width 20: "bar"
-          RenderBlock {DIV} at (10,29) size 724x0
-      RenderBlock {UL} at (0,124) size 784x19
-        RenderListItem {LI} at (0,0) size 744x19
-          RenderBlock (anonymous) at (0,0) size 744x19
+          RenderBlock {DIV} at (10,28) size 724x0
+      RenderBlock {UL} at (0,120) size 784x18
+        RenderListItem {LI} at (0,0) size 744x18
+          RenderBlock (anonymous) at (0,0) size 744x18
             RenderListMarker at (755,0) size 7x19: bullet
             RenderText {#text} at (723,0) size 21x19
               text run at (723,0) width 21: "foo"
-          RenderBlock {DIV} at (10,29) size 724x0
-      RenderBlock {UL} at (0,159) size 784x19
-        RenderListItem {LI} at (0,0) size 744x19
-          RenderBlock (anonymous) at (0,0) size 744x19
+          RenderBlock {DIV} at (10,28) size 724x0
+      RenderBlock {UL} at (0,154) size 784x18
+        RenderListItem {LI} at (0,0) size 744x18
+          RenderBlock (anonymous) at (0,0) size 744x18
             RenderListMarker at (738,0) size 7x19: bullet
             RenderText {#text} at (709,0) size 20x19
               text run at (709,0) width 20: "bar"
-          RenderBlock {DIV} at (10,29) size 724x0
+          RenderBlock {DIV} at (10,28) size 724x0

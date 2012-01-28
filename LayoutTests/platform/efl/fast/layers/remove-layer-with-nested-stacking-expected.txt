@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 300x19
           text run at (0,0) width 300: "The square should be a uniform shade of green."
-      RenderBlock (anonymous) at (0,69) size 784x0
-      RenderBlock (anonymous) at (0,69) size 784x100
-      RenderBlock (anonymous) at (0,169) size 784x0
+      RenderBlock (anonymous) at (0,68) size 784x0
+      RenderBlock (anonymous) at (0,68) size 784x100
+      RenderBlock (anonymous) at (0,168) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,77) size 100x100
+layer at (8,76) size 100x100
   RenderBlock {DIV} at (0,0) size 100x100
     RenderText {#text} at (0,0) size 0x0
-layer at (8,27) size 100x50
-  RenderBlock {DIV} at (0,19) size 100x50 [bgcolor=#008000]
-layer at (8,77) size 100x50
+layer at (8,26) size 100x50
+  RenderBlock {DIV} at (0,18) size 100x50 [bgcolor=#008000]
+layer at (8,76) size 100x50
   RenderBlock {SPAN} at (0,0) size 100x50 [bgcolor=#008000]

@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 783x57
+      RenderBlock {P} at (0,0) size 784x55
+        RenderText {#text} at (0,0) size 783x55
           text run at (0,0) width 777: "You should see a single 100x100 green square below. If your browser supports the display of ALT text, you should see the"
-          text run at (0,19) width 246: "word \"Image\" inside the green square. "
-          text run at (246,19) width 268: "If you see any red, then the test has failed. "
-          text run at (514,19) width 269: "This test is checking to make sure replaced"
-          text run at (0,38) width 263: "elements inside boxes get stretched when "
+          text run at (0,18) width 246: "word \"Image\" inside the green square. "
+          text run at (246,18) width 268: "If you see any red, then the test has failed. "
+          text run at (514,18) width 269: "This test is checking to make sure replaced"
+          text run at (0,36) width 263: "elements inside boxes get stretched when "
         RenderInline {CODE} at (0,0) size 144x15
-          RenderText {#text} at (263,42) size 144x15
-            text run at (263,42) width 144: "box-align: stretch"
-        RenderText {#text} at (407,38) size 78x19
-          text run at (407,38) width 78: " is specified."
-      RenderDeprecatedFlexibleBox {DIV} at (0,73) size 100x100 [bgcolor=#FF0000]
+          RenderText {#text} at (263,40) size 144x15
+            text run at (263,40) width 144: "box-align: stretch"
+        RenderText {#text} at (407,36) size 78x19
+          text run at (407,36) width 78: " is specified."
+      RenderDeprecatedFlexibleBox {DIV} at (0,71) size 100x100 [bgcolor=#FF0000]
         RenderImage {IMG} at (0,0) size 100x100 [bgcolor=#008000]

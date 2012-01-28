@@ -1,9 +1,9 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 785x601
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x576
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 642x19
@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
             text run at (610,0) width 85: "during layout"
         RenderText {#text} at (695,0) size 4x19
           text run at (695,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 769x18
         RenderText {#text} at (0,0) size 602x19
           text run at (0,0) width 602: "If Java is enabled, disable it and reload this page. You should see the word PASS at the bottom."
-layer at (8,581) size 39x19
-  RenderBlock (positioned) {APPLET} at (8,581) size 39x19
+layer at (8,582) size 39x18
+  RenderBlock (positioned) {APPLET} at (8,582) size 39x18
     RenderText {#text} at (0,0) size 39x19
       text run at (0,0) width 39: "PASS"

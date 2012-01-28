@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {HTML} at (0,0) size 800x54
-    RenderBody {BODY} at (8,8) size 784x38
-      RenderText {#text} at (0,0) size 780x38
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderText {#text} at (0,0) size 780x37
         text run at (0,0) width 304: "You should see a 100x100 green square below. "
         text run at (304,0) width 237: "If you see any red, the test has failed. "
         text run at (541,0) width 239: "This test is checking to make sure clip"
-        text run at (0,19) width 373: "applies to the element itself and starts from the border edge."
+        text run at (0,18) width 373: "applies to the element itself and starts from the border edge."
       RenderText {#text} at (0,0) size 0x0
-layer at (8,46) size 120x120 backgroundClip at (18,56) size 100x100 clip at (18,56) size 100x100 outlineClip at (18,56) size 100x100
-  RenderBlock (positioned) {DIV} at (8,46) size 120x120 [bgcolor=#008000] [border: (10px solid #FF0000)]
+layer at (8,44) size 120x120 backgroundClip at (18,54) size 100x100 clip at (18,54) size 100x100 outlineClip at (18,54) size 100x100
+  RenderBlock (positioned) {DIV} at (8,44) size 120x120 [bgcolor=#008000] [border: (10px solid #FF0000)]

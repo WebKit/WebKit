@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x390
-  RenderBlock {HTML} at (0,0) size 800x390
-    RenderBody {BODY} at (8,16) size 784x366
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x377
+  RenderBlock {HTML} at (0,0) size 800x377
+    RenderBody {BODY} at (8,16) size 784x353
+      RenderBlock {P} at (0,0) size 784x18
         RenderInline {B} at (0,0) size 62x19
           RenderText {#text} at (0,0) size 62x19
             text run at (0,0) width 62: "BUG ID:"
@@ -14,35 +14,35 @@ layer at (0,0) size 800x390
             text run at (66,0) width 117: "Bugzilla bug 6278"
         RenderText {#text} at (183,0) size 512x19
           text run at (183,0) width 512: " REGRESSION: Incomplete repaint when table cell width changes during layout"
-      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
+      RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
         RenderInline {B} at (0,0) size 91x19
           RenderText {#text} at (3,3) size 91x19
             text run at (3,3) width 91: "TEST PASS:"
         RenderText {#text} at (94,3) size 604x19
           text run at (94,3) width 4: " "
           text run at (98,3) width 600: "The purple and green rects will resize, and there will remain separated by a blue horizontal line."
-      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
+      RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x19
           RenderText {#text} at (3,3) size 90x19
             text run at (3,3) width 90: "TEST FAIL:"
         RenderText {#text} at (93,3) size 479x19
           text run at (93,3) width 4: " "
           text run at (97,3) width 475: "The purple and green rects will resize, but the blue separator will disappear."
-      RenderTable {TABLE} at (0,117) size 300x249
-        RenderTableSection {TBODY} at (0,0) size 300x249
-          RenderTableRow {TR} at (0,2) size 300x245
-            RenderTableCell {TD} at (2,2) size 242x245 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 242x190 [bgcolor=#EEEEFF]
-                RenderText {#text} at (0,0) size 234x190
+      RenderTable {TABLE} at (0,114) size 300x239
+        RenderTableSection {TBODY} at (0,0) size 300x239
+          RenderTableRow {TR} at (0,2) size 300x235
+            RenderTableCell {TD} at (2,2) size 242x235 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 242x180 [bgcolor=#EEEEFF]
+                RenderText {#text} at (0,0) size 234x181
                   text run at (0,0) width 234: "Curabitur pretium, quam quis semper"
-                  text run at (0,19) width 222: "malesuada, est libero feugiat libero,"
-                  text run at (0,38) width 203: "vel fringilla orci nibh sed neque."
-                  text run at (0,57) width 217: "Quisque eu nulla non nisi molestie"
-                  text run at (0,76) width 226: "accumsan. Etiam tellus urna, laoreet"
-                  text run at (0,95) width 224: "ac, laoreet non, suscipit sed, sapien."
-                  text run at (0,114) width 217: "Phasellus vehicula, sem at posuere"
-                  text run at (0,133) width 217: "vehicula, augue nibh molestie nisl,"
-                  text run at (0,152) width 229: "nec ullamcorper lacus ante vulputate"
-                  text run at (0,171) width 34: "pede."
-              RenderBlock {DIV} at (0,195) size 242x50 [bgcolor=#EEFFEE]
-            RenderTableCell {TD} at (246,123) size 52x2 [r=0 c=1 rs=1 cs=1]
+                  text run at (0,18) width 222: "malesuada, est libero feugiat libero,"
+                  text run at (0,36) width 203: "vel fringilla orci nibh sed neque."
+                  text run at (0,54) width 217: "Quisque eu nulla non nisi molestie"
+                  text run at (0,72) width 226: "accumsan. Etiam tellus urna, laoreet"
+                  text run at (0,90) width 224: "ac, laoreet non, suscipit sed, sapien."
+                  text run at (0,108) width 217: "Phasellus vehicula, sem at posuere"
+                  text run at (0,126) width 217: "vehicula, augue nibh molestie nisl,"
+                  text run at (0,144) width 229: "nec ullamcorper lacus ante vulputate"
+                  text run at (0,162) width 34: "pede."
+              RenderBlock {DIV} at (0,185) size 242x50 [bgcolor=#EEFFEE]
+            RenderTableCell {TD} at (246,118) size 52x2 [r=0 c=1 rs=1 cs=1]

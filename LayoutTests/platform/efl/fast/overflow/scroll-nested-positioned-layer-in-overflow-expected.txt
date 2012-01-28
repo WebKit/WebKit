@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (0,42) size 800x558 clip at (0,42) size 785x558 scrollY 302 scrollHeight 860
+layer at (0,42) size 800x558 clip at (0,42) size 785x558 scrollY 300 scrollHeight 858
   RenderBlock (positioned) {DIV} at (0,42) size 800x558
-layer at (0,-260) size 560x860 backgroundClip at (0,42) size 785x558 clip at (0,42) size 785x558 outlineClip at (0,42) size 785x558
-  RenderBlock (positioned) {DIV} at (0,0) size 560x860
-    RenderBlock (anonymous) at (0,0) size 560x19
+layer at (0,-258) size 560x858 backgroundClip at (0,42) size 785x558 clip at (0,42) size 785x558 outlineClip at (0,42) size 785x558
+  RenderBlock (positioned) {DIV} at (0,0) size 560x858
+    RenderBlock (anonymous) at (0,0) size 560x18
       RenderText {#text} at (0,0) size 560x19
         text run at (0,0) width 560: "This tests that we can scroll to reveal something in a nested positioned block in overflow."
-    RenderBlock {DIV} at (0,19) size 560x800
-    RenderBlock (anonymous) at (0,819) size 560x41
-      RenderButton {INPUT} at (2,2) size 276x37 [color=#202020]
-        RenderBlock (anonymous) at (15,8) size 246x19
+    RenderBlock {DIV} at (0,18) size 560x800
+    RenderBlock (anonymous) at (0,818) size 560x40
+      RenderButton {INPUT} at (2,2) size 276x36 [color=#202020]
+        RenderBlock (anonymous) at (15,8) size 246x18
           RenderText at (0,0) size 246x19
             text run at (0,0) width 246: "If you can see this, test has passed"
       RenderText {#text} at (0,0) size 0x0

@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (143,0) size 346x19
           text run at (143,0) width 247: " rules with font descriptors that specify "
           text run at (390,0) width 99: "multiple values."
-      RenderBlock {P} at (0,35) size 784x38
-        RenderText {#text} at (0,0) size 740x38
+      RenderBlock {P} at (0,35) size 784x36
+        RenderText {#text} at (0,0) size 740x37
           text run at (0,0) width 740: "Helvetica is assigned to weights 100 and 900 while courier is assigned to 400. Faces are assigned to other weights are"
-          text run at (0,19) width 405: "according to the heuristic in the CSS3 Web Fonts working draft."
-      RenderBlock {DIV} at (0,89) size 784x44
+          text run at (0,18) width 405: "according to the heuristic in the CSS3 Web Fonts working draft."
+      RenderBlock {DIV} at (0,87) size 784x44
         RenderInline {SPAN} at (0,0) size 60x41
           RenderText {#text} at (0,0) size 60x41
             text run at (0,0) width 60: "100"

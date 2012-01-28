@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x62
-  RenderBlock {HTML} at (0,0) size 800x62
-    RenderBody {BODY} at (8,8) size 784x46
-      RenderBlock {DIV} at (0,0) size 784x19
+layer at (0,0) size 800x60
+  RenderBlock {HTML} at (0,0) size 800x60
+    RenderBody {BODY} at (8,8) size 784x44
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 486x19
           text run at (0,0) width 486: "The text below should be centered since text-align does inherit in strict mode."
-      RenderBlock {DIV} at (0,19) size 784x27
-        RenderTable {TABLE} at (0,0) size 108x27 [border: (1px solid #000000)]
-          RenderTableSection {TBODY} at (1,1) size 106x25
-            RenderTableRow {TR} at (0,2) size 106x21
-              RenderTableCell {TD} at (2,2) size 102x21 [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (0,18) size 784x26
+        RenderTable {TABLE} at (0,0) size 108x26 [border: (1px solid #000000)]
+          RenderTableSection {TBODY} at (1,1) size 106x24
+            RenderTableRow {TR} at (0,2) size 106x20
+              RenderTableCell {TD} at (2,2) size 102x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (33,1) size 36x19
                   text run at (33,1) width 36: "hello."

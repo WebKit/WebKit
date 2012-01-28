@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x114 [color=#FF0000] [border: (3px solid #008000)]
-        RenderTable at (19,19) size 101x57
-          RenderTableSection (anonymous) at (0,0) size 101x57
-            RenderTableRow (anonymous) at (0,0) size 101x57
-              RenderTableCell (anonymous) at (0,0) size 101x57 [border: (3px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (0,0) size 784x112 [color=#FF0000] [border: (3px solid #008000)]
+        RenderTable at (19,19) size 101x56
+          RenderTableSection (anonymous) at (0,0) size 101x56
+            RenderTableRow (anonymous) at (0,0) size 101x56
+              RenderTableCell (anonymous) at (0,0) size 101x56 [border: (3px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
                 RenderText at (19,19) size 63x19
                   text run at (19,19) width 63: "BEFORE"
-        RenderBlock {DIV} at (19,76) size 746x19
+        RenderBlock {DIV} at (19,75) size 746x18
           RenderText {#text} at (0,0) size 77x19
             text run at (0,0) width 77: "CONTENT"

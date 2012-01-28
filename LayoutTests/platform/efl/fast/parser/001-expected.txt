@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIR} at (0,0) size 784x108
-        RenderBlock (anonymous) at (40,0) size 744x19
+      RenderBlock {DIR} at (0,0) size 784x104
+        RenderBlock (anonymous) at (40,0) size 744x18
           RenderText {#text} at (0,0) size 27x19
             text run at (0,0) width 27: "One"
-        RenderBlock {DIR} at (40,35) size 744x73
-          RenderBlock (anonymous) at (40,0) size 704x19
+        RenderBlock {DIR} at (40,34) size 744x70
+          RenderBlock (anonymous) at (40,0) size 704x18
             RenderText {#text} at (0,0) size 30x19
               text run at (0,0) width 30: "Two"
-          RenderBlock {DIR} at (40,35) size 704x38
-            RenderBlock (anonymous) at (40,0) size 664x19
+          RenderBlock {DIR} at (40,34) size 704x36
+            RenderBlock (anonymous) at (40,0) size 664x18
               RenderText {#text} at (0,0) size 37x19
                 text run at (0,0) width 37: "Three"
-            RenderBlock {CENTER} at (40,19) size 664x19
+            RenderBlock {CENTER} at (40,18) size 664x18
               RenderText {#text} at (317,0) size 30x19
                 text run at (317,0) width 30: "Four"
-      RenderBlock {PRE} at (0,124) size 784x334
+      RenderBlock {PRE} at (0,120) size 784x334
         RenderText {#text} at (0,0) size 64x15
           text run at (0,0) width 64: "Pre text"
           text run at (64,0) width 0: " "
@@ -27,15 +27,15 @@ layer at (0,0) size 800x600
           text run at (300,304) width 0: " "
           text run at (0,319) width 104: "Also pre text"
           text run at (104,319) width 0: " "
-      RenderBlock (anonymous) at (0,471) size 784x19
+      RenderBlock (anonymous) at (0,467) size 784x18
         RenderInline {NOBR} at (0,0) size 137x19 [bgcolor=#CCCCCC]
           RenderText {#text} at (0,0) size 137x19
             text run at (0,0) width 137: "This text won't break."
-      RenderBlock (anonymous) at (0,503) size 784x15
+      RenderBlock (anonymous) at (0,498) size 784x15
         RenderBlock {PRE} at (0,0) size 784x15
           RenderText {#text} at (0,0) size 208x15
             text run at (0,0) width 208: "This will be preformatted."
-      RenderBlock (anonymous) at (0,531) size 784x19
+      RenderBlock (anonymous) at (0,526) size 784x18
         RenderInline {NOBR} at (0,0) size 234x19 [bgcolor=#CCCCCC]
           RenderText {#text} at (0,0) size 234x19
             text run at (0,0) width 234: "Now we're back to nonbreaking text."

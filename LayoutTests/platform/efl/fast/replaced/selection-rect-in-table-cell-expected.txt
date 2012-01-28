@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 757x38
+        RenderInline {I} at (0,0) size 757x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 301x19
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13194"
-          RenderText {#text} at (354,0) size 757x38
+          RenderText {#text} at (354,0) size 757x37
             text run at (354,0) width 4: " "
             text run at (358,0) width 399: "REGRESSION: Selection rects are wrong for images in search"
-            text run at (0,19) width 202: "results from images.google.com"
-        RenderText {#text} at (202,19) size 4x19
-          text run at (202,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 202: "results from images.google.com"
+        RenderText {#text} at (202,18) size 4x19
+          text run at (202,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 718x19
           text run at (0,0) width 718: "Tests highlighting of replaced objects in table cells with extra height. You should see a dark green box and no red."
-      RenderTable {TABLE} at (0,89) size 56x104
+      RenderTable {TABLE} at (0,86) size 56x104
         RenderTableSection {TBODY} at (0,0) size 56x104
           RenderTableRow {TR} at (0,2) size 56x100
             RenderTableCell {TD} at (2,26) size 52x52 [r=0 c=0 rs=1 cs=1]

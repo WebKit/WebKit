@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 57x19
           text run at (0,0) width 57: "Test for "
         RenderInline {I} at (0,0) size 632x19
@@ -15,6 +15,6 @@ layer at (0,0) size 800x600
             text run at (390,0) width 299: "@font-face does not affect the default style"
         RenderText {#text} at (689,0) size 4x19
           text run at (689,0) width 4: "."
-      RenderBlock (anonymous) at (0,35) size 784x19
+      RenderBlock (anonymous) at (0,34) size 784x18
         RenderText {#text} at (0,0) size 192x19
           text run at (0,0) width 192: "This text should be in Arial."

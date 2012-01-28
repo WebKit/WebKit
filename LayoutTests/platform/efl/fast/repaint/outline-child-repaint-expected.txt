@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 151x19
           text run at (0,0) width 151: "This is a repaint test for "
         RenderInline {I} at (0,0) size 578x19
@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             text run at (462,0) width 267: "Repaint issue with outlines in child objects"
         RenderText {#text} at (729,0) size 4x19
           text run at (729,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 322x19
           text run at (0,0) width 322: "If the test passes, you should not see any red below"
-      RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
 layer at (0,240) size 220x50
   RenderBlock (positioned) {DIV} at (0,240) size 220x50 [border: (10px solid #FF0000)]
 layer at (10,250) size 200x50

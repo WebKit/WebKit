@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 220x19
           text run at (0,0) width 220: "This test passes if it does not crash."
-      RenderTable {TABLE} at (0,19) size 4x6
+      RenderTable {TABLE} at (0,18) size 4x6
         RenderTableSection {TBODY} at (0,0) size 4x6
           RenderTableRow {TR} at (0,2) size 4x0
           RenderTableRow {TR} at (0,4) size 4x0

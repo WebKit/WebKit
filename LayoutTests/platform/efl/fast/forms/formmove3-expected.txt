@@ -9,25 +9,25 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {A} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,0) size 784x47
+      RenderBlock {DIV} at (0,0) size 784x46
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {A} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,0) size 784x47
-          RenderTable {TABLE} at (0,0) size 95x47
-            RenderTableSection {TBODY} at (0,0) size 95x47
-              RenderTableRow {TR} at (0,2) size 95x43
+        RenderBlock (anonymous) at (0,0) size 784x46
+          RenderTable {TABLE} at (0,0) size 95x46
+            RenderTableSection {TBODY} at (0,0) size 95x46
+              RenderTableRow {TR} at (0,2) size 95x42
                 RenderTableCell {TD} at (2,22) size 2x2 [r=0 c=0 rs=1 cs=1]
-                RenderTableCell {TD} at (6,2) size 87x43 [r=0 c=1 rs=1 cs=1]
-                  RenderButton {INPUT} at (3,3) size 81x37 [color=#202020]
-                    RenderBlock (anonymous) at (15,8) size 51x19
+                RenderTableCell {TD} at (6,2) size 87x42 [r=0 c=1 rs=1 cs=1]
+                  RenderButton {INPUT} at (3,3) size 81x36 [color=#202020]
+                    RenderBlock (anonymous) at (15,8) size 51x18
                       RenderText at (0,0) size 51x19
                         text run at (0,0) width 51: "Search"
-        RenderBlock (anonymous) at (0,47) size 784x0
+        RenderBlock (anonymous) at (0,46) size 784x0
           RenderInline {A} at (0,0) size 0x0
           RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,47) size 784x19
+      RenderBlock (anonymous) at (0,46) size 784x18
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 104x19
           text run at (0,0) width 104: "Form did submit"

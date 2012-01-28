@@ -12,15 +12,15 @@ layer at (10,260) size 300x200
     RenderText {#text} at (0,0) size 285x19
       text run at (0,0) width 285: "This text should paginate across the columns."
     RenderBR {BR} at (285,15) size 0x0
-    RenderText {#text} at (0,19) size 285x19
-      text run at (0,19) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,34) size 0x0
+    RenderText {#text} at (0,18) size 285x19
+      text run at (0,18) width 285: "This text should paginate across the columns."
+    RenderBR {BR} at (285,33) size 0x0
     RenderText {#text} at (0,50) size 285x19
       text run at (0,50) width 285: "This text should paginate across the columns."
     RenderBR {BR} at (285,65) size 0x0
-    RenderText {#text} at (0,69) size 285x19
-      text run at (0,69) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,84) size 0x0
-    RenderText {#text} at (0,88) size 285x19
-      text run at (0,88) width 285: "This text should paginate across the columns."
-    RenderBR {BR} at (285,103) size 0x0
+    RenderText {#text} at (0,68) size 285x19
+      text run at (0,68) width 285: "This text should paginate across the columns."
+    RenderBR {BR} at (285,83) size 0x0
+    RenderText {#text} at (0,86) size 285x19
+      text run at (0,86) width 285: "This text should paginate across the columns."
+    RenderBR {BR} at (285,101) size 0x0

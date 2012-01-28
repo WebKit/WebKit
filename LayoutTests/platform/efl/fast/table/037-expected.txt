@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x60
-  RenderBlock {html} at (0,0) size 800x60
-    RenderBody {body} at (8,8) size 784x44
-      RenderTable {table} at (0,0) size 82x25
-        RenderTableSection (anonymous) at (0,0) size 82x25
-          RenderTableRow {tr} at (0,2) size 82x21
-            RenderTableCell {td} at (2,2) size 78x21 [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x58
+  RenderBlock {html} at (0,0) size 800x58
+    RenderBody {body} at (8,8) size 784x42
+      RenderTable {table} at (0,0) size 82x24
+        RenderTableSection (anonymous) at (0,0) size 82x24
+          RenderTableRow {tr} at (0,2) size 82x20
+            RenderTableCell {td} at (2,2) size 78x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 76x19
                 text run at (1,1) width 76: "Hello world"
-      RenderBlock (anonymous) at (0,25) size 784x19
+      RenderBlock (anonymous) at (0,24) size 784x18
         RenderText {#text} at (0,0) size 213x19
           text run at (0,0) width 213: "Hello also? Why isn't this visible?"

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x552
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 441x19
           text run at (0,0) width 441: "You should see a circle with a shadow above a square with a shadow."
-      RenderBlock {DIV} at (40,59) size 60x60 [bgcolor=#008000]
-      RenderBlock {DIV} at (40,159) size 60x60 [bgcolor=#008000]
+      RenderBlock {DIV} at (40,58) size 60x60 [bgcolor=#008000]
+      RenderBlock {DIV} at (40,158) size 60x60 [bgcolor=#008000]

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x70
-  RenderBlock {HTML} at (0,0) size 800x70
-    RenderBody {BODY} at (8,16) size 784x38
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 754x38
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,16) size 784x36
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 754x37
           text run at (0,0) width 754: "Any textual selection in this long paragraph should have green background. Any textual selection in this long paragraph"
-          text run at (0,19) width 678: "should have green background. Any textual selection in this long paragraph should have green background."
+          text run at (0,18) width 678: "should have green background. Any textual selection in this long paragraph should have green background."

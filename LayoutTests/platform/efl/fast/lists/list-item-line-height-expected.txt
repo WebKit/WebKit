@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 688x19
           text run at (0,0) width 688: "This test demonstrates that list items are not affected by the quirk that shrinks line boxes with no text children."
-      RenderBlock {UL} at (0,35) size 784x60
+      RenderBlock {UL} at (0,34) size 784x60
         RenderListItem {LI} at (40,0) size 744x30
           RenderListMarker at (-17,10) size 10x10
           RenderInline {SPAN} at (0,0) size 27x19
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,5) size 30x19
               text run at (0,5) width 30: "Two"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {UL} at (0,111) size 784x60
+      RenderBlock {UL} at (0,110) size 784x60
         RenderListItem {LI} at (40,0) size 744x30
           RenderInline {SPAN} at (0,0) size 37x19
             RenderText {#text} at (0,5) size 37x19

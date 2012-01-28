@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x104
+      RenderBlock {P} at (0,0) size 784x103
         RenderText {#text} at (0,85) size 96x19
           text run at (0,85) width 96: "Layout test for "
         RenderInline {A} at (0,0) size 40x19 [color=#0000EE]

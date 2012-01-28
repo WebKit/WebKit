@@ -2,27 +2,27 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x0
   RenderBlock {HTML} at (0,0) size 800x0
-layer at (8,8) size 784x57
-  RenderBody {BODY} at (8,8) size 784x57
-    RenderBlock {DIV} at (0,0) size 784x57
+layer at (8,8) size 784x54
+  RenderBody {BODY} at (8,8) size 784x54
+    RenderBlock {DIV} at (0,0) size 784x54
       RenderText {#text} at (0,0) size 130x19
         text run at (0,0) width 130: "You should see two "
       RenderInline {I} at (0,0) size 109x19
         RenderText {#text} at (130,0) size 109x19
           text run at (130,0) width 109: "vertically stacked"
-      RenderText {#text} at (239,0) size 763x57
+      RenderText {#text} at (239,0) size 763x55
         text run at (239,0) width 157: " green rectangles below. "
         text run at (396,0) width 181: "Each one is 100 pixels wide "
         text run at (577,0) width 115: "and 50 pixels tall. "
         text run at (692,0) width 61: "If the two"
-        text run at (0,19) width 386: "green rectangles are on the same line, then the test has failed. "
-        text run at (386,19) width 264: "This is a test of section 10.3.7 in CSS2.1. "
-        text run at (650,19) width 113: "In particular it is a"
-        text run at (0,38) width 216: "test of the shrink-to-fit algorithm's "
-        text run at (216,38) width 247: "preferred minimum width computation."
-layer at (8,65) size 100x108
-  RenderBlock (positioned) {DIV} at (0,0) size 100x108
+        text run at (0,18) width 386: "green rectangles are on the same line, then the test has failed. "
+        text run at (386,18) width 264: "This is a test of section 10.3.7 in CSS2.1. "
+        text run at (650,18) width 113: "In particular it is a"
+        text run at (0,36) width 216: "test of the shrink-to-fit algorithm's "
+        text run at (216,36) width 247: "preferred minimum width computation."
+layer at (8,62) size 100x106
+  RenderBlock (positioned) {DIV} at (0,0) size 100x106
     RenderBlock {SPAN} at (0,0) size 100x50 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 0x0
-    RenderBlock {SPAN} at (0,54) size 100x50 [bgcolor=#008000]
+    RenderBlock {SPAN} at (0,53) size 100x50 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 0x0

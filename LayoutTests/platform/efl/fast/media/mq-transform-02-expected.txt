@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38 [color=#008000]
-        RenderText {#text} at (0,0) size 778x38
+      RenderBlock {P} at (0,0) size 784x36 [color=#008000]
+        RenderText {#text} at (0,0) size 778x37
           text run at (0,0) width 778: "This text should be green. If running in a build of WebKit with 3d transforms, it will appear red (and this should not happen"
-          text run at (0,19) width 164: "while 3d is not supported)"
+          text run at (0,18) width 164: "while 3d is not supported)"

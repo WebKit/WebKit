@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x490
-  RenderBlock {HTML} at (0,0) size 800x490
-    RenderBody {BODY} at (8,8) size 784x474
+layer at (0,0) size 800x487
+  RenderBlock {HTML} at (0,0) size 800x487
+    RenderBody {BODY} at (8,8) size 784x471
       RenderBlock {DIV} at (10,10) size 150x150 [border: (50px solid #0000007F)]
       RenderText {#text} at (170,155) size 4x19
         text run at (170,155) width 4: " "
@@ -16,27 +16,27 @@ layer at (0,0) size 800x490
       RenderText {#text} at (692,155) size 4x19
         text run at (692,155) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,184) size 150x150 [border: (50px solid #0000007F) (50px solid #00000000) (50px solid #0000007F)]
-      RenderText {#text} at (170,329) size 4x19
-        text run at (170,329) width 4: " "
-      RenderBlock {DIV} at (184,184) size 150x150 [border: (50px solid #0000007F) (50px solid #00000000) (50px solid #0000007F)]
-      RenderText {#text} at (344,329) size 4x19
-        text run at (344,329) width 4: " "
-      RenderBlock {DIV} at (358,184) size 150x150 [border: (50px solid #0000007F) none (50px solid #00000000) (50px solid #0000007F)]
-      RenderText {#text} at (518,329) size 4x19
-        text run at (518,329) width 4: " "
-      RenderBlock {DIV} at (532,184) size 150x150 [border: (50px solid #0000007F) none (50px solid #0000007F)]
-      RenderText {#text} at (692,329) size 4x19
-        text run at (692,329) width 4: " "
+      RenderBlock {DIV} at (10,183) size 150x150 [border: (50px solid #0000007F) (50px solid #00000000) (50px solid #0000007F)]
+      RenderText {#text} at (170,328) size 4x19
+        text run at (170,328) width 4: " "
+      RenderBlock {DIV} at (184,183) size 150x150 [border: (50px solid #0000007F) (50px solid #00000000) (50px solid #0000007F)]
+      RenderText {#text} at (344,328) size 4x19
+        text run at (344,328) width 4: " "
+      RenderBlock {DIV} at (358,183) size 150x150 [border: (50px solid #0000007F) none (50px solid #00000000) (50px solid #0000007F)]
+      RenderText {#text} at (518,328) size 4x19
+        text run at (518,328) width 4: " "
+      RenderBlock {DIV} at (532,183) size 150x150 [border: (50px solid #0000007F) none (50px solid #0000007F)]
+      RenderText {#text} at (692,328) size 4x19
+        text run at (692,328) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (10,358) size 150x102 [border: (50px solid #0000007F)]
-      RenderText {#text} at (170,455) size 4x19
-        text run at (170,455) width 4: " "
-      RenderBlock {DIV} at (184,358) size 150x102 [border: (50px solid #0000007F) (50px double #0000007F) (50px solid #0000007F)]
-      RenderText {#text} at (344,455) size 4x19
-        text run at (344,455) width 4: " "
-      RenderBlock {DIV} at (358,358) size 150x102 [border: (50px solid #0000007F) none (50px solid #00000000) (50px solid #0000007F)]
-      RenderText {#text} at (518,455) size 4x19
-        text run at (518,455) width 4: " "
-      RenderBlock {DIV} at (532,358) size 150x102 [border: (50px solid #0000007F)]
+      RenderBlock {DIV} at (10,356) size 150x102 [border: (50px solid #0000007F)]
+      RenderText {#text} at (170,453) size 4x19
+        text run at (170,453) width 4: " "
+      RenderBlock {DIV} at (184,356) size 150x102 [border: (50px solid #0000007F) (50px double #0000007F) (50px solid #0000007F)]
+      RenderText {#text} at (344,453) size 4x19
+        text run at (344,453) width 4: " "
+      RenderBlock {DIV} at (358,356) size 150x102 [border: (50px solid #0000007F) none (50px solid #00000000) (50px solid #0000007F)]
+      RenderText {#text} at (518,453) size 4x19
+        text run at (518,453) width 4: " "
+      RenderBlock {DIV} at (532,356) size 150x102 [border: (50px solid #0000007F)]
       RenderText {#text} at (0,0) size 0x0

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 200x119
+      RenderBlock {DIV} at (0,0) size 200x118
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#ADD8E6]
         RenderInline {SPAN} at (0,0) size 266x19
           RenderText {#text} at (0,100) size 266x19

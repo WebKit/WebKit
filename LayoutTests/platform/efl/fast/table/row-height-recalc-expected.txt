@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x169
-  RenderBlock {HTML} at (0,0) size 800x169
-    RenderBody {BODY} at (8,16) size 784x145
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x168
+  RenderBlock {HTML} at (0,0) size 800x168
+    RenderBody {BODY} at (8,16) size 784x144
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 666x19
@@ -15,8 +15,8 @@ layer at (0,0) size 800x169
             text run at (405,0) width 314: "Row height not updated when cell heights change"
         RenderText {#text} at (719,0) size 4x19
           text run at (719,0) width 4: "."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,45) size 100x100
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,44) size 100x100
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x0 [bgcolor=#FF0000]
             RenderTableCell {TD} at (0,0) size 50x0 [r=0 c=0 rs=1 cs=1]

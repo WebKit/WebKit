@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,0) size 784x66
-        RenderBlock (anonymous) at (0,0) size 784x38
-          RenderInline {B} at (0,0) size 763x38
+      RenderBlock {DIV} at (0,0) size 784x64
+        RenderBlock (anonymous) at (0,0) size 784x36
+          RenderInline {B} at (0,0) size 763x37
             RenderInline {NOBR} at (0,0) size 219x19
               RenderText {#text} at (0,0) size 219x19
                 text run at (0,0) width 219: "This text is in a div inside a nobr"
-            RenderText {#text} at (219,0) size 763x38
+            RenderText {#text} at (219,0) size 763x37
               text run at (219,0) width 544: "More text that should not be in the nobr, i.e., the nobr should have closed the div"
-              text run at (0,19) width 122: "inside it implicitly."
-        RenderBlock {PRE} at (0,51) size 784x15
+              text run at (0,18) width 122: "inside it implicitly."
+        RenderBlock {PRE} at (0,49) size 784x15
           RenderText {#text} at (0,0) size 272x15
             text run at (0,0) width 272: "A pre tag outside everything else."

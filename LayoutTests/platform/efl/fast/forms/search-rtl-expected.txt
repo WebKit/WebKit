@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 699x19
@@ -15,50 +15,50 @@ layer at (0,0) size 800x600
             text run at (358,0) width 394: "REGRESSION (SearchField): RTL search fields are mixed up"
         RenderText {#text} at (752,0) size 4x19
           text run at (752,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x99
-        RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
+      RenderBlock {P} at (0,34) size 784x96
+        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,8) size 4x19
           text run at (199,8) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,35) size 285x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 278x19
+        RenderTextControl {INPUT} at (2,34) size 285x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 278x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 278x19
+            RenderBlock {DIV} at (0,0) size 278x18
             RenderBlock {DIV} at (278,9) size 0x0
-        RenderText {#text} at (289,41) size 4x19
-          text run at (289,41) width 4: " "
+        RenderText {#text} at (289,40) size 4x19
+          text run at (289,40) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,68) size 195x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
+        RenderTextControl {INPUT} at (2,66) size 195x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,150) size 784x19
+      RenderBlock {P} at (0,146) size 784x18
         RenderText {#text} at (0,0) size 36x19
           text run at (0,0) width 36: "FAIL"
-layer at (14,51) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
+layer at (14,50) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 188x18
     RenderText {#text} at (11,0) size 176x19
       text run at (11,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (39,0) width 26: "she"
       text run at (65,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (121,0) width 18: "he"
       text run at (139,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (14,84) size 278x19
-  RenderBlock {DIV} at (0,0) size 278x19
+layer at (14,82) size 278x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 278x18
     RenderText {#text} at (101,0) size 176x19
       text run at (101,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (129,0) width 26: "she"
       text run at (155,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (211,0) width 18: "he"
       text run at (229,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (14,117) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
+layer at (14,114) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 188x18
     RenderText {#text} at (59,0) size 128x19
       text run at (59,0) width 128: "click the (x) button"
 caret: position 19 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

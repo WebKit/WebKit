@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 319x19
           text run at (0,0) width 319: "This tests repainting of a layer's children's outlines."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-layer at (8,53) size 100x100
-  RenderBlock (relative positioned) {DIV} at (0,45) size 100x100 [bgcolor=#C0C0C0]
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+layer at (8,52) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,44) size 100x100 [bgcolor=#C0C0C0]
     RenderBlock {DIV} at (0,0) size 100x100

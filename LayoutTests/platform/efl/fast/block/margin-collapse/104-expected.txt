@@ -3,21 +3,21 @@ layer at (0,0) size 976x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock {DIV} at (0,0) size 784x113 [border: (2px solid #0000FF)]
-        RenderBlock (anonymous) at (2,2) size 780x57
-          RenderText {#text} at (0,0) size 747x38
+      RenderBlock {DIV} at (0,0) size 784x108 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (2,2) size 780x54
+          RenderText {#text} at (0,0) size 747x37
             text run at (0,0) width 584: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
             text run at (584,0) width 163: "left side, though they may"
-            text run at (0,19) width 128: "overflow from right."
-          RenderBR {BR} at (128,34) size 0x0
-          RenderBR {BR} at (0,38) size 0x19
-        RenderTable {TABLE} at (2,59) size 966x29 [border: (2px solid #FF0000)]
-          RenderTableSection {TBODY} at (2,2) size 962x25
-            RenderTableRow {TR} at (0,2) size 962x21
-              RenderTableCell {TD} at (2,2) size 958x21 [r=0 c=0 rs=1 cs=1]
+            text run at (0,18) width 128: "overflow from right."
+          RenderBR {BR} at (128,33) size 0x0
+          RenderBR {BR} at (0,36) size 0x19
+        RenderTable {TABLE} at (2,56) size 966x28 [border: (2px solid #FF0000)]
+          RenderTableSection {TBODY} at (2,2) size 962x24
+            RenderTableRow {TR} at (0,2) size 962x20
+              RenderTableCell {TD} at (2,2) size 958x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 956x19
                   text run at (1,1) width 480: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. "
                   text run at (481,1) width 476: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
-        RenderBlock {DIV} at (2,88) size 904x23 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (2,84) size 904x22 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 476x19
             text run at (2,2) width 476: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."

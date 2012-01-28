@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 0x0
-layer at (28,28) size 22x37
-  RenderTable {TABLE} at (20,20) size 22x37 [border: (5px outset #808080)]
-    RenderTableSection {TBODY} at (5,5) size 12x27
-      RenderTableRow {TR} at (0,2) size 12x23
-        RenderTableCell {TD} at (2,2) size 8x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (28,28) size 22x36
+  RenderTable {TABLE} at (20,20) size 22x36 [border: (5px outset #808080)]
+    RenderTableSection {TBODY} at (5,5) size 12x26
+      RenderTableRow {TR} at (0,2) size 12x22
+        RenderTableCell {TD} at (2,2) size 8x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (2,2) size 4x19
             text run at (2,2) width 4: " "

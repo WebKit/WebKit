@@ -3,72 +3,72 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (8,8) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+      RenderBlock {DIV} at (8,8) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (142,49) size 4x19
-        text run at (142,49) width 4: " "
-      RenderBlock {DIV} at (154,8) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (142,47) size 4x19
+        text run at (142,47) width 4: " "
+      RenderBlock {DIV} at (154,8) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (288,49) size 4x19
-        text run at (288,49) width 4: " "
-      RenderBlock {DIV} at (300,8) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (288,47) size 4x19
+        text run at (288,47) width 4: " "
+      RenderBlock {DIV} at (300,8) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (434,49) size 4x19
-        text run at (434,49) width 4: " "
-      RenderBlock {DIV} at (446,8) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (434,47) size 4x19
+        text run at (434,47) width 4: " "
+      RenderBlock {DIV} at (446,8) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (580,49) size 4x19
-        text run at (580,49) width 4: " "
-      RenderBlock {DIV} at (592,8) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (580,47) size 4x19
+        text run at (580,47) width 4: " "
+      RenderBlock {DIV} at (592,8) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (726,49) size 4x19
-        text run at (726,49) width 4: " "
-      RenderBlock {DIV} at (8,87) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (726,47) size 4x19
+        text run at (726,47) width 4: " "
+      RenderBlock {DIV} at (8,84) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (142,128) size 4x19
-        text run at (142,128) width 4: " "
-      RenderBlock {DIV} at (154,87) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (142,123) size 4x19
+        text run at (142,123) width 4: " "
+      RenderBlock {DIV} at (154,84) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (288,128) size 4x19
-        text run at (288,128) width 4: " "
-      RenderBlock {DIV} at (300,87) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (288,123) size 4x19
+        text run at (288,123) width 4: " "
+      RenderBlock {DIV} at (300,84) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (434,128) size 4x19
-        text run at (434,128) width 4: " "
-      RenderBlock {DIV} at (446,87) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (434,123) size 4x19
+        text run at (434,123) width 4: " "
+      RenderBlock {DIV} at (446,84) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
-      RenderText {#text} at (580,128) size 4x19
-        text run at (580,128) width 4: " "
-      RenderBlock {DIV} at (592,87) size 126x63 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 70x57
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
+      RenderText {#text} at (580,123) size 4x19
+        text run at (580,123) width 4: " "
+      RenderBlock {DIV} at (592,84) size 126x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 70x55
           text run at (3,3) width 51: "There is"
-          text run at (3,22) width 70: "remarkable"
-          text run at (3,41) width 60: "evidence."
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
       RenderText {#text} at (0,0) size 0x0

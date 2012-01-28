@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {HTML} at (0,0) size 800x35
-    RenderBody {BODY} at (8,8) size 784x19
-      RenderBlock {DIV} at (0,0) size 784x19
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 672x19
           text run at (0,0) width 672: "[~=] attribute selector looking for empty string in empty attribute (the text should not have red background)"

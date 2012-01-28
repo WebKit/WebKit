@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x582
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 83x19
           text run at (0,0) width 83: "Pixel test for "
-        RenderInline {I} at (0,0) size 561x38
+        RenderInline {I} at (0,0) size 561x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (83,0) size 301x19
               text run at (83,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=12043"
-          RenderText {#text} at (384,0) size 561x38
+          RenderText {#text} at (384,0) size 561x37
             text run at (384,0) width 4: " "
             text run at (388,0) width 173: "Another assertion failure in"
-            text run at (0,19) width 246: "WebCore::RenderObject::drawBorder"
-        RenderText {#text} at (246,19) size 4x19
-          text run at (246,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 246: "WebCore::RenderObject::drawBorder"
+        RenderText {#text} at (246,18) size 4x19
+          text run at (246,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 304x19
           text run at (0,0) width 304: "There should be three squres and a circle below."
-      RenderBlock {DIV} at (0,89) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,155) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,221) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
-      RenderBlock {DIV} at (0,287) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,86) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,152) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,218) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
+      RenderBlock {DIV} at (0,284) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]

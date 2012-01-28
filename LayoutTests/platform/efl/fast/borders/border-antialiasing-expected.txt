@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x470
-  RenderBlock {HTML} at (0,0) size 800x470
-    RenderBody {BODY} at (8,20) size 784x440
-layer at (18,20) size 764x440
-  RenderBlock {DIV} at (10,0) size 764x440
+layer at (0,0) size 800x461
+  RenderBlock {HTML} at (0,0) size 800x461
+    RenderBody {BODY} at (8,20) size 784x431
+layer at (18,20) size 764x431
+  RenderBlock {DIV} at (10,0) size 764x431
     RenderTable {TABLE} at (20,0) size 131x53 [border: none]
       RenderTableSection {TBODY} at (0,0) size 130x52
         RenderTableRow {TR} at (0,0) size 130x13
@@ -97,130 +97,130 @@ layer at (18,20) size 764x440
           RenderTableCell {TD} at (114,55) size 14x4 [border: (1px solid #000000)] [r=3 c=7 rs=1 cs=1]
           RenderTableCell {TD} at (130,55) size 14x4 [border: (1px solid #000000)] [r=3 c=8 rs=1 cs=1]
           RenderTableCell {TD} at (146,55) size 14x4 [border: (1px solid #000000)] [r=3 c=9 rs=1 cs=1]
-    RenderBlock {DIV} at (10,269) size 744x171
-      RenderInline {SPAN} at (0,0) size 78x42
+    RenderBlock {DIV} at (10,269) size 744x162
+      RenderInline {SPAN} at (0,0) size 78x41
         RenderText {#text} at (6,0) size 72x19
           text run at (6,0) width 72: "I am a span"
         RenderBR {BR} at (78,0) size 0x19
-        RenderText {#text} at (0,19) size 28x19
-          text run at (0,19) width 28: "I am"
-      RenderText {#text} at (34,19) size 4x19
-        text run at (34,19) width 4: " "
-      RenderInline {SPAN} at (0,0) size 74x42
-        RenderText {#text} at (44,19) size 28x19
-          text run at (44,19) width 28: "I am"
-        RenderBR {BR} at (72,19) size 0x19
-        RenderText {#text} at (0,38) size 72x19
-          text run at (0,38) width 72: "a span I am"
-      RenderText {#text} at (78,38) size 4x19
-        text run at (78,38) width 4: " "
-      RenderInline {SPAN} at (0,0) size 160x42
-        RenderText {#text} at (88,38) size 72x19
-          text run at (88,38) width 72: "I am a span"
-        RenderBR {BR} at (160,38) size 0x19
-        RenderText {#text} at (0,57) size 28x19
-          text run at (0,57) width 28: "I am"
-      RenderText {#text} at (34,57) size 4x19
-        text run at (34,57) width 4: " "
-      RenderInline {SPAN} at (0,0) size 74x42
-        RenderText {#text} at (44,57) size 28x19
-          text run at (44,57) width 28: "I am"
-        RenderBR {BR} at (72,57) size 0x19
-        RenderText {#text} at (0,76) size 72x19
-          text run at (0,76) width 72: "a span I am"
-      RenderText {#text} at (78,76) size 4x19
-        text run at (78,76) width 4: " "
-      RenderInline {SPAN} at (0,0) size 160x42
-        RenderText {#text} at (88,76) size 72x19
-          text run at (88,76) width 72: "I am a span"
-        RenderBR {BR} at (160,76) size 0x19
-        RenderText {#text} at (0,95) size 28x19
-          text run at (0,95) width 28: "I am"
-      RenderText {#text} at (34,95) size 4x19
-        text run at (34,95) width 4: " "
-      RenderInline {SPAN} at (0,0) size 74x42
-        RenderText {#text} at (44,95) size 28x19
-          text run at (44,95) width 28: "I am"
-        RenderBR {BR} at (72,95) size 0x19
-        RenderText {#text} at (0,114) size 72x19
-          text run at (0,114) width 72: "a span I am"
-      RenderText {#text} at (78,114) size 4x19
-        text run at (78,114) width 4: " "
-      RenderInline {SPAN} at (0,0) size 160x42
-        RenderText {#text} at (88,114) size 72x19
-          text run at (88,114) width 72: "I am a span"
-        RenderBR {BR} at (160,114) size 0x19
-        RenderText {#text} at (0,133) size 28x19
-          text run at (0,133) width 28: "I am"
-      RenderText {#text} at (34,133) size 4x19
-        text run at (34,133) width 4: " "
-      RenderInline {SPAN} at (0,0) size 74x42
-        RenderText {#text} at (44,133) size 28x19
-          text run at (44,133) width 28: "I am"
-        RenderBR {BR} at (72,133) size 0x19
-        RenderText {#text} at (0,152) size 72x19
-          text run at (0,152) width 72: "a span I am"
+        RenderText {#text} at (0,18) size 28x19
+          text run at (0,18) width 28: "I am"
+      RenderText {#text} at (34,18) size 4x19
+        text run at (34,18) width 4: " "
+      RenderInline {SPAN} at (0,0) size 74x41
+        RenderText {#text} at (44,18) size 28x19
+          text run at (44,18) width 28: "I am"
+        RenderBR {BR} at (72,18) size 0x19
+        RenderText {#text} at (0,36) size 72x19
+          text run at (0,36) width 72: "a span I am"
+      RenderText {#text} at (78,36) size 4x19
+        text run at (78,36) width 4: " "
+      RenderInline {SPAN} at (0,0) size 160x41
+        RenderText {#text} at (88,36) size 72x19
+          text run at (88,36) width 72: "I am a span"
+        RenderBR {BR} at (160,36) size 0x19
+        RenderText {#text} at (0,54) size 28x19
+          text run at (0,54) width 28: "I am"
+      RenderText {#text} at (34,54) size 4x19
+        text run at (34,54) width 4: " "
+      RenderInline {SPAN} at (0,0) size 74x41
+        RenderText {#text} at (44,54) size 28x19
+          text run at (44,54) width 28: "I am"
+        RenderBR {BR} at (72,54) size 0x19
+        RenderText {#text} at (0,72) size 72x19
+          text run at (0,72) width 72: "a span I am"
+      RenderText {#text} at (78,72) size 4x19
+        text run at (78,72) width 4: " "
+      RenderInline {SPAN} at (0,0) size 160x41
+        RenderText {#text} at (88,72) size 72x19
+          text run at (88,72) width 72: "I am a span"
+        RenderBR {BR} at (160,72) size 0x19
+        RenderText {#text} at (0,90) size 28x19
+          text run at (0,90) width 28: "I am"
+      RenderText {#text} at (34,90) size 4x19
+        text run at (34,90) width 4: " "
+      RenderInline {SPAN} at (0,0) size 74x41
+        RenderText {#text} at (44,90) size 28x19
+          text run at (44,90) width 28: "I am"
+        RenderBR {BR} at (72,90) size 0x19
+        RenderText {#text} at (0,108) size 72x19
+          text run at (0,108) width 72: "a span I am"
+      RenderText {#text} at (78,108) size 4x19
+        text run at (78,108) width 4: " "
+      RenderInline {SPAN} at (0,0) size 160x41
+        RenderText {#text} at (88,108) size 72x19
+          text run at (88,108) width 72: "I am a span"
+        RenderBR {BR} at (160,108) size 0x19
+        RenderText {#text} at (0,126) size 28x19
+          text run at (0,126) width 28: "I am"
+      RenderText {#text} at (34,126) size 4x19
+        text run at (34,126) width 4: " "
+      RenderInline {SPAN} at (0,0) size 74x41
+        RenderText {#text} at (44,126) size 28x19
+          text run at (44,126) width 28: "I am"
+        RenderBR {BR} at (72,126) size 0x19
+        RenderText {#text} at (0,144) size 72x19
+          text run at (0,144) width 72: "a span I am"
       RenderText {#text} at (0,0) size 0x0
 layer at (28,179) size 600x100
   RenderBlock {DIV} at (10,159) size 600x100
-    RenderText {#text} at (0,0) size 8x1195
+    RenderText {#text} at (0,0) size 8x1191
       text run at (0,0) width 8: "_"
-      text run at (0,19) width 8: "_"
-      text run at (0,38) width 8: "_"
-      text run at (0,57) width 8: "_"
-      text run at (0,76) width 8: "_"
+      text run at (0,18) width 8: "_"
+      text run at (0,36) width 8: "_"
+      text run at (0,54) width 8: "_"
+      text run at (0,72) width 8: "_"
       text run at (0,100) width 8: "_"
-      text run at (0,119) width 8: "_"
-      text run at (0,138) width 8: "_"
-      text run at (0,157) width 8: "_"
-      text run at (0,176) width 8: "_"
+      text run at (0,118) width 8: "_"
+      text run at (0,136) width 8: "_"
+      text run at (0,154) width 8: "_"
+      text run at (0,172) width 8: "_"
       text run at (0,200) width 8: "_"
-      text run at (0,219) width 8: "_"
-      text run at (0,238) width 8: "_"
-      text run at (0,257) width 8: "_"
-      text run at (0,276) width 8: "_"
+      text run at (0,218) width 8: "_"
+      text run at (0,236) width 8: "_"
+      text run at (0,254) width 8: "_"
+      text run at (0,272) width 8: "_"
       text run at (0,300) width 8: "_"
-      text run at (0,319) width 8: "_"
-      text run at (0,338) width 8: "_"
-      text run at (0,357) width 8: "_"
-      text run at (0,376) width 8: "_"
+      text run at (0,318) width 8: "_"
+      text run at (0,336) width 8: "_"
+      text run at (0,354) width 8: "_"
+      text run at (0,372) width 8: "_"
       text run at (0,400) width 8: "_"
-      text run at (0,419) width 8: "_"
-      text run at (0,438) width 8: "_"
-      text run at (0,457) width 8: "_"
-      text run at (0,476) width 8: "_"
+      text run at (0,418) width 8: "_"
+      text run at (0,436) width 8: "_"
+      text run at (0,454) width 8: "_"
+      text run at (0,472) width 8: "_"
       text run at (0,500) width 8: "_"
-      text run at (0,519) width 8: "_"
-      text run at (0,538) width 8: "_"
-      text run at (0,557) width 8: "_"
-      text run at (0,576) width 8: "_"
+      text run at (0,518) width 8: "_"
+      text run at (0,536) width 8: "_"
+      text run at (0,554) width 8: "_"
+      text run at (0,572) width 8: "_"
       text run at (0,600) width 8: "_"
-      text run at (0,619) width 8: "_"
-      text run at (0,638) width 8: "_"
-      text run at (0,657) width 8: "_"
-      text run at (0,676) width 8: "_"
+      text run at (0,618) width 8: "_"
+      text run at (0,636) width 8: "_"
+      text run at (0,654) width 8: "_"
+      text run at (0,672) width 8: "_"
       text run at (0,700) width 8: "_"
-      text run at (0,719) width 8: "_"
-      text run at (0,738) width 8: "_"
-      text run at (0,757) width 8: "_"
-      text run at (0,776) width 8: "_"
+      text run at (0,718) width 8: "_"
+      text run at (0,736) width 8: "_"
+      text run at (0,754) width 8: "_"
+      text run at (0,772) width 8: "_"
       text run at (0,800) width 8: "_"
-      text run at (0,819) width 8: "_"
-      text run at (0,838) width 8: "_"
-      text run at (0,857) width 8: "_"
-      text run at (0,876) width 8: "_"
+      text run at (0,818) width 8: "_"
+      text run at (0,836) width 8: "_"
+      text run at (0,854) width 8: "_"
+      text run at (0,872) width 8: "_"
       text run at (0,900) width 8: "_"
-      text run at (0,919) width 8: "_"
-      text run at (0,938) width 8: "_"
-      text run at (0,957) width 8: "_"
-      text run at (0,976) width 8: "_"
+      text run at (0,918) width 8: "_"
+      text run at (0,936) width 8: "_"
+      text run at (0,954) width 8: "_"
+      text run at (0,972) width 8: "_"
       text run at (0,1000) width 8: "_"
-      text run at (0,1019) width 8: "_"
-      text run at (0,1038) width 8: "_"
-      text run at (0,1057) width 8: "_"
-      text run at (0,1076) width 8: "_"
+      text run at (0,1018) width 8: "_"
+      text run at (0,1036) width 8: "_"
+      text run at (0,1054) width 8: "_"
+      text run at (0,1072) width 8: "_"
       text run at (0,1100) width 8: "_"
-      text run at (0,1119) width 8: "_"
-      text run at (0,1138) width 8: "_"
-      text run at (0,1157) width 8: "_"
-      text run at (0,1176) width 8: "_"
+      text run at (0,1118) width 8: "_"
+      text run at (0,1136) width 8: "_"
+      text run at (0,1154) width 8: "_"
+      text run at (0,1172) width 8: "_"

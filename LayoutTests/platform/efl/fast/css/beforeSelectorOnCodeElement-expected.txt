@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 729x19
           text run at (0,0) width 729: "The word \"PASSED\" should be shown below with a cirlce before and a square after. This is a test for WebKit bug "
         RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
             text run at (729,0) width 40: "11197"
         RenderText {#text} at (769,0) size 4x19
           text run at (769,0) width 4: "."
-      RenderBlock (anonymous) at (0,35) size 784x15
+      RenderBlock (anonymous) at (0,34) size 784x15
         RenderInline {CODE} at (0,0) size 61x15
           RenderInline (generated) at (0,0) size 5x15
             RenderCounter at (0,0) size 5x15

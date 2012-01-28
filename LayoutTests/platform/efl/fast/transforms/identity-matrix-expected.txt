@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "The following divs should be identical: "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock (floating) {DIV} at (5,24) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
+      RenderBlock (floating) {DIV} at (5,23) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (133,32) size 110x110
-  RenderBlock (floating) {DIV} at (125,24) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
+layer at (133,31) size 110x110
+  RenderBlock (floating) {DIV} at (125,23) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]

@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x19
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 757x38
-          RenderText {#text} at (104,0) size 757x38
+        RenderInline {I} at (0,0) size 757x37
+          RenderText {#text} at (104,0) size 757x37
             text run at (104,0) width 653: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6139 ATSUI code path should implement small caps,"
-            text run at (0,19) width 403: "synthetic bold and oblique and correct metrics for fallback fonts"
-        RenderText {#text} at (403,19) size 4x19
-          text run at (403,19) width 4: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,72) size 784x19
+            text run at (0,18) width 403: "synthetic bold and oblique and correct metrics for fallback fonts"
+        RenderText {#text} at (403,18) size 4x19
+          text run at (403,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 600x19
           text run at (0,0) width 600: "The two columns should be identical except for the accent over the e and the umlaut over the u."
-      RenderTable {TABLE} at (0,107) size 128x131 [border: none]
+      RenderTable {TABLE} at (0,104) size 128x131 [border: none]
         RenderTableSection {TBODY} at (0,0) size 127x130
           RenderTableRow {TR} at (0,0) size 127x26
             RenderTableCell {TD} at (0,0) size 8x26 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
@@ -85,16 +85,16 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (8,104) size 119x26 [border: (1px solid #008000)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x23
                 text run at (2,2) width 100: "Lorem ipsum"
-      RenderBlock {HR} at (0,246) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,264) size 784x19
+      RenderBlock {HR} at (0,243) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,261) size 784x18
         RenderText {#text} at (0,0) size 277x19
           text run at (0,0) width 277: "The following two lines should be identical."
-      RenderBlock {P} at (0,299) size 784x21
+      RenderBlock {P} at (0,295) size 784x21
         RenderInline {SPAN} at (0,0) size 2x23 [border: (1px solid #008000)]
           RenderText {#text} at (1,0) size 0x21
             text run at (1,0) width 0: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,336) size 784x21
+      RenderBlock {P} at (0,332) size 784x21
         RenderInline {SPAN} at (0,0) size 2x23 [border: (1px solid #008000)]
           RenderText {#text} at (1,0) size 0x21
             text run at (1,0) width 0: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"

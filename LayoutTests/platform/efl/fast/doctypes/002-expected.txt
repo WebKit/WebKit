@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x178
-  RenderBlock {HTML} at (0,0) size 800x178
-    RenderBody {BODY} at (8,8) size 784x154
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,8) size 784x152
       RenderBlock {DIV} at (0,0) size 784x100
-      RenderBlock (anonymous) at (0,100) size 784x19
+      RenderBlock (anonymous) at (0,100) size 784x18
         RenderText {#text} at (0,0) size 489x19
           text run at (0,0) width 309: "This file has a doc type with no public identifier. "
           text run at (309,0) width 180: "We should be in strict mode."
-      RenderBlock {UL} at (0,135) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderBlock {UL} at (0,0) size 744x19
-            RenderListItem {LI} at (40,0) size 704x19
+      RenderBlock {UL} at (0,134) size 784x18
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderBlock {UL} at (0,0) size 744x18
+            RenderListItem {LI} at (40,0) size 704x18
               RenderListMarker at (-58,0) size 7x19: bullet
               RenderListMarker at (-18,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 251x19

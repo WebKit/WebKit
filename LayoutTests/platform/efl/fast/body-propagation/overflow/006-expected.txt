@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x221
-  RenderBlock {HTML} at (0,0) size 800x221
-    RenderBody {BODY} at (8,16) size 784x19 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x220
+  RenderBlock {HTML} at (0,0) size 800x220
+    RenderBody {BODY} at (8,16) size 784x18 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 429x19
           text run at (0,0) width 429: "There should be scrollbars for the box below -- not for the viewport."
-layer at (8,51) size 162x162 clip at (9,52) size 145x145
-  RenderBody {BODY} at (8,51) size 162x162 [color=#000080] [border: (1px solid #000080)]
+layer at (8,50) size 162x162 clip at (9,51) size 145x145
+  RenderBody {BODY} at (8,50) size 162x162 [color=#000080] [border: (1px solid #000080)]

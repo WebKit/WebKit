@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 657x19
@@ -15,14 +15,14 @@ layer at (0,0) size 800x600
             text run at (358,0) width 352: "Table misrender when one of the TDs has width=100%"
         RenderText {#text} at (710,0) size 4x19
           text run at (710,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 558x19
           text run at (0,0) width 558: "There should be one green vertical line, 100px long and 2px thick, near the right margin."
-      RenderTable {TABLE} at (0,70) size 784x50
+      RenderTable {TABLE} at (0,68) size 784x50
         RenderTableSection {TBODY} at (0,0) size 784x50
           RenderTableRow {TR} at (0,0) size 784x50
             RenderTableCell {TD} at (0,25) size 782x0 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (782,0) size 2x50 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 2x50 [bgcolor=#008000]
-      RenderBlock {DIV} at (0,120) size 784x50
+      RenderBlock {DIV} at (0,118) size 784x50
         RenderBlock {DIV} at (782,0) size 2x50 [bgcolor=#008000]

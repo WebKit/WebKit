@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 682x38
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 682x37
           text run at (0,0) width 595: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
           text run at (595,0) width 87: "only works in"
-          text run at (0,19) width 534: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
-      RenderBlock {FORM} at (0,54) size 784x40
+          text run at (0,18) width 534: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
+      RenderBlock {FORM} at (0,52) size 784x39
         RenderBlock (anonymous) at (0,0) size 784x21
           RenderBlock {INPUT} at (4,6) size 12x12
           RenderInline {LABEL} at (0,0) size 176x19
@@ -26,11 +26,11 @@ layer at (0,0) size 800x600
                 RenderInline {LABEL} at (0,0) size 26x19
                   RenderText {#text} at (170,0) size 26x19
                     text run at (170,0) width 26: "four"
-        RenderBlock (anonymous) at (0,21) size 784x19
-          RenderBlock {DIV} at (0,0) size 784x19
+        RenderBlock (anonymous) at (0,21) size 784x18
+          RenderBlock {DIV} at (0,0) size 784x18
             RenderText {#text} at (0,0) size 104x19
               text run at (0,0) width 104: "Test Succeeded!"
-        RenderBlock (anonymous) at (0,40) size 784x0
+        RenderBlock (anonymous) at (0,39) size 784x0
           RenderInline {LABEL} at (0,0) size 0x0
             RenderInline {LABEL} at (0,0) size 0x0
               RenderInline {LABEL} at (0,0) size 0x0

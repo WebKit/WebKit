@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x429
-  RenderBlock {HTML} at (0,0) size 800x429
-    RenderBody {BODY} at (8,8) size 784x413
-      RenderBlock {DIV} at (0,0) size 400x413
-        RenderBlock {DIV} at (0,0) size 400x38
-          RenderText {#text} at (0,0) size 364x38
+layer at (0,0) size 800x427
+  RenderBlock {HTML} at (0,0) size 800x427
+    RenderBody {BODY} at (8,8) size 784x411
+      RenderBlock {DIV} at (0,0) size 400x411
+        RenderBlock {DIV} at (0,0) size 400x36
+          RenderText {#text} at (0,0) size 364x37
             text run at (0,0) width 364: "There should be no vertical space between the two blocks"
-            text run at (0,19) width 43: "below."
-        RenderBlock (floating) {DIV} at (0,38) size 100x100 [bgcolor=#008000]
-        RenderImage {IMG} at (0,138) size 395x275 [bgcolor=#FFFF00]
+            text run at (0,18) width 43: "below."
+        RenderBlock (floating) {DIV} at (0,36) size 100x100 [bgcolor=#008000]
+        RenderImage {IMG} at (0,136) size 395x275 [bgcolor=#FFFF00]

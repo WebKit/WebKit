@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 504x584 [border: (2px solid #000000)]
       RenderBlock {DIV} at (18,2) size 204x580 [border: (2px solid #800000)]
         RenderBlock (floating) {DIV} at (2,478) size 100x100 [bgcolor=#00FF00]
-        RenderText {#text} at (2,2) size 38x472
+        RenderText {#text} at (2,2) size 37x472
           text run at (2,2) width 280: "Here is some text in a vertical-rl block flow. "
           text run at (2,282) width 192: "The block direction is right-to-"
-          text run at (21,2) width 24: "left."
-        RenderBR {BR} at (36,26) size 0x0
-        RenderText {#text} at (40,2) size 19x203
-          text run at (40,2) width 203: "This line should also be vertical."
+          text run at (20,2) width 24: "left."
+        RenderBR {BR} at (35,26) size 0x0
+        RenderText {#text} at (38,2) size 19x203
+          text run at (38,2) width 203: "This line should also be vertical."

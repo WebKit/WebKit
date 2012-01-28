@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x78
-  RenderBlock {HTML} at (0,0) size 800x78
-    RenderBody {BODY} at (8,16) size 784x54
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76
+    RenderBody {BODY} at (8,16) size 784x52
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 100x19
           text run at (0,0) width 100: "Repaint test for "
         RenderInline {I} at (0,0) size 514x19
@@ -15,7 +15,7 @@ layer at (0,0) size 800x78
             text run at (258,0) width 356: "Repaint original element's position, not its offset position"
         RenderText {#text} at (614,0) size 4x19
           text run at (614,0) width 4: "."
-layer at (8,151) size 784x19
-  RenderBlock (relative positioned) {DIV} at (0,35) size 784x19
+layer at (8,150) size 784x18
+  RenderBlock (relative positioned) {DIV} at (0,34) size 784x18
     RenderText {#text} at (0,0) size 39x19
       text run at (0,0) width 39: "PASS"

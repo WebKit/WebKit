@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 132x39 [bgcolor=#C3D9FF]
-        RenderTable {TABLE} at (0,0) size 132x39
-          RenderTableSection {TBODY} at (0,0) size 132x39
-            RenderTableRow {TR} at (0,2) size 132x35
-              RenderTableCell {TD} at (2,2) size 128x35 [r=0 c=0 rs=1 cs=1]
-                RenderTextControl {INPUT} at (1,3) size 126x29 [color=#202020]
+      RenderBlock {DIV} at (0,0) size 132x38 [bgcolor=#C3D9FF]
+        RenderTable {TABLE} at (0,0) size 132x38
+          RenderTableSection {TBODY} at (0,0) size 132x38
+            RenderTableRow {TR} at (0,2) size 132x34
+              RenderTableCell {TD} at (2,2) size 128x34 [r=0 c=0 rs=1 cs=1]
+                RenderTextControl {INPUT} at (1,3) size 126x28 [color=#202020]
                 RenderText {#text} at (0,0) size 0x0
-layer at (15,19) size 119x19 scrollWidth 151
-  RenderBlock {DIV} at (4,6) size 119x19
+layer at (15,19) size 119x18 scrollWidth 151 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 119x18
     RenderText {#text} at (1,0) size 149x19
       text run at (1,0) width 149: "Should fit in blue box"

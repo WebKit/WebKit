@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 603x19
           text run at (0,0) width 603: "The div below should be rounded. You should see a rounded green square or the test has failed."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,149) size 784x19
+      RenderBlock {P} at (0,148) size 784x18
         RenderText {#text} at (0,0) size 565x19
           text run at (0,0) width 565: "This div should not be rounded. You should see a solid green square or the test has failed."
-      RenderBlock {P} at (0,300) size 784x19
+      RenderBlock {P} at (0,298) size 784x18
         RenderText {#text} at (0,0) size 563x19
           text run at (0,0) width 563: "This div should be rounded. You should see a rounded green square or the test has failed."
-layer at (8,192) size 100x100
-  RenderBlock {DIV} at (0,184) size 100x100
-layer at (8,27) size 100x100
-  RenderBlock (positioned) {DIV} at (8,27) size 100x100
-layer at (8,27) size 100x100
+layer at (8,190) size 100x100
+  RenderBlock {DIV} at (0,182) size 100x100
+layer at (8,26) size 100x100
+  RenderBlock (positioned) {DIV} at (8,26) size 100x100
+layer at (8,26) size 100x100
   RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-layer at (8,192) size 100x100
-  RenderBlock (positioned) {DIV} at (8,192) size 100x100 [bgcolor=#008000]
-layer at (8,343) size 100x100
-  RenderBlock (relative positioned) {DIV} at (0,335) size 100x100
-layer at (8,343) size 100x100
+layer at (8,190) size 100x100
+  RenderBlock (positioned) {DIV} at (8,190) size 100x100 [bgcolor=#008000]
+layer at (8,340) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,332) size 100x100
+layer at (8,340) size 100x100
   RenderBlock {DIV} at (0,0) size 100x100
-layer at (8,343) size 100x100
+layer at (8,340) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

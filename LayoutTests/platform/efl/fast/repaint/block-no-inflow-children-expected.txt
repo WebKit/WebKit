@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 200x200
-layer at (0,0) size 62x19
-  RenderBlock (positioned) {DIV} at (0,0) size 62x19
-    RenderBlock {DIV} at (0,0) size 62x19
+layer at (0,0) size 62x18
+  RenderBlock (positioned) {DIV} at (0,0) size 62x18
+    RenderBlock {DIV} at (0,0) size 62x18
       RenderText {#text} at (0,0) size 62x19
         text run at (0,0) width 62: "La la la la"

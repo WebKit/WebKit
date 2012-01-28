@@ -4,89 +4,89 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
 layer at (8,8) size 784x584
   RenderBody {BODY} at (8,8) size 784x584
-    RenderBlock {DIV} at (0,0) size 784x204 [color=#FF0000]
+    RenderBlock {DIV} at (0,0) size 784x192 [color=#FF0000]
       RenderText {#text} at (8,0) size 112x17
         text run at (8,0) width 32: "2 "
         text run at (40,0) width 32: "2 "
         text run at (72,0) width 32: "2 "
         text run at (104,0) width 16: "2"
       RenderBR {BR} at (120,13) size 0x0
-      RenderText {#text} at (8,17) size 112x17
-        text run at (8,17) width 32: "2 "
-        text run at (40,17) width 32: "2 "
-        text run at (72,17) width 32: "2 "
-        text run at (104,17) width 16: "2"
-      RenderBR {BR} at (120,30) size 0x0
-      RenderText {#text} at (8,34) size 112x17
-        text run at (8,34) width 32: "2 "
-        text run at (40,34) width 32: "2 "
-        text run at (72,34) width 32: "2 "
-        text run at (104,34) width 16: "2"
-      RenderBR {BR} at (120,47) size 0x0
-      RenderText {#text} at (8,51) size 112x17
-        text run at (8,51) width 32: "2 "
-        text run at (40,51) width 32: "2 "
-        text run at (72,51) width 32: "2 "
-        text run at (104,51) width 16: "2"
-      RenderBR {BR} at (120,64) size 0x0
-      RenderText {#text} at (8,68) size 112x17
-        text run at (8,68) width 32: "2 "
-        text run at (40,68) width 32: "2 "
-        text run at (72,68) width 32: "2 "
-        text run at (104,68) width 16: "2"
-      RenderBR {BR} at (120,81) size 0x0
-      RenderText {#text} at (8,85) size 112x17
-        text run at (8,85) width 32: "2 "
-        text run at (40,85) width 32: "2 "
-        text run at (72,85) width 32: "2 "
-        text run at (104,85) width 16: "2"
-      RenderBR {BR} at (120,98) size 0x0
-      RenderText {#text} at (8,102) size 112x17
-        text run at (8,102) width 32: "2 "
-        text run at (40,102) width 32: "2 "
-        text run at (72,102) width 32: "2 "
-        text run at (104,102) width 16: "2"
-      RenderBR {BR} at (120,115) size 0x0
-      RenderText {#text} at (8,119) size 112x17
-        text run at (8,119) width 32: "2 "
-        text run at (40,119) width 32: "2 "
-        text run at (72,119) width 32: "2 "
-        text run at (104,119) width 16: "2"
-      RenderBR {BR} at (120,132) size 0x0
-      RenderText {#text} at (8,136) size 112x17
-        text run at (8,136) width 32: "2 "
-        text run at (40,136) width 32: "2 "
-        text run at (72,136) width 32: "2 "
-        text run at (104,136) width 16: "2"
-      RenderBR {BR} at (120,149) size 0x0
-      RenderText {#text} at (8,153) size 112x17
-        text run at (8,153) width 32: "2 "
-        text run at (40,153) width 32: "2 "
-        text run at (72,153) width 32: "2 "
-        text run at (104,153) width 16: "2"
-      RenderBR {BR} at (120,166) size 0x0
-      RenderText {#text} at (8,170) size 112x17
-        text run at (8,170) width 32: "2 "
-        text run at (40,170) width 32: "2 "
-        text run at (72,170) width 32: "2 "
-        text run at (104,170) width 16: "2"
-      RenderBR {BR} at (120,183) size 0x0
-      RenderText {#text} at (8,187) size 112x17
-        text run at (8,187) width 32: "2 "
-        text run at (40,187) width 32: "2 "
-        text run at (72,187) width 32: "2 "
-        text run at (104,187) width 16: "2"
-layer at (8,8) size 128x200
-  RenderBlock (positioned) {DIV} at (0,0) size 128x200 [color=#008000]
-    RenderBlock {DIV} at (0,0) size 128x50
+      RenderText {#text} at (8,16) size 112x17
+        text run at (8,16) width 32: "2 "
+        text run at (40,16) width 32: "2 "
+        text run at (72,16) width 32: "2 "
+        text run at (104,16) width 16: "2"
+      RenderBR {BR} at (120,29) size 0x0
+      RenderText {#text} at (8,32) size 112x17
+        text run at (8,32) width 32: "2 "
+        text run at (40,32) width 32: "2 "
+        text run at (72,32) width 32: "2 "
+        text run at (104,32) width 16: "2"
+      RenderBR {BR} at (120,45) size 0x0
+      RenderText {#text} at (8,48) size 112x17
+        text run at (8,48) width 32: "2 "
+        text run at (40,48) width 32: "2 "
+        text run at (72,48) width 32: "2 "
+        text run at (104,48) width 16: "2"
+      RenderBR {BR} at (120,61) size 0x0
+      RenderText {#text} at (8,64) size 112x17
+        text run at (8,64) width 32: "2 "
+        text run at (40,64) width 32: "2 "
+        text run at (72,64) width 32: "2 "
+        text run at (104,64) width 16: "2"
+      RenderBR {BR} at (120,77) size 0x0
+      RenderText {#text} at (8,80) size 112x17
+        text run at (8,80) width 32: "2 "
+        text run at (40,80) width 32: "2 "
+        text run at (72,80) width 32: "2 "
+        text run at (104,80) width 16: "2"
+      RenderBR {BR} at (120,93) size 0x0
+      RenderText {#text} at (8,96) size 112x17
+        text run at (8,96) width 32: "2 "
+        text run at (40,96) width 32: "2 "
+        text run at (72,96) width 32: "2 "
+        text run at (104,96) width 16: "2"
+      RenderBR {BR} at (120,109) size 0x0
+      RenderText {#text} at (8,112) size 112x17
+        text run at (8,112) width 32: "2 "
+        text run at (40,112) width 32: "2 "
+        text run at (72,112) width 32: "2 "
+        text run at (104,112) width 16: "2"
+      RenderBR {BR} at (120,125) size 0x0
+      RenderText {#text} at (8,128) size 112x17
+        text run at (8,128) width 32: "2 "
+        text run at (40,128) width 32: "2 "
+        text run at (72,128) width 32: "2 "
+        text run at (104,128) width 16: "2"
+      RenderBR {BR} at (120,141) size 0x0
+      RenderText {#text} at (8,144) size 112x17
+        text run at (8,144) width 32: "2 "
+        text run at (40,144) width 32: "2 "
+        text run at (72,144) width 32: "2 "
+        text run at (104,144) width 16: "2"
+      RenderBR {BR} at (120,157) size 0x0
+      RenderText {#text} at (8,160) size 112x17
+        text run at (8,160) width 32: "2 "
+        text run at (40,160) width 32: "2 "
+        text run at (72,160) width 32: "2 "
+        text run at (104,160) width 16: "2"
+      RenderBR {BR} at (120,173) size 0x0
+      RenderText {#text} at (8,176) size 112x17
+        text run at (8,176) width 32: "2 "
+        text run at (40,176) width 32: "2 "
+        text run at (72,176) width 32: "2 "
+        text run at (104,176) width 16: "2"
+layer at (8,8) size 128x196
+  RenderBlock (positioned) {DIV} at (0,0) size 128x196 [color=#008000]
+    RenderBlock {DIV} at (0,0) size 128x49
       RenderText {#text} at (0,17) size 128x33
         text run at (0,17) width 128: "1111"
-    RenderBlock {DIV} at (0,50) size 128x50
+    RenderBlock {DIV} at (0,49) size 128x49
       RenderText {#text} at (0,0) size 128x33
         text run at (0,0) width 128: "1111"
-    RenderBlock {DIV} at (0,100) size 128x50
+    RenderBlock {DIV} at (0,98) size 128x49
       RenderText {#text} at (0,0) size 128x33
         text run at (0,0) width 128: "1111"
-    RenderBlock {DIV} at (0,150) size 128x50
+    RenderBlock {DIV} at (0,147) size 128x49
       RenderText {#text} at (0,17) size 128x33
         text run at (0,17) width 128: "1111"

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x295
-  RenderBlock {HTML} at (0,0) size 800x295
-    RenderBody {BODY} at (8,16) size 784x271
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x293
+  RenderBlock {HTML} at (0,0) size 800x293
+    RenderBody {BODY} at (8,16) size 784x269
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
@@ -15,9 +15,9 @@ layer at (0,0) size 800x295
           RenderText {#text} at (362,0) size 419x19
             text run at (362,0) width 419: "Selection is not completely erased when a replaced element moves"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,35) size 784x236
+      RenderBlock (anonymous) at (0,34) size 784x235
         RenderText {#text} at (0,0) size 0x0
-layer at (8,51) size 214x232
+layer at (8,50) size 214x232
   RenderImage {IMG} at (0,0) size 214x232
 selection start: position 0 of child 3 {IMG} of body
 selection end:   position 1 of child 3 {IMG} of body

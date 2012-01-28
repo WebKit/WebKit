@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 274x19
           text run at (0,0) width 274: "Each box should contain two identical lines"
-      RenderBlock {DIV} at (0,35) size 784x88 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x19
+      RenderBlock {DIV} at (0,34) size 784x86 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x18
           RenderText {#text} at (0,0) size 284x19
             text run at (0,0) width 284: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,52) size 766x19
+        RenderBlock {P} at (9,51) size 766x18
           RenderInline {SPAN} at (0,0) size 16x17
             RenderText {#text} at (0,2) size 16x17
               text run at (0,2) width 16: "A"
           RenderText {#text} at (16,0) size 272x19
             text run at (16,0) width 272: "BCDEFGHIJKLMNOPQRSTUVWXYZ"
-      RenderBlock {DIV} at (0,131) size 784x88 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x19
+      RenderBlock {DIV} at (0,128) size 784x86 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x18
           RenderText {#text} at (0,0) size 284x19
             text run at (0,0) width 284: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,52) size 766x19
+        RenderBlock {P} at (9,51) size 766x18
           RenderInline {SPAN} at (0,0) size 240x17
             RenderText {#text} at (0,2) size 240x17
               text run at (0,2) width 240: "ABCDEFGHIJKLMNO"
           RenderText {#text} at (240,0) size 124x19
             text run at (240,0) width 124: "PQRSTUVWXYZ"
-      RenderBlock {DIV} at (0,227) size 784x88 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x19
+      RenderBlock {DIV} at (0,222) size 784x86 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x18
           RenderText {#text} at (0,0) size 284x19
             text run at (0,0) width 284: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,52) size 766x19
+        RenderBlock {P} at (9,51) size 766x18
           RenderText {#text} at (0,0) size 12x19
             text run at (0,0) width 12: "A"
           RenderInline {SPAN} at (0,0) size 48x17
@@ -38,11 +38,11 @@ layer at (0,0) size 800x600
               text run at (12,2) width 48: "BCD"
           RenderText {#text} at (60,0) size 238x19
             text run at (60,0) width 238: "EFGHIJKLMNOPQRSTUVWXYZ"
-      RenderBlock {DIV} at (0,323) size 784x89 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x19
+      RenderBlock {DIV} at (0,316) size 784x87 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x18
           RenderText {#text} at (0,0) size 281x19
             text run at (0,0) width 281: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,52) size 766x20
+        RenderBlock {P} at (9,51) size 766x19
           RenderText {#text} at (0,0) size 148x19
             text run at (0,0) width 148: "ABCDEFGHIJKLMN"
           RenderInline {SPAN} at (0,0) size 30x19
@@ -53,11 +53,11 @@ layer at (0,0) size 800x600
               text run at (178,2) width 112: "RSTUVWX"
           RenderText {#text} at (290,0) size 22x19
             text run at (290,0) width 22: "YZ"
-      RenderBlock {DIV} at (0,420) size 784x89 [border: (1px solid #000000)]
-        RenderBlock {P} at (9,17) size 766x19
+      RenderBlock {DIV} at (0,411) size 784x87 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x18
           RenderText {#text} at (0,0) size 282x19
             text run at (0,0) width 282: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        RenderBlock {P} at (9,52) size 766x20
+        RenderBlock {P} at (9,51) size 766x19
           RenderText {#text} at (0,0) size 160x19
             text run at (0,0) width 160: "ABCDEFGHIJKLMNO"
           RenderInline {SPAN} at (0,0) size 120x17

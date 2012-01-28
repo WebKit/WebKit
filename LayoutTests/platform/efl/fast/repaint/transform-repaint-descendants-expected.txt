@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x261
-  RenderBlock {HTML} at (0,0) size 800x261
-    RenderBody {BODY} at (8,16) size 784x237
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x260
+  RenderBlock {HTML} at (0,0) size 800x260
+    RenderBody {BODY} at (8,16) size 784x236
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
@@ -11,7 +11,7 @@ layer at (0,0) size 800x261
             text run at (53,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=22088"
         RenderText {#text} at (358,0) size 292x19
           text run at (358,0) width 292: ". The rotated box should be correctly redrawn."
-layer at (108,151) size 202x202
-  RenderBlock (relative positioned) {DIV} at (0,35) size 202x202 [bgcolor=#CCCCCC] [border: (1px solid #000000)]
-layer at (184,227) size 400x50
+layer at (108,150) size 202x202
+  RenderBlock (relative positioned) {DIV} at (0,34) size 202x202 [bgcolor=#CCCCCC] [border: (1px solid #000000)]
+layer at (184,226) size 400x50
   RenderBlock (positioned) {DIV} at (76,76) size 400x50 [bgcolor=#555555]

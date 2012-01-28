@@ -17,16 +17,16 @@ layer at (8,8) size 20x0
     RenderBlock (anonymous) at (0,0) size 20x0
       RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 20x100
-  RenderBlock (positioned) {DIV} at (0,0) size 20x100
+layer at (8,8) size 20x96
+  RenderBlock (positioned) {DIV} at (0,0) size 20x96
     RenderBlock (anonymous) at (0,0) size 20x0
       RenderInline {A} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,16) size 20x68
-      RenderBlock {P} at (0,0) size 20x68
-        RenderText {#text} at (0,0) size 16x68
+    RenderBlock (anonymous) at (0,16) size 20x64
+      RenderBlock {P} at (0,0) size 20x64
+        RenderText {#text} at (0,0) size 16x65
           text run at (0,0) width 16: "A"
-          text run at (0,17) width 16: "B"
-          text run at (0,34) width 16: "C"
-          text run at (0,51) width 16: "D"
-    RenderBlock (anonymous) at (0,100) size 20x0
+          text run at (0,16) width 16: "B"
+          text run at (0,32) width 16: "C"
+          text run at (0,48) width 16: "D"
+    RenderBlock (anonymous) at (0,96) size 20x0
       RenderInline {A} at (0,0) size 0x0

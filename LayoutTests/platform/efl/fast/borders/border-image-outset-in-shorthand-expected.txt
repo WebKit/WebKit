@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (376,171) size 4x19
         text run at (376,171) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {DIV} at (30,220) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-      RenderText {#text} at (186,361) size 4x19
-        text run at (186,361) width 4: " "
-      RenderBlock {DIV} at (220,220) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderBlock {DIV} at (30,219) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (186,360) size 4x19
+        text run at (186,360) width 4: " "
+      RenderBlock {DIV} at (220,219) size 126x126 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
       RenderText {#text} at (0,0) size 0x0

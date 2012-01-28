@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderInline {I} at (0,0) size 59x19
           RenderText {#text} at (0,0) size 59x19
             text run at (0,0) width 59: "Line One"
-      RenderBlock (anonymous) at (0,35) size 784x19
-        RenderBlock {P} at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line Two"
-      RenderBlock (anonymous) at (0,70) size 784x19
+      RenderBlock (anonymous) at (0,68) size 784x18
         RenderInline {I} at (0,0) size 32x19
           RenderText {#text} at (0,0) size 32x19
             text run at (0,0) width 32: "Line "
@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 37x19
           RenderText {#text} at (32,0) size 37x19
             text run at (32,0) width 37: "Three"
-      RenderBlock (anonymous) at (0,105) size 784x19
-        RenderBlock {P} at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,102) size 784x18
+        RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 64x19
             text run at (0,0) width 64: "Line Four"
-      RenderBlock (anonymous) at (0,140) size 784x19
+      RenderBlock (anonymous) at (0,136) size 784x18
         RenderInline {I} at (0,0) size 60x19
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line Five"

@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 751x19
           text run at (0,0) width 229: "You should see three blocks below. "
           text run at (229,0) width 522: "The middle one should look like a diamond because it has been rotated 45 degrees."
-      RenderBlock (floating) {DIV} at (5,40) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
-      RenderBlock (floating) {DIV} at (245,40) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
-layer at (133,48) size 110x110
-  RenderBlock (floating) {DIV} at (125,40) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
+      RenderBlock (floating) {DIV} at (5,39) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
+      RenderBlock (floating) {DIV} at (245,39) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]
+layer at (133,47) size 110x110
+  RenderBlock (floating) {DIV} at (125,39) size 110x110 [bgcolor=#87CEEB] [border: (5px solid #000000)]

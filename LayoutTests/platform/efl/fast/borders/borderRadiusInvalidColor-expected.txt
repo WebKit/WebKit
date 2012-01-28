@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 600x19
           text run at (0,0) width 600: "This tests that border radius will choose the foreground color when no border color is specified."
-      RenderBlock {DIV} at (0,19) size 56x25 [color=#FF0000] [bgcolor=#ADD8E6] [border: (3px solid #FF0000)]
+      RenderBlock {DIV} at (0,18) size 56x24 [color=#FF0000] [bgcolor=#ADD8E6] [border: (3px solid #FF0000)]
         RenderText {#text} at (3,3) size 21x19
           text run at (3,3) width 21: "test"

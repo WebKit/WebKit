@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 47x19
           text run at (0,0) width 47: "test for "
         RenderInline {A} at (0,0) size 56x19 [color=#0000EE]
@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
             text run at (47,0) width 56: "4065447"
         RenderText {#text} at (103,0) size 257x19
           text run at (103,0) width 257: " (support outerHTML on IMG elements)"
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 504x19
           text run at (0,0) width 504: "If the test fails, you'll see a Mozilla logo; if it succeeds, you'll see an Apple logo."
-      RenderBlock (anonymous) at (0,70) size 784x64
+      RenderBlock (anonymous) at (0,68) size 784x64
         RenderImage {IMG} at (0,0) size 52x64
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

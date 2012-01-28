@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 84x19
           text run at (0,0) width 84: "Test case for "
         RenderInline {A} at (0,0) size 63x19 [color=#0000EE]
@@ -11,23 +11,23 @@ layer at (0,0) size 800x600
             text run at (84,0) width 63: "Bug 7265"
         RenderText {#text} at (147,0) size 587x19
           text run at (147,0) width 587: " REGRESSION: noscript, noframes, nolayer, noembed tags insert break inside paragraph tag"
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 321x19
           text run at (0,0) width 321: "This sentence contains noscript tags and should be "
         RenderText {#text} at (321,0) size 74x19
           text run at (321,0) width 74: "on one line."
-      RenderBlock {P} at (0,70) size 784x19
+      RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 329x19
           text run at (0,0) width 329: "This sentence contains noframes tags and should be "
         RenderText {#text} at (329,0) size 74x19
           text run at (329,0) width 74: "on one line."
-      RenderBlock {P} at (0,105) size 784x19
+      RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 318x19
           text run at (0,0) width 318: "This sentence contains nolayer tags and should be "
         RenderInline {NOLAYER} at (0,0) size 0x0
         RenderText {#text} at (318,0) size 74x19
           text run at (318,0) width 74: "on one line."
-      RenderBlock {P} at (0,140) size 784x19
+      RenderBlock {P} at (0,136) size 784x18
         RenderText {#text} at (0,0) size 329x19
           text run at (0,0) width 329: "This sentence contains noembed tags and should be "
         RenderText {#text} at (329,0) size 74x19

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 204x45 [border: (2px solid #FF0000)]
-        RenderInline {FONT} at (0,0) size 175x38 [color=#996699]
+      RenderBlock {DIV} at (0,0) size 204x44 [border: (2px solid #FF0000)]
+        RenderInline {FONT} at (0,0) size 175x37 [color=#996699]
           RenderText {#text} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 150x19
             RenderText {#text} at (2,2) size 10x19
@@ -16,17 +16,17 @@ layer at (0,0) size 800x600
               text run at (132,2) width 20: "     "
           RenderText {#text} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 175x19
-            RenderText {#text} at (2,21) size 10x19
-              text run at (2,21) width 10: "\x{2022} "
+            RenderText {#text} at (2,20) size 10x19
+              text run at (2,20) width 10: "\x{2022} "
             RenderInline {A} at (0,0) size 145x19 [color=#0000EE]
-              RenderText {#text} at (12,21) size 130x19
-                text run at (12,21) width 130: "1-800-las-flores.com"
+              RenderText {#text} at (12,20) size 130x19
+                text run at (12,20) width 130: "1-800-las-flores.com"
               RenderInline {SUB} at (0,0) size 15x15
-                RenderText {#text} at (142,28) size 15x15
-                  text run at (142,28) width 15: "sm"
-            RenderText {#text} at (157,21) size 20x19
-              text run at (157,21) width 20: "     "
+                RenderText {#text} at (142,27) size 15x15
+                  text run at (142,27) width 15: "sm"
+            RenderText {#text} at (157,20) size 20x19
+              text run at (157,20) width 20: "     "
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,45) size 784x0
+      RenderBlock (anonymous) at (0,44) size 784x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#996699]
           RenderText {#text} at (0,0) size 0x0

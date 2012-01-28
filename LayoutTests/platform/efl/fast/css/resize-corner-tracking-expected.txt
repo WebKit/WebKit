@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,18) size 784x19
+      RenderBlock {P} at (0,18) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 669x19
@@ -16,17 +16,17 @@ layer at (0,0) size 800x600
             text run at (405,0) width 317: "Resize corner does not track the mouse accurately"
         RenderText {#text} at (722,0) size 4x19
           text run at (722,0) width 4: "."
-      RenderBlock {HR} at (0,53) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,188) size 784x198
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,187) size 784x195
         RenderText {#text} at (169,106) size 4x19
           text run at (169,106) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,71) size 173x125 clip at (10,73) size 169x121
-  RenderBlock {DIV} at (0,63) size 173x125 [border: (2px solid #0000FF)]
-layer at (8,196) size 169x121 clip at (10,198) size 165x117
+layer at (8,70) size 173x125 clip at (10,72) size 169x121
+  RenderBlock {DIV} at (0,62) size 173x125 [border: (2px solid #0000FF)]
+layer at (8,195) size 169x121 clip at (10,197) size 165x117
   RenderTextControl {TEXTAREA} at (0,0) size 169x121 [bgcolor=#FFFFFF] [border: (2px solid #0000FF)]
-    RenderBlock {DIV} at (4,4) size 161x19
-layer at (10,323) size 221x69
-  RenderTextControl {TEXTAREA} at (2,127) size 221x69 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 214x19
+    RenderBlock {DIV} at (4,4) size 161x18
+layer at (10,321) size 221x67
+  RenderTextControl {TEXTAREA} at (2,126) size 221x67 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 214x18

@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 668x38
+        RenderInline {I} at (0,0) size 668x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 301x19
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14545"
-          RenderText {#text} at (354,0) size 668x38
+          RenderText {#text} at (354,0) size 668x37
             text run at (354,0) width 4: " "
             text run at (358,0) width 310: "REGRESSION (r21854-r21869): Repro crash in"
-            text run at (0,19) width 319: "RenderBlock::updateFirstLetter @ nola.com/rose/"
-        RenderText {#text} at (319,19) size 4x19
-          text run at (319,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 319: "RenderBlock::updateFirstLetter @ nola.com/rose/"
+        RenderText {#text} at (319,18) size 4x19
+          text run at (319,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 249x19
           text run at (0,0) width 249: "The following lines should be identical:"
-      RenderBlock {DIV} at (0,89) size 784x19
+      RenderBlock {DIV} at (0,86) size 784x18
         RenderInline (generated) at (0,0) size 10x19 [color=#008000]
           RenderText {#text} at (0,0) size 10x19
             text run at (0,0) width 10: "L"
         RenderText {#text} at (10,0) size 75x19
           text run at (10,0) width 75: "orem Ipsum"
-      RenderBlock {P} at (0,124) size 784x19
+      RenderBlock {P} at (0,120) size 784x18
         RenderInline {SPAN} at (0,0) size 10x19 [color=#008000]
           RenderText {#text} at (0,0) size 10x19
             text run at (0,0) width 10: "L"

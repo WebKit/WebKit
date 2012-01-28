@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x485 layerType: background only
-layer at (40,77) size 80x80
+layer at (0,0) size 800x484 layerType: background only
+layer at (40,76) size 80x80
   RenderBlock (positioned) zI: -1 {DIV} at (32,50) size 80x80 [bgcolor=#FF0000]
-layer at (40,397) size 80x80
+layer at (40,396) size 80x80
   RenderBlock (positioned) zI: -1 {DIV} at (32,370) size 80x80 [bgcolor=#FF0000]
-layer at (216,77) size 80x80
+layer at (216,76) size 80x80
   RenderBlock (positioned) zI: -1 {DIV} at (208,50) size 80x80 [bgcolor=#FF0000]
-layer at (216,397) size 80x80
+layer at (216,396) size 80x80
   RenderBlock (positioned) zI: -1 {DIV} at (208,370) size 80x80 [bgcolor=#FF0000]
-layer at (0,0) size 800x485 layerType: foreground only
-  RenderBlock {HTML} at (0,0) size 800x485
-    RenderBody {BODY} at (8,8) size 784x469
-      RenderBlock (anonymous) at (0,0) size 784x19
+layer at (0,0) size 800x484 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x484
+    RenderBody {BODY} at (8,8) size 784x468
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 490x19
           text run at (0,0) width 490: "You should see four 80x80 green squares below and no red should be visible."
-layer at (8,27) size 550x450
-  RenderBlock (relative positioned) {DIV} at (0,19) size 550x450
+layer at (8,26) size 550x450
+  RenderBlock (relative positioned) {DIV} at (0,18) size 550x450
     RenderBlock {DIV} at (0,0) size 550x450
       RenderRegion {DIV} at (0,0) size 500x50
       RenderRegion {DIV} at (0,50) size 320x400

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x174
-  RenderBlock {HTML} at (0,0) size 800x174
-layer at (8,8) size 784x158
-  RenderBody {BODY} at (8,8) size 784x158
+layer at (0,0) size 800x173
+  RenderBlock {HTML} at (0,0) size 800x173
+layer at (8,8) size 784x157 scrollHeight 158
+  RenderBody {BODY} at (8,8) size 784x157
     RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
       layer at (0,0) size 300x516
         RenderView at (0,0) size 300x150

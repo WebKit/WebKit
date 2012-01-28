@@ -3,57 +3,57 @@ layer at (0,0) size 954x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 224x19
           text run at (0,0) width 224: "These textfields should not overlap."
-      RenderTable {TABLE} at (0,19) size 784x37
-        RenderTableSection {TBODY} at (0,0) size 784x37
-          RenderTableRow {TR} at (0,1) size 784x35
-            RenderTableCell {TD} at (1,1) size 197x35 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 195x29 [color=#202020]
-            RenderTableCell {TD} at (199,1) size 9x35 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x29 [color=#202020]
-            RenderTableCell {TD} at (209,1) size 9x35 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x29 [color=#202020]
-            RenderTableCell {TD} at (219,8) size 564x21 [r=0 c=3 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 784x36
+        RenderTableSection {TBODY} at (0,0) size 784x36
+          RenderTableRow {TR} at (0,1) size 784x34
+            RenderTableCell {TD} at (1,1) size 197x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 195x28 [color=#202020]
+            RenderTableCell {TD} at (199,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+            RenderTableCell {TD} at (209,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+            RenderTableCell {TD} at (219,8) size 564x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,56) size 784x38
+      RenderBlock (anonymous) at (0,54) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,94) size 946x37
-        RenderTableSection {TBODY} at (0,0) size 946x37
-          RenderTableRow {TR} at (0,1) size 946x35
-            RenderTableCell {TD} at (1,1) size 917x35 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 915x29 [color=#202020]
-            RenderTableCell {TD} at (919,1) size 9x35 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x29 [color=#202020]
-            RenderTableCell {TD} at (929,1) size 9x35 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x29 [color=#202020]
-            RenderTableCell {TD} at (939,8) size 6x21 [r=0 c=3 rs=1 cs=1]
+        RenderBR {BR} at (0,18) size 0x19
+      RenderTable {TABLE} at (0,90) size 946x36
+        RenderTableSection {TBODY} at (0,0) size 946x36
+          RenderTableRow {TR} at (0,1) size 946x34
+            RenderTableCell {TD} at (1,1) size 917x34 [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 915x28 [color=#202020]
+            RenderTableCell {TD} at (919,1) size 9x34 [r=0 c=1 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+            RenderTableCell {TD} at (929,1) size 9x34 [r=0 c=2 rs=1 cs=1]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+            RenderTableCell {TD} at (939,8) size 6x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-layer at (14,37) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
+layer at (14,36) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 188x18
     RenderText {#text} at (1,0) size 67x19
       text run at (1,0) width 67: "New Mail"
-layer at (212,37) size 2x19 scrollWidth 44
-  RenderBlock {DIV} at (4,6) size 2x19
+layer at (212,36) size 2x18 scrollWidth 44 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 2x18
     RenderText {#text} at (1,0) size 42x19
       text run at (1,0) width 42: "Reply"
-layer at (222,37) size 2x19 scrollWidth 67
-  RenderBlock {DIV} at (4,6) size 2x19
+layer at (222,36) size 2x18 scrollWidth 67 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 2x18
     RenderText {#text} at (1,0) size 65x19
       text run at (1,0) width 65: "Reply All"
-layer at (14,112) size 908x19
-  RenderBlock {DIV} at (4,6) size 908x19
+layer at (14,108) size 908x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 908x18
     RenderText {#text} at (1,0) size 67x19
       text run at (1,0) width 67: "New Mail"
-layer at (932,112) size 2x19 scrollWidth 44
-  RenderBlock {DIV} at (4,6) size 2x19
+layer at (932,108) size 2x18 scrollWidth 44 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 2x18
     RenderText {#text} at (1,0) size 42x19
       text run at (1,0) width 42: "Reply"
-layer at (942,112) size 2x19 scrollWidth 67
-  RenderBlock {DIV} at (4,6) size 2x19
+layer at (942,108) size 2x18 scrollWidth 67 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 2x18
     RenderText {#text} at (1,0) size 65x19
       text run at (1,0) width 65: "Reply All"

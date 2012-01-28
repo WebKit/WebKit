@@ -1,48 +1,48 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x246
-  RenderBlock {HTML} at (0,0) size 800x246
-    RenderBody {BODY} at (8,8) size 784x222
-      RenderBlock {DIV} at (0,0) size 784x114
-        RenderBlock {DIV} at (0,0) size 784x19
+layer at (0,0) size 800x236
+  RenderBlock {HTML} at (0,0) size 800x236
+    RenderBody {BODY} at (8,8) size 784x212
+      RenderBlock {DIV} at (0,0) size 784x108
+        RenderBlock {DIV} at (0,0) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-        RenderBlock {DIV} at (0,19) size 784x19
+        RenderBlock {DIV} at (0,18) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-        RenderBlock {DIV} at (0,38) size 784x19
+        RenderBlock {DIV} at (0,36) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-        RenderBlock {DIV} at (0,57) size 784x19
+        RenderBlock {DIV} at (0,54) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-        RenderBlock {DIV} at (0,76) size 784x19
+        RenderBlock {DIV} at (0,72) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-        RenderBlock {DIV} at (0,95) size 784x19
+        RenderBlock {DIV} at (0,90) size 784x18
           RenderInline (generated) at (0,0) size 39x19
             RenderText at (0,0) size 39x19
               text run at (0,0) width 39: "PASS"
-      RenderBlock {DIV} at (0,130) size 784x92
-        RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,124) size 784x88
+        RenderBlock {P} at (0,0) size 784x18
           RenderInline {A} at (0,0) size 671x19 [color=#0000EE]
             RenderText {#text} at (0,0) size 671x19
               text run at (0,0) width 671: "Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer"
-        RenderBlock {OL} at (0,35) size 784x57
-          RenderListItem {LI} at (40,0) size 744x19
+        RenderBlock {OL} at (0,34) size 784x54
+          RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-21,0) size 16x19: "1"
             RenderText {#text} at (0,0) size 345x19
               text run at (0,0) width 345: "All lines above should be \"PASS\" on initial page load."
-          RenderListItem {LI} at (40,19) size 744x19
+          RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (-21,0) size 16x19: "2"
             RenderText {#text} at (0,0) size 140x19
               text run at (0,0) width 140: "Reload the page once."
-          RenderListItem {LI} at (40,38) size 744x19
+          RenderListItem {LI} at (40,36) size 744x18
             RenderListMarker at (-21,0) size 16x19: "3"
             RenderText {#text} at (0,0) size 247x19
               text run at (0,0) width 247: "All lines above should still be \"PASS\"."

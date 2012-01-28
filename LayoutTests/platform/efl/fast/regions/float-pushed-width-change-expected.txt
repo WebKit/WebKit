@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x354
-  RenderBlock {HTML} at (0,0) size 800x354
-    RenderBody {BODY} at (8,16) size 784x330
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 764x38
+layer at (0,0) size 800x352
+  RenderBlock {HTML} at (0,0) size 800x352
+    RenderBody {BODY} at (8,16) size 784x328
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 764x37
           text run at (0,0) width 764: "In the example below, the green float should be at the top of the first region and on the left. It should spill into region two."
-          text run at (0,19) width 400: "The orange float should be on the right at the top of region two."
-      RenderBlock {DIV} at (0,54) size 784x276
+          text run at (0,18) width 400: "The orange float should be on the right at the top of region two."
+      RenderBlock {DIV} at (0,52) size 784x276
         RenderRegion {DIV} at (0,0) size 182x92 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,92) size 402x92 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,184) size 402x92 [border: (1px solid #000000)]
@@ -15,20 +15,20 @@ Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 400x270
       RenderFlowThread at (0,0) size 400x270
-        RenderBlock {DIV} at (0,0) size 400x255
-          RenderBlock {DIV} at (5,21) size 390x213
-            RenderBlock {DIV} at (0,0) size 390x213
-              RenderBlock {P} at (0,0) size 390x178
+        RenderBlock {DIV} at (0,0) size 400x253
+          RenderBlock {DIV} at (5,21) size 390x211
+            RenderBlock {DIV} at (0,0) size 390x211
+              RenderBlock {P} at (0,0) size 390x177
                 RenderImage {IMG} at (0,0) size 150x100 [bgcolor=#008000]
                 RenderImage {IMG} at (190,70) size 200x30 [bgcolor=#FFA500]
                 RenderText {#text} at (0,100) size 390x78
                   text run at (0,100) width 106: "This line of text "
                   text run at (106,100) width 161: "should not get out of the "
                   text run at (267,100) width 123: "region. This line of"
-                  text run at (0,119) width 390: "text should not get out of the region. This line of text should"
-                  text run at (0,138) width 390: "not get out of the region. This line of text should not get out"
+                  text run at (0,118) width 390: "text should not get out of the region. This line of text should"
+                  text run at (0,136) width 390: "not get out of the region. This line of text should not get out"
                   text run at (0,159) width 84: "of the region."
-              RenderBlock {P} at (0,194) size 390x19
+              RenderBlock {P} at (0,193) size 390x18
                 RenderText {#text} at (0,0) size 308x19
                   text run at (0,0) width 308: "This line of text should not get out of the region.."
   Regions for flow 'flow1'

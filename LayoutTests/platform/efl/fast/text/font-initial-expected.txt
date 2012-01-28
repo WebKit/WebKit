@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 620x19
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (358,0) width 315: "Assertion failure in WebCore::Font::primaryFont"
         RenderText {#text} at (673,0) size 4x19
           text run at (673,0) width 4: "."
-      RenderBlock (anonymous) at (0,35) size 784x19
+      RenderBlock (anonymous) at (0,34) size 784x18
         RenderInline {SPAN} at (0,0) size 39x19
           RenderText {#text} at (0,0) size 39x19
             text run at (0,0) width 39: "PASS"

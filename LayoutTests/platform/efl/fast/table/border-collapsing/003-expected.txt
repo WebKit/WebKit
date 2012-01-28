@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x388
-  RenderBlock {HTML} at (0,0) size 800x388
-    RenderBody {BODY} at (8,16) size 784x340
-      RenderBlock {P} at (0,0) size 784x38
+layer at (0,0) size 800x386
+  RenderBlock {HTML} at (0,0) size 800x386
+    RenderBody {BODY} at (8,16) size 784x338
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 201x19
           text run at (0,0) width 201: "The black border below should "
         RenderInline {I} at (0,0) size 20x19
           RenderText {#text} at (201,0) size 20x19
             text run at (201,0) width 20: "not"
-        RenderText {#text} at (221,0) size 746x38
+        RenderText {#text} at (221,0) size 746x37
           text run at (221,0) width 212: " cut through the top left corner of "
           text run at (433,0) width 313: "the blue border. It would cut through with our old"
-          text run at (0,19) width 87: "behavior, but "
+          text run at (0,18) width 87: "behavior, but "
         RenderInline {A} at (0,0) size 22x19 [color=#0000EE]
-          RenderText {#text} at (87,19) size 22x19
-            text run at (87,19) width 22: "this"
-        RenderText {#text} at (109,19) size 307x19
-          text run at (109,19) width 4: " "
-          text run at (113,19) width 303: "bug fix changed our behavior to match the spec."
-      RenderBlock {DIV} at (32,70) size 720x270 [border: (1px solid #0000FF)]
+          RenderText {#text} at (87,18) size 22x19
+            text run at (87,18) width 22: "this"
+        RenderText {#text} at (109,18) size 307x19
+          text run at (109,18) width 4: " "
+          text run at (113,18) width 303: "bug fix changed our behavior to match the spec."
+      RenderBlock {DIV} at (32,68) size 720x270 [border: (1px solid #0000FF)]
         RenderTable {DIV} at (1,1) size 115x220 [border:]
           RenderTableSection (anonymous) at (1,10) size 104x200
             RenderTableRow {P} at (0,0) size 104x100

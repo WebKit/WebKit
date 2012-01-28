@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {CENTER} at (0,0) size 784x19
+      RenderBlock {CENTER} at (0,0) size 784x18
         RenderInline {FONT} at (0,0) size 298x19
           RenderText {#text} at (243,0) size 298x19
             text run at (243,0) width 298: "You should see a 100x100 green Image below."
-      RenderBlock (anonymous) at (0,19) size 784x100
+      RenderBlock (anonymous) at (0,18) size 784x100
         RenderInline {FONT} at (0,0) size 100x19
           RenderImage {IMG} at (0,0) size 100x100 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,119) size 6x6
+      RenderTable {TABLE} at (0,118) size 6x6
         RenderTableSection {TBODY} at (0,0) size 6x6
           RenderTableRow {TR} at (0,2) size 6x2
             RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
-      RenderBlock (anonymous) at (0,125) size 784x0
+      RenderBlock (anonymous) at (0,124) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

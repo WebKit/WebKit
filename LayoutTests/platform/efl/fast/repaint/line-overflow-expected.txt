@@ -1,34 +1,34 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x288
-  RenderBlock {HTML} at (0,0) size 800x288
-    RenderBody {BODY} at (8,16) size 784x264
-      RenderBlock {P} at (0,0) size 784x38
+layer at (0,0) size 800x286
+  RenderBlock {HTML} at (0,0) size 800x286
+    RenderBody {BODY} at (8,16) size 784x262
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x19
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 744x38
+        RenderInline {I} at (0,0) size 744x37
           RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x19
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9669"
-          RenderText {#text} at (452,0) size 744x38
+          RenderText {#text} at (452,0) size 744x37
             text run at (452,0) width 4: " "
             text run at (456,0) width 288: "Incomplete repaint when changing an inline's"
-            text run at (0,19) width 43: "border"
-        RenderText {#text} at (43,19) size 4x19
-          text run at (43,19) width 4: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,64) size 200x200
-        RenderText {#text} at (0,0) size 192x57
+            text run at (0,18) width 43: "border"
+        RenderText {#text} at (43,18) size 4x19
+          text run at (43,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,62) size 200x200
+        RenderText {#text} at (0,0) size 192x55
           text run at (0,0) width 129: "Cras faucibus. Nunc"
-          text run at (0,19) width 192: "adipiscing, enim in scelerisque"
-          text run at (0,38) width 64: "convallis, "
-          text run at (64,38) width 42: "augue "
+          text run at (0,18) width 192: "adipiscing, enim in scelerisque"
+          text run at (0,36) width 64: "convallis, "
+          text run at (64,36) width 42: "augue "
         RenderInline {SPAN} at (0,0) size 35x49 [border: (30px solid #0000FF) none]
-          RenderText {#text} at (106,38) size 35x19
-            text run at (106,38) width 35: "purus"
-        RenderText {#text} at (141,38) size 195x95
-          text run at (141,38) width 54: " eleifend"
-          text run at (0,57) width 151: "lacus, at sagittis eros leo"
-          text run at (0,76) width 135: "pulvinar velit. Integer"
-          text run at (0,95) width 190: "sollicitudin nisi ut urna blandit"
-          text run at (0,114) width 60: "convallis."
+          RenderText {#text} at (106,36) size 35x19
+            text run at (106,36) width 35: "purus"
+        RenderText {#text} at (141,36) size 195x91
+          text run at (141,36) width 54: " eleifend"
+          text run at (0,54) width 151: "lacus, at sagittis eros leo"
+          text run at (0,72) width 135: "pulvinar velit. Integer"
+          text run at (0,90) width 190: "sollicitudin nisi ut urna blandit"
+          text run at (0,108) width 60: "convallis."

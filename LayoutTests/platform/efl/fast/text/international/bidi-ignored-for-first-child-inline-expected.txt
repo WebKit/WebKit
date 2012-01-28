@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 132x19
           text run at (0,0) width 132: "This is a test for "
-        RenderInline {I} at (0,0) size 772x38
-          RenderText {#text} at (132,0) size 772x38
+        RenderInline {I} at (0,0) size 772x37
+          RenderText {#text} at (132,0) size 772x37
             text run at (132,0) width 640: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5980 Bidi properties of an inline"
-            text run at (0,19) width 478: "container whose first child is an inline container are ignored"
-        RenderText {#text} at (478,19) size 5x19
-          text run at (478,19) width 5: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,72) size 784x19
+            text run at (0,18) width 478: "container whose first child is an inline container are ignored"
+        RenderText {#text} at (478,18) size 5x19
+          text run at (478,18) width 5: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 365x19
           text run at (0,0) width 365: "The following lines should read \x{201C}ABCDEFGHI\x{201D}:"
-      RenderBlock {P} at (0,107) size 784x19
+      RenderBlock {P} at (0,104) size 784x18
         RenderText {#text} at (0,0) size 33x19
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 31x19
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
             text run at (33,0) width 31 RTL override: "FED"
         RenderText {#text} at (64,0) size 29x19
           text run at (64,0) width 29: "GHI"
-      RenderBlock {P} at (0,142) size 784x19
+      RenderBlock {P} at (0,138) size 784x18
         RenderText {#text} at (0,0) size 33x19
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 31x19
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
               text run at (33,0) width 31 RTL override: "FED"
         RenderText {#text} at (64,0) size 29x19
           text run at (64,0) width 29: "GHI"
-      RenderBlock {P} at (0,177) size 784x19
+      RenderBlock {P} at (0,172) size 784x18
         RenderText {#text} at (0,0) size 33x19
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 31x19
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
               text run at (33,0) width 22 RTL override: "ED"
         RenderText {#text} at (64,0) size 29x19
           text run at (64,0) width 29: "GHI"
-      RenderBlock {P} at (0,212) size 784x19
+      RenderBlock {P} at (0,206) size 784x18
         RenderText {#text} at (0,0) size 33x19
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 31x19
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
             text run at (33,0) width 12 RTL override: "D"
         RenderText {#text} at (64,0) size 29x19
           text run at (64,0) width 29: "GHI"
-      RenderBlock {P} at (0,247) size 784x19
+      RenderBlock {P} at (0,240) size 784x18
         RenderText {#text} at (0,0) size 33x19
           text run at (0,0) width 33: "ABC"
         RenderInline {SPAN} at (0,0) size 31x19
@@ -68,34 +68,34 @@ layer at (0,0) size 800x600
             text run at (33,0) width 12 RTL override: "D"
         RenderText {#text} at (64,0) size 29x19
           text run at (64,0) width 29: "GHI"
-      RenderBlock {P} at (0,282) size 784x19
+      RenderBlock {P} at (0,274) size 784x18
         RenderInline {SPAN} at (0,0) size 93x19
           RenderText {#text} at (0,0) size 93x19
             text run at (0,0) width 93 RTL override: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,317) size 784x19
+      RenderBlock {P} at (0,308) size 784x18
         RenderInline {SPAN} at (0,0) size 93x19
           RenderText {#text} at (0,0) size 93x19
             text run at (0,0) width 93 RTL override: "IHGFEDCBA"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,352) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,362) size 784x19
+      RenderBlock {HR} at (0,342) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,352) size 784x18
         RenderText {#text} at (0,0) size 306x19
           text run at (0,0) width 306: "The following lines should be identical:"
-      RenderBlock {P} at (0,397) size 784x19
+      RenderBlock {P} at (0,386) size 784x18
         RenderText {#text} at (0,0) size 63x19
           text run at (0,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (24,0) width 12: "(["
           text run at (36,0) width 27 RTL: "\x{202C}\x{5D0}\x{5D1}\x{5D2}"
           text run at (63,0) width 0: "\x{202A}"
-      RenderBlock {P} at (0,432) size 784x19
+      RenderBlock {P} at (0,420) size 784x18
         RenderText {#text} at (0,0) size 36x19
           text run at (0,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (24,0) width 12: "(["
         RenderInline {SPAN} at (0,0) size 0x19
         RenderText {#text} at (36,0) size 27x19
           text run at (36,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,467) size 784x19
+      RenderBlock {P} at (0,454) size 784x18
         RenderText {#text} at (0,0) size 36x19
           text run at (0,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (24,0) width 12: "(["
@@ -103,7 +103,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 0x19
         RenderText {#text} at (36,0) size 27x19
           text run at (36,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-      RenderBlock {P} at (0,502) size 784x19
+      RenderBlock {P} at (0,488) size 784x18
         RenderText {#text} at (0,0) size 36x19
           text run at (0,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (24,0) width 12: "(["

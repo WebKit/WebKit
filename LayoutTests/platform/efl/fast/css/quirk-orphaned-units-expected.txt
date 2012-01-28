@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x179 [border: (80px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x178 [border: (80px solid #FF0000)]
         RenderText {#text} at (80,80) size 208x19
           text run at (80,80) width 208: "This border should be 5em thick."
-      RenderBlock {DIV} at (0,179) size 100x38 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 98x38
+      RenderBlock {DIV} at (0,178) size 100x36 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 98x37
           text run at (0,0) width 98: "This div should"
-          text run at (0,19) width 98: "be 100px wide."
+          text run at (0,18) width 98: "be 100px wide."

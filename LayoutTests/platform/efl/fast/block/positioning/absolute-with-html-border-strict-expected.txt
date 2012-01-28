@@ -5,7 +5,7 @@ layer at (0,0) size 800x208
     RenderBody {BODY} at (108,108) size 584x0
 layer at (600,400) size 200x200
   RenderBlock (positioned) {DIV} at (600,400) size 200x200 [bgcolor=#008000]
-    RenderText {#text} at (0,0) size 186x57
+    RenderText {#text} at (0,0) size 186x55
       text run at (0,0) width 180: "This should be in the bottom"
-      text run at (0,19) width 149: "right-hand corner of the"
-      text run at (0,38) width 186: "viewport even when resizing."
+      text run at (0,18) width 149: "right-hand corner of the"
+      text run at (0,36) width 186: "viewport even when resizing."

@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
+      RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 151x19
           text run at (0,0) width 151: "This is a repaint test for "
-        RenderInline {I} at (0,0) size 755x38
+        RenderInline {I} at (0,0) size 755x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (151,0) size 301x19
               text run at (151,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11277"
-          RenderText {#text} at (452,0) size 755x38
+          RenderText {#text} at (452,0) size 755x37
             text run at (452,0) width 4: " "
             text run at (456,0) width 299: "REGRESSION: Incomplete repaint of overflow"
-            text run at (0,19) width 127: "areas when deleting"
-        RenderText {#text} at (127,19) size 760x38
-          text run at (127,19) width 8: ". "
-          text run at (135,19) width 443: "This shows that the repaint rect doesn't account for scrolling. You can "
-          text run at (578,19) width 182: "use Quartz Debug to see that"
-          text run at (0,38) width 408: "changing the text repaints a rect where the text would have been "
-          text run at (408,38) width 154: "if it hadn't been scrolled."
-layer at (8,81) size 80x69 clip at (8,81) size 65x69 scrollY 128 scrollHeight 209
-  RenderBlock {DIV} at (0,73) size 80x69
+            text run at (0,18) width 127: "areas when deleting"
+        RenderText {#text} at (127,18) size 760x37
+          text run at (127,18) width 8: ". "
+          text run at (135,18) width 443: "This shows that the repaint rect doesn't account for scrolling. You can "
+          text run at (578,18) width 182: "use Quartz Debug to see that"
+          text run at (0,36) width 408: "changing the text repaints a rect where the text would have been "
+          text run at (408,36) width 154: "if it hadn't been scrolled."
+layer at (8,78) size 80x69 clip at (8,78) size 65x69 scrollY 128 scrollHeight 199
+  RenderBlock {DIV} at (0,70) size 80x69
     RenderBR {BR} at (0,0) size 0x19
-    RenderBR {BR} at (0,19) size 0x19
-    RenderBR {BR} at (0,38) size 0x19
-    RenderBR {BR} at (0,57) size 0x19
-    RenderBR {BR} at (0,76) size 0x19
-    RenderBR {BR} at (0,95) size 0x19
-    RenderBR {BR} at (0,114) size 0x19
-    RenderBR {BR} at (0,133) size 0x19
-    RenderBR {BR} at (0,152) size 0x19
-    RenderText {#text} at (0,171) size 43x38
-      text run at (0,171) width 43: "Passed"
-      text run at (0,190) width 27: "Test"
+    RenderBR {BR} at (0,18) size 0x19
+    RenderBR {BR} at (0,36) size 0x19
+    RenderBR {BR} at (0,54) size 0x19
+    RenderBR {BR} at (0,72) size 0x19
+    RenderBR {BR} at (0,90) size 0x19
+    RenderBR {BR} at (0,108) size 0x19
+    RenderBR {BR} at (0,126) size 0x19
+    RenderBR {BR} at (0,144) size 0x19
+    RenderText {#text} at (0,162) size 43x37
+      text run at (0,162) width 43: "Passed"
+      text run at (0,180) width 27: "Test"

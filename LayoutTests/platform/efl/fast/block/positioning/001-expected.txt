@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x30
-  RenderBlock {HTML} at (0,0) size 800x30
-    RenderBody {BODY} at (0,0) size 800x29 [bgcolor=#000000]
-      RenderBlock {A} at (0,0) size 800x29 [color=#0000EE] [bgcolor=#FF0000]
+layer at (0,0) size 800x29
+  RenderBlock {HTML} at (0,0) size 800x29
+    RenderBody {BODY} at (0,0) size 800x28 [bgcolor=#000000]
+      RenderBlock {A} at (0,0) size 800x28 [color=#0000EE] [bgcolor=#FF0000]
         RenderText {#text} at (10,5) size 39x19
           text run at (10,5) width 39: "Home"
 layer at (55,190) size 50x50

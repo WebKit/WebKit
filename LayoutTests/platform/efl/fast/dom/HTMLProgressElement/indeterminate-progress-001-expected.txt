@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x73
-  RenderBlock {HTML} at (0,0) size 800x73
-    RenderBody {BODY} at (8,8) size 784x57
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x54
       RenderProgress {PROGRESS} at (0,2) size 160x16 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (2,2) size 156x12 [bgcolor=#808080]
           RenderBlock {DIV} at (0,0) size 0x12 [bgcolor=#008000]
       RenderText {#text} at (160,0) size 4x19
         text run at (160,0) width 4: " "
       RenderBR {BR} at (164,0) size 0x19
-      RenderProgress {PROGRESS} at (0,21) size 160x16 [border: (2px solid #0000FF)]
+      RenderProgress {PROGRESS} at (0,20) size 160x16 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (2,2) size 156x12 [bgcolor=#808080]
           RenderBlock {DIV} at (0,0) size 0x12 [bgcolor=#008000]
-      RenderText {#text} at (160,19) size 4x19
-        text run at (160,19) width 4: " "
-      RenderBR {BR} at (164,19) size 0x19
-      RenderProgress {PROGRESS} at (0,40) size 160x16 [border: (2px solid #FF0000)]
+      RenderText {#text} at (160,18) size 4x19
+        text run at (160,18) width 4: " "
+      RenderBR {BR} at (164,18) size 0x19
+      RenderProgress {PROGRESS} at (0,38) size 160x16 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (2,2) size 156x12 [bgcolor=#808080]
           RenderBlock {DIV} at (0,0) size 78x12 [bgcolor=#008000]
       RenderText {#text} at (0,0) size 0x0

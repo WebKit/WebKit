@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
-      RenderBlock {UL} at (0,0) size 114x584 [bgcolor=#808080] [border: (25px solid #008000) none]
-        RenderListItem {LI} at (0,50) size 38x534
+      RenderBlock {UL} at (0,0) size 108x584 [bgcolor=#808080] [border: (25px solid #008000) none]
+        RenderListItem {LI} at (0,50) size 36x534
           RenderListMarker at (0,-18) size 19x7: bullet
-          RenderText {#text} at (0,0) size 38x520
+          RenderText {#text} at (0,0) size 37x520
             text run at (0,0) width 520: "The top padding on this unordered list has been set to 25 pixels, which will require"
-            text run at (19,0) width 191: "some extra test in order to test."
-        RenderListItem {LI} at (38,50) size 76x534 [bgcolor=#FFFFFF] [border: (25px solid #008000) none]
+            text run at (18,0) width 191: "some extra test in order to test."
+        RenderListItem {LI} at (36,50) size 72x534 [bgcolor=#FFFFFF] [border: (25px solid #008000) none]
           RenderListMarker at (0,-18) size 19x7: bullet
-          RenderText {#text} at (0,50) size 76x473
+          RenderText {#text} at (0,50) size 73x473
             text run at (0,50) width 473: "Another list item might not be such a bad idea, either, considering that such"
-            text run at (19,50) width 239: "things do need to be double-checked. "
-            text run at (19,289) width 232: "This list item has its left padding also"
-            text run at (38,50) width 460: "set to 25 pixels, which should combine with the list's padding to make 50"
-            text run at (57,50) width 106: "pixels of margin."
+            text run at (18,50) width 239: "things do need to be double-checked. "
+            text run at (18,289) width 232: "This list item has its left padding also"
+            text run at (36,50) width 460: "set to 25 pixels, which should combine with the list's padding to make 50"
+            text run at (54,50) width 106: "pixels of margin."

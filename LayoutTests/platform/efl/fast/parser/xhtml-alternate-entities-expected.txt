@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x185
-  RenderBlock {html} at (0,0) size 800x185
+layer at (0,0) size 800x184
+  RenderBlock {html} at (0,0) size 800x184
     RenderBlock {parsererror} at (16,16) size 768x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
       RenderBlock {h3} at (18,20) size 732x22
         RenderText {#text} at (0,0) size 324x22
@@ -13,7 +13,7 @@ layer at (0,0) size 800x185
       RenderBlock {h3} at (18,92) size 732x22
         RenderText {#text} at (0,0) size 429x22
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-    RenderBlock (anonymous) at (0,166) size 800x19
+    RenderBlock (anonymous) at (0,166) size 800x18
       RenderInline {h1} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

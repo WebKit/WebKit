@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 780x57
+      RenderText {#text} at (0,0) size 780x55
         text run at (0,0) width 780: "The documents in the src attributes of the iframes below only contain comments. This test is for a bug where we would only"
-        text run at (0,19) width 773: "construct RenderViews for such iframes. We need to propery construct an empty frame instead, so the RenderView should"
-        text run at (0,38) width 502: "have a RenderBlock and RenderBody below it in the dump of the RenderTree. "
-      RenderBR {BR} at (502,53) size 0x0
-      RenderPartObject {IFRAME} at (0,57) size 788x14 [border: (2px inset #000000)]
+        text run at (0,18) width 773: "construct RenderViews for such iframes. We need to propery construct an empty frame instead, so the RenderView should"
+        text run at (0,36) width 502: "have a RenderBlock and RenderBody below it in the dump of the RenderTree. "
+      RenderBR {BR} at (502,51) size 0x0
+      RenderPartObject {IFRAME} at (0,54) size 788x14 [border: (2px inset #000000)]
         layer at (0,0) size 784x10
           RenderView at (0,0) size 784x10
         layer at (0,0) size 784x10
@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 768x0
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (0,0) size 0x0
-      RenderBR {BR} at (0,71) size 0x19
-      RenderPartObject {IFRAME} at (0,90) size 788x14 [border: (2px inset #000000)]
+      RenderBR {BR} at (0,68) size 0x19
+      RenderPartObject {IFRAME} at (0,86) size 788x14 [border: (2px inset #000000)]
         layer at (0,0) size 769x166
           RenderView at (0,0) size 769x10
         layer at (0,0) size 769x166

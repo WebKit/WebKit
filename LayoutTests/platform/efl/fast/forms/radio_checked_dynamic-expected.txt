@@ -3,58 +3,58 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 779x38
+      RenderBlock (anonymous) at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 779x37
           text run at (0,0) width 779: "This will test that radio buttons can be moved in and out of forms while maintaining only one checked button per group, per"
-          text run at (0,19) width 38: "form. "
-        RenderBR {BR} at (38,34) size 0x0
-        RenderText {#text} at (0,38) size 346x19
-          text run at (0,38) width 346: "Test 1: Transfer radio buttons from <body> to <form>:"
+          text run at (0,18) width 38: "form. "
+        RenderBR {BR} at (38,33) size 0x0
+        RenderText {#text} at (0,36) size 346x19
+          text run at (0,36) width 346: "Test 1: Transfer radio buttons from <body> to <form>:"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {FORM} at (0,57) size 784x18
+      RenderBlock {FORM} at (0,54) size 784x18
         RenderBlock {INPUT} at (4,3) size 12x12
         RenderBlock {INPUT} at (24,3) size 12x12
-      RenderBlock {DIV} at (0,91) size 784x19
+      RenderBlock {DIV} at (0,88) size 784x18
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Test 1 Passed"
-      RenderBlock (anonymous) at (0,110) size 784x38
+      RenderBlock (anonymous) at (0,106) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 346x19
-          text run at (0,19) width 346: "Test 2: Transfer radio buttons from <form> to <body>:"
-      RenderBlock {FORM} at (0,148) size 784x0
+        RenderText {#text} at (0,18) size 346x19
+          text run at (0,18) width 346: "Test 2: Transfer radio buttons from <form> to <body>:"
+      RenderBlock {FORM} at (0,142) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,164) size 784x19
+      RenderBlock {DIV} at (0,158) size 784x18
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Test 2 Passed"
-      RenderBlock (anonymous) at (0,183) size 784x38
+      RenderBlock (anonymous) at (0,176) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 563x19
-          text run at (0,19) width 563: "Test 3: Transfer radio buttons from <form> to <body> with a dormant state in the middle:"
-      RenderBlock {FORM} at (0,221) size 784x0
+        RenderText {#text} at (0,18) size 563x19
+          text run at (0,18) width 563: "Test 3: Transfer radio buttons from <form> to <body> with a dormant state in the middle:"
+      RenderBlock {FORM} at (0,212) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,237) size 784x19
+      RenderBlock {DIV} at (0,228) size 784x18
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Test 3 Passed"
-      RenderBlock (anonymous) at (0,256) size 784x38
+      RenderBlock (anonymous) at (0,246) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 254x19
-          text run at (0,19) width 254: "Test 4: Transfer from <form> to <form>"
-      RenderBlock {FORM} at (0,294) size 784x0
+        RenderText {#text} at (0,18) size 254x19
+          text run at (0,18) width 254: "Test 4: Transfer from <form> to <form>"
+      RenderBlock {FORM} at (0,282) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {FORM} at (0,310) size 784x21
+      RenderBlock {FORM} at (0,298) size 784x21
         RenderBlock {INPUT} at (4,6) size 12x12
         RenderText {#text} at (20,0) size 4x19
           text run at (20,0) width 4: " "
         RenderBlock {INPUT} at (28,6) size 12x12
         RenderBlock {INPUT} at (48,6) size 12x12
-      RenderBlock {DIV} at (0,347) size 784x19
+      RenderBlock {DIV} at (0,335) size 784x18
         RenderText {#text} at (0,0) size 91x19
           text run at (0,0) width 91: "Test 4 Passed"
-      RenderBlock (anonymous) at (0,366) size 784x18
+      RenderBlock (anonymous) at (0,353) size 784x18
         RenderBlock {INPUT} at (4,3) size 12x12
         RenderBlock {INPUT} at (24,3) size 12x12
         RenderBlock {INPUT} at (44,3) size 12x12

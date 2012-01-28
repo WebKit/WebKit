@@ -3,35 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 725x38
+        RenderInline {I} at (0,0) size 725x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 301x19
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=12818"
-          RenderText {#text} at (354,0) size 725x38
+          RenderText {#text} at (354,0) size 725x37
             text run at (354,0) width 4: " "
             text run at (358,0) width 367: "REGRESSION (r19148): shacknews.com does not render"
-            text run at (0,19) width 68: "completely"
-        RenderText {#text} at (68,19) size 4x19
-          text run at (68,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 68: "completely"
+        RenderText {#text} at (68,18) size 4x19
+          text run at (68,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 331x19
           text run at (0,0) width 331: "There should be a green square to the left of the text."
-      RenderBlock {DIV} at (0,89) size 100x100 [bgcolor=#008000]
-      RenderBlock {DIV} at (0,189) size 784x19
+      RenderBlock {DIV} at (0,86) size 100x100 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,186) size 784x18
         RenderText {#text} at (0,0) size 39x19
           text run at (0,0) width 39: "PASS"
-layer at (8,97) size 792x133
-  RenderBlock (positioned) {DIV} at (8,97) size 792x133
-    RenderBlock {DIV} at (100,0) size 692x133
-      RenderBlock {DIV} at (0,0) size 692x133
-        RenderText {#text} at (0,0) size 687x133
+layer at (8,94) size 792x126
+  RenderBlock (positioned) {DIV} at (8,94) size 792x126
+    RenderBlock {DIV} at (100,0) size 692x126
+      RenderBlock {DIV} at (0,0) size 692x126
+        RenderText {#text} at (0,0) size 687x127
           text run at (0,0) width 667: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque."
-          text run at (0,19) width 675: "Quisque eu nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien."
-          text run at (0,38) width 671: "Phasellus vehicula, sem at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate"
-          text run at (0,57) width 673: "pede. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra"
-          text run at (0,76) width 687: "augue vitae purus. Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus."
-          text run at (0,95) width 685: "Donec eget dui id eros pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis"
-          text run at (0,114) width 245: "blandit, elementum eu, aliquet a, tellus."
+          text run at (0,18) width 675: "Quisque eu nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien."
+          text run at (0,36) width 671: "Phasellus vehicula, sem at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate"
+          text run at (0,54) width 673: "pede. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra"
+          text run at (0,72) width 687: "augue vitae purus. Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus."
+          text run at (0,90) width 685: "Donec eget dui id eros pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis"
+          text run at (0,108) width 245: "blandit, elementum eu, aliquet a, tellus."

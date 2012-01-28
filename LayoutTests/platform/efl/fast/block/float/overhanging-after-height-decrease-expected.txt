@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,100) size 784x20
         RenderBlock {DIV} at (0,0) size 784x40 [bgcolor=#808080]
       RenderBlock {DIV} at (0,120) size 784x80 [bgcolor=#C0C0C0]
-        RenderBlock {DIV} at (0,0) size 784x19
+        RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 245x19
             text run at (0,0) width 245: "This line should start at the left margin."
       RenderBlock {DIV} at (0,200) size 784x20

@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {UL} at (0,0) size 784x57
-        RenderListItem {LI} at (40,0) size 744x19
+      RenderBlock {UL} at (0,0) size 784x54
+        RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
-        RenderListItem {LI} at (40,19) size 744x19
+        RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
-        RenderListItem {LI} at (40,38) size 744x19
+        RenderListItem {LI} at (40,36) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 323x19
             text run at (0,0) width 323: "There should be two bullets with no text above me."

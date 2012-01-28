@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x422
-  RenderBlock {HTML} at (0,0) size 800x422
-    RenderBody {BODY} at (8,16) size 784x398
-      RenderBlock {P} at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 780x76
+layer at (0,0) size 800x418
+  RenderBlock {HTML} at (0,0) size 800x418
+    RenderBody {BODY} at (8,16) size 784x394
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 780x73
           text run at (0,0) width 755: "In the test case below, the green block's width should not vary and should use the first region to determine its width. It is"
-          text run at (0,19) width 751: "overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's"
-          text run at (0,38) width 780: "containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect."
-          text run at (0,57) width 565: "The overflow should be spilling out of the top of region one and be painted in region two."
-      RenderBlock {DIV} at (0,92) size 784x306
+          text run at (0,18) width 751: "overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's"
+          text run at (0,36) width 780: "containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect."
+          text run at (0,54) width 565: "The overflow should be spilling out of the top of region one and be painted in region two."
+      RenderBlock {DIV} at (0,88) size 784x306
         RenderRegion {DIV} at (0,0) size 402x202 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,202) size 302x102 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,304) size 2x2 [border: (1px solid #000000)]
@@ -19,25 +19,25 @@ Flow Threads
       RenderFlowThread at (0,0) size 400x300
         RenderBlock {DIV} at (0,0) size 400x200
           RenderBlock {DIV} at (5,5) size 390x190 [border: (1px solid #0000FF)]
-            RenderBlock {DIV} at (48,1) size 293x249 [border: (1px solid #008000)]
-              RenderBlock {P} at (1,17) size 291x57
-                RenderText {#text} at (0,0) size 291x57
+            RenderBlock {DIV} at (48,1) size 293x229 [border: (1px solid #008000)]
+              RenderBlock {P} at (1,17) size 291x54
+                RenderText {#text} at (0,0) size 291x55
                   text run at (0,0) width 291: "These lines should all fit to the width of the"
-                  text run at (0,19) width 291: "block in the first region and spill out of the"
-                  text run at (0,38) width 116: "bottom of the first "
-                  text run at (116,38) width 44: "region."
-              RenderBlock {P} at (1,90) size 291x57
-                RenderText {#text} at (0,0) size 291x57
+                  text run at (0,18) width 291: "block in the first region and spill out of the"
+                  text run at (0,36) width 116: "bottom of the first "
+                  text run at (116,36) width 44: "region."
+              RenderBlock {P} at (1,87) size 291x54
+                RenderText {#text} at (0,0) size 291x55
                   text run at (0,0) width 291: "These lines should all fit to the width of the"
-                  text run at (0,19) width 291: "block in the first region and spill out of the"
-                  text run at (0,38) width 116: "bottom of the first "
-                  text run at (116,38) width 44: "region."
-              RenderBlock {P} at (1,163) size 291x69
-                RenderText {#text} at (0,0) size 291x69
+                  text run at (0,18) width 291: "block in the first region and spill out of the"
+                  text run at (0,36) width 116: "bottom of the first "
+                  text run at (116,36) width 44: "region."
+              RenderBlock {P} at (1,157) size 291x55
+                RenderText {#text} at (0,0) size 291x56
                   text run at (0,0) width 291: "These lines should all fit to the width of the"
-                  text run at (0,31) width 291: "block in the first region and spill out of the"
-                  text run at (0,50) width 116: "bottom of the first "
-                  text run at (116,50) width 44: "region."
+                  text run at (0,18) width 291: "block in the first region and spill out of the"
+                  text run at (0,37) width 116: "bottom of the first "
+                  text run at (116,37) width 44: "region."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1
     RenderRegion {DIV} #region2

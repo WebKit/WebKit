@@ -3,49 +3,49 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 764x57
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 764x55
           text run at (0,0) width 764: "This test is ensuring we don't grow the height of a block improperly when a float has no line association (e.g., when it's at"
-          text run at (0,19) width 741: "the end of a block). The complete dashed border should be in the first column, with none of it appearing in the second"
-          text run at (0,38) width 51: "column."
-layer at (8,81) size 784x400
-  RenderBlock {DIV} at (0,73) size 784x400
-    RenderBlock {DIV} at (0,0) size 384x248 [border: (10px dashed #800000)]
+          text run at (0,18) width 741: "the end of a block). The complete dashed border should be in the first column, with none of it appearing in the second"
+          text run at (0,36) width 51: "column."
+layer at (8,78) size 784x400
+  RenderBlock {DIV} at (0,70) size 784x400
+    RenderBlock {DIV} at (0,0) size 384x236 [border: (10px dashed #800000)]
       RenderText {#text} at (10,10) size 110x19
         text run at (10,10) width 110: "This is some text."
       RenderBR {BR} at (120,25) size 0x0
-      RenderText {#text} at (10,29) size 110x19
-        text run at (10,29) width 110: "This is some text."
-      RenderBR {BR} at (120,44) size 0x0
-      RenderText {#text} at (10,48) size 110x19
-        text run at (10,48) width 110: "This is some text."
-      RenderBR {BR} at (120,63) size 0x0
-      RenderText {#text} at (10,67) size 110x19
-        text run at (10,67) width 110: "This is some text."
-      RenderBR {BR} at (120,82) size 0x0
-      RenderText {#text} at (10,86) size 110x19
-        text run at (10,86) width 110: "This is some text."
-      RenderBR {BR} at (120,101) size 0x0
-      RenderText {#text} at (10,105) size 110x19
-        text run at (10,105) width 110: "This is some text."
-      RenderBR {BR} at (120,120) size 0x0
-      RenderText {#text} at (10,124) size 110x19
-        text run at (10,124) width 110: "This is some text."
-      RenderBR {BR} at (120,139) size 0x0
-      RenderText {#text} at (10,143) size 110x19
-        text run at (10,143) width 110: "This is some text."
-      RenderBR {BR} at (120,158) size 0x0
-      RenderText {#text} at (10,162) size 110x19
-        text run at (10,162) width 110: "This is some text."
-      RenderBR {BR} at (120,177) size 0x0
-      RenderText {#text} at (10,181) size 110x19
-        text run at (10,181) width 110: "This is some text."
-      RenderBR {BR} at (120,196) size 0x0
-      RenderText {#text} at (10,200) size 110x19
-        text run at (10,200) width 110: "This is some text."
-      RenderBR {BR} at (120,215) size 0x0
-      RenderText {#text} at (10,219) size 110x19
-        text run at (10,219) width 110: "This is some text."
-      RenderBR {BR} at (120,234) size 0x0
+      RenderText {#text} at (10,28) size 110x19
+        text run at (10,28) width 110: "This is some text."
+      RenderBR {BR} at (120,43) size 0x0
+      RenderText {#text} at (10,46) size 110x19
+        text run at (10,46) width 110: "This is some text."
+      RenderBR {BR} at (120,61) size 0x0
+      RenderText {#text} at (10,64) size 110x19
+        text run at (10,64) width 110: "This is some text."
+      RenderBR {BR} at (120,79) size 0x0
+      RenderText {#text} at (10,82) size 110x19
+        text run at (10,82) width 110: "This is some text."
+      RenderBR {BR} at (120,97) size 0x0
+      RenderText {#text} at (10,100) size 110x19
+        text run at (10,100) width 110: "This is some text."
+      RenderBR {BR} at (120,115) size 0x0
+      RenderText {#text} at (10,118) size 110x19
+        text run at (10,118) width 110: "This is some text."
+      RenderBR {BR} at (120,133) size 0x0
+      RenderText {#text} at (10,136) size 110x19
+        text run at (10,136) width 110: "This is some text."
+      RenderBR {BR} at (120,151) size 0x0
+      RenderText {#text} at (10,154) size 110x19
+        text run at (10,154) width 110: "This is some text."
+      RenderBR {BR} at (120,169) size 0x0
+      RenderText {#text} at (10,172) size 110x19
+        text run at (10,172) width 110: "This is some text."
+      RenderBR {BR} at (120,187) size 0x0
+      RenderText {#text} at (10,190) size 110x19
+        text run at (10,190) width 110: "This is some text."
+      RenderBR {BR} at (120,205) size 0x0
+      RenderText {#text} at (10,208) size 110x19
+        text run at (10,208) width 110: "This is some text."
+      RenderBR {BR} at (120,223) size 0x0
       RenderImage {IMG} at (274,400) size 100x200 [bgcolor=#CCCCCC]
       RenderText {#text} at (0,0) size 0x0

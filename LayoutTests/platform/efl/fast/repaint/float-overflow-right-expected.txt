@@ -90,7 +90,7 @@ layer at (0,0) size 800x588
                   RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (2,351) size 780x52 [border: (1px dotted #D3D3D3)]
         RenderBlock {DIV} at (779,1) size 0x6
-        RenderBlock (anonymous) at (1,7) size 778x32
+        RenderBlock (anonymous) at (1,7) size 778x31
           RenderTable {TABLE} at (670,0) size 58x28 [border: (1px solid #800080)]
             RenderTableSection {TBODY} at (6,6) size 46x16
               RenderTableRow {TR} at (0,2) size 46x12
@@ -112,7 +112,7 @@ layer at (0,0) size 800x588
         RenderBlock {DIV} at (779,1) size 0x6
       RenderBlock {DIV} at (2,522) size 780x50 [border: (1px dotted #D3D3D3)]
         RenderBlock {DIV} at (779,1) size 0x6
-        RenderBlock {DIV} at (667,7) size 62x36 [border: (1px solid #800080)]
+        RenderBlock {DIV} at (667,7) size 62x35 [border: (1px solid #800080)]
           RenderBlock {DIV} at (24,6) size 32x20 [bgcolor=#FFC0CB]
             RenderBlock (floating) {DIV} at (0,0) size 40x10 [bgcolor=#ADD8E6]
               RenderInline {SPAN} at (0,0) size 16x17 [color=#0000FF]

@@ -1,9 +1,9 @@
-layer at (0,0) size 785x3181
+layer at (0,0) size 785x3176
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x3181
-  RenderBlock {HTML} at (0,0) size 785x3181
-    RenderBody {BODY} at (8,8) size 769x3157
-      RenderBlock {P} at (0,0) size 769x19
+layer at (0,0) size 785x3176
+  RenderBlock {HTML} at (0,0) size 785x3176
+    RenderBody {BODY} at (8,8) size 769x3152
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
@@ -11,19 +11,19 @@ layer at (0,0) size 785x3181
             text run at (53,0) width 68: "bug 12331"
         RenderText {#text} at (121,0) size 4x19
           text run at (121,0) width 4: "."
-      RenderBlock {P} at (0,35) size 769x38
-        RenderText {#text} at (0,0) size 739x38
+      RenderBlock {P} at (0,34) size 769x36
+        RenderText {#text} at (0,0) size 739x37
           text run at (0,0) width 739: "To test manually, scroll down until you find the input element. Select some text. If the bug occurs, the page will scroll"
-          text run at (0,19) width 117: "back up to the top."
-      RenderBlock {DIV} at (0,89) size 769x3000
-      RenderBlock (anonymous) at (0,3089) size 769x33
-        RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
+          text run at (0,18) width 117: "back up to the top."
+      RenderBlock {DIV} at (0,86) size 769x3000
+      RenderBlock (anonymous) at (0,3086) size 769x32
+        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,3138) size 769x19
+      RenderBlock {P} at (0,3134) size 769x18
         RenderText {#text} at (0,0) size 404x19
           text run at (0,0) width 404: "If the bug does not occur, you'll be left down here at the bottom."
-layer at (14,3105) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
+layer at (14,3102) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 188x18
     RenderText {#text} at (1,0) size 160x19
       text run at (1,0) width 160: "select some of this text"
 selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

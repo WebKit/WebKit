@@ -2,22 +2,22 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x162
   RenderBlock {html} at (0,0) size 800x162
-layer at (0,0) size 162x162 clip at (1,1) size 145x145 scrollHeight 229
+layer at (0,0) size 162x162 clip at (1,1) size 145x145 scrollHeight 222
   RenderBlock {body} at (0,0) size 162x162 [color=#000080] [border: (1px solid #000080)]
-    RenderBlock {p} at (1,17) size 145x57
-      RenderText {#text} at (0,0) size 145x57
+    RenderBlock {p} at (1,17) size 145x54
+      RenderText {#text} at (0,0) size 145x55
         text run at (0,0) width 102: "There should be"
-        text run at (0,19) width 145: "scrollbars for this box -"
-        text run at (0,38) width 138: "- not for the viewport."
-    RenderBlock {p} at (1,90) size 145x19 [color=#808080]
+        text run at (0,18) width 145: "scrollbars for this box -"
+        text run at (0,36) width 138: "- not for the viewport."
+    RenderBlock {p} at (1,87) size 145x18 [color=#808080]
       RenderText {#text} at (0,0) size 106x19
         text run at (0,0) width 106: "This is filler text."
-    RenderBlock {p} at (1,125) size 145x19 [color=#808080]
+    RenderBlock {p} at (1,121) size 145x18 [color=#808080]
       RenderText {#text} at (0,0) size 106x19
         text run at (0,0) width 106: "This is filler text."
-    RenderBlock {p} at (1,160) size 145x19 [color=#808080]
+    RenderBlock {p} at (1,155) size 145x18 [color=#808080]
       RenderText {#text} at (0,0) size 106x19
         text run at (0,0) width 106: "This is filler text."
-    RenderBlock {p} at (1,195) size 145x19 [color=#808080]
+    RenderBlock {p} at (1,189) size 145x18 [color=#808080]
       RenderText {#text} at (0,0) size 106x19
         text run at (0,0) width 106: "This is filler text."

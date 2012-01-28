@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 207x19
           text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 777x38
+        RenderInline {I} at (0,0) size 777x37
           RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
             RenderText {#text} at (207,0) size 348x19
               text run at (207,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8081"
-          RenderText {#text} at (555,0) size 777x38
+          RenderText {#text} at (555,0) size 777x37
             text run at (555,0) width 4: " "
             text run at (559,0) width 218: "REGRESSION: Drop-down menu"
-            text run at (0,19) width 90: "has gap at top"
-        RenderText {#text} at (90,19) size 4x19
-          text run at (90,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 90: "has gap at top"
+        RenderText {#text} at (90,18) size 4x19
+          text run at (90,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 535x19
           text run at (0,0) width 535: "You should see two identical green squares, 100x100 pixels each, next to each other."
-      RenderTable {TABLE} at (0,89) size 107x156
+      RenderTable {TABLE} at (0,86) size 107x156
         RenderTableSection {TBODY} at (0,0) size 107x156
           RenderTableRow {TR} at (0,2) size 107x50
             RenderTableCell {TD} at (2,26) size 103x2 [r=0 c=0 rs=1 cs=2]
           RenderTableRow {TR} at (0,54) size 107x100
             RenderTableCell {TD} at (2,54) size 100x2 [bgcolor=#008000] [r=1 c=0 rs=1 cs=1]
             RenderTableCell (anonymous) at (104,54) size 1x0 [r=1 c=1 rs=1 cs=1]
-layer at (11,152) size 98x98
-  RenderBlock (positioned) {DIV} at (11,152) size 98x98
-layer at (112,151) size 102x102
-  RenderBlock (positioned) {TD} at (112,151) size 102x102 [bgcolor=#008000]
+layer at (11,149) size 98x98
+  RenderBlock (positioned) {DIV} at (11,149) size 98x98
+layer at (112,148) size 102x102
+  RenderBlock (positioned) {TD} at (112,148) size 102x102 [bgcolor=#008000]

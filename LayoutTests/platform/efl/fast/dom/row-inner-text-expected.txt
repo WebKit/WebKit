@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
-      RenderTable {TABLE} at (0,0) size 178x27 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 176x25
-          RenderTableRow {TR} at (0,1) size 176x23
-            RenderTableCell {TH} at (1,1) size 34x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 178x26 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 176x24
+          RenderTableRow {TR} at (0,1) size 176x22
+            RenderTableCell {TH} at (1,1) size 34x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "(1,1)"
-            RenderTableCell {TH} at (36,1) size 34x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (36,1) size 34x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "(1,2)"
-            RenderTableCell {TH} at (71,1) size 34x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TH} at (71,1) size 34x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "(1,3)"
-            RenderTableCell {TH} at (106,1) size 34x23 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TH} at (106,1) size 34x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "(1,4)"
-            RenderTableCell {TH} at (141,1) size 34x23 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TH} at (141,1) size 34x22 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "(1,5)"
-      RenderBlock {PRE} at (0,40) size 784x15
+      RenderBlock {PRE} at (0,39) size 784x15
         RenderText {#text} at (0,0) size 408x15
           text run at (0,0) width 408: "xxx(1,1)[tab](1,2)[tab](1,3)[tab](1,4)[tab](1,5)xxx"

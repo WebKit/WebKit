@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 707x19
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (364,0) width 396: "REGRESSION (r36513): iframe isn't sized properly upon load"
         RenderText {#text} at (760,0) size 4x19
           text run at (760,0) width 4: "."
-      RenderTable {TABLE} at (0,35) size 304x400
+      RenderTable {TABLE} at (0,34) size 304x400
         RenderTableSection {TBODY} at (0,0) size 304x400
           RenderTableRow {TR} at (0,2) size 304x396
             RenderTableCell {TD} at (2,2) size 300x396 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]

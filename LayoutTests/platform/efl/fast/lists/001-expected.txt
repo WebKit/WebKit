@@ -3,18 +3,18 @@ layer at (0,0) size 810x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x561
-      RenderBlock {DIV} at (0,0) size 784x107 [border: (3px solid #FFA500)]
+      RenderBlock {DIV} at (0,0) size 784x106 [border: (3px solid #FFA500)]
         RenderBlock (floating) {DIV} at (11,11) size 122x122 [bgcolor=#FFA500] [border: (3px solid #FFA500)]
-        RenderListItem {DIV} at (11,11) size 762x85 [border: (3px solid #FFA500)]
-          RenderListItem {DIV} at (11,11) size 740x63 [border: (3px solid #FFA500)]
-            RenderListItem {DIV} at (11,11) size 718x41 [border: (3px solid #FFA500)]
+        RenderListItem {DIV} at (11,11) size 762x84 [border: (3px solid #FFA500)]
+          RenderListItem {DIV} at (11,11) size 740x62 [border: (3px solid #FFA500)]
+            RenderListItem {DIV} at (11,11) size 718x40 [border: (3px solid #FFA500)]
               RenderListMarker at (103,11) size 7x19: bullet
               RenderListMarker at (103,11) size 7x19: bullet
               RenderListMarker at (103,11) size 7x19: bullet
               RenderText {#text} at (132,11) size 86x19
                 text run at (132,11) width 86: "List item text."
-      RenderBlock {UL} at (0,123) size 784x123
-        RenderListItem {LI} at (40,0) size 744x123 [border: (2px solid #FF0000)]
+      RenderBlock {UL} at (0,122) size 784x122
+        RenderListItem {LI} at (40,0) size 744x122 [border: (2px solid #FF0000)]
           RenderListMarker at (755,52) size 7x19: bullet
           RenderText {#text} at (201,52) size 491x19
             text run at (201,52) width 491: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl asjdlksajdk"

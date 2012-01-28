@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 385x506
+      RenderBlock {DIV} at (0,0) size 385x503
         RenderImage {IMG} at (0,0) size 395x275
         RenderBlock {H2} at (0,315) size 385x28
           RenderText {#text} at (0,0) size 316x28
             text run at (0,0) width 316: "This text should be on line one."
-        RenderBlock (anonymous) at (0,362) size 385x38
-          RenderText {#text} at (0,0) size 340x38
+        RenderBlock (anonymous) at (0,362) size 385x36
+          RenderText {#text} at (0,0) size 340x37
             text run at (0,0) width 269: "This text should be on the following lines. "
             text run at (269,0) width 71: "These lines"
-            text run at (0,19) width 121: "should not overlap."
-        RenderBlock {H2} at (0,440) size 385x28
+            text run at (0,18) width 121: "should not overlap."
+        RenderBlock {H2} at (0,438) size 385x28
           RenderText {#text} at (0,0) size 211x28
             text run at (0,0) width 211: "Here's what's weird."
-        RenderBlock (anonymous) at (0,487) size 385x19
+        RenderBlock (anonymous) at (0,485) size 385x18
           RenderText {#text} at (0,0) size 136x19
             text run at (0,0) width 136: "The problem persists!"

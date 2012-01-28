@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x25
-        RenderTableSection {TBODY} at (0,0) size 784x25
-          RenderTableRow {TR} at (0,2) size 784x21
-            RenderTableCell {TD} at (2,2) size 60x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,2) size 784x20
+            RenderTableCell {TD} at (2,2) size 60x20 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (64,11) size 718x2 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {DIV} at (0,25) size 784x0
-layer at (11,11) size 58x19
-  RenderBlock {DIV} at (1,1) size 58x19
+      RenderBlock {DIV} at (0,24) size 784x0
+layer at (11,11) size 58x18 scrollHeight 19
+  RenderBlock {DIV} at (1,1) size 58x18
     RenderText {#text} at (0,0) size 55x19
       text run at (0,0) width 55: "Success!"

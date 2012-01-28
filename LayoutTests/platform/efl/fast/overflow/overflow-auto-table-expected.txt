@@ -1,18 +1,18 @@
 layer at (0,0) size 7618x585
   RenderView at (0,0) size 800x585
-layer at (0,0) size 800x163
-  RenderBlock {HTML} at (0,0) size 800x163
-    RenderBody {BODY} at (8,16) size 784x139
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 780x57
+layer at (0,0) size 800x160
+  RenderBlock {HTML} at (0,0) size 800x160
+    RenderBody {BODY} at (8,16) size 784x136
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 780x55
           text run at (0,0) width 775: "This tests the interaction of overflow on some very wide text with auto table layout. The CSS 2.1 spec does not define how"
-          text run at (0,19) width 780: "overflow interacts with intrinsic width, so we copy the IE behavior. Therefore the lines should come out very very wide and"
-          text run at (0,38) width 177: "scroll along with the border."
-      RenderTable {TABLE} at (0,73) size 7610x66 [border: (1px solid #FF0000)]
+          text run at (0,18) width 780: "overflow interacts with intrinsic width, so we copy the IE behavior. Therefore the lines should come out very very wide and"
+          text run at (0,36) width 177: "scroll along with the border."
+      RenderTable {TABLE} at (0,70) size 7610x66 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 7608x64
           RenderTableRow {TR} at (0,2) size 7608x60
             RenderTableCell {TD} at (2,2) size 7604x60 [r=0 c=0 rs=1 cs=1]
-layer at (12,106) size 7602x32 clip at (13,107) size 7600x30
+layer at (12,103) size 7602x32 clip at (13,104) size 7600x30
   RenderBlock {PRE} at (1,14) size 7602x32 [border: (1px solid #0000FF)]
     RenderText {#text} at (1,1) size 7600x30
       text run at (1,1) width 3200: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "

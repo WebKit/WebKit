@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 450x63
-        RenderTableSection {TBODY} at (0,0) size 450x63
-          RenderTableRow {TR} at (0,2) size 450x59
-            RenderTableCell {TD} at (2,2) size 446x59 [bgcolor=#CCCC44] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 418x38
+      RenderTable {TABLE} at (0,0) size 450x60
+        RenderTableSection {TBODY} at (0,0) size 450x60
+          RenderTableRow {TR} at (0,2) size 450x56
+            RenderTableCell {TD} at (2,2) size 446x56 [bgcolor=#CCCC44] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 418x37
                 text run at (1,1) width 418: "This stuff should all be within the table boundaries, and not off the"
-                text run at (1,20) width 38: "edge. "
-                text run at (39,20) width 324: "No way should it be off the edge of the damn table."
+                text run at (1,19) width 38: "edge. "
+                text run at (39,19) width 324: "No way should it be off the edge of the damn table."
               RenderInline {SPAN} at (0,0) size 202x19
-                RenderImage {IMG} at (1,54) size 50x0
-                RenderText {#text} at (51,39) size 152x19
-                  text run at (51,39) width 152: "oh, no I fell off the edge"
+                RenderImage {IMG} at (1,52) size 50x0
+                RenderText {#text} at (51,37) size 152x19
+                  text run at (51,37) width 152: "oh, no I fell off the edge"
               RenderText {#text} at (0,0) size 0x0

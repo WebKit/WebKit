@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 619x19
@@ -15,13 +15,13 @@ layer at (0,0) size 800x600
             text run at (358,0) width 314: "Specifying border-radius makes the outline shrink"
         RenderText {#text} at (672,0) size 4x19
           text run at (672,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 273x19
           text run at (0,0) width 273: "These two squares should be the same size:"
-      RenderBlock (anonymous) at (0,70) size 784x19
+      RenderBlock (anonymous) at (0,68) size 784x18
         RenderBlock {DIV} at (0,5) size 10x10
         RenderText {#text} at (10,0) size 4x19
           text run at (10,0) width 4: " "
         RenderBlock {DIV} at (14,5) size 10x10
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,105) size 784x0
+      RenderBlock {P} at (0,102) size 784x0

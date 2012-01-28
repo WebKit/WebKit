@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 645x584
         RenderTableSection {TBODY} at (0,0) size 645x584
-          RenderTableRow {TR} at (0,0) size 645x23
-            RenderTableCell {TD} at (0,0) size 645x23 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 645x23 [border: (2px solid #FF0000)]
+          RenderTableRow {TR} at (0,0) size 645x22
+            RenderTableCell {TD} at (0,0) size 645x22 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 645x22 [border: (2px solid #FF0000)]
                 RenderText {#text} at (2,2) size 174x19
                   text run at (2,2) width 174: "i am the text of the first row"
-          RenderTableRow {TR} at (0,23) size 645x561
-            RenderTableCell {TD} at (0,23) size 645x23 [r=1 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 645x23 [border: (2px solid #FF0000)]
+          RenderTableRow {TR} at (0,22) size 645x562
+            RenderTableCell {TD} at (0,22) size 645x22 [r=1 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 645x22 [border: (2px solid #FF0000)]
                 RenderText {#text} at (2,2) size 194x19
                   text run at (2,2) width 194: "i am the text of the second row"

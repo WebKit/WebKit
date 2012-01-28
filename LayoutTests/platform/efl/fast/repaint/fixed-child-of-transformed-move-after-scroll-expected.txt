@@ -5,8 +5,8 @@ layer at (0,0) size 785x3016
     RenderBody {BODY} at (8,8) size 769x3000
 layer at (18,278) size 100x100
   RenderBlock (positioned) zI: -5 {DIV} at (10,270) size 100x100 [bgcolor=#FFFF00]
-layer at (8,234) size 531x19
-  RenderBlock (positioned) {P} at (0,226) size 531x19
+layer at (8,234) size 531x18
+  RenderBlock (positioned) {P} at (0,226) size 531x18
     RenderText {#text} at (0,0) size 531x19
       text run at (0,0) width 531: "You should see a yellow rect on the left, and a green one on the right. No red pixels."
 layer at (158,278) size 100x100

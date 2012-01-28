@@ -3,57 +3,57 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x170
+      RenderBlock (anonymous) at (0,0) size 784x161
         RenderText {#text} at (0,0) size 502x19
           text run at (0,0) width 502: "This tests that typing in a scrolled textarea does not cause unnecessary scrolling."
         RenderBR {BR} at (502,15) size 0x0
-        RenderText {#text} at (206,151) size 4x19
-          text run at (206,151) width 4: " "
-        RenderBR {BR} at (210,166) size 0x0
-      RenderBlock {DIV} at (0,170) size 784x0
-layer at (10,29) size 202x143 clip at (10,29) size 187x143 scrollY 266 scrollHeight 409
-  RenderTextControl {TEXTAREA} at (2,21) size 202x143 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 180x399
-      RenderText {#text} at (0,0) size 58x380
+        RenderText {#text} at (206,143) size 4x19
+          text run at (206,143) width 4: " "
+        RenderBR {BR} at (210,158) size 0x0
+      RenderBlock {DIV} at (0,161) size 784x0
+layer at (10,28) size 202x136 clip at (10,28) size 187x136 scrollY 252 scrollHeight 388
+  RenderTextControl {TEXTAREA} at (2,20) size 202x136 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 180x378
+      RenderText {#text} at (0,0) size 58x361
         text run at (0,0) width 9: "1"
         text run at (9,0) width 0: " "
-        text run at (0,19) width 9: "2"
-        text run at (9,19) width 0: " "
-        text run at (0,38) width 9: "3"
-        text run at (9,38) width 0: " "
-        text run at (0,57) width 9: "4"
-        text run at (9,57) width 0: " "
-        text run at (0,76) width 9: "5"
-        text run at (9,76) width 0: " "
-        text run at (0,95) width 9: "6"
-        text run at (9,95) width 0: " "
-        text run at (0,114) width 9: "7"
-        text run at (9,114) width 0: " "
-        text run at (0,133) width 9: "8"
-        text run at (9,133) width 0: " "
-        text run at (0,152) width 9: "9"
-        text run at (9,152) width 0: " "
-        text run at (0,171) width 18: "10"
-        text run at (18,171) width 0: " "
-        text run at (0,190) width 18: "11"
-        text run at (18,190) width 0: " "
-        text run at (0,209) width 18: "12"
-        text run at (18,209) width 0: " "
-        text run at (0,228) width 18: "13"
-        text run at (18,228) width 0: " "
-        text run at (0,247) width 18: "14"
-        text run at (18,247) width 0: " "
-        text run at (0,266) width 18: "15"
-        text run at (18,266) width 0: " "
-        text run at (0,285) width 18: "16"
-        text run at (18,285) width 0: " "
-        text run at (0,304) width 18: "17"
-        text run at (18,304) width 0: " "
-        text run at (0,323) width 58: "18 Pass"
-        text run at (58,323) width 0: " "
-        text run at (0,342) width 18: "19"
+        text run at (0,18) width 9: "2"
+        text run at (9,18) width 0: " "
+        text run at (0,36) width 9: "3"
+        text run at (9,36) width 0: " "
+        text run at (0,54) width 9: "4"
+        text run at (9,54) width 0: " "
+        text run at (0,72) width 9: "5"
+        text run at (9,72) width 0: " "
+        text run at (0,90) width 9: "6"
+        text run at (9,90) width 0: " "
+        text run at (0,108) width 9: "7"
+        text run at (9,108) width 0: " "
+        text run at (0,126) width 9: "8"
+        text run at (9,126) width 0: " "
+        text run at (0,144) width 9: "9"
+        text run at (9,144) width 0: " "
+        text run at (0,162) width 18: "10"
+        text run at (18,162) width 0: " "
+        text run at (0,180) width 18: "11"
+        text run at (18,180) width 0: " "
+        text run at (0,198) width 18: "12"
+        text run at (18,198) width 0: " "
+        text run at (0,216) width 18: "13"
+        text run at (18,216) width 0: " "
+        text run at (0,234) width 18: "14"
+        text run at (18,234) width 0: " "
+        text run at (0,252) width 18: "15"
+        text run at (18,252) width 0: " "
+        text run at (0,270) width 18: "16"
+        text run at (18,270) width 0: " "
+        text run at (0,288) width 18: "17"
+        text run at (18,288) width 0: " "
+        text run at (0,306) width 58: "18 Pass"
+        text run at (58,306) width 0: " "
+        text run at (0,324) width 18: "19"
+        text run at (18,324) width 0: " "
+        text run at (0,342) width 18: "20"
         text run at (18,342) width 0: " "
-        text run at (0,361) width 18: "20"
-        text run at (18,361) width 0: " "
-      RenderBR {BR} at (0,380) size 0x19
+      RenderBR {BR} at (0,360) size 0x19
 caret: position 49 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {TEXTAREA} of body

@@ -1,60 +1,60 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x295
-  RenderBlock {HTML} at (0,0) size 800x295
-    RenderBody {BODY} at (8,16) size 784x271
-      RenderBlock {UL} at (0,0) size 784x57 [color=#000080]
-        RenderListItem {LI} at (40,0) size 744x19
+layer at (0,0) size 800x292
+  RenderBlock {HTML} at (0,0) size 800x292
+    RenderBody {BODY} at (8,16) size 784x268
+      RenderBlock {UL} at (0,0) size 784x54 [color=#000080]
+        RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 336x19
             text run at (0,0) width 336: "You should not see the background under the border."
-        RenderListItem {LI} at (40,19) size 744x19
+        RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 343x19
             text run at (0,0) width 343: "As you scroll the element below the cats should move."
-        RenderListItem {LI} at (40,38) size 744x19
+        RenderListItem {LI} at (40,36) size 744x18
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 296x19
             text run at (0,0) width 296: "The cats should be on a light grey background."
-layer at (8,89) size 390x198 clip at (38,119) size 315x138 scrollHeight 380
-  RenderBlock {DIV} at (0,73) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
-    RenderText {#text} at (30,30) size 32x380
+layer at (8,86) size 390x198 clip at (38,116) size 315x138 scrollHeight 361
+  RenderBlock {DIV} at (0,70) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
+    RenderText {#text} at (30,30) size 32x361
       text run at (30,30) width 20: "   1"
       text run at (50,30) width 0: " "
-      text run at (30,49) width 20: "   2"
-      text run at (50,49) width 0: " "
-      text run at (30,68) width 20: "   3"
-      text run at (50,68) width 0: " "
-      text run at (30,87) width 20: "   4"
-      text run at (50,87) width 0: " "
-      text run at (30,106) width 20: "   5"
-      text run at (50,106) width 0: " "
-      text run at (30,125) width 20: "   6"
-      text run at (50,125) width 0: " "
-      text run at (30,144) width 20: "   7"
-      text run at (50,144) width 0: " "
-      text run at (30,163) width 20: "   8"
-      text run at (50,163) width 0: " "
-      text run at (30,182) width 20: "   9"
-      text run at (50,182) width 0: " "
-      text run at (30,201) width 24: "  10"
-      text run at (54,201) width 0: " "
-      text run at (30,220) width 24: "  11"
-      text run at (54,220) width 0: " "
-      text run at (30,239) width 24: "  12"
-      text run at (54,239) width 0: " "
-      text run at (30,258) width 24: "  13"
-      text run at (54,258) width 0: " "
-      text run at (30,277) width 24: "  14"
-      text run at (54,277) width 0: " "
-      text run at (30,296) width 24: "  15"
-      text run at (54,296) width 0: " "
-      text run at (30,315) width 24: "  16"
-      text run at (54,315) width 0: " "
-      text run at (30,334) width 24: "  17"
-      text run at (54,334) width 0: " "
-      text run at (30,353) width 24: "  18"
-      text run at (54,353) width 0: " "
-      text run at (30,372) width 24: "  19"
-      text run at (54,372) width 0: " "
-      text run at (30,391) width 32: "  20  "
+      text run at (30,48) width 20: "   2"
+      text run at (50,48) width 0: " "
+      text run at (30,66) width 20: "   3"
+      text run at (50,66) width 0: " "
+      text run at (30,84) width 20: "   4"
+      text run at (50,84) width 0: " "
+      text run at (30,102) width 20: "   5"
+      text run at (50,102) width 0: " "
+      text run at (30,120) width 20: "   6"
+      text run at (50,120) width 0: " "
+      text run at (30,138) width 20: "   7"
+      text run at (50,138) width 0: " "
+      text run at (30,156) width 20: "   8"
+      text run at (50,156) width 0: " "
+      text run at (30,174) width 20: "   9"
+      text run at (50,174) width 0: " "
+      text run at (30,192) width 24: "  10"
+      text run at (54,192) width 0: " "
+      text run at (30,210) width 24: "  11"
+      text run at (54,210) width 0: " "
+      text run at (30,228) width 24: "  12"
+      text run at (54,228) width 0: " "
+      text run at (30,246) width 24: "  13"
+      text run at (54,246) width 0: " "
+      text run at (30,264) width 24: "  14"
+      text run at (54,264) width 0: " "
+      text run at (30,282) width 24: "  15"
+      text run at (54,282) width 0: " "
+      text run at (30,300) width 24: "  16"
+      text run at (54,300) width 0: " "
+      text run at (30,318) width 24: "  17"
+      text run at (54,318) width 0: " "
+      text run at (30,336) width 24: "  18"
+      text run at (54,336) width 0: " "
+      text run at (30,354) width 24: "  19"
+      text run at (54,354) width 0: " "
+      text run at (30,372) width 32: "  20  "

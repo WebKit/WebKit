@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x82
-  RenderBlock {HTML} at (0,0) size 800x82
-    RenderBody {BODY} at (8,8) size 784x66
+layer at (0,0) size 800x80
+  RenderBlock {HTML} at (0,0) size 800x80
+    RenderBody {BODY} at (8,8) size 784x64
       RenderBR {BR} at (199,8) size 0x19
-      RenderTextControl {INPUT} at (2,35) size 195x29 [color=#202020]
-        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
-          RenderBlock {DIV} at (0,0) size 188x19
+      RenderTextControl {INPUT} at (2,34) size 195x28 [color=#202020]
+        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
+          RenderBlock {DIV} at (0,0) size 188x18
       RenderText {#text} at (0,0) size 0x0
-layer at (14,49) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
+layer at (14,48) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 188x18
     RenderText {#text} at (1,0) size 18x19
       text run at (1,0) width 18: "10"
-layer at (10,10) size 195x29
-  RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
-    RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
-      RenderBlock {DIV} at (0,0) size 188x19
-layer at (14,16) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
+layer at (10,10) size 195x28
+  RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+    RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
+      RenderBlock {DIV} at (0,0) size 188x18
+layer at (14,16) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 188x18
     RenderText {#text} at (1,0) size 18x19
       text run at (1,0) width 18: "10"

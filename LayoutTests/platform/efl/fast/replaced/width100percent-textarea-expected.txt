@@ -3,69 +3,69 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 252x19
           text run at (0,0) width 252: "The textareas below should not overlap."
-      RenderTable {TABLE} at (0,19) size 784x56
-        RenderTableSection {TBODY} at (0,0) size 784x56
-          RenderTableRow {TR} at (0,1) size 784x54
-            RenderTableCell {TD} at (1,1) size 204x54 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (206,1) size 9x54 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (216,1) size 9x54 [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (226,17) size 557x21 [r=0 c=3 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 784x54
+        RenderTableSection {TBODY} at (0,0) size 784x54
+          RenderTableRow {TR} at (0,1) size 784x52
+            RenderTableCell {TD} at (1,1) size 204x52 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (206,1) size 9x52 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (216,1) size 9x52 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (226,17) size 557x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,75) size 784x38
+      RenderBlock (anonymous) at (0,72) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,113) size 784x56
-        RenderTableSection {TBODY} at (0,0) size 784x56
-          RenderTableRow {TR} at (0,1) size 784x54
-            RenderTableCell {TD} at (1,1) size 294x54 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (296,1) size 9x54 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (306,1) size 9x54 [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (316,17) size 467x21 [r=0 c=3 rs=1 cs=1]
+        RenderBR {BR} at (0,18) size 0x19
+      RenderTable {TABLE} at (0,108) size 784x54
+        RenderTableSection {TBODY} at (0,0) size 784x54
+          RenderTableRow {TR} at (0,1) size 784x52
+            RenderTableCell {TD} at (1,1) size 294x52 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (296,1) size 9x52 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (306,1) size 9x52 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (316,17) size 467x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-layer at (10,31) size 202x48
-  RenderTextControl {TEXTAREA} at (1,3) size 202x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 195x19
+layer at (10,30) size 202x46
+  RenderTextControl {TEXTAREA} at (1,3) size 202x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 195x18
       RenderText {#text} at (0,0) size 27x19
         text run at (0,0) width 27: "one"
-layer at (215,31) size 7x48 clip at (0,0) size 0x0 scrollWidth 16 scrollHeight 67
-  RenderTextControl {TEXTAREA} at (1,3) size 7x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 0x57
-      RenderText {#text} at (0,0) size 12x57
+layer at (215,30) size 7x46 clip at (0,0) size 0x0 scrollWidth 16 scrollHeight 64
+  RenderTextControl {TEXTAREA} at (1,3) size 7x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 0x54
+      RenderText {#text} at (0,0) size 12x55
         text run at (0,0) width 4: "t"
-        text run at (0,19) width 12: "w"
-        text run at (0,38) width 9: "o"
-layer at (225,31) size 7x48 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 105
-  RenderTextControl {TEXTAREA} at (1,3) size 7x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 0x95
-      RenderText {#text} at (0,0) size 9x95
+        text run at (0,18) width 12: "w"
+        text run at (0,36) width 9: "o"
+layer at (225,30) size 7x46 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 100
+  RenderTextControl {TEXTAREA} at (1,3) size 7x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 0x90
+      RenderText {#text} at (0,0) size 9x91
         text run at (0,0) width 4: "t"
-        text run at (0,19) width 9: "h"
-        text run at (0,38) width 5: "r"
-        text run at (0,57) width 9: "e"
-        text run at (0,76) width 9: "e"
-layer at (10,125) size 292x48
-  RenderTextControl {TEXTAREA} at (1,3) size 292x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 285x19
+        text run at (0,18) width 9: "h"
+        text run at (0,36) width 5: "r"
+        text run at (0,54) width 9: "e"
+        text run at (0,72) width 9: "e"
+layer at (10,120) size 292x46
+  RenderTextControl {TEXTAREA} at (1,3) size 292x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 285x18
       RenderText {#text} at (0,0) size 96x19
         text run at (0,0) width 96: "one two three"
-layer at (305,125) size 7x48 clip at (0,0) size 0x0 scrollWidth 16 scrollHeight 67
-  RenderTextControl {TEXTAREA} at (1,3) size 7x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 0x57
-      RenderText {#text} at (0,0) size 12x57
+layer at (305,120) size 7x46 clip at (0,0) size 0x0 scrollWidth 16 scrollHeight 64
+  RenderTextControl {TEXTAREA} at (1,3) size 7x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 0x54
+      RenderText {#text} at (0,0) size 12x55
         text run at (0,0) width 4: "t"
-        text run at (0,19) width 12: "w"
-        text run at (0,38) width 9: "o"
-layer at (315,125) size 7x48 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 105
-  RenderTextControl {TEXTAREA} at (1,3) size 7x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 0x95
-      RenderText {#text} at (0,0) size 9x95
+        text run at (0,18) width 12: "w"
+        text run at (0,36) width 9: "o"
+layer at (315,120) size 7x46 clip at (0,0) size 0x0 scrollWidth 13 scrollHeight 100
+  RenderTextControl {TEXTAREA} at (1,3) size 7x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 0x90
+      RenderText {#text} at (0,0) size 9x91
         text run at (0,0) width 4: "t"
-        text run at (0,19) width 9: "h"
-        text run at (0,38) width 5: "r"
-        text run at (0,57) width 9: "e"
-        text run at (0,76) width 9: "e"
+        text run at (0,18) width 9: "h"
+        text run at (0,36) width 5: "r"
+        text run at (0,54) width 9: "e"
+        text run at (0,72) width 9: "e"

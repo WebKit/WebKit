@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,25) size 566x23
-  RenderBlock (positioned) {DIV} at (8,25) size 566x23 [border: (2px solid #008000)]
+layer at (8,25) size 566x22
+  RenderBlock (positioned) {DIV} at (8,25) size 566x22 [border: (2px solid #008000)]
     RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

@@ -1,13 +1,13 @@
-layer at (0,0) size 785x1499
+layer at (0,0) size 785x1498
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1499
-  RenderBlock {HTML} at (0,0) size 785x1499
-    RenderBody {BODY} at (8,8) size 769x1459
-      RenderBlock (anonymous) at (0,0) size 769x19
+layer at (0,0) size 785x1498
+  RenderBlock {HTML} at (0,0) size 785x1498
+    RenderBody {BODY} at (8,8) size 769x1458
+      RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {#text} at (0,0) size 259x19
           text run at (0,0) width 259: "All of these blocks should look the same."
-layer at (8,59) size 320x256
-  RenderBlock {DIV} at (0,51) size 320x256 [bgcolor=#00FF00]
+layer at (8,58) size 320x256
+  RenderBlock {DIV} at (0,50) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,31) size 320x65
         text run at (0,31) width 320: "xxxxx"
@@ -19,8 +19,8 @@ layer at (8,59) size 320x256
       RenderText {#text} at (256,159) size 64x65
         text run at (256,159) width 64: "x"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,347) size 320x256
-  RenderBlock {DIV} at (0,339) size 320x256 [bgcolor=#00FF00]
+layer at (8,346) size 320x256
+  RenderBlock {DIV} at (0,338) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,31) size 320x65
         text run at (0,31) width 320: "xxxxx"
@@ -32,8 +32,8 @@ layer at (8,347) size 320x256
       RenderText {#text} at (256,159) size 64x65
         text run at (256,159) width 64: "x"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,635) size 320x256
-  RenderBlock {DIV} at (0,627) size 320x256 [bgcolor=#00FF00]
+layer at (8,634) size 320x256
+  RenderBlock {DIV} at (0,626) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,31) size 320x65
         text run at (0,31) width 320: "xxxxx"
@@ -45,8 +45,8 @@ layer at (8,635) size 320x256
       RenderText {#text} at (256,159) size 64x65
         text run at (256,159) width 64: "x"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,923) size 320x256
-  RenderBlock {DIV} at (0,915) size 320x256 [bgcolor=#00FF00]
+layer at (8,922) size 320x256
+  RenderBlock {DIV} at (0,914) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,31) size 320x65
         text run at (0,31) width 320: "xxxxx"
@@ -58,8 +58,8 @@ layer at (8,923) size 320x256
       RenderText {#text} at (256,159) size 64x65
         text run at (256,159) width 64: "x"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,1211) size 320x256
-  RenderBlock {DIV} at (0,1203) size 320x256 [bgcolor=#00FF00]
+layer at (8,1210) size 320x256
+  RenderBlock {DIV} at (0,1202) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
       RenderText {#text} at (0,31) size 320x65
         text run at (0,31) width 320: "xxxxx"

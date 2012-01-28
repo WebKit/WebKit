@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 371x19
           text run at (0,0) width 371: "Tests selection painting on a transformed, replaced element"
         RenderBR {BR} at (371,15) size 0x0
         RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
-          RenderText {#text} at (0,19) size 305x19
-            text run at (0,19) width 305: "https://bugs.webkit.org/show_bug.cgi?id=15739"
+          RenderText {#text} at (0,18) size 305x19
+            text run at (0,18) width 305: "https://bugs.webkit.org/show_bug.cgi?id=15739"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,54) size 784x19
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 514x19
           text run at (0,0) width 514: "You should see a dark green square rotated 45\x{B0}. If you see any red, the test failed."
-      RenderBlock {DIV} at (0,89) size 784x150
+      RenderBlock {DIV} at (0,86) size 784x150
         RenderText {#text} at (0,0) size 0x0
-layer at (58,147) size 100x100
+layer at (58,144) size 100x100
   RenderImage {IMG} at (50,50) size 100x100 [bgcolor=#FF0000]
 selection start: position 0 of child 1 {IMG} of child 4 {DIV} of body
 selection end:   position 1 of child 1 {IMG} of child 4 {DIV} of body

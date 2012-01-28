@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 685x19
@@ -15,263 +15,263 @@ layer at (0,0) size 800x600
             text run at (405,0) width 333: "TFOOT borders are copied to THEAD and TBODY"
         RenderText {#text} at (738,0) size 4x19
           text run at (738,0) width 4: "."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,45) size 314x319
-        RenderTableSection {TBODY} at (0,0) size 314x319
-          RenderTableRow {TR} at (0,2) size 314x315
-            RenderTableCell {TD} at (2,2) size 76x315 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x91 [border: none]
-                RenderTableSection {THEAD} at (0,0) size 53x22
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,44) size 314x307
+        RenderTableSection {TBODY} at (0,0) size 314x307
+          RenderTableRow {TR} at (0,2) size 314x303
+            RenderTableCell {TD} at (2,2) size 76x303 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: none]
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+              RenderTable {TABLE} at (11,108) size 54x87 [border: none]
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+              RenderTable {TABLE} at (11,205) size 54x87 [border: none]
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+            RenderTableCell {TD} at (80,2) size 76x303 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: none]
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+              RenderTable {TABLE} at (11,108) size 54x87 [border: none]
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+              RenderTable {TABLE} at (11,205) size 54x87 [border: none]
+                RenderTableSection {TBODY} at (0,21) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 1"
+                RenderTableSection {TBODY} at (0,42) size 53x22
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 47x19
+                        text run at (2,2) width 47: "Body 2"
+                RenderTableSection {TFOOT} at (0,64) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
+                  RenderTableRow {TR} at (0,0) size 53x22
+                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 41x19
+                        text run at (2,2) width 41: "Footer"
+                RenderTableSection {THEAD} at (0,0) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TH} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 50x19
+                        text run at (2,2) width 50: "Header"
+            RenderTableCell {TD} at (158,2) size 76x303 [r=0 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,112) size 54x91 [border: none]
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,0) size 53x22
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,213) size 54x91 [border: none]
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,0) size 53x22
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-            RenderTableCell {TD} at (80,2) size 76x315 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x91 [border: none]
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (236,2) size 76x303 [r=0 c=3 rs=1 cs=1]
+              RenderTable {TABLE} at (11,11) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-                RenderTableSection {THEAD} at (0,0) size 53x22
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,112) size 54x91 [border: none]
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (11,108) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,0) size 53x22
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,213) size 54x91 [border: none]
-                RenderTableSection {TBODY} at (0,22) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (11,205) size 54x87 [border: (1px none #808080)]
+                RenderTableSection {TBODY} at (0,23) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TBODY} at (0,44) size 53x23
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,44) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 47x19
                         text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,67) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TD} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TFOOT} at (0,65) size 53x21
+                  RenderTableRow {TR} at (0,0) size 53x21
+                    RenderTableCell {TD} at (0,0) size 53x21 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 41x19
                         text run at (2,2) width 41: "Footer"
-                RenderTableSection {THEAD} at (0,0) size 53x22
+                RenderTableSection {THEAD} at (0,1) size 53x22 [border: (2px solid #0000FF) none (2px solid #008000) none]
                   RenderTableRow {TR} at (0,0) size 53x22
                     RenderTableCell {TH} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-            RenderTableCell {TD} at (158,2) size 76x315 [r=0 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,112) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-              RenderTable {TABLE} at (11,213) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-            RenderTableCell {TD} at (236,2) size 76x315 [r=0 c=3 rs=1 cs=1]
-              RenderTable {TABLE} at (11,11) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,112) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 50x19
-                        text run at (2,2) width 50: "Header"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-              RenderTable {TABLE} at (11,213) size 54x91 [border: (1px none #808080)]
-                RenderTableSection {TBODY} at (0,24) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 1"
-                RenderTableSection {TBODY} at (0,46) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 47x19
-                        text run at (2,2) width 47: "Body 2"
-                RenderTableSection {TFOOT} at (0,68) size 53x22
-                  RenderTableRow {TR} at (0,0) size 53x22
-                    RenderTableCell {TD} at (0,0) size 53x22 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 41x19
-                        text run at (2,2) width 41: "Footer"
-                RenderTableSection {THEAD} at (0,1) size 53x23 [border: (2px solid #0000FF) none (2px solid #008000) none]
-                  RenderTableRow {TR} at (0,0) size 53x23
-                    RenderTableCell {TH} at (0,0) size 53x23 [border: (1px solid #D3D3D3)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 50x19
                         text run at (2,2) width 50: "Header"

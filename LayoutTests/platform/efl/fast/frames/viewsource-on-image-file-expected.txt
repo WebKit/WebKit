@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 447x19
           text run at (0,0) width 447: "You should see 'hello world' in the frame below in 'view source' mode."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,45) size 784x154
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,44) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                 RenderTable {TABLE} at (0,0) size 300x15
                   RenderTableSection {TBODY} at (0,0) size 300x15
                     RenderTableRow {TR} at (0,0) size 300x15
-                      RenderTableCell {TD} at (0,2) size 31x11 [color=#808080] [bgcolor=#F0F0F0] [border: none (1px solid #BBBBBB) none] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,2) size 31x10 [color=#808080] [bgcolor=#F0F0F0] [border: none (1px solid #BBBBBB) none] [r=0 c=0 rs=1 cs=1]
                         RenderInline (generated) at (0,0) size 5x11
                           RenderCounter at (21,0) size 5x11
                             text run at (21,0) width 5: "1"

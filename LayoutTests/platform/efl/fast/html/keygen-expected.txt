@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {KEYGEN} at (2,2) size 56x39
-        RenderMenuList {SELECT} at (0,0) size 56x39 [color=#202020]
-          RenderBlock (anonymous) at (15,10) size 0x19
+      RenderBlock {KEYGEN} at (2,2) size 56x38
+        RenderMenuList {SELECT} at (0,0) size 56x38 [color=#202020]
+          RenderBlock (anonymous) at (15,10) size 0x18
             RenderBR at (0,0) size 0x19
       RenderText {#text} at (0,0) size 0x0

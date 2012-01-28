@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x174
-  RenderBlock {HTML} at (0,0) size 800x174
-    RenderBody {BODY} at (8,80) size 784x86
+layer at (0,0) size 800x172
+  RenderBlock {HTML} at (0,0) size 800x172
+    RenderBody {BODY} at (8,80) size 784x84
       RenderBlock {DIV} at (0,0) size 784x16 [color=#FF0000]
         RenderText {#text} at (0,0) size 80x17
           text run at (0,0) width 80: "XXXXX"
-      RenderBlock {P} at (0,32) size 784x19
+      RenderBlock {P} at (0,32) size 784x18
         RenderText {#text} at (0,0) size 192x19
           text run at (0,0) width 192: "There should be no red above."
-      RenderBlock (anonymous) at (0,67) size 784x19
+      RenderBlock (anonymous) at (0,66) size 784x18
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,2) size 528x17
             text run at (0,2) width 528: "Ahem_font_required_for_this_test."

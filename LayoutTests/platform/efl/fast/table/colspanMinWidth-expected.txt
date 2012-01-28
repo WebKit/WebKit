@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 219x53
-        RenderTableSection {TBODY} at (0,0) size 219x53
+      RenderTable {TABLE} at (0,0) size 219x52
+        RenderTableSection {TBODY} at (0,0) size 219x52
           RenderTableRow {TR} at (0,2) size 219x2
             RenderTableCell {TD} at (2,2) size 3x2 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
           RenderTableRow {TR} at (0,6) size 219x0
             RenderTableCell {TD} at (2,6) size 211x2 [bgcolor=#008000] [r=1 c=0 rs=2 cs=2]
           RenderTableRow {TR} at (0,8) size 219x0
             RenderTableCell {TD} at (215,28) size 2x2 [bgcolor=#FF0000] [r=2 c=2 rs=2 cs=1]
-          RenderTableRow {TR} at (0,10) size 219x41
-            RenderTableCell {TD} at (2,10) size 211x41 [bgcolor=#00FFFF] [r=3 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 209x39
-                RenderTableSection {TBODY} at (0,0) size 209x39
-                  RenderTableRow {TR} at (0,2) size 209x35
+          RenderTableRow {TR} at (0,10) size 219x40
+            RenderTableCell {TD} at (2,10) size 211x40 [bgcolor=#00FFFF] [r=3 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 209x38
+                RenderTableSection {TBODY} at (0,0) size 209x38
+                  RenderTableRow {TR} at (0,2) size 209x34
                     RenderTableCell {TD} at (2,18) size 2x2 [bgcolor=#FF00FF] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (6,2) size 201x35 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-                      RenderTextControl {INPUT} at (3,3) size 195x29 [color=#202020]
+                    RenderTableCell {TD} at (6,2) size 201x34 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
                       RenderText {#text} at (0,0) size 0x0
-layer at (24,30) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
+layer at (24,30) size 188x18
+  RenderBlock {DIV} at (4,6) size 188x18

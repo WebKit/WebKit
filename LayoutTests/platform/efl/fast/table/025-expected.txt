@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x43
-        RenderTableSection {TBODY} at (0,0) size 784x43
-          RenderTableRow {TR} at (0,0) size 784x43
-            RenderTableCell {TD} at (0,8) size 208x27 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x42
+        RenderTableSection {TBODY} at (0,0) size 784x42
+          RenderTableRow {TR} at (0,0) size 784x42
+            RenderTableCell {TD} at (0,8) size 208x26 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 8x19
                 text run at (4,4) width 8: "d"
-            RenderTableCell {TD} at (208,0) size 340x43 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (4,4) size 332x35
-                RenderTableSection {TBODY} at (0,0) size 332x35
-                  RenderTableRow {TR} at (0,2) size 332x31
-                    RenderTableCell {TD} at (2,2) size 328x31 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 252x27
-                        RenderTableSection {TBODY} at (0,0) size 252x27
-                          RenderTableRow {TR} at (0,2) size 252x23
+            RenderTableCell {TD} at (208,0) size 340x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 332x34
+                RenderTableSection {TBODY} at (0,0) size 332x34
+                  RenderTableRow {TR} at (0,2) size 332x30
+                    RenderTableCell {TD} at (2,2) size 328x30 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 252x26
+                        RenderTableSection {TBODY} at (0,0) size 252x26
+                          RenderTableRow {TR} at (0,2) size 252x22
                             RenderTableCell {TD} at (2,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                            RenderTableCell {TD} at (8,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                            RenderTableCell {TD} at (8,2) size 236x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,2) size 4x19
                                 text run at (23,2) width 4: " "
@@ -47,23 +47,23 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (2,2) size 216x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
                               RenderImage {IMG} at (2,2) size 212x18 [bgcolor=#800080]
                               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,59) size 784x0
-      RenderTable {TABLE} at (0,59) size 784x43
-        RenderTableSection {TBODY} at (0,0) size 784x43
-          RenderTableRow {TR} at (0,0) size 784x43
-            RenderTableCell {TD} at (0,8) size 219x27 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {P} at (0,58) size 784x0
+      RenderTable {TABLE} at (0,58) size 784x42
+        RenderTableSection {TBODY} at (0,0) size 784x42
+          RenderTableRow {TR} at (0,0) size 784x42
+            RenderTableCell {TD} at (0,8) size 219x26 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 8x19
                 text run at (4,4) width 8: "d"
-            RenderTableCell {TD} at (219,0) size 329x43 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (4,4) size 321x35
-                RenderTableSection {TBODY} at (0,0) size 321x35
-                  RenderTableRow {TR} at (0,2) size 321x31
-                    RenderTableCell {TD} at (2,2) size 317x31 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 252x27
-                        RenderTableSection {TBODY} at (0,0) size 252x27
-                          RenderTableRow {TR} at (0,2) size 252x23
+            RenderTableCell {TD} at (219,0) size 329x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 321x34
+                RenderTableSection {TBODY} at (0,0) size 321x34
+                  RenderTableRow {TR} at (0,2) size 321x30
+                    RenderTableCell {TD} at (2,2) size 317x30 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 252x26
+                        RenderTableSection {TBODY} at (0,0) size 252x26
+                          RenderTableRow {TR} at (0,2) size 252x22
                             RenderTableCell {TD} at (2,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                            RenderTableCell {TD} at (8,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                            RenderTableCell {TD} at (8,2) size 236x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,2) size 4x19
                                 text run at (23,2) width 4: " "

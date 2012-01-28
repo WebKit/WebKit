@@ -1,33 +1,33 @@
-layer at (0,0) size 785x953
+layer at (0,0) size 785x948
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x929
-  RenderBlock {HTML} at (0,0) size 785x929
-    RenderBody {BODY} at (8,8) size 769x913
+layer at (0,0) size 785x924
+  RenderBlock {HTML} at (0,0) size 785x924
+    RenderBody {BODY} at (8,8) size 769x908
       RenderText {#text} at (0,0) size 457x19
         text run at (0,0) width 457: "All of the replaced elements below should be clipped to a border-radius. "
       RenderBR {BR} at (0,0) size 0x0
-      RenderImage {IMG} at (0,19) size 100x100
-      RenderText {#text} at (100,104) size 4x19
-        text run at (100,104) width 4: " "
+      RenderImage {IMG} at (0,18) size 100x100
+      RenderText {#text} at (100,103) size 4x19
+        text run at (100,103) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderImage {INPUT} at (0,123) size 100x100
-      RenderText {#text} at (100,208) size 4x19
-        text run at (100,208) width 4: " "
+      RenderImage {INPUT} at (0,121) size 100x100
+      RenderText {#text} at (100,206) size 4x19
+        text run at (100,206) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderPartObject {IFRAME} at (0,227) size 304x154 [border: (2px inset #000000)]
+      RenderPartObject {IFRAME} at (0,224) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (0,0) size 300x150
               RenderImage {IMG} at (0,0) size 100x100
-      RenderText {#text} at (304,366) size 4x19
-        text run at (304,366) width 4: " "
+      RenderText {#text} at (304,363) size 4x19
+        text run at (304,363) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (300,520) size 4x19
-        text run at (300,520) width 4: " "
+      RenderText {#text} at (300,516) size 4x19
+        text run at (300,516) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderEmbeddedObject {EMBED} at (0,539) size 556x406 [bgcolor=#00FF00] [border: (3px solid #000000)]
+      RenderEmbeddedObject {EMBED} at (0,534) size 556x406 [bgcolor=#00FF00] [border: (3px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (8,393) size 300x150
-  RenderVideo {VIDEO} at (0,385) size 300x150
+layer at (8,389) size 300x150
+  RenderVideo {VIDEO} at (0,381) size 300x150

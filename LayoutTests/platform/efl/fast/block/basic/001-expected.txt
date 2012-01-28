@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x186 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (2,2) size 780x19
+      RenderBlock {DIV} at (0,0) size 784x182 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (2,2) size 780x18
           RenderInline {I} at (0,0) size 230x19
             RenderText {#text} at (0,0) size 93x19
               text run at (0,0) width 93: "Start of a line. "
             RenderInline {FONT} at (0,0) size 137x19 [color=#FF0000]
               RenderText {#text} at (93,0) size 137x19
                 text run at (93,0) width 137: "More red on this line:"
-        RenderBlock (anonymous) at (2,39) size 780x69 [color=#FF0000]
+        RenderBlock (anonymous) at (2,38) size 780x69 [color=#FF0000]
           RenderBlock {H3} at (0,0) size 780x22
             RenderText {#text} at (0,0) size 211x22
               text run at (0,0) width 211: "Suddenly a block appears!"
           RenderBlock {H2} at (0,41) size 780x28
             RenderText {#text} at (0,0) size 193x28
               text run at (0,0) width 193: "And another block!"
-        RenderBlock (anonymous) at (2,127) size 780x57
-          RenderInline {I} at (0,0) size 294x38
-            RenderInline {FONT} at (0,0) size 97x38 [color=#FF0000]
+        RenderBlock (anonymous) at (2,126) size 780x54
+          RenderInline {I} at (0,0) size 294x37
+            RenderInline {FONT} at (0,0) size 97x37 [color=#FF0000]
               RenderText {#text} at (0,0) size 97x19
                 text run at (0,0) width 97: "Now more text."
               RenderBR {BR} at (97,15) size 0x0
-              RenderText {#text} at (0,19) size 66x19
-                text run at (0,19) width 66: "This is red"
-            RenderText {#text} at (66,19) size 228x19
-              text run at (66,19) width 228: " but now only italic on the same line"
-          RenderBR {BR} at (294,34) size 0x0
-          RenderText {#text} at (0,38) size 128x19
-            text run at (0,38) width 128: "Plain line at the end."
+              RenderText {#text} at (0,18) size 66x19
+                text run at (0,18) width 66: "This is red"
+            RenderText {#text} at (66,18) size 228x19
+              text run at (66,18) width 228: " but now only italic on the same line"
+          RenderBR {BR} at (294,33) size 0x0
+          RenderText {#text} at (0,36) size 128x19
+            text run at (0,36) width 128: "Plain line at the end."

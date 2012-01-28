@@ -7,60 +7,60 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H4} at (0,0) size 784x19
+      RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 81x19
           text run at (0,0) width 81: "Instructions"
-      RenderBlock {P} at (0,40) size 784x19
+      RenderBlock {P} at (0,39) size 784x18
         RenderText {#text} at (0,0) size 176x19
           text run at (0,0) width 176: "Click the following buttons."
-      RenderBlock {OL} at (0,75) size 784x193
-        RenderListItem {LI} at (40,0) size 744x19
+      RenderBlock {OL} at (0,73) size 784x184
+        RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-21,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 193x19
             text run at (0,0) width 193: "Start with the outmost left one."
-        RenderListItem {LI} at (40,19) size 744x19
+        RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 135x19
             text run at (0,0) width 135: "Click the middle one."
-        RenderListItem {LI} at (40,38) size 744x19
+        RenderListItem {LI} at (40,36) size 744x18
           RenderListMarker at (-21,0) size 16x19: "3"
           RenderText {#text} at (0,0) size 266x19
             text run at (0,0) width 266: "(The ouline will not be updated correctly.)"
-        RenderListItem {LI} at (40,57) size 744x19
+        RenderListItem {LI} at (40,54) size 744x18
           RenderListMarker at (-21,0) size 16x19: "4"
           RenderText {#text} at (0,0) size 138x19
             text run at (0,0) width 138: "Click the right button."
-        RenderListItem {LI} at (40,76) size 744x19
+        RenderListItem {LI} at (40,72) size 744x18
           RenderListMarker at (-21,0) size 16x19: "5"
           RenderText {#text} at (0,0) size 465x19
             text run at (0,0) width 465: "This will crash Safari 1.3 (v176 and v170, no other configurations tested)."
-        RenderListItem {LI} at (40,95) size 744x19
+        RenderListItem {LI} at (40,90) size 744x18
           RenderListMarker at (-21,0) size 16x19: "6"
           RenderText {#text} at (0,0) size 294x19
             text run at (0,0) width 294: "The combination 2. 1. 3. will also crash Safari."
-        RenderListItem {LI} at (40,114) size 744x19
+        RenderListItem {LI} at (40,108) size 744x18
           RenderListMarker at (-21,0) size 16x19: "7"
           RenderText {#text} at (0,0) size 447x19
             text run at (0,0) width 447: "1. 3. will not crash Safari. (But the outline should vanish. Shouldn't it?)"
-        RenderListItem {LI} at (40,133) size 744x19
+        RenderListItem {LI} at (40,126) size 744x18
           RenderListMarker at (-21,0) size 16x19: "8"
           RenderText {#text} at (0,0) size 201x19
             text run at (0,0) width 201: "2. 3. will not crash Safari either."
-        RenderBlock (anonymous) at (40,152) size 744x41
-          RenderButton {INPUT} at (2,2) size 185x37 [color=#202020]
-            RenderBlock (anonymous) at (15,8) size 155x19
+        RenderBlock (anonymous) at (40,144) size 744x40
+          RenderButton {INPUT} at (2,2) size 185x36 [color=#202020]
+            RenderBlock (anonymous) at (15,8) size 155x18
               RenderText at (0,0) size 155x19
                 text run at (0,0) width 155: "1. Set outline property"
           RenderText {#text} at (189,10) size 4x19
             text run at (189,10) width 4: " "
-          RenderButton {INPUT} at (195,2) size 188x37 [color=#202020]
-            RenderBlock (anonymous) at (15,8) size 158x19
+          RenderButton {INPUT} at (195,2) size 188x36 [color=#202020]
+            RenderBlock (anonymous) at (15,8) size 158x18
               RenderText at (0,0) size 158x19
                 text run at (0,0) width 158: "2. Set display property"
           RenderText {#text} at (385,10) size 4x19
             text run at (385,10) width 4: " "
-          RenderButton {INPUT} at (391,2) size 208x37 [color=#202020]
-            RenderBlock (anonymous) at (15,8) size 178x19
+          RenderButton {INPUT} at (391,2) size 208x36 [color=#202020]
+            RenderBlock (anonymous) at (15,8) size 178x18
               RenderText at (0,0) size 178x19
                 text run at (0,0) width 178: "3. Replace span-element"
           RenderText {#text} at (0,0) size 0x0

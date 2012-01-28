@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x260
-  RenderBlock {HTML} at (0,0) size 800x260
-    RenderBody {BODY} at (8,16) size 784x236
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x256
+  RenderBlock {HTML} at (0,0) size 800x256
+    RenderBody {BODY} at (8,16) size 784x232
+      RenderBlock {P} at (0,0) size 784x18
         RenderInline {B} at (0,0) size 62x19
           RenderText {#text} at (0,0) size 62x19
             text run at (0,0) width 62: "BUG ID:"
@@ -14,24 +14,24 @@ layer at (0,0) size 800x260
             text run at (66,0) width 117: "Bugzilla bug 6388"
         RenderText {#text} at (183,0) size 491x19
           text run at (183,0) width 491: " REGRESSION: Incomplete repaint when dragging the map on Google maps"
-      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
+      RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
         RenderInline {B} at (0,0) size 91x19
           RenderText {#text} at (3,3) size 91x19
             text run at (3,3) width 91: "TEST PASS:"
         RenderText {#text} at (94,3) size 241x19
           text run at (94,3) width 4: " "
           text run at (98,3) width 237: "The blue square will change to green."
-      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
+      RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x19
           RenderText {#text} at (3,3) size 90x19
             text run at (3,3) width 90: "TEST FAIL:"
         RenderText {#text} at (93,3) size 279x19
           text run at (93,3) width 4: " "
           text run at (97,3) width 275: "The blue square will NOT change to green."
-      RenderBlock (anonymous) at (0,217) size 784x19
+      RenderBlock (anonymous) at (0,214) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-layer at (8,133) size 100x100
-  RenderBlock (relative positioned) {DIV} at (0,117) size 100x100
-layer at (-92,133) size 200x100 backgroundClip at (8,133) size 100x100 clip at (8,133) size 100x100 outlineClip at (8,133) size 100x100
+layer at (8,130) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,114) size 100x100
+layer at (-92,130) size 200x100 backgroundClip at (8,130) size 100x100 clip at (8,130) size 100x100 outlineClip at (8,130) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 200x100 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000FF]

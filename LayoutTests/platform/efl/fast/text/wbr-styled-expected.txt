@@ -21,13 +21,13 @@ layer at (0,0) size 800x600
             text run at (498,4) width 64: "absolute"
         RenderText {#text} at (562,0) size 152x19
           text run at (562,0) width 152: " does not crash WebKit."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,35) size 784x18
         RenderText {#text} at (0,0) size 126x19
           text run at (0,0) width 126: "There should be no "
         RenderWordBreak {WBR} at (0,0) size 0x0
         RenderText {#text} at (126,0) size 97x19
           text run at (126,0) width 97: "red on this line."
-      RenderBlock {P} at (0,70) size 784x19
+      RenderBlock {P} at (0,69) size 784x18
         RenderText {#text} at (0,0) size 124x19
           text run at (0,0) width 124: "No crashing, please"
         RenderWordBreak {WBR} at (0,0) size 0x0

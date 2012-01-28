@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FFFFFF]
-      RenderBlock {DIV} at (0,0) size 784x36 [bgcolor=#008000] [border: (1px solid #000000) none]
-        RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,0) size 784x35 [bgcolor=#008000] [border: (1px solid #000000) none]
+        RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 400x19
             text run at (0,0) width 400: "This div should be 2em tall with a 1em gap underneath the text."
-      RenderBlock {DIV} at (0,36) size 784x19 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,35) size 784x18 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 400x19
           text run at (0,0) width 400: "I should also be green and flush with the other green div above."

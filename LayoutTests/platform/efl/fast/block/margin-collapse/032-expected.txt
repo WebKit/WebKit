@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x145
-  RenderBlock {HTML} at (0,0) size 800x145
-    RenderBody {BODY} at (8,16) size 784x121
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x144
+  RenderBlock {HTML} at (0,0) size 800x144
+    RenderBody {BODY} at (8,16) size 784x120
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 295x19
           text run at (0,0) width 295: "The following two squares should be identical."
-      RenderTable {TABLE} at (0,35) size 316x86
+      RenderTable {TABLE} at (0,34) size 316x86
         RenderTableSection {TBODY} at (0,0) size 316x86
           RenderTableRow {TR} at (0,16) size 316x54
             RenderTableCell {TD} at (16,16) size 134x54 [bgcolor=#00FF00] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]

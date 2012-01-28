@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 747x38
+        RenderInline {I} at (0,0) size 747x37
           RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 307x19
               text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=34735"
-          RenderText {#text} at (360,0) size 747x38
+          RenderText {#text} at (360,0) size 747x37
             text run at (360,0) width 387: " [Chromium] OpenType font with CFF glyphs is not handled"
-            text run at (0,19) width 162: "correctly on Windows XP"
-        RenderText {#text} at (162,19) size 4x19
-          text run at (162,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x38
-        RenderText {#text} at (0,0) size 770x38
+            text run at (0,18) width 162: "correctly on Windows XP"
+        RenderText {#text} at (162,18) size 4x19
+          text run at (162,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 770x37
           text run at (0,0) width 770: "Check if glyphs in Ahem.otf can be rendered correctly. If the test passes, you should see dozens of black square characters"
-          text run at (0,19) width 43: "below:"
-      RenderBlock (anonymous) at (0,108) size 784x19
+          text run at (0,18) width 43: "below:"
+      RenderBlock (anonymous) at (0,104) size 784x18
         RenderInline {SPAN} at (0,0) size 394x19
           RenderText {#text} at (0,0) size 394x19
             text run at (0,0) width 394: "!\"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO"
@@ -30,11 +30,11 @@ layer at (0,0) size 800x600
             text run at (398,0) width 367: "PQRSTUVWXYZ[\\]^_`abcdefghijklmnoqrstuvwxyz{|}~"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,143) size 784x38
-        RenderText {#text} at (0,0) size 744x38
+      RenderBlock {P} at (0,138) size 784x36
+        RenderText {#text} at (0,0) size 744x37
           text run at (0,0) width 744: "Check if glyphs not in Ahem.otf can be rendered using a fallback font. If the test passes, you should see a single-quote"
-          text run at (0,19) width 104: "character below:"
-      RenderBlock (anonymous) at (0,197) size 784x19
+          text run at (0,18) width 104: "character below:"
+      RenderBlock (anonymous) at (0,190) size 784x18
         RenderInline {SPAN} at (0,0) size 3x19
           RenderText {#text} at (0,0) size 3x19
             text run at (0,0) width 3: "'"

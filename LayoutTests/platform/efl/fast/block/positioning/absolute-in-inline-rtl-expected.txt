@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 323x19
           text run at (0,0) width 323: "The black outline box should stretch from the right "
         RenderInline {SPAN} at (0,0) size 27x19 [color=#0000FF]
@@ -16,19 +16,19 @@ layer at (0,0) size 800x600
             text run at (564,0) width 43: "orange"
         RenderText {#text} at (607,0) size 152x19
           text run at (607,0) width 152: " border on the third line."
-      RenderBlock {DIV} at (0,35) size 600x76
+      RenderBlock {DIV} at (0,34) size 600x72
         RenderText {#text} at (414,0) size 186x19
           text run at (414,0) width 186 RTL override: "ILorem ipsum dolor sit amet, "
-        RenderText {#text} at (7,38) size 593x38
-          text run at (7,38) width 89 RTL override: "duis aute irure"
-          text run at (351,57) width 249 RTL override: "dolor in reprehenderit in voluptate velit."
-layer at (8,43) size 597x59
-  RenderInline (relative positioned) {SPAN} at (0,0) size 597x59 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
-    RenderText {#text} at (43,0) size 557x38
+        RenderText {#text} at (7,36) size 593x37
+          text run at (7,36) width 89 RTL override: "duis aute irure"
+          text run at (351,54) width 249 RTL override: "dolor in reprehenderit in voluptate velit."
+layer at (8,42) size 597x57
+  RenderInline (relative positioned) {SPAN} at (0,0) size 597x57 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
+    RenderText {#text} at (43,0) size 557x37
       text run at (43,0) width 331 RTL override: "con a pariatur. Excepteur sint occaecat cupidatat non"
-      text run at (234,19) width 366 RTL override: "proident, sunt in culp qui officia deserunt mollit animequs "
-    RenderText {#text} at (3,19) size 597x38
-      text run at (3,19) width 231 RTL override: "ILOREM ipsum dol sDuis aute irure"
-      text run at (136,38) width 464 RTL override: "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nullat "
-layer at (134,43) size 258x57
-  RenderBlock (positioned) {DIV} at (83,1) size 258x57
+      text run at (234,18) width 366 RTL override: "proident, sunt in culp qui officia deserunt mollit animequs "
+    RenderText {#text} at (3,18) size 597x37
+      text run at (3,18) width 231 RTL override: "ILOREM ipsum dol sDuis aute irure"
+      text run at (136,36) width 464 RTL override: "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nullat "
+layer at (134,42) size 258x55
+  RenderBlock (positioned) {DIV} at (83,1) size 258x55

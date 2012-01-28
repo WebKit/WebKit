@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (7,7) size 786x586
-      RenderBlock {P} at (0,0) size 786x34
+      RenderBlock {P} at (0,0) size 786x32
         RenderText {#text} at (0,0) size 303x17
           text run at (0,0) width 303: "Tests that these functions account for full page zoom."
         RenderBR {BR} at (303,13) size 0x0
-        RenderText {#text} at (0,17) size 176x17
-          text run at (0,17) width 176: "There should be no red visible."
-      RenderTable {TABLE} at (0,48) size 786x21
-        RenderTableSection {TBODY} at (0,0) size 786x21
-          RenderTableRow {TR} at (0,1) size 786x19
-            RenderTableCell {TD} at (1,1) size 182x19 [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,16) size 176x17
+          text run at (0,16) width 176: "There should be no red visible."
+      RenderTable {TABLE} at (0,46) size 786x20
+        RenderTableSection {TBODY} at (0,0) size 786x20
+          RenderTableRow {TR} at (0,1) size 786x18
+            RenderTableCell {TD} at (1,1) size 182x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 145x17
                 text run at (1,1) width 145: "getClientBoundingRect():"
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (184,1) size 601x19 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (184,1) size 601x18 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 95x17
                 text run at (1,1) width 95: "getClientRects():"
               RenderText {#text} at (0,0) size 0x0
@@ -28,8 +28,8 @@ layer at (90,90) size 90x90
   RenderBlock (positioned) {DIV} at (90,90) size 90x90 [bgcolor=#FF0000]
 layer at (90,90) size 90x90
   RenderBlock (positioned) {DIV} at (90,90) size 90x90 [bgcolor=#008000]
-layer at (9,198) size 35x17
-  RenderBlock (positioned) {DIV} at (9,198) size 35x17
+layer at (9,198) size 35x16
+  RenderBlock (positioned) {DIV} at (9,198) size 35x16
     RenderInline {SPAN} at (0,0) size 35x17 [color=#008000]
       RenderInline {B} at (0,0) size 35x17
         RenderText {#text} at (0,0) size 35x17
@@ -38,8 +38,8 @@ layer at (270,90) size 90x90
   RenderBlock (positioned) {DIV} at (270,90) size 90x90 [bgcolor=#FF0000]
 layer at (270,90) size 90x90
   RenderBlock (positioned) {DIV} at (270,90) size 90x90 [bgcolor=#008000]
-layer at (198,198) size 35x17
-  RenderBlock (positioned) {DIV} at (198,198) size 35x17
+layer at (198,198) size 35x16
+  RenderBlock (positioned) {DIV} at (198,198) size 35x16
     RenderInline {SPAN} at (0,0) size 35x17 [color=#008000]
       RenderInline {B} at (0,0) size 35x17
         RenderText {#text} at (0,0) size 35x17

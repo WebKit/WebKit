@@ -3,45 +3,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 100x19
           text run at (0,0) width 100: "Repaint test for "
-        RenderInline {I} at (0,0) size 767x38
+        RenderInline {I} at (0,0) size 767x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (100,0) size 301x19
               text run at (100,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15838"
-          RenderText {#text} at (401,0) size 767x38
+          RenderText {#text} at (401,0) size 767x37
             text run at (401,0) width 366: " Incomplete repaint toggling \"How you know this person\""
-            text run at (0,19) width 83: "on Facebook"
-        RenderText {#text} at (83,19) size 4x19
-          text run at (83,19) width 4: "."
-      RenderBlock {DIV} at (0,54) size 784x271
-        RenderBlock (anonymous) at (0,0) size 784x95
+            text run at (0,18) width 83: "on Facebook"
+        RenderText {#text} at (83,18) size 4x19
+          text run at (83,18) width 4: "."
+      RenderBlock {DIV} at (0,52) size 784x262
+        RenderBlock (anonymous) at (0,0) size 784x90
           RenderText {#text} at (0,0) size 40x19
             text run at (0,0) width 40: "Word,"
           RenderBR {BR} at (40,15) size 0x0
-          RenderText {#text} at (0,19) size 43x19
-            text run at (0,19) width 43: "words,"
-          RenderBR {BR} at (43,34) size 0x0
-          RenderText {#text} at (0,38) size 79x19
-            text run at (0,38) width 79: "more words."
-          RenderBR {BR} at (79,53) size 0x0
-          RenderText {#text} at (0,57) size 44x19
-            text run at (0,57) width 44: "I could"
-          RenderBR {BR} at (44,72) size 0x0
-          RenderText {#text} at (0,76) size 79x19
-            text run at (0,76) width 79: "write a book"
-          RenderBR {BR} at (79,91) size 0x0
-        RenderBlock {DIV} at (0,95) size 10x100 [bgcolor=#FFFF00]
-        RenderBlock (anonymous) at (0,195) size 784x76
+          RenderText {#text} at (0,18) size 43x19
+            text run at (0,18) width 43: "words,"
+          RenderBR {BR} at (43,33) size 0x0
+          RenderText {#text} at (0,36) size 79x19
+            text run at (0,36) width 79: "more words."
+          RenderBR {BR} at (79,51) size 0x0
+          RenderText {#text} at (0,54) size 44x19
+            text run at (0,54) width 44: "I could"
+          RenderBR {BR} at (44,69) size 0x0
+          RenderText {#text} at (0,72) size 79x19
+            text run at (0,72) width 79: "write a book"
+          RenderBR {BR} at (79,87) size 0x0
+        RenderBlock {DIV} at (0,90) size 10x100 [bgcolor=#FFFF00]
+        RenderBlock (anonymous) at (0,190) size 784x72
           RenderText {#text} at (0,0) size 109x19
             text run at (0,0) width 109: "about all the stuff"
           RenderBR {BR} at (109,15) size 0x0
-          RenderText {#text} at (0,19) size 67x19
-            text run at (0,19) width 67: "that comes"
-          RenderBR {BR} at (67,34) size 0x0
-          RenderText {#text} at (0,38) size 28x19
-            text run at (0,38) width 28: "after"
-          RenderBR {BR} at (28,53) size 0x0
-          RenderText {#text} at (0,57) size 62x19
-            text run at (0,57) width 62: "the break."
+          RenderText {#text} at (0,18) size 67x19
+            text run at (0,18) width 67: "that comes"
+          RenderBR {BR} at (67,33) size 0x0
+          RenderText {#text} at (0,36) size 28x19
+            text run at (0,36) width 28: "after"
+          RenderBR {BR} at (28,51) size 0x0
+          RenderText {#text} at (0,54) size 62x19
+            text run at (0,54) width 62: "the break."

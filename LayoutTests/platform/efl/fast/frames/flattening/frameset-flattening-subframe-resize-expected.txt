@@ -9,14 +9,14 @@ layer at (0,0) size 785x650
         layer at (0,0) size 300x650
           RenderBlock {HTML} at (0,0) size 300x650
             RenderBody {BODY} at (8,8) size 284x626 [bgcolor=#008000]
-              RenderBlock {P} at (0,0) size 284x38
-                RenderText {#text} at (0,0) size 265x38
+              RenderBlock {P} at (0,0) size 284x36
+                RenderText {#text} at (0,0) size 265x37
                   text run at (0,0) width 265: "Test for frameset flattening. The flattening"
-                  text run at (0,19) width 176: "only works inside the DRT."
-              RenderBlock {P} at (0,54) size 284x38
-                RenderText {#text} at (0,0) size 282x38
+                  text run at (0,18) width 176: "only works inside the DRT."
+              RenderBlock {P} at (0,52) size 284x36
+                RenderText {#text} at (0,0) size 282x37
                   text run at (0,0) width 282: "This frame should be 300px wide and not be"
-                  text run at (0,19) width 172: "scrollable (have scrollbars)."
+                  text run at (0,18) width 172: "scrollable (have scrollbars)."
         layer at (0,350) size 300x300
           RenderBlock (positioned) {DIV} at (0,350) size 300x300 [bgcolor=#0000FF]
       RenderFrame {FRAME} at (300,0) size 700x650

@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 393x19
           text run at (0,0) width 393: "Tests that box shadow is not applied to Aqua-themed controls."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 257x19
           text run at (0,0) width 257: "You should not see any red on this page."
-      RenderBlock {DIV} at (0,70) size 784x33
-        RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
+      RenderBlock {DIV} at (0,68) size 784x32
+        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,103) size 784x33
-        RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
+      RenderBlock {DIV} at (0,100) size 784x32
+        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,136) size 784x33
-        RenderTextControl {INPUT} at (2,2) size 195x29 [color=#202020]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x19
+      RenderBlock {DIV} at (0,132) size 784x32
+        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,169) size 784x96
+      RenderBlock (anonymous) at (0,164) size 784x94
         RenderBlock {INPUT} at (4,20) size 12x12
         RenderText {#text} at (20,14) size 4x19
           text run at (20,14) width 4: " "
@@ -43,42 +43,42 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (117,0) size 12x12
         RenderText {#text} at (181,14) size 4x19
           text run at (181,14) width 4: " "
-        RenderFileUploadControl {INPUT} at (187,6) size 306x37 "No file selected"
-          RenderButton {INPUT} at (0,0) size 117x37 [color=#202020]
-            RenderBlock (anonymous) at (15,8) size 87x19
+        RenderFileUploadControl {INPUT} at (187,6) size 306x36 "No file selected"
+          RenderButton {INPUT} at (0,0) size 117x36 [color=#202020]
+            RenderBlock (anonymous) at (15,8) size 87x18
               RenderText at (0,0) size 87x19
                 text run at (0,0) width 87: "Choose File"
         RenderText {#text} at (495,14) size 4x19
           text run at (495,14) width 4: " "
-        RenderButton {INPUT} at (501,2) size 88x42 [color=#202020]
-          RenderBlock (anonymous) at (15,8) size 58x24
+        RenderButton {INPUT} at (501,2) size 88x41 [color=#202020]
+          RenderBlock (anonymous) at (15,8) size 58x23
             RenderText at (0,0) size 58x24
               text run at (0,0) width 58: "Button"
         RenderText {#text} at (591,14) size 4x19
           text run at (591,14) width 4: " "
-        RenderButton {INPUT} at (597,6) size 76x37 [color=#202020]
-          RenderBlock (anonymous) at (15,8) size 46x19
+        RenderButton {INPUT} at (597,6) size 76x36 [color=#202020]
+          RenderBlock (anonymous) at (15,8) size 46x18
             RenderText at (0,0) size 46x19
               text run at (0,0) width 46: "Button"
         RenderText {#text} at (675,14) size 4x19
           text run at (675,14) width 4: " "
-        RenderButton {INPUT} at (679,16) size 44x25 [color=#202020]
-          RenderBlock (anonymous) at (15,8) size 14x7
+        RenderButton {INPUT} at (679,16) size 44x24 [color=#202020]
+          RenderBlock (anonymous) at (15,8) size 14x6
             RenderText at (0,0) size 14x7
               text run at (0,0) width 14: "Button"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {BUTTON} at (2,48) size 92x46 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (17,10) size 58x24
+        RenderButton {BUTTON} at (2,47) size 92x45 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (17,10) size 58x23
             RenderText {#text} at (0,0) size 58x24
               text run at (0,0) width 58: "Button"
         RenderText {#text} at (0,0) size 0x0
-layer at (14,86) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
+layer at (14,84) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (0,0) size 188x18
     RenderText {#text} at (1,0) size 51x19
       text run at (1,0) width 51: "Search"
-layer at (14,119) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
-layer at (14,152) size 188x19
-  RenderBlock {DIV} at (0,0) size 188x19
-layer at (116,195) size 12x12
+layer at (14,116) size 188x18
+  RenderBlock {DIV} at (0,0) size 188x18
+layer at (14,148) size 188x18
+  RenderBlock {DIV} at (0,0) size 188x18
+layer at (116,190) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 610x206
         RenderTableSection {TBODY} at (0,0) size 610x206
           RenderTableRow {TR} at (0,2) size 610x202
-            RenderTableCell {TD} at (2,92) size 402x21 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 400x19 [bgcolor=#008000]
+            RenderTableCell {TD} at (2,93) size 402x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 400x18 [bgcolor=#008000]
                 RenderText {#text} at (0,0) size 141x19
                   text run at (0,0) width 141: "This div does not flex."
             RenderTableCell {TD} at (406,2) size 202x202 [r=0 c=1 rs=1 cs=1]

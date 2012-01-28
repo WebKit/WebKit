@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DL} at (0,0) size 784x38
-        RenderBlock {DT} at (0,0) size 784x19
+      RenderBlock {DL} at (0,0) size 784x36
+        RenderBlock {DT} at (0,0) size 784x18
           RenderInline {B} at (0,0) size 27x19
             RenderText {#text} at (0,0) size 27x19
               text run at (0,0) width 27: "Boo"
-        RenderBlock {DD} at (40,19) size 744x19
+        RenderBlock {DD} at (40,18) size 744x18
           RenderInline {B} at (0,0) size 36x19
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "Goo?"
-      RenderBlock (anonymous) at (0,54) size 784x0
+      RenderBlock (anonymous) at (0,52) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

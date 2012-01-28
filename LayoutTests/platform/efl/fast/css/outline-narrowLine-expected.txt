@@ -7,34 +7,34 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,0) size 784x133
+      RenderBlock {P} at (0,0) size 784x126
         RenderInline {SPAN} at (0,0) size 0x19
           RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (0,19) size 0x19
-        RenderBR {BR} at (0,38) size 0x19
-        RenderBR {BR} at (0,57) size 0x19
-        RenderBR {BR} at (0,76) size 0x19
-        RenderBR {BR} at (0,95) size 0x19
-        RenderBR {BR} at (0,114) size 0x19
-      RenderBlock {P} at (0,149) size 784x152
-        RenderInline {SPAN} at (0,0) size 8x38
+        RenderBR {BR} at (0,18) size 0x19
+        RenderBR {BR} at (0,36) size 0x19
+        RenderBR {BR} at (0,54) size 0x19
+        RenderBR {BR} at (0,72) size 0x19
+        RenderBR {BR} at (0,90) size 0x19
+        RenderBR {BR} at (0,108) size 0x19
+      RenderBlock {P} at (0,142) size 784x144
+        RenderInline {SPAN} at (0,0) size 8x37
           RenderBR {BR} at (0,0) size 0x19
-          RenderText {#text} at (0,19) size 8x19
-            text run at (0,19) width 8: "x"
-        RenderText {#text} at (8,19) size 4x19
-          text run at (8,19) width 4: " "
-        RenderBR {BR} at (12,34) size 0x0
-        RenderBR {BR} at (0,38) size 0x19
-        RenderBR {BR} at (0,57) size 0x19
-        RenderBR {BR} at (0,76) size 0x19
-        RenderBR {BR} at (0,95) size 0x19
-        RenderBR {BR} at (0,114) size 0x19
-        RenderBR {BR} at (0,133) size 0x19
-      RenderBlock {P} at (0,317) size 784x38
-        RenderInline {SPAN} at (0,0) size 8x38
+          RenderText {#text} at (0,18) size 8x19
+            text run at (0,18) width 8: "x"
+        RenderText {#text} at (8,18) size 4x19
+          text run at (8,18) width 4: " "
+        RenderBR {BR} at (12,33) size 0x0
+        RenderBR {BR} at (0,36) size 0x19
+        RenderBR {BR} at (0,54) size 0x19
+        RenderBR {BR} at (0,72) size 0x19
+        RenderBR {BR} at (0,90) size 0x19
+        RenderBR {BR} at (0,108) size 0x19
+        RenderBR {BR} at (0,126) size 0x19
+      RenderBlock {P} at (0,302) size 784x36
+        RenderInline {SPAN} at (0,0) size 8x37
           RenderText {#text} at (0,0) size 8x19
             text run at (0,0) width 8: "x"
           RenderBR {BR} at (8,15) size 0x0
-          RenderBR {BR} at (0,19) size 0x19
+          RenderBR {BR} at (0,18) size 0x19
         RenderText {#text} at (0,0) size 0x0

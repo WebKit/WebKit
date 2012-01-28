@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 709x19
@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             text run at (358,0) width 404: "REGRESSION: Moving a slider moves another unrelated slider"
         RenderText {#text} at (762,0) size 4x19
           text run at (762,0) width 4: "."
-      RenderBlock {P} at (0,35) size 784x19
+      RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 282x19
           text run at (0,0) width 282: "The first slider\x{2019}s thumb should be on the left."
-      RenderBlock {DIV} at (0,70) size 784x30
+      RenderBlock {DIV} at (0,68) size 784x30
         RenderSlider {INPUT} at (2,2) size 129x11 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x11
             RenderBlock {DIV} at (0,0) size 117x12
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 117x12
             RenderBlock {DIV} at (117,0) size 12x12
         RenderText {#text} at (0,0) size 0x0
-layer at (10,80) size 12x12
+layer at (10,78) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (127,95) size 12x12
+layer at (127,93) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12

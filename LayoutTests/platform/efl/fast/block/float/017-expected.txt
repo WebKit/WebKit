@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 454x166 [border: (2px solid #008000)]
+      RenderBlock {DIV} at (0,0) size 454x159 [border: (2px solid #008000)]
         RenderImage {IMG} at (2,2) size 450x29 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderImage {IMG} at (2,31) size 250x125 [bgcolor=#FFA500]
-        RenderText {#text} at (255,31) size 193x133
+        RenderText {#text} at (255,31) size 193x127
           text run at (255,31) width 186: "Theme Park Roller Coaster is"
-          text run at (255,50) width 193: "an excellent game that lets you"
-          text run at (255,69) width 146: "create your own virtual"
-          text run at (255,88) width 178: "amusement park. Go behind"
-          text run at (255,107) width 184: "the scenes of its development"
-          text run at (255,126) width 184: "and its transition from the PC"
-          text run at (255,145) width 69: "to the PS2."
-      RenderBlock {P} at (0,182) size 784x0
-      RenderBlock {DIV} at (0,182) size 304x42 [border: (2px solid #008000)]
+          text run at (255,49) width 193: "an excellent game that lets you"
+          text run at (255,67) width 146: "create your own virtual"
+          text run at (255,85) width 178: "amusement park. Go behind"
+          text run at (255,103) width 184: "the scenes of its development"
+          text run at (255,121) width 184: "and its transition from the PC"
+          text run at (255,139) width 69: "to the PS2."
+      RenderBlock {P} at (0,175) size 784x0
+      RenderBlock {DIV} at (0,175) size 304x40 [border: (2px solid #008000)]
         RenderImage {IMG} at (197,5) size 105x70 [bgcolor=#800080]
         RenderText {#text} at (2,2) size 147x19
           text run at (2,2) width 147: "First non-breaking line."
         RenderInline {NOBR} at (0,0) size 166x19
-          RenderText {#text} at (2,21) size 166x19
-            text run at (2,21) width 166: "Second non-breaking line."
+          RenderText {#text} at (2,20) size 166x19
+            text run at (2,20) width 166: "Second non-breaking line."
         RenderText {#text} at (0,0) size 0x0

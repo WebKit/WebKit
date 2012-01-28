@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x38
+      RenderBlock (anonymous) at (0,0) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderBR {BR} at (0,19) size 0x19
-      RenderBlock {DIV} at (0,38) size 784x19
+        RenderBR {BR} at (0,18) size 0x19
+      RenderBlock {DIV} at (0,36) size 784x18
         RenderText {#text} at (0,0) size 131x19
           text run at (0,0) width 131: "This is a testcase for "
         RenderInline {A} at (0,0) size 477x19 [color=#0000EE]
@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
             text run at (131,0) width 477: "REGRESSION: (r13028) Scrolling causes incomplete drawing of ul bullets"
         RenderText {#text} at (608,0) size 4x19
           text run at (608,0) width 4: "."
-layer at (8,-4) size 400x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderBlock (positioned) {UL} at (8,-4) size 400x19
-    RenderListItem {LI} at (40,0) size 360x19
+layer at (8,-4) size 400x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderBlock (positioned) {UL} at (8,-4) size 400x18
+    RenderListItem {LI} at (40,0) size 360x18
       RenderListMarker at (-18,0) size 7x19: bullet
       RenderText {#text} at (0,0) size 360x19
         text run at (0,0) width 114: "This is a list item. "

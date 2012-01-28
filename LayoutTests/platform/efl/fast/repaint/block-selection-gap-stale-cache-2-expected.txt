@@ -8,6 +8,6 @@ layer at (8,8) size 784x100 clip at (8,8) size 769x100 scrollY 50 scrollHeight 1
     RenderBlock {DIV} at (0,50) size 769x100
       RenderBlock {DIV} at (0,0) size 100x100
       RenderBR {BR} at (100,100) size 0x0
-    RenderBlock (anonymous) at (0,150) size 769x19
+    RenderBlock (anonymous) at (0,150) size 769x18
       RenderText {#text} at (0,0) size 4x19
         text run at (0,0) width 4: " "

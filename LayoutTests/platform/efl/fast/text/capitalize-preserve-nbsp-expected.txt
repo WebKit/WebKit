@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 770x38
+        RenderInline {I} at (0,0) size 770x37
           RenderInline {A} at (0,0) size 301x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 301x19
               text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11671"
-          RenderText {#text} at (354,0) size 770x38
+          RenderText {#text} at (354,0) size 770x37
             text run at (354,0) width 4: " "
             text run at (358,0) width 412: "REGRESSION (r13702): text-transform: capitalize changes non-"
-            text run at (0,19) width 164: "breaking spaces to spaces"
-        RenderText {#text} at (164,19) size 4x19
-          text run at (164,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 164: "breaking spaces to spaces"
+        RenderText {#text} at (164,18) size 4x19
+          text run at (164,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "The next three lines should all look the same."
-      RenderBlock {P} at (0,89) size 784x19
+      RenderBlock {P} at (0,86) size 784x18
         RenderText {#text} at (0,0) size 101x19
           text run at (0,0) width 101: "Lorem     Ipsum"
-      RenderBlock {P} at (0,124) size 784x19
+      RenderBlock {P} at (0,120) size 784x18
         RenderText {#text} at (0,0) size 62x19
           text run at (0,0) width 62: "Lorem     "
         RenderInline {SPAN} at (0,0) size 39x19
           RenderText {#text} at (62,0) size 39x19
             text run at (62,0) width 39: "Ipsum"
-      RenderBlock {P} at (0,159) size 784x19
+      RenderBlock {P} at (0,154) size 784x18
         RenderText {#text} at (0,0) size 101x19
           text run at (0,0) width 101: "Lorem     Ipsum"

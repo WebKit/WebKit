@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,0) size 784x18
         RenderInline {SPAN} at (0,0) size 249x19
           RenderText {#text} at (0,0) size 249x19
             text run at (0,0) width 249: "This should not turn red when hovered."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,27) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,45) size 784x38
+      RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,44) size 784x37
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 548x19

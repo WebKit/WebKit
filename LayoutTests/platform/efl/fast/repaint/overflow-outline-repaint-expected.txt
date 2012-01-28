@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 781x38
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 781x37
           text run at (0,0) width 580: "If the red outline at the bottom of the div extends all the way to the scrollbar, the test passes. "
           text run at (580,0) width 201: "If it stops short, then the test has"
-          text run at (0,19) width 293: "failed, and an incomplete repaint has occurred."
-layer at (8,46) size 80x69 clip at (8,46) size 65x69 scrollY 91 scrollHeight 209
-  RenderBlock {DIV} at (0,38) size 80x69
+          text run at (0,18) width 293: "failed, and an incomplete repaint has occurred."
+layer at (8,44) size 80x69 clip at (8,44) size 65x69 scrollY 91 scrollHeight 199
+  RenderBlock {DIV} at (0,36) size 80x69
     RenderBR {BR} at (0,0) size 0x19
-    RenderBR {BR} at (0,19) size 0x19
-    RenderBR {BR} at (0,38) size 0x19
-    RenderBR {BR} at (0,57) size 0x19
-    RenderBR {BR} at (0,76) size 0x19
-    RenderBR {BR} at (0,95) size 0x19
-    RenderBR {BR} at (0,114) size 0x19
-    RenderBR {BR} at (0,133) size 0x19
-    RenderBR {BR} at (0,152) size 0x19
-    RenderInline {SPAN} at (0,0) size 64x38
-      RenderText {#text} at (0,171) size 64x38
-        text run at (0,171) width 64: "Excellent!"
-        text run at (0,190) width 27: "Test"
+    RenderBR {BR} at (0,18) size 0x19
+    RenderBR {BR} at (0,36) size 0x19
+    RenderBR {BR} at (0,54) size 0x19
+    RenderBR {BR} at (0,72) size 0x19
+    RenderBR {BR} at (0,90) size 0x19
+    RenderBR {BR} at (0,108) size 0x19
+    RenderBR {BR} at (0,126) size 0x19
+    RenderBR {BR} at (0,144) size 0x19
+    RenderInline {SPAN} at (0,0) size 64x37
+      RenderText {#text} at (0,162) size 64x37
+        text run at (0,162) width 64: "Excellent!"
+        text run at (0,180) width 27: "Test"
     RenderText {#text} at (0,0) size 0x0

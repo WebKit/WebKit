@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 223x59
-        RenderTableSection {TBODY} at (0,0) size 223x59
+      RenderTable {TABLE} at (0,0) size 223x58
+        RenderTableSection {TBODY} at (0,0) size 223x58
           RenderTableRow {TR} at (0,2) size 223x2
             RenderTableCell {TD} at (2,2) size 6x2 [r=0 c=0 rs=1 cs=1]
           RenderTableRow {TR} at (0,6) size 223x0
             RenderTableCell {TD} at (2,6) size 6x2 [r=1 c=0 rs=2 cs=1]
           RenderTableRow {TR} at (0,8) size 223x0
             RenderTableCell {TD} at (10,31) size 211x2 [r=2 c=1 rs=2 cs=1]
-          RenderTableRow {TR} at (0,10) size 223x47
-            RenderTableCell {TD} at (2,10) size 219x47 [r=3 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 217x45 [border: (2px outset #808080)]
-                RenderTableSection {TBODY} at (2,2) size 213x41
-                  RenderTableRow {TR} at (0,2) size 213x37
+          RenderTableRow {TR} at (0,10) size 223x46
+            RenderTableCell {TD} at (2,10) size 219x46 [r=3 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 217x44 [border: (2px outset #808080)]
+                RenderTableSection {TBODY} at (2,2) size 213x40
+                  RenderTableRow {TR} at (0,2) size 213x36
                     RenderTableCell {TD} at (2,18) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (8,2) size 203x37 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderTextControl {INPUT} at (4,4) size 195x29 [color=#202020]
+                    RenderTableCell {TD} at (8,2) size 203x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (4,4) size 195x28 [color=#202020]
                       RenderText {#text} at (0,0) size 0x0
-layer at (29,33) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
+layer at (29,33) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 188x18
     RenderText {#text} at (1,0) size 35x19
       text run at (1,0) width 35: "hello"

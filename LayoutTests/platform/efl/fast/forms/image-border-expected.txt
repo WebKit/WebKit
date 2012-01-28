@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 769x38
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 769x37
           text run at (0,0) width 523: "The first empty image box below should have the default grey \"no border\" border. "
           text run at (523,0) width 246: "The second should have a 1-pixel solid"
-          text run at (0,19) width 313: "black border. They should be the same otherwise."
-      RenderBlock (anonymous) at (0,54) size 784x54
+          text run at (0,18) width 313: "black border. They should be the same otherwise."
+      RenderBlock (anonymous) at (0,52) size 784x53
         RenderText {#text} at (0,35) size 53x19
           text run at (0,35) width 53: "border:0"
         RenderImage {IMG} at (53,0) size 338x50
-      RenderBlock {HR} at (0,116) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,126) size 784x56
+      RenderBlock {HR} at (0,113) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,123) size 784x55
         RenderText {#text} at (0,37) size 53x19
           text run at (0,37) width 53: "border:1"
         RenderImage {IMG} at (53,0) size 340x52 [border: (1px solid #000000)]

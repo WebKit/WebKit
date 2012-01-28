@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x35
-  RenderBlock {html} at (0,0) size 800x35
-    RenderBody {body} at (8,8) size 784x19
-      RenderBlock (anonymous) at (0,0) size 784x19
+layer at (0,0) size 800x34
+  RenderBlock {html} at (0,0) size 800x34
+    RenderBody {body} at (8,8) size 784x18
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 29x19
           text run at (0,0) width 29: "Text"
-      RenderTable {table} at (0,19) size 2x0
-      RenderTable at (0,19) size 0x0
+      RenderTable {table} at (0,18) size 2x0
+      RenderTable at (0,18) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

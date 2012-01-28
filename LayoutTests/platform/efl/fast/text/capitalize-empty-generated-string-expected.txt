@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x19
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 769x38
+        RenderInline {I} at (0,0) size 769x37
           RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x19
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9432"
-          RenderText {#text} at (520,0) size 769x38
+          RenderText {#text} at (520,0) size 769x37
             text run at (520,0) width 4: " "
             text run at (524,0) width 245: "REGRESSION: crash in capitalization"
-            text run at (0,19) width 273: "code due to empty-string generated content"
-        RenderText {#text} at (273,19) size 4x19
-          text run at (273,19) width 4: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,72) size 784x19
+            text run at (0,18) width 273: "code due to empty-string generated content"
+        RenderText {#text} at (273,18) size 4x19
+          text run at (273,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,70) size 784x18
         RenderInline {SPAN} at (0,0) size 85x19
           RenderText {#text} at (0,0) size 46x19
             text run at (0,0) width 46: "Lorem "
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
             text run at (89,0) width 61: "should be"
         RenderText {#text} at (150,0) size 89x19
           text run at (150,0) width 89: " Lorem Ipsum"
-      RenderBlock {P} at (0,107) size 784x19
+      RenderBlock {P} at (0,104) size 784x18
         RenderInline {SPAN} at (0,0) size 85x19
           RenderText {#text} at (0,0) size 23x19
             text run at (0,0) width 23: "Lor"

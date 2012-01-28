@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x153
-  RenderBlock {HTML} at (0,0) size 800x153
-    RenderBody {BODY} at (8,8) size 784x137
-      RenderBlock (anonymous) at (0,0) size 784x19
+layer at (0,0) size 800x152
+  RenderBlock {HTML} at (0,0) size 800x152
+    RenderBody {BODY} at (8,8) size 784x136
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,2) size 528x17
             text run at (0,2) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,19) size 342x118
+      RenderTable {TABLE} at (0,18) size 342x118
         RenderTableSection {TBODY} at (0,0) size 342x118
           RenderTableRow {TR} at (0,2) size 342x114
             RenderTableCell {TD} at (2,2) size 338x114 [r=0 c=0 rs=1 cs=1]

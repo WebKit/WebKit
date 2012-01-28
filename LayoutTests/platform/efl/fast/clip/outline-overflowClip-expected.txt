@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 765x38
+      RenderText {#text} at (0,0) size 765x37
         text run at (0,0) width 209: "This tests clipping of the outline. "
         text run at (209,0) width 287: "It should not be clipped by the overflow rect. "
         text run at (496,0) width 269: "The inner div has a green outline and a red"
-        text run at (0,19) width 45: "border."
+        text run at (0,18) width 45: "border."
       RenderText {#text} at (0,0) size 0x0
-layer at (8,46) size 304x204 backgroundClip at (83,46) size 229x204 clip at (83,46) size 229x204 outlineClip at (83,46) size 229x204
-  RenderBlock (positioned) {DIV} at (8,46) size 304x204 [border: (2px solid #0000FF)]
+layer at (8,44) size 304x204 backgroundClip at (83,44) size 229x204 clip at (83,44) size 229x204 outlineClip at (83,44) size 229x204
+  RenderBlock (positioned) {DIV} at (8,44) size 304x204 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 99x19
       text run at (2,2) width 99: "text in outer div"
     RenderText {#text} at (0,0) size 0x0
-layer at (60,67) size 105x25 backgroundClip at (83,67) size 82x25 clip at (83,70) size 79x19 outlineClip at (83,46) size 229x204 scrollWidth 100
-  RenderBlock (positioned) {DIV} at (52,21) size 105x25 [bgcolor=#EEEEEE] [border: (3px solid #FF0000)]
+layer at (60,64) size 105x24 backgroundClip at (83,64) size 82x24 clip at (83,67) size 79x18 outlineClip at (83,44) size 229x204 scrollWidth 100 scrollHeight 19
+  RenderBlock (positioned) {DIV} at (52,20) size 105x24 [bgcolor=#EEEEEE] [border: (3px solid #FF0000)]
     RenderText {#text} at (3,3) size 99x19
       text run at (3,3) width 99: "text in inner div"
       text run at (102,3) width 0: " "

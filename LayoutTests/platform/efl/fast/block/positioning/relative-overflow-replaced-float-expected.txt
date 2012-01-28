@@ -3,8 +3,8 @@ layer at (0,0) size 1108x1108
 layer at (0,0) size 785x585
   RenderBlock {HTML} at (0,0) size 785x585
     RenderBody {BODY} at (8,8) size 769x569
-      RenderText {#text} at (100,0) size 639x38
+      RenderText {#text} at (100,0) size 639x37
         text run at (100,0) width 639: "The image should be 1000px over to the right and bottom, which should cause horizontal and vertical"
-        text run at (100,19) width 126: "scrollbars to appear."
+        text run at (100,18) width 126: "scrollbars to appear."
 layer at (1008,1008) size 100x100
   RenderImage {IMG} at (0,0) size 100x100 [bgcolor=#00FF00]

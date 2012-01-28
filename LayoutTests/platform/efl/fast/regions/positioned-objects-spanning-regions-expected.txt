@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x515
-  RenderBlock {HTML} at (0,0) size 800x515
-    RenderBody {BODY} at (8,16) size 784x491
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x514
+  RenderBlock {HTML} at (0,0) size 800x514
+    RenderBody {BODY} at (8,16) size 784x490
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 609x19
           text run at (0,0) width 609: "The green positioned object should span all the regions. It should fill the left half of every region."
-      RenderBlock {DIV} at (0,35) size 784x456
+      RenderBlock {DIV} at (0,34) size 784x456
         RenderRegion {DIV} at (0,0) size 202x152 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,152) size 302x182 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,334) size 122x122 [border: (1px solid #000000)]

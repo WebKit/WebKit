@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 623x19
           text run at (0,0) width 623: "This tests that the scrollbar and resize corner are not visible on an element that has visibility:hidden."
-layer at (8,27) size 50x70 clip at (8,27) size 35x55 scrollWidth 42 scrollHeight 114
-  RenderBlock {DIV} at (0,19) size 50x70
-    RenderText {#text} at (0,0) size 42x114
+layer at (8,26) size 50x70 clip at (8,26) size 35x55 scrollWidth 42 scrollHeight 109
+  RenderBlock {DIV} at (0,18) size 50x70
+    RenderText {#text} at (0,0) size 42x109
       text run at (0,0) width 28: "You"
-      text run at (0,19) width 42: "should"
-      text run at (0,38) width 20: "not"
-      text run at (0,57) width 20: "see"
-      text run at (0,76) width 22: "this"
-      text run at (0,95) width 23: "text"
+      text run at (0,18) width 42: "should"
+      text run at (0,36) width 20: "not"
+      text run at (0,54) width 20: "see"
+      text run at (0,72) width 22: "this"
+      text run at (0,90) width 23: "text"

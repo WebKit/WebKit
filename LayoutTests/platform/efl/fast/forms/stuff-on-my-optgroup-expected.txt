@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMenuList {SELECT} at (2,2) size 103x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 47x19
+      RenderMenuList {SELECT} at (2,2) size 103x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 47x18
           RenderText at (0,0) size 30x19
             text run at (0,0) width 30: "One"
       RenderBR {BR} at (107,27) size 0x0
-      RenderMenuList {SELECT} at (2,45) size 103x39 [color=#202020]
-        RenderBlock (anonymous) at (15,10) size 47x19
+      RenderMenuList {SELECT} at (2,44) size 103x38 [color=#202020]
+        RenderBlock (anonymous) at (15,10) size 47x18
           RenderText at (0,0) size 30x19
             text run at (0,0) width 30: "One"
       RenderText {#text} at (0,0) size 0x0

@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 771x38
+        RenderInline {I} at (0,0) size 771x37
           RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 307x19
               text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=23848"
-          RenderText {#text} at (360,0) size 771x38
+          RenderText {#text} at (360,0) size 771x37
             text run at (360,0) width 411: " REGRESSION: Crash when mouse cursor moves over a link on"
-            text run at (0,19) width 122: "www.opportuno.de"
-        RenderText {#text} at (122,19) size 4x19
-          text run at (122,19) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
+            text run at (0,18) width 122: "www.opportuno.de"
+        RenderText {#text} at (122,18) size 4x19
+          text run at (122,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 736x19
           text run at (0,0) width 449: "This tests that changing the z-index of an inline correctly invalidates its "
           text run at (449,0) width 287: "layer\x{2019}s and its stacking context\x{2019}s z-index lists."
-      RenderBlock (anonymous) at (0,89) size 784x0
+      RenderBlock (anonymous) at (0,86) size 784x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

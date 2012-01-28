@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 212x19
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 717x38
+        RenderInline {I} at (0,0) size 717x37
           RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x19
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6618"
-          RenderText {#text} at (560,0) size 717x38
+          RenderText {#text} at (560,0) size 717x37
             text run at (560,0) width 4: " "
             text run at (564,0) width 153: "Inline in RTL block with"
-            text run at (0,19) width 344: "overflow:auto and left border makes scroll bar appear"
-        RenderText {#text} at (344,19) size 4x19
-          text run at (344,19) width 4: "."
-      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
-layer at (8,72) size 784x19 clip at (18,72) size 774x19
-  RenderBlock {DIV} at (0,64) size 784x19 [border: (10px solid #0000FF)]
-    RenderText {#text} at (469,0) size 315x19
-      text run at (469,0) width 117: "This block should "
-      text run at (780,0) width 4 RTL: "."
+            text run at (0,18) width 344: "overflow:auto and left border makes scroll bar appear"
+        RenderText {#text} at (344,18) size 4x19
+          text run at (344,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+layer at (8,70) size 784x18 clip at (18,70) size 759x18 scrollHeight 19
+  RenderBlock {DIV} at (0,62) size 784x18 [border: (10px solid #0000FF)]
+    RenderText {#text} at (454,0) size 315x19
+      text run at (454,0) width 117: "This block should "
+      text run at (765,0) width 4 RTL: "."
     RenderInline {EM} at (0,0) size 20x19
-      RenderText {#text} at (586,0) size 20x19
-        text run at (586,0) width 20: "not"
-    RenderText {#text} at (606,0) size 174x19
-      text run at (606,0) width 174: " have a horizontal scroll bar"
+      RenderText {#text} at (571,0) size 20x19
+        text run at (571,0) width 20: "not"
+    RenderText {#text} at (591,0) size 174x19
+      text run at (591,0) width 174: " have a horizontal scroll bar"

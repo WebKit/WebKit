@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x463
-  RenderBlock {HTML} at (0,0) size 800x463
-    RenderBody {BODY} at (8,16) size 784x439
-      RenderBlock {P} at (0,0) size 784x19
+layer at (0,0) size 800x458
+  RenderBlock {HTML} at (0,0) size 800x458
+    RenderBody {BODY} at (8,16) size 784x434
+      RenderBlock {P} at (0,0) size 784x18
         RenderInline {B} at (0,0) size 62x19
           RenderText {#text} at (0,0) size 62x19
             text run at (0,0) width 62: "BUG ID:"
@@ -14,28 +14,28 @@ layer at (0,0) size 800x463
             text run at (66,0) width 117: "Bugzilla bug 8467"
         RenderText {#text} at (183,0) size 500x19
           text run at (183,0) width 500: " Block with percentage background-size doesn't repaint properly when it grows"
-      RenderBlock {P} at (0,35) size 784x44 [bgcolor=#98FB98]
+      RenderBlock {P} at (0,34) size 784x42 [bgcolor=#98FB98]
         RenderInline {B} at (0,0) size 91x19
           RenderText {#text} at (3,3) size 91x19
             text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 759x38
+        RenderText {#text} at (94,3) size 759x37
           text run at (94,3) width 4: " "
           text run at (98,3) width 664: "The boxes will resize, and their background images will repaint correctly maintaining the set background-"
-          text run at (3,22) width 28: "size."
-      RenderBlock {P} at (0,95) size 784x25 [bgcolor=#FF3300]
+          text run at (3,21) width 28: "size."
+      RenderBlock {P} at (0,92) size 784x24 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x19
           RenderText {#text} at (3,3) size 90x19
             text run at (3,3) width 90: "TEST FAIL:"
         RenderText {#text} at (93,3) size 516x19
           text run at (93,3) width 4: " "
           text run at (97,3) width 512: "The boxes will resize, but the background images will leave artifacts on the sides."
-      RenderBlock {DIV} at (0,136) size 222x142 [border: (1px solid #0000FF)]
+      RenderBlock {DIV} at (0,132) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,21) size 200x40
-      RenderBlock (anonymous) at (0,278) size 784x19
+      RenderBlock (anonymous) at (0,274) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {DIV} at (0,297) size 222x142 [border: (1px solid #0000FF)]
+      RenderBlock {DIV} at (0,292) size 222x142 [border: (1px solid #0000FF)]
         RenderBlock {DIV} at (11,21) size 200x60
-layer at (29,173) size 180x40
+layer at (29,169) size 180x40
   RenderBlock {DIV} at (10,0) size 180x40 [bgcolor=#008080]
-layer at (29,334) size 180x60
+layer at (29,329) size 180x60
   RenderBlock {DIV} at (10,0) size 180x60 [bgcolor=#008080]

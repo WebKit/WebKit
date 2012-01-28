@@ -1,9 +1,9 @@
-layer at (0,0) size 785x2286
+layer at (0,0) size 785x2269
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2286
-  RenderBlock {HTML} at (0,0) size 785x2286
-    RenderBody {BODY} at (8,16) size 769x2222 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,0) size 769x19
+layer at (0,0) size 785x2269
+  RenderBlock {HTML} at (0,0) size 785x2269
+    RenderBody {BODY} at (8,16) size 769x2205 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 165x19
           text run at (0,0) width 165: "This page is part of the "
         RenderInline {A} at (0,0) size 73x19 [color=#0000EE]
@@ -21,9 +21,9 @@ layer at (0,0) size 785x2286
             text run at (506,0) width 111: "CSS3 selectors"
         RenderText {#text} at (617,0) size 4x19
           text run at (617,0) width 4: "."
-      RenderBlock {DIV} at (0,35) size 769x0 [bgcolor=#009900]
-      RenderBlock {OL} at (0,35) size 769x2187
-        RenderListItem {LI} at (40,0) size 615x245 [bgcolor=#AAAAAA]
+      RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
+      RenderBlock {OL} at (0,34) size 769x2171
+        RenderListItem {LI} at (40,0) size 615x243 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x106 [bgcolor=#FFFFFF]
@@ -39,11 +39,11 @@ layer at (0,0) size 785x2286
               text run at (6,70) width 112: "   <div></div>"
               text run at (118,70) width 0: " "
               text run at (6,85) width 48: "</div>"
-          RenderBlock {P} at (16,175) size 583x38
-            RenderText {#text} at (0,0) size 572x38
+          RenderBlock {P} at (16,175) size 583x36
+            RenderText {#text} at (0,0) size 572x37
               text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"
-              text run at (0,19) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,293) size 615x260 [bgcolor=#AAAAAA]
+              text run at (0,18) width 165: "of the outer div element"
+        RenderListItem {LI} at (40,291) size 615x258 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,24) size 583x0
@@ -62,11 +62,11 @@ layer at (0,0) size 785x2286
               text run at (6,85) width 224: "   <blockquote></blockquote>"
               text run at (230,85) width 0: " "
               text run at (6,100) width 48: "</div>"
-          RenderBlock {P} at (16,190) size 583x38
-            RenderText {#text} at (0,0) size 567x38
+          RenderBlock {P} at (16,190) size 583x36
+            RenderText {#text} at (0,0) size 567x37
               text run at (0,0) width 567: "The CSS selector should match the inner div element, because it is the first child"
-              text run at (0,19) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,601) size 615x279 [bgcolor=#AAAAAA]
+              text run at (0,18) width 165: "of the outer div element"
+        RenderListItem {LI} at (40,597) size 615x276 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 583x121 [bgcolor=#FFFFFF]
@@ -84,20 +84,20 @@ layer at (0,0) size 785x2286
               text run at (6,85) width 112: "   <div></div>"
               text run at (118,85) width 0: " "
               text run at (6,100) width 48: "</div>"
-          RenderBlock {P} at (16,190) size 583x57
-            RenderText {#text} at (0,0) size 567x57
+          RenderBlock {P} at (16,190) size 583x54
+            RenderText {#text} at (0,0) size 567x55
               text run at (0,0) width 567: "The CSS selector should match the inner div element, because it is the first child"
-              text run at (0,19) width 169: "of the outer div element "
-              text run at (169,19) width 358: "Comments are not elements, so they should not be"
-              text run at (0,38) width 307: "considered when determining the first child."
-        RenderListItem {LI} at (40,928) size 615x294 [bgcolor=#AAAAAA]
-          RenderBlock {DIV} at (16,16) size 583x43 [bgcolor=#990000]
-            RenderBlock (anonymous) at (0,0) size 583x19
+              text run at (0,18) width 169: "of the outer div element "
+              text run at (169,18) width 358: "Comments are not elements, so they should not be"
+              text run at (0,36) width 307: "considered when determining the first child."
+        RenderListItem {LI} at (40,921) size 615x290 [bgcolor=#AAAAAA]
+          RenderBlock {DIV} at (16,16) size 583x42 [bgcolor=#990000]
+            RenderBlock (anonymous) at (0,0) size 583x18
               RenderListMarker at (-38,0) size 17x19: "4"
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: "."
-            RenderBlock {DIV} at (0,19) size 583x24 [bgcolor=#009900]
-          RenderBlock {PRE} at (16,72) size 583x117 [bgcolor=#FFFFFF]
+            RenderBlock {DIV} at (0,18) size 583x24 [bgcolor=#009900]
+          RenderBlock {PRE} at (16,71) size 583x117 [bgcolor=#FFFFFF]
             RenderText {#text} at (6,6) size 224x105
               text run at (6,6) width 144: "div :first-child {"
               text run at (150,6) width 0: " "
@@ -111,13 +111,13 @@ layer at (0,0) size 785x2286
               text run at (6,81) width 112: "   <div></div>"
               text run at (118,81) width 0: " "
               text run at (6,96) width 48: "</div>"
-          RenderBlock {P} at (16,205) size 583x57
-            RenderText {#text} at (0,0) size 567x57
+          RenderBlock {P} at (16,204) size 583x54
+            RenderText {#text} at (0,0) size 567x55
               text run at (0,0) width 567: "The CSS selector should match the inner div element, because it is the first child"
-              text run at (0,19) width 173: "of the outer div element. "
-              text run at (173,19) width 348: "Regular text is not an element, so it should not be"
-              text run at (0,38) width 307: "considered when determining the first child."
-        RenderListItem {LI} at (40,1270) size 615x260 [bgcolor=#AAAAAA]
+              text run at (0,18) width 173: "of the outer div element. "
+              text run at (173,18) width 348: "Regular text is not an element, so it should not be"
+              text run at (0,36) width 307: "considered when determining the first child."
+        RenderListItem {LI} at (40,1259) size 615x258 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#009900]
             RenderBlock {BLOCKQUOTE} at (0,0) size 583x0 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24
@@ -136,11 +136,11 @@ layer at (0,0) size 785x2286
               text run at (6,85) width 112: "   <div></div>"
               text run at (118,85) width 0: " "
               text run at (6,100) width 48: "</div>"
-          RenderBlock {P} at (16,190) size 583x38
-            RenderText {#text} at (0,0) size 582x38
+          RenderBlock {P} at (16,190) size 583x36
+            RenderText {#text} at (0,0) size 582x37
               text run at (0,0) width 582: "The CSS selector should not match the inner div element, because it is the second"
-              text run at (0,19) width 203: "child of the outer div element"
-        RenderListItem {LI} at (40,1578) size 615x290 [bgcolor=#AAAAAA]
+              text run at (0,18) width 203: "child of the outer div element"
+        RenderListItem {LI} at (40,1565) size 615x288 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,24) size 583x0
@@ -162,11 +162,11 @@ layer at (0,0) size 785x2286
               text run at (6,115) width 392: "var ib = document.getElementById('insertBefore');"
               text run at (398,115) width 0: " "
               text run at (6,130) width 520: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
-          RenderBlock {P} at (16,220) size 583x38
-            RenderText {#text} at (0,0) size 567x38
+          RenderBlock {P} at (16,220) size 583x36
+            RenderText {#text} at (0,0) size 567x37
               text run at (0,0) width 567: "The CSS selector should match the div element that is inserted by the Javascript"
-              text run at (0,19) width 39: "code."
-        RenderListItem {LI} at (40,1916) size 615x271 [bgcolor=#AAAAAA]
+              text run at (0,18) width 39: "code."
+        RenderListItem {LI} at (40,1901) size 615x270 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 583x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 583x0 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 583x24
@@ -188,6 +188,6 @@ layer at (0,0) size 785x2286
               text run at (6,115) width 392: "var ib = document.getElementById('insertBefore');"
               text run at (398,115) width 0: " "
               text run at (6,130) width 520: "ib.parentElement.insertBefore(document.createElement(\"div\"), ib);"
-          RenderBlock {P} at (16,220) size 583x19
+          RenderBlock {P} at (16,220) size 583x18
             RenderText {#text} at (0,0) size 515x19
               text run at (0,0) width 515: "The original div element should not be a match for the :first-child selector."
