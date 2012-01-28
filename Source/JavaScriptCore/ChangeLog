@@ -1,3 +1,20 @@
+2012-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106151.
+        http://trac.webkit.org/changeset/106151
+        https://bugs.webkit.org/show_bug.cgi?id=77275
+
+        may break windows build (Requested by morrita on #webkit).
+
+        * runtime/ExceptionHelpers.h:
+        (InterruptedExecutionError):
+        * runtime/JSBoundFunction.h:
+        (JSBoundFunction):
+        * runtime/RegExp.h:
+        (RegExp):
+        * runtime/RegExpMatchesArray.h:
+        (RegExpMatchesArray):
+
 2012-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         GC invoked while doing an old JIT property storage reallocation may lead

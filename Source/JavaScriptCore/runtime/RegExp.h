@@ -72,7 +72,7 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, 0), &s_info);
         }
         
-        static const ClassInfo s_info;
+        static JS_EXPORTDATA const ClassInfo s_info;
 
         RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 

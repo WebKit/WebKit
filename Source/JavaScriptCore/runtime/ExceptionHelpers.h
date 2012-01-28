@@ -79,7 +79,7 @@ public:
         return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
-    static const ClassInfo s_info;
+    static JS_EXPORTDATA const ClassInfo s_info;
 };
 
 class TerminatedExecutionError : public JSNonFinalObject {

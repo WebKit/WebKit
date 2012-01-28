@@ -51,7 +51,7 @@ public:
         return Structure::create(globalData, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), &s_info); 
     }
 
-    static const ClassInfo s_info;
+    static JS_EXPORTDATA const ClassInfo s_info;
 
 protected:
     const static unsigned StructureFlags = OverridesHasInstance | OverridesVisitChildren | Base::StructureFlags;
