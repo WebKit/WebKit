@@ -40,7 +40,10 @@
     NSMutableSet *typesSet;
     NSMutableDictionary *dataByType;
     NSInteger changeCount;
+    NSString *pasteboardName;
 }
+
+-(id)initWithName:(NSString *)name;
 @end
 
 static NSMutableDictionary *localPasteboards;
@@ -58,7 +61,7 @@ static NSMutableDictionary *localPasteboards;
     LocalPasteboard *pasteboard = [localPasteboards objectForKey:name];
     if (pasteboard)
         return pasteboard;
-    pasteboard = [[LocalPasteboard alloc] init];
+    pasteboard = [[LocalPasteboard alloc] initWithName:name];
     [localPasteboards setObject:pasteboard forKey:name];
     [pasteboard release];
     return pasteboard;
@@ -86,11 +89,12 @@ static NSMutableDictionary *localPasteboards;
     return NSAllocateObject(self, 0, 0);
 }
 
-- (id)init
+- (id)initWithName:(NSString *)name
 {
     typesArray = [[NSMutableArray alloc] init];
     typesSet = [[NSMutableSet alloc] init];
     dataByType = [[NSMutableDictionary alloc] init];
+    pasteboardName = [NSString stringWithString:name];
     return self;
 }
 
@@ -99,12 +103,13 @@ static NSMutableDictionary *localPasteboards;
     [typesArray release];
     [typesSet release];
     [dataByType release];
+    [pasteboardName release];
     [super dealloc];
 }
 
 - (NSString *)name
 {
-    return nil;
+    return pasteboardName;
 }
 
 - (void)releaseGlobally

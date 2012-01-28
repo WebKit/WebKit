@@ -1,3 +1,19 @@
+2012-01-27  Enrica Casucci  <enrica@apple.com>
+
+        DRT pasteboard object should return the correct pasteboard name.
+        https://bugs.webkit.org/show_bug.cgi?id=77260
+        
+        Currently the name property always returns nil.
+        Adding a memeber variable to store the pasteboard name and return its
+        value from the name method instead of returning nil always.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        (+[DumpRenderTreePasteboard _pasteboardWithName:]):
+        (-[LocalPasteboard initWithName:]):
+        (-[LocalPasteboard name]):
+
 2012-01-27  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WK2] Implement the policy client
