@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x93
-        RenderTableSection {TBODY} at (0,0) size 784x93
-          RenderTableRow {TR} at (0,2) size 784x89
-            RenderTableCell {TD} at (2,2) size 638x89 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 636x87
-                RenderTableSection {TBODY} at (0,0) size 636x87
-                  RenderTableRow {TR} at (0,2) size 636x83
-                    RenderTableCell {TD} at (2,2) size 632x83 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 54x81
+      RenderTable {TABLE} at (0,0) size 784x91
+        RenderTableSection {TBODY} at (0,0) size 784x91
+          RenderTableRow {TR} at (0,2) size 784x87
+            RenderTableCell {TD} at (2,2) size 638x87 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 636x85
+                RenderTableSection {TBODY} at (0,0) size 636x85
+                  RenderTableRow {TR} at (0,2) size 636x81
+                    RenderTableCell {TD} at (2,2) size 632x81 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 54x80
                         text run at (1,1) width 54: "inside of"
-                        text run at (1,63) width 30: "table"
-                      RenderImage {IMG} at (31,20) size 600x58
-            RenderTableCell {TD} at (642,26) size 140x40 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 119x38
+                        text run at (1,62) width 30: "table"
+                      RenderImage {IMG} at (31,19) size 600x58
+            RenderTableCell {TD} at (642,26) size 140x38 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 119x37
                 text run at (1,1) width 119: "2nd row of outside"
-                text run at (1,20) width 30: "table"
+                text run at (1,19) width 30: "table"

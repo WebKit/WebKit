@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 264x19
           text run at (0,0) width 264: "The select should not contain blank items "
         RenderBR {BR} at (264,15) size 0x0
-      RenderBlock {FORM} at (0,19) size 784x43
+      RenderBlock {FORM} at (0,18) size 784x42
         RenderInline {B} at (0,0) size 47x19
           RenderText {#text} at (0,12) size 47x19
             text run at (0,12) width 47: "Search"
         RenderText {#text} at (47,12) size 4x19
           text run at (47,12) width 4: " "
-        RenderTextControl {INPUT} at (53,6) size 177x29 [color=#202020]
+        RenderTextControl {INPUT} at (53,6) size 177x28 [color=#202020]
         RenderText {#text} at (232,12) size 4x19
           text run at (232,12) width 4: " "
-        RenderMenuList {SELECT} at (238,2) size 116x39 [color=#202020]
-          RenderBlock (anonymous) at (15,10) size 60x19
+        RenderMenuList {SELECT} at (238,2) size 116x38 [color=#202020]
+          RenderBlock (anonymous) at (15,10) size 60x18
             RenderText at (0,0) size 44x19
               text run at (0,0) width 44: "Excite"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,78) size 784x38
+      RenderBlock (anonymous) at (0,76) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 264x19
-          text run at (0,19) width 264: "The select should not contain blank items "
-        RenderBR {BR} at (264,34) size 0x0
-      RenderBlock {FORM} at (0,116) size 784x43
-        RenderMenuList {SELECT} at (2,2) size 284x39 [color=#202020]
-          RenderBlock (anonymous) at (15,10) size 228x19
+        RenderText {#text} at (0,18) size 264x19
+          text run at (0,18) width 264: "The select should not contain blank items "
+        RenderBR {BR} at (264,33) size 0x0
+      RenderBlock {FORM} at (0,112) size 784x42
+        RenderMenuList {SELECT} at (2,2) size 284x38 [color=#202020]
+          RenderBlock (anonymous) at (15,10) size 228x18
             RenderText at (0,0) size 75x19
               text run at (0,0) width 75: "Quick Link"
-layer at (65,39) size 170x19
-  RenderBlock {DIV} at (4,6) size 170x19
+layer at (65,38) size 170x18
+  RenderBlock {DIV} at (4,6) size 170x18

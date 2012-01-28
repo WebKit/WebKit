@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 728x19
           text run at (0,0) width 728: "The INPUT element using the IMAGE attribute is used to load the image in the table. This image flows outside the "
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {#text} at (0,19) size 275x19
-          text run at (0,19) width 275: "the table after the window has been resized."
-      RenderTable {TABLE} at (292,54) size 200x24 [bgcolor=#FF0000]
+        RenderText {#text} at (0,18) size 275x19
+          text run at (0,18) width 275: "the table after the window has been resized."
+      RenderTable {TABLE} at (292,52) size 200x24 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 200x24
           RenderTableRow {TR} at (0,2) size 200x20
             RenderTableCell {TD} at (2,2) size 196x20 [r=0 c=0 rs=1 cs=1]
               RenderImage {INPUT} at (1,1) size 19x18
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,94) size 784x19
+      RenderBlock {P} at (0,92) size 784x18
         RenderText {#text} at (0,0) size 547x19
           text run at (0,0) width 547: "This test case is identicate to one above except the table is assigned a border of 2 pixels"
-      RenderTable {TABLE} at (292,129) size 200x30 [bgcolor=#FF0000] [border: (2px outset #808080)]
+      RenderTable {TABLE} at (292,126) size 200x30 [bgcolor=#FF0000] [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 196x26
           RenderTableRow {TR} at (0,2) size 196x22
             RenderTableCell {TD} at (2,2) size 192x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

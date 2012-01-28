@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 38x48
-        RenderTableSection {TBODY} at (0,0) size 38x48
-          RenderTableRow {TR} at (0,2) size 38x21
-            RenderTableCell {TD} at (2,2) size 10x21 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 38x46
+        RenderTableSection {TBODY} at (0,0) size 38x46
+          RenderTableRow {TR} at (0,2) size 38x20
+            RenderTableCell {TD} at (2,2) size 10x20 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 7x19
                 text run at (1,1) width 7: "a"
-            RenderTableCell {TD} at (14,14) size 22x20 [bgcolor=#FFA500] [r=0 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (14,13) size 22x20 [bgcolor=#FFA500] [r=0 c=1 rs=2 cs=1]
               RenderImage {IMG} at (1,1) size 20x18
-          RenderTableRow {TR} at (0,25) size 38x21
-            RenderTableCell {TD} at (2,25) size 10x21 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 38x20
+            RenderTableCell {TD} at (2,24) size 10x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x19
                 text run at (1,1) width 8: "x"

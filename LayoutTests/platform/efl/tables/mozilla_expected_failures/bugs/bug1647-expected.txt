@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 598x581
         RenderTableSection {TBODY} at (0,0) size 598x581
           RenderTableRow {TR} at (0,0) size 598x234
-            RenderTableCell {TD} at (0,0) size 152x19 [bgcolor=#CCCC9C] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,0) size 152x18 [bgcolor=#CCCC9C] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (0,0) size 96x19
                 text run at (0,0) width 96: "xxxxxxxxxxxx"
               RenderBR {BR} at (96,15) size 0x0
-            RenderTableCell {TD} at (152,0) size 3x37 [bgcolor=#D3D3D3] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (152,0) size 3x36 [bgcolor=#D3D3D3] [r=0 c=1 rs=1 cs=1]
               RenderBlock {HR} at (0,8) size 3x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (0,18) size 3x19
+              RenderBlock (anonymous) at (0,18) size 3x18
                 RenderBR {BR} at (0,0) size 0x19
-            RenderTableCell {TD} at (155,0) size 91x111 [bgcolor=#FFA500] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (155,0) size 91x108 [bgcolor=#FFA500] [r=0 c=2 rs=1 cs=1]
               RenderBlock {HR} at (0,8) size 91x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (0,18) size 91x19
+              RenderBlock (anonymous) at (0,18) size 91x18
                 RenderBR {BR} at (0,0) size 0x19
-              RenderBlock {HR} at (0,45) size 91x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (0,55) size 91x19
+              RenderBlock {HR} at (0,44) size 91x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,54) size 91x18
                 RenderBR {BR} at (0,0) size 0x19
-              RenderBlock {HR} at (0,82) size 91x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (0,92) size 91x19
+              RenderBlock {HR} at (0,80) size 91x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,90) size 91x18
                 RenderBR {BR} at (0,0) size 0x19
           RenderTableRow {TR} at (0,234) size 598x56
             RenderTableCell {TD} at (152,234) size 446x56 [r=1 c=1 rs=1 cs=5]

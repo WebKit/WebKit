@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 4x19
                   text run at (0,0) width 4: " "
               RenderImage {IMG} at (1,101) size 125x125
-            RenderTableCell {TD} at (131,105) size 651x21 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (131,105) size 651x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "

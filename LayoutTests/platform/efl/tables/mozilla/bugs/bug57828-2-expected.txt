@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 404x19
           text run at (0,0) width 404: "The table below takes out the nowrap with the cell of 1% width."
-      RenderTable {TABLE} at (0,35) size 675x65
-        RenderTableSection {TBODY} at (0,0) size 675x65
-          RenderTableRow {TR} at (0,0) size 675x65 [bgcolor=#9999CC]
-            RenderTableCell {TD} at (0,20) size 631x25 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,34) size 675x62
+        RenderTableSection {TBODY} at (0,0) size 675x62
+          RenderTableRow {TR} at (0,0) size 675x62 [bgcolor=#9999CC]
+            RenderTableCell {TD} at (0,18) size 631x25 [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 153x21
                 RenderInline {B} at (0,0) size 153x21
                   RenderText {#text} at (2,2) size 153x21
@@ -19,23 +19,23 @@ layer at (0,0) size 800x600
                   text run at (155,7) width 62: " - updated "
                   text run at (217,7) width 120: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (631,0) size 44x65 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 40x61
-                RenderTableSection {TBODY} at (0,0) size 40x61
-                  RenderTableRow {TR} at (0,0) size 40x61
-                    RenderTableCell {TD} at (0,0) size 40x61 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (631,0) size 44x62 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 40x58
+                RenderTableSection {TBODY} at (0,0) size 40x58
+                  RenderTableRow {TR} at (0,0) size 40x58
+                    RenderTableCell {TD} at (0,0) size 40x58 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 16x16
-                      RenderInline {FONT} at (0,0) size 34x39
-                        RenderInline {A} at (0,0) size 34x39 [color=#0000EE]
-                          RenderText {#text} at (3,19) size 34x39
+                      RenderInline {FONT} at (0,0) size 34x37
+                        RenderInline {A} at (0,0) size 34x37 [color=#0000EE]
+                          RenderText {#text} at (3,19) size 34x37
                             text run at (3,19) width 31: "Add to"
-                            text run at (3,32) width 13: "My"
-                            text run at (3,45) width 34: "Yahoo!"
+                            text run at (3,31) width 13: "My"
+                            text run at (3,43) width 34: "Yahoo!"
                       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,116) size 784x19
+      RenderBlock {P} at (0,112) size 784x18
         RenderText {#text} at (0,0) size 471x19
           text run at (0,0) width 471: "The table below leaves in the nowrap but take out the 1% width in the cell."
-      RenderTable {TABLE} at (0,151) size 675x26
+      RenderTable {TABLE} at (0,146) size 675x26
         RenderTableSection {TBODY} at (0,0) size 675x26
           RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,0) size 506x25 [r=0 c=0 rs=1 cs=1]

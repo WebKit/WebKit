@@ -1,72 +1,72 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x217
-  RenderBlock {html} at (0,0) size 800x217
-    RenderBody {body} at (8,16) size 784x193
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x210
+  RenderBlock {html} at (0,0) size 800x210
+    RenderBody {body} at (8,16) size 784x186
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 393x19
           text run at (0,0) width 393: "The numbers in the TFOOT should align at the decimal points"
-      RenderTable {table} at (0,35) size 365x158 [border: (1px outset #808080)]
-        RenderTableSection {thead} at (1,1) size 363x52
-          RenderTableRow {tr} at (0,2) size 363x23
-            RenderTableCell {td} at (2,2) size 113x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {table} at (0,34) size 365x152 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 363x50
+          RenderTableRow {tr} at (0,2) size 363x22
+            RenderTableCell {td} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-            RenderTableCell {td} at (117,2) size 121x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,2) size 121x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-            RenderTableCell {td} at (240,2) size 121x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,2) size 121x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-          RenderTableRow {tr} at (0,27) size 363x23
-            RenderTableCell {td} at (2,27) size 113x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {tr} at (0,26) size 363x22
+            RenderTableCell {td} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-            RenderTableCell {td} at (117,27) size 121x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,26) size 121x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-            RenderTableCell {td} at (240,27) size 121x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,26) size 121x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "THEAD"
-        RenderTableSection {tfoot} at (1,105) size 363x52
-          RenderTableRow {tr} at (0,2) size 363x23
-            RenderTableCell {td} at (2,2) size 113x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tfoot} at (1,101) size 363x50
+          RenderTableRow {tr} at (0,2) size 363x22
+            RenderTableCell {td} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 93x19
                 text run at (2,2) width 93: "TFOOT 55.00"
-            RenderTableCell {td} at (117,2) size 121x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,2) size 121x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 117x19
                 text run at (2,2) width 117: "TFOOT 55555.00"
-            RenderTableCell {td} at (240,2) size 121x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,2) size 121x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 101x19
                 text run at (2,2) width 101: "TFOOT 555.00"
-          RenderTableRow {tr} at (0,27) size 363x23
-            RenderTableCell {td} at (2,27) size 113x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {tr} at (0,26) size 363x22
+            RenderTableCell {td} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 109x19
                 text run at (2,2) width 109: "TFOOT 1234.56"
-            RenderTableCell {td} at (117,27) size 121x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,26) size 121x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 101x19
                 text run at (2,2) width 101: "TFOOT 123.45"
-            RenderTableCell {td} at (240,27) size 121x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,26) size 121x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 117x19
                 text run at (2,2) width 117: "TFOOT 12345.67"
-        RenderTableSection {tbody} at (1,53) size 363x52
-          RenderTableRow {tr} at (0,2) size 363x23
-            RenderTableCell {td} at (2,2) size 113x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tbody} at (1,51) size 363x50
+          RenderTableRow {tr} at (0,2) size 363x22
+            RenderTableCell {td} at (2,2) size 113x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (117,2) size 121x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,2) size 121x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (240,2) size 121x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,2) size 121x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-          RenderTableRow {tr} at (0,27) size 363x23
-            RenderTableCell {td} at (2,27) size 113x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {tr} at (0,26) size 363x22
+            RenderTableCell {td} at (2,26) size 113x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (117,27) size 121x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (117,26) size 121x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (240,27) size 121x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {td} at (240,26) size 121x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"

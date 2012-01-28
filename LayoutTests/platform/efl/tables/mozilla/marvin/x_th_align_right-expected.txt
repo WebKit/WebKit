@@ -1,40 +1,40 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x266
-  RenderBlock {html} at (0,0) size 800x266
-    RenderBody {body} at (8,16) size 784x242
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x258
+  RenderBlock {html} at (0,0) size 800x258
+    RenderBody {body} at (8,16) size 784x234
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 146x19
           text run at (0,0) width 146: "TEST: th align=\"right\""
-      RenderBlock {p} at (0,35) size 784x38
+      RenderBlock {p} at (0,34) size 784x36
         RenderInline {b} at (0,0) size 76x19
           RenderText {#text} at (0,0) size 76x19
             text run at (0,0) width 76: "Example 1."
         RenderBR {br} at (76,0) size 0x19
-        RenderText {#text} at (0,19) size 122x19
-          text run at (0,19) width 122: "Table width=100%"
-      RenderTable {table} at (0,89) size 784x29 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 782x27
-          RenderTableRow {tr} at (0,2) size 782x23
-            RenderTableCell {th} at (2,2) size 778x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 122x19
+          text run at (0,18) width 122: "Table width=100%"
+      RenderTable {table} at (0,86) size 784x28 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 782x26
+          RenderTableRow {tr} at (0,2) size 782x22
+            RenderTableCell {th} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (561,2) size 215x19
                 text run at (561,2) width 215: "Cell text should be right aligned"
-      RenderBlock {p} at (0,134) size 784x38
+      RenderBlock {p} at (0,130) size 784x36
         RenderInline {b} at (0,0) size 76x19
           RenderText {#text} at (0,0) size 76x19
             text run at (0,0) width 76: "Example 2."
         RenderBR {br} at (76,0) size 0x19
-        RenderText {#text} at (0,19) size 424x19
-          text run at (0,19) width 399: "No specific table width; text in second row exceeds text in first "
-          text run at (399,19) width 25: "row"
-      RenderTable {table} at (0,188) size 566x54 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 564x52
-          RenderTableRow {tr} at (0,2) size 564x23
-            RenderTableCell {th} at (2,2) size 560x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 424x19
+          text run at (0,18) width 399: "No specific table width; text in second row exceeds text in first "
+          text run at (399,18) width 25: "row"
+      RenderTable {table} at (0,182) size 566x52 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 564x50
+          RenderTableRow {tr} at (0,2) size 564x22
+            RenderTableCell {th} at (2,2) size 560x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (343,2) size 215x19
                 text run at (343,2) width 215: "Cell text should be right aligned"
-          RenderTableRow {tr} at (0,27) size 564x23
-            RenderTableCell {th} at (2,27) size 560x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {tr} at (0,26) size 564x22
+            RenderTableCell {th} at (2,26) size 560x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 556x19
                 text run at (2,2) width 448: "xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx "
                 text run at (450,2) width 108: "xxx xxx xxx xxx"

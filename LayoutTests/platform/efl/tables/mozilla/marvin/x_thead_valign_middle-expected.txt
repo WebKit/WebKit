@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x327
-  RenderBlock {html} at (0,0) size 800x327
-    RenderBody {body} at (8,16) size 784x303
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x323
+  RenderBlock {html} at (0,0) size 800x323
+    RenderBody {body} at (8,16) size 784x299
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 195x19
           text run at (0,0) width 195: "THEAD VALIGN=MIDDLE"
-      RenderTable {table} at (0,35) size 616x268 [border: (1px outset #808080)]
-        RenderTableSection {thead} at (1,1) size 614x212
-          RenderTableRow {tr} at (0,2) size 614x208
-            RenderTableCell {td} at (2,2) size 204x208 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {table} at (0,34) size 616x265 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 614x211
+          RenderTableRow {tr} at (0,2) size 614x207
+            RenderTableCell {td} at (2,2) size 204x207 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,94) size 404x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,94) size 404x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 400x19
                 text run at (2,2) width 362: "This text should be vertically aligned to the middle of the "
                 text run at (364,2) width 38: "image"
-        RenderTableSection {tfoot} at (1,240) size 614x27
-          RenderTableRow {tr} at (0,2) size 614x23
-            RenderTableCell {td} at (2,2) size 204x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tfoot} at (1,238) size 614x26
+          RenderTableRow {tr} at (0,2) size 614x22
+            RenderTableCell {td} at (2,2) size 204x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "TFOOT"
-            RenderTableCell {td} at (208,2) size 404x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,2) size 404x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 53x19
                 text run at (2,2) width 53: "TFOOT"
-        RenderTableSection {tbody} at (1,213) size 614x27
-          RenderTableRow {tr} at (0,2) size 614x23
-            RenderTableCell {td} at (2,2) size 204x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tbody} at (1,212) size 614x26
+          RenderTableRow {tr} at (0,2) size 614x22
+            RenderTableCell {td} at (2,2) size 204x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (208,2) size 404x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,2) size 404x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x19
                 text run at (2,2) width 57: "TBODY"

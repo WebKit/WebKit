@@ -6,7 +6,7 @@ layer at (0,0) size 800x116
       RenderTable {TABLE} at (0,0) size 200x100 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 200x100
           RenderTableRow {TR} at (0,0) size 200x100
-            RenderTableCell {TD} at (0,40) size 59x19 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,41) size 59x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 21x19
                 text run at (0,0) width 21: "foo"
             RenderTableCell {TD} at (59,0) size 141x50 [r=0 c=1 rs=1 cs=1]

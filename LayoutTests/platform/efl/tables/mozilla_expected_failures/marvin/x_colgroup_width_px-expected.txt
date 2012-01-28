@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x88
-  RenderBlock {html} at (0,0) size 800x88
-    RenderBody {body} at (8,16) size 784x64
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x86
+  RenderBlock {html} at (0,0) size 800x86
+    RenderBody {body} at (8,16) size 784x62
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 172x19
           text run at (0,0) width 172: "COLGROUP WIDTH=px"
-      RenderTable {table} at (0,35) size 608x29 [border: (1px outset #808080)]
+      RenderTable {table} at (0,34) size 608x28 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection (anonymous) at (1,1) size 606x27
-          RenderTableRow {tr} at (0,2) size 606x23
-            RenderTableCell {td} at (2,2) size 300x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection (anonymous) at (1,1) size 606x26
+          RenderTableRow {tr} at (0,2) size 606x22
+            RenderTableCell {td} at (2,2) size 300x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 296x19
                 text run at (2,2) width 296: "This column should have a width of 200 pixels"
-            RenderTableCell {td} at (304,2) size 300x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (304,2) size 300x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 296x19
                 text run at (2,2) width 296: "This column should have a width of 200 pixels"

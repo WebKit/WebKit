@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 246x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 244x27
-          RenderTableRow {TR} at (0,2) size 244x23 [bgcolor=#CCFFFF]
-            RenderTableCell {TD} at (2,2) size 240x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 246x28 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 244x26
+          RenderTableRow {TR} at (0,2) size 244x22 [bgcolor=#CCFFFF]
+            RenderTableCell {TD} at (2,2) size 240x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 236x19
                 text run at (2,2) width 236: "THis table has zero % width declared"
-      RenderTable {TABLE} at (0,29) size 218x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 216x27
-          RenderTableRow {TR} at (0,2) size 216x23 [bgcolor=#CCFFFF]
-            RenderTableCell {TD} at (2,2) size 212x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,28) size 218x28 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 216x26
+          RenderTableRow {TR} at (0,2) size 216x22 [bgcolor=#CCFFFF]
+            RenderTableCell {TD} at (2,2) size 212x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 208x19
                 text run at (2,2) width 208: "THis table has no width declared"

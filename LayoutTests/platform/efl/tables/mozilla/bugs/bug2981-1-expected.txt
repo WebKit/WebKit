@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x38
-        RenderTableSection {TBODY} at (0,0) size 784x38
-          RenderTableRow {TR} at (0,0) size 784x38
-            RenderTableCell {TD} at (0,9) size 135x19 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 135x19
-                RenderTableSection {TBODY} at (0,0) size 135x19
-                  RenderTableRow {TR} at (0,0) size 135x19
-                    RenderTableCell {TD} at (0,0) size 135x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x36
+        RenderTableSection {TBODY} at (0,0) size 784x36
+          RenderTableRow {TR} at (0,0) size 784x36
+            RenderTableCell {TD} at (0,9) size 135x18 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 135x18
+                RenderTableSection {TBODY} at (0,0) size 135x18
+                  RenderTableRow {TR} at (0,0) size 135x18
+                    RenderTableCell {TD} at (0,0) size 135x18 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (0,0) size 135x19
                         text run at (0,0) width 135: "should be 135 pixels-"
-            RenderTableCell {TD} at (135,0) size 649x38 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 647x38
+            RenderTableCell {TD} at (135,0) size 649x36 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 647x37
                 text run at (0,0) width 469: "Spain stretched their unbeaten streak to six games as they beat Croatia 3-1 "
                 text run at (469,0) width 178: "in a friendly at Seville's new"
-                text run at (0,19) width 282: "Olympic stadium which was inaugurated on "
-                text run at (282,19) width 78: "Wednesday."
+                text run at (0,18) width 282: "Olympic stadium which was inaugurated on "
+                text run at (282,18) width 78: "Wednesday."

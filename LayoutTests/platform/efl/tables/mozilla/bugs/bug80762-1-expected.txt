@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x79
-        RenderTableSection {TBODY} at (0,0) size 784x79
-          RenderTableRow {TR} at (0,2) size 784x27
-            RenderTableCell {TD} at (2,2) size 780x27 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 778x25
-                RenderTableSection {TBODY} at (0,0) size 778x25
-                  RenderTableRow {TR} at (0,2) size 778x21
-                    RenderTableCell {TD} at (2,2) size 774x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x76
+        RenderTableSection {TBODY} at (0,0) size 784x76
+          RenderTableRow {TR} at (0,2) size 784x26
+            RenderTableCell {TD} at (2,2) size 780x26 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 778x24
+                RenderTableSection {TBODY} at (0,0) size 778x24
+                  RenderTableRow {TR} at (0,2) size 778x20
+                    RenderTableCell {TD} at (2,2) size 774x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 236x19
                         text run at (1,1) width 236: "text below cant break out of this table"
-          RenderTableRow {TR} at (0,31) size 784x46
-            RenderTableCell {TD} at (2,31) size 780x46 [r=1 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 778x44
-                RenderTableSection {TBODY} at (0,0) size 778x44
-                  RenderTableRow {TR} at (0,2) size 778x40
-                    RenderTableCell {TD} at (2,2) size 774x40 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 755x38
+          RenderTableRow {TR} at (0,30) size 784x44
+            RenderTableCell {TD} at (2,30) size 780x44 [r=1 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 778x42
+                RenderTableSection {TBODY} at (0,0) size 778x42
+                  RenderTableRow {TR} at (0,2) size 778x38
+                    RenderTableCell {TD} at (2,2) size 774x38 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 755x37
                         text run at (1,1) width 561: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text "
                         text run at (562,1) width 194: "Text Text Text Text Text Text"
-                        text run at (1,20) width 359: "Text Text Text Text Text Text Text Text Text Text Text"
+                        text run at (1,19) width 359: "Text Text Text Text Text Text Text Text Text Text Text"

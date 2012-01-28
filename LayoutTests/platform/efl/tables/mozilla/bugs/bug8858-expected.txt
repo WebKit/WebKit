@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
+      RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 501x19
           text run at (0,0) width 424: "there's a table below this line with cellspacing=1 and border=2 and "
           text run at (424,0) width 77: "several lines"
         RenderBR {BR} at (501,15) size 0x0
-        RenderText {#text} at (0,19) size 412x19
-          text run at (0,19) width 412: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
-      RenderTable {TABLE} at (0,54) size 776x529 [border: (2px outset #808080)]
+        RenderText {#text} at (0,18) size 412x19
+          text run at (0,18) width 412: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
+      RenderTable {TABLE} at (0,52) size 776x529 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 772x525
           RenderTableRow {TR} at (0,1) size 772x79
             RenderTableCell {TD} at (1,1) size 770x205 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]

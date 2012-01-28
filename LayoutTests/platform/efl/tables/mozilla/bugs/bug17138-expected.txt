@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock {H4} at (0,0) size 784x19
+      RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "Testcase distilled from "
         RenderInline {A} at (0,0) size 168x19 [color=#0000EE]
           RenderText {#text} at (154,0) size 168x19
             text run at (154,0) width 168: "http://www.weather.com"
-      RenderTable {TABLE} at (0,40) size 450x205
-        RenderTableSection {TBODY} at (0,0) size 450x205
+      RenderTable {TABLE} at (0,39) size 450x196
+        RenderTableSection {TBODY} at (0,0) size 450x196
           RenderTableRow {TR} at (0,0) size 450x17
             RenderTableCell {TD} at (0,0) size 325x17 [r=0 c=0 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 318x17
-            RenderTableCell {TD} at (325,0) size 125x205 [r=0 c=3 rs=2 cs=1]
-              RenderTable {TABLE} at (0,0) size 125x205 [bgcolor=#E0EBF5]
-                RenderTableSection {TBODY} at (0,0) size 125x205
-                  RenderTableRow {TR} at (0,0) size 125x205
-                    RenderTableCell {TD} at (0,0) size 125x205 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (325,0) size 125x196 [r=0 c=3 rs=2 cs=1]
+              RenderTable {TABLE} at (0,0) size 125x196 [bgcolor=#E0EBF5]
+                RenderTableSection {TBODY} at (0,0) size 125x196
+                  RenderTableRow {TR} at (0,0) size 125x196
+                    RenderTableCell {TD} at (0,0) size 125x196 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 125x34
                       RenderBR {BR} at (125,34) size 0x0
-                      RenderText {#text} at (0,34) size 119x38
+                      RenderText {#text} at (0,34) size 119x37
                         text run at (0,34) width 119: "Jose moving out to"
-                        text run at (0,53) width 20: "sea"
-                      RenderBR {BR} at (20,68) size 0x0
-                      RenderBR {BR} at (0,72) size 0x19
-                      RenderBR {BR} at (0,91) size 0x19
-                      RenderBR {BR} at (0,110) size 0x19
-                      RenderBR {BR} at (0,129) size 0x19
-                      RenderBR {BR} at (0,148) size 0x19
-                      RenderBR {BR} at (0,167) size 0x19
-                      RenderBR {BR} at (0,186) size 0x19
-          RenderTableRow {TR} at (0,17) size 450x188
+                        text run at (0,52) width 20: "sea"
+                      RenderBR {BR} at (20,67) size 0x0
+                      RenderBR {BR} at (0,70) size 0x19
+                      RenderBR {BR} at (0,88) size 0x19
+                      RenderBR {BR} at (0,106) size 0x19
+                      RenderBR {BR} at (0,124) size 0x19
+                      RenderBR {BR} at (0,142) size 0x19
+                      RenderBR {BR} at (0,160) size 0x19
+                      RenderBR {BR} at (0,178) size 0x19
+          RenderTableRow {TR} at (0,17) size 450x179
             RenderTableCell {TD} at (0,17) size 167x105 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 167x105
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (167,101) size 4x19 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (167,97) size 4x18 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
             RenderTableCell {TD} at (171,17) size 154x75 [r=1 c=2 rs=1 cs=1]

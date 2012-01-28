@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 644x63
         RenderTableSection {TBODY} at (0,0) size 644x63
           RenderTableRow {TR} at (0,2) size 644x59
-            RenderTableCell {TD} at (2,21) size 184x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,21) size 184x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 182x19
                 text run at (1,1) width 182: "Let's put some space in here!"
             RenderTableCell {TD} at (188,2) size 454x59 [r=0 c=1 rs=1 cs=1]

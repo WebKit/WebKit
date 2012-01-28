@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 148x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 146x27
-          RenderTableRow {TR} at (0,2) size 146x23
-            RenderTableCell {TD} at (2,2) size 142x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
+      RenderTable {TABLE} at (0,0) size 148x28 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 146x26
+          RenderTableRow {TR} at (0,2) size 146x22
+            RenderTableCell {TD} at (2,2) size 142x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=4]
               RenderImage {IMG} at (122,2) size 18x15
               RenderImage {IMG} at (91,2) size 28x15
               RenderImage {IMG} at (70,2) size 18x15
@@ -15,12 +15,12 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (2,2) size 65x19
                     text run at (2,2) width 65: "Portfolios"
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,29) size 784x19
+      RenderBlock (anonymous) at (0,28) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,48) size 784x31 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x29
-          RenderTableRow {TR} at (0,0) size 782x29 [bgcolor=#CCCCFF]
-            RenderTableCell {TD} at (0,0) size 782x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,46) size 784x30 [bgcolor=#EEEEEE] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x28
+          RenderTableRow {TR} at (0,0) size 782x28 [bgcolor=#CCCCFF]
+            RenderTableCell {TD} at (0,0) size 782x28 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (759,5) size 18x15

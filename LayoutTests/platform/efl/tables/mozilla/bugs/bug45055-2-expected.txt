@@ -1,155 +1,155 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x137
-  RenderBlock {HTML} at (0,0) size 800x137
+layer at (0,0) size 800x136
+  RenderBlock {HTML} at (0,0) size 800x136
     RenderBody {BODY} at (8,8) size 784x0 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 86x124
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (0,0) size 86x123
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"105\""
-        RenderTableSection {TBODY} at (0,19) size 86x105
+        RenderTableSection {TBODY} at (0,18) size 86x105
           RenderTableRow {TR} at (0,0) size 86x21
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,21) size 86x21
-            RenderTableCell {TD} at (0,21) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,21) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,42) size 86x21
-            RenderTableCell {TD} at (0,42) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,42) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,63) size 86x21
-            RenderTableCell {TD} at (0,63) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,63) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,84) size 86x21
-            RenderTableCell {TD} at (0,84) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,84) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"
-      RenderTable {TABLE} at (86,0) size 86x125
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (86,0) size 86x124
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"106\""
-        RenderTableSection {TBODY} at (0,19) size 86x106
+        RenderTableSection {TBODY} at (0,18) size 86x106
           RenderTableRow {TR} at (0,0) size 86x21
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,21) size 86x21
-            RenderTableCell {TD} at (0,21) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,21) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,42) size 86x21
-            RenderTableCell {TD} at (0,42) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,42) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,63) size 86x21
-            RenderTableCell {TD} at (0,63) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,63) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,84) size 86x22
-            RenderTableCell {TD} at (0,84) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,85) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"
-      RenderTable {TABLE} at (172,0) size 86x126
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (172,0) size 86x125
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"107\""
-        RenderTableSection {TBODY} at (0,19) size 86x107
+        RenderTableSection {TBODY} at (0,18) size 86x107
           RenderTableRow {TR} at (0,0) size 86x21
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,21) size 86x21
-            RenderTableCell {TD} at (0,21) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,21) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,42) size 86x21
-            RenderTableCell {TD} at (0,42) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,42) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,63) size 86x22
-            RenderTableCell {TD} at (0,63) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,64) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,85) size 86x22
-            RenderTableCell {TD} at (0,85) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,86) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"
-      RenderTable {TABLE} at (258,0) size 86x127
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (258,0) size 86x126
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"108\""
-        RenderTableSection {TBODY} at (0,19) size 86x108
+        RenderTableSection {TBODY} at (0,18) size 86x108
           RenderTableRow {TR} at (0,0) size 86x21
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,21) size 86x21
-            RenderTableCell {TD} at (0,21) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,21) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,42) size 86x22
-            RenderTableCell {TD} at (0,42) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,43) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,64) size 86x22
-            RenderTableCell {TD} at (0,64) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,65) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,86) size 86x22
-            RenderTableCell {TD} at (0,86) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,87) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"
-      RenderTable {TABLE} at (344,0) size 86x128
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (344,0) size 86x127
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"109\""
-        RenderTableSection {TBODY} at (0,19) size 86x109
+        RenderTableSection {TBODY} at (0,18) size 86x109
           RenderTableRow {TR} at (0,0) size 86x21
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,21) size 86x22
-            RenderTableCell {TD} at (0,21) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,22) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,43) size 86x22
-            RenderTableCell {TD} at (0,43) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,44) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,65) size 86x22
-            RenderTableCell {TD} at (0,65) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,66) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,87) size 86x22
-            RenderTableCell {TD} at (0,87) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,88) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"
-      RenderTable {TABLE} at (430,0) size 86x129
-        RenderBlock {CAPTION} at (0,0) size 86x19
+      RenderTable {TABLE} at (430,0) size 86x128
+        RenderBlock {CAPTION} at (0,0) size 86x18
           RenderText {#text} at (0,0) size 86x19
             text run at (0,0) width 86: "height=\"110\""
-        RenderTableSection {TBODY} at (0,19) size 86x110
+        RenderTableSection {TBODY} at (0,18) size 86x110
           RenderTableRow {TR} at (0,0) size 86x22
-            RenderTableCell {TD} at (0,0) size 86x21 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,1) size 86x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #01"
           RenderTableRow {TR} at (0,22) size 86x22
-            RenderTableCell {TD} at (0,22) size 86x21 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,23) size 86x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #02"
           RenderTableRow {TR} at (0,44) size 86x22
-            RenderTableCell {TD} at (0,44) size 86x21 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,45) size 86x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #03"
           RenderTableRow {TR} at (0,66) size 86x22
-            RenderTableCell {TD} at (0,66) size 86x21 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,67) size 86x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #04"
           RenderTableRow {TR} at (0,88) size 86x22
-            RenderTableCell {TD} at (0,88) size 86x21 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,89) size 86x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Entry #05"

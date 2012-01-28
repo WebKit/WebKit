@@ -1,12 +1,12 @@
-layer at (0,0) size 785x677
+layer at (0,0) size 785x669
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x677
-  RenderBlock {HTML} at (0,0) size 785x677
-    RenderBody {BODY} at (8,8) size 769x653 [color=#333333] [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 636x624 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 634x622
+layer at (0,0) size 785x669
+  RenderBlock {HTML} at (0,0) size 785x669
+    RenderBody {BODY} at (8,8) size 769x645 [color=#333333] [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 636x617 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 634x615
           RenderTableRow {TR} at (0,0) size 634x24
-            RenderTableCell {TD} at (0,0) size 148x622 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=0 rs=6 cs=1]
+            RenderTableCell {TD} at (0,0) size 148x615 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=0 rs=6 cs=1]
               RenderInline {B} at (0,0) size 64x19
                 RenderInline {A} at (0,0) size 64x19
                   RenderInline {FONT} at (0,0) size 64x15 [color=#FFFFFF]
@@ -85,133 +85,133 @@ layer at (0,0) size 785x677
               RenderInline {B} at (0,0) size 48x19
                 RenderInline {A} at (0,0) size 48x19
                   RenderInline {FONT} at (0,0) size 48x15 [color=#FFFFFF]
-                    RenderText {#text} at (4,203) size 48x15
-                      text run at (4,203) width 48: "MONEY"
-                  RenderBR {BR} at (52,215) size 0x0
+                    RenderText {#text} at (4,202) size 48x15
+                      text run at (4,202) width 48: "MONEY"
+                  RenderBR {BR} at (52,214) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 79x19
                 RenderInline {FONT} at (0,0) size 79x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,218) size 79x15
-                    text run at (4,218) width 79: "Mutual Funds"
-                RenderBR {BR} at (83,230) size 0x0
+                  RenderText {#text} at (4,217) size 79x15
+                    text run at (4,217) width 79: "Mutual Funds"
+                RenderBR {BR} at (83,229) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 48x19
                 RenderInline {FONT} at (0,0) size 48x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,233) size 48x15
-                    text run at (4,233) width 48: "Portfolio"
-                RenderBR {BR} at (52,245) size 0x0
+                  RenderText {#text} at (4,232) size 48x15
+                    text run at (4,232) width 48: "Portfolio"
+                RenderBR {BR} at (52,244) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 70x19
                 RenderInline {FONT} at (0,0) size 70x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,248) size 70x15
-                    text run at (4,248) width 70: "Loan Center"
-                RenderBR {BR} at (74,260) size 0x0
+                  RenderText {#text} at (4,247) size 70x15
+                    text run at (4,247) width 70: "Loan Center"
+                RenderBR {BR} at (74,259) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 116x19
                 RenderInline {FONT} at (0,0) size 116x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,263) size 116x15
-                    text run at (4,263) width 116: "Mortgage Calculator"
-                RenderBR {BR} at (120,275) size 0x0
+                  RenderText {#text} at (4,262) size 116x15
+                    text run at (4,262) width 116: "Mortgage Calculator"
+                RenderBR {BR} at (120,274) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 53x19
                 RenderInline {FONT} at (0,0) size 53x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,278) size 53x15
-                    text run at (4,278) width 53: "Investing"
-                RenderBR {BR} at (57,290) size 0x0
+                  RenderText {#text} at (4,277) size 53x15
+                    text run at (4,277) width 53: "Investing"
+                RenderBR {BR} at (57,289) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 63x19
                 RenderInline {FONT} at (0,0) size 63x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,293) size 63x15
-                    text run at (4,293) width 63: "Retirement"
-                RenderBR {BR} at (67,305) size 0x0
+                  RenderText {#text} at (4,292) size 63x15
+                    text run at (4,292) width 63: "Retirement"
+                RenderBR {BR} at (67,304) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 120x19
                 RenderInline {FONT} at (0,0) size 120x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,308) size 120x15
-                    text run at (4,308) width 120: "Negocios Bloomberg"
-                RenderBR {BR} at (124,320) size 0x0
+                  RenderText {#text} at (4,307) size 120x15
+                    text run at (4,307) width 120: "Negocios Bloomberg"
+                RenderBR {BR} at (124,319) size 0x0
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (4,323) size 0x19
+              RenderBR {BR} at (4,322) size 0x19
               RenderInline {B} at (0,0) size 78x19
                 RenderInline {A} at (0,0) size 78x19
                   RenderInline {FONT} at (0,0) size 78x15 [color=#FFFFFF]
-                    RenderText {#text} at (4,342) size 78x15
-                      text run at (4,342) width 78: "MAGAZINES"
-                  RenderBR {BR} at (82,354) size 0x0
+                    RenderText {#text} at (4,340) size 78x15
+                      text run at (4,340) width 78: "MAGAZINES"
+                  RenderBR {BR} at (82,352) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 101x19
                 RenderInline {FONT} at (0,0) size 101x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,357) size 101x15
-                    text run at (4,357) width 101: "Personal Finance"
-                RenderBR {BR} at (105,369) size 0x0
+                  RenderText {#text} at (4,355) size 101x15
+                    text run at (4,355) width 101: "Personal Finance"
+                RenderBR {BR} at (105,367) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 94x19
                 RenderInline {FONT} at (0,0) size 94x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,372) size 94x15
-                    text run at (4,372) width 94: "Wealth Manager"
-                RenderBR {BR} at (98,384) size 0x0
+                  RenderText {#text} at (4,370) size 94x15
+                    text run at (4,370) width 94: "Wealth Manager"
+                RenderBR {BR} at (98,382) size 0x0
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (4,387) size 0x19
+              RenderBR {BR} at (4,385) size 0x19
               RenderInline {FONT} at (0,0) size 124x15 [color=#FFFFFF]
                 RenderInline {B} at (0,0) size 124x15
-                  RenderText {#text} at (4,406) size 124x15
-                    text run at (4,406) width 124: "BUSINESS CENTER"
-                RenderBR {BR} at (128,418) size 0x0
+                  RenderText {#text} at (4,403) size 124x15
+                    text run at (4,403) width 124: "BUSINESS CENTER"
+                RenderBR {BR} at (128,415) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 91x19
                 RenderInline {FONT} at (0,0) size 91x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,421) size 91x15
-                    text run at (4,421) width 91: "Small Business"
-                RenderBR {BR} at (95,433) size 0x0
+                  RenderText {#text} at (4,418) size 91x15
+                    text run at (4,418) width 91: "Small Business"
+                RenderBR {BR} at (95,430) size 0x0
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (4,436) size 0x19
+              RenderBR {BR} at (4,433) size 0x19
               RenderInline {B} at (0,0) size 63x19
                 RenderInline {A} at (0,0) size 63x19
                   RenderInline {FONT} at (0,0) size 63x15 [color=#FFFFFF]
-                    RenderText {#text} at (4,455) size 63x15
-                      text run at (4,455) width 63: "CAREERS"
-                  RenderBR {BR} at (67,467) size 0x0
+                    RenderText {#text} at (4,451) size 63x15
+                      text run at (4,451) width 63: "CAREERS"
+                  RenderBR {BR} at (67,463) size 0x0
               RenderText {#text} at (0,0) size 0x0
-              RenderBR {BR} at (4,470) size 0x19
+              RenderBR {BR} at (4,466) size 0x19
               RenderInline {B} at (0,0) size 29x19
                 RenderInline {A} at (0,0) size 29x19
                   RenderInline {FONT} at (0,0) size 29x15 [color=#FFFFFF]
-                    RenderText {#text} at (4,489) size 29x15
-                      text run at (4,489) width 29: "LIFE"
-                  RenderBR {BR} at (33,501) size 0x0
+                    RenderText {#text} at (4,484) size 29x15
+                      text run at (4,484) width 29: "LIFE"
+                  RenderBR {BR} at (33,496) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 98x19
                 RenderInline {FONT} at (0,0) size 98x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,504) size 98x15
-                    text run at (4,504) width 98: "The Finer Things"
-                RenderBR {BR} at (102,516) size 0x0
+                  RenderText {#text} at (4,499) size 98x15
+                    text run at (4,499) width 98: "The Finer Things"
+                RenderBR {BR} at (102,511) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 38x19
                 RenderInline {FONT} at (0,0) size 38x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,519) size 38x15
-                    text run at (4,519) width 38: "Sports"
-                RenderBR {BR} at (42,531) size 0x0
+                  RenderText {#text} at (4,514) size 38x15
+                    text run at (4,514) width 38: "Sports"
+                RenderBR {BR} at (42,526) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 74x19
                 RenderInline {FONT} at (0,0) size 74x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,534) size 74x15
-                    text run at (4,534) width 74: "Charlie Rose"
-                RenderBR {BR} at (78,546) size 0x0
+                  RenderText {#text} at (4,529) size 74x15
+                    text run at (4,529) width 74: "Charlie Rose"
+                RenderBR {BR} at (78,541) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 76x19
                 RenderInline {FONT} at (0,0) size 76x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,549) size 76x15
-                    text run at (4,549) width 76: "B-Commerce"
-                RenderBR {BR} at (80,561) size 0x0
-              RenderBR {BR} at (4,564) size 0x19
-              RenderImage {IMG} at (4,583) size 140x1
-              RenderBR {BR} at (144,584) size 0x0
+                  RenderText {#text} at (4,544) size 76x15
+                    text run at (4,544) width 76: "B-Commerce"
+                RenderBR {BR} at (80,556) size 0x0
+              RenderBR {BR} at (4,559) size 0x19
+              RenderImage {IMG} at (4,577) size 140x1
+              RenderBR {BR} at (144,578) size 0x0
               RenderInline {A} at (0,0) size 74x19
                 RenderInline {FONT} at (0,0) size 74x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,584) size 74x15
-                    text run at (4,584) width 74: "To Advertise"
-                RenderBR {BR} at (78,596) size 0x0
-              RenderBR {BR} at (4,599) size 0x19
+                  RenderText {#text} at (4,578) size 74x15
+                    text run at (4,578) width 74: "To Advertise"
+                RenderBR {BR} at (78,590) size 0x0
+              RenderBR {BR} at (4,593) size 0x19
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
               RenderImage {IMG} at (11,4) size 465x16
           RenderTableRow {TR} at (0,24) size 634x69
@@ -229,8 +229,8 @@ layer at (0,0) size 785x677
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (4,64) size 167x1
-            RenderTableCell {TD} at (451,24) size 183x527 [bgcolor=#CCCC99] [border: (1px inset #808080)] [r=1 c=3 rs=6 cs=1]
-              RenderBlock (anonymous) at (4,4) size 175x28
+            RenderTableCell {TD} at (451,24) size 183x523 [bgcolor=#CCCC99] [border: (1px inset #808080)] [r=1 c=3 rs=6 cs=1]
+              RenderBlock (anonymous) at (4,4) size 175x27
                 RenderInline {FONT} at (0,0) size 143x12
                   RenderInline {FONT} at (0,0) size 143x13
                     RenderInline {SPAN} at (0,0) size 143x13
@@ -241,11 +241,11 @@ layer at (0,0) size 785x677
                 RenderInline {FONT} at (0,0) size 105x15 [color=#000000]
                   RenderInline {B} at (0,0) size 105x15
                     RenderInline {SPAN} at (0,0) size 105x15
-                      RenderText {#text} at (35,13) size 105x15
-                        text run at (35,13) width 105: "Market Snapshot"
-                      RenderBR {BR} at (139,25) size 1x0
+                      RenderText {#text} at (35,12) size 105x15
+                        text run at (35,12) width 105: "Market Snapshot"
+                      RenderBR {BR} at (139,24) size 1x0
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {CENTER} at (4,32) size 175x491
+              RenderBlock {CENTER} at (4,31) size 175x488
                 RenderInline {A} at (0,0) size 175x19
                   RenderImage {IMG} at (0,0) size 175x270
                 RenderText {#text} at (0,0) size 0x0
@@ -275,33 +275,33 @@ layer at (0,0) size 785x677
                     text run at (127,315) width 3: " "
                 RenderText {#text} at (0,0) size 0x0
                 RenderBR {BR} at (0,0) size 0x0
-                RenderBR {BR} at (87,328) size 1x19
-                RenderBR {BR} at (87,347) size 1x19
+                RenderBR {BR} at (87,327) size 1x19
+                RenderBR {BR} at (87,345) size 1x19
                 RenderInline {A} at (0,0) size 125x19
                   RenderText {#text} at (0,0) size 0x0
-                  RenderImage {IMG} at (25,366) size 125x125
+                  RenderImage {IMG} at (25,363) size 125x125
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,93) size 634x122
-            RenderTableCell {TD} at (148,93) size 303x122 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=2]
+          RenderTableRow {TR} at (0,93) size 634x116
+            RenderTableCell {TD} at (148,93) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=2]
               RenderInline {A} at (0,0) size 0x0
                 RenderImage {IMG} at (4,4) size 288x26
               RenderBR {BR} at (295,4) size 0x19
-              RenderBR {BR} at (295,23) size 0x19
-              RenderInline {A} at (0,0) size 274x57
-                RenderInline {SPAN} at (0,0) size 274x57
-                  RenderText {#text} at (4,42) size 274x57
-                    text run at (4,42) width 264: "Looking for a new approach to investing?"
-                    text run at (4,61) width 274: "How about a portfolio where every holding"
-                    text run at (4,80) width 207: "has a word for its stock symbol? "
+              RenderBR {BR} at (295,22) size 0x19
+              RenderInline {A} at (0,0) size 274x55
+                RenderInline {SPAN} at (0,0) size 274x55
+                  RenderText {#text} at (4,40) size 274x55
+                    text run at (4,40) width 264: "Looking for a new approach to investing?"
+                    text run at (4,58) width 274: "How about a portfolio where every holding"
+                    text run at (4,76) width 207: "has a word for its stock symbol? "
               RenderBR {BR} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 46x19
                 RenderInline {A} at (0,0) size 46x19
-                  RenderText {#text} at (4,99) size 46x19
-                    text run at (4,99) width 46: "More..."
+                  RenderText {#text} at (4,94) size 46x19
+                    text run at (4,94) width 46: "More..."
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,215) size 634x313
-            RenderTableCell {TD} at (148,215) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+          RenderTableRow {TR} at (0,209) size 634x313
+            RenderTableCell {TD} at (148,209) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderImage {IMG} at (4,4) size 290x35
               RenderBR {BR} at (294,39) size 0x0
               RenderInline {A} at (0,0) size 249x19
@@ -367,7 +367,7 @@ layer at (0,0) size 785x677
                     text run at (4,279) width 284: "For Y2K information on BLOOMBERG, download"
                     text run at (4,294) width 147: "our customer letters now."
               RenderBR {BR} at (151,306) size 0x0
-      RenderBlock {P} at (0,640) size 769x13
+      RenderBlock {P} at (0,633) size 769x12
         RenderInline {FONT} at (0,0) size 424x13
           RenderText {#text} at (0,0) size 197x13
             text run at (0,0) width 197: "\x{A9}1999 Bloomberg L.P. All rights reserved. "

@@ -3,75 +3,75 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 103x54 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 101x52
-          RenderTableRow {TR} at (0,2) size 101x23
-            RenderTableCell {TD} at (2,2) size 30x23 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 103x52 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 101x50
+          RenderTableRow {TR} at (0,2) size 101x22
+            RenderTableCell {TD} at (2,2) size 30x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "one"
-            RenderTableCell {TD} at (34,2) size 28x23 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,2) size 28x22 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "two"
-            RenderTableCell {TD} at (64,2) size 35x23 [border: (1px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (64,2) size 35x22 [border: (1px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "three"
-          RenderTableRow {TR} at (0,27) size 101x23
-            RenderTableCell {TD} at (2,27) size 30x23 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 101x22
+            RenderTableCell {TD} at (2,26) size 30x22 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "four"
-            RenderTableCell {TD} at (34,27) size 28x23 [border: (1px solid #FFFF00)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,26) size 28x22 [border: (1px solid #FFFF00)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "five"
-            RenderTableCell {TD} at (64,27) size 35x23 [border: (1px solid #FFA500)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (64,26) size 35x22 [border: (1px solid #FFA500)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 18x19
                 text run at (2,2) width 18: "six"
-      RenderBlock (anonymous) at (0,54) size 784x19
+      RenderBlock (anonymous) at (0,52) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,73) size 103x54 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 101x52
-          RenderTableRow {TR} at (0,2) size 101x23
-            RenderTableCell {TD} at (2,2) size 30x23 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,70) size 103x52 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 101x50
+          RenderTableRow {TR} at (0,2) size 101x22
+            RenderTableCell {TD} at (2,2) size 30x22 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "one"
-            RenderTableCell {TD} at (34,2) size 28x23 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,2) size 28x22 [border: (1px solid #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "two"
-            RenderTableCell {TD} at (64,2) size 35x23 [border: (1px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (64,2) size 35x22 [border: (1px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x19
                 text run at (2,2) width 31: "three"
-          RenderTableRow {TR} at (0,27) size 101x23
-            RenderTableCell {TD} at (2,27) size 30x23 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 101x22
+            RenderTableCell {TD} at (2,26) size 30x22 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "four"
-            RenderTableCell {TD} at (34,27) size 28x23 [border: (1px solid #FFFF00)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,26) size 28x22 [border: (1px solid #FFFF00)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "five"
-            RenderTableCell {TD} at (64,27) size 35x23 [border: (1px solid #FFA500)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (64,26) size 35x22 [border: (1px solid #FFA500)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 18x19
                 text run at (2,2) width 18: "six"
-      RenderBlock (anonymous) at (0,127) size 784x38
+      RenderBlock (anonymous) at (0,122) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 229x19
-          text run at (0,19) width 229: "should be 2px solid red around table"
-      RenderTable {TABLE} at (0,165) size 75x31 [border: (2px solid #FF0000)]
-        RenderTableSection {TBODY} at (2,2) size 71x27
-          RenderTableRow {TR} at (0,2) size 71x23
-            RenderTableCell {TD} at (2,2) size 31x23 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 229x19
+          text run at (0,18) width 229: "should be 2px solid red around table"
+      RenderTable {TABLE} at (0,158) size 75x30 [border: (2px solid #FF0000)]
+        RenderTableSection {TBODY} at (2,2) size 71x26
+          RenderTableRow {TR} at (0,2) size 71x22
+            RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "One"
-            RenderTableCell {TD} at (35,2) size 34x23 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (35,2) size 34x22 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Two"
-      RenderBlock (anonymous) at (0,196) size 784x38
+      RenderBlock (anonymous) at (0,188) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 256x19
-          text run at (0,19) width 256: "should be medium solid red around table"
-      RenderTable {TABLE} at (0,234) size 77x33 [border: (3px solid #FF0000)]
-        RenderTableSection {TBODY} at (3,3) size 71x27
-          RenderTableRow {TR} at (0,2) size 71x23
-            RenderTableCell {TD} at (2,2) size 31x23 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 256x19
+          text run at (0,18) width 256: "should be medium solid red around table"
+      RenderTable {TABLE} at (0,224) size 77x32 [border: (3px solid #FF0000)]
+        RenderTableSection {TBODY} at (3,3) size 71x26
+          RenderTableRow {TR} at (0,2) size 71x22
+            RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "One"
-            RenderTableCell {TD} at (35,2) size 34x23 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (35,2) size 34x22 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Two"

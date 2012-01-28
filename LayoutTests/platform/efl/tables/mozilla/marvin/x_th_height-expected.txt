@@ -1,43 +1,43 @@
-layer at (0,0) size 785x1642
+layer at (0,0) size 785x1638
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1642
-  RenderBlock {html} at (0,0) size 785x1642
-    RenderBody {body} at (8,8) size 769x1626
+layer at (0,0) size 785x1638
+  RenderBlock {html} at (0,0) size 785x1638
+    RenderBody {body} at (8,8) size 769x1622
       RenderTable {table} at (0,0) size 293x110 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 291x108
           RenderTableRow {tr} at (0,2) size 291x104
-            RenderTableCell {th} at (2,42) size 287x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,43) size 287x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 283x19
                 text run at (2,2) width 283: "The height of this cell should be 100 pixels"
-      RenderBlock (anonymous) at (0,110) size 769x19
+      RenderBlock (anonymous) at (0,110) size 769x18
         RenderBR {br} at (0,0) size 0x19
-      RenderTable {table} at (0,129) size 293x210 [border: (1px outset #808080)]
+      RenderTable {table} at (0,128) size 293x210 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 291x208
           RenderTableRow {tr} at (0,2) size 291x204
-            RenderTableCell {th} at (2,92) size 287x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,93) size 287x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 283x19
                 text run at (2,2) width 283: "The height of this cell should be 200 pixels"
-      RenderBlock (anonymous) at (0,339) size 769x19
+      RenderBlock (anonymous) at (0,338) size 769x18
         RenderBR {br} at (0,0) size 0x19
-      RenderTable {table} at (0,358) size 293x310 [border: (1px outset #808080)]
+      RenderTable {table} at (0,356) size 293x310 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 291x308
           RenderTableRow {tr} at (0,2) size 291x304
-            RenderTableCell {th} at (2,142) size 287x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,143) size 287x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 283x19
                 text run at (2,2) width 283: "The height of this cell should be 300 pixels"
-      RenderBlock (anonymous) at (0,668) size 769x19
+      RenderBlock (anonymous) at (0,666) size 769x18
         RenderBR {br} at (0,0) size 0x19
-      RenderTable {table} at (0,687) size 293x410 [border: (1px outset #808080)]
+      RenderTable {table} at (0,684) size 293x410 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 291x408
           RenderTableRow {tr} at (0,2) size 291x404
-            RenderTableCell {th} at (2,192) size 287x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,193) size 287x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 283x19
                 text run at (2,2) width 283: "The height of this cell should be 400 pixels"
-      RenderBlock (anonymous) at (0,1097) size 769x19
+      RenderBlock (anonymous) at (0,1094) size 769x18
         RenderBR {br} at (0,0) size 0x19
-      RenderTable {table} at (0,1116) size 293x510 [border: (1px outset #808080)]
+      RenderTable {table} at (0,1112) size 293x510 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 291x508
           RenderTableRow {tr} at (0,2) size 291x504
-            RenderTableCell {th} at (2,242) size 287x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,243) size 287x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 283x19
                 text run at (2,2) width 283: "The height of this cell should be 500 pixels"

@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 472x77 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 470x75
-          RenderTableRow {TR} at (0,2) size 470x71
-            RenderTableCell {TD} at (2,2) size 282x71 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 278x19
+      RenderTable {TABLE} at (0,0) size 472x74 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 470x72
+          RenderTableRow {TR} at (0,2) size 470x68
+            RenderTableCell {TD} at (2,2) size 282x68 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 278x18
                 RenderText {#text} at (0,0) size 253x19
                   text run at (0,0) width 253: "some normal text before the nested table"
-              RenderTable {TABLE} at (52,21) size 264x29 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 262x27
-                  RenderTableRow {TR} at (0,2) size 262x23
-                    RenderTableCell {TD} at (2,2) size 258x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (52,20) size 264x28 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 262x26
+                  RenderTableRow {TR} at (0,2) size 262x22
+                    RenderTableCell {TD} at (2,2) size 258x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 218x19
                         text run at (2,2) width 218: "selection of words to pad table cell"
-              RenderBlock (anonymous) at (2,50) size 278x19
+              RenderBlock (anonymous) at (2,48) size 278x18
                 RenderText {#text} at (0,0) size 241x19
                   text run at (0,0) width 241: "some normal text after the nested table"
-            RenderTableCell {TD} at (286,26) size 182x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (286,25) size 182x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 178x19
                 text run at (2,2) width 178: "contents of table cell to right"
-      RenderTable {TABLE} at (0,77) size 41x39 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 39x37
-          RenderTableRow {TR} at (0,2) size 39x33
-            RenderTableCell {TD} at (2,2) size 35x33 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 37x29 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 35x27
-                  RenderTableRow {TR} at (0,2) size 35x23
-                    RenderTableCell {TD} at (2,2) size 31x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,74) size 41x38 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 39x36
+          RenderTableRow {TR} at (0,2) size 39x32
+            RenderTableCell {TD} at (2,2) size 35x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 37x28 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 35x26
+                  RenderTableRow {TR} at (0,2) size 35x22
+                    RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 21x19
                         text run at (2,2) width 21: "foo"

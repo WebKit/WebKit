@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 300x48 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 296x44
-          RenderTableRow {TR} at (0,0) size 296x44
-            RenderTableCell {TD} at (0,0) size 296x44 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {CENTER} at (3,3) size 290x38
+      RenderTable {TABLE} at (0,0) size 300x46 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 296x42
+          RenderTableRow {TR} at (0,0) size 296x42
+            RenderTableCell {TD} at (0,0) size 296x42 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (3,3) size 290x36
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                   RenderImage {IMG} at (0,0) size 4x4
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {A} at (0,0) size 185x38 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 185x38 [color=#000000]
+                RenderInline {A} at (0,0) size 185x37 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 185x37 [color=#000000]
                     RenderText {#text} at (56,0) size 185x19
                       text run at (56,0) width 111: "Free Homepage! "
                       text run at (166,0) width 75: "Free Email!"
                     RenderBR {BR} at (240,15) size 1x0
-                    RenderText {#text} at (60,19) size 170x19
-                      text run at (60,19) width 41: "It's all "
-                      text run at (101,19) width 129: "yours at ACMEcity!"
+                    RenderText {#text} at (60,18) size 170x19
+                      text run at (60,18) width 41: "It's all "
+                      text run at (101,18) width 129: "yours at ACMEcity!"

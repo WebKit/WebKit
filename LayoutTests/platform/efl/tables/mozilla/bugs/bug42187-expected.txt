@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {H4} at (0,0) size 784x19
+      RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 556x19
           text run at (0,0) width 556: "Try resizing the window horizantally - the red cell should be 195 pixels at all times."
-      RenderTable {TABLE} at (0,40) size 404x82 [bgcolor=#FFFF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 402x80
-          RenderTableRow {TR} at (0,0) size 402x21
+      RenderTable {TABLE} at (0,39) size 404x78 [bgcolor=#FFFF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 402x76
+          RenderTableRow {TR} at (0,0) size 402x20
             RenderTableCell {TD} at (0,9) size 202x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (202,9) size 102x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (304,0) size 98x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (304,0) size 98x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 96x19
                 text run at (1,1) width 96: "xxxxxxxxxxxx"
-          RenderTableRow {TR} at (0,21) size 402x59
-            RenderTableCell {TD} at (0,40) size 202x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,20) size 402x56
+            RenderTableCell {TD} at (0,38) size 202x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
-            RenderTableCell {TD} at (202,21) size 200x59 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 182x57
+            RenderTableCell {TD} at (202,20) size 200x56 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
+              RenderText {#text} at (1,1) size 182x55
                 text run at (1,1) width 182: "Now you can vote forTLJ as"
-                text run at (1,20) width 109: "game of the year "
-                text run at (110,20) width 53: "at Game"
-                text run at (1,39) width 64: "Rankings."
-      RenderBlock {HR} at (0,130) size 204x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,140) size 385x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,150) size 784x19
+                text run at (1,19) width 109: "game of the year "
+                text run at (110,19) width 53: "at Game"
+                text run at (1,37) width 64: "Rankings."
+      RenderBlock {HR} at (0,125) size 204x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,135) size 385x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,145) size 784x18
         RenderText {#text} at (0,0) size 513x19
           text run at (0,0) width 513: "200*150 =3000twips 100*150=1500twips 180*150=1200twips sum: 5700 twips"

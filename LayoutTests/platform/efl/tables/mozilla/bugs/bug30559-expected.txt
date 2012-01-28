@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 716x19
           text run at (0,0) width 716: "The bug causes the nested table containing the textarea to be positioned away from the left edge of the outer table "
         RenderBR {BR} at (716,15) size 0x0
-      RenderTable {TABLE} at (242,19) size 300x72 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 298x70
-          RenderTableRow {TR} at (0,2) size 298x66
-            RenderTableCell {TD} at (2,2) size 294x66 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 81x62 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 79x60
-                  RenderTableRow {TR} at (0,2) size 79x56
-                    RenderTableCell {TD} at (2,2) size 75x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (242,18) size 300x70 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 298x68
+          RenderTableRow {TR} at (0,2) size 298x64
+            RenderTableCell {TD} at (2,2) size 294x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 81x60 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 79x58
+                  RenderTableRow {TR} at (0,2) size 79x54
+                    RenderTableCell {TD} at (2,2) size 75x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (0,0) size 0x0
-layer at (262,39) size 67x48
-  RenderTextControl {TEXTAREA} at (4,4) size 67x48 [color=#202020]
-    RenderBlock {DIV} at (4,6) size 60x19
+layer at (262,38) size 67x46
+  RenderTextControl {TEXTAREA} at (4,4) size 67x46 [color=#202020]
+    RenderBlock {DIV} at (4,6) size 60x18
       RenderText {#text} at (0,0) size 23x19
         text run at (0,0) width 23: "bar"

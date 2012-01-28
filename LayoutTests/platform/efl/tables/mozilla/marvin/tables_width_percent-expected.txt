@@ -3,57 +3,57 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 763x38
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 763x37
           text run at (0,0) width 693: "This test case shows how WIDTH can set the width of the table to a fixed size using PERCENT. PERCENT "
           text run at (693,0) width 70: "is based on"
-          text run at (0,19) width 444: "the percentage of the space between the current left and right margins. "
-          text run at (444,19) width 253: "This first table has a width of 80 percent"
-      RenderTable {TABLE} at (0,38) size 627x48
-        RenderTableSection {TBODY} at (0,0) size 627x48
-          RenderTableRow {TR} at (0,2) size 627x21
-            RenderTableCell {TD} at (2,2) size 209x21 [r=0 c=0 rs=1 cs=1]
+          text run at (0,18) width 444: "the percentage of the space between the current left and right margins. "
+          text run at (444,18) width 253: "This first table has a width of 80 percent"
+      RenderTable {TABLE} at (0,36) size 627x46
+        RenderTableSection {TBODY} at (0,0) size 627x46
+          RenderTableRow {TR} at (0,2) size 627x20
+            RenderTableCell {TD} at (2,2) size 209x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Navigator"
-            RenderTableCell {TD} at (213,2) size 219x21 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (213,2) size 219x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 68x19
                 text run at (1,1) width 68: "Messenger"
-            RenderTableCell {TD} at (434,2) size 191x21 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (434,2) size 191x20 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 54x19
                 text run at (1,1) width 54: "Collabra"
-          RenderTableRow {TR} at (0,25) size 627x21
-            RenderTableCell {TD} at (2,25) size 209x21 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 627x20
+            RenderTableCell {TD} at (2,24) size 209x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "Composer"
-            RenderTableCell {TD} at (213,25) size 219x21 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (213,24) size 219x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x19
                 text run at (1,1) width 57: "Calendar"
-            RenderTableCell {TD} at (434,25) size 191x21 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (434,24) size 191x20 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x19
                 text run at (1,1) width 59: "Netcaster"
-      RenderBlock (anonymous) at (0,86) size 784x38
+      RenderBlock (anonymous) at (0,82) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 313x19
-          text run at (0,19) width 313: "While, this second table has a width of 50 percent"
-      RenderTable {TABLE} at (0,124) size 392x48
-        RenderTableSection {TBODY} at (0,0) size 392x48
-          RenderTableRow {TR} at (0,2) size 392x21
-            RenderTableCell {TD} at (2,2) size 129x21 [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 313x19
+          text run at (0,18) width 313: "While, this second table has a width of 50 percent"
+      RenderTable {TABLE} at (0,118) size 392x46
+        RenderTableSection {TBODY} at (0,0) size 392x46
+          RenderTableRow {TR} at (0,2) size 392x20
+            RenderTableCell {TD} at (2,2) size 129x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x19
                 text run at (1,1) width 63: "Navigator"
-            RenderTableCell {TD} at (133,2) size 136x21 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (133,2) size 136x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 68x19
                 text run at (1,1) width 68: "Messenger"
-            RenderTableCell {TD} at (271,2) size 119x21 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (271,2) size 119x20 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 54x19
                 text run at (1,1) width 54: "Collabra"
-          RenderTableRow {TR} at (0,25) size 392x21
-            RenderTableCell {TD} at (2,25) size 129x21 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 392x20
+            RenderTableCell {TD} at (2,24) size 129x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "Composer"
-            RenderTableCell {TD} at (133,25) size 136x21 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (133,24) size 136x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x19
                 text run at (1,1) width 57: "Calendar"
-            RenderTableCell {TD} at (271,25) size 119x21 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (271,24) size 119x20 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x19
                 text run at (1,1) width 59: "Netcaster"

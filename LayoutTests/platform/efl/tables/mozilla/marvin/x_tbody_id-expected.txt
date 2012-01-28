@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x45
-  RenderBlock {html} at (0,0) size 800x45
-    RenderBody {body} at (8,8) size 784x29
-      RenderTable {table} at (0,0) size 554x29 [border: (1px outset #808080)]
-        RenderTableSection {tbody} at (1,1) size 552x27 [bgcolor=#00FF00]
-          RenderTableRow {tr} at (0,2) size 552x23
-            RenderTableCell {td} at (2,2) size 273x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x44
+  RenderBlock {html} at (0,0) size 800x44
+    RenderBody {body} at (8,8) size 784x28
+      RenderTable {table} at (0,0) size 554x28 [border: (1px outset #808080)]
+        RenderTableSection {tbody} at (1,1) size 552x26 [bgcolor=#00FF00]
+          RenderTableRow {tr} at (0,2) size 552x22
+            RenderTableCell {td} at (2,2) size 273x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
                 text run at (2,2) width 269: "This tbody should have a lime background"
-            RenderTableCell {td} at (277,2) size 273x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (277,2) size 273x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 269x19
                 text run at (2,2) width 269: "This tbody should have a lime background"

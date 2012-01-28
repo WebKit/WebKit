@@ -3,102 +3,102 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 725x19
           text run at (0,0) width 154: "Here's the original case. "
           text run at (154,0) width 571: "All of the cells have images that fill to their given widths except the ones marked \"Empty\"."
-      RenderTable {TABLE} at (0,35) size 566x60 [bgcolor=#00FFFF]
+      RenderTable {TABLE} at (0,34) size 566x60 [bgcolor=#00FFFF]
         RenderTableSection {TBODY} at (0,0) size 566x60
           RenderTableRow {TR} at (0,0) size 566x40
             RenderTableCell {TD} at (0,0) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 222x40
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
-            RenderTableCell {TD} at (367,10) size 199x19 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,11) size 199x18 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"
           RenderTableRow {TR} at (0,40) size 566x20
             RenderTableCell {TD} at (0,40) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 367x20
-            RenderTableCell {TD} at (367,40) size 199x19 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,41) size 199x18 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"
-      RenderBlock {P} at (0,111) size 784x19
+      RenderBlock {P} at (0,110) size 784x18
         RenderText {#text} at (0,0) size 377x19
           text run at (0,0) width 377: "If we fill either empty out with text, the problem goes away."
-      RenderTable {TABLE} at (0,146) size 566x77 [bgcolor=#00FFFF]
-        RenderTableSection {TBODY} at (0,0) size 566x77
-          RenderTableRow {TR} at (0,0) size 566x57
-            RenderTableCell {TD} at (0,8) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,144) size 566x74 [bgcolor=#00FFFF]
+        RenderTableSection {TBODY} at (0,0) size 566x74
+          RenderTableRow {TR} at (0,0) size 566x54
+            RenderTableCell {TD} at (0,7) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 222x40
-            RenderTableCell {TD} at (222,8) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (222,7) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
-            RenderTableCell {TD} at (367,0) size 199x57 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 193x57
+            RenderTableCell {TD} at (367,0) size 199x54 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 193x55
                 text run at (0,0) width 193: "Empty - lots of text here now -"
-                text run at (0,19) width 185: "and more and more and more"
-                text run at (0,38) width 51: "text in it"
-          RenderTableRow {TR} at (0,57) size 566x20
-            RenderTableCell {TD} at (0,57) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
+                text run at (0,18) width 185: "and more and more and more"
+                text run at (0,36) width 51: "text in it"
+          RenderTableRow {TR} at (0,54) size 566x20
+            RenderTableCell {TD} at (0,54) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 367x20
-            RenderTableCell {TD} at (367,57) size 199x19 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,55) size 199x18 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"
-      RenderBlock {P} at (0,239) size 784x19
+      RenderBlock {P} at (0,234) size 784x18
         RenderText {#text} at (0,0) size 4x19
           text run at (0,0) width 4: " "
-      RenderTable {TABLE} at (0,274) size 566x78 [bgcolor=#00FFFF]
-        RenderTableSection {TBODY} at (0,0) size 566x78
+      RenderTable {TABLE} at (0,268) size 566x76 [bgcolor=#00FFFF]
+        RenderTableSection {TBODY} at (0,0) size 566x76
           RenderTableRow {TR} at (0,0) size 566x40
             RenderTableCell {TD} at (0,0) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 222x40
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
-            RenderTableCell {TD} at (367,10) size 199x19 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,11) size 199x18 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"
-          RenderTableRow {TR} at (0,40) size 566x38
-            RenderTableCell {TD} at (0,49) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
+          RenderTableRow {TR} at (0,40) size 566x36
+            RenderTableCell {TD} at (0,48) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 367x20
-            RenderTableCell {TD} at (367,40) size 199x38 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 181x38
+            RenderTableCell {TD} at (367,40) size 199x36 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 181x37
                 text run at (0,0) width 181: "Empty - this has lots and lots"
-                text run at (0,19) width 121: "and lots of text in it"
-      RenderBlock {P} at (0,368) size 784x19
+                text run at (0,18) width 121: "and lots of text in it"
+      RenderBlock {P} at (0,360) size 784x18
         RenderText {#text} at (0,0) size 464x19
           text run at (0,0) width 464: "Taking away either the cellpadding=0 or cellspacing=0 fixes the problem."
-      RenderTable {TABLE} at (0,403) size 566x70 [bgcolor=#00FFFF]
+      RenderTable {TABLE} at (0,394) size 566x70 [bgcolor=#00FFFF]
         RenderTableSection {TBODY} at (0,0) size 566x70
           RenderTableRow {TR} at (0,2) size 566x42
             RenderTableCell {TD} at (2,2) size 224x42 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 222x40
             RenderTableCell {TD} at (228,2) size 147x42 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 145x40
-            RenderTableCell {TD} at (377,12) size 187x21 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (377,13) size 187x20 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 42x19
                 text run at (1,1) width 42: "Empty"
           RenderTableRow {TR} at (0,46) size 566x22
             RenderTableCell {TD} at (2,46) size 373x22 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (1,1) size 367x20
-            RenderTableCell {TD} at (377,46) size 187x21 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (377,47) size 187x20 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 42x19
                 text run at (1,1) width 42: "Empty"
-      RenderBlock {P} at (0,489) size 784x19
+      RenderBlock {P} at (0,480) size 784x18
         RenderText {#text} at (0,0) size 317x19
           text run at (0,0) width 317: "As does removing the explicit width on the table..."
-      RenderTable {TABLE} at (0,524) size 566x60 [bgcolor=#00FFFF]
+      RenderTable {TABLE} at (0,514) size 566x60 [bgcolor=#00FFFF]
         RenderTableSection {TBODY} at (0,0) size 566x60
           RenderTableRow {TR} at (0,0) size 566x40
             RenderTableCell {TD} at (0,0) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 222x40
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
-            RenderTableCell {TD} at (367,10) size 199x19 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,11) size 199x18 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"
           RenderTableRow {TR} at (0,40) size 566x20
             RenderTableCell {TD} at (0,40) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 367x20
-            RenderTableCell {TD} at (367,40) size 199x19 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (367,41) size 199x18 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 42x19
                 text run at (0,0) width 42: "Empty"

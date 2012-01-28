@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 81x29
-        RenderTableSection {TBODY} at (0,0) size 81x29
-          RenderTableRow {TR} at (0,5) size 81x19
-            RenderTableCell {TD} at (5,5) size 30x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 81x28
+        RenderTableSection {TBODY} at (0,0) size 81x28
+          RenderTableRow {TR} at (0,5) size 81x18
+            RenderTableCell {TD} at (5,5) size 30x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 30x19
                 text run at (0,0) width 30: "Blah"
             RenderTableCell {TD} at (40,14) size 1x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
               RenderInline {SPACER} at (0,0) size 0x0
-            RenderTableCell {TD} at (46,5) size 30x19 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (46,5) size 30x18 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 30x19
                 text run at (0,0) width 30: "Blah"
-      RenderBlock (anonymous) at (0,29) size 784x19
+      RenderBlock (anonymous) at (0,28) size 784x18
         RenderBR {BR} at (0,0) size 0x19

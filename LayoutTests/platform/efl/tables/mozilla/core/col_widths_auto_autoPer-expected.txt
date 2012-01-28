@@ -3,59 +3,59 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 61x19
           text run at (0,0) width 61: "auto table"
-      RenderTable {TABLE} at (0,19) size 139x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 137x27
-          RenderTableRow {TR} at (0,2) size 137x23
-            RenderTableCell {TD} at (2,2) size 100x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 139x28 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 137x26
+          RenderTableRow {TR} at (0,2) size 137x22
+            RenderTableCell {TD} at (2,2) size 100x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 96x19
                 text run at (2,2) width 96: "0% 0% 0% 0%"
-            RenderTableCell {TD} at (104,2) size 31x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (104,2) size 31x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "auto"
-      RenderBlock (anonymous) at (0,48) size 784x38
+      RenderBlock (anonymous) at (0,46) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 391x19
-          text run at (0,19) width 391: "auto table - % width cell increases table width based on % cell"
-      RenderTable {TABLE} at (0,86) size 784x82 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x80
-          RenderTableRow {TR} at (0,10) size 782x60
-            RenderTableCell {TD} at (10,10) size 75x60 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 29x38
+        RenderText {#text} at (0,18) size 391x19
+          text run at (0,18) width 391: "auto table - % width cell increases table width based on % cell"
+      RenderTable {TABLE} at (0,82) size 784x80 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x78
+          RenderTableRow {TR} at (0,10) size 782x58
+            RenderTableCell {TD} at (10,10) size 75x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (11,11) size 29x37
                 text run at (11,11) width 29: "10%"
-                text run at (11,30) width 29: "10%"
-            RenderTableCell {TD} at (95,19) size 677x41 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                text run at (11,29) width 29: "10%"
+            RenderTableCell {TD} at (95,19) size 677x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 27x19
                 text run at (11,11) width 27: "auto"
-      RenderBlock (anonymous) at (0,168) size 784x19
+      RenderBlock (anonymous) at (0,162) size 784x18
         RenderText {#text} at (0,0) size 391x19
           text run at (0,0) width 391: "auto table - % width cell increases table width based on % cell"
-      RenderTable {TABLE} at (0,187) size 362x45 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 360x43
-          RenderTableRow {TR} at (0,10) size 360x23
-            RenderTableCell {TD} at (10,10) size 33x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,180) size 362x44 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 360x42
+          RenderTableRow {TR} at (0,10) size 360x22
+            RenderTableCell {TD} at (10,10) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x19
                 text run at (2,2) width 29: "10%"
-            RenderTableCell {TD} at (53,10) size 297x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,10) size 297x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "auto"
-      RenderBlock (anonymous) at (0,232) size 784x38
+      RenderBlock (anonymous) at (0,224) size 784x36
         RenderBR {BR} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 535x19
-          text run at (0,19) width 535: "auto table - % width cell increases table width based on % cell which makes it largest"
-      RenderTable {TABLE} at (0,270) size 784x45 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x43
-          RenderTableRow {TR} at (0,10) size 782x23
-            RenderTableCell {TD} at (10,10) size 74x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (0,18) size 535x19
+          text run at (0,18) width 535: "auto table - % width cell increases table width based on % cell which makes it largest"
+      RenderTable {TABLE} at (0,260) size 784x44 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x42
+          RenderTableRow {TR} at (0,10) size 782x22
+            RenderTableCell {TD} at (10,10) size 74x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x19
                 text run at (2,2) width 29: "10%"
-            RenderTableCell {TD} at (94,10) size 25x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (94,10) size 25x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "1%"
-            RenderTableCell {TD} at (129,10) size 643x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (129,10) size 643x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x19
                 text run at (2,2) width 27: "auto"
-      RenderBlock (anonymous) at (0,315) size 784x19
+      RenderBlock (anonymous) at (0,304) size 784x18
         RenderBR {BR} at (0,0) size 0x19

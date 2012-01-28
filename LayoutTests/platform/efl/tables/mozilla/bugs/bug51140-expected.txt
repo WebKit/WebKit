@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderInline {A} at (0,0) size 27x19 [color=#551A8B]
           RenderText {#text} at (0,0) size 27x19
             text run at (0,0) width 27: "note"
@@ -13,13 +13,13 @@ layer at (0,0) size 800x600
           RenderText {#text} at (31,0) size 72x19
             text run at (31,0) width 72: "closepopup"
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,19) size 40x29 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 38x27
-          RenderTableRow {TR} at (0,2) size 38x23
-            RenderTableCell {TD} at (2,2) size 34x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 40x28 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 38x26
+          RenderTableRow {TR} at (0,2) size 38x22
+            RenderTableCell {TD} at (2,2) size 34x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "table"
-layer at (8,27) size 20x19
-  RenderBlock (positioned) {DIV} at (8,27) size 20x19
+layer at (8,26) size 20x18
+  RenderBlock (positioned) {DIV} at (8,26) size 20x18
     RenderText {#text} at (0,0) size 20x19
       text run at (0,0) width 20: "div"

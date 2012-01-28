@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 72x71 [bgcolor=#008000] [border: (1px solid #0000FF)]
-        RenderTableSection {TBODY} at (1,1) size 70x69
-          RenderTableRow {TR} at (0,0) size 70x23
-            RenderTableCell {TD} at (0,0) size 34x23 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 72x68 [bgcolor=#008000] [border: (1px solid #0000FF)]
+        RenderTableSection {TBODY} at (1,1) size 70x66
+          RenderTableRow {TR} at (0,0) size 70x22
+            RenderTableCell {TD} at (0,0) size 34x22 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "asdf"
-            RenderTableCell {TD} at (34,0) size 36x23 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,0) size 36x22 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x19
                 text run at (2,2) width 32: "qwer"
-          RenderTableRow {TR} at (0,23) size 70x23
-            RenderTableCell {TD} at (0,23) size 34x23 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,22) size 70x22
+            RenderTableCell {TD} at (0,22) size 34x22 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "fdsa"
-            RenderTableCell {TD} at (34,23) size 36x23 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,22) size 36x22 [bgcolor=#FF0000] [border: (1px solid #0000FF)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x19
                 text run at (2,2) width 32: "rewq"
-          RenderTableRow {TR} at (0,46) size 70x23
-            RenderTableCell {TD} at (0,46) size 34x23 [border: (1px solid #0000FF)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,44) size 70x22
+            RenderTableCell {TD} at (0,44) size 34x22 [border: (1px solid #0000FF)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "zxcv"
-            RenderTableCell {TD} at (34,46) size 36x23 [border: (1px solid #0000FF)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,44) size 36x22 [border: (1px solid #0000FF)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "uiop"

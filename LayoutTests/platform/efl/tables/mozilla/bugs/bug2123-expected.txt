@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 477x56 [bgcolor=#000000]
-        RenderTableSection {TBODY} at (0,0) size 477x56
-          RenderTableRow {TR} at (0,0) size 477x56
-            RenderTableCell {TD} at (0,0) size 477x56 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 475x54 [bgcolor=#959595]
-                RenderTableSection {TBODY} at (0,0) size 475x54
-                  RenderTableRow {TR} at (0,0) size 475x27
-                    RenderTableCell {TD} at (0,0) size 475x27 [bgcolor=#6666CC] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 477x54 [bgcolor=#000000]
+        RenderTableSection {TBODY} at (0,0) size 477x54
+          RenderTableRow {TR} at (0,0) size 477x54
+            RenderTableCell {TD} at (0,0) size 477x54 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 475x52 [bgcolor=#959595]
+                RenderTableSection {TBODY} at (0,0) size 475x52
+                  RenderTableRow {TR} at (0,0) size 475x26
+                    RenderTableCell {TD} at (0,0) size 475x26 [bgcolor=#6666CC] [r=0 c=0 rs=1 cs=1]
                       RenderInline {FONT} at (0,0) size 229x19 [color=#FFFFFF]
                         RenderInline {B} at (0,0) size 229x19
                           RenderText {#text} at (123,4) size 229x19
                             text run at (123,4) width 187: "BrowserWatch Headline "
                             text run at (310,4) width 42: "News"
-                  RenderTableRow {TR} at (0,27) size 475x27
-                    RenderTableCell {TD} at (0,27) size 475x27 [bgcolor=#D4D4D4] [r=1 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,26) size 475x26
+                    RenderTableCell {TD} at (0,26) size 475x26 [bgcolor=#D4D4D4] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (4,4) size 24x19
                         text run at (4,4) width 24: "xxx"

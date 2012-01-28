@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 287x19
           text run at (0,0) width 287: "table with no cells doesn't show up BEFORE"
-      RenderTable {TABLE} at (0,19) size 100x6 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,18) size 100x6 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 98x4
           RenderTableRow {TR} at (0,2) size 98x0
-      RenderBlock (anonymous) at (0,25) size 784x19
+      RenderBlock (anonymous) at (0,24) size 784x18
         RenderText {#text} at (0,0) size 32x19
           text run at (0,0) width 32: "after "
         RenderBR {BR} at (32,15) size 0x0

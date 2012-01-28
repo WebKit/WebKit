@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock {H4} at (0,0) size 784x19
+      RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "Testcase distilled from "
         RenderInline {A} at (0,0) size 502x19 [color=#0000EE]
           RenderText {#text} at (154,0) size 502x19
             text run at (154,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
-      RenderBlock {H4} at (0,40) size 784x19
+      RenderBlock {H4} at (0,39) size 784x18
         RenderText {#text} at (0,0) size 305x19
           text run at (0,0) width 305: "Minimize the window and then open it again."
-      RenderTable {TABLE} at (0,80) size 784x25
-        RenderTableSection {TBODY} at (0,0) size 784x25
-          RenderTableRow {TR} at (0,2) size 784x21 [bgcolor=#006633]
-            RenderTableCell {TD} at (2,2) size 780x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,78) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
+            RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 144x19 [color=#FFCC00]
                 RenderText {#text} at (1,1) size 8x19
                   text run at (1,1) width 8: "  "
@@ -29,15 +29,15 @@ layer at (0,0) size 800x600
                     text run at (64,1) width 73: "Downloads"
                 RenderText {#text} at (137,1) size 8x19
                   text run at (137,1) width 8: " :"
-      RenderBlock (anonymous) at (0,105) size 784x19
+      RenderBlock (anonymous) at (0,102) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {H4} at (0,145) size 784x19
+      RenderBlock {H4} at (0,141) size 784x18
         RenderText {#text} at (0,0) size 481x19
           text run at (0,0) width 481: "This is the same table as above but with all <SPAN> elements removed."
-      RenderTable {TABLE} at (0,185) size 784x25
-        RenderTableSection {TBODY} at (0,0) size 784x25
-          RenderTableRow {TR} at (0,2) size 784x21 [bgcolor=#006633]
-            RenderTableCell {TD} at (2,2) size 780x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,180) size 784x24
+        RenderTableSection {TBODY} at (0,0) size 784x24
+          RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
+            RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 144x19 [color=#FFCC00]
                 RenderText {#text} at (1,1) size 144x19
                   text run at (1,1) width 144: "  CNET : Downloads :"

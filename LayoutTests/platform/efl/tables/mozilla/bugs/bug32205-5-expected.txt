@@ -9,19 +9,19 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 53x194 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 49x190 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 47x188
-                  RenderTableRow {TR} at (0,2) size 47x58
-                    RenderTableCell {TD} at (2,2) size 43x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 39x54 [border: (1px outset #808080)]
-                        RenderTableSection {TBODY} at (1,1) size 37x52
-                          RenderTableRow {TR} at (0,2) size 37x23
-                            RenderTableCell {TD} at (2,2) size 33x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,2) size 47x56
+                    RenderTableCell {TD} at (2,2) size 43x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 39x52 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 37x50
+                          RenderTableRow {TR} at (0,2) size 37x22
+                            RenderTableCell {TD} at (2,2) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 29x19
                                 text run at (2,2) width 29: "30%"
-                          RenderTableRow {TR} at (0,27) size 37x23
-                            RenderTableCell {TD} at (2,27) size 33x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                          RenderTableRow {TR} at (0,26) size 37x22
+                            RenderTableCell {TD} at (2,26) size 33x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 29x19
                                 text run at (2,2) width 29: "70%"
-                  RenderTableRow {TR} at (0,62) size 47x124
-                    RenderTableCell {TD} at (2,112) size 43x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,60) size 47x126
+                    RenderTableCell {TD} at (2,112) size 43x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 29x19
                         text run at (2,2) width 29: "70%"

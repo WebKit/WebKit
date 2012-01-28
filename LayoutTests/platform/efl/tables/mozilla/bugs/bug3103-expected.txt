@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 622x400 [border: (4px outset #808080)]
         RenderTableSection {TBODY} at (4,4) size 614x392
           RenderTableRow {TR} at (0,2) size 614x193
-            RenderTableCell {TD} at (2,175) size 204x42 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 196x38
+            RenderTableCell {TD} at (2,176) size 204x40 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 196x37
                 text run at (2,2) width 196: "1 Some sample text for the first"
-                text run at (2,21) width 188: "column. Notice its formatting."
-            RenderTableCell {TD} at (208,68) size 404x61 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 398x57
+                text run at (2,20) width 188: "column. Notice its formatting."
+            RenderTableCell {TD} at (208,69) size 404x58 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 398x55
                 text run at (2,2) width 398: "2 Here is some sample text to demonstrate the problem. Is there"
-                text run at (2,21) width 387: "some setting in Navigator that will make this work correctly ?"
-                text run at (2,40) width 234: "If so I haven't found it. Is this a bug ?"
+                text run at (2,20) width 387: "some setting in Navigator that will make this work correctly ?"
+                text run at (2,38) width 234: "If so I haven't found it. Is this a bug ?"
           RenderTableRow {TR} at (0,197) size 614x193
-            RenderTableCell {TD} at (208,263) size 404x61 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 398x57
+            RenderTableCell {TD} at (208,264) size 404x58 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 398x55
                 text run at (2,2) width 398: "3 Here is some sample text to demonstrate the problem. Is there"
-                text run at (2,21) width 387: "some setting in Navigator that will make this work correctly ?"
-                text run at (2,40) width 234: "If so I haven't found it. Is this a bug ?"
+                text run at (2,20) width 387: "some setting in Navigator that will make this work correctly ?"
+                text run at (2,38) width 234: "If so I haven't found it. Is this a bug ?"

@@ -24,22 +24,22 @@ layer at (0,0) size 800x600
               RenderInline {MAP} at (0,0) size 0x19
               RenderImage {IMG} at (348,0) size 88x18
               RenderImage {IMG} at (436,0) size 55x18
-      RenderBlock {P} at (0,163) size 784x164
-        RenderBlock (anonymous) at (0,0) size 784x57
+      RenderBlock {P} at (0,163) size 784x161
+        RenderBlock (anonymous) at (0,0) size 784x54
           RenderText {#text} at (0,0) size 471x19
             text run at (0,0) width 471: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
           RenderBR {BR} at (471,15) size 0x0
-          RenderText {#text} at (0,19) size 384x19
-            text run at (0,19) width 384: "removing <MAP> element in second row it looks OK to me:"
-          RenderBR {BR} at (384,34) size 0x0
-          RenderBR {BR} at (0,38) size 0x19
-        RenderTable {TABLE} at (0,57) size 600x89
+          RenderText {#text} at (0,18) size 384x19
+            text run at (0,18) width 384: "removing <MAP> element in second row it looks OK to me:"
+          RenderBR {BR} at (384,33) size 0x0
+          RenderBR {BR} at (0,36) size 0x19
+        RenderTable {TABLE} at (0,54) size 600x89
           RenderTableSection {TBODY} at (0,0) size 600x89
             RenderTableRow {TR} at (0,0) size 600x89
               RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 128x89
               RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
-        RenderTable {TABLE} at (0,146) size 600x18
+        RenderTable {TABLE} at (0,143) size 600x18
           RenderTableSection {TBODY} at (0,0) size 600x18
             RenderTableRow {TR} at (0,0) size 600x18
               RenderTableCell {TD} at (0,0) size 600x18 [r=0 c=0 rs=1 cs=1]

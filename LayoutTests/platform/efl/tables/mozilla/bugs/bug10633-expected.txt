@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,1) size 468x22
             RenderTableCell {TD} at (0,1) size 18x22 [r=1 c=0 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
-            RenderTableCell {TD} at (18,2) size 187x19 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (18,3) size 187x18 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
               RenderInline {A} at (0,0) size 121x19 [color=#0000EE]
                 RenderInline {B} at (0,0) size 121x19
                   RenderInline {FONT} at (0,0) size 121x19
@@ -30,12 +30,12 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (205,1) size 20x22 [r=1 c=4 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x22
-            RenderTableCell {TD} at (225,2) size 18x19 [r=1 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (225,3) size 18x18 [r=1 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
             RenderTableCell {TD} at (243,1) size 18x22 [r=1 c=6 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
-            RenderTableCell {TD} at (261,2) size 187x19 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
+            RenderTableCell {TD} at (261,3) size 187x18 [bgcolor=#FFCC00] [r=1 c=9 rs=1 cs=1]
               RenderInline {A} at (0,0) size 151x19 [color=#0000EE]
                 RenderInline {B} at (0,0) size 151x19
                   RenderInline {FONT} at (0,0) size 151x19
@@ -45,10 +45,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (448,1) size 20x22 [r=1 c=10 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x22
           RenderTableRow {TR} at (0,23) size 468x80
-            RenderTableCell {TD} at (0,53) size 6x19 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,54) size 6x18 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (6,53) size 6x19 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (6,54) size 6x18 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
             RenderTableCell {TD} at (12,23) size 213x80 [bgcolor=#EBEBE4] [r=2 c=2 rs=1 cs=3]
@@ -67,13 +67,13 @@ layer at (0,0) size 800x600
                   RenderBR {BR} at (130,62) size 0x0
                   RenderText {#text} at (0,65) size 4x15
                     text run at (0,65) width 4: " "
-            RenderTableCell {TD} at (225,53) size 18x19 [r=2 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (225,54) size 18x18 [r=2 c=5 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (243,53) size 7x19 [r=2 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (243,54) size 7x18 [r=2 c=6 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
-            RenderTableCell {TD} at (250,53) size 7x19 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
+            RenderTableCell {TD} at (250,54) size 7x18 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x19
                 text run at (0,0) width 4: " "
             RenderTableCell {TD} at (257,23) size 211x50 [bgcolor=#EBEBE4] [r=2 c=8 rs=1 cs=3]

@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x38
+      RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 638x19
           text run at (0,0) width 638: "This table uses a ROWSPAN attribute in the first TD tag. The ROWSPAN attribute has a value of 2."
         RenderBR {BR} at (638,15) size 0x0
-        RenderBR {BR} at (0,19) size 0x19
-      RenderTable {TABLE} at (0,38) size 268x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 266x52
-          RenderTableRow {TR} at (0,2) size 266x23
-            RenderTableCell {TD} at (2,14) size 64x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+        RenderBR {BR} at (0,18) size 0x19
+      RenderTable {TABLE} at (0,36) size 268x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 266x50
+          RenderTableRow {TR} at (0,2) size 266x22
+            RenderTableCell {TD} at (2,14) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,2) size 60x19
                 text run at (2,2) width 60: "Platforms"
-            RenderTableCell {TD} at (68,2) size 196x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,2) size 196x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 192x19
                 text run at (2,2) width 192: "Netscape Communicator 4.0.6"
-          RenderTableRow {TR} at (0,27) size 266x23
-            RenderTableCell {TD} at (68,27) size 196x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 266x22
+            RenderTableCell {TD} at (68,26) size 196x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 142x19
                 text run at (2,2) width 142: "Available Everywhere"

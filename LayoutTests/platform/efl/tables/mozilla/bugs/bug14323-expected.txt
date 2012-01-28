@@ -7,16 +7,16 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,10) size 184x49 [bgcolor=#F7D68C] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 182x47
           RenderTableRow {TR} at (0,0) size 182x47
-            RenderTableCell {TD} at (0,3) size 138x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 136x38
+            RenderTableCell {TD} at (0,4) size 138x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 136x37
                 text run at (1,1) width 136: "xxxxxxxxxxxxxxxxx"
-                text run at (1,20) width 100: "xxxxxx xxxxxx"
+                text run at (1,19) width 100: "xxxxxx xxxxxx"
             RenderTableCell {TD} at (138,0) size 44x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 21x45
               RenderImage {IMG} at (22,1) size 21x45
-      RenderBlock (anonymous) at (0,59) size 784x19
+      RenderBlock (anonymous) at (0,59) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,78) size 468x72 [bgcolor=#F7D68C]
+      RenderTable {TABLE} at (0,77) size 468x72 [bgcolor=#F7D68C]
         RenderTableSection {TBODY} at (0,0) size 468x72
           RenderTableRow {TR} at (0,0) size 468x42
             RenderTableCell {TD} at (0,0) size 326x21 [r=0 c=0 rs=1 cs=1]

@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 504x111 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 498x105
-          RenderTableRow {TR} at (0,2) size 498x101
-            RenderTableCell {TD} at (2,2) size 494x101 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 500x97 [border: (2px outset #808080)]
-                RenderTableSection {TBODY} at (2,2) size 496x93
-                  RenderTableRow {TR} at (0,2) size 496x89
-                    RenderTableCell {TD} at (2,2) size 400x89 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (11,11) size 378x67 [border: (1px outset #808080)]
-                        RenderTableSection {TBODY} at (1,1) size 376x65
-                          RenderTableRow {TR} at (0,2) size 376x61
-                            RenderTableCell {TD} at (2,2) size 372x61 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 363x57
+      RenderTable {TABLE} at (0,0) size 504x108 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 498x102
+          RenderTableRow {TR} at (0,2) size 498x98
+            RenderTableCell {TD} at (2,2) size 494x98 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 500x94 [border: (2px outset #808080)]
+                RenderTableSection {TBODY} at (2,2) size 496x90
+                  RenderTableRow {TR} at (0,2) size 496x86
+                    RenderTableCell {TD} at (2,2) size 400x86 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (11,11) size 378x64 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 376x62
+                          RenderTableRow {TR} at (0,2) size 376x58
+                            RenderTableCell {TD} at (2,2) size 372x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 363x55
                                 text run at (2,2) width 360: "Have a tip or rumor to share? Just click on the icon and if"
-                                text run at (2,21) width 363: "you get a BrowserWatch net.fame be sure and display the"
-                                text run at (2,40) width 271: "icon on your own home page for all to see!"
-                    RenderTableCell {TD} at (404,26) size 90x41 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                text run at (2,20) width 363: "you get a BrowserWatch net.fame be sure and display the"
+                                text run at (2,38) width 271: "icon on your own home page for all to see!"
+                    RenderTableCell {TD} at (404,25) size 90x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (11,11) size 21x19
                         text run at (11,11) width 21: "foo"

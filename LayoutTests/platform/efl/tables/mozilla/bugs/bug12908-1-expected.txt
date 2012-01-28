@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#C0C0C0]
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 147x19
           text run at (0,0) width 147: "Border enabled version"
-      RenderTable {TABLE} at (0,35) size 335x226 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,34) size 335x226 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 333x224
           RenderTableRow {TR} at (0,0) size 333x2
             RenderTableCell {TD} at (0,0) size 31x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -14,10 +14,10 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 333x222
             RenderTableCell {TD} at (0,2) size 333x222 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (1,1) size 329x220
-      RenderBlock {P} at (0,277) size 784x19
+      RenderBlock {P} at (0,276) size 784x18
         RenderText {#text} at (0,0) size 203x19
           text run at (0,0) width 203: "Cellspanned cell's bgcolor is red"
-      RenderTable {TABLE} at (0,312) size 329x220
+      RenderTable {TABLE} at (0,310) size 329x220
         RenderTableSection {TBODY} at (0,0) size 329x220
           RenderTableRow {TR} at (0,0) size 329x0
             RenderTableCell {TD} at (0,0) size 29x0 [r=0 c=0 rs=1 cs=1]

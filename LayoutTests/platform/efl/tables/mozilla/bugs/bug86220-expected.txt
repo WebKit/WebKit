@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x178
-  RenderBlock {HTML} at (0,0) size 800x178
-    RenderBody {BODY} at (8,8) size 784x162
-      RenderTable {TABLE} at (0,0) size 200x141 [bgcolor=#008000]
-        RenderTableSection {TBODY} at (0,0) size 200x141
-          RenderTableRow {TR} at (0,60) size 200x21 [bgcolor=#FF0000]
-            RenderTableCell {TD} at (60,60) size 80x21 [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,8) size 784x160
+      RenderTable {TABLE} at (0,0) size 200x140 [bgcolor=#008000]
+        RenderTableSection {TBODY} at (0,0) size 200x140
+          RenderTableRow {TR} at (0,60) size 200x20 [bgcolor=#FF0000]
+            RenderTableCell {TD} at (60,60) size 80x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x19
                 text run at (1,1) width 21: "foo"
-      RenderBlock {DIV} at (0,141) size 262x21 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,140) size 262x20 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 40x19
           text run at (1,1) width 40: "260px"

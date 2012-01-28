@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (1,1) size 132x360
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,0) size 600x362
-            RenderTableCell {TD} at (502,170) size 98x21 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=6]
+            RenderTableCell {TD} at (502,171) size 98x20 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=6]
               RenderText {#text} at (73,1) size 24x19
                 text run at (73,1) width 24: "xxx"

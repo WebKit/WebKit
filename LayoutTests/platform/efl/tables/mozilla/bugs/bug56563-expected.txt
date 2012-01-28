@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderInline {SH} at (0,0) size 0x0
           RenderInline {SH} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,0) size 784x19
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 14x19
           text run at (0,0) width 14: "M"
-      RenderBlock {P} at (0,35) size 784x40
+      RenderBlock {P} at (0,34) size 784x40
         RenderImage {IMG} at (0,0) size 126x40
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,91) size 4x2 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,90) size 4x2 [border: (1px outset #808080)]

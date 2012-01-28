@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 225x19
           text run at (0,0) width 225: "the lower left cell should be colored"
-      RenderTable {TABLE} at (0,19) size 31x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 29x52
-          RenderTableRow {TR} at (0,2) size 29x23
-            RenderTableCell {TD} at (2,2) size 11x23 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 31x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 29x50
+          RenderTableRow {TR} at (0,2) size 29x22
+            RenderTableCell {TD} at (2,2) size 11x22 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "a"
-            RenderTableCell {TD} at (15,2) size 12x23 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,2) size 12x22 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "b"
-          RenderTableRow {TR} at (0,27) size 29x23
-            RenderTableCell {TD} at (2,27) size 11x23 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 29x22
+            RenderTableCell {TD} at (2,26) size 11x22 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderBR {BR} at (2,2) size 0x19
-            RenderTableCell {TD} at (15,27) size 12x23 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,26) size 12x22 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "c"

@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 741x25
-        RenderTableSection {TBODY} at (0,0) size 741x25
-          RenderTableRow {TR} at (0,2) size 741x21
-            RenderTableCell {TD} at (2,2) size 304x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 741x24
+        RenderTableSection {TBODY} at (0,0) size 741x24
+          RenderTableRow {TR} at (0,2) size 741x20
+            RenderTableCell {TD} at (2,2) size 304x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 302x19
                 text run at (1,1) width 302: "The quick brown fox jumped over the lazy dog."
-            RenderTableCell {TD} at (308,2) size 431x21 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (308,2) size 431x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 429x19
                 text run at (1,1) width 429: "Now is the time for all good men to come to the aid of their country."

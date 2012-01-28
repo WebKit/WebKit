@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 100x112 [bgcolor=#0000FF] [border: (20px solid #000000)]
-        RenderTableSection {TBODY} at (30,30) size 40x52
-          RenderTableRow {TR} at (0,2) size 40x23
-            RenderTableCell {TD} at (2,2) size 36x23 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 100x110 [bgcolor=#0000FF] [border: (20px solid #000000)]
+        RenderTableSection {TBODY} at (30,30) size 40x50
+          RenderTableRow {TR} at (0,2) size 40x22
+            RenderTableCell {TD} at (2,2) size 36x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "foo"
-          RenderTableRow {TR} at (0,27) size 40x23
-            RenderTableCell {TD} at (2,27) size 36x23 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 40x22
+            RenderTableCell {TD} at (2,26) size 36x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,112) size 784x19
+      RenderBlock (anonymous) at (0,110) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,131) size 100x112 [bgcolor=#0000FF] [border: (20px solid #000000)]
-        RenderTableSection {TBODY} at (30,30) size 40x52
-          RenderTableRow {TR} at (0,2) size 40x23
-            RenderTableCell {TD} at (2,2) size 36x23 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,128) size 100x110 [bgcolor=#0000FF] [border: (20px solid #000000)]
+        RenderTableSection {TBODY} at (30,30) size 40x50
+          RenderTableRow {TR} at (0,2) size 40x22
+            RenderTableCell {TD} at (2,2) size 36x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "foo"
-          RenderTableRow {TR} at (0,27) size 40x23
-            RenderTableCell {TD} at (2,27) size 36x23 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 40x22
+            RenderTableCell {TD} at (2,26) size 36x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"
-      RenderBlock (anonymous) at (0,243) size 784x19
+      RenderBlock (anonymous) at (0,238) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,262) size 100x112 [bgcolor=#0000FF] [border: (20px solid #000000)]
-        RenderTableSection {TBODY} at (30,30) size 40x52
-          RenderTableRow {TR} at (0,2) size 40x23
-            RenderTableCell {TD} at (2,2) size 36x23 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,256) size 100x110 [bgcolor=#0000FF] [border: (20px solid #000000)]
+        RenderTableSection {TBODY} at (30,30) size 40x50
+          RenderTableRow {TR} at (0,2) size 40x22
+            RenderTableCell {TD} at (2,2) size 36x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "foo"
-          RenderTableRow {TR} at (0,27) size 40x23
-            RenderTableCell {TD} at (2,27) size 36x23 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 40x22
+            RenderTableCell {TD} at (2,26) size 36x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "bar"

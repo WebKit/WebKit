@@ -3,53 +3,53 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 782x38
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 782x37
           text run at (0,0) width 782: "This test checks the renderer's ability to layer multiple cells in a table on top of one another. This test has three cells that span"
-          text run at (0,19) width 183: "multiple table grid slots. The "
+          text run at (0,18) width 183: "multiple table grid slots. The "
         RenderInline {SPAN} at (0,0) size 23x19 [color=#FF0000]
-          RenderText {#text} at (183,19) size 23x19
-            text run at (183,19) width 23: "red"
-        RenderText {#text} at (206,19) size 381x19
-          text run at (206,19) width 381: " cell starts at row 1 and column 3 and spans three rows. The "
+          RenderText {#text} at (183,18) size 23x19
+            text run at (183,18) width 23: "red"
+        RenderText {#text} at (206,18) size 381x19
+          text run at (206,18) width 381: " cell starts at row 1 and column 3 and spans three rows. The "
         RenderInline {SPAN} at (0,0) size 29x19 [color=#0000FF]
-          RenderText {#text} at (587,19) size 29x19
-            text run at (587,19) width 29: "blue"
-        RenderText {#text} at (616,19) size 765x38
-          text run at (616,19) width 149: " cell starts at row 2, and"
-          text run at (0,38) width 341: "column 2, and spans two columns and two rows. The "
+          RenderText {#text} at (587,18) size 29x19
+            text run at (587,18) width 29: "blue"
+        RenderText {#text} at (616,18) size 765x37
+          text run at (616,18) width 149: " cell starts at row 2, and"
+          text run at (0,36) width 341: "column 2, and spans two columns and two rows. The "
         RenderInline {SPAN} at (0,0) size 38x19 [color=#008000]
-          RenderText {#text} at (341,38) size 38x19
-            text run at (341,38) width 38: "green"
-        RenderText {#text} at (379,38) size 196x19
-          text run at (379,38) width 196: " cell spans 4 columns of row 3."
-      RenderBlock {P} at (0,73) size 784x38
-        RenderText {#text} at (0,0) size 764x38
+          RenderText {#text} at (341,36) size 38x19
+            text run at (341,36) width 38: "green"
+        RenderText {#text} at (379,36) size 196x19
+          text run at (379,36) width 196: " cell spans 4 columns of row 3."
+      RenderBlock {P} at (0,70) size 784x36
+        RenderText {#text} at (0,0) size 764x37
           text run at (0,0) width 764: "If the test succeeds then you should see no text inside the table. If you see the text 'FAIL' inside the table, then the test has"
-          text run at (0,19) width 39: "failed."
-      RenderTable {TABLE} at (0,127) size 102x79 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 100x77
-          RenderTableRow {TR} at (0,2) size 100x23
-            RenderTableCell {TD} at (2,2) size 20x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          text run at (0,18) width 39: "failed."
+      RenderTable {TABLE} at (0,122) size 102x76 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 100x74
+          RenderTableRow {TR} at (0,2) size 100x22
+            RenderTableCell {TD} at (2,2) size 20x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (24,2) size 20x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (24,2) size 20x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (46,52) size 52x23 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=2 rs=3 cs=1]
-              RenderBlock {DIV} at (2,2) size 48x19
+            RenderTableCell {TD} at (46,50) size 52x22 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=2 rs=3 cs=1]
+              RenderBlock {DIV} at (2,2) size 48x18
                 RenderText {#text} at (0,0) size 48x19
                   text run at (0,0) width 48: "            "
-          RenderTableRow {TR} at (0,27) size 100x23
-            RenderTableCell {TD} at (2,27) size 20x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 100x22
+            RenderTableCell {TD} at (2,26) size 20x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (24,52) size 74x23 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
-              RenderBlock {DIV} at (2,2) size 70x19 [color=#008000]
+            RenderTableCell {TD} at (24,50) size 74x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
+              RenderBlock {DIV} at (2,2) size 70x18 [color=#008000]
                 RenderText {#text} at (14,0) size 56x19
                   text run at (14,0) width 56: "   FAIL  "
-          RenderTableRow {TR} at (0,52) size 100x23
-            RenderTableCell {TD} at (2,52) size 96x23 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
-              RenderBlock {DIV} at (2,2) size 92x19
+          RenderTableRow {TR} at (0,50) size 100x22
+            RenderTableCell {TD} at (2,50) size 96x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+              RenderBlock {DIV} at (2,2) size 92x18
                 RenderText {#text} at (84,0) size 8x19
                   text run at (84,0) width 8: "  "

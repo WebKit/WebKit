@@ -1,38 +1,38 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x592
-  RenderBlock {HTML} at (0,0) size 800x592 [bgcolor=#00FF99]
-    RenderBody {BODY} at (57,64) size 686x464 [bgcolor=#99FFCC] [border: (3px solid #000000)]
+layer at (0,0) size 800x589
+  RenderBlock {HTML} at (0,0) size 800x589 [bgcolor=#00FF99]
+    RenderBody {BODY} at (57,64) size 686x461 [bgcolor=#99FFCC] [border: (3px solid #000000)]
       RenderBlock {P} at (3,3) size 680x64
         RenderText {#text} at (0,6) size 680x51
           text run at (0,6) width 513: "These links are in an element with display table-row, and the li elements "
           text run at (513,6) width 167: "have display: table-cell."
           text run at (0,38) width 115: "They disappear:"
-      RenderTable at (3,67) size 264x19
-        RenderTableSection (anonymous) at (0,0) size 264x19
-          RenderTableRow {UL} at (0,0) size 264x19 [bgcolor=#00CC99]
-            RenderTableCell {LI} at (0,0) size 66x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (3,67) size 264x18
+        RenderTableSection (anonymous) at (0,0) size 264x18
+          RenderTableRow {UL} at (0,0) size 264x18 [bgcolor=#00CC99]
+            RenderTableCell {LI} at (0,0) size 66x18 [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 50x19 [color=#0000EE]
                 RenderText {#text} at (8,0) size 50x19
                   text run at (8,0) width 50: "people"
-            RenderTableCell {LI} at (66,0) size 66x19 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {LI} at (66,0) size 66x18 [r=0 c=1 rs=1 cs=1]
               RenderInline {A} at (0,0) size 48x19 [color=#0000EE]
                 RenderText {#text} at (9,0) size 48x19
                   text run at (9,0) width 48: "places"
-            RenderTableCell {LI} at (132,0) size 66x19 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {LI} at (132,0) size 66x18 [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
                 RenderText {#text} at (0,0) size 66x19
                   text run at (0,0) width 66: "members"
-            RenderTableCell {LI} at (198,0) size 66x19 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {LI} at (198,0) size 66x18 [r=0 c=3 rs=1 cs=1]
               RenderInline {A} at (0,0) size 34x19 [color=#0000EE]
                 RenderText {#text} at (16,0) size 34x19
                   text run at (16,0) width 34: "links"
-      RenderBlock {DIV} at (3,86) size 680x375
-        RenderBlock (anonymous) at (16,16) size 648x19
+      RenderBlock {DIV} at (3,85) size 680x373
+        RenderBlock (anonymous) at (16,16) size 648x18
           RenderText {#text} at (0,0) size 434x19
             text run at (0,0) width 188: "This text is not in the form. "
             text run at (188,0) width 246: "The form should be indented 40px."
-        RenderBlock {FORM} at (96,35) size 568x324
+        RenderBlock {FORM} at (96,34) size 568x323
           RenderBlock {P} at (0,0) size 568x64
             RenderText {#text} at (0,6) size 556x51
               text run at (0,6) width 162: "This is text in the form. "
@@ -49,7 +49,7 @@ layer at (0,0) size 800x592
                       text run at (0,6) width 137: "First Name (required)"
                 RenderTableRow (anonymous) at (0,28) size 163x34
                   RenderTableCell (anonymous) at (0,28) size 163x34 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (2,2) size 159x29 [color=#202020]
+                    RenderTextControl {INPUT} at (2,2) size 159x28 [color=#202020]
             RenderText {#text} at (163,47) size 4x19
               text run at (163,47) width 4: " "
             RenderTable {SPAN} at (167,0) size 163x62
@@ -60,7 +60,7 @@ layer at (0,0) size 800x592
                       text run at (0,6) width 136: "Last Name (required)"
                 RenderTableRow (anonymous) at (0,28) size 163x34
                   RenderTableCell (anonymous) at (0,28) size 163x34 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (2,2) size 159x29 [color=#202020]
+                    RenderTextControl {INPUT} at (2,2) size 159x28 [color=#202020]
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,137) size 568x73
             RenderTable {SPAN} at (0,0) size 379x62
@@ -71,7 +71,7 @@ layer at (0,0) size 800x592
                       text run at (0,6) width 91: "Email Address"
                 RenderTableRow (anonymous) at (0,28) size 379x34
                   RenderTableCell (anonymous) at (0,28) size 379x34 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (2,2) size 375x29 [color=#202020]
+                    RenderTextControl {INPUT} at (2,2) size 375x28 [color=#202020]
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,210) size 568x73
             RenderTable {SPAN} at (0,0) size 163x62
@@ -82,7 +82,7 @@ layer at (0,0) size 800x592
                       text run at (0,6) width 103: "Company Name"
                 RenderTableRow (anonymous) at (0,28) size 163x34
                   RenderTableCell (anonymous) at (0,28) size 163x34 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (2,2) size 159x29 [color=#202020]
+                    RenderTextControl {INPUT} at (2,2) size 159x28 [color=#202020]
             RenderText {#text} at (163,47) size 4x19
               text run at (163,47) width 4: " "
             RenderTable {SPAN} at (167,0) size 163x62
@@ -93,27 +93,27 @@ layer at (0,0) size 800x592
                       text run at (0,6) width 27: "Title"
                 RenderTableRow (anonymous) at (0,28) size 163x34
                   RenderTableCell (anonymous) at (0,28) size 163x34 [r=1 c=0 rs=1 cs=1]
-                    RenderTextControl {INPUT} at (2,2) size 159x29 [color=#202020]
+                    RenderTextControl {INPUT} at (2,2) size 159x28 [color=#202020]
             RenderText {#text} at (0,0) size 0x0
-          RenderBlock {P} at (0,283) size 568x41
-            RenderButton {INPUT} at (2,2) size 84x37 [color=#202020]
-              RenderBlock (anonymous) at (15,8) size 54x19
+          RenderBlock {P} at (0,283) size 568x40
+            RenderButton {INPUT} at (2,2) size 84x36 [color=#202020]
+              RenderBlock (anonymous) at (15,8) size 54x18
                 RenderText at (0,0) size 54x19
                   text run at (0,0) width 54: "Submit!"
             RenderText {#text} at (88,10) size 4x19
               text run at (88,10) width 4: " "
-            RenderButton {INPUT} at (94,2) size 110x37 [color=#202020]
-              RenderBlock (anonymous) at (15,8) size 80x19
+            RenderButton {INPUT} at (94,2) size 110x36 [color=#202020]
+              RenderBlock (anonymous) at (15,8) size 80x18
                 RenderText at (0,0) size 80x19
                   text run at (0,0) width 80: "Clear Form"
             RenderText {#text} at (0,0) size 0x0
-layer at (162,285) size 152x19
-  RenderBlock {DIV} at (4,6) size 152x19
-layer at (329,285) size 152x19
-  RenderBlock {DIV} at (4,6) size 152x19
-layer at (162,358) size 368x19
-  RenderBlock {DIV} at (4,6) size 368x19
-layer at (162,431) size 152x19
-  RenderBlock {DIV} at (4,6) size 152x19
-layer at (329,431) size 152x19
-  RenderBlock {DIV} at (4,6) size 152x19
+layer at (162,283) size 152x18
+  RenderBlock {DIV} at (4,6) size 152x18
+layer at (329,283) size 152x18
+  RenderBlock {DIV} at (4,6) size 152x18
+layer at (162,356) size 368x18
+  RenderBlock {DIV} at (4,6) size 368x18
+layer at (162,429) size 152x18
+  RenderBlock {DIV} at (4,6) size 152x18
+layer at (329,429) size 152x18
+  RenderBlock {DIV} at (4,6) size 152x18

@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x39 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x37
-          RenderTableRow {TR} at (0,2) size 782x33
-            RenderTableCell {TD} at (2,2) size 778x33 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 774x29 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 772x27
-                  RenderTableRow {TR} at (0,2) size 772x23
-                    RenderTableCell {TD} at (2,2) size 219x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 784x38 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x36
+          RenderTableRow {TR} at (0,2) size 782x32
+            RenderTableCell {TD} at (2,2) size 778x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 774x28 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 772x26
+                  RenderTableRow {TR} at (0,2) size 772x22
+                    RenderTableCell {TD} at (2,2) size 219x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 34x19
                         text run at (2,2) width 34: "cell 1"
-                    RenderTableCell {TD} at (223,2) size 547x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (223,2) size 547x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 34x19
                         text run at (2,2) width 34: "cell 2"

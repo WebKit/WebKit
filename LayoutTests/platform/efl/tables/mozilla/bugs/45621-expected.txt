@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x155
-  RenderBlock {HTML} at (0,0) size 800x155
-    RenderBody {BODY} at (8,13) size 784x134
+layer at (0,0) size 800x153
+  RenderBlock {HTML} at (0,0) size 800x153
+    RenderBody {BODY} at (8,13) size 784x132
       RenderBlock {PRE} at (0,0) size 784x45
         RenderText {#text} at (0,0) size 168x45
           text run at (0,0) width 120: "table width=50%"
@@ -11,13 +11,13 @@ layer at (0,0) size 800x155
           text run at (96,15) width 0: " "
           text run at (0,30) width 168: "    input width=100% "
           text run at (168,30) width 0: " "
-      RenderTable {TABLE} at (0,58) size 392x57 [bgcolor=#C0C0C0] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 390x55
-          RenderTableRow {TR} at (0,2) size 390x51
-            RenderTableCell {TD} at (2,2) size 386x51 [bgcolor=#AABBFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (9,11) size 375x29 [color=#202020]
+      RenderTable {TABLE} at (0,58) size 392x56 [bgcolor=#C0C0C0] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 390x54
+          RenderTableRow {TR} at (0,2) size 390x50
+            RenderTableCell {TD} at (2,2) size 386x50 [bgcolor=#AABBFF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (9,11) size 375x28 [color=#202020]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,115) size 784x19
+      RenderBlock (anonymous) at (0,114) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-layer at (24,91) size 368x19
-  RenderBlock {DIV} at (4,6) size 368x19
+layer at (24,91) size 368x18
+  RenderBlock {DIV} at (4,6) size 368x18

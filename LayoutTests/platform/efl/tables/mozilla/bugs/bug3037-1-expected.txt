@@ -14,11 +14,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {XUL:TOOLBAR} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderTable at (0,0) size 34x19
-          RenderTableSection (anonymous) at (0,0) size 34x19
-            RenderTableRow (anonymous) at (0,0) size 34x19
-              RenderTableCell {HTML:SPAN} at (0,0) size 33x19 [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderTable at (0,0) size 34x18
+          RenderTableSection (anonymous) at (0,0) size 34x18
+            RenderTableRow (anonymous) at (0,0) size 34x18
+              RenderTableCell {HTML:SPAN} at (0,0) size 33x18 [r=0 c=0 rs=1 cs=1]
                 RenderInline {HTML:BUTTON} at (0,0) size 33x19 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 0x0
                   RenderInline {HTML:IMG} at (0,0) size 33x19
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
               RenderTableCell {HTML:SPAN} at (33,0) size 1x0 [r=0 c=1 rs=1 cs=1]
                 RenderInline {HTML:INPUT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,19) size 784x0
+      RenderBlock (anonymous) at (0,18) size 784x0
         RenderInline {WINDOW} at (0,0) size 0x0
           RenderInline {WINDOW} at (0,0) size 0x0
             RenderInline {WINDOW} at (0,0) size 0x0

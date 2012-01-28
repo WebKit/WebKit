@@ -3,44 +3,44 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFCCC]
-      RenderBlock {CENTER} at (0,0) size 784x129
-        RenderTable {TABLE} at (92,0) size 600x129
-          RenderTableSection {TBODY} at (0,0) size 600x129
-            RenderTableRow {TR} at (0,0) size 600x93
-              RenderTableCell {TD} at (0,0) size 150x38 [r=0 c=0 rs=1 cs=1]
-                RenderBlock {CENTER} at (0,0) size 150x38
-                  RenderInline {IFRAMEX} at (0,0) size 0x38
+      RenderBlock {CENTER} at (0,0) size 784x124
+        RenderTable {TABLE} at (92,0) size 600x124
+          RenderTableSection {TBODY} at (0,0) size 600x124
+            RenderTableRow {TR} at (0,0) size 600x89
+              RenderTableCell {TD} at (0,0) size 150x36 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {CENTER} at (0,0) size 150x36
+                  RenderInline {IFRAMEX} at (0,0) size 0x37
                     RenderText {#text} at (0,0) size 0x0
                     RenderBR {BR} at (75,0) size 0x19
-                    RenderBR {BR} at (75,19) size 0x19
+                    RenderBR {BR} at (75,18) size 0x19
               RenderTableCell {TD} at (150,0) size 1x1 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (151,0) size 449x93 [r=0 c=2 rs=1 cs=1]
-                RenderTable {TABLE} at (0,0) size 449x65
-                  RenderTableSection {TBODY} at (0,0) size 449x65
-                    RenderTableRow {TR} at (0,2) size 449x61
-                      RenderTableCell {TD} at (2,2) size 445x61 [r=0 c=0 rs=1 cs=1]
-                        RenderBlock {P} at (2,2) size 441x57
+              RenderTableCell {TD} at (151,0) size 449x89 [r=0 c=2 rs=1 cs=1]
+                RenderTable {TABLE} at (0,0) size 449x62
+                  RenderTableSection {TBODY} at (0,0) size 449x62
+                    RenderTableRow {TR} at (0,2) size 449x58
+                      RenderTableCell {TD} at (2,2) size 445x58 [r=0 c=0 rs=1 cs=1]
+                        RenderBlock {P} at (2,2) size 441x54
                           RenderText {#text} at (0,0) size 166x19
                             text run at (0,0) width 166: "IMPROVE YOUR SITE "
                           RenderBR {BR} at (166,15) size 0x0
-                          RenderText {#text} at (0,19) size 435x38
-                            text run at (0,19) width 435: "In this week's Home Improvements you can find an article on how to"
-                            text run at (0,38) width 256: "spice up your page by using imagemaps."
-                        RenderBlock {P} at (2,75) size 441x0
-                RenderTable {TABLE} at (0,65) size 449x28
-                  RenderTableSection {TBODY} at (0,0) size 449x28
-                    RenderTableRow {TR} at (0,2) size 449x24
-                      RenderTableCell {TD} at (2,2) size 445x24 [r=0 c=0 rs=1 cs=1]
+                          RenderText {#text} at (0,18) size 435x37
+                            text run at (0,18) width 435: "In this week's Home Improvements you can find an article on how to"
+                            text run at (0,36) width 256: "spice up your page by using imagemaps."
+                        RenderBlock {P} at (2,72) size 441x0
+                RenderTable {TABLE} at (0,62) size 449x27
+                  RenderTableSection {TBODY} at (0,0) size 449x27
+                    RenderTableRow {TR} at (0,2) size 449x23
+                      RenderTableCell {TD} at (2,2) size 445x23 [r=0 c=0 rs=1 cs=1]
                         RenderInline {A} at (0,0) size 97x19 [color=#0000EE]
                           RenderText {#text} at (347,4) size 47x19
                             text run at (347,4) width 47: "MORE"
                           RenderImage {IMG} at (394,1) size 50x18
                         RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,93) size 600x36
-              RenderTableCell {TD} at (0,93) size 600x36 [r=1 c=0 rs=1 cs=3]
+            RenderTableRow {TR} at (0,89) size 600x35
+              RenderTableCell {TD} at (0,89) size 600x35 [r=1 c=0 rs=1 cs=3]
                 RenderBlock (anonymous) at (0,0) size 600x1
                   RenderImage {IMG} at (0,0) size 600x1
-                RenderBlock {P} at (0,17) size 600x19
+                RenderBlock {P} at (0,17) size 600x18
                   RenderBR {BR} at (300,0) size 0x19

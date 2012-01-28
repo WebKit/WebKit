@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable at (0,0) size 135x19
-        RenderTableSection (anonymous) at (0,0) size 135x19
-          RenderTableRow {A} at (0,0) size 135x19 [color=#0000EE]
-            RenderTableCell (anonymous) at (0,0) size 135x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (0,0) size 135x18
+        RenderTableSection (anonymous) at (0,0) size 135x18
+          RenderTableRow {A} at (0,0) size 135x18 [color=#0000EE]
+            RenderTableCell (anonymous) at (0,0) size 135x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 135x19
                 text run at (0,0) width 135: "This should not crash"
-      RenderBlock (anonymous) at (0,19) size 784x19
+      RenderBlock (anonymous) at (0,18) size 784x18
         RenderBR {BR} at (0,0) size 0x19

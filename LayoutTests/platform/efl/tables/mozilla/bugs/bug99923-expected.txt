@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 784x19
+      RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 203x19
           text run at (0,0) width 203: "both tables should look identical"
-      RenderTable {TABLE} at (0,19) size 50x47 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 48x45
-          RenderTableRow {TR} at (0,2) size 48x41
-            RenderTableCell {TD} at (2,2) size 44x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,18) size 50x46 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 48x44
+          RenderTableRow {TR} at (0,2) size 48x40
+            RenderTableCell {TD} at (2,2) size 44x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 22x19
                 text run at (11,11) width 22: "cell"
-      RenderTable {TABLE} at (0,66) size 50x47 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 48x45
-          RenderTableRow {TR} at (0,2) size 48x41
-            RenderTableCell {TD} at (2,2) size 44x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,64) size 50x46 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 48x44
+          RenderTableRow {TR} at (0,2) size 48x40
+            RenderTableCell {TD} at (2,2) size 44x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 22x19
                 text run at (11,11) width 22: "cell"

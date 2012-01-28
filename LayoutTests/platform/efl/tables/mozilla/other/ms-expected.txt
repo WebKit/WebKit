@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                   RenderImage {IMG} at (0,0) size 250x60
               RenderTableCell {TD} at (352,0) size 25x20 [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (7,0) size 18x20
-              RenderTableCell {TD} at (377,3) size 423x13 [bgcolor=#000000] [r=0 c=2 rs=1 cs=2]
+              RenderTableCell {TD} at (377,4) size 423x12 [bgcolor=#000000] [r=0 c=2 rs=1 cs=2]
                 RenderInline {FONT} at (0,0) size 300x13 [color=#FFFFFF]
                   RenderText {#text} at (0,0) size 0x0
                   RenderInline {B} at (0,0) size 300x13
@@ -71,7 +71,7 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 112x19 [color=#003399]
                   RenderImage {IMG} at (336,0) size 112x40
             RenderTableRow {TR} at (0,60) size 800x20
-              RenderTableCell {TD} at (0,63) size 800x13 [bgcolor=#6699CC] [r=2 c=0 rs=1 cs=4]
+              RenderTableCell {TD} at (0,64) size 800x12 [bgcolor=#6699CC] [r=2 c=0 rs=1 cs=4]
                 RenderInline {FONT} at (0,0) size 502x13 [color=#FFFFFF]
                   RenderInline {B} at (0,0) size 502x13
                     RenderText {#text} at (0,0) size 6x13

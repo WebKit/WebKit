@@ -3,32 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 450x108 [border: (1px solid #000000)]
-        RenderTableSection {TBODY} at (1,1) size 448x106
-          RenderTableRow {TR} at (0,2) size 448x102
-            RenderTableCell {TD} at (2,2) size 444x102 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 442x27 [border: (1px solid #FF0000)]
-                RenderTableSection {TBODY} at (1,1) size 440x25
-                  RenderTableRow {TR} at (0,2) size 440x21
-                    RenderTableCell {TD} at (2,2) size 436x21 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 450x104 [border: (1px solid #000000)]
+        RenderTableSection {TBODY} at (1,1) size 448x102
+          RenderTableRow {TR} at (0,2) size 448x98
+            RenderTableCell {TD} at (2,2) size 444x98 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 442x26 [border: (1px solid #FF0000)]
+                RenderTableSection {TBODY} at (1,1) size 440x24
+                  RenderTableRow {TR} at (0,2) size 440x20
+                    RenderTableCell {TD} at (2,2) size 436x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 21x19
                         text run at (1,1) width 21: "test"
-              RenderTable {TABLE} at (1,28) size 437x73 [border: (1px solid #000000)]
-                RenderTableSection {TBODY} at (1,1) size 435x71
-                  RenderTableRow {TR} at (0,2) size 435x67
-                    RenderTableCell {TD} at (2,2) size 431x67 [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (1,1) size 316x65 [border: (1px solid #000000)]
-                        RenderTableSection {TBODY} at (1,1) size 314x63
-                          RenderTableRow {TR} at (0,2) size 314x59
-                            RenderTableCell {TD} at (2,2) size 310x59 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,27) size 437x70 [border: (1px solid #000000)]
+                RenderTableSection {TBODY} at (1,1) size 435x68
+                  RenderTableRow {TR} at (0,2) size 435x64
+                    RenderTableCell {TD} at (2,2) size 431x64 [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 316x62 [border: (1px solid #000000)]
+                        RenderTableSection {TBODY} at (1,1) size 314x60
+                          RenderTableRow {TR} at (0,2) size 314x56
+                            RenderTableCell {TD} at (2,2) size 310x56 [r=0 c=0 rs=1 cs=1]
                               RenderImage {IMG} at (1,7) size 9x9
                               RenderText {#text} at (10,1) size 132x19
                                 text run at (10,1) width 132: " Shop Till You Drop"
                               RenderBR {BR} at (142,16) size 0x0
-                              RenderText {#text} at (1,20) size 279x19
-                                text run at (1,20) width 279: "From Regina Lewis, AOL's Online Advisor"
-                              RenderBR {BR} at (280,35) size 0x0
-                              RenderImage {IMG} at (1,45) size 9x9
-                              RenderText {#text} at (10,39) size 299x19
-                                text run at (10,39) width 299: " Forget Dates? Don't Worry We'll Remind You"
-                              RenderBR {BR} at (309,54) size 0x0
+                              RenderText {#text} at (1,19) size 279x19
+                                text run at (1,19) width 279: "From Regina Lewis, AOL's Online Advisor"
+                              RenderBR {BR} at (280,34) size 0x0
+                              RenderImage {IMG} at (1,43) size 9x9
+                              RenderText {#text} at (10,37) size 299x19
+                                text run at (10,37) width 299: " Forget Dates? Don't Worry We'll Remind You"
+                              RenderBR {BR} at (309,52) size 0x0

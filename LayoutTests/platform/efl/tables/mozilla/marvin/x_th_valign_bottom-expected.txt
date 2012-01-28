@@ -1,22 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x273
-  RenderBlock {html} at (0,0) size 800x273
-    RenderBody {body} at (8,16) size 784x249
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x271
+  RenderBlock {html} at (0,0) size 800x271
+    RenderBody {body} at (8,16) size 784x247
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 167x19
           text run at (0,0) width 167: "TH VALIGN=BOTTOM"
-      RenderTable {table} at (0,35) size 784x214 [border: (1px outset #808080)]
-        RenderTableSection (anonymous) at (1,1) size 782x212
-          RenderTableRow {tr} at (0,2) size 782x208
-            RenderTableCell {th} at (2,2) size 204x208 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {table} at (0,34) size 784x213 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 782x211
+          RenderTableRow {tr} at (0,2) size 782x207
+            RenderTableCell {th} at (2,2) size 204x207 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {th} at (208,149) size 572x61 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,2) size 560x57
+            RenderTableCell {th} at (208,151) size 572x58 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (6,2) size 560x55
                 text run at (6,2) width 293: "The bottom of this text should be vertically "
                 text run at (298,2) width 268: "aligned to the bottom of the image. x-fill"
-                text run at (7,21) width 103: "x-fill x-fill x-fill "
-                text run at (109,21) width 307: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
-                text run at (415,21) width 150: "x-fill x-fill x-fill x-fill x-"
-                text run at (107,40) width 158: "fill x-fill x-fill x-fill x-fill "
-                text run at (264,40) width 201: "x-fill x-fill x-fill x-fill x-fill x-fill"
+                text run at (7,20) width 103: "x-fill x-fill x-fill "
+                text run at (109,20) width 307: "x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill x-fill "
+                text run at (415,20) width 150: "x-fill x-fill x-fill x-fill x-"
+                text run at (107,38) width 158: "fill x-fill x-fill x-fill x-fill "
+                text run at (264,38) width 201: "x-fill x-fill x-fill x-fill x-fill x-fill"

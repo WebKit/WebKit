@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x99
-        RenderTable {TABLE} at (0,0) size 346x99 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 344x97
-            RenderTableRow {TR} at (0,2) size 344x93
-              RenderTableCell {TD} at (2,2) size 340x93 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 336x89 [border: (2px outset #808080)]
-                  RenderTableSection {TBODY} at (2,2) size 332x85
-                    RenderTableRow {TR} at (0,2) size 332x42
-                      RenderTableCell {TD} at (2,2) size 95x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 56x38
+      RenderBlock {FORM} at (0,0) size 784x96
+        RenderTable {TABLE} at (0,0) size 346x96 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 344x94
+            RenderTableRow {TR} at (0,2) size 344x90
+              RenderTableCell {TD} at (2,2) size 340x90 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 336x86 [border: (2px outset #808080)]
+                  RenderTableSection {TBODY} at (2,2) size 332x82
+                    RenderTableRow {TR} at (0,2) size 332x40
+                      RenderTableCell {TD} at (2,2) size 95x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (2,2) size 56x37
                           text run at (2,2) width 53: "Member"
-                          text run at (2,21) width 56: "Number:"
-                      RenderTableCell {TD} at (99,4) size 225x37 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                        RenderTextControl {INPUT} at (4,4) size 195x29 [color=#202020]
+                          text run at (2,20) width 56: "Number:"
+                      RenderTableCell {TD} at (99,4) size 225x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                        RenderTextControl {INPUT} at (4,4) size 195x28 [color=#202020]
                         RenderText {#text} at (0,0) size 0x0
-                    RenderTableRow {TR} at (0,46) size 332x37
-                      RenderTableCell {TD} at (2,53) size 95x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                    RenderTableRow {TR} at (0,44) size 332x36
+                      RenderTableCell {TD} at (2,51) size 95x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 30x19
                           text run at (2,2) width 30: "PIN:"
-                      RenderTableCell {TD} at (99,46) size 225x37 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                        RenderTextControl {INPUT} at (4,4) size 195x29 [color=#202020]
+                      RenderTableCell {TD} at (99,44) size 225x36 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                        RenderTextControl {INPUT} at (4,4) size 195x28 [color=#202020]
                         RenderText {#text} at (0,0) size 0x0
-                      RenderTableCell {TD} at (326,62) size 4x4 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-layer at (122,29) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
-layer at (122,71) size 188x19
-  RenderBlock {DIV} at (4,6) size 188x19
+                      RenderTableCell {TD} at (326,60) size 4x4 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+layer at (122,29) size 188x18
+  RenderBlock {DIV} at (4,6) size 188x18
+layer at (122,69) size 188x18
+  RenderBlock {DIV} at (4,6) size 188x18

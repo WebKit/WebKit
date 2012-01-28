@@ -3,47 +3,47 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 741x38
+      RenderBlock (anonymous) at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 741x37
           text run at (0,0) width 741: "It should never be the case that deleting a tbody causes a rebuild of the cell map since cells cannot span out of tbodies."
-          text run at (0,19) width 150: "However, this is a bug. "
-        RenderBR {BR} at (150,34) size 0x0
-        RenderBR {BR} at (0,38) size 0x19
-        RenderText {#text} at (0,57) size 214x19
-          text run at (0,57) width 214: "The 2 tables should look the same"
-      RenderTable {TABLE} at (0,76) size 62x54 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 60x52
-          RenderTableRow {TR} at (0,2) size 60x23
-            RenderTableCell {TD} at (2,2) size 27x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          text run at (0,18) width 150: "However, this is a bug. "
+        RenderBR {BR} at (150,33) size 0x0
+        RenderBR {BR} at (0,36) size 0x19
+        RenderText {#text} at (0,54) size 214x19
+          text run at (0,54) width 214: "The 2 tables should look the same"
+      RenderTable {TABLE} at (0,72) size 62x52 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 60x50
+          RenderTableRow {TR} at (0,2) size 60x22
+            RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c31"
-            RenderTableCell {TD} at (31,2) size 27x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c32"
-          RenderTableRow {TR} at (0,27) size 60x23
-            RenderTableCell {TD} at (2,27) size 27x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 60x22
+            RenderTableCell {TD} at (2,26) size 27x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c41"
-            RenderTableCell {TD} at (31,27) size 27x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (31,26) size 27x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c42"
-      RenderBlock (anonymous) at (0,130) size 784x19
+      RenderBlock (anonymous) at (0,124) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,149) size 62x54 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 60x52
-          RenderTableRow {TR} at (0,2) size 60x23
-            RenderTableCell {TD} at (2,2) size 27x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,142) size 62x52 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 60x50
+          RenderTableRow {TR} at (0,2) size 60x22
+            RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c31"
-            RenderTableCell {TD} at (31,2) size 27x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c32"
-          RenderTableRow {TR} at (0,27) size 60x23
-            RenderTableCell {TD} at (2,27) size 27x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 60x22
+            RenderTableCell {TD} at (2,26) size 27x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c41"
-            RenderTableCell {TD} at (31,27) size 27x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (31,26) size 27x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c42"
-      RenderBlock (anonymous) at (0,203) size 784x19
+      RenderBlock (anonymous) at (0,194) size 784x18
         RenderBR {BR} at (0,0) size 0x19

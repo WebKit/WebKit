@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 400x149 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 398x147
-          RenderTableRow {TR} at (0,2) size 398x23
-            RenderTableCell {TD} at (2,2) size 300x23 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 400x142 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 398x140
+          RenderTableRow {TR} at (0,2) size 398x22
+            RenderTableCell {TD} at (2,2) size 300x22 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 229x19
                 text run at (2,2) width 229: "What's New on WebDeveloper.com"
-            RenderTableCell {TD} at (304,2) size 92x23 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (304,2) size 92x22 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x19
                 text run at (2,2) width 32: "umm"
-          RenderTableRow {TR} at (0,27) size 398x118
-            RenderTableCell {TD} at (2,65) size 300x42 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 275x38
+          RenderTableRow {TR} at (0,26) size 398x112
+            RenderTableCell {TD} at (2,62) size 300x40 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 275x37
                 text run at (2,2) width 275: "blah blah blah blah blah blah blah blah blah"
-                text run at (2,21) width 89: "blah blah blah"
-            RenderTableCell {TD} at (304,27) size 92x118 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 58x114
+                text run at (2,20) width 89: "blah blah blah"
+            RenderTableCell {TD} at (304,26) size 92x112 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 58x109
                 text run at (2,2) width 58: "blah blah"
-                text run at (2,21) width 58: "blah blah"
-                text run at (2,40) width 58: "blah blah"
-                text run at (2,59) width 58: "blah blah"
-                text run at (2,78) width 58: "blah blah"
-                text run at (2,97) width 58: "blah blah"
+                text run at (2,20) width 58: "blah blah"
+                text run at (2,38) width 58: "blah blah"
+                text run at (2,56) width 58: "blah blah"
+                text run at (2,74) width 58: "blah blah"
+                text run at (2,92) width 58: "blah blah"

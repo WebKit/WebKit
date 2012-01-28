@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,2) size 768x2 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (768,0) size 6x6 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 4x4
-      RenderBlock (anonymous) at (0,8) size 784x19
+      RenderBlock (anonymous) at (0,8) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,27) size 352x25
+      RenderTable {TABLE} at (0,26) size 352x25
         RenderTableSection {TBODY} at (0,0) size 352x25
           RenderTableRow {TR} at (0,0) size 352x21
             RenderTableCell {TD} at (0,0) size 348x21 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
@@ -27,10 +27,10 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 1x4
             RenderTableCell {TD} at (348,21) size 4x4 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x4
-      RenderBlock (anonymous) at (0,52) size 784x19
+      RenderBlock (anonymous) at (0,51) size 784x18
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,71) size 352x40
-        RenderTableSection {TBODY} at (0,0) size 352x40
+      RenderTable {TABLE} at (0,69) size 352x39
+        RenderTableSection {TBODY} at (0,0) size 352x39
           RenderTableRow {TR} at (0,0) size 352x21
             RenderTableCell {TD} at (0,0) size 348x21 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 13x16
@@ -40,8 +40,8 @@ layer at (0,0) size 800x600
                     text run at (13,0) width 142: "Rugged Laptops"
             RenderTableCell {TD} at (348,3) size 4x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x18
-          RenderTableRow {TR} at (0,21) size 352x19
-            RenderTableCell {TD} at (0,21) size 348x19 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,21) size 352x18
+            RenderTableCell {TD} at (0,21) size 348x18 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,11) size 1x4
               RenderInline {B} at (0,0) size 21x19
                 RenderText {#text} at (1,0) size 21x19

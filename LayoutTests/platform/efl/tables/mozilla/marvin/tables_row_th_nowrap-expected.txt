@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 784x38
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 784x37
           text run at (0,0) width 734: "The table heading (The EggPlant Exchange) should not wrap when window is resized. However, the cell below the "
           text run at (734,0) width 50: "heading"
-          text run at (0,19) width 152: "will wrap atuomatically."
-        RenderBR {BR} at (152,34) size 0x0
-      RenderTable {TABLE} at (0,38) size 250x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 248x52
-          RenderTableRow {TR} at (0,2) size 248x23
-            RenderTableCell {TH} at (2,2) size 238x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          text run at (0,18) width 152: "will wrap atuomatically."
+        RenderBR {BR} at (152,33) size 0x0
+      RenderTable {TABLE} at (0,36) size 250x52 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 248x50
+          RenderTableRow {TR} at (0,2) size 248x22
+            RenderTableCell {TH} at (2,2) size 238x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (37,2) size 164x19
                 text run at (37,2) width 164: "The Eggplant Exchange"
             RenderTableCell {TH} at (242,11) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-          RenderTableRow {TR} at (0,27) size 248x23
-            RenderTableCell {TD} at (2,27) size 238x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 248x22
+            RenderTableCell {TD} at (2,26) size 238x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 234x19
                 text run at (2,2) width 234: "Lots of Recipies for Eggplant Lovers"
