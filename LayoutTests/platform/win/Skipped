@@ -1499,9 +1499,9 @@ webintents/
 # Pointer Lock is not implemented.
 pointer-lock/
 
-// Needs ENABLE_SHADOW_DOM
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
+# Needs ENABLE_SHADOW_DOM
+fast/dom/shadow/content-element-api.html = TEXT
+fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
