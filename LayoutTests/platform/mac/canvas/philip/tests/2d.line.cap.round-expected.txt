@@ -1,0 +1,4 @@
+Failed assertion: got pixel [1,254,0,255] at (67,6), expected [0,255,0,255]
+Failed assertion: got pixel [1,254,0,255] at (82,6), expected [0,255,0,255]
+Failed assertion: got pixel [1,254,0,255] at (67,43), expected [0,255,0,255]
+Failed assertion: got pixel [1,254,0,255] at (82,43), expected [0,255,0,255]
