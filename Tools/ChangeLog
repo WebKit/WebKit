@@ -1,5 +1,16 @@
 2012-01-27  Enrica Casucci  <enrica@apple.com>
 
+        Followup to http://trac.webkit.org/changeset/106171.
+        Dan Bernstein pointed out correctly that I should
+        have used copy instead of initWithString.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        (-[LocalPasteboard initWithName:]):
+
+2012-01-27  Enrica Casucci  <enrica@apple.com>
+
         DRT pasteboard object should return the correct pasteboard name.
         https://bugs.webkit.org/show_bug.cgi?id=77260
         

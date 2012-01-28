@@ -94,7 +94,7 @@ static NSMutableDictionary *localPasteboards;
     typesArray = [[NSMutableArray alloc] init];
     typesSet = [[NSMutableSet alloc] init];
     dataByType = [[NSMutableDictionary alloc] init];
-    pasteboardName = [NSString stringWithString:name];
+    pasteboardName = [name copy];
     return self;
 }
 
