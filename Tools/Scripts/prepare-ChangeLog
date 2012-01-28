@@ -778,25 +778,27 @@ sub get_function_line_ranges_for_cpp($$)
             if ($1 eq "{") {
                 $skip_til_brace_or_semicolon = 0;
 
-                if ($namespace_start >= 0 and $namespace_start < $potential_start) {
-                    push @ranges, [ $namespace_start . "", $potential_start - 1, $name ];
-                }
+                if (!$in_braces) {
+                    if ($namespace_start >= 0 and $namespace_start < $potential_start) {
+                        push @ranges, [ $namespace_start . "", $potential_start - 1, $name ];
+                    }
 
-                if ($potential_namespace) {
-                    push @namespaces, $potential_namespace;
-                    $potential_namespace = "";
-                    $name = $namespaces[-1];
-                    $namespace_start = $. + 1;
-                    next;
-                }
+                    if ($potential_namespace) {
+                        push @namespaces, $potential_namespace;
+                        $potential_namespace = "";
+                        $name = $namespaces[-1];
+                        $namespace_start = $. + 1;
+                        next;
+                    }
 
-                # Promote potential name to real function name at the
-                # start of the outer level set of braces (function body?).
-                if (!$in_braces and $potential_start) {
-                    $start = $potential_start;
-                    $name = $potential_name;
-                    if (@namespaces && $name && (length($name) < 2 || substr($name,1,1) ne "[")) {
-                        $name = join ('::', @namespaces, $name);
+                    # Promote potential name to real function name at the
+                    # start of the outer level set of braces (function body?).
+                    if ($potential_start) {
+                        $start = $potential_start;
+                        $name = $potential_name;
+                        if (@namespaces && $name && (length($name) < 2 || substr($name,1,1) ne "[")) {
+                            $name = join ('::', @namespaces, $name);
+                        }
                     }
                 }
 

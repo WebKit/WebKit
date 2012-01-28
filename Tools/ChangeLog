@@ -1,3 +1,29 @@
+2012-01-27  Kentaro Hara  <haraken@chromium.org>
+
+        The cpp parser of prepare-ChangeLog treats if(...) {} as a method
+        https://bugs.webkit.org/show_bug.cgi?id=77241
+
+        Reviewed by Ryosuke Niwa.
+
+        The cpp parser of prepare-ChangeLog is wrong, and an inner {} block
+        in a method in some namespace or class is treated as a method.
+        This patch fixes the bug.
+
+            class C {
+                void func()
+                {
+                    if (1) {    // This should not be treated as a method.
+                    }
+                }
+            };
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp:
+        (Class108):
+        (Class108::func35):
+
 2012-01-27  Enrica Casucci  <enrica@apple.com>
 
         Followup to http://trac.webkit.org/changeset/106171.

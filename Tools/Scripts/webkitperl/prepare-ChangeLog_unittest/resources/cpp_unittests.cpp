@@ -302,3 +302,21 @@ int ll;
 int m;
 int n;
 };
+
+class Class108 {
+    int a;
+    void func35()
+    {
+        int b;
+        if (1) {
+            int c;
+            for (;;) {
+                int d;
+                int e;
+            }
+            int f;
+        }
+        int g;
+    }
+    int h;
+};
