@@ -1,3 +1,25 @@
+2012-01-29  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Use decoding swizzle only on libjpeg-turbo 1.1.90+
+        https://bugs.webkit.org/show_bug.cgi?id=74286
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. Covered by many existing tests: in particular 
+            fast/images/*, fast/canvas/*,
+            tables/mozilla/bugs/bug29314.html
+            tables/mozilla/bugs/bug13169.html
+            tables/mozilla/bugs/bug10565.html
+            tables/mozilla/bugs/bug11026.html
+            fast/repaint/backgroundSizeRepaint.html
+            fast/repaint/block-layout-inline-children-replaced.html
+            fast/repaint/clipped-relative.html
+            fast/repaint/selected-replaced.html
+            tables/mozilla/bugs/bug12908-1.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (rgbOutputColorSpace): Swizzle decode iff libjpeg-turbo is r732 or above.
+
 2012-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r105999.

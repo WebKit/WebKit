@@ -69,12 +69,12 @@ extern "C" {
 #define ASSUME_LITTLE_ENDIAN 1
 #endif
 
-#if defined(JCS_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
+#if defined(JCS_ALPHA_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
 #define TURBO_JPEG_RGB_SWIZZLE
 #if USE(SKIA) && (!SK_R32_SHIFT && SK_G32_SHIFT == 8 && SK_B32_SHIFT == 16)
-inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_RGBX; }
+inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_RGBA; }
 #else
-inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRX; }
+inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRA; }
 #endif
 inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == rgbOutputColorSpace(); }
 #else
