@@ -4029,3 +4029,6 @@ BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE
 BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = PASS TIMEOUT
 
 BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
+
+BUGWK77303 : fast/js/reserved-words-strict.html = TEXT
+BUGWK77303 : fast/js/keywords-and-reserved_words.html = TEXT
