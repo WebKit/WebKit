@@ -43,7 +43,6 @@ public:
     void updateSize();
 
     void paintToCurrentGLContext();
-    void paint(QPainter*);
     void resetPaintNode();
 
     QScopedPointer<QtWebPageEventHandler> eventHandler;

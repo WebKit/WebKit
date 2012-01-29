@@ -360,12 +360,6 @@ void DrawingAreaProxyImpl::setVisibleContentRectTrajectoryVector(const WebCore::
         m_layerTreeHostProxy->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
-void DrawingAreaProxyImpl::paintLayerTree(BackingStore::PlatformGraphicsContext context)
-{
-    if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->paintToGraphicsContext(context);
-}
-
 void DrawingAreaProxyImpl::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity)
 {
     if (m_layerTreeHostProxy)

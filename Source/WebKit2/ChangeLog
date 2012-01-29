@@ -1,3 +1,30 @@
+2012-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106109.
+        http://trac.webkit.org/changeset/106109
+        https://bugs.webkit.org/show_bug.cgi?id=77302
+
+        It made tests crash (Requested by Ossy_weekend on #webkit).
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::setViewNeedsDisplay):
+
 2012-01-27  Fady Samuel  <fsamuel@chromium.org>
 
         Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting

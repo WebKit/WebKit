@@ -77,8 +77,6 @@ public:
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
     void didChangeBackForwardList();
 
-    void setNeedsDisplay();
-
     void updateDesktopViewportSize();
     void updateTouchViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
@@ -103,12 +101,10 @@ public:
     bool handleCertificateVerificationRequest(const QString& hostname);
 
     void setUseTraditionalDesktopBehaviour(bool enable);
-    void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setViewInAttachedProperties(QObject*);
     void setIcon(const QUrl&);
 
     bool navigatorQtObjectEnabled() const;
-    bool renderToOffscreenBuffer() const { return m_renderToOffscreenBuffer; }
     void setNavigatorQtObjectEnabled(bool);
 
     // PageClient.
@@ -170,7 +166,6 @@ private:
     bool isTransitioningToNewPage;
     bool pageIsSuspended;
     bool m_navigatorQtObjectEnabled;
-    bool m_renderToOffscreenBuffer;
     QUrl m_iconURL;
 };
 

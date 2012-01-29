@@ -237,12 +237,11 @@ public:
     void setCertificateVerificationDialog(QDeclarativeComponent*);
     QDeclarativeComponent* itemSelector() const;
     void setItemSelector(QDeclarativeComponent*);
-    bool useTraditionalDesktopBehaviour() const;
-    void setUseTraditionalDesktopBehaviour(bool enable);
-
+    
     QWebViewportInfo* viewportInfo();
 
     QWebPreferences* preferences() const;
+    bool useTraditionalDesktopBehaviour() const;
     QWebNavigationHistory* navigationHistory() const;
     QQuickWebPage* page();
 
@@ -254,11 +253,8 @@ public:
     void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData>);
     void sendApplicationSchemeReply(QQuickNetworkReply*);
 
-    // C++ only
-    bool renderToOffscreenBuffer() const;
-    void setRenderToOffscreenBuffer(bool enable);
-
 public Q_SLOTS:
+    void setUseTraditionalDesktopBehaviour(bool enable);
     void goBackTo(int index);
     void goForwardTo(int index);
     void postMessage(const QString&);
