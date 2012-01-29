@@ -1,3 +1,15 @@
+2012-01-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reserve 'let'
+        https://bugs.webkit.org/show_bug.cgi?id=77293
+
+        Rubber stamped by Oliver Hunt.
+
+        'let' may become a keyword in ES6.  We're going to try experimentally reserving it,
+        to see if this breaks the web.
+
+        * parser/Keywords.table:
+
 2012-01-27  Gavin Barraclough  <barraclough@apple.com>
 
         Implement a JIT-code aware sampling profiler for JSC

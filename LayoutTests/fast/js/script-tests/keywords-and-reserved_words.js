@@ -104,7 +104,7 @@ shouldBe('classifyIdentifier("super")', '"keyword"');
 // Future Reserved Words, in strict mode only.
 shouldBe('classifyIdentifier("implements")', '"strict"');
 shouldBe('classifyIdentifier("interface")', '"strict"');
-shouldBe('classifyIdentifier("let")', '"strict"');
+shouldBe('classifyIdentifier("let")', '"keyword"'); // Experimentally reserving this; this may be reserved in ES6.
 shouldBe('classifyIdentifier("package")', '"strict"');
 shouldBe('classifyIdentifier("private")', '"strict"');
 shouldBe('classifyIdentifier("protected")', '"strict"');

@@ -1335,42 +1335,6 @@ PASS "use strict";({ implements: 42 }.implements === 42) is true
 PASS (function(){"use strict";({ implements: 42 }.implements === 42)}); true is true
 PASS "use strict";({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){"use strict";({ get implements(){}, set implements(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS var let; true is true
-PASS (function(){var let; true}); true is true
-PASS var let = 42; let === 42 is true
-PASS (function(){var let = 42; let === 42}); true is true
-PASS function g(let){  }; true is true
-PASS (function(){function g(let){  }; true}); true is true
-PASS /let/.test(function g(let){  }) is true
-PASS (function(){/let/.test(function g(let){  })}); true is true
-PASS try{}catch(let){}; true is true
-PASS (function(){try{}catch(let){}; true}); true is true
-PASS function let(){  }; true is true
-PASS (function(){function let(){  }; true}); true is true
-PASS ({ "let": 42 }.let === 42) is true
-PASS (function(){({ "let": 42 }.let === 42)}); true is true
-PASS ({ let: 42 }.let === 42) is true
-PASS (function(){({ let: 42 }.let === 42)}); true is true
-PASS ({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var let; true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";var let; true}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";var let = 42; let === 42 threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";var let = 42; let === 42}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";function g(let){ "use strict"; }; true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";function g(let){ "use strict"; }; true}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";/let/.test(function g(let){ "use strict"; }) threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";/let/.test(function g(let){ "use strict"; })}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";try{}catch(let){}; true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";try{}catch(let){}; true}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";function let(){ "use strict"; }; true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS (function(){"use strict";function let(){ "use strict"; }; true}); true threw exception SyntaxError: Use of reserved word 'let' in strict mode.
-PASS "use strict";({ "let": 42 }.let === 42) is true
-PASS (function(){"use strict";({ "let": 42 }.let === 42)}); true is true
-PASS "use strict";({ let: 42 }.let === 42) is true
-PASS (function(){"use strict";({ let: 42 }.let === 42)}); true is true
-PASS "use strict";({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42) is true
-PASS (function(){"use strict";({ get let(){}, set let(){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
 PASS var private; true is true
 PASS (function(){var private; true}); true is true
 PASS var private = 42; private === 42 is true

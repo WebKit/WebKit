@@ -43,10 +43,12 @@ extends         RESERVED
 import          RESERVED
 super           RESERVED
 
+# technically RESERVED_IF_STRICT in ES5, but may be reserved in ES6.
+let             RESERVED
+
 # reserved for future use in strict code
 implements      RESERVED_IF_STRICT
 interface       RESERVED_IF_STRICT
-let             RESERVED_IF_STRICT
 package         RESERVED_IF_STRICT
 private         RESERVED_IF_STRICT
 protected       RESERVED_IF_STRICT
