@@ -27,9 +27,9 @@
 
 #include "Attr.h"
 #include "Document.h"
+#include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
-#include "StyledElement.h"
 
 namespace WebCore {
 
@@ -328,29 +328,6 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
     }
     
     return true;
-}
-
-CSSMutableStyleDeclaration* NamedNodeMap::ensureInlineStyleDecl()
-{
-    if (!m_inlineStyleDecl)
-        createInlineStyleDecl();
-    return m_inlineStyleDecl.get();
-}
-
-void NamedNodeMap::destroyInlineStyleDecl()
-{
-    if (!m_inlineStyleDecl)
-        return;
-    m_inlineStyleDecl->clearParentElement();
-    m_inlineStyleDecl = 0;
-}
-
-void NamedNodeMap::createInlineStyleDecl()
-{
-    ASSERT(!m_inlineStyleDecl);
-    ASSERT(m_element->isStyledElement());
-    m_inlineStyleDecl = CSSMutableStyleDeclaration::createInline(static_cast<StyledElement*>(m_element));
-    m_inlineStyleDecl->setStrictParsing(m_element->isHTMLElement() && !m_element->document()->inQuirksMode());
 }
 
 } // namespace WebCore

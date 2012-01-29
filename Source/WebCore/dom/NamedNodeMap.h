@@ -102,10 +102,6 @@ public:
 
     size_t mappedAttributeCount() const;
 
-    CSSMutableStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
-    CSSMutableStyleDeclaration* ensureInlineStyleDecl();
-    void destroyInlineStyleDecl();
-
 private:
     NamedNodeMap(Element* element)
         : m_element(element)
@@ -120,16 +116,11 @@ private:
     void setAttributes(const NamedNodeMap&);
     void clearAttributes();
     void replaceAttribute(size_t index, PassRefPtr<Attribute>);
-    void createInlineStyleDecl();
 
-    // FIXME: NamedNodeMap should be broken up into two classes, one containing data
-    //        for elements with attributes, and one for exposure to the DOM.
-    //        See <http://webkit.org/b/75069> for more information.
     SpaceSplitString m_classNames;
     Element* m_element;
     Vector<RefPtr<Attribute>, 4> m_attributes;
     AtomicString m_idForStyleResolution;
-    RefPtr<CSSMutableStyleDeclaration> m_inlineStyleDecl;
 };
 
 inline Attribute* NamedNodeMap::getAttributeItem(const QualifiedName& name) const
