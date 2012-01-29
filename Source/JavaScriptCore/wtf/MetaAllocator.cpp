@@ -55,10 +55,11 @@ ALWAYS_INLINE void MetaAllocator::release(MetaAllocatorHandle* handle)
         m_tracker->release(handle);
 }
 
-MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, size_t sizeInBytes)
+MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, size_t sizeInBytes, void* ownerUID)
     : m_allocator(allocator)
     , m_start(start)
     , m_sizeInBytes(sizeInBytes)
+    , m_ownerUID(ownerUID)
 {
     ASSERT(allocator);
     ASSERT(start);
@@ -129,7 +130,7 @@ MetaAllocator::MetaAllocator(size_t allocationGranule)
     ASSERT(static_cast<size_t>(1) << m_logAllocationGranule == m_allocationGranule);
 }
 
-PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes)
+PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void* ownerUID)
 {
     SpinLockHolder locker(&m_lock);
 
@@ -167,7 +168,7 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes)
     m_numAllocations++;
 #endif
 
-    MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes);
+    MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes, ownerUID);
     // FIXME: Implement a verifier scheme that groks MetaAllocatorHandles
     handle->deprecatedTurnOffVerifier();
 

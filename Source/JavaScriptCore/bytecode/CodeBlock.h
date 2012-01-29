@@ -388,7 +388,22 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual void jettison() = 0;
         virtual CodeBlock* replacement() = 0;
-        virtual bool canCompileWithDFG() = 0;
+
+        enum CompileWithDFGState {
+            CompileWithDFGFalse,
+            CompileWithDFGTrue,
+            CompileWithDFGUnset
+        };
+
+        virtual bool canCompileWithDFGInternal() = 0;
+        bool canCompileWithDFG()
+        {
+            bool result = canCompileWithDFGInternal();
+            m_canCompileWithDFGState = result ? CompileWithDFGTrue : CompileWithDFGFalse;
+            return result;
+        }
+        CompileWithDFGState canCompileWithDFGState() { return m_canCompileWithDFGState; }
+
         bool hasOptimizedReplacement()
         {
             ASSERT(getJITType() == JITCode::BaselineJIT);
@@ -1187,6 +1202,7 @@ namespace JSC {
         friend void WTF::deleteOwnedPtr<RareData>(RareData*);
 #endif
         OwnPtr<RareData> m_rareData;
+        CompileWithDFGState m_canCompileWithDFGState;
     };
 
     // Program code is not marked by any function, so we make the global object
@@ -1226,7 +1242,7 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFG();
+        virtual bool canCompileWithDFGInternal();
 #endif
     };
 
@@ -1260,7 +1276,7 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFG();
+        virtual bool canCompileWithDFGInternal();
 #endif
 
     private:
@@ -1297,7 +1313,7 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
         virtual CodeBlock* replacement();
-        virtual bool canCompileWithDFG();
+        virtual bool canCompileWithDFGInternal();
 #endif
     };
 

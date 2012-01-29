@@ -23,6 +23,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/parser \
     $$SOURCE_DIR/profiler \
     $$SOURCE_DIR/runtime \
+    $$SOURCE_DIR/tools \
     $$SOURCE_DIR/yarr \
     $$SOURCE_DIR/API \
     $$SOURCE_DIR/ForwardingHeaders \

@@ -67,7 +67,7 @@ public:
     
     virtual ~MetaAllocator();
     
-    WTF_EXPORT_PRIVATE PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes);
+    WTF_EXPORT_PRIVATE PassRefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes, void* ownerUID);
 
     void trackAllocations(MetaAllocatorTracker* tracker)
     {

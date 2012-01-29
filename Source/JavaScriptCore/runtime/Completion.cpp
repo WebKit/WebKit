@@ -24,6 +24,7 @@
 #include "Completion.h"
 
 #include "CallFrame.h"
+#include "CodeProfiling.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "Interpreter.h"
@@ -54,6 +55,8 @@ JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& 
 {
     JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
+
+    CodeProfiling profile(source);
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     if (!program) {

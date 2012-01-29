@@ -40,7 +40,7 @@ class MetaAllocator;
 
 class MetaAllocatorHandle : public RefCounted<MetaAllocatorHandle>, public RedBlackTree<MetaAllocatorHandle, void*>::Node {
 private:
-    MetaAllocatorHandle(MetaAllocator*, void* start, size_t sizeInBytes);
+    MetaAllocatorHandle(MetaAllocator*, void* start, size_t sizeInBytes, void* ownerUID);
     
 public:
     WTF_EXPORT_PRIVATE ~MetaAllocatorHandle();
@@ -72,7 +72,12 @@ public:
         ASSERT(m_allocator);
         return m_allocator;
     }
-    
+
+    void* ownerUID()
+    {
+        return m_ownerUID;
+    }
+
     void* key()
     {
         return m_start;
@@ -84,6 +89,7 @@ private:
     MetaAllocator* m_allocator;
     void* m_start;
     size_t m_sizeInBytes;
+    void* m_ownerUID;
 };
 
 }

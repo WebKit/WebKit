@@ -1,3 +1,86 @@
+2012-01-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Implement a JIT-code aware sampling profiler for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=76855
+
+        Reviewed by Oliver Hunt.
+
+        To enable the profiler, set the JSC_CODE_PROFILING environment variable to
+        1 (no tracing the C stack), 2 (trace one level of C code) or 3 (recursively
+        trace all samples).
+
+        The profiler requires -fomit-frame-pointer to be removed from the build flags.
+
+        * JavaScriptCore.exp:
+            - Removed an export.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Added new files
+        * bytecode/CodeBlock.cpp:
+            - For baseline codeblocks, cache the result of canCompileWithDFG.
+        * bytecode/CodeBlock.h:
+            - For baseline codeblocks, cache the result of canCompileWithDFG.
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+            - Notify the profiler when the allocator is created.
+        (JSC::ExecutableAllocator::allocate):
+            - Inform the allocated of the ownerUID.
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+            - Notify the profiler when the allocator is created.
+        (JSC::ExecutableAllocator::allocate):
+            - Inform the allocated of the ownerUID.
+        * jit/JITStubs.cpp:
+            - If profiling, don't mask the return address in JIT code.
+              (We do so to provide nicer backtraces in debug builds).
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+            - Notify the profiler of script evaluations.
+        * tools: Added.
+        * tools/CodeProfile.cpp: Added.
+        (JSC::symbolName):
+            - Helper function to get the name of a symbol in the framework.
+        (JSC::truncateTrace):
+            - Helper to truncate traces into methods know to have uninformatively deep stacks.
+        (JSC::CodeProfile::sample):
+            - Record a stack trace classifying samples.
+        (JSC::CodeProfile::report):
+            - {Print profiler output.
+        * tools/CodeProfile.h: Added.
+            - new class, captures a set of samples associated with an evaluated script,
+              and nested to record samples from subscripts.
+        * tools/CodeProfiling.cpp: Added.
+        (JSC::CodeProfiling::profilingTimer):
+            - callback fired then a timer event occurs.
+        (JSC::CodeProfiling::notifyAllocator):
+            - called when the executable allocator is constructed.
+        (JSC::CodeProfiling::getOwnerUIDForPC):
+            - helper to lookup the codeblock from an address in JIT code
+        (JSC::CodeProfiling::begin):
+            - enter a profiling scope.
+        (JSC::CodeProfiling::end):
+            - exit a profiling scope.
+        * tools/CodeProfiling.h: Added.
+            - new class, instantialed from Completion to define a profiling scope.
+        * tools/ProfileTreeNode.h: Added.
+            - new class, used to construct a tree of samples.
+        * tools/TieredMMapArray.h: Added.
+            - new class, a malloc-free vector (can be used while the main thread is suspended,
+              possibly holding the malloc heap lock).
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocator::allocate):
+            - Allow allocation handles to track information about their owner.
+        * wtf/MetaAllocator.h:
+        (MetaAllocator):
+            - Allow allocation handles to track information about their owner.
+        * wtf/MetaAllocatorHandle.h:
+        (MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::ownerUID):
+            - Allow allocation handles to track information about their owner.
+        * wtf/OSAllocator.h:
+        (WTF::OSAllocator::reallocateCommitted):
+            - reallocate an existing, committed memory allocation.
+
 2012-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106187.

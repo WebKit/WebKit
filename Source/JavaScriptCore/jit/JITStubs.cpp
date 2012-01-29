@@ -37,6 +37,7 @@
 #include "Arguments.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "CodeProfiling.h"
 #include "DFGOSREntry.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
@@ -968,7 +969,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, propertyName, slot, offset, returnAddress);
 }
 
-#if !defined(NDEBUG) && !ENABLE(CODE_PROFILING)
+#if !defined(NDEBUG)
 
 extern "C" {
 
@@ -986,7 +987,8 @@ struct StackHack {
         : stackFrame(stackFrame)
         , savedReturnAddress(*stackFrame.returnAddressSlot())
     {
-        *stackFrame.returnAddressSlot() = ReturnAddressPtr(FunctionPtr(jscGeneratedNativeCode));
+        if (!CodeProfiling::enabled())
+            *stackFrame.returnAddressSlot() = ReturnAddressPtr(FunctionPtr(jscGeneratedNativeCode));
     }
 
     ALWAYS_INLINE ~StackHack() 

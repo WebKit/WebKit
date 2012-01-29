@@ -1447,6 +1447,34 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="tools"
+			>
+			<File
+				RelativePath="..\..\tools\CodeProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tools\CodeProfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tools\CodeProfiling.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tools\CodeProfiling.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tools\ProfileTreeNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tools\TieredMMapArray.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="bytecode"
 			>
 			<File

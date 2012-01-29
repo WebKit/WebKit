@@ -209,6 +209,8 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
+    tools/CodeProfile.cpp \
+    tools/CodeProfiling.cpp \
     yarr/YarrJIT.cpp \
 
 *sh4* {

@@ -1456,6 +1456,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_speculativeFailCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+    , m_canCompileWithDFGState(CompileWithDFGUnset)
 {
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
@@ -2164,17 +2165,17 @@ JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* s
     return error;
 }
 
-bool ProgramCodeBlock::canCompileWithDFG()
+bool ProgramCodeBlock::canCompileWithDFGInternal()
 {
     return DFG::canCompileProgram(this);
 }
 
-bool EvalCodeBlock::canCompileWithDFG()
+bool EvalCodeBlock::canCompileWithDFGInternal()
 {
     return DFG::canCompileEval(this);
 }
 
-bool FunctionCodeBlock::canCompileWithDFG()
+bool FunctionCodeBlock::canCompileWithDFGInternal()
 {
     if (m_isConstructor)
         return DFG::canCompileFunctionForConstruct(this);

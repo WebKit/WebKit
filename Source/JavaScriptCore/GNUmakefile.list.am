@@ -525,6 +525,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
+	Source/JavaScriptCore/tools/CodeProfile.cpp \
+	Source/JavaScriptCore/tools/CodeProfile.h \
+	Source/JavaScriptCore/tools/CodeProfiling.cpp \
+	Source/JavaScriptCore/tools/CodeProfiling.h \
+	Source/JavaScriptCore/tools/ProfileTreeNode.h \
+	Source/JavaScriptCore/tools/TieredMMapArray.h \
 	Source/JavaScriptCore/wtf/Alignment.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \
 	Source/JavaScriptCore/wtf/ArrayBuffer.cpp \

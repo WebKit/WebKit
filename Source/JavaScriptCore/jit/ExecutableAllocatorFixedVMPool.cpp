@@ -29,8 +29,8 @@
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
 
+#include "CodeProfiling.h"
 #include <errno.h>
-
 #include <sys/mman.h>
 #include <unistd.h>
 #include <wtf/MetaAllocator.h>
@@ -96,6 +96,7 @@ void ExecutableAllocator::initializeAllocator()
 {
     ASSERT(!allocator);
     allocator = new FixedVMPoolExecutableAllocator();
+    CodeProfiling::notifyAllocator(allocator);
 }
 
 ExecutableAllocator::ExecutableAllocator(JSGlobalData&)
@@ -116,12 +117,10 @@ bool ExecutableAllocator::underMemoryPressure()
 
 PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData& globalData, size_t sizeInBytes, void* ownerUID)
 {
-    UNUSED_PARAM(ownerUID);
-
-    RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes);
+    RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);
     if (!result) {
         releaseExecutableMemory(globalData);
-        result = allocator->allocate(sizeInBytes);
+        result = allocator->allocate(sizeInBytes, ownerUID);
         if (!result)
             CRASH();
     }

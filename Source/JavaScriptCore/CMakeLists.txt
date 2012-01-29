@@ -14,6 +14,7 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/parser"
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
+    "${JAVASCRIPTCORE_DIR}/tools"
     "${JAVASCRIPTCORE_DIR}/yarr"
     "${JAVASCRIPTCORE_DIR}/wtf"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
@@ -199,6 +200,9 @@ SET(JavaScriptCore_SOURCES
     runtime/StructureChain.cpp
     runtime/TimeoutChecker.cpp
     runtime/UString.cpp
+
+    tools/CodeProfile.cpp
+    tools/CodeProfiling.cpp
 
     yarr/YarrPattern.cpp
     yarr/YarrInterpreter.cpp
