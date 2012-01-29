@@ -1,3 +1,9 @@
+2012-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-01-28  Nico Weber  <thakis@chromium.org>
 
         [chromium] Add support for building standalone webkit/chromium checkouts with ninja.
