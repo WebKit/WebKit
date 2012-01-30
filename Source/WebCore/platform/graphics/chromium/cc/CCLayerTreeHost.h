@@ -210,6 +210,8 @@ private:
     void paintMaskAndReplicaForRenderSurface(LayerChromium*, PaintType);
 
     void updateLayers(LayerChromium*);
+    // Pre-reserve textures for any layer marked "always reserve textures"
+    void reserveTextures();
     void clearPendingUpdate();
 
     int m_compositorIdentifier;

@@ -61,6 +61,8 @@ public:
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& layerRect);
 
+    virtual void reserveTextures();
+
 protected:
     TiledLayerChromium();
 

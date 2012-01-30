@@ -1,3 +1,15 @@
+2012-01-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Always pre-reserve scrollbar and scroll corner textures
+        https://bugs.webkit.org/show_bug.cgi?id=77251
+
+        Reviewed by James Robinson.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::reserveScrollbarLayers):
+        (WebKit):
+        (WebKit::NonCompositedContentHost::setViewport):
+
 2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll Chromium DEPS from 119623 to 119700.

@@ -379,6 +379,8 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
+    reserveTextures();
+
     paintLayerContents(m_updateList, PaintVisible);
     if (!m_triggerIdlePaints)
         return;
@@ -395,6 +397,19 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     // The second (idle) paint will be a no-op in layers where painting already occured above.
     paintLayerContents(m_updateList, PaintIdle);
     m_contentsTextureManager->setMaxMemoryLimitBytes(maxLimitBytes);
+}
+
+void CCLayerTreeHost::reserveTextures()
+{
+    // Use BackToFront since it's cheap and this isn't order-dependent.
+    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+
+    CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
+        if (it.representsTargetRenderSurface() || !it->alwaysReserveTextures())
+            continue;
+        it->reserveTextures();
+    }
 }
 
 // static

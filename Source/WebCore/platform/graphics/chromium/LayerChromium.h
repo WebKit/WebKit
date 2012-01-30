@@ -197,6 +197,12 @@ public:
 
     CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
 
+    // Reserve any textures needed for this layer.
+    virtual void reserveTextures() { }
+
+    void setAlwaysReserveTextures(bool alwaysReserveTextures) { m_alwaysReserveTextures = alwaysReserveTextures; }
+    bool alwaysReserveTextures() const { return m_alwaysReserveTextures; }
+
 protected:
     LayerChromium();
 
@@ -264,6 +270,7 @@ private:
     bool m_usesLayerClipping;
     bool m_isNonCompositedContent;
     bool m_preserves3D;
+    bool m_alwaysReserveTextures;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

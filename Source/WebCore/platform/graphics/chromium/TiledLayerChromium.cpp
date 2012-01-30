@@ -451,6 +451,31 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     }
 }
 
+void TiledLayerChromium::reserveTextures()
+{
+    updateBounds();
+
+    const IntRect& layerRect = visibleLayerRect();
+    if (layerRect.isEmpty() || !m_tiler->numTiles())
+        return;
+
+    int left, top, right, bottom;
+    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
+
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            if (!tile)
+                tile = createTile(i, j);
+
+            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
+                tile->m_dirtyRect = m_tiler->tileRect(tile);
+
+            if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat))
+                return;
+        }
+    }
+}
 
 void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect)
 {
