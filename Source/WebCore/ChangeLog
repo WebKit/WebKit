@@ -1,3 +1,24 @@
+2012-01-30  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Credential backing store implementation
+        https://bugs.webkit.org/show_bug.cgi?id=76761
+
+        Reviewed by Antonio Gomes.
+
+        Implemented credential backing store database and related
+        operations in class CredentialBackingStore.
+
+        * platform/network/blackberry/CredentialBackingStore.cpp:
+        (WebCore::CredentialBackingStore::~CredentialBackingStore):
+        (WebCore::CredentialBackingStore::open):
+        (WebCore::CredentialBackingStore::close):
+        (WebCore::CredentialBackingStore::addLogin):
+        (WebCore::CredentialBackingStore::updateLogin):
+        (WebCore::CredentialBackingStore::hasLogin):
+        (WebCore::CredentialBackingStore::getLogin):
+        (WebCore::CredentialBackingStore::removeLogin):
+        (WebCore::CredentialBackingStore::clear):
+
 2012-01-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Only send resize events when layout size changes.
