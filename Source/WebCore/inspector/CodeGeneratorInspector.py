@@ -2381,6 +2381,7 @@ class Generator:
             agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
             Generator.backend_agent_interface_list.append("    class %s {\n" % agent_interface_name)
             Generator.backend_agent_interface_list.append("    public:\n")
+            Generator.backend_agent_interface_list.append("        virtual ~%s() { }\n" % agent_interface_name);
             if "commands" in json_domain:
                 for json_command in json_domain["commands"]:
                     Generator.process_command(json_command, domain_name, agent_field_name)
