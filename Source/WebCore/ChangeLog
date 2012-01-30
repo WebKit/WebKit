@@ -1,3 +1,13 @@
+2012-01-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: TimelinePanel does not respect InspectorFrontendHost.canSaveAs
+        https://bugs.webkit.org/show_bug.cgi?id=77301
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._registerShortcuts):
+
 2012-01-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix Clang build for real after r106218.
