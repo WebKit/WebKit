@@ -1,4 +1,18 @@
 ================
+WebKitGTK+ 1.6.2
+================
+
+What's new in WebKitGTK+ 1.6.1?
+
+ Bug 69099 - [Freetype] Some text in Planet GNOME renders in the wrong place
+ Bug 69840 -  Fix build with GLib 2.31
+ Bug 70447 - [GTK] Streamline wk1 documentation build
+ Bug 70500 - [GTK] webkitgtk's pkgconfig file needs to require javascriptcoregtk
+ Bug 71001 - [GTK] Create .xz tarballs during 'make dist'
+ Bug 69123 - [GTK] The process freezes when you right click on windowed Flash
+ Bug 73719 - [GTK] Plugins sometimes crash WebKitGTK+ with Gdk-CRITICAL **: gdk_window_get_toplevel: assertion `GDK_IS_WINDOW (window)' failed
+
+================
 WebKitGTK+ 1.6.1
 ================
 
