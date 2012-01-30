@@ -1,0 +1,13 @@
+Tests PeerConnection::addStream().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.addStream() threw TypeError: Not enough arguments
+PASS pc.addStream(undefined) threw Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS pc.addStream(null) threw Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS pc.addStream(new Array()) threw TypeError: Type error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

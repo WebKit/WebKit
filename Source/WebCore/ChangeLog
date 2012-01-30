@@ -1,3 +1,19 @@
+2012-01-30  Tommy Widenflycht  <tommyw@google.com>
+
+        Memory leak caused by PeerConnection add a NULL media stream
+        https://bugs.webkit.org/show_bug.cgi?id=76150
+
+        It was my missunderstanding that the IDL keyword [StrictTypeChecking] also protects against
+        null or undefined arguments, it doesn't. Added checks for null pointers.
+
+        Reviewed by Adam Barth.
+
+        Test: fast/mediastream/peerconnection-addstream.html
+
+        * mediastream/PeerConnection.cpp:
+        (WebCore::PeerConnection::addStream):
+        (WebCore::PeerConnection::removeStream):
+
 2012-01-26  Andy Estes  <aestes@apple.com>
 
         [Windows] Optionally invert colors when drawing to a WebView's backing store.
