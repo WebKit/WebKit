@@ -1,3 +1,19 @@
+2012-01-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: protocol validator should fail if one of response fields turns optional
+        https://bugs.webkit.org/show_bug.cgi?id=76452
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector-0.1.json:
+        * inspector/Inspector.json:
+        * inspector/generate-inspector-protocol-version:
+        (compare_commands):
+        (compare_events):
+        (compare_params_list):
+        (compare_types):
+        (self_test):
+
 2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: keyboard navigation through comparison view in heap profiler should update retainers view

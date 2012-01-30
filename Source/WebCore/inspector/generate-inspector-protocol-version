@@ -123,6 +123,9 @@ def compare_params_list(params_1, params_2, types_map_1, types_map_2, depth, err
             continue
 
         param_2 = params_2[name]
+        if param_2 and "optional" in param_2 and not "optional" in param_1:
+            errors.append("required parameter is now optional: %s" % name)
+            continue;
         type_1 = extract_type(param_1, types_map_1, errors)
         type_2 = extract_type(param_2, types_map_2, errors)
         compare_types("param " + name, type_1, type_2, types_map_1, types_map_2, depth, errors)
@@ -226,6 +229,7 @@ def self_test():
                     ],
                     "returns": [
                         { "name": "mimeType", "type": "string" },
+                        { "name": "nonOptionalMimeType", "type": "string" },
                         { "name": "optionalMimeType", "type": "string", "optional": True }
                     ]
                 }
@@ -273,6 +277,9 @@ def self_test():
                     "name": "setExtraHTTPHeaders",
                     "parameters": [
                         { "name": "headers", "type": "object" },
+                    ],
+                    "returns": [
+                        { "name": "nonOptionalMimeType", "type": "string", "optional": True }
                     ]
                 }
             ],
@@ -291,6 +298,7 @@ def self_test():
     golden_errors = [
         "Network.setUserAgentOverride: command is missing",
         "Network.setExtraHTTPHeaders: required parameter is missing: mimeType",
+        "Network.setExtraHTTPHeaders: required parameter is now optional: nonOptionalMimeType",
         "Network.loadingFailed: event is missing",
         "Network.requestWillBeSent: required parameter is missing: postData",
         "Network.requestWillBeSent: required parameter is missing: documentURL" ]
