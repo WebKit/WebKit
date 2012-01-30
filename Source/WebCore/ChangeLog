@@ -1,3 +1,22 @@
+2012-01-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Only send resize events when layout size changes.
+        https://bugs.webkit.org/show_bug.cgi?id=77212
+
+        When using fixed layout the widget size is the size of content, therefore
+        resize checks must check against layoutsize and not widget size.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Needs to be manual tests because the test framework does not currently
+        support testing fixed layout.
+
+        Tests: ManualTests/resize-events.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2012-01-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: TimelinePanel does not respect InspectorFrontendHost.canSaveAs

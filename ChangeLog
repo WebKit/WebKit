@@ -1,3 +1,16 @@
+2012-01-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Manual test of number of resize events emitted during page generation.
+        https://bugs.webkit.org/show_bug.cgi?id=77212
+
+        Is needed to test if too many resize events are send when using fixed
+        layout, and needs to be a manual test because the test framework does
+        not currently support testing fixed layout.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ManualTests/resize-events.html: Added.
+
 2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Custom written CSS lexer

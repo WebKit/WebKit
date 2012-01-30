@@ -1059,7 +1059,7 @@ void FrameView::layout(bool allowSubtree)
 
                     m_firstLayout = false;
                     m_firstLayoutCallbackPending = true;
-                    m_lastLayoutSize = LayoutSize(width(), height());
+                    m_lastLayoutSize = LayoutSize(layoutWidth(), layoutHeight());
                     m_lastZoomFactor = root->style()->zoom();
 
                     // Set the initial vMode to AlwaysOn if we're auto.
@@ -2308,7 +2308,7 @@ void FrameView::performPostLayoutTasks()
     m_actionScheduler->resume();
 
     if (!root->printing()) {
-        LayoutSize currentSize = LayoutSize(width(), height());
+        LayoutSize currentSize = LayoutSize(layoutWidth(), layoutHeight());
         float currentZoomFactor = root->style()->zoom();
         bool resized = !m_firstLayout && (currentSize != m_lastLayoutSize || currentZoomFactor != m_lastZoomFactor);
         m_lastLayoutSize = currentSize;
