@@ -1,3 +1,13 @@
+2012-01-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Add manual tests for tap highlighting
+
+        Rubberstamped by Simon Hausmann.
+
+        * ManualTests/qt/tap-highlighting-colors.html: Added.
+        * ManualTests/qt/tap-highlighting-images.html: Added.
+        * ManualTests/qt/tap-highlighting-inlines.html: Added.
+
 2012-01-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Manual test of number of resize events emitted during page generation.
