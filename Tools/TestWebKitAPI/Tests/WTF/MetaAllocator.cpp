@@ -182,7 +182,7 @@ public:
     
     MetaAllocatorHandle* allocate(size_t sizeInBytes, SanityCheckMode sanityCheckMode = RunSanityCheck)
     {
-        MetaAllocatorHandle* handle = allocator->allocate(sizeInBytes).leakRef();
+        MetaAllocatorHandle* handle = allocator->allocate(sizeInBytes, 0).leakRef();
         EXPECT_TRUE(handle);
         EXPECT_EQ(handle->sizeInBytes(), sizeInBytes);
         
@@ -464,7 +464,7 @@ public:
         
         sanityCheck();
         
-        EXPECT_TRUE(!allocator->allocate(sizeInBytes));
+        EXPECT_TRUE(!allocator->allocate(sizeInBytes, 0));
         
         for (size_t index = 0; index < numAllocations; ++index)
             free(handles.at(index), DontRunSanityCheck);
@@ -571,7 +571,7 @@ public:
         sanityCheck();
         
         // Assert that the heap is not empty.
-        EXPECT_TRUE(!allocator->allocate(defaultPagesInHeap * pageSize()));
+        EXPECT_TRUE(!allocator->allocate(defaultPagesInHeap * pageSize(), 0));
         
         // Allocate the remainder of the heap.
         MetaAllocatorHandle* remainder = allocate(defaultPagesInHeap * pageSize() - secondSize);
@@ -589,12 +589,12 @@ public:
     
     void testDemandAllocCoalesce(size_t firstSize, size_t numPages, size_t secondSize)
     {
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
         
         MetaAllocatorHandle* firstHandle = allocate(firstSize);
         
-        EXPECT_TRUE(!allocator->allocate(secondSize));
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate(secondSize, 0));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
         
         currentHeapGrowthMode = ForTestDemandAllocCoalesce;
         allowAllocatePages = numPages;
@@ -618,12 +618,12 @@ public:
     {
         free(allocate(firstSize));
         free(allocate(defaultPagesInHeap * pageSize()));
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
         
         MetaAllocatorHandle* firstHandle = allocate(firstSize);
         
-        EXPECT_TRUE(!allocator->allocate(secondSize));
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate(secondSize, 0));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
         
         currentHeapGrowthMode = ForTestDemandAllocDontCoalesce;
         allowAllocatePages = numPages;
@@ -637,12 +637,12 @@ public:
         
         requestedNumPages = 0;
         
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
 
         free(firstHandle);
         free(secondHandle);
         
-        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize()));
+        EXPECT_TRUE(!allocator->allocate((defaultPagesInHeap + numPages) * pageSize(), 0));
         
         firstHandle = allocate(firstSize);
         secondHandle = allocate(secondSize);
@@ -663,7 +663,7 @@ TEST_F(MetaAllocatorTest, AllocZero)
     // Tests that allocating a zero-length block returns 0 and
     // does not change anything in memory.
     
-    ASSERT(!allocator->allocate(0));
+    ASSERT(!allocator->allocate(0, 0));
     
     MetaAllocatorHandle* final = allocate(defaultPagesInHeap * pageSize());
     EXPECT_EQ(final->start(), reinterpret_cast<void*>(basePage * pageSize()));
