@@ -1688,6 +1688,7 @@ typedef String ErrorString;
 class InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher> {
 public:
     static PassRefPtr<InspectorBackendDispatcher> create(InspectorFrontendChannel* inspectorFrontendChannel);
+    virtual ~InspectorBackendDispatcher() { }
 
 $agentInterfaces
 $virtualSetters
