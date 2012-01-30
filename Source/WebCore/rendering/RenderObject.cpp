@@ -1713,20 +1713,6 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     return diff;
 }
 
-RenderStyle* RenderObject::styleInRegion() const
-{
-    ASSERT(inRenderFlowThread());
-
-    if (!canHaveRegionStyle()
-        || !((view() && view()->currentRenderRegion() && view()->currentRenderRegion()->hasCustomRegionStyle())))
-        return m_style.get();
-
-    RenderStyle* regionStyle = view()->currentRenderRegion()->renderObjectRegionStyle(this);
-    if (!regionStyle)
-        view()->currentRenderRegion()->computeStyleInRegion(this);
-    return view()->currentRenderRegion()->renderObjectRegionStyle(this);
-}
-
 void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style) {

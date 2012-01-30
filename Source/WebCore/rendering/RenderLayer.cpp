@@ -2590,27 +2590,8 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
     return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
-class CurrentRenderRegionMaintainer {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderRegionMaintainer);
-public:
-    CurrentRenderRegionMaintainer(RenderView* view, RenderRegion* renderRegion)
-    : m_view(view)
-    , m_renderRegion(view->currentRenderRegion())
-    {
-        m_view->setCurrentRenderRegion(renderRegion);
-    }
-    ~CurrentRenderRegionMaintainer()
-    {
-        m_view->setCurrentRenderRegion(m_renderRegion);
-    }
-private:
-    RenderView* m_view;
-    RenderRegion* m_renderRegion;
-};
-
 void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject* paintingRoot, RenderRegion* region, PaintLayerFlags paintFlags)
 {
-    CurrentRenderRegionMaintainer renderRegionMaintainer(renderer()->view(), region);
     OverlapTestRequestMap overlapTestRequests;
     paintLayer(this, context, damageRect, paintBehavior, paintingRoot, region, &overlapTestRequests, paintFlags);
     OverlapTestRequestMap::iterator end = overlapTestRequests.end();
@@ -3112,7 +3093,6 @@ static inline LayoutRect frameVisibleRect(RenderObject* renderer)
 
 bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
-    CurrentRenderRegionMaintainer renderRegionMaintainer(renderer()->view(), result.region());
     renderer()->document()->updateLayout();
     
     LayoutRect hitTestArea = renderer()->view()->documentRect();

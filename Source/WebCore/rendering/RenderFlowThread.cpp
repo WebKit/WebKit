@@ -742,7 +742,7 @@ RenderRegion* RenderFlowThread::lastRegion() const
     return 0;
 }
 
-void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object,
+void RenderFlowThread::clearRenderBoxCustomStyle(const RenderBox* box,
     const RenderRegion* oldStartRegion, const RenderRegion* oldEndRegion,
     const RenderRegion* newStartRegion, const RenderRegion* newEndRegion)
 {
@@ -759,7 +759,7 @@ void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object,
             insideNewRegionRange = true;
 
         if (!(insideOldRegionRange && insideNewRegionRange))
-            region->clearObjectStyleInRegion(object);
+            region->clearBoxStyleInRegion(box);
 
         if (oldEndRegion == region)
             insideOldRegionRange = false;
@@ -798,7 +798,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
             break;
     }
 
-    clearRenderObjectCustomStyle(box, range.startRegion(), range.endRegion(), startRegion, endRegion);
+    clearRenderBoxCustomStyle(box, range.startRegion(), range.endRegion(), startRegion, endRegion);
     range.setRange(startRegion, endRegion);
 }
 

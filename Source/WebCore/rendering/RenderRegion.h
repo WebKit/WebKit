@@ -80,11 +80,14 @@ public:
     bool isFirstRegion() const;
     bool isLastRegion() const;
 
-    RenderStyle* renderObjectRegionStyle(const RenderObject*) const;
-    void computeStyleInRegion(const RenderObject*);
-    void clearObjectStyleInRegion(const RenderObject*);
+    void clearBoxStyleInRegion(const RenderBox*);
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
+
+    PassRefPtr<RenderStyle> renderBoxRegionStyle(const RenderBox*);
+    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderBox*);
+    void setRegionBoxesRegionStyle();
+    void restoreRegionBoxesOriginalStyle();
 
     RenderFlowThread* m_flowThread;
 
@@ -98,15 +101,18 @@ private:
     // A RenderBoxRegionInfo* tells us about any layout information for a RenderBox that
     // is unique to the region. For now it just holds logical width information for RenderBlocks, but eventually
     // it will also hold a custom style for any box (for region styling).
-    HashMap<const RenderBox*, OwnPtr<RenderBoxRegionInfo> > m_renderBoxRegionInfo;
+    typedef HashMap<const RenderBox*, OwnPtr<RenderBoxRegionInfo> > RenderBoxRegionInfoMap;
+    RenderBoxRegionInfoMap m_renderBoxRegionInfo;
 
-    // This map holds information about the region style associated with the render objects that
-    // are displayed into this region.
-    typedef HashMap<const RenderObject*, RefPtr<RenderStyle> > RenderObjectRegionStyleMap;
-    RenderObjectRegionStyleMap m_renderObjectRegionStyle;
+    typedef HashMap<const RenderBox*, RefPtr<RenderStyle> > RenderBoxRegionStyleMap;
+    RenderBoxRegionStyleMap m_renderBoxRegionStyle;
 
     bool m_isValid;
     bool m_hasCustomRegionStyle;
+
+#ifndef NDEBUG
+    bool m_insideRegionPaint;
+#endif
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

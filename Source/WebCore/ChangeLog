@@ -1,3 +1,55 @@
+2012-01-30  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for background-color in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=71488
+
+        Reviewed by David Hyatt.
+
+        Based on work by Alexandru Chiculita (achicu@adobe.com).
+        Previous patches for region styling were touching RenderObject::style() method. After several attempts to avoid regressions
+        (including caching of RenderObject::style() pointer in most used methods), we decided to attempt a different approach:
+        Step1: before each region is repainted, we compute the style for each box that falls into the region
+        Step2: before paint, we store the box original style
+        Step3: paint the region contents using the style in region
+        Step4: after paint is finished, we restore the box original style (and store the box style in region for future region paint)
+
+        Tests for region styling are also enabled with this patch.
+
+        * WebCore.exp.in:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::clearRenderBoxCustomStyle):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        * rendering/RenderFlowThread.h:
+        ():
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+        (RenderObject):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::setRegionBoxesRegionStyle):
+        (WebCore):
+        (WebCore::RenderRegion::restoreRegionBoxesOriginalStyle):
+        (WebCore::RenderRegion::paintReplaced):
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::renderBoxRegionStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        (WebCore::RenderRegion::clearBoxStyleInRegion):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore):
+        (RenderView):
+
 2012-01-30  Jessie Berlin  <jberlin@apple.com>
 
         WebCore build exceeds address space on 32-bit Windows builders (again).
