@@ -639,6 +639,8 @@ WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIME
 
 // Inspector tests in Debug build are very slow.
 BUG_DRT SLOW LINUX WIN DEBUG : inspector = PASS
+BUG_DRT WIN DEBUG : inspector/extensions/extensions-events.html = TIMEOUT
+BUG_DRT WIN DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
 BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector-enabled = PASS
 
