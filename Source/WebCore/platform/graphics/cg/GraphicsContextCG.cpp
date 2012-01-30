@@ -1036,6 +1036,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     blurRadius = min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 
 
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
     if (!isAcceleratedContext()) {
         // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
         // to the desired integer. Also see: <rdar://problem/10056277>
@@ -1050,6 +1051,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
         else if (yOffset < 0)
             yOffset -= extraShadowOffset;
     }
+#endif
 
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.

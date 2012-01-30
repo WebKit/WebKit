@@ -1,3 +1,16 @@
+2012-01-28  Matthew Delaney  <mdelaney@apple.com>
+
+        Limit the shadow offset CG hack to just SL and Lion
+        https://bugs.webkit.org/show_bug.cgi?id=77348
+        <rdar://problem/10158016>
+
+        Reviewed by Chris Marrin.
+
+        No new tests, current tests cover this.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2012-01-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77263
