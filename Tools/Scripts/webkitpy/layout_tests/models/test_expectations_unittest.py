@@ -273,7 +273,15 @@ BUG_OVERRIDE : failures/expected/text.html = CRASH
         port = MockHost().port_factory.get('qt')
         port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'platform/qt/Skipped')] = 'failures/expected/text.html'
         port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
-        self.assertRaises(ParseError, TestExpectations, port, 'failures/expected/text.html\n', 'BUGX : failures/expected/text.html = text\n', None, True)
+        expectations = TestExpectations(port, tests=['failures/expected/text.html'], expectations='', test_config=port.test_configuration())
+        self.assertEquals(expectations.get_modifiers('failures/expected/text.html'), [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER])
+        self.assertEquals(expectations.get_expectations('failures/expected/text.html'), set([FAIL]))
+
+    def test_add_skipped_tests_duplicate(self):
+        port = MockHost().port_factory.get('qt')
+        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'platform/qt/Skipped')] = 'failures/expected/text.html'
+        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
+        self.assertRaises(ParseError, TestExpectations, port, tests=['failures/expected/text.html'], expectations='BUGX : failures/expected/text.html = text\n', test_config=port.test_configuration(), is_lint_mode=True)
 
 
 class ExpectationSyntaxTests(Base):
