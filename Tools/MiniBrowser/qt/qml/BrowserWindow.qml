@@ -36,6 +36,7 @@ Rectangle {
     property alias webview: webView
 
     signal pageTitleChanged(string title)
+    signal newWindow(string url)
 
     function load(address) {
         webView.load(address)
@@ -206,6 +207,26 @@ Rectangle {
                         }
 
                         options.touchMockingEnabled = !options.touchMockingEnabled
+                    }
+                }
+            }
+
+            Rectangle {
+                id: newBrowserWindowButton
+                height: parent.height
+                width: height
+                color: "#efefef"
+                radius: 6
+
+                Image {
+                    anchors.centerIn: parent
+                    source: "../icons/plus.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        newWindow("about:blank")
                     }
                 }
             }

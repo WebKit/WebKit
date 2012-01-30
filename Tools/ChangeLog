@@ -1,3 +1,16 @@
+2012-01-30  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] Add "New Window" button to the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=77281
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/icons/plus.png: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-01-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rolling out r106222.

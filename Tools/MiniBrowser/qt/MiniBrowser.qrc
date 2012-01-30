@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>icons/info.png</file>
         <file>icons/next.png</file>
+        <file>icons/plus.png</file>
         <file>icons/previous.png</file>
         <file>icons/refresh.png</file>
         <file>icons/stop.png</file>
