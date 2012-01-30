@@ -1,3 +1,12 @@
+2012-01-30  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] enable -Wexit-time-destructors for webkit unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=77300
+
+        Reviewed by Tony Chang.
+
+        * WebKitUnitTests.gyp: Enable clang check for exit time destructors.
+
 2012-01-30  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Fix a few memory leaks
