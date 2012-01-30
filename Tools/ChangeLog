@@ -1,3 +1,9 @@
+2012-01-30  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed. Add myself to CSS, GStreamer, Qt related watchlists.
+        
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed build fix following bug#76855
