@@ -14,21 +14,21 @@ h3 {font-size: 1em;}
 <p>Key: canonicalized name used by build bots and storage. Name: human friendly name</p>
 
 <h2>Builder</h2>
-<form method="post" action="/api/create/builder" onsubmit="return submitByXHR(this, event)">
+<form method="post" action="/admin/create/builder" onsubmit="return submitByXHR(this, event)">
 <label for="name">Name/Key</label><input type="text" name="name">
 <label for="password">Password</label><input type="password" name="password">
 <button type="submit">Create</button>
 </form>
 
 <h2>Branch</h2>
-<form method="post" action="/api/create/branch" onsubmit="return submitByXHR(this, event);">
+<form method="post" action="/admin/create/branch" onsubmit="return submitByXHR(this, event);">
 <label for="key">Key</label><input type="text" name="key">
 <label for="name">Name</label><input type="text" name="name">
 <button type="submit">Create</button>
 </form>
 
 <h2>Platform</h2>
-<form method="post" action="/api/create/platform" onsubmit="return submitByXHR(this, event)">
+<form method="post" action="/admin/create/platform" onsubmit="return submitByXHR(this, event)">
 <label for="key">Key</label><input type="text" name="key">
 <label for="name">Name</label><input type="text" name="name">
 <button type="submit">Create</button>

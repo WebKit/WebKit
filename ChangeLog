@@ -1,3 +1,28 @@
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-perf.appspot.com should have an ability to merge tests
+        https://bugs.webkit.org/show_bug.cgi?id=77250
+
+        Reviewed by Adam Barth.
+
+        Added admin/merge-tests. This page allows administrators to easily merge test objects.
+
+        Also add the forgotten title.png and rename api/create to admin/create since we don't allow
+        non-admins to create new models anyway.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+        * Websites/webkit-perf.appspot.com/css: Added.
+        * Websites/webkit-perf.appspot.com/css/title.png: Added.
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/merge_tests.yaml: Added.
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py: Added.
+        (MergeTestHandler):
+        (MergeTestHandler.get):
+        (MergeTestHandler.post):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (deleteModelWithNumericIdHolder):
+        * Websites/webkit-perf.appspot.com/static/create-models.html:
+
 2012-01-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add manual tests for tap highlighting

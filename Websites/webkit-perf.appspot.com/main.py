@@ -26,12 +26,14 @@ from manifest_handler import ManifestHandler
 from report_handler import ReportHandler
 from report_handler import AdminReportHandler
 from runs_handler import RunsHandler
+from merge_tests_handler import MergeTestsHandler
 
 routes = [
-    ('/api/create/(.*)', CreateHandler),
+    ('/admin/report/?', AdminReportHandler),
+    ('/admin/merge-tests/?', MergeTestsHandler),
+    ('/admin/create/(.*)', CreateHandler),
     ('/api/test/?', ManifestHandler),
     ('/api/test/report/?', ReportHandler),
-    ('/admin/report/?', AdminReportHandler),
     ('/api/test/runs/?', RunsHandler),
     ('/api/test/dashboard/?', DashboardHandler),
 ]

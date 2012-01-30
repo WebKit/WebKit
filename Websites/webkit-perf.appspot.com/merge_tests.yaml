@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Merge tests</h1>
+<form method="post" action="/admin/merge-tests">
+
+<label for="merge">Merge</label>:
+<select id="merge" name="merge">
+{% for test in tests %}
+    <option value="{{ test.name }}">{{ test.name }}</option>
+{% endfor %}
+</select>
+
+<label for="into">Into</label>:
+<select id="into" name="into">
+{% for test in tests %}
+    <option value="{{ test.name }}">{{ test.name }}</option>
+{% endfor %}
+</select>
+
+<button type="submit">Merge</button>
+
+</form>
+</body>
+</html>

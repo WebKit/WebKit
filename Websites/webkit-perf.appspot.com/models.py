@@ -51,6 +51,12 @@ def createInTransactionWithNumericIdHolder(callback):
     return owner
 
 
+def deleteModelWithNumericIdHolder(model):
+    idHolder = NumericIdHolder.get_by_id(model.id)
+    model.delete()
+    idHolder.delete()
+
+
 def modelFromNumericId(id, expectedKind):
     idHolder = NumericIdHolder.get_by_id(id)
     return idHolder.owner if idHolder and idHolder.owner and isinstance(idHolder.owner, expectedKind) else None
