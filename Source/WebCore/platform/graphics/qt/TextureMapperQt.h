@@ -70,7 +70,8 @@ public:
 
     static void initialize(QPainter* painter)
     {
-        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
+        if (painter)
+            painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
     }
 
     static PassOwnPtr<TextureMapper> create() { return adoptPtr(new TextureMapperQt); }

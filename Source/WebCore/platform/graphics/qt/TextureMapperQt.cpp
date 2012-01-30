@@ -141,7 +141,7 @@ TextureMapperQt::TextureMapperQt()
 void TextureMapperQt::setGraphicsContext(GraphicsContext* context)
 {
     m_context = context;
-    m_painter = context->platformContext();
+    m_painter = context ? context->platformContext() : 0;
     initialize(m_painter);
 }
 

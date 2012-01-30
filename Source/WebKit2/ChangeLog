@@ -1,3 +1,32 @@
+2012-01-26  No'am Rosenthal  <noam.rosenthal@nokia.com> and Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] WKTR: Use a software rendering pipiline when running tests.
+        https://bugs.webkit.org/show_bug.cgi?id=76708
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Animation layout tests require the graphics layers tree to be updated
+        to pass. WebkitTestRunner doesn't show its wrapping QQuickView, which
+        prevents the rendering pipeline to run and then in turn blocks the web
+        process from processing further graphics layer updates.
+
+        This allows the tests to use a TextureMapperQt to empty the LayerTreeHost's
+        message queue and render the layers in software on an offscreen buffer.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paint):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::setNeedsDisplay):
+        (QQuickWebViewExperimental::setRenderToOffscreenBuffer):
+        (QQuickWebViewExperimental::renderToOffscreenBuffer):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::setRenderToOffscreenBuffer):
+        (QQuickWebViewPrivate::renderToOffscreenBuffer):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToGraphicsContext):
+
 2012-01-30  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Render layers do not get flushed when the scroll animation finishes

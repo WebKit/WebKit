@@ -1,3 +1,15 @@
+2012-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] WKTR: Use a software rendering pipiline when running tests.
+        https://bugs.webkit.org/show_bug.cgi?id=76708
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/qt/TextureMapperQt.cpp: Allow setting the context to null.
+        (WebCore::TextureMapperQt::setGraphicsContext):
+        * platform/graphics/qt/TextureMapperQt.h:
+        (WebCore::TextureMapperQt::initialize):
+
 2012-01-27  Enrica Casucci  <enrica@apple.com>
 
         Remove all references to NSPasteboard objects from the Pasteboard
