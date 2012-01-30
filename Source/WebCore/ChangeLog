@@ -1,3 +1,23 @@
+2012-01-26  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        Reviewed by Darin Fisher.
+
+        Remove SpeechInputClientMock. The mock is moving to the DumpRenderTree
+        implementation.
+
+        No new tests, just refactoring.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mock/SpeechInputClientMock.cpp: Removed.
+        * platform/mock/SpeechInputClientMock.h: Removed.
+
 2012-01-30  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: clean InspectorBackendDispatcher.h

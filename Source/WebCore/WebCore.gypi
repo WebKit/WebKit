@@ -3852,8 +3852,6 @@
             'platform/mock/GeolocationServiceMock.h',
             'platform/mock/ScrollbarThemeMock.cpp',
             'platform/mock/ScrollbarThemeMock.h',
-            'platform/mock/SpeechInputClientMock.cpp',
-            'platform/mock/SpeechInputClientMock.h',
             'platform/network/AuthenticationChallengeBase.cpp',
             'platform/network/BlobData.cpp',
             'platform/network/BlobData.h',

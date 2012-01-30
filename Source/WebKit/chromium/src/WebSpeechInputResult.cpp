@@ -48,6 +48,11 @@ void WebSpeechInputResult::set(const WebString& utterance, double confidence)
     m_private = WebCore::SpeechInputResult::create(utterance, confidence);
 }
 
+void WebSpeechInputResult::assign(const WebSpeechInputResult& other)
+{
+    m_private = WebCore::SpeechInputResult::create(*other.m_private.get());
+}
+
 WebSpeechInputResult::operator PassRefPtr<WebCore::SpeechInputResult>() const
 {
     return m_private.get();
