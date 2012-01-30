@@ -92,9 +92,11 @@ void CodeProfile::sample(void* pc, void** framePointer)
 
     while (framePointer) {
         CodeType type;
+
+#if ENABLE(JIT)
+        // Determine if this sample fell in JIT code, and if so, from which JIT & why.
         void* ownerUID = CodeProfiling::getOwnerUIDForPC(pc);
 
-        // Determine if this sample fell in JIT code, and if so, from which JIT & why.
         if (!ownerUID)
             type = EngineFrame;
         else if (ownerUID == GLOBAL_THUNK_ID)
@@ -112,6 +114,9 @@ void CodeProfile::sample(void* pc, void** framePointer)
             else
                 type = BaselineProfile;
         }
+#else
+        type = EngineFrame;
+#endif
 
         // A sample in JIT code terminates the trace.
         m_samples.append(CodeRecord(pc, type));

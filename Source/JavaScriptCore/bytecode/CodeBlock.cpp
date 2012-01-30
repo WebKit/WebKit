@@ -1450,7 +1450,9 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_speculativeFailCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+#if ENABLE(JIT)
     , m_canCompileWithDFGState(CompileWithDFGUnset)
+#endif
 {
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();

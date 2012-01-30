@@ -1,5 +1,18 @@
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
+        Unreviewed build fix for interpreter builds.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+
+2012-01-30  Gavin Barraclough  <barraclough@apple.com>
+
         Unreviewed build fix following bug#76855
 
         * JavaScriptCore.exp:

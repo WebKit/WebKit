@@ -1202,7 +1202,9 @@ namespace JSC {
         friend void WTF::deleteOwnedPtr<RareData>(RareData*);
 #endif
         OwnPtr<RareData> m_rareData;
+#if ENABLE(JIT)
         CompileWithDFGState m_canCompileWithDFGState;
+#endif
     };
 
     // Program code is not marked by any function, so we make the global object
