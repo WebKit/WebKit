@@ -1,5 +1,14 @@
 2012-01-30  Michael Saboff  <msaboff@apple.com>
 
+        Dromaeo tests call parseSimpleLengthValue() on 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=76649
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.exp: Added export for charactersToDouble.
+
+2012-01-30  Michael Saboff  <msaboff@apple.com>
+
         WebCore decodeEscapeSequences unnecessarily converts 8 bit strings to 16 bit when decoding.
         https://bugs.webkit.org/show_bug.cgi?id=76648
 
