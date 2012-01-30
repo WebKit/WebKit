@@ -4037,3 +4037,4 @@ BUGWK77309 WIN : css3/flexbox/cross-axis-scrollbar.html = IMAGE
 BUGWK77310 : fast/js/navigator-language.html = PASS TEXT
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
+BUGWK77315 WIN MAC : fast/events/touch/touch-gesture-scroll.html = PASS TEXT
