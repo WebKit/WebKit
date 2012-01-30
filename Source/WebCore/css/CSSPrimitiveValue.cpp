@@ -416,7 +416,8 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             break;
         case CSS_REMS:
             applyZoomMultiplier = false;
-            factor = computingFontSize ? rootStyle->fontDescription().specifiedSize() : rootStyle->fontDescription().computedSize();
+            if (rootStyle)
+                factor = computingFontSize ? rootStyle->fontDescription().specifiedSize() : rootStyle->fontDescription().computedSize();
             break;
         case CSS_PX:
             break;

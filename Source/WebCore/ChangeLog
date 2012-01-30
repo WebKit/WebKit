@@ -1,3 +1,21 @@
+2012-01-30  Parag Radke  <nrqv63@motorola.com>
+
+        REGRESSION (r82580): Reproducible crash in CSSPrimitiveValue::computeLengthDouble
+        https://bugs.webkit.org/show_bug.cgi?id=61989
+
+        Reviewed by Simon Fraser.
+
+        According to css3 specs when font-size is specified in 'rems' for an element implies the font-size
+        of the root element. In this case as HTML element has a property 'display:none' and hence renderer 
+        is NULL causes this crash.
+
+        Test: fast/css/fontsize-unit-rems-crash.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        Added a null check for the root element's RenderStyle as it can be null in case of html has a property
+        hidden or display:none.
+
 2012-01-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] WKTR: Use a software rendering pipiline when running tests.
