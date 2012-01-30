@@ -131,11 +131,11 @@ WebInspector.ScriptsPanel = function(presentationModel)
     helpSection.addKey(evaluateInConsoleShortcut.name, WebInspector.UIString("Evaluate selection in console"));
     this.registerShortcut(evaluateInConsoleShortcut.key, this._evaluateSelectionInConsole.bind(this));
 
-    var scriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
-    helpSection.addKey(scriptOutlineShortcut.name, WebInspector.UIString("Go to Function"));
-
     var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
     helpSection.addKey(openResourceShortcut.name, WebInspector.UIString("Open Script"));
+
+    var scriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
+    helpSection.addKey(scriptOutlineShortcut.name, WebInspector.UIString("Go to Function"));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");

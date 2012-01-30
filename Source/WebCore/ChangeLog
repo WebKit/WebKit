@@ -1,3 +1,15 @@
+2012-01-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Change Open Resource and Go To function shortcuts in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=77321
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/FilteredItemSelectionDialog.js:
+        (WebInspector.JavaScriptOutlineDialog.createShortcut):
+        (WebInspector.OpenResourceDialog.createShortcut):
+        * inspector/front-end/ScriptsPanel.js:
+
 2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: hide function popover in heap snapshot view before navigating to the function definition

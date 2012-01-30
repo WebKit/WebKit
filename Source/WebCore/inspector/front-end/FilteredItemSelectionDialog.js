@@ -515,7 +515,7 @@ WebInspector.JavaScriptOutlineDialog._show = function(panel, sourceView)
 
 WebInspector.JavaScriptOutlineDialog.createShortcut = function()
 {
-    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
+    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
 }
 
 WebInspector.JavaScriptOutlineDialog.prototype = {
@@ -636,7 +636,7 @@ WebInspector.OpenResourceDialog._show = function(panel, presentationModel, relat
 
 WebInspector.OpenResourceDialog.createShortcut = function()
 {
-    return WebInspector.KeyboardShortcut.makeDescriptor("t", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta | WebInspector.KeyboardShortcut.Modifiers.Shift);
+    return WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
 }
 
 WebInspector.OpenResourceDialog.prototype = {
