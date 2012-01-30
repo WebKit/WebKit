@@ -1,3 +1,17 @@
+2012-01-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Disconnect the LayerTreeHost from layers when they get removed from their parent.
+        https://bugs.webkit.org/show_bug.cgi?id=77362
+
+        Reviewed by Noam Rosenthal.
+
+        This fixes crashes seen in layout tests under certain timing circumstances
+        that appeared after r106109 was landed.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::replaceChild):
+        (WebCore::WebGraphicsLayer::removeFromParent):
+
 2012-01-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=77263

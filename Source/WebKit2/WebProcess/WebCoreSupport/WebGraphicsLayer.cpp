@@ -162,6 +162,7 @@ bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newC
         return false;
     notifyChange();
     toWebGraphicsLayer(oldChild)->notifyChange();
+    toWebGraphicsLayer(oldChild)->setLayerTreeTileClient(0);
     toWebGraphicsLayer(newChild)->setVisibleContentRectAndScale(m_pageVisibleRect, m_contentsScale);
     toWebGraphicsLayer(newChild)->notifyChange();
     return true;
@@ -174,6 +175,7 @@ void WebGraphicsLayer::removeFromParent()
     GraphicsLayer::removeFromParent();
 
     notifyChange();
+    setLayerTreeTileClient(0);
 }
 
 void WebGraphicsLayer::setPosition(const FloatPoint& p)
