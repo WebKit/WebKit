@@ -2188,6 +2188,15 @@ sub buildQMakeProjects
         #}
     }
 
+    # Save config up-front so we can detect changes to the build config even
+    # when the user re-configures after aborting the build.
+    open(DEFAULTS, ">$pathToDefinesCache");
+    print DEFAULTS "# These defines were set when building WebKit last time\n";
+    foreach my $key (sort keys %defines) {
+        print DEFAULTS "$key=$defines{$key}\n";
+    }
+    close(DEFAULTS);
+
     my $result = 0;
 
     my $makefile = File::Spec->catfile($dir, "Makefile");
@@ -2221,12 +2230,9 @@ sub buildQMakeProjects
     chdir ".." or die;
 
     if ($result eq 0) {
-        $defines{"SVN_REVISION"} = $svnRevision;
-        open(DEFAULTS, ">$pathToDefinesCache");
-        print DEFAULTS "# These defines were set when building WebKit last time\n";
-        foreach my $key (sort keys %defines) {
-            print DEFAULTS "$key=$defines{$key}\n";
-        }
+        # Now that the build completed successfully we can save the SVN revision
+        open(DEFAULTS, ">>$pathToDefinesCache");
+        print DEFAULTS "SVN_REVISION=$svnRevision\n";
         close(DEFAULTS);
     } elsif ($buildHint eq "" && exitStatus($result)) {
         my $exitCode = exitStatus($result);

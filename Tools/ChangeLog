@@ -1,3 +1,17 @@
+2012-01-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Store build config immediately instead of waiting for a successfull build
+
+        Otherwise we will not pick up changes to the config if the build is aborted,
+        for example due to build errors or if the user pressed Ctrl+Z. We now write
+        the new config before starting a build, but still defer to write the SVN
+        revision once the build completes successfully.
+
+        Reviewed by Ossy.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-01-30  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] Add "New Window" button to the Qt MiniBrowser
