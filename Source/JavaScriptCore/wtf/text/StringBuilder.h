@@ -86,6 +86,20 @@ public:
         append(other.characters(), other.m_length);
     }
 
+    void append(const String& string, unsigned offset, unsigned length)
+    {
+        if (!string.length())
+            return;
+
+        if ((offset + length) > string.length())
+            return;
+
+        if (string.is8Bit())
+            append(string.characters8() + offset, length);
+        else
+            append(string.characters16() + offset, length);
+    }
+
     void append(const char* characters)
     {
         if (characters)

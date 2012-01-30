@@ -139,11 +139,11 @@ String decodeEscapeSequences(const String& string, const TextEncoding& encoding)
         if (decoded.isEmpty())
             continue;
 
-        result.append(string.characters() + decodedPosition, encodedRunPosition - decodedPosition);
+        result.append(string, decodedPosition, encodedRunPosition - decodedPosition);
         result.append(decoded);
         decodedPosition = encodedRunEnd;
     }
-    result.append(string.characters() + decodedPosition, length - decodedPosition);
+    result.append(string, decodedPosition, length - decodedPosition);
     return result.toString();
 }
 

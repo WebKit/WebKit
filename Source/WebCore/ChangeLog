@@ -1,3 +1,18 @@
+2012-01-30  Michael Saboff  <msaboff@apple.com>
+
+        WebCore decodeEscapeSequences unnecessarily converts 8 bit strings to 16 bit when decoding.
+        https://bugs.webkit.org/show_bug.cgi?id=76648
+
+        Reviewed by Geoffrey Garen.
+
+        Using new overloaded append(String&, offset, length)  member to build result string.
+        The new member properly handles 8/16 bit-ness of strings.
+
+        Functionality not changed, therefore no new tests.
+
+        * platform/text/DecodeEscapeSequences.h:
+        (WebCore::decodeEscapeSequences):
+
 2012-01-30  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: follow up to r105625, use proper event categoty in inspector frontend.

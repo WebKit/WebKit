@@ -1,3 +1,16 @@
+2012-01-30  Michael Saboff  <msaboff@apple.com>
+
+        WebCore decodeEscapeSequences unnecessarily converts 8 bit strings to 16 bit when decoding.
+        https://bugs.webkit.org/show_bug.cgi?id=76648
+
+        Reviewed by Geoffrey Garen.
+
+        Added a new overloaded append member that takes a String& argument, an offest
+        and a length to do direct sub string appending to a StringBuilder.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append):
+
 2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Custom written CSS lexer
