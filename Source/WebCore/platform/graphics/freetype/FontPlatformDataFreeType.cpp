@@ -270,6 +270,12 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
         cairo_matrix_scale(&fontMatrix, realSize, realSize);
     }
 
+    if (syntheticOblique()) {
+        static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
+        cairo_matrix_t skew = {1, 0, syntheticObliqueSkew, 1, 0, 0};
+        cairo_matrix_multiply(&fontMatrix, &skew, &fontMatrix);
+    }
+
     m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
     cairo_font_options_destroy(options);
 }
