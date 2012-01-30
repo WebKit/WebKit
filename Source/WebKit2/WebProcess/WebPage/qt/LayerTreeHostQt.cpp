@@ -403,8 +403,10 @@ void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
 
 void LayerTreeHostQt::setVisibleContentRectAndScale(const IntRect& rect, float scale)
 {
-    if (m_rootLayer)
+    if (m_rootLayer) {
         toWebGraphicsLayer(m_rootLayer.get())->setVisibleContentRectAndScale(rect, scale);
+        scheduleLayerFlush();
+    }
 }
 
 void LayerTreeHostQt::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)

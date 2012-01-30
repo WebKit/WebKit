@@ -1,3 +1,17 @@
+2012-01-30  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Render layers do not get flushed when the scroll animation finishes
+        https://bugs.webkit.org/show_bug.cgi?id=77338
+
+        Reviewed by Noam Rosenthal.
+
+        Schedule a layer flush when setting the visible content rect and scale.
+
+        Fixed with the help of Jocelyn Turcotte <jocelyn.turcotte@nokia.com>
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setVisibleContentRectAndScale):
+
 2012-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
