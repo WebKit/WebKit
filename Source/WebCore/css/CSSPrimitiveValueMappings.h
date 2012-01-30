@@ -285,6 +285,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e)
         case CompositePlusLighter:
             m_value.ident = CSSValuePlusLighter;
             break;
+        case CompositeDifference:
+            ASSERT_NOT_REACHED();
+            break;
     }
 }
 

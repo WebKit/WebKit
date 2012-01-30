@@ -30,9 +30,6 @@
 
 namespace WebCore {
 
-    // Note: These constants exactly match the NSCompositeOperator constants of
-    // AppKit on Mac OS X Tiger. If these ever change, we'll need to change the
-    // Mac OS X Tiger platform code to map one to the other.
     enum CompositeOperator {
         CompositeClear,
         CompositeCopy,
@@ -46,7 +43,8 @@ namespace WebCore {
         CompositeDestinationAtop,
         CompositeXOR,
         CompositePlusDarker,
-        CompositePlusLighter
+        CompositePlusLighter,
+        CompositeDifference
     };
 
     enum GradientSpreadMethod {

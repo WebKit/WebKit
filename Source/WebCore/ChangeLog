@@ -1,3 +1,20 @@
+2012-01-26  Andy Estes  <aestes@apple.com>
+
+        [Windows] Optionally invert colors when drawing to a WebView's backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=77168
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSPrimitiveValueMappings.h: Assert that CompositeDifference is
+        not converted to a CSS value. Exposing a new compositing operation to
+        CSS is outside the scope of this patch.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * platform/graphics/GraphicsTypes.h: Add CompositeDifference as a
+        CompositeOperator. Also, remove an outdated comment.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Map
+        CompositeDifference to kCGBlendModeDifference.
+
 2012-01-28  Matthew Delaney  <mdelaney@apple.com>
 
         Limit the shadow offset CG hack to just SL and Lion

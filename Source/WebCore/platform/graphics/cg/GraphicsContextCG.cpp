@@ -1603,6 +1603,9 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     case CompositePlusLighter:
         target = kCGBlendModePlusLighter;
         break;
+    case CompositeDifference:
+        target = kCGBlendModeDifference;
+        break;
     }
     CGContextSetBlendMode(platformContext(), target);
 }

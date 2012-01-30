@@ -1,3 +1,19 @@
+2012-01-26  Andy Estes  <aestes@apple.com>
+
+        [Windows] Optionally invert colors when drawing to a WebView's backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=77168
+
+        Reviewed by Sam Weinig.
+
+        * WebView.cpp:
+        (WebView::WebView): Initialize m_shouldInvertColors to false.
+        (WebView::paintIntoBackingStore): If m_shouldInvertColors is true, draw
+        an opaque white quad using the CompositeDifference blend mode. This
+        blend operation instructs CoreGraphics to take the difference between
+        the source pixel (white) and the background pixel, resulting in an
+        inverted pixel.
+        * WebView.h: Define m_shouldInvertColors.
+
 2012-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Show layer borders for scrollbar layers

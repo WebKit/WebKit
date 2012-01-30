@@ -1001,6 +1001,8 @@ private:
     virtual void flushPendingGraphicsLayerChanges();
 #endif
 
+    bool m_shouldInvertColors;
+
 protected:
     static bool registerWebViewWindowClass();
     static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -332,6 +332,7 @@ bool WebView::s_allowSiteSpecificHacks = false;
 
 WebView::WebView()
     : m_refCount(0)
+    , m_shouldInvertColors(false)
 #if !ASSERT_DISABLED
     , m_deletionHasBegun(false)
 #endif
@@ -1154,6 +1155,8 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     if (frameView && frameView->frame() && frameView->frame()->contentRenderer()) {
         gc.clip(dirtyRect);
         frameView->paint(&gc, dirtyRect);
+        if (m_shouldInvertColors)
+            gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB, CompositeDifference);
     }
     gc.restore();
 }
