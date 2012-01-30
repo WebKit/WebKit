@@ -52,7 +52,7 @@
 #define ASSERT_VALID_CODE_OFFSET(offset) // Anything goes!
 #endif
 
-#if CPU(X86) && OS(WIN)
+#if CPU(X86) && OS(WINDOWS)
 #define CALLING_CONVENTION_IS_STDCALL 1
 #ifndef CDECL
 #if COMPILER(MSVC)
