@@ -128,7 +128,7 @@ String CSSStyleRule::cssText() const
     String result = selectorText();
 
     result += " { ";
-    result += m_style->cssText();
+    result += m_style->asText();
     result += "}";
 
     return result;

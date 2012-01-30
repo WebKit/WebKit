@@ -46,7 +46,7 @@ String WebKitCSSKeyframeRule::cssText() const
     String result = m_key;
 
     result += " { ";
-    result += m_style->cssText();
+    result += m_style->asText();
     result += "}";
 
     return result;

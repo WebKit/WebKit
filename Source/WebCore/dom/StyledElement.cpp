@@ -112,8 +112,8 @@ void StyledElement::updateStyleAttribute() const
     ASSERT(!isStyleAttributeValid());
     setIsStyleAttributeValid();
     setIsSynchronizingStyleAttribute();
-    if (m_inlineStyleDecl)
-        const_cast<StyledElement*>(this)->setAttribute(styleAttr, m_inlineStyleDecl->cssText());
+    if (CSSMutableStyleDeclaration* inlineStyle = inlineStyleDecl())
+        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText());
     clearIsSynchronizingStyleAttribute();
 }
 

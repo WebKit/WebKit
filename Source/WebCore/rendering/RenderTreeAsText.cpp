@@ -184,7 +184,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
         return true;
 
     CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
-    return (!inlineStyleDecl || inlineStyleDecl->length() == 0);
+    return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 
 String quoteAndEscapeNonPrintables(const String& s)

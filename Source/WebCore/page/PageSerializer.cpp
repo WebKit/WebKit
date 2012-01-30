@@ -317,12 +317,9 @@ void PageSerializer::retrieveResourcesForCSSDeclaration(CSSMutableStyleDeclarati
     // The background-image and list-style-image (for ul or ol) are the CSS properties
     // that make use of images. We iterate to make sure we include any other
     // image properties there might be.
-    for (unsigned i = 0; i < styleDeclaration->length(); ++i) {
-        // FIXME: It's kind of ridiculous to get the property name and then get
-        // the value out of the name. Ideally we would get the value out of the
-        // property ID, but CSSStyleDeclaration only gives access to property
-        // names, not IDs.
-        RefPtr<CSSValue> cssValue = styleDeclaration->getPropertyCSSValue(styleDeclaration->item(i));
+    unsigned propertyCount = styleDeclaration->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        RefPtr<CSSValue> cssValue = styleDeclaration->propertyAt(i).value();
         if (!cssValue->isImageValue())
             continue;
 

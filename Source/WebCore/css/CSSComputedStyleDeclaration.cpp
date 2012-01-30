@@ -29,6 +29,7 @@
 #include "CSSBorderImage.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
@@ -2475,24 +2476,8 @@ String CSSComputedStyleDeclaration::getPropertyValue(int propertyID) const
     return "";
 }
 
-bool CSSComputedStyleDeclaration::getPropertyPriority(int /*propertyID*/) const
-{
-    // All computed styles have a priority of false (not "important").
-    return false;
-}
 
-String CSSComputedStyleDeclaration::removeProperty(int /*propertyID*/, ExceptionCode& ec)
-{
-    ec = NO_MODIFICATION_ALLOWED_ERR;
-    return String();
-}
-
-void CSSComputedStyleDeclaration::setProperty(int /*propertyID*/, const String& /*value*/, bool /*important*/, ExceptionCode& ec)
-{
-    ec = NO_MODIFICATION_ALLOWED_ERR;
-}
-
-unsigned CSSComputedStyleDeclaration::virtualLength() const
+unsigned CSSComputedStyleDeclaration::length() const
 {
     Node* node = m_node.get();
     if (!node)
@@ -2525,8 +2510,8 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property
                 return true;
         }
     }
-
-    return CSSStyleDeclaration::cssPropertyMatches(property);
+    RefPtr<CSSValue> value = getPropertyCSSValue(property->id());
+    return value && value->cssText() == property->value()->cssText();
 }
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copy() const
@@ -2575,6 +2560,76 @@ PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSid
         list->append(leftValue);
 
     return list.release();
+}
+
+PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
+{
+    Vector<CSSProperty> list;
+    list.reserveInitialCapacity(length);
+    for (unsigned i = 0; i < length; ++i) {
+        RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
+        if (value)
+            list.append(CSSProperty(set[i], value.release(), false));
+    }
+    return CSSMutableStyleDeclaration::create(list);
+}
+
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return 0;
+    return getPropertyCSSValue(propertyID);
+}
+
+String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return String();
+    return getPropertyValue(propertyID);
+}
+
+String CSSComputedStyleDeclaration::getPropertyPriority(const String&)
+{
+    // All computed styles have a priority of not "important".
+    return "";
+}
+
+String CSSComputedStyleDeclaration::getPropertyShorthand(const String&)
+{
+    return "";
+}
+
+bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
+{
+    return false;
+}
+
+void CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&, ExceptionCode& ec)
+{
+    ec = NO_MODIFICATION_ALLOWED_ERR;
+}
+
+String CSSComputedStyleDeclaration::removeProperty(const String&, ExceptionCode& ec)
+{
+    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return String();
+}
+    
+PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
+{
+    return getPropertyCSSValue(propertyID);
+}
+
+String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
+{
+    return getPropertyValue(propertyID);
+}
+
+void CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool, ExceptionCode& ec)
+{
+    ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
 } // namespace WebCore

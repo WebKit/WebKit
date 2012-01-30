@@ -1,3 +1,153 @@
+2012-01-29  Antti Koivisto  <antti@apple.com>
+
+        Reduce non-CSSOM API of CSSStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=77299
+
+        Reviewed by Andreas Kling.
+
+        CSSStyleDeclaration should expose the CSSOM API only. Subclasses should expose the internal API only. 
+        This will move us closer to being able to split the CSSOM API from the internal implementation.
+        
+        - Make CSSStyleDeclaration CSSOM functions virtual, internal functions non-virtual.
+        - Move implementations to subclasses (CSSComputedStyleDeclaration, CSSMutableStyleDeclaration).
+        - Make CSSOM functions in the subclasses private (making it harder to invoke them internally).
+        - Switch a bunch of places to use internal API instead of CSSOM.
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter):
+        (WebCore::V8CSSStyleDeclaration::namedPropertySetter):
+        
+            Switch to *Internal versions of the CSSOM functions.
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::length):
+        (WebCore::CSSComputedStyleDeclaration::cssPropertyMatches):
+        (WebCore::CSSComputedStyleDeclaration::copyPropertiesInSet):
+        
+            Move copyPropertiesInSet to subclasses, devirtualize.
+            
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyShorthand):
+        (WebCore::CSSComputedStyleDeclaration::isPropertyImplicit):
+        (WebCore::CSSComputedStyleDeclaration::setProperty):
+        (WebCore::CSSComputedStyleDeclaration::removeProperty):
+        * css/CSSComputedStyleDeclaration.h:
+        (CSSComputedStyleDeclaration):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::cssText):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::length):
+        (WebCore::CSSMutableStyleDeclaration::asText):
+        (WebCore::CSSMutableStyleDeclaration::cssText):
+        (WebCore):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyPriority):
+        (WebCore::CSSMutableStyleDeclaration::getPropertyShorthand):
+        (WebCore::CSSMutableStyleDeclaration::isPropertyImplicit):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::copyPropertiesInSet):
+        
+            Move copyPropertiesInSet to subclasses, devirtualize.
+        
+        (WebCore::CSSMutableStyleDeclaration::cssPropertyMatches):
+        (WebCore::CSSMutableStyleDeclaration::removeEquivalentProperties):
+        
+            Move diff() to CSSMutableStyleDeclaration, rename to removeEquivalentProperties, switch to mutate
+            this object instead of the argument object.
+    
+        * css/CSSMutableStyleDeclaration.h:
+        (CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::propertyCount):
+        (WebCore::CSSMutableStyleDeclaration::isEmpty):
+        (WebCore::CSSMutableStyleDeclaration::propertyAt):
+        
+            Expose properties and property count internally (iterator should be removed in favor of these).
+        
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore):
+        * css/CSSStyleDeclaration.h:
+        (CSSStyleDeclaration):
+        (WebCore::CSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::CSSStyleDeclaration::getPropertyValueInternal):
+        (WebCore::CSSStyleDeclaration::setPropertyInternal):
+        
+            Add *Internal versions of some CSSOM APIs to support some editing and bindings uses.
+            These take propertyIDs instead of strings names.
+
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::cssText):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::leftToRightDeclaration):
+        (WebCore::rightToLeftDeclaration):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        (WebCore::CSSStyleSelector::matchPageRulesForList):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::cssText):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::addBlockStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/EditingStyle.cpp:
+        ():
+        (WebCore::copyEditingProperties):
+        (WebCore):
+        (WebCore::propertyCSSValue):
+        (WebCore::getRGBAFontColor):
+        (WebCore::EditingStyle::overrideWithStyle):
+        (WebCore::EditingStyle::removeStyleAddedByNode):
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::removePropertiesInStyle):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::fontWeightIsBold):
+        (WebCore::getPropertiesNotIn):
+        (WebCore::getIdentifierValue):
+        (WebCore::hasTransparentBackgroundColor):
+        * editing/EditingStyle.h:
+        
+            Adapt to changes.
+    
+        (WebCore):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * editing/mac/EditorMac.mm:
+        (WebCore::styleForSelectionStart):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::restoreImageSize):
+        (WebCore::ImageDocument::windowSizeChanged):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::currentColor):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::revalidateStyle):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForCSSDeclaration):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::isEmptyOrUnstyledAppleStyleSpan):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+
 2012-01-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: protocol validator should fail if one of response fields turns optional

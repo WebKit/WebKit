@@ -2751,13 +2751,9 @@ void Editor::applyEditingStyleToElement(Element* element) const
     if (!element->isStyledElement())
         return;
     CSSMutableStyleDeclaration* style = static_cast<StyledElement*>(element)->ensureInlineStyleDecl();
-    ExceptionCode ec = 0;
-    style->setProperty(CSSPropertyWordWrap, "break-word", false, ec);
-    ASSERT(!ec);
-    style->setProperty(CSSPropertyWebkitNbspMode, "space", false, ec);
-    ASSERT(!ec);
-    style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false, ec);
-    ASSERT(!ec);
+    style->setProperty(CSSPropertyWordWrap, "break-word", false);
+    style->setProperty(CSSPropertyWebkitNbspMode, "space", false);
+    style->setProperty(CSSPropertyWebkitLineBreak, "after-white-space", false);
 }
 
 // Searches from the beginning of the document if nothing is selected.

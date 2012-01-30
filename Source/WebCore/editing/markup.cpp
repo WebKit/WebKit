@@ -191,7 +191,7 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, CSSMuta
     DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
     DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span style=\""));
     out.append(isBlock ? divStyle : styleSpanOpen);
-    appendAttributeValue(out, style->cssText(), document->isHTMLDocument());
+    appendAttributeValue(out, style->asText(), document->isHTMLDocument());
     out.append('\"');
     out.append('>');
 }
@@ -328,7 +328,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
         if (!newInlineStyle->isEmpty()) {
             DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
             out.append(stylePrefix);
-            appendAttributeValue(out, newInlineStyle->style()->cssText(), documentIsHTML);
+            appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
             out.append('\"');
         }
     }

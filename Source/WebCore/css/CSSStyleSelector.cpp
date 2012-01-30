@@ -299,7 +299,7 @@ static const MediaQueryEvaluator& printEval()
 static CSSMutableStyleDeclaration* leftToRightDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, leftToRightDecl, (CSSMutableStyleDeclaration::create()));
-    if (!leftToRightDecl->length())
+    if (leftToRightDecl->isEmpty())
         leftToRightDecl->setProperty(CSSPropertyDirection, CSSValueLtr);
     return leftToRightDecl.get();
 }
@@ -307,7 +307,7 @@ static CSSMutableStyleDeclaration* leftToRightDeclaration()
 static CSSMutableStyleDeclaration* rightToLeftDeclaration()
 {
     DEFINE_STATIC_LOCAL(RefPtr<CSSMutableStyleDeclaration>, rightToLeftDecl, (CSSMutableStyleDeclaration::create()));
-    if (!rightToLeftDecl->length())
+    if (rightToLeftDecl->isEmpty())
         rightToLeftDecl->setProperty(CSSPropertyDirection, CSSValueRtl);
     return rightToLeftDecl.get();
 }
@@ -780,7 +780,7 @@ void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules
             }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             CSSMutableStyleDeclaration* decl = rule->declaration();
-            if (!decl || (!decl->length() && !includeEmptyRules)) {
+            if (!decl || (decl->isEmpty() && !includeEmptyRules)) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
@@ -2526,7 +2526,7 @@ void CSSStyleSelector::matchPageRulesForList(const Vector<RuleData>* rules, bool
 
         // If the rule has no properties to apply, then ignore it.
         CSSMutableStyleDeclaration* decl = rule->declaration();
-        if (!decl || !decl->length())
+        if (!decl || decl->isEmpty())
             continue;
 
         // Add this rule to our list of matched rules.

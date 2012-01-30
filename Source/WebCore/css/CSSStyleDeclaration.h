@@ -21,6 +21,7 @@
 #ifndef CSSStyleDeclaration_h
 #define CSSStyleDeclaration_h
 
+#include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include <wtf/Forward.h>
 
@@ -51,35 +52,26 @@ public:
 
     virtual String cssText() const = 0;
     virtual void setCssText(const String&, ExceptionCode&) = 0;
-
-    unsigned length() const { return virtualLength(); }
-    virtual unsigned virtualLength() const = 0;
-    bool isEmpty() const { return !length(); }
+    virtual unsigned length() const = 0;
     virtual String item(unsigned index) const = 0;
+    virtual PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) = 0;
+    virtual String getPropertyValue(const String& propertyName) = 0;
+    virtual String getPropertyPriority(const String& propertyName) = 0;
+    virtual String getPropertyShorthand(const String& propertyName) = 0;
+    virtual bool isPropertyImplicit(const String& propertyName) = 0;
+    virtual void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) = 0;
+    virtual String removeProperty(const String& propertyName, ExceptionCode&) = 0;
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(const String& propertyName);
-    String getPropertyValue(const String& propertyName);
-    String getPropertyPriority(const String& propertyName);
-    String getPropertyShorthand(const String& propertyName);
-    bool isPropertyImplicit(const String& propertyName);
-
-    virtual PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const = 0;
-    virtual String getPropertyValue(int propertyID) const = 0;
-    virtual bool getPropertyPriority(int propertyID) const = 0;
-    virtual int getPropertyShorthand(int propertyID) const = 0;
-    virtual bool isPropertyImplicit(int propertyID) const = 0;
-
-    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&);
-    String removeProperty(const String& propertyName, ExceptionCode&);
-    virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&) = 0;
-    virtual String removeProperty(int propertyID, ExceptionCode&) = 0;
+    // CSSPropertyID versions of the CSSOM functions to support bindings and editing.
+    // Use the non-virtual methods in the concrete subclasses when possible.
+    virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) = 0;
+    virtual String getPropertyValueInternal(CSSPropertyID) = 0;
+    virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) = 0;
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const = 0;
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable() = 0;
 
-    void diff(CSSMutableStyleDeclaration*) const;
-
-    PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;
+    virtual bool cssPropertyMatches(const CSSProperty*) const = 0;
 
 #ifndef NDEBUG
     void showStyle();
@@ -91,8 +83,6 @@ public:
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
     CSSStyleDeclaration(StyledElement* parentElement, bool isInline);
-
-    virtual bool cssPropertyMatches(const CSSProperty*) const;
 
     // The bits in this section are only used by specific subclasses but kept here
     // to maximize struct packing.

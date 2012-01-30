@@ -216,7 +216,7 @@ private:
 };
 
 // FIXME: Remove these functions or make them non-global to discourage using CSSStyleDeclaration directly.
-int getIdentifierValue(CSSStyleDeclaration*, int propertyID);
+int getIdentifierValue(CSSStyleDeclaration*, CSSPropertyID);
 
 } // namespace WebCore
 

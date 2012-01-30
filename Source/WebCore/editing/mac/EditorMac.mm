@@ -112,7 +112,7 @@ static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 
     RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
 
-    String styleText = typingStyle->style()->cssText() + " display: inline";
+    String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(styleAttr, styleText.impl());
 
     styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);

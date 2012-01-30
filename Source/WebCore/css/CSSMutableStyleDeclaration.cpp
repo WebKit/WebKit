@@ -682,18 +682,6 @@ bool CSSMutableStyleDeclaration::isPropertyImplicit(int propertyID) const
     return property ? property->isImplicit() : false;
 }
 
-void CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value, bool important, ExceptionCode& ec)
-{
-    ec = 0;
-    setProperty(propertyID, value, important, true);
-}
-
-String CSSMutableStyleDeclaration::removeProperty(int propertyID, ExceptionCode& ec)
-{
-    ec = 0;
-    return removeProperty(propertyID, true, true);
-}
-
 bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value, bool important, bool notifyChanged)
 {
     ASSERT(!m_iteratorCount);
@@ -826,9 +814,9 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 #endif
 }
 
-unsigned CSSMutableStyleDeclaration::virtualLength() const
+unsigned CSSMutableStyleDeclaration::length() const
 {
-    return length();
+    return propertyCount();
 }
 
 String CSSMutableStyleDeclaration::item(unsigned i) const
@@ -838,7 +826,7 @@ String CSSMutableStyleDeclaration::item(unsigned i) const
     return getPropertyName(static_cast<CSSPropertyID>(m_properties[i].id()));
 }
 
-String CSSMutableStyleDeclaration::cssText() const
+String CSSMutableStyleDeclaration::asText() const
 {
     String result = "";
 
@@ -1050,6 +1038,121 @@ CSSProperty* CSSMutableStyleDeclaration::findPropertyWithId(int propertyID)
             return &m_properties[n];
     }
     return 0;
+}
+
+String CSSMutableStyleDeclaration::cssText() const
+{
+    return asText();
+}
+
+PassRefPtr<CSSValue> CSSMutableStyleDeclaration::getPropertyCSSValue(const String& propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return 0;
+    return getPropertyCSSValue(propertyID);
+}
+
+String CSSMutableStyleDeclaration::getPropertyValue(const String &propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return String();
+    return getPropertyValue(propertyID);
+}
+
+String CSSMutableStyleDeclaration::getPropertyPriority(const String& propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return String();
+    return getPropertyPriority(propertyID) ? "important" : "";
+}
+
+String CSSMutableStyleDeclaration::getPropertyShorthand(const String& propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return String();
+    int shorthandID = getPropertyShorthand(propertyID);
+    if (!shorthandID)
+        return String();
+    return getPropertyName(static_cast<CSSPropertyID>(shorthandID));
+}
+
+bool CSSMutableStyleDeclaration::isPropertyImplicit(const String& propertyName)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return false;
+    return isPropertyImplicit(propertyID);
+}
+
+void CSSMutableStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return;
+    bool important = priority.find("important", 0, false) != notFound;
+    ec = 0;
+    setProperty(propertyID, value, important, true);
+}
+
+String CSSMutableStyleDeclaration::removeProperty(const String& propertyName, ExceptionCode& ec)
+{
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return String();
+    ec = 0;
+    return removeProperty(propertyID, true, true);
+}
+
+PassRefPtr<CSSValue> CSSMutableStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
+{ 
+    return getPropertyCSSValue(propertyID); 
+}
+
+String CSSMutableStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
+{ 
+    return getPropertyValue(propertyID); 
+}
+
+void CSSMutableStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important, ExceptionCode& ec)
+{ 
+    ec = 0;
+    setProperty(propertyID, value, important, true);
+}
+
+PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
+{
+    Vector<CSSProperty> list;
+    list.reserveInitialCapacity(length);
+    for (unsigned i = 0; i < length; ++i) {
+        RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
+        if (value)
+            list.append(CSSProperty(set[i], value.release(), false));
+    }
+    return CSSMutableStyleDeclaration::create(list);
+}
+
+bool CSSMutableStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
+{
+    RefPtr<CSSValue> value = getPropertyCSSValue(property->id());
+    return value && value->cssText() == property->value()->cssText();
+}
+
+void CSSMutableStyleDeclaration::removeEquivalentProperties(const CSSStyleDeclaration* style)
+{
+    Vector<int> propertiesToRemove;
+    size_t size = m_properties.size();
+    for (size_t i = 0; i < size; ++i) {
+        const CSSProperty& property = m_properties[i];
+        if (style->cssPropertyMatches(&property))
+            propertiesToRemove.append(property.id());
+    }    
+    // FIXME: This should use mass removal.
+    for (unsigned i = 0; i < propertiesToRemove.size(); ++i)
+        removeProperty(propertiesToRemove[i]);
 }
 
 } // namespace WebCore

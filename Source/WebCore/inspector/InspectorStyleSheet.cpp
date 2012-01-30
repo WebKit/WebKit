@@ -1085,7 +1085,7 @@ void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
     for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
         CSSStyleRule* parsedRule = m_flatRules.at(i);
         if (parsedRule->style() == pageStyle) {
-            if (parsedRule->style()->cssText() != pageStyle->cssText()) {
+            if (parsedRule->style()->asText() != pageStyle->cssText()) {
                 // Clear the disabled properties for the invalid style here.
                 m_inspectorStyles.remove(pageStyle);
                 setStyleText(pageStyle, pageStyle->cssText());

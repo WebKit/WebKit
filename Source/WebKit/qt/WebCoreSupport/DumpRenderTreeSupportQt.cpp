@@ -635,10 +635,11 @@ QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWe
     if (!webElement)
         return res;
 
-    RefPtr<WebCore::CSSComputedStyleDeclaration> style = computedStyle(webElement, true);
+    RefPtr<WebCore::CSSComputedStyleDeclaration> computedStyleDeclaration = computedStyle(webElement, true);
+    CSSStyleDeclaration* style = static_cast<WebCore::CSSStyleDeclaration*>(computedStyleDeclaration.get());
     for (unsigned i = 0; i < style->length(); i++) {
         QString name = style->item(i);
-        QString value = (static_cast<WebCore::CSSStyleDeclaration*>(style.get()))->getPropertyValue(name);
+        QString value = style->getPropertyValue(name);
         res[convertToPropertyName(name)] = QVariant(value);
     }
     return res;

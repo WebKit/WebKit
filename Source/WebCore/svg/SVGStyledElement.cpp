@@ -437,7 +437,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
         int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(cssSVGAttr->name());
         addCSSProperty(cssSVGAttr, propId, cssSVGAttr->value());
     }
-    return cssSVGAttr->decl()->getPropertyCSSValue(name);
+    return cssSVGAttr->decl()->getPropertyCSSValue(cssPropertyID(name));
 }
 
 bool SVGStyledElement::instanceUpdatesBlocked() const
