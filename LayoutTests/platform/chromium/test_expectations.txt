@@ -2317,8 +2317,6 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = PASS CRASH
 BUGWK48256 LINUX WIN : fast/multicol/float-multicol.html = PASS IMAGE+TEXT
-BUGWK48341 XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
-BUGWK48341 LINUX MAC DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
 BUGWK48352 : fast/writing-mode/block-level-images.html = PASS IMAGE
 
 // Vertical text needs to be implemented in platforms other than OS X.
