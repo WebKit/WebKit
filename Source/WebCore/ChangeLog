@@ -1,3 +1,9 @@
+2012-01-30  Beth Dakin  <bdakin@apple.com>
+
+        Speculative 32-bit build-fix.
+
+        * WebCore.exp.in:
+
 2012-01-30  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for background-color in region styling
