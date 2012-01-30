@@ -7446,6 +7446,7 @@ enum CharacterType {
     CharacterDash,
 
     CharacterOther,
+    CharacterNull,
     CharacterWhiteSpace,
     CharacterEndMediaQuery,
     CharacterEndNthChild,
@@ -7467,7 +7468,7 @@ enum CharacterType {
 
 // 128 ASCII codes
 static const CharacterType typesOfASCIICharacters[128] = {
-/*   0 - Null               */ CharacterOther,
+/*   0 - Null               */ CharacterNull,
 /*   1 - Start of Heading   */ CharacterOther,
 /*   2 - Start of Text      */ CharacterOther,
 /*   3 - End of Text        */ CharacterOther,
@@ -8425,6 +8426,11 @@ restartAfterComment:
 
     case CharacterOther:
         // m_token is simply the current character.
+        break;
+
+    case CharacterNull:
+        // Do not advance pointer at the end of input.
+        --m_currentCharacter;
         break;
 
     case CharacterWhiteSpace:
