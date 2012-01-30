@@ -4032,3 +4032,4 @@ BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
 BUGWK77303 : fast/js/reserved-words-strict.html = TEXT
 BUGWK77303 : fast/js/keywords-and-reserved_words.html = TEXT
+BUGWK77309 WIN : css3/flexbox/cross-axis-scrollbar.html = IMAGE
