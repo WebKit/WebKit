@@ -113,13 +113,14 @@ static NSArray* writableTypesForImage()
 
 Pasteboard* Pasteboard::generalPasteboard() 
 {
-    static Pasteboard* pasteboard = new Pasteboard([NSPasteboard generalPasteboard]);
+    static Pasteboard* pasteboard = new Pasteboard(NSGeneralPboard);
     return pasteboard;
 }
 
-Pasteboard::Pasteboard(NSPasteboard* pboard)
-    : m_pasteboard(pboard)
+Pasteboard::Pasteboard(const String& pasteboardName)
+    : m_pasteboard([NSPasteboard pasteboardWithName:pasteboardName])
 {
+    ASSERT(pasteboardName);
 }
 
 void Pasteboard::clear()
@@ -127,7 +128,7 @@ void Pasteboard::clear()
     [m_pasteboard.get() declareTypes:[NSArray array] owner:nil];
 }
 
-void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelectionForTypes(NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     if (!WebArchivePboardType)
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
@@ -158,26 +159,26 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
 #endif
 
     NSArray *types = pasteboardTypes ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
-    [pasteboard declareTypes:types owner:nil];
+    [m_pasteboard.get() declareTypes:types owner:nil];
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
     
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
         RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(frame);
         RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
-        [pasteboard setData:(NSData *)data.get() forType:WebArchivePboardType];
+        [m_pasteboard.get() setData:(NSData *)data.get() forType:WebArchivePboardType];
     }
     
     // Put the attributed string on the pasteboard (RTF/RTFD format).
     if ([types containsObject:NSRTFDPboardType]) {
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+        [m_pasteboard.get() setData:RTFDData forType:NSRTFDPboardType];
     }
     if ([types containsObject:NSRTFPboardType]) {
         if ([attributedString containsAttachments])
             attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        [pasteboard setData:RTFData forType:NSRTFPboardType];
+        [m_pasteboard.get() setData:RTFData forType:NSRTFPboardType];
     }
     
     // Put plain string on the pasteboard.
@@ -189,48 +190,34 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
         
         NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&noBreakSpace length:1];
         [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
-        [pasteboard setString:s forType:NSStringPboardType];
+        [m_pasteboard.get() setString:s forType:NSStringPboardType];
         [s release];
     }
     
     if ([types containsObject:WebSmartPastePboardType]) {
-        [pasteboard setData:nil forType:WebSmartPastePboardType];
+        [m_pasteboard.get() setData:nil forType:WebSmartPastePboardType];
     }
-}
-
-void Pasteboard::writePlainText(NSPasteboard* pasteboard, const String& text)
-{
-    NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
-    [pasteboard declareTypes:types owner:nil];
-    
-    [pasteboard setString:text forType:NSStringPboardType];
-}
-    
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
-{
-    Pasteboard::writeSelection(m_pasteboard.get(), 0, selectedRange, canSmartCopyOrDelete, frame);
 }
 
 void Pasteboard::writePlainText(const String& text)
 {
-    if (!WebArchivePboardType)
-        Pasteboard::generalPasteboard(); // Initializes pasteboard types.
-
-    NSArray *types = [NSArray arrayWithObject:NSStringPboardType];
-    NSPasteboard *pasteboard = m_pasteboard.get();
-    [pasteboard declareTypes:types owner:nil];
-
-    [pasteboard setString:text forType:NSStringPboardType];
+    [m_pasteboard.get() declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    [m_pasteboard.get() setString:text forType:NSStringPboardType];
+}
+    
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+{
+    writeSelectionForTypes(nil, selectedRange, canSmartCopyOrDelete, frame);
 }
 
-void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
+void Pasteboard::writeURLForTypes(NSArray* types, const KURL& url, const String& titleStr, Frame* frame)
 {
     if (!WebArchivePboardType)
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
    
     if (!types) {
         types = writableTypesForURL();
-        [pasteboard declareTypes:types owner:nil];
+        [m_pasteboard.get() declareTypes:types owner:nil];
     }
     
     ASSERT(!url.isEmpty());
@@ -246,23 +233,23 @@ void Pasteboard::writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& 
     }
         
     if ([types containsObject:WebURLsWithTitlesPboardType])
-        [pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
+        [m_pasteboard.get() setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:userVisibleString], 
                                      [NSArray arrayWithObject:(NSString*)titleStr.stripWhiteSpace()], 
                                      nil]
                             forType:WebURLsWithTitlesPboardType];
     if ([types containsObject:NSURLPboardType])
-        [cocoaURL writeToPasteboard:pasteboard];
+        [cocoaURL writeToPasteboard:m_pasteboard.get()];
     if ([types containsObject:WebURLPboardType])
-        [pasteboard setString:userVisibleString forType:WebURLPboardType];
+        [m_pasteboard.get() setString:userVisibleString forType:WebURLPboardType];
     if ([types containsObject:WebURLNamePboardType])
-        [pasteboard setString:title forType:WebURLNamePboardType];
+        [m_pasteboard.get() setString:title forType:WebURLNamePboardType];
     if ([types containsObject:NSStringPboardType])
-        [pasteboard setString:userVisibleString forType:NSStringPboardType];
+        [m_pasteboard.get() setString:userVisibleString forType:NSStringPboardType];
 }
     
 void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 {
-    Pasteboard::writeURL(m_pasteboard.get(), nil, url, titleStr, frame);
+    writeURLForTypes(nil, url, titleStr, frame);
 }
 
 static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *url)
@@ -308,7 +295,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
 
     NSArray* types = writableTypesForImage();
     [m_pasteboard.get() declareTypes:types owner:nil];
-    writeURL(m_pasteboard.get(), types, cocoaURL, nsStringNilIfEmpty(title), frame);
+    writeURLForTypes(types, cocoaURL, nsStringNilIfEmpty(title), frame);
     
     Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);

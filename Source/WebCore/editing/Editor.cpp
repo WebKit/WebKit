@@ -466,11 +466,6 @@ bool Editor::tryDHTMLPaste()
     return !dispatchCPPEvent(eventNames().pasteEvent, ClipboardReadable);
 }
 
-void Editor::writeSelectionToPasteboard(Pasteboard* pasteboard)
-{
-    pasteboard->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
-}
-
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
     return client() && client()->shouldInsertText(text, range, action);

@@ -105,7 +105,7 @@ bool DragData::containsPlainText() const
 
 String DragData::asPlainText(Frame *frame) const
 {
-    Pasteboard pasteboard(m_pasteboard.get());
+    Pasteboard pasteboard([m_pasteboard.get() name]);
     return pasteboard.plainText(frame);
 }
 
@@ -157,13 +157,13 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
         if (NSString *URLTitleString = [m_pasteboard.get() stringForType:WebURLNamePboardType])
             *title = URLTitleString;
     }
-    Pasteboard pasteboard(m_pasteboard.get());
+    Pasteboard pasteboard([m_pasteboard.get() name]);
     return pasteboard.asURL(frame);
 }
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range> range, bool allowPlainText, bool& chosePlainText) const
 {
-    Pasteboard pasteboard(m_pasteboard.get());
+    Pasteboard pasteboard([m_pasteboard.get() name]);
     
     return pasteboard.documentFragment(frame, range, allowPlainText, chosePlainText);
 }

@@ -1,3 +1,49 @@
+2012-01-27  Enrica Casucci  <enrica@apple.com>
+
+        Remove all references to NSPasteboard objects from the Pasteboard
+        class interface on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=77261
+        
+        This is cleanup work needed as first step in the direction of
+        removing access to NSPasteboard from the WebProcess.
+        This way all access to the NSPasteboard object are internal to
+        the class.
+        Removed static methods taking NSPasteboard as paramenter and changed
+        the constructor of the class to take the pasteboard name instead of
+        the NSPasteboard object.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. There is no change in behavior.
+
+        * editing/Editor.cpp: Removed ununsed private method writeSelectionToPasteboard.
+        (WebCore):
+        * editing/Editor.h: Ditto.
+        (Editor):
+        ():
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::readSelectionFromPasteboard):
+        * platform/Pasteboard.h:
+        (Pasteboard):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::writeRange):
+        (WebCore::ClipboardMac::writePlainText):
+        (WebCore::ClipboardMac::writeURL):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::writeSelectionForTypes): Added.
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeURLForTypes): Added.
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+
 2012-01-29  Antti Koivisto  <antti@apple.com>
 
         Reduce non-CSSOM API of CSSStyleDeclaration
