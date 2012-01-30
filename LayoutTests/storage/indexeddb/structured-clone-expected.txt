@@ -1,0 +1,692 @@
+
+Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB
+PASS indexedDB != null is true
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
+PASS IDBTransaction != null is true
+
+Prepare Database
+indexedDB.deleteDatabase('structured-clone')
+indexedDB.open('structured-clone')
+db = request.result
+PASS db.version is ""
+db.setVersion('1')
+db.createObjectStore('storeName')
+
+Running tests...
+
+Testing: undefined
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: undefined (type: undefined)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+
+Testing: null
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: null (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+
+Testing boolean primitives
+
+Testing: true
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: true (type: boolean)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: false
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: false (type: boolean)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+
+Testing number primitives
+
+Testing: NaN
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: NaN (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -Infinity
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -Infinity (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -Number.MAX_VALUE
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -1.7976931348623157e+308 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -Number.MIN_VALUE
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -5e-324 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -0
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 0 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 0
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 0 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: Number.MIN_VALUE
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 5e-324 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: Number.MAX_VALUE
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 1.7976931348623157e+308 (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: Infinity
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Infinity (type: number)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+
+Testing string primitives
+
+Testing: ''
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is:  (type: string)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 'this is a sample string'
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: this is a sample string (type: string)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 'null(\0)'
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: null() (type: string)
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+
+Testing Boolean objects
+
+Testing: new Boolean(true)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: true (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): true
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Boolean(false)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: false (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): false
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+
+Testing Number objects
+
+Testing: new Number(NaN)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: NaN (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): NaN
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(-Infinity)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -Infinity (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): -Infinity
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(-Number.MAX_VALUE)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -1.7976931348623157e+308 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): -1.7976931348623157e+308
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(-Number.MIN_VALUE)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: -5e-324 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): -5e-324
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(-0)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 0 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): 0
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(0)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 0 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): 0
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(Number.MIN_VALUE)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 5e-324 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): 5e-324
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(Number.MAX_VALUE)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: 1.7976931348623157e+308 (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): 1.7976931348623157e+308
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Number(Infinity)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Infinity (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Infinity
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+
+Testing String objects
+
+Testing: new String()
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is:  (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): 
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new String('this is a sample string')
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: this is a sample string (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): this is a sample string
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new String('null(\0)')
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: null() (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): null()
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+
+Testing Date objects
+
+Testing: new Date(-1e13)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Sun Feb 09 1653 22:13:20 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Sun Feb 09 1653 22:13:20 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(-1e12)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Sun Apr 24 1938 15:13:20 GMT-0700 (PDT) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Sun Apr 24 1938 15:13:20 GMT-0700 (PDT)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(-1e9)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Sat Dec 20 1969 02:13:20 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Sat Dec 20 1969 02:13:20 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(-1e6)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Wed Dec 31 1969 15:43:20 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Wed Dec 31 1969 15:43:20 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(-1e3)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Wed Dec 31 1969 15:59:59 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Wed Dec 31 1969 15:59:59 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(0)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Wed Dec 31 1969 16:00:00 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Wed Dec 31 1969 16:00:00 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(1e3)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Wed Dec 31 1969 16:00:01 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Wed Dec 31 1969 16:00:01 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(1e6)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Wed Dec 31 1969 16:16:40 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Wed Dec 31 1969 16:16:40 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(1e9)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Mon Jan 12 1970 05:46:40 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Mon Jan 12 1970 05:46:40 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(1e12)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Sat Sep 08 2001 18:46:40 GMT-0700 (PDT) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Sat Sep 08 2001 18:46:40 GMT-0700 (PDT)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+Testing: new Date(1e13)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: Sat Nov 20 2286 09:46:40 GMT-0800 (PST) (type: object)
+store.put(value, 'key')
+store.get('key')
+String(result): Sat Nov 20 2286 09:46:40 GMT-0800 (PST)
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+PASS is(test_data.valueOf(), result.valueOf()) is true
+
+
+Testing RegExp objects
+
+Testing RegExp: new RegExp()
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /(?:)/ (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/ (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/g
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/g (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/i
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/i (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/gi
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/gi (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/m
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/m (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/mg
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/gm (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/mi
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/im (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+Testing RegExp: /abc/mgi
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: /abc/gim (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object RegExp]"
+PASS result.toString() is test_data.toString()
+
+
+Testing ImageData
+canvas = document.createElement('canvas')
+canvas.width = 8
+canvas.height = 8
+test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8)
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: [object ImageData] (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object ImageData]"
+PASS result.width is test_data.width
+PASS result.height is test_data.height
+PASS result.data.length is test_data.data.length
+PASS result data matches
+
+Testing Blob
+Skipping test
+
+Testing File
+Skipping test
+
+Testing FileList
+Skipping test
+
+Testing Array
+test_data = []
+test_data[0] = 'foo'
+test_data[1] = 'bar'
+test_data[10] = true
+test_data[11] = false
+test_data[20] = 123
+test_data[21] = 456
+test_data[30] = null
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: foo,bar,,,,,,,,,true,false,,,,,,,,,123,456,,,,,,,,, (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS test_data.length === result.length is true
+PASS test_data[0] is result[0]
+PASS test_data[1] is result[1]
+PASS test_data[10] is result[10]
+PASS test_data[11] is result[11]
+PASS test_data[20] is result[20]
+PASS test_data[21] is result[21]
+PASS test_data[30] is result[30]
+
+Testing Object
+test_data = []
+test_data[0] = 'foo'
+test_data[1] = 'bar'
+test_data['a'] = true
+test_data['b'] = false
+test_data['foo'] = 123
+test_data['bar'] = 456
+test_data[''] = null
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+value is: foo,bar (type: object)
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS arrayCompare(Object.keys(result).sort(), Object.keys(test_data).sort()) is true
+PASS test_data["0"] is result["0"]
+PASS test_data["1"] is result["1"]
+PASS test_data["a"] is result["a"]
+PASS test_data["b"] is result["b"]
+PASS test_data["foo"] is result["foo"]
+PASS test_data["bar"] is result["bar"]
+PASS test_data[""] is result[""]
+
+
+Test types that can't be cloned:
+
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
+store = transaction.objectStore('storeName')
+
+Other JavaScript object types:
+Expecting exception from store.put(new Error, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+Expecting exception from store.put(new Function, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+
+Other host object types:
+Expecting exception from store.put(window, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+Expecting exception from store.put(document, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+Expecting exception from store.put(document.body, 'key')
+PASS Exception was thrown.
+PASS code is DOMException.DATA_CLONE_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
