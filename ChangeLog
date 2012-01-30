@@ -1,3 +1,16 @@
+2012-01-30  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Streamline wk1 documentation build
+        https://bugs.webkit.org/show_bug.cgi?id=70447
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: include the documentation's GNUmakefile.am;
+        * autogen.sh: we no longer call gtkdocize, since we now ship
+          a modified gtk-doc.make;
+        * configure.ac: no longer generate a separate GNUmakefile for
+          the documentation build.
+
 2012-01-30  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix build with GLib 2.31
