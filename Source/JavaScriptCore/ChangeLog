@@ -1,5 +1,12 @@
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
+        Speculative Windows build fix.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (FunctionPtr):
+
+2012-01-30  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=77163
         MacroAssemblerCodeRef.h uses OS(WIN) instead of OS(WINDOWS)
 

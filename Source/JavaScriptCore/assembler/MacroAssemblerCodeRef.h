@@ -126,7 +126,9 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-#if CALLING_CONVENTION_IS_STDCALL
+// MSVC doesn't seem to treat functions with different calling conventions as
+// different types; these methods already defined for fastcall, below.
+#if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
 
     template<typename returnType>
     FunctionPtr(returnType (CDECL *value)())
