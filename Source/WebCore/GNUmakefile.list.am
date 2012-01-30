@@ -2703,6 +2703,8 @@ webcore_sources += \
 	Source/WebCore/page/GeolocationError.h \
 	Source/WebCore/page/GeolocationPosition.h \
 	Source/WebCore/page/Geoposition.h \
+	Source/WebCore/page/GestureTapHighlighter.cpp \
+	Source/WebCore/page/GestureTapHighlighter.h \
 	Source/WebCore/page/GroupSettings.cpp \
 	Source/WebCore/page/GroupSettings.h \
 	Source/WebCore/page/History.cpp \
@@ -2737,6 +2739,8 @@ webcore_sources += \
 	Source/WebCore/page/PerformanceTiming.cpp \
 	Source/WebCore/page/PerformanceTiming.h \
 	Source/WebCore/page/PointerLock.h \
+	Source/WebCore/page/PointerLockController.cpp \
+	Source/WebCore/page/PointerLockController.h \
 	Source/WebCore/page/PositionCallback.h \
 	Source/WebCore/page/PositionError.h \
 	Source/WebCore/page/PositionErrorCallback.h \
@@ -3756,6 +3760,7 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGRootInlineBox.h \
 	Source/WebCore/rendering/svg/SVGShadowTreeElements.cpp \
 	Source/WebCore/rendering/svg/SVGShadowTreeElements.h \
+	Source/WebCore/rendering/svg/SVGSubpathData.h \
 	Source/WebCore/rendering/svg/SVGTextChunk.cpp \
 	Source/WebCore/rendering/svg/SVGTextChunk.h \
 	Source/WebCore/rendering/svg/SVGTextChunkBuilder.cpp \

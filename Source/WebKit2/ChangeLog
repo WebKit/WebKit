@@ -1,3 +1,11 @@
+2012-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add missing files.
+        * WebProcess/WebPage/TapHighlightController.cpp: Add #if
+        ENABLE(TOUCH_EVENTS).
+
 2012-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106022.

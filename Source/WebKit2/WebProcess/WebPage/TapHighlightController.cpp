@@ -21,6 +21,8 @@
 #include "config.h"
 #include "TapHighlightController.h"
 
+#if ENABLE(TOUCH_EVENTS)
+
 #include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
@@ -115,3 +117,5 @@ bool TapHighlightController::mouseEvent(PageOverlay*, const WebMouseEvent&)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(TOUCH_EVENTS)
