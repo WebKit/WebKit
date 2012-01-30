@@ -34,6 +34,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "FrameView.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Widget.h"
@@ -73,23 +74,23 @@ bool screenIsMonochrome(Widget*)
     return false;
 }
 
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
-    if (!widget)
+    if (!frameView)
         return FloatRect();
 
     int x, y, w, h;
-    Evas* e = widget->evas();
+    Evas* e = frameView->evas();
 
     ecore_evas_screen_geometry_get(ecore_evas_ecore_evas_get(e), &x, &y, &w, &h);
 
     return FloatRect(x, y, w, h);
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
     notImplemented();
-    return screenRect(widget);
+    return screenRect(frameView);
 }
 
 }

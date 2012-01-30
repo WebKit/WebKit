@@ -150,19 +150,16 @@ void WebChromeClient::chromeDestroyed()
     delete this;
 }
 
-// These functions scale between window and WebView coordinates because JavaScript/DOM operations 
-// assume that the WebView and the window share the same coordinate system.
-
 void WebChromeClient::setWindowRect(const FloatRect& rect)
 {
-    NSRect windowRect = toDeviceSpace(rect, [m_webView window]);
+    NSRect windowRect = toDeviceSpace(rect, [m_webView window], [m_webView _backingScaleFactor]);
     [[m_webView _UIDelegateForwarder] webView:m_webView setFrame:windowRect];
 }
 
 FloatRect WebChromeClient::windowRect()
 {
     NSRect windowRect = [[m_webView _UIDelegateForwarder] webViewFrame:m_webView];
-    return toUserSpace(windowRect, [m_webView window]);
+    return toUserSpace(windowRect, [m_webView window], [m_webView _backingScaleFactor]);
 }
 
 // FIXME: We need to add API for setting and getting this.

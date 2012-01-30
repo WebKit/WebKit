@@ -1,3 +1,15 @@
+2012-01-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77263
+        PlatformScreenMac should not rely on NSWindow for important bits of data
+
+        Reviewed by Geoff Garen.
+
+        These two functions now take a FrameView instead of a Widget.
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::screenRect):
+        (WebCore::PlatformSupport::screenAvailableRect):
+
 2012-01-30  Ami Fischman  <fischman@chromium.org>
 
         [chromium] enable -Wexit-time-destructors for webkit unit tests

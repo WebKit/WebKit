@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "FrameView.h"
 #include "IntRect.h"
 #include "PlatformSupport.h"
 
@@ -61,14 +62,14 @@ bool screenIsMonochrome(Widget* widget)
     return PlatformSupport::screenIsMonochrome(widget);
 }
 
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
-    return PlatformSupport::screenRect(widget);
+    return PlatformSupport::screenRect(frameView);
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
-    return PlatformSupport::screenAvailableRect(widget);
+    return PlatformSupport::screenAvailableRect(frameView);
 }
 
 } // namespace WebCore

@@ -64,16 +64,16 @@ bool screenIsMonochrome(Widget*)
 // These functions scale between screen and page coordinates because JavaScript/DOM operations 
 // assume that the screen and the page share the same coordinate system.
 
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    return toUserSpace([screenForWindow(window) frame], window);
+    NSWindow *window = frameView ? [frameView->platformWidget() window] : nil;
+    return toUserSpace([screenForWindow(window) frame], window, WebCore::deviceScaleFactor(frameView->frame()));
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
-    NSWindow *window = widget ? [widget->platformWidget() window] : nil;
-    return toUserSpace([screenForWindow(window) visibleFrame], window);
+    NSWindow *window = frameView ? [frameView->platformWidget() window] : nil;
+    return toUserSpace([screenForWindow(window) visibleFrame], window, WebCore::deviceScaleFactor(frameView->frame()));
 }
 
 NSScreen *screenForWindow(NSWindow *window)
@@ -89,29 +89,18 @@ NSScreen *screenForWindow(NSWindow *window)
     return nil;
 }
 
-static CGFloat windowScaleFactor(NSWindow *window)
-{
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    return [window backingScaleFactor];
-#else
-    return [window userSpaceScaleFactor];
-#endif
-}
-
-FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
+FloatRect toUserSpace(const NSRect& rect, NSWindow *destination, float deviceScaleFactor)
 {
     FloatRect userRect = rect;
     userRect.setY(NSMaxY([screenForWindow(destination) frame]) - (userRect.y() + userRect.height())); // flip
-    if (destination)
-        userRect.scale(1 / windowScaleFactor(destination)); // scale down
+    userRect.scale(1 / deviceScaleFactor); // scale down
     return userRect;
 }
 
-NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)
+NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source, float deviceScaleFactor)
 {
     FloatRect deviceRect = rect;
-    if (source)
-        deviceRect.scale(windowScaleFactor(source)); // scale up
+    deviceRect.scale(deviceScaleFactor); // scale up
     deviceRect.setY(NSMaxY([screenForWindow(source) frame]) - (deviceRect.y() + deviceRect.height())); // flip
     return deviceRect;
 }

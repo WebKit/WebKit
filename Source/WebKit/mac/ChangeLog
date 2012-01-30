@@ -1,3 +1,17 @@
+2012-01-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=77263
+        PlatformScreenMac should not rely on NSWindow for important bits of data
+
+        Reviewed by Geoff Garen.
+
+        toUserSpace() and toDeviceSpace() now take a parameter for the 
+        deviceScaleFactor.
+        * WebCoreSupport/WebChromeClient.mm:
+        (windowScaleFactor):
+        (WebChromeClient::setWindowRect):
+        (WebChromeClient::windowRect):
+
 2012-01-25  Mark Rowe  <mrowe@apple.com>
 
         Build in to an alternate location when USE_STAGING_INSTALL_PATH is set.

@@ -28,6 +28,7 @@
 #include "Screen.h"
 #include "IntRect.h"
 #include "FloatRect.h"
+#include "FrameView.h"
 #include "NotImplemented.h"
 #include "Widget.h"
 
@@ -48,7 +49,7 @@ int screenVerticalDPI(Widget*)
     return 0;
 }
     
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
 /*
     int displayNum;
@@ -77,7 +78,7 @@ bool screenIsMonochrome(Widget* widget)
     return wxColourDisplay();
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
 /*
     Widget* widget = widget->widget();

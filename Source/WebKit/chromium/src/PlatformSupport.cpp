@@ -1092,17 +1092,17 @@ bool PlatformSupport::screenIsMonochrome(Widget* widget)
     return client->screenInfo().isMonochrome;
 }
 
-IntRect PlatformSupport::screenRect(Widget* widget)
+IntRect PlatformSupport::screenRect(FrameView* frameView)
 {
-    WebWidgetClient* client = toWebWidgetClient(widget);
+    WebWidgetClient* client = toWebWidgetClient(frameView);
     if (!client)
         return IntRect();
     return client->screenInfo().rect;
 }
 
-IntRect PlatformSupport::screenAvailableRect(Widget* widget)
+IntRect PlatformSupport::screenAvailableRect(FrameView* frameView)
 {
-    WebWidgetClient* client = toWebWidgetClient(widget);
+    WebWidgetClient* client = toWebWidgetClient(frameView);
     if (!client)
         return IntRect();
     return client->screenInfo().availableRect;

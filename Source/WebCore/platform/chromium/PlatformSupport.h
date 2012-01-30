@@ -71,6 +71,7 @@ class Color;
 class Cursor;
 class Document;
 class Frame;
+class FrameView;
 class GamepadList;
 class GeolocationServiceBridge;
 class GeolocationServiceChromium;
@@ -245,8 +246,8 @@ public:
     static int screenDepth(Widget*);
     static int screenDepthPerComponent(Widget*);
     static bool screenIsMonochrome(Widget*);
-    static IntRect screenRect(Widget*);
-    static IntRect screenAvailableRect(Widget*);
+    static IntRect screenRect(FrameView*);
+    static IntRect screenAvailableRect(FrameView*);
 
     // SharedTimers -------------------------------------------------------
     static void setSharedTimerFiredFunction(void (*func)());

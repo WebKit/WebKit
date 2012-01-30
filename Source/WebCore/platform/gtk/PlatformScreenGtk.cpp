@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "FrameView.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
@@ -100,9 +101,9 @@ static GdkScreen* getScreen(GtkWidget* widget)
     return gtk_widget_has_screen(widget) ? gtk_widget_get_screen(widget) : gdk_screen_get_default();
 }
 
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
-    GtkWidget* container = widget ? GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()) : 0;
+    GtkWidget* container = frameView ? GTK_WIDGET(frameView->root()->hostWindow()->platformPageClient()) : 0;
     if (container)
         container = getToplevel(container);
 
@@ -118,11 +119,11 @@ FloatRect screenRect(Widget* widget)
     return FloatRect(geometry.x, geometry.y, geometry.width, geometry.height);
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
-    GtkWidget* container = widget ? GTK_WIDGET(widget->root()->hostWindow()->platformPageClient()) : 0;
+    GtkWidget* container = frameView ? GTK_WIDGET(frameView->root()->hostWindow()->platformPageClient()) : 0;
     if (container && !gtk_widget_get_realized(container))
-        return screenRect(widget);
+        return screenRect(frameView);
 
     GdkScreen* screen = container ? getScreen(container) : gdk_screen_get_default();
     if (!screen)

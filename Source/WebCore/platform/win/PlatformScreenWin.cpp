@@ -106,15 +106,15 @@ bool screenIsMonochrome(Widget* widget)
 #endif
 }
 
-FloatRect screenRect(Widget* widget)
+FloatRect screenRect(FrameView* frameView)
 {
-    MONITORINFOEX monitorInfo = monitorInfoForWidget(widget);
+    MONITORINFOEX monitorInfo = monitorInfoForWidget(frameView);
     return monitorInfo.rcMonitor;
 }
 
-FloatRect screenAvailableRect(Widget* widget)
+FloatRect screenAvailableRect(FrameView* frameView)
 {
-    MONITORINFOEX monitorInfo = monitorInfoForWidget(widget);
+    MONITORINFOEX monitorInfo = monitorInfoForWidget(frameView);
     return monitorInfo.rcWork;
 }
 
