@@ -1,3 +1,55 @@
+2012-01-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Clean up putDirect
+        https://bugs.webkit.org/show_bug.cgi?id=76232
+
+        Reviewed by Sam Weinig.
+
+        Part 3 - merge op_put_getter & op_put_setter.
+
+        Putting these separately is inefficient (and makes future optimiation,
+        e.g. making GetterSetter immutable) harder. Change to emit a single
+        op_put_getter_setter bytecode op. Ultimately we should probably be
+        able to merge this with put direct, to create a common op to initialize
+        object literal properties.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        ():
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutGetterSetter):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_setter):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_setter):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        ():
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectVirtual):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        ():
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+
 2012-01-30  Michael Saboff  <msaboff@apple.com>
 
         Dromaeo tests call parseSimpleLengthValue() on 8 bit strings

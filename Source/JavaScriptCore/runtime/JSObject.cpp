@@ -224,8 +224,26 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
 
 void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
+    ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     PutPropertySlot slot;
     object->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, value, attributes, slot, getJSFunction(value));
+}
+
+void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
+{
+    ASSERT(value.isGetterSetter() && (attributes & Accessor));
+    ASSERT(propertyName != globalData.propertyNames->underscoreProto);
+
+    PutPropertySlot slot;
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getJSFunction(value));
+
+    // putDirect will change our Structure if we add a new property. For
+    // getters and setters, though, we also need to change our Structure
+    // if we override an existing non-getter or non-setter.
+    if (slot.type() != PutPropertySlot::NewProperty)
+        setStructure(globalData, Structure::attributeChangeTransition(globalData, structure(), propertyName, attributes));
+
+    structure()->setHasGetterSetterProperties(true);
 }
 
 bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
@@ -692,15 +710,11 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
             GetterSetter* accessor = GetterSetter::create(exec);
-            if (oldDescriptor.getterPresent()) {
-                attributes |= Accessor;
+            if (oldDescriptor.getterPresent())
                 accessor->setGetter(exec->globalData(), oldDescriptor.getterObject());
-            }
-            if (oldDescriptor.setterPresent()) {
-                attributes |= Accessor;
+            if (oldDescriptor.setterPresent())
                 accessor->setSetter(exec->globalData(), oldDescriptor.setterObject());
-            }
-            target->methodTable()->putDirectVirtual(target, exec, propertyName, accessor, attributes);
+            target->putDirectAccessor(exec->globalData(), propertyName, accessor, attributes | Accessor);
             return true;
         }
         JSValue newValue = jsUndefined();
@@ -708,21 +722,32 @@ static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& p
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->methodTable()->putDirectVirtual(target, exec, propertyName, newValue, attributes & ~Accessor);
+        target->putDirect(exec->globalData(), propertyName, newValue, attributes & ~Accessor);
         return true;
     }
     attributes &= ~ReadOnly;
+    GetterSetter* accessor = GetterSetter::create(exec);
+
     if (descriptor.getterPresent())
-        target->methodTable()->defineGetter(target, exec, propertyName, descriptor.getterObject(), attributes);
-    if (exec->hadException())
-        return false;
+        accessor->setGetter(exec->globalData(), descriptor.getterObject());
+    else if (oldDescriptor.getterPresent())
+        accessor->setGetter(exec->globalData(), oldDescriptor.getterObject());
     if (descriptor.setterPresent())
-        target->methodTable()->defineSetter(target, exec, propertyName, descriptor.setterObject(), attributes);
-    return !exec->hadException();
+        accessor->setSetter(exec->globalData(), descriptor.setterObject());
+    else if (oldDescriptor.setterPresent())
+        accessor->setSetter(exec->globalData(), oldDescriptor.setterObject());
+
+    target->putDirectAccessor(exec->globalData(), propertyName, accessor, attributes | Accessor);
+    return true;
 }
 
 bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
+    // __proto__ is magic; we don't currently support setting it as a regular property.
+    // Silent filter out calls to set __proto__ at an early stage; pretend all is okay.
+    if (propertyName == exec->propertyNames().underscoreProto)
+        return true;
+
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
     if (!object->methodTable()->getOwnPropertyDescriptor(object, exec, propertyName, current)) {
@@ -832,9 +857,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
     }
     object->methodTable()->deleteProperty(object, exec, propertyName);
     unsigned attrs = current.attributesWithOverride(descriptor);
-    if (descriptor.setterPresent() || descriptor.getterPresent())
-        attrs |= Accessor;
-    object->putDirect(exec->globalData(), propertyName, getterSetter, attrs);
+    object->putDirectAccessor(exec->globalData(), propertyName, getterSetter, attrs | Accessor);
     return true;
 }
 

@@ -1573,22 +1573,13 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     return value;
 }
 
-RegisterID* BytecodeGenerator::emitPutGetter(RegisterID* base, const Identifier& property, RegisterID* value)
+void BytecodeGenerator::emitPutGetterSetter(RegisterID* base, const Identifier& property, RegisterID* getter, RegisterID* setter)
 {
-    emitOpcode(op_put_getter);
+    emitOpcode(op_put_getter_setter);
     instructions().append(base->index());
     instructions().append(addConstant(property));
-    instructions().append(value->index());
-    return value;
-}
-
-RegisterID* BytecodeGenerator::emitPutSetter(RegisterID* base, const Identifier& property, RegisterID* value)
-{
-    emitOpcode(op_put_setter);
-    instructions().append(base->index());
-    instructions().append(addConstant(property));
-    instructions().append(value->index());
-    return value;
+    instructions().append(getter->index());
+    instructions().append(setter->index());
 }
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)

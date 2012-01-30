@@ -4961,52 +4961,41 @@ skip_id_custom_self:
         int result = vPC[1].u.operand;
         return callFrame->r(result).jsValue();
     }
-    DEFINE_OPCODE(op_put_getter) {
-        /* put_getter base(r) property(id) function(r)
+    DEFINE_OPCODE(op_put_getter_setter) {
+        /* put_getter_setter base(r) property(id) getter(r) setter(r)
 
-           Sets register function on register base as the getter named
-           by identifier property. Base and function are assumed to be
-           objects as this op should only be used for getters defined
-           in object literal form.
-
-           Unlike many opcodes, this one does not write any output to
-           the register file.
-        */
-        int base = vPC[1].u.operand;
-        int property = vPC[2].u.operand;
-        int function = vPC[3].u.operand;
-
-        ASSERT(callFrame->r(base).jsValue().isObject());
-        JSObject* baseObj = asObject(callFrame->r(base).jsValue());
-        Identifier& ident = codeBlock->identifier(property);
-        ASSERT(callFrame->r(function).jsValue().isObject());
-        baseObj->methodTable()->defineGetter(baseObj, callFrame, ident, asObject(callFrame->r(function).jsValue()), 0);
-
-        vPC += OPCODE_LENGTH(op_put_getter);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_put_setter) {
-        /* put_setter base(r) property(id) function(r)
-
-           Sets register function on register base as the setter named
-           by identifier property. Base and function are assumed to be
-           objects as this op should only be used for setters defined
-           in object literal form.
+           Puts accessor descriptor to register base as the named
+           identifier property. Base and function may be objects
+           or undefined, this op should only be used for accessors
+           defined in object literal form.
 
            Unlike many opcodes, this one does not write any output to
            the register file.
         */
         int base = vPC[1].u.operand;
         int property = vPC[2].u.operand;
-        int function = vPC[3].u.operand;
+        int getterReg = vPC[3].u.operand;
+        int setterReg = vPC[4].u.operand;
 
         ASSERT(callFrame->r(base).jsValue().isObject());
         JSObject* baseObj = asObject(callFrame->r(base).jsValue());
         Identifier& ident = codeBlock->identifier(property);
-        ASSERT(callFrame->r(function).jsValue().isObject());
-        baseObj->methodTable()->defineSetter(baseObj, callFrame, ident, asObject(callFrame->r(function).jsValue()), 0);
 
-        vPC += OPCODE_LENGTH(op_put_setter);
+        GetterSetter* accessor = GetterSetter::create(callFrame);
+
+        JSValue getter = callFrame->r(getterReg).jsValue();
+        JSValue setter = callFrame->r(setterReg).jsValue();
+        ASSERT(getter.isObject() || getter.isUndefined());
+        ASSERT(setter.isObject() || setter.isUndefined());
+        ASSERT(getter.isObject() || setter.isObject());
+
+        if (!getter.isUndefined())
+            accessor->setGetter(callFrame->globalData(), asObject(getter));
+        if (!setter.isUndefined())
+            accessor->setSetter(callFrame->globalData(), asObject(setter));
+        baseObj->putDirectAccessor(callFrame->globalData(), ident, accessor, Accessor);
+
+        vPC += OPCODE_LENGTH(op_put_getter_setter);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_method_check) {

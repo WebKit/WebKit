@@ -857,10 +857,9 @@ namespace JSC {
         void emit_op_put_by_id(Instruction*);
         void emit_op_put_by_index(Instruction*);
         void emit_op_put_by_val(Instruction*);
-        void emit_op_put_getter(Instruction*);
+        void emit_op_put_getter_setter(Instruction*);
         void emit_op_put_global_var(Instruction*);
         void emit_op_put_scoped_var(Instruction*);
-        void emit_op_put_setter(Instruction*);
         void emit_op_resolve(Instruction*);
         void emit_op_resolve_base(Instruction*);
         void emit_op_ensure_property_exists(Instruction*);

@@ -132,8 +132,7 @@ namespace JSC {
         macro(op_put_by_val, 4) \
         macro(op_del_by_val, 4) \
         macro(op_put_by_index, 4) \
-        macro(op_put_getter, 4) \
-        macro(op_put_setter, 4) \
+        macro(op_put_getter_setter, 5) \
         \
         macro(op_jmp, 2) \
         macro(op_jtrue, 3) \

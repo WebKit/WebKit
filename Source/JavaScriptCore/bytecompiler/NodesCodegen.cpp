@@ -236,27 +236,79 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     
     generator.emitNewObject(newObj.get());
     
-    for (PropertyListNode* p = this; p; p = p->m_next) {
-        RegisterID* value = generator.emitNode(p->m_node->m_assign);
-        
-        switch (p->m_node->m_type) {
-            case PropertyNode::Constant: {
-                generator.emitDirectPutById(newObj.get(), p->m_node->name(), value);
-                break;
+    // Fast case: this loop just handles regular value properties.
+    PropertyListNode* p = this;
+    for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next)
+        generator.emitDirectPutById(newObj.get(), p->m_node->name(), generator.emitNode(p->m_node->m_assign));
+
+    // Were there any get/set properties?
+    if (p) {
+        typedef std::pair<PropertyNode*, PropertyNode*> GetterSetterPair;
+        typedef HashMap<StringImpl*, GetterSetterPair> GetterSetterMap;
+        GetterSetterMap map;
+
+        // Build a map, pairing get/set values together.
+        for (PropertyListNode* q = p; q; q = q->m_next) {
+            PropertyNode* node = q->m_node;
+            if (node->m_type == PropertyNode::Constant)
+                continue;
+
+            GetterSetterPair pair(node, 0);
+            std::pair<GetterSetterMap::iterator, bool> result = map.add(node->name().impl(), pair);
+            if (!result.second)
+                result.first->second.second = node;
+        }
+
+        // Iterate over the remaining properties in the list.
+        for (; p; p = p->m_next) {
+            PropertyNode* node = p->m_node;
+            RegisterID* value = generator.emitNode(node->m_assign);
+
+            // Handle regular values.
+            if (node->m_type == PropertyNode::Constant) {
+                generator.emitDirectPutById(newObj.get(), node->name(), value);
+                continue;
             }
-            case PropertyNode::Getter: {
-                generator.emitPutGetter(newObj.get(), p->m_node->name(), value);
-                break;
+
+            // This is a get/set property, find its entry in the map.
+            ASSERT(node->m_type == PropertyNode::Getter || node->m_type == PropertyNode::Setter);
+            GetterSetterMap::iterator it = map.find(node->name().impl());
+            ASSERT(it != map.end());
+            GetterSetterPair& pair = it->second;
+
+            // Was this already generated as a part of its partner?
+            if (pair.second == node)
+                continue;
+    
+            // Generate the paired node now.
+            RefPtr<RegisterID> getterReg;
+            RefPtr<RegisterID> setterReg;
+
+            if (node->m_type == PropertyNode::Getter) {
+                getterReg = value;
+                if (pair.second) {
+                    ASSERT(pair.second->m_type == PropertyNode::Setter);
+                    setterReg = generator.emitNode(pair.second->m_assign);
+                } else {
+                    setterReg = generator.newTemporary();
+                    generator.emitLoad(setterReg.get(), jsUndefined());
+                }
+            } else {
+                ASSERT(node->m_type == PropertyNode::Setter);
+                setterReg = value;
+                if (pair.second) {
+                    ASSERT(pair.second->m_type == PropertyNode::Getter);
+                    getterReg = generator.emitNode(pair.second->m_assign);
+                } else {
+                    getterReg = generator.newTemporary();
+                    generator.emitLoad(getterReg.get(), jsUndefined());
+                }
             }
-            case PropertyNode::Setter: {
-                generator.emitPutSetter(newObj.get(), p->m_node->name(), value);
-                break;
-            }
-            default:
-                ASSERT_NOT_REACHED();
+
+            generator.emitPutGetterSetter(newObj.get(), node->name(), getterReg.get(), setterReg.get());
         }
     }
-    
+
     return generator.moveToDestinationIfNeeded(dst, newObj.get());
 }
 
