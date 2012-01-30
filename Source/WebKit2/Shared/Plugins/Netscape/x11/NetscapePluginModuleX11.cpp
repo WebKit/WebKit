@@ -172,6 +172,19 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
 
 void NetscapePluginModule::determineQuirks()
 {
+#if CPU(X86_64)
+    PluginModuleInfo plugin;
+    if (!getPluginInfoForLoadedPlugin(plugin))
+        return;
+
+    Vector<MimeClassInfo> mimeTypes = plugin.info.mimes;
+    for (size_t i = 0; i < mimeTypes.size(); ++i) {
+        if (mimeTypes[i].type == "application/x-shockwave-flash") {
+            m_pluginQuirks.add(PluginQuirks::IgnoreRightClickInWindowlessMode);
+            break;
+        }
+    }
+#endif
 }
 
 } // namespace WebKit
