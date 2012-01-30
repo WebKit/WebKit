@@ -46,15 +46,18 @@ class HTMLContentElement;
 class ContentSelectorQuery {
     WTF_MAKE_NONCOPYABLE(ContentSelectorQuery);
 public:
-    explicit ContentSelectorQuery(HTMLContentElement*);
+    explicit ContentSelectorQuery(const HTMLContentElement*);
 
+    bool isValidSelector() const;
     bool matches(Node*) const;
-
 private:
-    HTMLContentElement* m_contentElement;
+    bool validateSelectorList();
+
+    const HTMLContentElement* m_contentElement;
     SelectorDataList m_selectors;
     CSSSelectorList m_selectorList;
     SelectorChecker m_selectorChecker;
+    bool m_isValidSelector;
 };
 
 }

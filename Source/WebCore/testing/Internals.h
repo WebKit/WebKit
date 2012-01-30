@@ -70,6 +70,7 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
+    bool isValidContentSelect(Element* contentElement, ExceptionCode&);
 
 #if ENABLE(INPUT_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);

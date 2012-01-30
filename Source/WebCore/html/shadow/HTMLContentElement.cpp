@@ -105,6 +105,12 @@ const AtomicString& HTMLContentElement::select() const
     return getAttribute(selectAttr);
 }
 
+bool HTMLContentElement::isSelectValid() const
+{
+    ContentSelectorQuery query(this);
+    return query.isValidSelector();
+}
+
 void HTMLContentElement::setSelect(const AtomicString& selectValue)
 {
     setAttribute(selectAttr, selectValue);

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test checks select attribute of content element is valid.</p>
+<pre id="console"></pre>
+<div id="container"></div>
+
+<script>
+var container = document.getElementById("container");
+
+var content;
+function test(select, valid) {
+    content = internals.createContentElement(document);
+    if (select != null)
+        content.setAttribute('select', select);
+
+    debug(select);
+    if (valid)
+        shouldBe("internals.isValidContentSelect(content)", "true");
+    else
+        shouldBe("internals.isValidContentSelect(content)", "false");
+}
+
+var dataOfValidCases = [
+    null, '',
+    'ns|div', '*|div', '|div', 'div',
+    'ns|*', '*|*', '|*', '*',
+    '.elem', 'p.elem', 'foo.elem', '*.right',
+    '#elem', 'p#elem', 'foo#elem', '*#something',
+    'div[title]', 'div[class="example"]', 'div[hello="Cleveland"][goodbye="Columbus"]',
+    'div[rel~="copyright"]', 'div[href="http://www.example.com/"]',
+    'div[hreflang|="en"]', 'div[character=romeo]',
+    'div:link', 'div:visited', 'div:target', 'div:enabled', 'div:checked',
+    'div:indeterminate', 'div:nth-child(1)', 'div:nth-last-child(1)', 'div:nth-of-type(1)',
+    'div:nth-last-of-type(1)', 'div:first-child', 'div:last-child', 'div:first-of-type',
+    'div:last-of-type', 'div:only-of-type',
+    'div:first-of-type:last-of-type', 'div.elem:visited', '*:visited',
+    'div, div', 'div:first-of-type, div', 'div, div:first-of-type', 'div:first-of-type, div:last-of-type',
+    ' div,      div     ',
+];
+
+var dataOfInvalidCases = [
+    'div div', 'div > div', 'div + div', 'div ~ div',
+    'div:not(div)', 'div:root', 'div:lang(en)',
+    'div::before', 'div::after', 'div::first-line', 'div::first-letter',
+    'div:active', 'div:hover', 'div:focus',
+    'div div:not(div)', 'div:not(div) div', 'div span div',
+    'div < div', 'div - dvi', '< div', '+div', '~div', 'div:!', '!:!', 'div::!', 'div::first_of_type',
+    'pe;ro', '@screen', '@import "style.css"', 'div :first-of-type', 'div::first-of-type',
+    ' div, ,div', 'div \'\''
+]
+
+function doTest() {
+    if (!window.layoutTestController || !window.internals) {
+        return;
+    }
+
+    layoutTestController.dumpAsText();
+
+    for (var i = 0; i < dataOfValidCases.length; ++i) {
+         test(dataOfValidCases[i], true);
+    }
+    for (var i = 0; i < dataOfInvalidCases.length; ++i) {
+         test(dataOfInvalidCases[i], false);
+    }
+}
+
+doTest();
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

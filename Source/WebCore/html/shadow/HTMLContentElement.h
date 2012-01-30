@@ -63,6 +63,8 @@ public:
     const ShadowInclusionList* inclusions() const { return m_inclusions.get(); }
     bool hasInclusion() const { return inclusions()->first(); }
 
+    virtual bool isSelectValid() const;
+
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
 

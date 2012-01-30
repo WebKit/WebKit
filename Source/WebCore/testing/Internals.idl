@@ -44,6 +44,7 @@ module window {
         DOMString shadowPseudoId(in Element element) raises (DOMException);
         Element createContentElement(in Document document) raises(DOMException);
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
+        boolean isValidContentSelect(in Element contentElement) raises(DOMException);
 
 #if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
         void selectColorInColorChooser(in Element element, in DOMString colorValue);

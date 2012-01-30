@@ -147,6 +147,16 @@ Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& i
     return toShadowRoot(shadowRoot)->getElementById(id);
 }
 
+bool Internals::isValidContentSelect(Element* contentElement, ExceptionCode& ec)
+{
+    if (!contentElement || !contentElement->isContentElement()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return toHTMLContentElement(contentElement)->isSelectValid();
+}
+
 String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
 {
     if (!element) {
