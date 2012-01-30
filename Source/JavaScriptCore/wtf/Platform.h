@@ -386,6 +386,9 @@
 #define WTF_OS_WINDOWS 1
 #endif
 
+#define WTF_OS_WIN ERROR "USE WINDOWS WITH OS NOT WIN"
+#define WTF_OS_MAC ERROR "USE MAC_OS_X WITH OS NOT MAC"
+
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
     || OS(ANDROID)          \
