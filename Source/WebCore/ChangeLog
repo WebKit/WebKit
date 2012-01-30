@@ -1,3 +1,12 @@
+2012-01-30  Rémi Duraffort  <remi.duraffort@st.com>
+
+        [GTK] Fix compilation with gtk v2.20.1
+        https://bugs.webkit.org/show_bug.cgi?id=69418
+
+        Unreviewed build fix
+
+        * platform/gtk/GtkDragAndDropHelper.cpp:
+
 2012-01-30  Martin Robinson  <mrobinson@igalia.com>
 
         [Freetype] Some text in Planet GNOME renders in the wrong place
