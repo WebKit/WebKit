@@ -1,3 +1,21 @@
+2012-01-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rolling out r106222.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.handle_test_list):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_repeat_each):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::setIsPixelTest):
+
 2012-01-30  Hans Wennborg  <hans@chromium.org>
 
         Unreviewed, rolling out r106219.

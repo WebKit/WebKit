@@ -385,11 +385,6 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['--repeat-each', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, ['passes/image.html', 'passes/image.html', 'passes/text.html', 'passes/text.html'])
 
-    def test_skip_pixel_test_if_no_baseline_option(self):
-        tests_to_run = ['passes/image.html', 'passes/text.html']
-        tests_run = get_tests_run(['--skip-pixel-test-if-no-baseline'] + tests_to_run, tests_included=True, flatten_batches=True)
-        self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html'])
-
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
         tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)

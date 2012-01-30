@@ -178,9 +178,6 @@ def _set_up_derived_options(port, options):
     if options.ignore_metrics and (options.new_baseline or options.reset_results):
         warnings.append("--ignore-metrics has no effect with --new-baselines or with --reset-results")
 
-    if options.skip_pixel_test_if_no_baseline and not options.pixel_tests:
-        warnings.append("--skip-pixel-test-if-no-baseline is only supported with -p (--pixel-tests)")
-
     return warnings
 
 
@@ -317,9 +314,6 @@ def parse_args(args=None):
         optparse.make_option("--no-new-test-results", action="store_false",
             dest="new_test_results", default=True,
             help="Don't create new baselines when no expected results exist"),
-        optparse.make_option("--skip-pixel-test-if-no-baseline", action="store_true",
-            dest="skip_pixel_test_if_no_baseline", help="Do not generate and check pixel result in the case when "
-                 "no image baseline is available for the test."),
         optparse.make_option("--skip-failing-tests", action="store_true",
             default=False, help="Skip tests that are expected to fail. "
                  "Note: When using this option, you might miss new crashes "

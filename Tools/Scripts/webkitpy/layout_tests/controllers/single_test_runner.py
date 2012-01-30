@@ -55,7 +55,6 @@ class SingleTestRunner:
         self._timeout = test_input.timeout
         self._worker_name = worker_name
         self._test_name = test_input.test_name
-        self._should_run_pixel_test = test_input.should_run_pixel_test
 
         self._is_reftest = False
         self._reference_files = port.reference_files(self._test_name)
@@ -78,8 +77,6 @@ class SingleTestRunner:
                                  self._port.expected_audio(self._test_name))
 
     def _should_fetch_expected_checksum(self):
-        if not self._should_run_pixel_test:
-            return False
         return (self._options.pixel_tests and
                 not (self._options.new_baseline or self._options.reset_results))
 

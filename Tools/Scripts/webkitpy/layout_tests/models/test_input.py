@@ -36,7 +36,7 @@ class TestInput:
     ref_file = None
     is_mismatch_reftest = None
 
-    def __init__(self, test_name, timeout, should_run_pixel_test=True):
+    def __init__(self, test_name, timeout):
         """Holds the input parameters for a test.
         Args:
           test: name of test (not an absolute path!)
@@ -46,7 +46,6 @@ class TestInput:
           """
         self.test_name = test_name
         self.timeout = timeout
-        self.should_run_pixel_test = should_run_pixel_test
 
     def __repr__(self):
         return "TestInput('%s', %d)" % (self.test_name, self.timeout)

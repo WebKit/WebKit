@@ -108,9 +108,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         start_time = time.time()
         num_tests = 0
         for test_input in test_list:
-            # FIXME: DumpRenderTree should also supprort --skip-pixel-test-if-no-baseline.
-            if self._port.driver_name() == "WebKitTestRunner" and self._port.get_option('skip_pixel_test_if_no_baseline') and self._port.get_option('pixel_tests'):
-                test_input.should_run_pixel_test = (self._port.expected_image(test_input.test_name) != None)
             self._run_test(test_input)
             num_tests += 1
             self._worker_connection.yield_to_broker()
