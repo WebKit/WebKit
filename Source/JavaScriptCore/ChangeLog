@@ -1,3 +1,15 @@
+2012-01-30  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] OS(QNX) also has TM_GMTOFF, TM_ZONE, and TIMEGM
+        https://bugs.webkit.org/show_bug.cgi?id=77360
+
+        Reviewed by Rob Buis.
+
+        Turn on HAVE(TM_GMTOFF), HAVE(TM_ZONE), and HAVE(TIMEGM)
+        for OS(QNX).
+
+        * wtf/Platform.h:
+
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative Windows build fix.

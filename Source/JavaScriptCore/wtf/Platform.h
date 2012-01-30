@@ -669,7 +669,7 @@
 #endif
 #endif
 
-#if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
+#if !OS(WINDOWS) && !OS(SOLARIS) \
     && !OS(RVCT) \
     && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
