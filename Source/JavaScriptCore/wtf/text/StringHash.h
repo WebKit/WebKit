@@ -100,7 +100,9 @@ namespace WTF {
 
         static unsigned hash(StringImpl* str)
         {
-            return hash(str->characters(), str->length());
+            if (str->is8Bit())
+                return hash(str->characters8(), str->length());
+            return hash(str->characters16(), str->length());
         }
 
         static unsigned hash(const LChar* data, unsigned length)
