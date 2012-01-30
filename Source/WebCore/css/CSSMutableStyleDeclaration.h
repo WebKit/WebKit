@@ -33,28 +33,6 @@ namespace WebCore {
 
 class StyledElement;
 
-class CSSMutableStyleDeclarationConstIterator {
-public:
-    CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current);
-    CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclarationConstIterator& o);
-    ~CSSMutableStyleDeclarationConstIterator();
-
-    const CSSProperty& operator*() const { return *m_current; }
-    const CSSProperty* operator->() const { return m_current; }
-
-    bool operator!=(const CSSMutableStyleDeclarationConstIterator& o) { ASSERT(m_decl == o.m_decl); return m_current != o.m_current; }
-    bool operator==(const CSSMutableStyleDeclarationConstIterator& o) { ASSERT(m_decl == o.m_decl); return m_current == o.m_current; }
-
-    CSSMutableStyleDeclarationConstIterator& operator=(const CSSMutableStyleDeclarationConstIterator& o);
-
-    CSSMutableStyleDeclarationConstIterator& operator++();
-    CSSMutableStyleDeclarationConstIterator& operator--();
-
-private:
-    const CSSMutableStyleDeclaration* m_decl;
-    CSSProperty* m_current;
-};
-
 class CSSMutableStyleDeclaration : public CSSStyleDeclaration {
 public:
     virtual ~CSSMutableStyleDeclaration();
@@ -83,16 +61,6 @@ public:
     { 
         return adoptRef(new CSSMutableStyleDeclaration(element, false));
     }
-    
-    static bool isPropertyName(const String&);
-
-    // Used by StyledElement::copyNonAttributeProperties().
-    void copyPropertiesFrom(const CSSMutableStyleDeclaration&);
-
-    typedef CSSMutableStyleDeclarationConstIterator const_iterator;
-
-    const_iterator begin() { return const_iterator(this, m_properties.begin()); }
-    const_iterator end() { return const_iterator(this, m_properties.end()); }
 
     unsigned propertyCount() const { return m_properties.size(); }
     bool isEmpty() const { return m_properties.isEmpty(); }
@@ -131,7 +99,10 @@ public:
     bool useStrictParsing() const { return m_strictParsing; }
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&);
-    
+
+    // Used by StyledElement::copyNonAttributeProperties().
+    void copyPropertiesFrom(const CSSMutableStyleDeclaration&);
+
     void removeEquivalentProperties(const CSSStyleDeclaration*);
 
     PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;
@@ -190,61 +161,11 @@ private:
 
     virtual bool cssPropertyMatches(const CSSProperty*) const;
 
-    Vector<CSSProperty>::const_iterator findPropertyWithId(int propertyId) const;
-    Vector<CSSProperty>::iterator findPropertyWithId(int propertyId);
+    const CSSProperty* findPropertyWithId(int propertyId) const;
+    CSSProperty* findPropertyWithId(int propertyId);
 
     Vector<CSSProperty, 4> m_properties;
-
-    friend class CSSMutableStyleDeclarationConstIterator;
 };
-
-inline CSSMutableStyleDeclarationConstIterator::CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current)
-: m_decl(decl)
-, m_current(current)
-{
-#ifndef NDEBUG
-    const_cast<CSSMutableStyleDeclaration*>(m_decl)->m_iteratorCount++;
-#endif
-}
-
-inline CSSMutableStyleDeclarationConstIterator::CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclarationConstIterator& o)
-: m_decl(o.m_decl)
-, m_current(o.m_current)
-{
-#ifndef NDEBUG
-    const_cast<CSSMutableStyleDeclaration*>(m_decl)->m_iteratorCount++;
-#endif
-}
-
-inline CSSMutableStyleDeclarationConstIterator::~CSSMutableStyleDeclarationConstIterator()
-{
-#ifndef NDEBUG
-    const_cast<CSSMutableStyleDeclaration*>(m_decl)->m_iteratorCount--;
-#endif
-}
-
-inline CSSMutableStyleDeclarationConstIterator& CSSMutableStyleDeclarationConstIterator::operator=(const CSSMutableStyleDeclarationConstIterator& o)
-{
-    m_decl = o.m_decl;
-    m_current = o.m_current;
-#ifndef NDEBUG
-    const_cast<CSSMutableStyleDeclaration*>(m_decl)->m_iteratorCount++;
-#endif
-    return *this;
-}
-
-inline CSSMutableStyleDeclarationConstIterator& CSSMutableStyleDeclarationConstIterator::operator++()
-{
-    ASSERT(m_current != const_cast<CSSMutableStyleDeclaration*>(m_decl)->m_properties.end());
-    ++m_current;
-    return *this;
-}
-
-inline CSSMutableStyleDeclarationConstIterator& CSSMutableStyleDeclarationConstIterator::operator--()
-{
-    --m_current;
-    return *this;
-}
 
 } // namespace WebCore
 

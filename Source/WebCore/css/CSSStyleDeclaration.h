@@ -89,9 +89,6 @@ protected:
 
     // CSSMutableStyleDeclaration bits:
     bool m_strictParsing : 1;
-#ifndef NDEBUG
-    unsigned m_iteratorCount : 4;
-#endif
     bool m_isElementStyleDeclaration : 1;
     bool m_isInlineStyleDeclaration : 1;
 

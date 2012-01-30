@@ -558,9 +558,9 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
     RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node), AllEditingProperties);
     nodeStyle->removeEquivalentProperties(parentStyle.get());
 
-    CSSMutableStyleDeclaration::const_iterator end = nodeStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = nodeStyle->begin(); it != end; ++it)
-        m_mutableStyle->removeProperty(it->id());
+    unsigned propertyCount = nodeStyle->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i)
+        m_mutableStyle->removeProperty(nodeStyle->propertyAt(i).id());
 }
 
 void EditingStyle::removeNonEditingProperties()
@@ -652,9 +652,9 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
     if (!m_mutableStyle || !inlineStyle)
         return false;
 
-    CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
+    unsigned propertyCount = m_mutableStyle->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(m_mutableStyle->propertyAt(i).id());
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
         if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element))
@@ -836,9 +836,9 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
 
     if (element->hasAttribute(HTMLNames::styleAttr)) {
         if (CSSMutableStyleDeclaration* style = element->inlineStyleDecl()) {
-            CSSMutableStyleDeclaration::const_iterator end = style->end();
-            for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                if (!isEditingProperty(it->id()))
+            unsigned propertyCount = style->propertyCount();
+            for (unsigned i = 0; i < propertyCount; ++i) {
+                if (!isEditingProperty(style->propertyAt(i).id()))
                     return false;
             }
         }
@@ -992,21 +992,22 @@ void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style, CSSPropertyOver
         return;
     }
 
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-        RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(it->id());
+    unsigned propertyCount = style->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        const CSSProperty& property = style->propertyAt(i);
+        RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(property.id());
 
         // text decorations never override values
-        if ((it->id() == CSSPropertyTextDecoration || it->id() == CSSPropertyWebkitTextDecorationsInEffect) && it->value()->isValueList() && value) {
+        if ((property.id() == CSSPropertyTextDecoration || property.id() == CSSPropertyWebkitTextDecorationsInEffect) && property.value()->isValueList() && value) {
             if (value->isValueList()) {
-                mergeTextDecorationValues(static_cast<CSSValueList*>(value.get()), static_cast<CSSValueList*>(it->value()));
+                mergeTextDecorationValues(static_cast<CSSValueList*>(value.get()), static_cast<CSSValueList*>(property.value()));
                 continue;
             }
             value = 0; // text-decoration: none is equivalent to not having the property
         }
 
         if (mode == OverrideValues || (mode == DoNotOverrideValues && !value))
-            m_mutableStyle->setProperty(it->id(), it->value()->cssText(), it->isImportant());
+            m_mutableStyle->setProperty(property.id(), property.value()->cssText(), property.isImportant());
     }
 }
 
@@ -1049,9 +1050,9 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
     RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
     {
-        CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
-        for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
-            const CSSProperty& property = *it;
+        unsigned propertyCount = m_mutableStyle->propertyCount();
+        for (unsigned i = 0; i < propertyCount; ++i) {
+            const CSSProperty& property = m_mutableStyle->propertyAt(i);
             CSSValue* value = property.value();
             if (!value->isPrimitiveValue())
                 continue;
@@ -1066,11 +1067,10 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
 
 static void removePropertiesInStyle(CSSMutableStyleDeclaration* styleToRemovePropertiesFrom, CSSMutableStyleDeclaration* style)
 {
-    Vector<int> propertiesToRemove(style->propertyCount());
-    size_t i = 0;
-    CSSMutableStyleDeclaration::const_iterator end = style->end();
-    for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it, ++i)
-        propertiesToRemove[i] = it->id();
+    unsigned propertyCount = style->propertyCount();
+    Vector<int> propertiesToRemove(propertyCount);
+    for (unsigned i = 0; i < propertyCount; ++i)
+        propertiesToRemove[i] = style->propertyAt(i).id();
 
     styleToRemovePropertiesFrom->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
 }

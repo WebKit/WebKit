@@ -186,7 +186,6 @@ CSSMutableStyleDeclaration::~CSSMutableStyleDeclaration()
 
 void CSSMutableStyleDeclaration::copyPropertiesFrom(const CSSMutableStyleDeclaration& other)
 {
-    ASSERT(!m_iteratorCount);
     m_properties = other.m_properties;
 }
 
@@ -613,8 +612,6 @@ bool CSSMutableStyleDeclaration::removeShorthandProperty(int propertyID, bool no
 
 String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyChanged, bool returnText)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -684,8 +681,6 @@ bool CSSMutableStyleDeclaration::isPropertyImplicit(int propertyID) const
 
 bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value, bool important, bool notifyChanged)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -718,8 +713,6 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
 
 void CSSMutableStyleDeclaration::setPropertyInternal(const CSSProperty& property, CSSProperty* slot)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -758,8 +751,6 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, double value, CSSPr
 
 void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -777,8 +768,6 @@ void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration
 
 void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty* const* properties, int numProperties)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -797,8 +786,6 @@ void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty* const* p
 
 void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -897,8 +884,6 @@ void CSSMutableStyleDeclaration::setCssText(const String& text, ExceptionCode& e
 
 void CSSMutableStyleDeclaration::merge(const CSSMutableStyleDeclaration* other, bool argOverridesOnConflict)
 {
-    ASSERT(!m_iteratorCount);
-
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
@@ -971,8 +956,6 @@ void CSSMutableStyleDeclaration::removeBlockProperties()
 
 bool CSSMutableStyleDeclaration::removePropertiesInSet(const int* set, unsigned length, bool notifyChanged)
 {
-    ASSERT(!m_iteratorCount);
-
     if (m_properties.isEmpty())
         return false;
 

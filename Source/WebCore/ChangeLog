@@ -1,3 +1,36 @@
+2012-01-30  Antti Koivisto  <antti@apple.com>
+
+        Kill CSSMutableStyleDeclarationConstIterator
+        https://bugs.webkit.org/show_bug.cgi?id=77342
+
+        Reviewed by Sam Weinig.
+
+        CSSMutableStyleDeclaration is an array and should be iterated using an index. This simplifies the code.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::copyPropertiesFrom):
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setPropertyInternal):
+        (WebCore::CSSMutableStyleDeclaration::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperty):
+        (WebCore::CSSMutableStyleDeclaration::merge):
+        (WebCore::CSSMutableStyleDeclaration::removePropertiesInSet):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore):
+        (WebCore::CSSMutableStyleDeclaration::createForSVGFontFaceElement):
+        (CSSMutableStyleDeclaration):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::CSSStyleDeclaration):
+        * css/CSSStyleDeclaration.h:
+        (CSSStyleDeclaration):
+        ():
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        * editing/EditingStyle.cpp:
+
 2012-01-30  Michael Saboff  <msaboff@apple.com>
 
         Dromaeo tests call parseSimpleLengthValue() on 8 bit strings

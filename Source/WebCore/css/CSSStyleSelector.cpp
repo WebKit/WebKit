@@ -1394,10 +1394,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 #endif
 
     // Add all the animating properties to the keyframe.
-    if (keyframeRule->style()) {
-        CSSMutableStyleDeclaration::const_iterator end = keyframeRule->style()->end();
-        for (CSSMutableStyleDeclaration::const_iterator it = keyframeRule->style()->begin(); it != end; ++it) {
-            int property = (*it).id();
+    if (CSSMutableStyleDeclaration* styleDeclaration = keyframeRule->style()) {
+        unsigned propertyCount = styleDeclaration->propertyCount();
+        for (unsigned i = 0; i < propertyCount; ++i) {
+            int property = styleDeclaration->propertyAt(i).id();
             // Timing-function within keyframes is special, because it is not animated; it just
             // describes the timing function between this keyframe and the next.
             if (property != CSSPropertyWebkitAnimationTimingFunction)
@@ -2256,12 +2256,11 @@ template <bool applyFirst>
 void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRule());
-    CSSMutableStyleDeclaration::const_iterator end = styleDeclaration->end();
-
     bool styleDeclarationInsideRegionRule = m_regionForStyling ? isInsideRegionRule(styleDeclaration) : false;
 
-    for (CSSMutableStyleDeclaration::const_iterator it = styleDeclaration->begin(); it != end; ++it) {
-        const CSSProperty& current = *it;
+    unsigned propertyCount = styleDeclaration->propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        const CSSProperty& current = styleDeclaration->propertyAt(i);
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {

@@ -41,9 +41,6 @@ namespace WebCore {
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parentRule)
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
     , m_isElementStyleDeclaration(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(parentRule)
@@ -52,9 +49,6 @@ CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parentRule)
     
 CSSStyleDeclaration::CSSStyleDeclaration(StyledElement* parentElement, bool isInline)
     : m_strictParsing(false)
-#ifndef NDEBUG
-    , m_iteratorCount(0)
-#endif
     , m_isElementStyleDeclaration(true)
     , m_isInlineStyleDeclaration(isInline)
     , m_parent(parentElement)
