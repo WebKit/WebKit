@@ -398,6 +398,7 @@ module window {
         attribute EntityConstructor Entity;
         attribute EntityReferenceConstructor EntityReference;
         attribute ProcessingInstructionConstructor ProcessingInstruction;
+        attribute [Conditional=SHADOW_DOM, EnabledAtRuntime=shadowDOM] ShadowRootConstructor WebKitShadowRoot;
 
         attribute HTMLDocumentConstructor HTMLDocument;
 

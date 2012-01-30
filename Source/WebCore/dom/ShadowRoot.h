@@ -27,17 +27,19 @@
 #ifndef ShadowRoot_h
 #define ShadowRoot_h
 
+#include "ExceptionCode.h"
 #include "TreeScope.h"
 
 namespace WebCore {
 
+class ContentInclusionSelector;
 class Document;
 class HTMLContentElement;
-class ContentInclusionSelector;
 
 class ShadowRoot : public TreeScope {
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
+    static PassRefPtr<ShadowRoot> create(Element*, ExceptionCode&);
 
     void recalcShadowTreeStyle(StyleChange);
 

@@ -1,3 +1,22 @@
+2012-01-29  Hayato Ito  <hayato@chromium.org>
+
+        Add a ShadowRoot constructor as 'WebKitShadowRootConstructor', enabled by SHADOW_DOM flag.
+        https://bugs.webkit.org/show_bug.cgi?id=76354
+
+        Reviewed by Hajime Morita.
+
+        We use vendor-prefixed name, 'WebKitShadowRoot', instead of 'ShadowRoot'
+        since this is a feature under development.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        (WebCore):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        (ShadowRoot):
+        * dom/ShadowRoot.idl:
+        * page/DOMWindow.idl:
+
 2012-01-29  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Use decoding swizzle only on libjpeg-turbo 1.1.90+

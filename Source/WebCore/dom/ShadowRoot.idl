@@ -28,7 +28,9 @@ module core {
 
     interface [
         Conditional=SHADOW_DOM,
-        EnabledAtRuntime=shadowDOM
+        EnabledAtRuntime=shadowDOM,
+        Constructor(in Element host),
+        ConstructorRaisesException
     ] ShadowRoot : Node {
         readonly attribute Element host;
     };

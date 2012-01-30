@@ -10,9 +10,15 @@ description("Tests for ShadowRoot JS APIs. Can only run within DRT");
 
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
+shouldThrow("new WebKitShadowRoot()");
+shouldThrow("new WebKitShadowRoot(undefined)");
+shouldThrow("new WebKitShadowRoot(null)");
+shouldThrow("new WebKitShadowRoot(1)");
 var shadowHost = document.createElement('div');
-internals.ensureShadowRoot(shadowHost);
-var shadowRoot = internals.shadowRoot(shadowHost);
+var shadowRoot = new WebKitShadowRoot(shadowHost);
+shouldBe("shadowHost", "shadowRoot.host");
+shouldThrow("new WebKitShadowRoot(shadowHost)");
+debug('The previous test should not have side effects.');
 shouldBe("shadowHost", "shadowRoot.host");
 
 </script>

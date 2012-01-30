@@ -53,6 +53,19 @@ ShadowRoot::~ShadowRoot()
 {
 }
 
+PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
+{
+    if (!element || element->shadowRoot()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return 0;
+    }
+    RefPtr<ShadowRoot> shadowRoot = create(element->document());
+    element->setShadowRoot(shadowRoot, ec);
+    if (ec)
+        return 0;
+    return shadowRoot.release();
+}
+
 String ShadowRoot::nodeName() const
 {
     return "#shadow-root";
