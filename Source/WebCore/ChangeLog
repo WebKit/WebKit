@@ -1,3 +1,10 @@
+2012-01-30  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: follow up to r105625, use proper event categoty in inspector frontend.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+
 2012-01-30  Parag Radke  <nrqv63@motorola.com>
 
         REGRESSION (r82580): Reproducible crash in CSSPrimitiveValue::computeLengthDouble
