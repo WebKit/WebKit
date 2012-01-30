@@ -35,9 +35,8 @@
  * @param {string|undefined} subtype
  * @param {*} value
  * @param {string=} description
- * @param {string|undefined} functionName
  */
-WebInspector.RemoteObject = function(objectId, type, subtype, value, description, functionName)
+WebInspector.RemoteObject = function(objectId, type, subtype, value, description)
 {
     this._type = type;
     this._subtype = subtype;
@@ -45,7 +44,6 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
         // handle
         this._objectId = objectId;
         this._description = description;
-        this._functionName = functionName;
         this._hasChildren = true;
     } else {
         // Primitive or null object.
@@ -106,7 +104,7 @@ WebInspector.RemoteObject.fromPayload = function(payload)
 {
     console.assert(typeof payload === "object", "Remote object payload should only be an object");
 
-    return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.functionName);
+    return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description);
 }
 
 /**
@@ -148,12 +146,6 @@ WebInspector.RemoteObject.prototype = {
     get description()
     {
         return this._description;
-    },
-
-    /** @return {string|undefined} */
-    get functionName()
-    {
-        return this._functionName;
     },
 
     /** @return {boolean} */

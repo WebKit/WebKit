@@ -1,3 +1,11 @@
+2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix inspector front-end compilation.
+
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPayload):
+
 2012-01-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         Node::parentOrHostElement(): Node::shadowHost() already returns an Element*
