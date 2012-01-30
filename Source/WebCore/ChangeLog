@@ -1,3 +1,35 @@
+2012-01-30  ChangSeok Oh  <shivamidow@gmail.com>
+
+        Make GraphicsContext3DPrivate of GTK port shareable.
+        https://bugs.webkit.org/show_bug.cgi?id=77296
+
+        Reviewed by Eric Seidel.
+
+        GraphicsContext3DPrivate.cpp/h of GTK port look shareable with another port
+        using glx backend for WebGL. For example, EFL port.
+        Moved GraphicsContext3DPrivate.cpp and its header into Source/WebCore/platform/graphics/glx.
+
+        No new tests required, because of no new feature.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/graphics/glx/GraphicsContext3DPrivate.cpp: Renamed from Source/WebCore/platform/graphics/gtk/GraphicsContext3DPrivate.cpp.
+        (sharedDisplay):
+        (WebCore):
+        (WebCore::activeGraphicsContexts):
+        (WebCore::GraphicsContext3DPrivate::addActiveGraphicsContext):
+        (WebCore::GraphicsContext3DPrivate::removeActiveGraphicsContext):
+        (WebCore::GraphicsContext3DPrivate::cleanupActiveContextsAtExit):
+        (WebCore::GraphicsContext3DPrivate::create):
+        (WebCore::GraphicsContext3DPrivate::createPbufferContext):
+        (WebCore::GraphicsContext3DPrivate::createPixmapContext):
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+        * platform/graphics/glx/GraphicsContext3DPrivate.h: Renamed from Source/WebCore/platform/graphics/gtk/GraphicsContext3DPrivate.h.
+        (WebCore):
+        (GraphicsContext3DPrivate):
+
 2012-01-26  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation

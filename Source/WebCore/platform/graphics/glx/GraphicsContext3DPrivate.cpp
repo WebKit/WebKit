@@ -240,9 +240,8 @@ bool GraphicsContext3DPrivate::makeContextCurrent()
         return true;
     if (!m_context)
         return false;
-    if (m_pbuffer) {
+    if (m_pbuffer)
         return ::glXMakeCurrent(sharedDisplay(), m_pbuffer, m_context);
-    }
 
     ASSERT(m_glxPixmap);
     return ::glXMakeCurrent(sharedDisplay(), m_glxPixmap, m_context);

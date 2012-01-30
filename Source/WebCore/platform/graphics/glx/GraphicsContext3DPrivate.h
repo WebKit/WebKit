@@ -33,12 +33,12 @@ namespace WebCore {
 class GraphicsContext3D;
 
 class GraphicsContext3DPrivate {
-    public:
+public:
     static PassOwnPtr<GraphicsContext3DPrivate> create();
     ~GraphicsContext3DPrivate();
     bool makeContextCurrent();
 
-    private:
+private:
     friend class GraphicsContext3D;
     static GraphicsContext3DPrivate* createPbufferContext();
     static GraphicsContext3DPrivate* createPixmapContext();

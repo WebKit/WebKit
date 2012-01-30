@@ -101,6 +101,7 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/cairo \
 	-I$(srcdir)/Source/WebCore/platform/audio/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/Source/WebCore/platform/graphics/glx \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
