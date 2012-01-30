@@ -3141,6 +3141,8 @@ webcore_sources += \
 	Source/WebCore/platform/mock/GeolocationServiceMock.h \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.cpp \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.h \
+	Source/WebCore/platform/mock/SpeechInputClientMock.cpp \
+	Source/WebCore/platform/mock/SpeechInputClientMock.h \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.h \
 	Source/WebCore/platform/network/AuthenticationClient.h \

@@ -1,3 +1,37 @@
+2012-01-30  Hans Wennborg  <hans@chromium.org>
+
+        Unreviewed, rolling out r106219.
+        http://trac.webkit.org/changeset/106219
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        This broke Chromium's test_shell.
+
+        * WebKit.gyp:
+        * public/WebSpeechInputControllerMock.h: Added.
+        (WebKit):
+        (WebSpeechInputControllerMock):
+        (WebKit::WebSpeechInputControllerMock::~WebSpeechInputControllerMock):
+        * public/WebSpeechInputResult.h:
+        (WebSpeechInputResult):
+        * src/WebSpeechInputControllerMockImpl.cpp: Added.
+        (WebKit):
+        (WebKit::WebSpeechInputControllerMock::create):
+        (WebKit::WebSpeechInputControllerMockImpl::WebSpeechInputControllerMockImpl):
+        (WebKit::WebSpeechInputControllerMockImpl::~WebSpeechInputControllerMockImpl):
+        (WebKit::WebSpeechInputControllerMockImpl::addMockRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::clearResults):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecording):
+        (WebKit::WebSpeechInputControllerMockImpl::didCompleteRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::setRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::cancelRecognition):
+        (WebKit::WebSpeechInputControllerMockImpl::stopRecording):
+        * src/WebSpeechInputControllerMockImpl.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSpeechInputControllerMockImpl):
+        * src/WebSpeechInputResult.cpp:
+
 2012-01-26  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation

@@ -1,3 +1,30 @@
+2012-01-30  Hans Wennborg  <hans@chromium.org>
+
+        Unreviewed, rolling out r106219.
+        http://trac.webkit.org/changeset/106219
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        This broke Chromium's test_shell.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mock/SpeechInputClientMock.cpp: Added.
+        (WebCore):
+        (WebCore::SpeechInputClientMock::SpeechInputClientMock):
+        (WebCore::SpeechInputClientMock::setListener):
+        (WebCore::SpeechInputClientMock::startRecognition):
+        (WebCore::SpeechInputClientMock::stopRecording):
+        (WebCore::SpeechInputClientMock::cancelRecognition):
+        (WebCore::SpeechInputClientMock::addRecognitionResult):
+        (WebCore::SpeechInputClientMock::clearResults):
+        (WebCore::SpeechInputClientMock::timerFired):
+        * platform/mock/SpeechInputClientMock.h: Added.
+        (WebCore):
+        (SpeechInputClientMock):
+
 2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Clang build fix after r106218

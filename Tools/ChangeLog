@@ -1,3 +1,29 @@
+2012-01-30  Hans Wennborg  <hans@chromium.org>
+
+        Unreviewed, rolling out r106219.
+        http://trac.webkit.org/changeset/106219
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        This broke Chromium's test_shell.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (WebKit):
+        (LayoutTestController):
+        ():
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp: Removed.
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h: Removed.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::speechInputController):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebKit):
+        (WebViewHost::speechInputControllerMock):
+        (WebViewHost):
+        ():
+
 2012-01-26  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation

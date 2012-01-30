@@ -45,7 +45,6 @@
 #include <wtf/text/WTFString.h>
 
 class LayoutTestController;
-class MockWebSpeechInputController;
 class SkCanvas;
 class TestShell;
 
@@ -58,6 +57,7 @@ class WebGeolocationClientMock;
 class WebGeolocationServiceMock;
 class WebSharedWorkerClient;
 class WebSpeechInputController;
+class WebSpeechInputControllerMock;
 class WebSpeechInputListener;
 class WebURL;
 class WebUserMediaClientMock;
@@ -108,7 +108,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     WebKit::WebContextMenuData* lastContextMenuData() const;
     void clearContextMenuData();
 
-    MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
+    WebKit::WebSpeechInputControllerMock* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
 
 #if ENABLE(POINTER_LOCK)
     void didLosePointerLock();
@@ -382,7 +382,7 @@ private:
     OwnPtr<WebKit::WebGeolocationClientMock> m_geolocationClientMock;
 
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
-    OwnPtr<MockWebSpeechInputController> m_speechInputControllerMock;
+    OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
 
     OwnPtr<WebKit::WebUserMediaClientMock> m_userMediaClientMock;
     OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
