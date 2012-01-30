@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript">
+var test = function()
+{
+    function dumpHistory(history)
+    {
+        InspectorTest.addResult("  history = [" + String(history._urls) + "]");
+    }
+
+    function updateAndDump(history, urls)
+    {
+        history.update(urls);
+        dumpHistory(history);
+    }
+
+    function removeAndDump(history, url)
+    {
+        history.remove(url);
+        dumpHistory(history);
+    }
+
+    function url(index)
+    {
+        return "url_" + index;
+    }
+
+    var history = new WebInspector.TabbedEditorContainer.History([]);
+
+    dumpHistory(history);
+    // Emulate opening of several tabs.
+    updateAndDump(history, [url(1)]);
+    updateAndDump(history, [url(2), url(1)]);
+    updateAndDump(history, [url(3), url(2), url(1)]);
+    // Emulate switching between tabs.
+    updateAndDump(history, [url(2), url(3), url(1)]);
+    updateAndDump(history, [url(1), url(2), url(3)]);
+    // Emulate opening of several tabs from another page.
+    updateAndDump(history, [url(11)]);
+    updateAndDump(history, [url(12), url(11)]);
+    updateAndDump(history, [url(13), url(12), url(11)]);
+    // ... and switching between them.
+    updateAndDump(history, [url(12), url(13), url(11)]);
+    updateAndDump(history, [url(11), url(12), url(13)]);
+    // Now close some tabs.
+    removeAndDump(history, url(11));
+    removeAndDump(history, url(13));
+    // Now open some other instead of them.
+    updateAndDump(history, [url(14), url(12)]);
+    updateAndDump(history, [url(15), url(14), url(12)]);
+    updateAndDump(history, [url(16), url(15), url(14), url(12)]);
+    // Close all of them one by one.
+    removeAndDump(history, url(16));
+    removeAndDump(history, url(15));
+    removeAndDump(history, url(14));
+    removeAndDump(history, url(12));
+    removeAndDump(history, url(1));
+    removeAndDump(history, url(2));
+    removeAndDump(history, url(3));
+
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests history saving logic in TabbedEditorContainer.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=76912">Bug 76912</a>
+</body>
+</html>

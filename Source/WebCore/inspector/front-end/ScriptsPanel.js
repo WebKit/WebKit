@@ -256,18 +256,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
         this._fileSelector.addUISourceCode(uiSourceCode);
-
-        var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
-        if (!this._initialViewSelectionProcessed) {
-            this._initialViewSelectionProcessed = true;
-            // Option we just added is the only option in files select.
-            // We have to show corresponding source frame immediately.
-            this._showFile(uiSourceCode);
-            // Restore original value of lastViewedScriptFile because
-            // source frame was shown as a result of initial load.
-            WebInspector.settings.lastViewedScriptFile.set(lastViewedURL);
-        } else if (uiSourceCode.url === lastViewedURL)
-            this._showFile(uiSourceCode);
+        this._editorContainer.uiSourceCodeAdded(uiSourceCode);
     },
 
     _uiSourceCodeRemoved: function(event)
@@ -415,9 +404,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._debuggerResumed();
 
-        delete this._initialViewSelectionProcessed;
         delete this._curentUISourceCode;
-        
         this._editorContainer.reset();
         this._updateScriptViewStatusBarItems();
 
@@ -486,7 +473,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (!this._fileSelector.isScriptSourceAdded(uiSourceCode))
             return null;
-        
+
         var sourceFrame = this._getOrCreateSourceFrame(uiSourceCode);
         if (this._curentUISourceCode === uiSourceCode)
             return sourceFrame;
@@ -495,9 +482,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._fileSelector.revealUISourceCode(uiSourceCode);
         this._editorContainer.showFile(uiSourceCode);
         this._updateScriptViewStatusBarItems();
-
-        if (uiSourceCode.url)
-            WebInspector.settings.lastViewedScriptFile.set(uiSourceCode.url);
 
         return sourceFrame;
     },
@@ -617,7 +601,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         // Anonymous scripts are not added to files select by default.
         this._fileSelector.addUISourceCode(uiLocation.uiSourceCode);
-        
+
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.setExecutionLine(uiLocation.lineNumber);
         this._executionSourceFrame = sourceFrame;
@@ -1112,6 +1096,11 @@ WebInspector.EditorContainer.prototype = {
     setFileIsDirty: function(uiSourceCode, isDirty) { },
 
     /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    uiSourceCodeAdded: function(uiSourceCode) { },
+
+    /**
      * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
      * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
      */
@@ -1529,14 +1518,45 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
         if (this._currentSourceFrame === sourceFrame)
             return;
 
+        this._innerShowFile(uiSourceCode, true);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean} userGesture
+     */
+    _innerShowFile: function(uiSourceCode, userGesture)
+    {
         if (this._currentSourceFrame)
             this._currentSourceFrame.detach();
 
+        this._initialViewSelectionProcessed = true;
+        
+        var sourceFrame = this._delegate.viewForFile(uiSourceCode);
         this._currentSourceFrame = sourceFrame;
         this._currentFile = uiSourceCode;
+        
+        if (userGesture) {
+            this._userSelectedFiles = true;
+            WebInspector.settings.lastViewedScriptFile.set(uiSourceCode.url);
+        }
 
         if (sourceFrame)
             sourceFrame.show(this.element);
+        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    uiSourceCodeAdded: function(uiSourceCode)
+    {
+        var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
+        // Show first file that was added or file with the last viewed url.
+        if (this._userSelectedFiles)
+            return;
+        if (uiSourceCode.url === lastViewedURL || !this._initialViewSelectionProcessed)
+            this._innerShowFile(uiSourceCode, false);
     },
 
     /**
@@ -1564,6 +1584,8 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
             this._currentSourceFrame.detach();
         this._currentSourceFrame = null;
         this._currentFile = null;
+        delete this._initialViewSelectionProcessed;
+        delete this._userSelectedFiles;
     }
 }
 

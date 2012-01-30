@@ -43,11 +43,17 @@ WebInspector.TabbedEditorContainer = function(delegate)
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 
-    this._tabIds = new Map();  
+    this._tabIds = new Map();
     this._files = {};
+    this._loadedURLs = {};
+
+    this._previouslyViewedFilesSetting = WebInspector.settings.createSetting("previouslyViewedFiles", []);
+    this._history = new WebInspector.TabbedEditorContainer.History(this._previouslyViewedFilesSetting.get());
 }
 
 WebInspector.TabbedEditorContainer._tabId = 0;
+
+WebInspector.TabbedEditorContainer.maximalPreviouslyViewedFilesCount = 30;
 
 WebInspector.TabbedEditorContainer.prototype = {
     /**
@@ -71,12 +77,26 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     showFile: function(uiSourceCode)
     {
+        this._innerShowFile(uiSourceCode, true);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean=} userGesture
+     */
+    _innerShowFile: function(uiSourceCode, userGesture)
+    {
         if (this._currentFile === uiSourceCode)
             return;
-        
         this._currentFile = uiSourceCode;
-        var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode);
-        this._tabbedPane.selectTab(tabId);
+        
+        var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode, userGesture);
+        
+        this._tabbedPane.selectTab(tabId, userGesture);
+        if (userGesture)
+            this._editorSelectedByUserAction();
+        
+        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, this._currentFile);
     },
 
     /**
@@ -90,6 +110,55 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    uiSourceCodeAdded: function(uiSourceCode)
+    {
+        if (this._userSelectedFiles || this._loadedURLs[uiSourceCode.url])
+            return;
+        this._loadedURLs[uiSourceCode.url] = true;
+
+        var index = this._history.index(uiSourceCode.url)
+        if (index === -1)
+            return;
+
+        var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode, false);
+
+        // Select tab if this file was the last to be shown.
+        if (index === 0)
+            this._innerShowFile(uiSourceCode, false);
+    },
+    
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _editorClosedByUserAction: function(uiSourceCode)
+    {
+        this._userSelectedFiles = true;
+        this._history.remove(uiSourceCode.url);
+        this._updateHistory();
+    },
+
+    _editorSelectedByUserAction: function()
+    {
+        this._userSelectedFiles = true;
+        this._updateHistory();
+    },
+
+    _updateHistory: function()
+    {
+        var tabIds = this._tabbedPane.lastOpenedTabIds(WebInspector.TabbedEditorContainer.maximalPreviouslyViewedFilesCount);
+        
+        function tabIdToURL(tabId)
+        {
+            return this._files[tabId].url;
+        }
+        
+        this._history.update(tabIds.map(tabIdToURL.bind(this)));
+        this._history.save(this._previouslyViewedFilesSetting);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @return {string}
      */
     _tooltipForFile: function(uiSourceCode)
@@ -99,8 +168,9 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean=} userGesture
      */
-    _appendFileTab: function(uiSourceCode)
+    _appendFileTab: function(uiSourceCode, userGesture)
     {
         var view = this._delegate.viewForFile(uiSourceCode);
         var title = this._titleForFile(uiSourceCode);
@@ -110,7 +180,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.put(uiSourceCode, tabId);
         this._files[tabId] = uiSourceCode;
         
-        this._tabbedPane.appendTab(tabId, title, view, tooltip);
+        this._tabbedPane.appendTab(tabId, title, view, tooltip, userGesture);
         return tabId;
     },
 
@@ -131,12 +201,16 @@ WebInspector.TabbedEditorContainer.prototype = {
     _tabClosed: function(event)
     {
         var tabId = /** @type {string} */ event.data.tabId;
+        var userGesture = /** @type {boolean} */ event.data.isUserGesture;
 
         var uiSourceCode = this._files[tabId];
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
 
-        this.dispatchEventToListeners(WebInspector.ScriptsPanel.EditorContainer.Events.EditorClosed, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorClosed, uiSourceCode);
+
+        if (userGesture)
+            this._editorClosedByUserAction(uiSourceCode);
     },
 
     /**
@@ -145,11 +219,10 @@ WebInspector.TabbedEditorContainer.prototype = {
     _tabSelected: function(event)
     {
         var tabId = /** @type {string} */ event.data.tabId;
+        var userGesture = /** @type {boolean} */ event.data.isUserGesture;
+
         var uiSourceCode = this._files[tabId];
-        
-        if (this._currentFile === uiSourceCode)
-            return;
-        this.dispatchEventToListeners(WebInspector.EditorContainer.Events.EditorSelected, uiSourceCode);
+        this._innerShowFile(uiSourceCode, userGesture);
     },
 
     /**
@@ -217,6 +290,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds = new Map();
         this._files = {};
         delete this._currentFile;
+        delete this._userSelectedFiles;
+        this._loadedURLs = {};
     },
 
     /**
@@ -229,3 +304,54 @@ WebInspector.TabbedEditorContainer.prototype = {
 }
 
 WebInspector.TabbedEditorContainer.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ */
+WebInspector.TabbedEditorContainer.History = function(urls)
+{
+    this._urls = urls;
+}
+
+WebInspector.TabbedEditorContainer.History.prototype = {
+    /**
+     * @param {string} url
+     */
+    index: function(url)
+    {
+        return this._urls.indexOf(url);
+    },
+
+    /**
+     * @param {Array.<string>} urls
+     */
+    update: function(urls)
+    {
+        for (var i = urls.length - 1; i >= 0; --i) {
+            var index = this._urls.indexOf(urls[i]);
+            if (index !== -1)
+                this._urls.splice(index, 1);
+            this._urls.unshift(urls[i]);
+        }
+    },
+
+    /**
+     * @param {string} url
+     */
+    remove: function(url)
+    {
+        var index = this._urls.indexOf(url);
+        if (index !== -1)
+            this._urls.splice(index, 1);
+    },
+    
+    /**
+     * @param {WebInspector.Setting} setting
+     */
+    save: function(setting)
+    {
+        setting.set(this._urls);
+    }
+}
+
+WebInspector.TabbedEditorContainer.History.prototype.__proto__ = WebInspector.Object.prototype;

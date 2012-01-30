@@ -1,0 +1,27 @@
+Tests history saving logic in TabbedEditorContainer.
+
+Bug 76912
+  history = []
+  history = [url_1]
+  history = [url_2,url_1]
+  history = [url_3,url_2,url_1]
+  history = [url_2,url_3,url_1]
+  history = [url_1,url_2,url_3]
+  history = [url_11,url_1,url_2,url_3]
+  history = [url_12,url_11,url_1,url_2,url_3]
+  history = [url_13,url_12,url_11,url_1,url_2,url_3]
+  history = [url_12,url_13,url_11,url_1,url_2,url_3]
+  history = [url_11,url_12,url_13,url_1,url_2,url_3]
+  history = [url_12,url_13,url_1,url_2,url_3]
+  history = [url_12,url_1,url_2,url_3]
+  history = [url_14,url_12,url_1,url_2,url_3]
+  history = [url_15,url_14,url_12,url_1,url_2,url_3]
+  history = [url_16,url_15,url_14,url_12,url_1,url_2,url_3]
+  history = [url_15,url_14,url_12,url_1,url_2,url_3]
+  history = [url_14,url_12,url_1,url_2,url_3]
+  history = [url_12,url_1,url_2,url_3]
+  history = [url_1,url_2,url_3]
+  history = [url_2,url_3]
+  history = [url_3]
+  history = []
+

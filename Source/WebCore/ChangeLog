@@ -1,3 +1,45 @@
+2012-01-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TabbedEditorContainer should save open tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=76912
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/tabbed-editors-history.html
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._showFile):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.EditorContainer.prototype.uiSourceCodeAdded):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.showFile):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.reset):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype.showFile):
+        (WebInspector.TabbedEditorContainer.prototype._editorClosedByUserAction):
+        (WebInspector.TabbedEditorContainer.prototype._editorSelectedByUserAction):
+        (WebInspector.TabbedEditorContainer.prototype._updateHistory.tabIdToURL):
+        (WebInspector.TabbedEditorContainer.prototype._updateHistory):
+        (WebInspector.TabbedEditorContainer.prototype._appendFileTab):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._tabSelected):
+        (WebInspector.TabbedEditorContainer.prototype.reset):
+        (WebInspector.TabbedEditorContainer.History):
+        (WebInspector.TabbedEditorContainer.History.prototype.index):
+        (WebInspector.TabbedEditorContainer.History.prototype.update):
+        (WebInspector.TabbedEditorContainer.History.prototype.remove):
+        (WebInspector.TabbedEditorContainer.History.prototype.save):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype.closeTab):
+        (WebInspector.TabbedPane.prototype._innerCloseTab):
+        (WebInspector.TabbedPane.prototype.closeAllTabs):
+        (WebInspector.TabbedPane.prototype.lastOpenedTabIds):
+        (WebInspector.TabbedPane.prototype._tabsSelectChanged):
+
 2012-01-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Unable to paste and subsequently edit multiple properties in the Styles pane
