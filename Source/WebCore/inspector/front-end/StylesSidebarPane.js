@@ -1987,7 +1987,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         function apply()
         {
-            this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent, false, false, false);
+            var valueText = this.valueElement.textContent;
+            if (valueText.indexOf(";") === -1)
+                this.applyStyleText(this.nameElement.textContent + ": " + valueText, false, false, false);
         }
         if (now)
             apply.call(this);

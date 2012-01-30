@@ -1,3 +1,15 @@
+2012-01-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Unable to paste and subsequently edit multiple properties in the Styles pane
+        https://bugs.webkit.org/show_bug.cgi?id=77209
+
+        Reviewed by Pavel Feldman.
+
+        Check if the property value contains a ";" before kicking the freeflow text update.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-01-30  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Change Open Resource and Go To function shortcuts in scripts panel.

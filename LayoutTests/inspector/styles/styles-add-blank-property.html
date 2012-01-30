@@ -55,6 +55,38 @@ function test()
     {
         InspectorTest.addResult("After append:");
         InspectorTest.dumpSelectedElementStyles(true);
+
+        treeElement = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1].addNewBlankProperty();
+        treeElement.startEditing();
+        treeElement.nameElement.textContent = "color";
+        treeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+
+        treeElement.valueElement.textContent = "green; font-weight: bold";
+        treeElement.kickFreeFlowStyleEditForTest();
+
+        treeElement.valueElement.textContent = "red; font-weight: bold";
+        treeElement.kickFreeFlowStyleEditForTest();
+
+        treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step6);
+    }
+
+    function step6()
+    {
+        InspectorTest.selectNodeWithId("other");
+        InspectorTest.runAfterPendingDispatches(step7);
+    }
+
+    function step7()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step8);
+    }
+
+
+    function step8()
+    {
+        InspectorTest.addResult("After append and change of a 'compound' property:");
+        InspectorTest.dumpSelectedElementStyles(true);
         InspectorTest.completeTest();
     }
 }
