@@ -106,6 +106,8 @@ TestInvocation::~TestInvocation()
 
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
 {
+    if (!expectedPixelHash.length())
+        return;
     m_dumpPixels = true;
     m_expectedPixelHash = expectedPixelHash;
 }
