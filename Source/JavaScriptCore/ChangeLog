@@ -1,3 +1,10 @@
+2012-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Build fix for Mac non-x64 platforms.
+
+        * tools/CodeProfiling.cpp:
+        (JSC):
+
 2012-01-28  Gavin Barraclough  <barraclough@apple.com>
 
         Reserve 'let'

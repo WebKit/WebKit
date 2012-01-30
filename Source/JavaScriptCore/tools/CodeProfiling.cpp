@@ -36,6 +36,11 @@ volatile CodeProfile* CodeProfiling::s_profileStack = 0;
 CodeProfiling::Mode CodeProfiling::s_mode = CodeProfiling::Disabled;
 WTF::MetaAllocatorTracker* CodeProfiling::s_tracker = 0;
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+#endif
+
 // Helper function to start & stop the timer.
 // Presently we're using the wall-clock timer, since this seems to give the best results.
 static void setProfileTimer(unsigned usec)
@@ -53,6 +58,10 @@ static void setProfileTimer(unsigned usec)
     ASSERT_NOT_REACHED();
 #endif
 }
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
 
 #if PLATFORM(MAC) && CPU(X86_64)
 static void profilingTimer(int, siginfo_t*, void* uap)
