@@ -35,34 +35,49 @@ namespace {
 
 class FakeTextureAllocator : public TextureAllocator {
 public:
+    virtual ~FakeTextureAllocator() { }
     virtual unsigned createTexture(const IntSize&, GC3Denum) { return 1; }
     virtual void deleteTexture(unsigned, const IntSize&, GC3Denum) { }
 };
 
-FakeTextureAllocator fakeTextureAllocator;
-const IntSize textureSize(256, 256);
-const GC3Denum textureFormat = GraphicsContext3D::RGBA;
+class TextureManagerTest : public testing::Test {
+public:
+    TextureManagerTest()
+        : m_textureSize(256, 256)
+        , m_textureFormat(GraphicsContext3D::RGBA)
+    {
+    }
 
-size_t texturesMemorySize(size_t textureCount)
-{
-    return TextureManager::memoryUseBytes(textureSize, textureFormat) * textureCount;
-}
+    virtual ~TextureManagerTest()
+    {
+    }
 
-PassOwnPtr<TextureManager> createTextureManager(size_t maxTextures, size_t preferredTextures)
-{
-    return TextureManager::create(texturesMemorySize(maxTextures), texturesMemorySize(preferredTextures), 1024);
-}
+    size_t texturesMemorySize(size_t textureCount)
+    {
+        return TextureManager::memoryUseBytes(m_textureSize, m_textureFormat) * textureCount;
+    }
 
-bool requestTexture(TextureManager* manager, TextureToken token)
-{
-    unsigned textureId;
-    bool result = manager->requestTexture(token, textureSize, textureFormat, textureId);
-    if (result)
-        manager->allocateTexture(&fakeTextureAllocator, token);
-    return result;
-}
+    PassOwnPtr<TextureManager> createTextureManager(size_t maxTextures, size_t preferredTextures)
+    {
+        return TextureManager::create(texturesMemorySize(maxTextures), texturesMemorySize(preferredTextures), 1024);
+    }
 
-TEST(TextureManagerTest, requestTextureInPreferredLimit)
+    bool requestTexture(TextureManager* manager, TextureToken token)
+    {
+        unsigned textureId;
+        bool result = manager->requestTexture(token, m_textureSize, m_textureFormat, textureId);
+        if (result)
+            manager->allocateTexture(&m_fakeTextureAllocator, token);
+        return result;
+    }
+
+private:
+    FakeTextureAllocator m_fakeTextureAllocator;
+    const IntSize m_textureSize;
+    const GC3Denum m_textureFormat;
+};
+
+TEST_F(TextureManagerTest, requestTextureInPreferredLimit)
 {
     const size_t preferredTextures = 8;
     OwnPtr<TextureManager> textureManager = createTextureManager(preferredTextures * 2, preferredTextures);
@@ -82,7 +97,7 @@ TEST(TextureManagerTest, requestTextureInPreferredLimit)
     EXPECT_EQ(texturesMemorySize(preferredTextures), textureManager->currentMemoryUseBytes());
 }
 
-TEST(TextureManagerTest, requestTextureExceedingPreferredLimit)
+TEST_F(TextureManagerTest, requestTextureExceedingPreferredLimit)
 {
     const size_t maxTextures = 8;
     const size_t preferredTextures = 4;
@@ -114,7 +129,7 @@ TEST(TextureManagerTest, requestTextureExceedingPreferredLimit)
     EXPECT_EQ(texturesMemorySize(preferredTextures), textureManager->currentMemoryUseBytes());
 }
 
-TEST(TextureManagerTest, requestTextureExceedingMaxLimit)
+TEST_F(TextureManagerTest, requestTextureExceedingMaxLimit)
 {
     const size_t maxTextures = 8;
     const size_t preferredTextures = 4;
@@ -146,7 +161,7 @@ TEST(TextureManagerTest, requestTextureExceedingMaxLimit)
     EXPECT_FALSE(textureManager->hasTexture(tokens[3]));
 }
 
-TEST(TextureManagerTest, reduceMemoryToLimit)
+TEST_F(TextureManagerTest, reduceMemoryToLimit)
 {
     const size_t maxTextures = 8;
     const size_t preferredTextures = 4;
@@ -179,7 +194,7 @@ TEST(TextureManagerTest, reduceMemoryToLimit)
     EXPECT_EQ(texturesMemorySize(preferredTextures), textureManager->preferredMemoryLimitBytes());
 }
 
-TEST(TextureManagerTest, setMaxMemoryLimitBytes)
+TEST_F(TextureManagerTest, setMaxMemoryLimitBytes)
 {
     const size_t maxTextures = 8;
     const size_t preferredTextures = 4;
@@ -203,7 +218,7 @@ TEST(TextureManagerTest, setMaxMemoryLimitBytes)
     EXPECT_EQ(texturesMemorySize(preferredTextures), textureManager->maxMemoryLimitBytes());
 }
 
-TEST(TextureManagerTest, setPreferredMemoryLimitBytes)
+TEST_F(TextureManagerTest, setPreferredMemoryLimitBytes)
 {
     const size_t maxTextures = 8;
     const size_t preferredTextures = 4;
