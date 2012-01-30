@@ -1,3 +1,26 @@
+2012-01-30  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fix a few memory leaks
+        https://bugs.webkit.org/show_bug.cgi?id=77334
+
+        Reviewed by Darin Fisher.
+
+        It seems that either the behaviour of WebPrivatePtr has changed or I misunderstood
+        something, but I fixed a memory leak in WebMediaStreamDescriptor and safeguarded
+        WebMediaStreamSource.
+
+        * public/platform/WebMediaStreamDescriptor.h:
+        (WebKit::WebMediaStreamDescriptor::WebMediaStreamDescriptor):
+        * public/platform/WebMediaStreamSource.h:
+        (WebKit::WebMediaStreamSource::WebMediaStreamSource):
+        (WebKit::WebMediaStreamSource::operator=):
+        (WebMediaStreamSource):
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::assign):
+        * src/WebMediaStreamSource.cpp:
+        (WebKit::WebMediaStreamSource::assign):
+        (WebKit):
+
 2012-01-30  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove exit time destructors from TextureManagerTest

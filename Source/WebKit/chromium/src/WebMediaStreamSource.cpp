@@ -53,6 +53,11 @@ WebMediaStreamSource& WebMediaStreamSource::operator=(WebCore::MediaStreamSource
     return *this;
 }
 
+void WebMediaStreamSource::assign(const WebMediaStreamSource& other)
+{
+    m_private = other.m_private;
+}
+
 void WebMediaStreamSource::reset()
 {
     m_private.reset();

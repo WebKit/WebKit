@@ -51,7 +51,16 @@ public:
     };
 
     WebMediaStreamSource() { }
+    WebMediaStreamSource(const WebMediaStreamSource& other) { assign(other); }
     ~WebMediaStreamSource() { reset(); }
+
+    WebMediaStreamSource& operator=(const WebMediaStreamSource& other)
+    {
+        assign(other);
+        return *this;
+    }
+
+    WEBKIT_EXPORT void assign(const WebMediaStreamSource&);
 
     WEBKIT_EXPORT void initialize(const WebString& id, Type, const WebString& name);
     WEBKIT_EXPORT void reset();

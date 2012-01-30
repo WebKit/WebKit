@@ -138,10 +138,7 @@ void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVecto
 
 void WebMediaStreamDescriptor::assign(const WebMediaStreamDescriptor& other)
 {
-    MediaStreamDescriptor* p = other.m_private.get();
-    if (p)
-        p->ref();
-    m_private = p;
+    m_private = other.m_private;
 }
 
 } // namespace WebKit

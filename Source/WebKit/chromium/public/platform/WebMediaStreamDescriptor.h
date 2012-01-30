@@ -42,7 +42,7 @@ class WebString;
 class WebMediaStreamDescriptor {
 public:
     WebMediaStreamDescriptor() { }
-    WebMediaStreamDescriptor(const WebMediaStreamDescriptor& request) { assign(request); }
+    WebMediaStreamDescriptor(const WebMediaStreamDescriptor& other) { assign(other); }
     ~WebMediaStreamDescriptor() { reset(); }
 
     WebMediaStreamDescriptor& operator=(const WebMediaStreamDescriptor& other)
