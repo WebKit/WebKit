@@ -509,7 +509,7 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
     this.helpButton.addEventListener("click", this._helpClicked.bind(this), false);
 
-    var popoverHelper = new WebInspector.ObjectPopoverHelper(this.element, this._getHoverAnchor.bind(this), this._showObjectPopover.bind(this), null, true);
+    this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.element, this._getHoverAnchor.bind(this), this._showObjectPopover.bind(this), null, true);
 
     this._loadProfile(this._profileUid, profileCallback.bind(this));
 
@@ -961,6 +961,11 @@ WebInspector.DetailedHeapshotView.prototype = {
     _showObjectPopover: function(element, showCallback)
     {
         element.node.queryObjectContent(showCallback);
+    },
+
+    willHide: function()
+    {
+        this._popoverHelper.hidePopover();
     },
 
     _helpClicked: function(event)

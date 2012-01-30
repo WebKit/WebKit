@@ -1,3 +1,13 @@
+2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: hide function popover in heap snapshot view before navigating to the function definition
+        https://bugs.webkit.org/show_bug.cgi?id=77330
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.willHide):
+
 2012-01-30  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Credential backing store implementation
