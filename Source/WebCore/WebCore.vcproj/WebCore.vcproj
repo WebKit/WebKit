@@ -25834,19 +25834,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\DocumentLoadTiming.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\DocumentLoadTiming.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\DocumentLoader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\loader\DocumentLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentLoadTiming.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentLoadTiming.h"
 				>
 			</File>
 			<File
@@ -26621,14 +26621,14 @@
 				RelativePath="..\platform\GeolocationService.h"
 				>
 			</File>
-            <File
-                RelativePath="..\platform\HistogramSupport.cpp"
-                >
-            </File>
-            <File
-                RelativePath="..\platform\HistogramSupport.h"
-                >
-            </File>
+			<File
+				RelativePath="..\platform\HistogramSupport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\HistogramSupport.h"
+				>
+			</File>
 			<File
 				RelativePath="..\platform\HostWindow.h"
 				>
@@ -32702,62 +32702,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSBorderImageSliceValue.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\css\CSSBorderImageSliceValue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSBorderImage.cpp"
 				>
 				<FileConfiguration
@@ -32811,6 +32755,62 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSBorderImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSBorderImageSliceValue.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSBorderImageSliceValue.h"
 				>
 			</File>
 			<File
@@ -40754,62 +40754,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderTableCell.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderTableCell.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderTableCaption.cpp"
 				>
 				<FileConfiguration
@@ -40863,6 +40807,62 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderTableCaption.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderTableCell.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderTableCell.h"
 				>
 			</File>
 			<File
@@ -44991,62 +44991,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\svg\SVGTextMetricsBuilder.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo_CFLite|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo_CFLite|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Production|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\rendering\svg\SVGTextMetricsBuilder.h"
-					>
-				</File>
-				<File
 					RelativePath="..\rendering\svg\SVGTextMetrics.cpp"
 					>
 					<FileConfiguration
@@ -45100,6 +45044,62 @@
 				</File>
 				<File
 					RelativePath="..\rendering\svg\SVGTextMetrics.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextMetricsBuilder.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Production|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextMetricsBuilder.h"
 					>
 				</File>
 				<File
@@ -49553,62 +49553,62 @@
 				RelativePath="..\dom\MutationObserverInterestGroup.h"
 				>
 			</File>
-            <File
-                RelativePath="..\dom\MutationObserverRegistration.cpp"
-                >
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Release|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Debug_Cairo_CFLite|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Release_Cairo_CFLite|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Debug_All|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Production|Win32"
-                    ExcludedFromBuild="true"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
-                RelativePath="..\dom\MutationObserverRegistration.h"
-                >
-            </File>
+			<File
+				RelativePath="..\dom\MutationObserverRegistration.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\MutationObserverRegistration.h"
+				>
+			</File>
 			<File
 				RelativePath="..\dom\MutationRecord.cpp"
 				>
@@ -57317,62 +57317,62 @@
 				RelativePath="..\html\HTMLFormControlElement.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\html\HTMLFormControlElementWithState.cpp"
-                                >
-                                <FileConfiguration
-                                        Name="Debug|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Release|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Debug_Cairo_CFLite|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Release_Cairo_CFLite|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Debug_All|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Production|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                        </File>
-                        <File
-                                RelativePath="..\html\HTMLFormControlElementWithState.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\html\HTMLFormControlElementWithState.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLFormControlElementWithState.h"
+				>
+			</File>
 			<File
 				RelativePath="..\html\HTMLFormElement.cpp"
 				>
@@ -60933,19 +60933,19 @@
 				Name="shadow"
 				>
 				<File
-					RelativePath="..\html\shadow\ContentSelectorQuery.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\ContentSelectorQuery.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\ContentInclusionSelector.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\html\shadow\ContentInclusionSelector.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ContentSelectorQuery.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ContentSelectorQuery.h"
 					>
 				</File>
 				<File
@@ -70598,14 +70598,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\DOMWindowSQLDatabase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\DOMWindowSQLDatabase.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\Database.cpp"
 				>
 			</File>
@@ -70655,6 +70647,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\DatabaseTracker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DOMWindowSQLDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DOMWindowSQLDatabase.h"
 				>
 			</File>
 			<File
@@ -71264,14 +71264,82 @@
 			<File
 				RelativePath="..\inspector\InspectorAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorAgent.h"
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorAllInOne.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorApplicationCacheAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorApplicationCacheAgent.h"
@@ -71280,6 +71348,22 @@
 			<File
 				RelativePath="..\inspector\InspectorBaseAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorBaseAgent.h"
@@ -71288,6 +71372,22 @@
 			<File
 				RelativePath="..\inspector\InspectorClient.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorClient.h"
@@ -71296,6 +71396,22 @@
 			<File
 				RelativePath="..\inspector\InspectorConsoleAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorConsoleAgent.h"
@@ -71308,6 +71424,22 @@
 			<File
 				RelativePath="..\inspector\InspectorController.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorController.h"
@@ -71316,6 +71448,22 @@
 			<File
 				RelativePath="..\inspector\InspectorCSSAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorCSSAgent.h"
@@ -71324,6 +71472,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDatabaseAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDatabaseAgent.h"
@@ -71336,6 +71500,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDatabaseResource.h"
@@ -71344,6 +71524,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDebuggerAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDebuggerAgent.h"
@@ -71352,6 +71548,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDOMAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMAgent.h"
@@ -71360,6 +71572,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDOMDebuggerAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMDebuggerAgent.h"
@@ -71368,6 +71596,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDOMStorageAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMStorageAgent.h"
@@ -71376,6 +71620,22 @@
 			<File
 				RelativePath="..\inspector\InspectorDOMStorageResource.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMStorageResource.h"
@@ -71384,6 +71644,22 @@
 			<File
 				RelativePath="..\inspector\InspectorFileSystemAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorFileSystemAgent.h"
@@ -71404,6 +71680,22 @@
 			<File
 				RelativePath="..\inspector\InspectorFrontendClientLocal.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorFrontendClientLocal.h"
@@ -71412,6 +71704,22 @@
 			<File
 				RelativePath="..\inspector\InspectorFrontendHost.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorFrontendHost.h"
@@ -71420,6 +71728,22 @@
 			<File
 				RelativePath="..\inspector\InspectorIndexedDBAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorIndexedDBAgent.h"
@@ -71428,6 +71752,22 @@
 			<File
 				RelativePath="..\inspector\InspectorInstrumentation.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorInstrumentation.h"
@@ -71436,6 +71776,22 @@
 			<File
 				RelativePath="..\inspector\InspectorMemoryAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorMemoryAgent.h"
@@ -71444,6 +71800,22 @@
 			<File
 				RelativePath="..\inspector\InspectorPageAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorPageAgent.h"
@@ -71452,6 +71824,22 @@
 			<File
 				RelativePath="..\inspector\InspectorProfilerAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorProfilerAgent.h"
@@ -71460,6 +71848,22 @@
 			<File
 				RelativePath="..\inspector\InspectorResourceAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorResourceAgent.h"
@@ -71468,6 +71872,22 @@
 			<File
 				RelativePath="..\inspector\InspectorRuntimeAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorRuntimeAgent.h"
@@ -71476,6 +71896,22 @@
 			<File
 				RelativePath="..\inspector\InspectorState.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorState.h"
@@ -71488,6 +71924,22 @@
 			<File
 				RelativePath="..\inspector\InspectorStyleSheet.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorStyleSheet.h"
@@ -71496,6 +71948,22 @@
 			<File
 				RelativePath="..\inspector\InspectorStyleTextEditor.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorStyleTextEditor.h"
@@ -71504,6 +71972,22 @@
 			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.h"
@@ -71512,6 +71996,22 @@
 			<File
 				RelativePath="..\inspector\InspectorValues.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorValues.h"
@@ -71520,6 +72020,22 @@
 			<File
 				RelativePath="..\inspector\InspectorWorkerAgent.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorWorkerAgent.h"
@@ -71881,11 +72397,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\FilteredItemSelectionDialog.js"
+					RelativePath="..\inspector\front-end\filteredItemSelectionDialog.css"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\filteredItemSelectionDialog.css"
+					RelativePath="..\inspector\front-end\FilteredItemSelectionDialog.js"
 					>
 				</File>
 				<File
