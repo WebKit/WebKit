@@ -201,7 +201,9 @@ CSSParser::CSSParser(bool strictParsing)
     , m_propertyRange(UINT_MAX, UINT_MAX)
     , m_ruleRangeMap(0)
     , m_currentRuleData(0)
-    , yy_start(1)
+    , m_parsingMode(NormalMode)
+    , m_currentCharacter(0)
+    , m_token(0)
     , m_lineNumber(0)
     , m_lastSelectorLineNumber(0)
     , m_allowImportRules(true)
@@ -243,27 +245,22 @@ void CSSParserString::lower()
 
 void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
 {
-    int length = string.length() + strlen(prefix) + strlen(suffix) + 2;
+    int length = string.length() + strlen(prefix) + strlen(suffix) + 1;
 
-    m_data = adoptArrayPtr(new UChar[length]);
+    m_dataStart = adoptArrayPtr(new UChar[length]);
     for (unsigned i = 0; i < strlen(prefix); i++)
-        m_data[i] = prefix[i];
+        m_dataStart[i] = prefix[i];
 
-    memcpy(m_data.get() + strlen(prefix), string.characters(), string.length() * sizeof(UChar));
+    memcpy(m_dataStart.get() + strlen(prefix), string.characters(), string.length() * sizeof(UChar));
 
     unsigned start = strlen(prefix) + string.length();
     unsigned end = start + strlen(suffix);
     for (unsigned i = start; i < end; i++)
-        m_data[i] = suffix[i - start];
+        m_dataStart[i] = suffix[i - start];
 
-    m_data[length - 1] = 0;
-    m_data[length - 2] = 0;
+    m_dataStart[length - 1] = 0;
 
-    yy_hold_char = 0;
-    yyleng = 0;
-    yytext = m_data.get();
-    yy_c_buf_p = yytext;
-    yy_hold_char = *yy_c_buf_p;
+    m_currentCharacter = m_tokenStart = m_dataStart.get();
     resetRuleBodyMarks();
 }
 
@@ -423,7 +420,7 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
         return false;
 
     CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::CSS_NUMBER;
-    if (length > 2 && (characters[length - 2] | 0x20) == 'p' && (characters[length - 1] | 0x20) == 'x') {
+    if (length > 2 && isASCIIAlphaCaselessEqual(characters[length - 2], 'p') && isASCIIAlphaCaselessEqual(characters[length - 1], 'x')) {
         length -= 2;
         unit = CSSPrimitiveValue::CSS_PX;
     } else if (length > 1 && characters[length - 1] == '%') {
@@ -4850,10 +4847,10 @@ static inline bool mightBeRGBA(const UChar* characters, unsigned length)
     if (length < 5)
         return false;
     return characters[4] == '('
-        && (characters[0] | 0x20) == 'r'
-        && (characters[1] | 0x20) == 'g'
-        && (characters[2] | 0x20) == 'b'
-        && (characters[3] | 0x20) == 'a';
+        && isASCIIAlphaCaselessEqual(characters[0], 'r')
+        && isASCIIAlphaCaselessEqual(characters[1], 'g')
+        && isASCIIAlphaCaselessEqual(characters[2], 'b')
+        && isASCIIAlphaCaselessEqual(characters[3], 'a');
 }
 
 static inline bool mightBeRGB(const UChar* characters, unsigned length)
@@ -4861,9 +4858,9 @@ static inline bool mightBeRGB(const UChar* characters, unsigned length)
     if (length < 4)
         return false;
     return characters[3] == '('
-        && (characters[0] | 0x20) == 'r'
-        && (characters[1] | 0x20) == 'g'
-        && (characters[2] | 0x20) == 'b';
+        && isASCIIAlphaCaselessEqual(characters[0], 'r')
+        && isASCIIAlphaCaselessEqual(characters[1], 'g')
+        && isASCIIAlphaCaselessEqual(characters[2], 'b');
 }
 
 bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
@@ -7433,35 +7430,1181 @@ bool CSSParser::parseCalculation(CSSParserValue* value)
     
     return true;
 }
-    
-static inline int yyerror(const char*) { return 1; }
 
 #define END_TOKEN 0
 
 #include "CSSGrammar.h"
 
+enum CharacterType {
+    // Types for the main switch.
+
+    // The first 4 types must be grouped together, as they
+    // represent the allowed chars in an identifier.
+    CharacterCaselessU,
+    CharacterIdentifierStart,
+    CharacterNumber,
+    CharacterDash,
+
+    CharacterOther,
+    CharacterWhiteSpace,
+    CharacterEndMediaQuery,
+    CharacterEndNthChild,
+    CharacterQuote,
+    CharacterExclamationMark,
+    CharacterHashmark,
+    CharacterDollar,
+    CharacterAsterisk,
+    CharacterPlus,
+    CharacterDot,
+    CharacterSlash,
+    CharacterLess,
+    CharacterAt,
+    CharacterBackSlash,
+    CharacterXor,
+    CharacterVerticalBar,
+    CharacterTilde,
+};
+
+// 128 ASCII codes
+static const CharacterType typesOfASCIICharacters[128] = {
+/*   0 - Null               */ CharacterOther,
+/*   1 - Start of Heading   */ CharacterOther,
+/*   2 - Start of Text      */ CharacterOther,
+/*   3 - End of Text        */ CharacterOther,
+/*   4 - End of Transm.     */ CharacterOther,
+/*   5 - Enquiry            */ CharacterOther,
+/*   6 - Acknowledgment     */ CharacterOther,
+/*   7 - Bell               */ CharacterOther,
+/*   8 - Back Space         */ CharacterOther,
+/*   9 - Horizontal Tab     */ CharacterWhiteSpace,
+/*  10 - Line Feed          */ CharacterWhiteSpace,
+/*  11 - Vertical Tab       */ CharacterOther,
+/*  12 - Form Feed          */ CharacterWhiteSpace,
+/*  13 - Carriage Return    */ CharacterWhiteSpace,
+/*  14 - Shift Out          */ CharacterOther,
+/*  15 - Shift In           */ CharacterOther,
+/*  16 - Data Line Escape   */ CharacterOther,
+/*  17 - Device Control 1   */ CharacterOther,
+/*  18 - Device Control 2   */ CharacterOther,
+/*  19 - Device Control 3   */ CharacterOther,
+/*  20 - Device Control 4   */ CharacterOther,
+/*  21 - Negative Ack.      */ CharacterOther,
+/*  22 - Synchronous Idle   */ CharacterOther,
+/*  23 - End of Transmit    */ CharacterOther,
+/*  24 - Cancel             */ CharacterOther,
+/*  25 - End of Medium      */ CharacterOther,
+/*  26 - Substitute         */ CharacterOther,
+/*  27 - Escape             */ CharacterOther,
+/*  28 - File Separator     */ CharacterOther,
+/*  29 - Group Separator    */ CharacterOther,
+/*  30 - Record Separator   */ CharacterOther,
+/*  31 - Unit Separator     */ CharacterOther,
+/*  32 - Space              */ CharacterWhiteSpace,
+/*  33 - !                  */ CharacterExclamationMark,
+/*  34 - "                  */ CharacterQuote,
+/*  35 - #                  */ CharacterHashmark,
+/*  36 - $                  */ CharacterDollar,
+/*  37 - %                  */ CharacterOther,
+/*  38 - &                  */ CharacterOther,
+/*  39 - '                  */ CharacterQuote,
+/*  40 - (                  */ CharacterOther,
+/*  41 - )                  */ CharacterEndNthChild,
+/*  42 - *                  */ CharacterAsterisk,
+/*  43 - +                  */ CharacterPlus,
+/*  44 - ,                  */ CharacterOther,
+/*  45 - -                  */ CharacterDash,
+/*  46 - .                  */ CharacterDot,
+/*  47 - /                  */ CharacterSlash,
+/*  48 - 0                  */ CharacterNumber,
+/*  49 - 1                  */ CharacterNumber,
+/*  50 - 2                  */ CharacterNumber,
+/*  51 - 3                  */ CharacterNumber,
+/*  52 - 4                  */ CharacterNumber,
+/*  53 - 5                  */ CharacterNumber,
+/*  54 - 6                  */ CharacterNumber,
+/*  55 - 7                  */ CharacterNumber,
+/*  56 - 8                  */ CharacterNumber,
+/*  57 - 9                  */ CharacterNumber,
+/*  58 - :                  */ CharacterOther,
+/*  59 - ;                  */ CharacterEndMediaQuery,
+/*  60 - <                  */ CharacterLess,
+/*  61 - =                  */ CharacterOther,
+/*  62 - >                  */ CharacterOther,
+/*  63 - ?                  */ CharacterOther,
+/*  64 - @                  */ CharacterAt,
+/*  65 - A                  */ CharacterIdentifierStart,
+/*  66 - B                  */ CharacterIdentifierStart,
+/*  67 - C                  */ CharacterIdentifierStart,
+/*  68 - D                  */ CharacterIdentifierStart,
+/*  69 - E                  */ CharacterIdentifierStart,
+/*  70 - F                  */ CharacterIdentifierStart,
+/*  71 - G                  */ CharacterIdentifierStart,
+/*  72 - H                  */ CharacterIdentifierStart,
+/*  73 - I                  */ CharacterIdentifierStart,
+/*  74 - J                  */ CharacterIdentifierStart,
+/*  75 - K                  */ CharacterIdentifierStart,
+/*  76 - L                  */ CharacterIdentifierStart,
+/*  77 - M                  */ CharacterIdentifierStart,
+/*  78 - N                  */ CharacterIdentifierStart,
+/*  79 - O                  */ CharacterIdentifierStart,
+/*  80 - P                  */ CharacterIdentifierStart,
+/*  81 - Q                  */ CharacterIdentifierStart,
+/*  82 - R                  */ CharacterIdentifierStart,
+/*  83 - S                  */ CharacterIdentifierStart,
+/*  84 - T                  */ CharacterIdentifierStart,
+/*  85 - U                  */ CharacterCaselessU,
+/*  86 - V                  */ CharacterIdentifierStart,
+/*  87 - W                  */ CharacterIdentifierStart,
+/*  88 - X                  */ CharacterIdentifierStart,
+/*  89 - Y                  */ CharacterIdentifierStart,
+/*  90 - Z                  */ CharacterIdentifierStart,
+/*  91 - [                  */ CharacterOther,
+/*  92 - \                  */ CharacterBackSlash,
+/*  93 - ]                  */ CharacterOther,
+/*  94 - ^                  */ CharacterXor,
+/*  95 - _                  */ CharacterIdentifierStart,
+/*  96 - `                  */ CharacterOther,
+/*  97 - a                  */ CharacterIdentifierStart,
+/*  98 - b                  */ CharacterIdentifierStart,
+/*  99 - c                  */ CharacterIdentifierStart,
+/* 100 - d                  */ CharacterIdentifierStart,
+/* 101 - e                  */ CharacterIdentifierStart,
+/* 102 - f                  */ CharacterIdentifierStart,
+/* 103 - g                  */ CharacterIdentifierStart,
+/* 104 - h                  */ CharacterIdentifierStart,
+/* 105 - i                  */ CharacterIdentifierStart,
+/* 106 - j                  */ CharacterIdentifierStart,
+/* 107 - k                  */ CharacterIdentifierStart,
+/* 108 - l                  */ CharacterIdentifierStart,
+/* 109 - m                  */ CharacterIdentifierStart,
+/* 110 - n                  */ CharacterIdentifierStart,
+/* 111 - o                  */ CharacterIdentifierStart,
+/* 112 - p                  */ CharacterIdentifierStart,
+/* 113 - q                  */ CharacterIdentifierStart,
+/* 114 - r                  */ CharacterIdentifierStart,
+/* 115 - s                  */ CharacterIdentifierStart,
+/* 116 - t                  */ CharacterIdentifierStart,
+/* 117 - u                  */ CharacterCaselessU,
+/* 118 - v                  */ CharacterIdentifierStart,
+/* 119 - w                  */ CharacterIdentifierStart,
+/* 120 - x                  */ CharacterIdentifierStart,
+/* 121 - y                  */ CharacterIdentifierStart,
+/* 122 - z                  */ CharacterIdentifierStart,
+/* 123 - {                  */ CharacterEndMediaQuery,
+/* 124 - |                  */ CharacterVerticalBar,
+/* 125 - }                  */ CharacterOther,
+/* 126 - ~                  */ CharacterTilde,
+/* 127 - Delete             */ CharacterOther,
+};
+
+// Utility functions for the CSS tokenizer.
+
+static inline bool isCSSLetter(UChar character)
+{
+    return character >= 128 || typesOfASCIICharacters[character] <= CharacterDash;
+}
+
+static inline bool isCSSEscape(UChar character)
+{
+    return character >= ' ' && character != 127;
+}
+
+static inline bool isURILetter(UChar character)
+{
+    return (character >= '*' && character != 127) || (character >= '#' && character <= '&') || character == '!';
+}
+
+static inline bool isIdentifierStartAfterDash(UChar* currentCharacter)
+{
+    return isASCIIAlpha(currentCharacter[0]) || currentCharacter[0] == '_' || currentCharacter[0] >= 128
+        || (currentCharacter[0] == '\\' && isCSSEscape(currentCharacter[1]));
+}
+
+static inline bool isEqualToCSSIdentifier(UChar* cssString, const char* constantString)
+{
+    // Compare an UChar memory data with a zero terminated string.
+    do {
+        // The input must be part of an identifier if constantChar or constString
+        // contains '-'. Otherwise toASCIILowerUnchecked('\r') would be equal to '-'.
+        ASSERT((*constantString >= 'a' && *constantString <= 'z') || *constantString == '-');
+        ASSERT(*constantString != '-' || isCSSLetter(*cssString));
+        if (toASCIILowerUnchecked(*cssString++) != (*constantString++))
+            return false;
+    } while (*constantString);
+    return true;
+}
+
+static UChar* checkAndSkipEscape(UChar* currentCharacter)
+{
+    // Returns with 0, if escape check is failed. Otherwise
+    // it returns with the following character.
+    ASSERT(*currentCharacter == '\\');
+
+    ++currentCharacter;
+    if (!isCSSEscape(*currentCharacter))
+        return 0;
+
+    if (isASCIIHexDigit(*currentCharacter)) {
+        int length = 6;
+
+        do {
+            ++currentCharacter;
+        } while (isASCIIHexDigit(*currentCharacter) && --length);
+
+        // Optional space after the escape sequence.
+        if (isHTMLSpace(*currentCharacter))
+            ++currentCharacter;
+        return currentCharacter;
+    }
+    return currentCharacter + 1;
+}
+
+static inline UChar* skipWhiteSpace(UChar* currentCharacter)
+{
+    while (isHTMLSpace(*currentCharacter))
+        ++currentCharacter;
+    return currentCharacter;
+}
+
+// Main CSS tokenizer functions.
+
+inline bool CSSParser::isIdentifierStart()
+{
+    // Check whether an identifier is started.
+    return isIdentifierStartAfterDash((*m_currentCharacter != '-') ? m_currentCharacter : m_currentCharacter + 1);
+}
+
+inline UChar* CSSParser::checkAndSkipString(UChar* currentCharacter, UChar quote)
+{
+    // Returns with 0, if string check is failed. Otherwise
+    // it returns with the following character. This is necessary
+    // since we cannot revert escape sequences, thus strings
+    // must be validated before parsing.
+    while (true) {
+        if (UNLIKELY(*currentCharacter == quote)) {
+            // String parsing is successful.
+            return currentCharacter + 1;
+        }
+        if (UNLIKELY(*currentCharacter <= '\r' && (!*currentCharacter || *currentCharacter == '\n' || (*currentCharacter | 0x1) == '\r'))) {
+            // String parsing is failed for character '\0', '\n', '\f' or '\r'.
+            return 0;
+        }
+
+        if (LIKELY(currentCharacter[0] != '\\'))
+            ++currentCharacter;
+        else if (currentCharacter[1] == '\n' || currentCharacter[1] == '\f')
+            currentCharacter += 2;
+        else if (currentCharacter[1] == '\r')
+            currentCharacter += currentCharacter[2] == '\n' ? 3 : 2;
+        else {
+            currentCharacter = checkAndSkipEscape(currentCharacter);
+            if (!currentCharacter)
+                return 0;
+        }
+    }
+}
+
+void CSSParser::parseEscape(UChar*& result)
+{
+    ASSERT(*m_currentCharacter == '\\' && isCSSEscape(m_currentCharacter[1]));
+
+    ++m_currentCharacter;
+    if (isASCIIHexDigit(*m_currentCharacter)) {
+        unsigned unicode = 0;
+        int length = 6;
+
+        do {
+            unicode = (unicode << 4) + toASCIIHexValue(*m_currentCharacter++);
+        } while (--length && isASCIIHexDigit(*m_currentCharacter));
+
+        // Characters above 0xffff are not handled.
+        if (unicode > 0xffff)
+            unicode = 0xfffd;
+
+        // Optional space after the escape sequence.
+        if (isHTMLSpace(*m_currentCharacter))
+            ++m_currentCharacter;
+        *result = unicode;
+    } else
+        *result = *m_currentCharacter++;
+    ++result;
+}
+
+inline void CSSParser::parseIdentifier(UChar*& result, bool& hasEscape)
+{
+    // If a valid identifier start is found, we can safely
+    // parse the identifier until the next invalid character.
+    ASSERT(isIdentifierStart());
+    hasEscape = false;
+    do {
+        if (LIKELY(*m_currentCharacter != '\\'))
+            *result++ = *m_currentCharacter++;
+        else {
+            hasEscape = true;
+            parseEscape(result);
+        }
+    } while (isCSSLetter(m_currentCharacter[0]) || (m_currentCharacter[0] == '\\' && isCSSEscape(m_currentCharacter[1])));
+}
+
+inline void CSSParser::parseString(UChar*& result, UChar quote)
+{
+    while (true) {
+        if (UNLIKELY(*m_currentCharacter == quote)) {
+            // String parsing is done.
+            ++m_currentCharacter;
+            return;
+        }
+        ASSERT(*m_currentCharacter > '\r' || (*m_currentCharacter < '\n' && *m_currentCharacter) || *m_currentCharacter == '\v');
+
+        if (LIKELY(m_currentCharacter[0] != '\\'))
+            *result++ = *m_currentCharacter++;
+        else if (m_currentCharacter[1] == '\n' || m_currentCharacter[1] == '\f')
+            m_currentCharacter += 2;
+        else if (m_currentCharacter[1] == '\r')
+            m_currentCharacter += m_currentCharacter[2] == '\n' ? 3 : 2;
+        else
+            parseEscape(result);
+    }
+}
+
+inline void CSSParser::parseURI(UChar*& start, UChar*& result)
+{
+    UChar* uriStart = skipWhiteSpace(m_currentCharacter);
+
+    if (*uriStart == '"' || *uriStart == '\'') {
+        UChar quote = *uriStart;
+        ++uriStart;
+
+        UChar* stringEnd = checkAndSkipString(uriStart, quote);
+        if (!stringEnd)
+            return;
+        stringEnd = skipWhiteSpace(stringEnd);
+        if (*stringEnd != ')')
+            return;
+
+        start = result = m_currentCharacter = uriStart;
+        parseString(result, quote);
+
+        m_currentCharacter = stringEnd + 1;
+        m_token = URI;
+    } else {
+        UChar* stringEnd = uriStart;
+
+        while (isURILetter(*stringEnd)) {
+            if (*stringEnd != '\\')
+                ++stringEnd;
+            else {
+                stringEnd = checkAndSkipEscape(stringEnd);
+                if (!stringEnd)
+                    return;
+            }
+        }
+
+        stringEnd = skipWhiteSpace(stringEnd);
+        if (*stringEnd != ')')
+            return;
+
+        start = result = m_currentCharacter = uriStart;
+        while (isURILetter(*m_currentCharacter)) {
+            if (LIKELY(*m_currentCharacter != '\\'))
+                *result++ = *m_currentCharacter++;
+            else
+                parseEscape(result);
+        }
+
+        m_currentCharacter = stringEnd + 1;
+        m_token = URI;
+    }
+}
+
+inline bool CSSParser::parseUnicodeRange()
+{
+    UChar* currentCharacter = m_currentCharacter + 1;
+    int length = 6;
+    ASSERT(*m_currentCharacter == '+');
+
+    while (isASCIIHexDigit(*currentCharacter) && length) {
+        ++currentCharacter;
+        --length;
+    }
+
+    if (length && *currentCharacter == '?') {
+        // At most 5 hex digit followed by a question mark.
+        do {
+            ++currentCharacter;
+            --length;
+        } while (*currentCharacter == '?' && length);
+        m_currentCharacter = currentCharacter;
+        return true;
+    }
+
+    if (length < 6) {
+        // At least one hex digit.
+        if (currentCharacter[0] == '-' && isASCIIHexDigit(currentCharacter[1])) {
+            // Followed by a dash and a hex digit.
+            ++currentCharacter;
+            length = 6;
+            do {
+                ++currentCharacter;
+            } while (--length && isASCIIHexDigit(*currentCharacter));
+        }
+        m_currentCharacter = currentCharacter;
+        return true;
+    }
+    return false;
+}
+
+bool CSSParser::parseNthChild()
+{
+    UChar* currentCharacter = m_currentCharacter;
+
+    while (isASCIIDigit(*currentCharacter))
+        ++currentCharacter;
+    if (isASCIIAlphaCaselessEqual(*currentCharacter, 'n')) {
+        m_currentCharacter = currentCharacter + 1;
+        return true;
+    }
+    return false;
+}
+
+bool CSSParser::parseNthChildExtra()
+{
+    UChar* currentCharacter = skipWhiteSpace(m_currentCharacter);
+    if (*currentCharacter != '+' && *currentCharacter != '-')
+        return false;
+
+    currentCharacter = skipWhiteSpace(currentCharacter + 1);
+    if (!isASCIIDigit(*currentCharacter))
+        return false;
+
+    do {
+        ++currentCharacter;
+    } while (isASCIIDigit(*currentCharacter));
+
+    m_currentCharacter = currentCharacter;
+    return true;
+}
+
+inline void CSSParser::detectFunctionTypeToken(int length)
+{
+    ASSERT(length > 0);
+    UChar* name = m_tokenStart;
+
+    switch (length) {
+    case 3:
+        if (isASCIIAlphaCaselessEqual(name[0], 'n') && isASCIIAlphaCaselessEqual(name[1], 'o') && isASCIIAlphaCaselessEqual(name[2], 't'))
+            m_token = NOTFUNCTION;
+        else if (isASCIIAlphaCaselessEqual(name[0], 'u') && isASCIIAlphaCaselessEqual(name[1], 'r') && isASCIIAlphaCaselessEqual(name[2], 'l'))
+            m_token = URI;
+        return;
+
+    case 9:
+        if (isEqualToCSSIdentifier(name, "nth-child"))
+            m_parsingMode = NthChildMode;
+        return;
+
+    case 11:
+        if (isEqualToCSSIdentifier(name, "nth-of-type"))
+            m_parsingMode = NthChildMode;
+        return;
+
+    case 14:
+        if (isEqualToCSSIdentifier(name, "nth-last-child"))
+            m_parsingMode = NthChildMode;
+        return;
+
+    case 16:
+        if (isEqualToCSSIdentifier(name, "nth-last-of-type"))
+            m_parsingMode = NthChildMode;
+        return;
+    }
+}
+
+inline void CSSParser::detectMediaQueryToken(int length)
+{
+    ASSERT(m_parsingMode == MediaQueryMode);
+    UChar* name = m_tokenStart;
+
+    if (length == 3) {
+        if (isASCIIAlphaCaselessEqual(name[0], 'a') && isASCIIAlphaCaselessEqual(name[1], 'n') && isASCIIAlphaCaselessEqual(name[2], 'd'))
+            m_token = MEDIA_AND;
+        else if (isASCIIAlphaCaselessEqual(name[0], 'n') && isASCIIAlphaCaselessEqual(name[1], 'o') && isASCIIAlphaCaselessEqual(name[2], 't'))
+            m_token = MEDIA_NOT;
+    } else if (length == 4) {
+        if (isASCIIAlphaCaselessEqual(name[0], 'o') && isASCIIAlphaCaselessEqual(name[1], 'n')
+                && isASCIIAlphaCaselessEqual(name[2], 'l') && isASCIIAlphaCaselessEqual(name[3], 'y'))
+            m_token = MEDIA_ONLY;
+    }
+}
+
+inline void CSSParser::detectNumberToken(UChar* type, int length)
+{
+    ASSERT(length > 0);
+
+    switch (toASCIILowerUnchecked(type[0])) {
+    case 'c':
+        if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'm'))
+            m_token = CMS;
+        return;
+
+    case 'd':
+        if (length == 3 && isASCIIAlphaCaselessEqual(type[1], 'e') && isASCIIAlphaCaselessEqual(type[2], 'g'))
+            m_token = DEGS;
+        return;
+
+    case 'e':
+        if (length == 2) {
+            if (isASCIIAlphaCaselessEqual(type[1], 'm'))
+                m_token = EMS;
+            else if (isASCIIAlphaCaselessEqual(type[1], 'x'))
+                m_token = EXS;
+        }
+        return;
+
+    case 'g':
+        if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'r')
+                && isASCIIAlphaCaselessEqual(type[2], 'a') && isASCIIAlphaCaselessEqual(type[3], 'd'))
+            m_token = GRADS;
+        return;
+
+    case 'h':
+        if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'z'))
+            m_token = HERTZ;
+        return;
+
+    case 'i':
+        if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'n'))
+            m_token = INS;
+        return;
+
+    case 'k':
+        if (length == 3 && isASCIIAlphaCaselessEqual(type[1], 'h') && isASCIIAlphaCaselessEqual(type[2], 'z'))
+            m_token = KHERTZ;
+        return;
+
+    case 'm':
+        if (length == 2) {
+            if (isASCIIAlphaCaselessEqual(type[1], 'm'))
+                m_token = MMS;
+            else if (isASCIIAlphaCaselessEqual(type[1], 's'))
+                m_token = MSECS;
+        }
+        return;
+
+    case 'p':
+        if (length == 2) {
+            if (isASCIIAlphaCaselessEqual(type[1], 'x'))
+                m_token = PXS;
+            else if (isASCIIAlphaCaselessEqual(type[1], 't'))
+                m_token = PTS;
+            else if (isASCIIAlphaCaselessEqual(type[1], 'c'))
+                m_token = PCS;
+        }
+        return;
+
+    case 'r':
+        if (length == 3) {
+            if (isASCIIAlphaCaselessEqual(type[1], 'a') && isASCIIAlphaCaselessEqual(type[2], 'd'))
+                m_token = RADS;
+            else if (isASCIIAlphaCaselessEqual(type[1], 'e') && isASCIIAlphaCaselessEqual(type[2], 'm'))
+                m_token = REMS;
+        }
+        return;
+
+    case 's':
+        if (length == 1)
+            m_token = SECS;
+        return;
+
+    case 't':
+        if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'u')
+                && isASCIIAlphaCaselessEqual(type[2], 'r') && isASCIIAlphaCaselessEqual(type[3], 'n'))
+            m_token = TURNS;
+        return;
+
+    default:
+        if (type[0] == '_' && length == 5 && type[1] == '_' && isASCIIAlphaCaselessEqual(type[2], 'q')
+                && isASCIIAlphaCaselessEqual(type[3], 'e') && isASCIIAlphaCaselessEqual(type[4], 'm'))
+            m_token = QEMS;
+        return;
+    }
+}
+
+inline void CSSParser::detectDashToken(int length)
+{
+    UChar* name = m_tokenStart;
+
+    if (length == 11) {
+        if (isASCIIAlphaCaselessEqual(name[10], 'y') && isEqualToCSSIdentifier(name + 1, "webkit-an"))
+            m_token = ANYFUNCTION;
+        else if (isASCIIAlphaCaselessEqual(name[10], 'n') && isEqualToCSSIdentifier(name + 1, "webkit-mi"))
+            m_token = MINFUNCTION;
+        else if (isASCIIAlphaCaselessEqual(name[10], 'x') && isEqualToCSSIdentifier(name + 1, "webkit-ma"))
+            m_token = MAXFUNCTION;
+    } else if (length == 12 && isEqualToCSSIdentifier(name + 1, "webkit-calc"))
+        m_token = CALCFUNCTION;
+}
+
+inline void CSSParser::detectAtToken(int length, bool hasEscape)
+{
+    UChar* name = m_tokenStart;
+    ASSERT(name[0] == '@' && length >= 2);
+
+    // charset, font-face, import, media, namespace, page,
+    // -webkit-keyframes, and -webkit-mediaquery are not affected by hasEscape.
+    switch (toASCIILowerUnchecked(name[1])) {
+    case 'b':
+        if (hasEscape)
+            return;
+
+        switch (length) {
+        case 12:
+            if (isEqualToCSSIdentifier(name + 2, "ottom-left"))
+                m_token = BOTTOMLEFT_SYM;
+            return;
+
+        case 13:
+            if (isEqualToCSSIdentifier(name + 2, "ottom-right"))
+                m_token = BOTTOMRIGHT_SYM;
+            return;
+
+        case 14:
+            if (isEqualToCSSIdentifier(name + 2, "ottom-center"))
+                m_token = BOTTOMCENTER_SYM;
+            return;
+
+        case 19:
+            if (isEqualToCSSIdentifier(name + 2, "ottom-left-corner"))
+                m_token = BOTTOMLEFTCORNER_SYM;
+            return;
+
+        case 20:
+            if (isEqualToCSSIdentifier(name + 2, "ottom-right-corner"))
+                m_token = BOTTOMRIGHTCORNER_SYM;
+            return;
+        }
+        return;
+
+    case 'c':
+        if (length == 8 && isEqualToCSSIdentifier(name + 2, "harset"))
+            m_token = CHARSET_SYM;
+        return;
+
+    case 'f':
+        if (length == 10 && isEqualToCSSIdentifier(name + 2, "ont-face"))
+            m_token = FONT_FACE_SYM;
+        return;
+
+    case 'i':
+        if (length == 7 && isEqualToCSSIdentifier(name + 2, "mport")) {
+            m_parsingMode = MediaQueryMode;
+            m_token = IMPORT_SYM;
+        }
+        return;
+
+    case 'l':
+        if (hasEscape)
+            return;
+
+        if (length == 9) {
+            if (isEqualToCSSIdentifier(name + 2, "eft-top"))
+                m_token = LEFTTOP_SYM;
+        } else if (length == 12) {
+            // Checking the last character first could further reduce the possibile cases.
+            if (isASCIIAlphaCaselessEqual(name[11], 'e') && isEqualToCSSIdentifier(name + 2, "eft-middl"))
+                m_token = LEFTMIDDLE_SYM;
+            else if (isASCIIAlphaCaselessEqual(name[11], 'm') && isEqualToCSSIdentifier(name + 2, "eft-botto"))
+                m_token = LEFTBOTTOM_SYM;
+        }
+        return;
+
+    case 'm':
+        if (length == 6 && isEqualToCSSIdentifier(name + 2, "edia")) {
+            m_parsingMode = MediaQueryMode;
+            m_token = MEDIA_SYM;
+        }
+        return;
+
+    case 'n':
+        if (length == 10 && isEqualToCSSIdentifier(name + 2, "amespace"))
+            m_token = NAMESPACE_SYM;
+        return;
+
+    case 'p':
+        if (length == 5 && isEqualToCSSIdentifier(name + 2, "age"))
+            m_token = PAGE_SYM;
+        return;
+
+    case 'r':
+        if (hasEscape)
+            return;
+
+        if (length == 10) {
+            if (isEqualToCSSIdentifier(name + 2, "ight-top"))
+                m_token = RIGHTTOP_SYM;
+        } else if (length == 13) {
+            // Checking the last character first could further reduce the possibile cases.
+            if (isASCIIAlphaCaselessEqual(name[12], 'e') && isEqualToCSSIdentifier(name + 2, "ight-middl"))
+                m_token = RIGHTMIDDLE_SYM;
+            else if (isASCIIAlphaCaselessEqual(name[12], 'm') && isEqualToCSSIdentifier(name + 2, "ight-botto"))
+                m_token = RIGHTBOTTOM_SYM;
+        }
+        return;
+
+    case 't':
+        if (hasEscape)
+            return;
+
+        switch (length) {
+        case 9:
+            if (isEqualToCSSIdentifier(name + 2, "op-left"))
+                m_token = TOPLEFT_SYM;
+            return;
+
+        case 10:
+            if (isEqualToCSSIdentifier(name + 2, "op-right"))
+                m_token = TOPRIGHT_SYM;
+            return;
+
+        case 11:
+            if (isEqualToCSSIdentifier(name + 2, "op-center"))
+                m_token = TOPCENTER_SYM;
+            return;
+
+        case 16:
+            if (isEqualToCSSIdentifier(name + 2, "op-left-corner"))
+                m_token = TOPLEFTCORNER_SYM;
+            return;
+
+        case 17:
+            if (isEqualToCSSIdentifier(name + 2, "op-right-corner"))
+                m_token = TOPRIGHTCORNER_SYM;
+            return;
+        }
+        return;
+
+    case '-':
+        switch (length) {
+        case 13:
+            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-rule"))
+                m_token = WEBKIT_RULE_SYM;
+            return;
+
+        case 14:
+            if (hasEscape)
+                return;
+
+            // Checking the last character first could further reduce the possibile cases.
+            if (isASCIIAlphaCaselessEqual(name[13], 's') && isEqualToCSSIdentifier(name + 2, "webkit-decl"))
+                m_token = WEBKIT_DECLS_SYM;
+            else if (isASCIIAlphaCaselessEqual(name[13], 'e') && isEqualToCSSIdentifier(name + 2, "webkit-valu"))
+                m_token = WEBKIT_VALUE_SYM;
+            return;
+
+        case 15:
+            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-region"))
+                m_token = WEBKIT_REGION_RULE_SYM;
+            return;
+
+        case 17:
+            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-selector"))
+                m_token = WEBKIT_SELECTOR_SYM;
+            return;
+
+        case 18:
+            if (isEqualToCSSIdentifier(name + 2, "webkit-keyframes"))
+                m_token = WEBKIT_KEYFRAMES_SYM;
+            return;
+
+        case 19:
+            if (isEqualToCSSIdentifier(name + 2, "webkit-mediaquery")) {
+                m_parsingMode = MediaQueryMode;
+                m_token = WEBKIT_MEDIAQUERY_SYM;
+            }
+            return;
+
+        case 22:
+            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-keyframe-rule"))
+                m_token = WEBKIT_KEYFRAME_RULE_SYM;
+            return;
+        }
+    }
+}
+
 int CSSParser::lex(void* yylvalWithoutType)
 {
     YYSTYPE* yylval = static_cast<YYSTYPE*>(yylvalWithoutType);
-    int length;
+    // Write pointer for the next character.
+    UChar* result;
+    bool hasEscape;
 
-    lex();
+    // The input buffer is terminated by two \0, so
+    // it is safe to read two characters ahead anytime.
 
-    UChar* t = text(&length);
+#ifndef NDEBUG
+    // In debug we check with an ASSERT that the length is > 0 for string types.
+    yylval->string.characters = 0;
+    yylval->string.length = 0;
+#endif
 
-    switch (token()) {
-    case WHITESPACE:
-    case SGML_CD:
-    case INCLUDES:
-    case DASHMATCH:
+restartAfterComment:
+    m_tokenStart = result = m_currentCharacter;
+    m_token = *m_currentCharacter;
+    ++m_currentCharacter;
+
+    switch ((m_token <= 127) ? typesOfASCIICharacters[m_token] : CharacterIdentifierStart) {
+    case CharacterCaselessU:
+        if (UNLIKELY(*m_currentCharacter == '+'))
+            if (parseUnicodeRange()) {
+                m_token = UNICODERANGE;
+                yylval->string.characters = m_tokenStart;
+                yylval->string.length = m_currentCharacter - m_tokenStart;
+                break;
+            }
+        // Fall through to CharacterIdentifierStart.
+
+    case CharacterIdentifierStart:
+        --m_currentCharacter;
+        parseIdentifier(result, hasEscape);
+        m_token = IDENT;
+
+        yylval->string.characters = m_tokenStart;
+        yylval->string.length = result - m_tokenStart;
+
+        if (UNLIKELY(*m_currentCharacter == '(')) {
+            m_token = FUNCTION;
+            if (!hasEscape)
+                detectFunctionTypeToken(result - m_tokenStart);
+            ++m_currentCharacter;
+            ++result;
+            ++yylval->string.length;
+
+            if (token() == URI) {
+                m_token = FUNCTION;
+                // Check whether it is really an URI.
+                parseURI(yylval->string.characters, result);
+                yylval->string.length = result - yylval->string.characters;
+            }
+        } else if (UNLIKELY(m_parsingMode != NormalMode) && !hasEscape) {
+            if (m_parsingMode == MediaQueryMode)
+                detectMediaQueryToken(result - m_tokenStart);
+            else if (m_parsingMode == NthChildMode && isASCIIAlphaCaselessEqual(m_tokenStart[0], 'n')) {
+                if (result - m_tokenStart == 1) {
+                    // String "n" is IDENT but "n+1" is NTH.
+                    if (parseNthChildExtra()) {
+                        m_token = NTH;
+                        yylval->string.length = m_currentCharacter - m_tokenStart;
+                    }
+                } else if (result - m_tokenStart == 2 && m_tokenStart[1] == '-') {
+                    // String "n-" is IDENT but "n-1" is NTH.
+                    // Speculatively decrease m_currentCharacter to detect an nth-child token.
+                    m_currentCharacter--;
+                    if (parseNthChildExtra()) {
+                        m_token = NTH;
+                        yylval->string.length = m_currentCharacter - m_tokenStart;
+                    } else {
+                        // Revert the change to m_currentCharacter if unsuccessful.
+                        m_currentCharacter++;
+                    }
+                }
+            }
+        }
         break;
 
-    case URI:
+    case CharacterDot:
+        if (!isASCIIDigit(m_currentCharacter[0]))
+            break;
+        // Fall through to CharacterNumber.
+
+    case CharacterNumber: {
+        bool dotSeen = (m_token == '.');
+
+        while (true) {
+            if (!isASCIIDigit(m_currentCharacter[0])) {
+                // Only one dot is allowed for a number,
+                // and it must be followed by a digit.
+                if (m_currentCharacter[0] != '.' || dotSeen || !isASCIIDigit(m_currentCharacter[1]))
+                    break;
+                dotSeen = true;
+            }
+            ++m_currentCharacter;
+        }
+
+        if (UNLIKELY(m_parsingMode == NthChildMode) && !dotSeen && isASCIIAlphaCaselessEqual(*m_currentCharacter, 'n')) {
+            // "[0-9]+n" is always an NthChild.
+            ++m_currentCharacter;
+            parseNthChildExtra();
+            m_token = NTH;
+            yylval->string.characters = m_tokenStart;
+            yylval->string.length = m_currentCharacter - m_tokenStart;
+            break;
+        }
+
+        yylval->number = charactersToDouble(m_tokenStart, m_currentCharacter - m_tokenStart);
+
+        // Type of the function.
+        if (isIdentifierStart()) {
+            UChar* type = m_currentCharacter;
+            result = m_currentCharacter;
+
+            parseIdentifier(result, hasEscape);
+            if (*m_currentCharacter == '+') {
+                // Any identifier followed by a '+' sign is an invalid dimension.
+                ++m_currentCharacter;
+                m_token = INVALIDDIMEN;
+            } else {
+                m_token = DIMEN;
+                if (!hasEscape)
+                    detectNumberToken(type, m_currentCharacter - type);
+
+                if (m_token == DIMEN) {
+                    // The decoded number is overwritten, but this is intentional.
+                    yylval->string.characters = m_tokenStart;
+                    yylval->string.length = m_currentCharacter - m_tokenStart;
+                }
+            }
+        } else if (*m_currentCharacter == '%') {
+            // Although the CSS grammar says {num}% we follow
+            // webkit at the moment which uses {num}%+.
+            do {
+                ++m_currentCharacter;
+            } while (*m_currentCharacter == '%');
+            m_token = PERCENTAGE;
+        } else
+            m_token = dotSeen ? FLOATTOKEN : INTEGER;
+        break;
+    }
+
+    case CharacterDash:
+        if (isIdentifierStartAfterDash(m_currentCharacter)) {
+            --m_currentCharacter;
+            parseIdentifier(result, hasEscape);
+            m_token = IDENT;
+
+            if (*m_currentCharacter == '(') {
+                m_token = FUNCTION;
+                if (!hasEscape)
+                    detectDashToken(result - m_tokenStart);
+                ++m_currentCharacter;
+                ++result;
+            } else if (UNLIKELY(m_parsingMode == NthChildMode) && !hasEscape && isASCIIAlphaCaselessEqual(m_tokenStart[1], 'n')) {
+                if (result - m_tokenStart == 2) {
+                    // String "-n" is IDENT but "-n+1" is NTH.
+                    if (parseNthChildExtra()) {
+                        m_token = NTH;
+                        result = m_currentCharacter;
+                    }
+                } else if (result - m_tokenStart == 3 && m_tokenStart[2] == '-') {
+                    // String "-n-" is IDENT but "-n-1" is NTH.
+                    // Speculatively decrease m_currentCharacter to detect an nth-child token.
+                    m_currentCharacter--;
+                    if (parseNthChildExtra()) {
+                        m_token = NTH;
+                        yylval->string.length = m_currentCharacter - m_tokenStart;
+                    } else {
+                        // Revert the change to m_currentCharacter if unsuccessful.
+                        m_currentCharacter++;
+                    }
+                }
+            }
+            yylval->string.characters = m_tokenStart;
+            yylval->string.length = result - m_tokenStart;
+        } else if (m_currentCharacter[0] == '-' && m_currentCharacter[1] == '>') {
+            m_currentCharacter += 2;
+            m_token = SGML_CD;
+        } else if (UNLIKELY(m_parsingMode == NthChildMode)) {
+            // "-[0-9]+n" is always an NthChild.
+            if (parseNthChild()) {
+                parseNthChildExtra();
+                m_token = NTH;
+                yylval->string.characters = m_tokenStart;
+                yylval->string.length = m_currentCharacter - m_tokenStart;
+            }
+        }
+        break;
+
+    case CharacterOther:
+        // m_token is simply the current character.
+        break;
+
+    case CharacterWhiteSpace:
+        m_token = WHITESPACE;
+        // Might start with a '\n'.
+        --m_currentCharacter;
+        do {
+            if (*m_currentCharacter == '\n')
+                ++m_lineNumber;
+            ++m_currentCharacter;
+        } while (*m_currentCharacter <= ' ' && (typesOfASCIICharacters[*m_currentCharacter] == CharacterWhiteSpace));
+        break;
+
+    case CharacterEndMediaQuery:
+        if (m_parsingMode == MediaQueryMode)
+            m_parsingMode = NormalMode;
+        break;
+
+    case CharacterEndNthChild:
+        if (m_parsingMode == NthChildMode)
+            m_parsingMode = NormalMode;
+        break;
+
+    case CharacterQuote:
+        if (checkAndSkipString(m_currentCharacter, m_token)) {
+            ++result;
+            parseString(result, m_token);
+            m_token = STRING;
+            yylval->string.characters = m_tokenStart + 1;
+            yylval->string.length = result - (m_tokenStart + 1);
+        }
+        break;
+
+    case CharacterExclamationMark: {
+        UChar* start = skipWhiteSpace(m_currentCharacter);
+        if (isEqualToCSSIdentifier(start, "important")) {
+            m_token = IMPORTANT_SYM;
+            m_currentCharacter = start + 9;
+        }
+        break;
+    }
+
+    case CharacterHashmark: {
+        UChar* start = m_currentCharacter;
+        result = m_currentCharacter;
+
+        if (isASCIIDigit(*m_currentCharacter)) {
+            // This must be a valid hex number token.
+            do {
+                ++m_currentCharacter;
+            } while (isASCIIHexDigit(*m_currentCharacter));
+            m_token = HEX;
+            yylval->string.characters = start;
+            yylval->string.length = m_currentCharacter - start;
+        } else if (isIdentifierStart()) {
+            m_token = IDSEL;
+            parseIdentifier(result, hasEscape);
+            if (!hasEscape) {
+                // Check whether the identifier is also a valid hex number.
+                UChar* current = start;
+                m_token = HEX;
+                do {
+                    if (!isASCIIHexDigit(*current)) {
+                        m_token = IDSEL;
+                        break;
+                    }
+                    ++current;
+                } while (current < result);
+            }
+            yylval->string.characters = start;
+            yylval->string.length = result - start;
+        }
+        break;
+    }
+
+    case CharacterSlash:
+        // Ignore comments. They are not even considered as white spaces.
+        if (*m_currentCharacter == '*') {
+            ++m_currentCharacter;
+            while (m_currentCharacter[0] != '*' || m_currentCharacter[1] != '/') {
+                if (m_currentCharacter[0] == '\n')
+                    ++m_lineNumber;
+                if (m_currentCharacter[0] == '\0' && m_currentCharacter[1] == '\0') {
+                    // Unterminated comments are simply ignored.
+                    m_currentCharacter -= 2;
+                    break;
+                }
+                ++m_currentCharacter;
+            }
+            m_currentCharacter += 2;
+            goto restartAfterComment;
+        }
+        break;
+
+    case CharacterDollar:
+        if (*m_currentCharacter == '=') {
+            ++m_currentCharacter;
+            m_token = ENDSWITH;
+        }
+        break;
+
+    case CharacterAsterisk:
+        if (*m_currentCharacter == '=') {
+            ++m_currentCharacter;
+            m_token = CONTAINS;
+        }
+        break;
+
+    case CharacterPlus:
+        if (UNLIKELY(m_parsingMode == NthChildMode)) {
+            // Simplest case. "+[0-9]*n" is always NthChild.
+            if (parseNthChild()) {
+                parseNthChildExtra();
+                m_token = NTH;
+                yylval->string.characters = m_tokenStart;
+                yylval->string.length = m_currentCharacter - m_tokenStart;
+            }
+        }
+        break;
+
+    case CharacterLess:
+        if (m_currentCharacter[0] == '!' && m_currentCharacter[1] == '-' && m_currentCharacter[2] == '-') {
+            m_currentCharacter += 3;
+            m_token = SGML_CD;
+        }
+        break;
+
+    case CharacterAt:
+        if (isIdentifierStart()) {
+            m_token = ATKEYWORD;
+            ++result;
+            parseIdentifier(result, hasEscape);
+            detectAtToken(result - m_tokenStart, hasEscape);
+        }
+        break;
+
+    case CharacterBackSlash:
+        if (isCSSEscape(*m_currentCharacter)) {
+            --m_currentCharacter;
+            parseIdentifier(result, hasEscape);
+            m_token = IDENT;
+            yylval->string.characters = m_tokenStart;
+            yylval->string.length = result - m_tokenStart;
+        }
+        break;
+
+    case CharacterXor:
+        if (*m_currentCharacter == '=') {
+            ++m_currentCharacter;
+            m_token = BEGINSWITH;
+        }
+        break;
+
+    case CharacterVerticalBar:
+        if (*m_currentCharacter == '=') {
+            ++m_currentCharacter;
+            m_token = DASHMATCH;
+        }
+        break;
+
+    case CharacterTilde:
+        if (*m_currentCharacter == '=') {
+            ++m_currentCharacter;
+            m_token = INCLUDES;
+        }
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+#ifndef NDEBUG
+    switch (token()) {
     case STRING:
+        ASSERT(yylval->string.characters == m_tokenStart + 1);
+        break;
+
     case IDENT:
     case NTH:
-    case HEX:
-    case IDSEL:
     case DIMEN:
     case UNICODERANGE:
     case FUNCTION:
@@ -7470,200 +8613,21 @@ int CSSParser::lex(void* yylvalWithoutType)
     case CALCFUNCTION:
     case MINFUNCTION:
     case MAXFUNCTION:
-        yylval->string.characters = t;
-        yylval->string.length = length;
+        ASSERT(yylval->string.characters == m_tokenStart && yylval->string.length > 0);
         break;
 
-    case IMPORT_SYM:
-    case PAGE_SYM:
-    case MEDIA_SYM:
-    case FONT_FACE_SYM:
-    case CHARSET_SYM:
-    case NAMESPACE_SYM:
-    case WEBKIT_KEYFRAMES_SYM:
-
-    case IMPORTANT_SYM:
+    case URI:
+        ASSERT(yylval->string.characters && yylval->string.characters != m_tokenStart);
         break;
 
-    case QEMS:
-        length--;
-    case GRADS:
-    case TURNS:
-        length--;
-    case DEGS:
-    case RADS:
-    case KHERTZ:
-    case REMS:
-        length--;
-    case MSECS:
-    case HERTZ:
-    case EMS:
-    case EXS:
-    case PXS:
-    case CMS:
-    case MMS:
-    case INS:
-    case PTS:
-    case PCS:
-        length--;
-    case SECS:
-    case PERCENTAGE:
-        length--;
-    case FLOATTOKEN:
-    case INTEGER:
-        yylval->number = charactersToDouble(t, length);
-        break;
-
-    default:
-        break;
-    }
-
-    return token();
-}
-
-void CSSParser::recheckAtKeyword(const UChar* str, int len)
-{
-    String ruleName(str, len);
-    if (equalIgnoringCase(ruleName, "@import"))
-        yyTok = IMPORT_SYM;
-    else if (equalIgnoringCase(ruleName, "@page"))
-        yyTok = PAGE_SYM;
-    else if (equalIgnoringCase(ruleName, "@media"))
-        yyTok = MEDIA_SYM;
-    else if (equalIgnoringCase(ruleName, "@font-face"))
-        yyTok = FONT_FACE_SYM;
-    else if (equalIgnoringCase(ruleName, "@charset"))
-        yyTok = CHARSET_SYM;
-    else if (equalIgnoringCase(ruleName, "@namespace"))
-        yyTok = NAMESPACE_SYM;
-    else if (equalIgnoringCase(ruleName, "@-webkit-keyframes"))
-        yyTok = WEBKIT_KEYFRAMES_SYM;
-    else if (equalIgnoringCase(ruleName, "@-webkit-mediaquery"))
-        yyTok = WEBKIT_MEDIAQUERY_SYM;
-}
-
-UChar* CSSParser::text(int *length)
-{
-    UChar* start = yytext;
-    int l = yyleng;
-    switch (yyTok) {
-    case STRING:
-        l--;
-        /* nobreak */
     case HEX:
     case IDSEL:
-        start++;
-        l--;
-        break;
-    case URI:
-        // "url("{w}{string}{w}")"
-        // "url("{w}{url}{w}")"
-        // strip "url(" and ")"
-        start += 4;
-        l -= 5;
-        // strip {w}
-        while (l && isHTMLSpace(*start)) {
-            ++start;
-            --l;
-        }
-        while (l && isHTMLSpace(start[l - 1]))
-            --l;
-        if (l && (*start == '"' || *start == '\'')) {
-            ASSERT(l >= 2 && start[l - 1] == *start);
-            ++start;
-            l -= 2;
-        }
-        break;
-    default:
+        ASSERT(yylval->string.characters == m_tokenStart + 1 && yylval->string.length > 0);
         break;
     }
+#endif
 
-    // process escapes
-    UChar* out = start;
-    UChar* escape = 0;
-
-    bool sawEscape = false;
-
-    for (int i = 0; i < l; i++) {
-        UChar* current = start + i;
-        if (escape == current - 1) {
-            if (isASCIIHexDigit(*current))
-                continue;
-            if (yyTok == STRING &&
-                 (*current == '\n' || *current == '\r' || *current == '\f')) {
-                // ### handle \r\n case
-                if (*current != '\r')
-                    escape = 0;
-                continue;
-            }
-            // in all other cases copy the char to output
-            // ###
-            *out++ = *current;
-            escape = 0;
-            continue;
-        }
-        if (escape == current - 2 && yyTok == STRING &&
-             *(current-1) == '\r' && *current == '\n') {
-            escape = 0;
-            continue;
-        }
-        if (escape > current - 7 && isASCIIHexDigit(*current))
-            continue;
-        if (escape) {
-            // add escaped char
-            unsigned uc = 0;
-            escape++;
-            while (escape < current) {
-                uc *= 16;
-                uc += toASCIIHexValue(*escape);
-                escape++;
-            }
-            // can't handle chars outside ucs2
-            if (uc > 0xffff)
-                uc = 0xfffd;
-            *out++ = uc;
-            escape = 0;
-            if (isHTMLSpace(*current))
-                continue;
-        }
-        if (!escape && *current == '\\') {
-            escape = current;
-            sawEscape = true;
-            continue;
-        }
-        *out++ = *current;
-    }
-    if (escape) {
-        // add escaped char
-        unsigned uc = 0;
-        escape++;
-        while (escape < start+l) {
-            uc *= 16;
-            uc += toASCIIHexValue(*escape);
-            escape++;
-        }
-        // can't handle chars outside ucs2
-        if (uc > 0xffff)
-            uc = 0xfffd;
-        *out++ = uc;
-    }
-
-    *length = out - start;
-
-    // If we have an unrecognized @-keyword, and if we handled any escapes at all, then
-    // we should attempt to adjust yyTok to the correct type.
-    if (yyTok == ATKEYWORD && sawEscape)
-        recheckAtKeyword(start, *length);
-
-    return start;
-}
-
-void CSSParser::countLines()
-{
-    for (UChar* current = yytext; current < yytext + yyleng; ++current) {
-        if (*current == '\n')
-            ++m_lineNumber;
-    }
+    return token();
 }
 
 CSSParserSelector* CSSParser::createFloatingSelector()
@@ -8069,27 +9033,27 @@ void CSSParser::updateLastMediaLine(MediaList* media)
 
 void CSSParser::markSelectorListStart()
 {
-    m_selectorListRange.start = yytext - m_data.get();
+    m_selectorListRange.start = m_tokenStart - m_dataStart.get();
 }
 
 void CSSParser::markSelectorListEnd()
 {
     if (!m_currentRuleData)
         return;
-    UChar* listEnd = yytext;
-    while (listEnd > m_data.get() + 1) {
+    UChar* listEnd = m_tokenStart;
+    while (listEnd > m_dataStart.get() + 1) {
         if (isHTMLSpace(*(listEnd - 1)))
             --listEnd;
         else
             break;
     }
-    m_selectorListRange.end = listEnd - m_data.get();
+    m_selectorListRange.end = listEnd - m_dataStart.get();
 }
 
 void CSSParser::markRuleBodyStart()
 {
-    unsigned offset = yytext - m_data.get();
-    if (*yytext == '{')
+    unsigned offset = m_tokenStart - m_dataStart.get();
+    if (*m_tokenStart == '{')
         ++offset; // Skip the rule body opening brace.
     if (offset > m_ruleBodyRange.start)
         m_ruleBodyRange.start = offset;
@@ -8098,7 +9062,7 @@ void CSSParser::markRuleBodyStart()
 
 void CSSParser::markRuleBodyEnd()
 {
-    unsigned offset = yytext - m_data.get();
+    unsigned offset = m_tokenStart - m_dataStart.get();
     if (offset > m_ruleBodyRange.end)
         m_ruleBodyRange.end = offset;
 }
@@ -8107,15 +9071,15 @@ void CSSParser::markPropertyStart()
 {
     if (!m_inStyleRuleOrDeclaration)
         return;
-    m_propertyRange.start = yytext - m_data.get();
+    m_propertyRange.start = m_tokenStart - m_dataStart.get();
 }
 
 void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
 {
     if (!m_inStyleRuleOrDeclaration)
         return;
-    unsigned offset = yytext - m_data.get();
-    if (*yytext == ';') // Include semicolon into the property text.
+    unsigned offset = m_tokenStart - m_dataStart.get();
+    if (*m_tokenStart == ';') // Include semicolon into the property text.
         ++offset;
     m_propertyRange.end = offset;
     if (m_propertyRange.start != UINT_MAX && m_currentRuleData) {
@@ -8123,7 +9087,7 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         const unsigned start = m_propertyRange.start;
         const unsigned end = m_propertyRange.end;
         ASSERT(start < end);
-        String propertyString = String(m_data.get() + start, end - start).stripWhiteSpace();
+        String propertyString = String(m_dataStart.get() + start, end - start).stripWhiteSpace();
         if (propertyString.endsWith(";", true))
             propertyString = propertyString.left(propertyString.length() - 1);
         size_t colonIndex = propertyString.find(":");
@@ -8341,34 +9305,5 @@ bool isValidNthToken(const CSSParserString& token)
     return equalIgnoringCase(token, "odd") || equalIgnoringCase(token, "even")
         || equalIgnoringCase(token, "n") || equalIgnoringCase(token, "-n");
 }
-
-#define YY_DECL int CSSParser::lex()
-#define yyconst const
-typedef int yy_state_type;
-typedef unsigned YY_CHAR;
-// The following line makes sure we treat non-Latin-1 Unicode characters correctly.
-#define YY_SC_TO_UI(c) (c > 0xff ? 0xff : c)
-#define YY_DO_BEFORE_ACTION \
-        yytext = yy_bp; \
-        yyleng = (int) (yy_cp - yy_bp); \
-        yy_hold_char = *yy_cp; \
-        *yy_cp = 0; \
-        yy_c_buf_p = yy_cp;
-#define YY_BREAK break;
-#define ECHO
-#define YY_RULE_SETUP
-#define INITIAL 0
-#define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
-#define yyterminate() yyTok = END_TOKEN; return yyTok
-#define YY_FATAL_ERROR(a)
-// The following line is needed to build the tokenizer with a condition stack.
-// The macro is used in the tokenizer grammar with lines containing
-// BEGIN(mediaqueries) and BEGIN(initial). yy_start acts as index to
-// tokenizer transition table, and 'mediaqueries' and 'initial' are
-// offset multipliers that specify which transitions are active
-// in the tokenizer during in each condition (tokenizer state).
-#define BEGIN yy_start = 1 + 2 *
-
-#include "tokenizer.cpp"
 
 }

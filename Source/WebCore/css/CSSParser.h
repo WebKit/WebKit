@@ -319,15 +319,29 @@ public:
     void resetRuleBodyMarks() { m_ruleBodyRange.start = m_ruleBodyRange.end = 0; }
     void resetPropertyMarks() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
     int lex(void* yylval);
-    int token() { return yyTok; }
-    UChar* text(int* length);
-    void countLines();
-    int lex();
+    int token() { return m_token; }
 
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
         
 private:
+    inline bool isIdentifierStart();
+
+    static inline UChar* checkAndSkipString(UChar*, UChar);
+
+    void parseEscape(UChar*&);
+    inline void parseIdentifier(UChar*&, bool&);
+    inline void parseString(UChar*&, UChar);
+    inline void parseURI(UChar*&, UChar*&);
+    inline bool parseUnicodeRange();
+    bool parseNthChild();
+    bool parseNthChildExtra();
+    inline void detectFunctionTypeToken(int);
+    inline void detectMediaQueryToken(int);
+    inline void detectNumberToken(UChar*, int);
+    inline void detectDashToken(int);
+    inline void detectAtToken(int, bool);
+
     void setStyleSheet(CSSStyleSheet*);
     void ensureCSSValuePool();
 
@@ -363,15 +377,17 @@ private:
 
     bool parseColor(const String&);
 
-    OwnArrayPtr<UChar> m_data;
-    UChar* yytext;
-    UChar* yy_c_buf_p;
-    UChar yy_hold_char;
-    int yy_last_accepting_state;
-    UChar* yy_last_accepting_cpos;
-    int yyleng;
-    int yyTok;
-    int yy_start;
+    enum ParsingMode {
+        NormalMode,
+        MediaQueryMode,
+        NthChildMode
+    };
+
+    ParsingMode m_parsingMode;
+    OwnArrayPtr<UChar> m_dataStart;
+    UChar* m_currentCharacter;
+    UChar* m_tokenStart;
+    int m_token;
     int m_lineNumber;
     int m_lastSelectorLineNumber;
 

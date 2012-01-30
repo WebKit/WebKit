@@ -8540,7 +8540,6 @@
 		6565814409D13043000E61D7 /* CSSGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGrammar.cpp; sourceTree = "<group>"; };
 		6565814709D13043000E61D7 /* CSSValueKeywords.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueKeywords.gperf; sourceTree = "<group>"; };
 		6565814809D13043000E61D7 /* CSSValueKeywords.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueKeywords.h; sourceTree = "<group>"; };
-		6565814C09D13043000E61D7 /* tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = tokenizer.cpp; sourceTree = "<group>"; };
 		656581AC09D14EE6000E61D7 /* CharsetData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CharsetData.cpp; sourceTree = "<group>"; };
 		656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UserAgentStyleSheets.h; sourceTree = "<group>"; };
 		656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyleSheetsData.cpp; sourceTree = "<group>"; };
@@ -10058,7 +10057,6 @@
 		93CA4C9D09DF93FA00DF8677 /* makevalues.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makevalues.pl; sourceTree = "<group>"; };
 		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
-		93CA4CA309DF93FA00DF8677 /* tokenizer.flex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tokenizer.flex; sourceTree = "<group>"; };
 		93CCF0260AF6C52900018E89 /* NavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAction.h; sourceTree = "<group>"; };
 		93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationAction.cpp; sourceTree = "<group>"; };
 		93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
@@ -14838,7 +14836,6 @@
 				656581E709D1508D000E61D7 /* SVGElementFactory.h */,
 				656581E809D1508D000E61D7 /* SVGNames.cpp */,
 				656581E909D1508D000E61D7 /* SVGNames.h */,
-				6565814C09D13043000E61D7 /* tokenizer.cpp */,
 				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
 				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
 				1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */,
@@ -20093,7 +20090,6 @@
 				B2227B020D00BFF10071B782 /* SVGCSSPropertyNames.in */,
 				B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
-				93CA4CA309DF93FA00DF8677 /* tokenizer.flex */,
 				BC5EC1760A507E3E006007F5 /* view-source.css */,
 				3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */,
 				3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */,

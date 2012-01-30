@@ -641,10 +641,6 @@ DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNam
 DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	$(AM_V_GEN)$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/platform/ColorData.gperf
 
-# CSS tokenizer
-DerivedSources/WebCore/tokenizer.cpp : $(WebCore)/css/tokenizer.flex $(WebCore)/css/maketokenizer
-	$(AM_V_GEN)$(FLEX) -t $< | $(PERL) $(WebCore)/css/maketokenizer > $@
-
 # CSS grammar
 
 # NOTE: older versions of bison do not inject an inclusion guard, so we do it
@@ -936,7 +932,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/svg.css \
 	Source/WebCore/css/SVGCSSPropertyNames.in \
 	Source/WebCore/css/SVGCSSValueKeywords.in \
-	Source/WebCore/css/tokenizer.flex \
 	Source/WebCore/css/view-source.css \
 	Source/WebCore/css/WebKitFontFamilyNames.in \
 	Source/WebCore/dom/EventFactory.in \

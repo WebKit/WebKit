@@ -278,7 +278,6 @@ def build(bld):
         # intermediate sources
         excludes.append('DocTypeStrings.cpp')
         excludes.append('HTMLEntityNames.cpp')
-        excludes.append('tokenizer.cpp')
 
         # Qt specific file in common sources
         excludes.append('ContextShadow.cpp')

@@ -2328,17 +2328,6 @@ ADD_CUSTOM_COMMAND(
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/HTMLEntityTable.cpp)
 
 
-# Generate tokenizer
-FILE(TO_NATIVE_PATH ${PERL_EXECUTABLE} PERL_EXECUTABLE_NATIVE_PATH)
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/tokenizer.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/maketokenizer
-    DEPENDS ${WEBCORE_DIR}/css/tokenizer.flex
-    COMMAND ${FLEX_EXECUTABLE} -t ${WEBCORE_DIR}/css/tokenizer.flex | ${PERL_EXECUTABLE_NATIVE_PATH} ${WEBCORE_DIR}/css/maketokenizer > ${DERIVED_SOURCES_WEBCORE_DIR}/tokenizer.cpp
-    VERBATIM)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSParser.cpp tokenizer.cpp)
-
-
 # Replace ";" with "space" in order to recognize feature definition in css files.
 SET(FEATURE_DEFINES_WITH_SPACE_SEPARATOR "")
 FOREACH(_feature ${FEATURE_DEFINES})

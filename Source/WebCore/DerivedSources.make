@@ -618,7 +618,6 @@ all : \
     MathMLElementFactory.cpp \
     MathMLNames.cpp \
     XPathGrammar.cpp \
-    tokenizer.cpp \
 #
 
 # --------
@@ -712,13 +711,6 @@ HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/crea
 
 ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	perl $(WebCore)/make-hash-tools.pl . $(WebCore)/platform/ColorData.gperf
-
-# --------
-
-# CSS tokenizer
-
-tokenizer.cpp : css/tokenizer.flex css/maketokenizer
-	flex -t $< | perl $(WebCore)/css/maketokenizer > $@
 
 # --------
 

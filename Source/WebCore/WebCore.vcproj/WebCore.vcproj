@@ -35510,10 +35510,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\tokenizer.flex"
-				>
-			</File>
-			<File
 				RelativePath="..\css\WebKitCSSFilterValue.cpp"
 				>
 			</File>

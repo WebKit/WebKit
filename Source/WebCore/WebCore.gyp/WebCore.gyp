@@ -912,23 +912,6 @@
           ],
         },
         {
-          'action_name': 'tokenizer',
-          'inputs': [
-            '../css/maketokenizer',
-            '../css/tokenizer.flex',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/tokenizer.cpp',
-          ],
-          'action': [
-            'python',
-            'scripts/action_maketokenizer.py',
-            '<@(_outputs)',
-            '--',
-            '<@(_inputs)'
-          ],
-        },
-        {
           'action_name': 'derived_sources_all_in_one',
           'inputs': [
             'scripts/action_derivedsourcesallinone.py',

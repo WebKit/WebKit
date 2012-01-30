@@ -1,3 +1,17 @@
+2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Custom written CSS lexer
+        https://bugs.webkit.org/show_bug.cgi?id=70107
+
+        Reviewed by Antti Koivisto and Oliver Hunt.
+
+        Add new helper functions for the custom written CSS lexer.
+
+        * wtf/ASCIICType.h:
+        (WTF::toASCIILowerUnchecked):
+        (WTF):
+        (WTF::isASCIIAlphaCaselessEqual):
+
 2012-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r105576-r105582): Web Inspector Crash in JSC::JSValue::toString(JSC::ExecState*) const

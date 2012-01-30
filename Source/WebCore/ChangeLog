@@ -1,3 +1,77 @@
+2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Custom written CSS lexer
+        https://bugs.webkit.org/show_bug.cgi?id=70107
+
+        Reviewed by Antti Koivisto and Oliver Hunt.
+
+        This patch replaces the flex based CSS lexer to a
+        new, custom written one. The new code is more
+        than 2 times faster according to oprofile and CPU
+        cycle counters.
+
+        The code structure is quite straightforward: it choose
+        the possible token group based on the first character
+        and employ utility functions to parse the longer than
+        one character long ones. Most of the utilities are inline
+        to make the lexer fast.
+
+        All build systems updated. Including removing the flex support.
+
+        Existing tests cover this feature.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_maketokenizer.py: Removed.
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::mightBeRGBA):
+        (WebCore::mightBeRGB):
+        ():
+        (WebCore::isCSSLetter):
+        (WebCore):
+        (WebCore::isCSSEscape):
+        (WebCore::isURILetter):
+        (WebCore::isIdentifierStartAfterDash):
+        (WebCore::isEqualToCSSIdentifier):
+        (WebCore::checkAndSkipEscape):
+        (WebCore::skipWhiteSpace):
+        (WebCore::CSSParser::isIdentifierStart):
+        (WebCore::CSSParser::checkAndSkipString):
+        (WebCore::CSSParser::parseEscape):
+        (WebCore::CSSParser::parseIdentifier):
+        (WebCore::CSSParser::parseString):
+        (WebCore::CSSParser::parseURI):
+        (WebCore::CSSParser::parseUnicodeRange):
+        (WebCore::CSSParser::parseNthChild):
+        (WebCore::CSSParser::parseNthChildExtra):
+        (WebCore::CSSParser::detectFunctionTypeToken):
+        (WebCore::CSSParser::detectMediaQueryToken):
+        (WebCore::CSSParser::detectNumberToken):
+        (WebCore::CSSParser::detectDashToken):
+        (WebCore::CSSParser::detectAtToken):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::markSelectorListStart):
+        (WebCore::CSSParser::markSelectorListEnd):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markRuleBodyEnd):
+        (WebCore::CSSParser::markPropertyStart):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::token):
+        (CSSParser):
+        ():
+        * css/tokenizer.flex: Removed.
+
 2012-01-29  Dale Curtis  <dalecurtis@chromium.org>
 
         Prepare WebCore.gyp for ffmpeg source transition.

@@ -1,6 +1,3 @@
-webcore_built_nosources += \
-	DerivedSources/WebCore/tokenizer.cpp
-
 webcore_built_sources += \
 	DerivedSources/WebCore/CSSGrammar.cpp \
 	DerivedSources/WebCore/CSSGrammar.h \

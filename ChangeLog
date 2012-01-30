@@ -1,3 +1,14 @@
+2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Custom written CSS lexer
+        https://bugs.webkit.org/show_bug.cgi?id=70107
+
+        Reviewed by Antti Koivisto and Oliver Hunt.
+
+        Remove tokenizer.cpp from intermediate sources.
+
+        * wscript:
+
 2012-01-27  Fady Samuel  <fsamuel@chromium.org>
 
         Rename shouldLayoutFixedElementsRelativeToFrame and make it a setting

@@ -7963,7 +7963,6 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/XMLViewerJS.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/XPathGrammar.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/XPathGrammar.h',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/tokenizer.cpp',
         ],
         'export_file_generator_files': [
             '<(PRODUCT_DIR)/DerivedSources/WebCore/ExportFileGenerator.cpp',

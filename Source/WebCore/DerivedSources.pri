@@ -26,8 +26,6 @@ SVG_NAMES = $$PWD/svg/svgtags.in
 
 XLINK_NAMES = $$PWD/svg/xlinkattrs.in
 
-TOKENIZER = $$PWD/css/tokenizer.flex
-
 CSSBISON = $$PWD/css/CSSGrammar.y
 
 contains(DEFINES, ENABLE_XSLT=1) {
@@ -760,15 +758,6 @@ arrayBufferViewCustomScript.input = ARRAY_BUFFER_VIEW_CUSTOM_SCRIPT_SOURCE
 arrayBufferViewCustomScript.commands = perl $$PWD/inspector/xxd.pl V8ArrayBufferViewCustomScript_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 arrayBufferViewCustomScript.add_output_to_sources = false
 GENERATORS += arrayBufferViewCustomScript
-
-# GENERATOR 3: tokenizer (flex)
-tokenizer.output = ${QMAKE_FILE_BASE}.cpp
-tokenizer.input = TOKENIZER
-tokenizer.script = $$PWD/css/maketokenizer
-tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$tokenizer.script > ${QMAKE_FILE_OUT}
-# tokenizer.cpp is included into CSSParser.cpp
-tokenizer.add_output_to_sources = false
-GENERATORS += tokenizer
 
 # GENERATOR 4: CSS grammar
 cssbison.output = ${QMAKE_FILE_BASE}.cpp
