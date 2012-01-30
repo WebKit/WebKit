@@ -1,5 +1,24 @@
 2012-01-29  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION (r105576-r105582): Web Inspector Crash in JSC::JSValue::toString(JSC::ExecState*) const
+        https://bugs.webkit.org/show_bug.cgi?id=77146
+        <rdar://problem/10770586>
+
+        Reviewed by Oliver Hunt.
+        
+        The old JIT expects that the result of the last operation is in the lastResultRegister.  The DFG JIT is
+        designed to correctly track the lastResultRegister by looking at SetLocal nodes.  However, when the DFG
+        JIT inlines a code block, it forgets that the inlined code block's result would have been placed in the
+        lastResultRegister.  Hence if we OSR exit on the first node following the end of an inlined code block
+        that had a return value, and that first node uses the return value, the old JIT will get massively
+        confused.  This patch takes a surgical approach: instead of making the DFG smarter, it makes the old
+        JIT slightly dumber.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+
+2012-01-29  Filip Pizlo  <fpizlo@apple.com>
+
         Build fix for Mac non-x64 platforms.
 
         * tools/CodeProfiling.cpp:
