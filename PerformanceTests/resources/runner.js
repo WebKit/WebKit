@@ -72,9 +72,26 @@ function logStatistics(times) {
     log("max " + computeMax(times));
 }
 
+function gc() {
+    if (window.GCController)
+        GCController.collect();
+    else {
+        function gcRec(n) {
+            if (n < 1)
+                return {};
+            var temp = {i: "ab" + i + (i / 100000)};
+            temp += "foo";
+            gcRec(n-1);
+        }
+        for (var i = 0; i < 1000; i++)
+            gcRec(10);
+    }
+}
+
 function runLoop()
 {
     if (window.completedRuns < window.runCount) {
+        gc();
         window.setTimeout(run, 0);
     } else {
         logStatistics(times);

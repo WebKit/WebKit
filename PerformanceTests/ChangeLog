@@ -1,3 +1,20 @@
+2012-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOM/DOMDivWalk.html result is unreliable
+        https://bugs.webkit.org/show_bug.cgi?id=77313
+
+        Reviewed by Adam Birth.
+
+        Trigger garbage collection manually between test runs to avoid GC
+        to occur in the middle of runs.
+
+        * DOM/resources/dom-perf.js:
+        (BenchmarkSuite.prototype.RunSingle):
+        * resources/runner.js:
+        (gc.else.gcRec):
+        (gc):
+        (runLoop):
+
 2012-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import Chromium's dom_perf test

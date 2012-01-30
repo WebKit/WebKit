@@ -284,6 +284,8 @@ BenchmarkSuite.prototype.RunSingle = function(benchmark, times) {
             this.benchmarkContentHolder.removeChild(this.benchmarkContent);
         this.benchmarkContent = this.benchmarkContentProto.cloneNode();
         this.benchmarkContentHolder.appendChild(this.benchmarkContent);
+        gc();
+
         try {
             if (benchmark.setup) {
                 if (!setupReturn || !benchmark.shareSetup)
