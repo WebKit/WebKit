@@ -1,3 +1,22 @@
+2012-01-29  Dale Curtis  <dalecurtis@chromium.org>
+
+        Prepare WebCore.gyp for ffmpeg source transition.
+        https://bugs.webkit.org/show_bug.cgi?id=77254
+
+        We're migrating our ffmpeg repo from a set of patches living on top of
+        a tarball to an actual git fork of upstream.  The paths have changed
+        slightly.
+
+        In order to not break the current build, we'll keep both paths around
+        until the transition is complete.  Afterward the 'patched-ffmpeg' path
+        will be removed.
+
+        Reviewed by Tony Chang.
+
+        No new tests. GYP change, if it doesn't work, nothing will compile.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-01-29  Hayato Ito  <hayato@chromium.org>
 
         Add a ShadowRoot constructor as 'WebKitShadowRootConstructor', enabled by SHADOW_DOM flag.

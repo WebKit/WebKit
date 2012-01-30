@@ -1378,6 +1378,7 @@
           'direct_dependent_settings': {
             'include_dirs': [
               '<(chromium_src_dir)/third_party/ffmpeg/patched-ffmpeg',
+              '<(chromium_src_dir)/third_party/ffmpeg',
             ],
           },
           'dependencies': [
