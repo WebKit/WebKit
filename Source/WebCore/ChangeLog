@@ -1,3 +1,14 @@
+2012-01-28  Matthew Delaney  <mdelaney@apple.com>
+
+        Limit periodic flushing inside ImageBufferCG to just Lion
+        https://bugs.webkit.org/show_bug.cgi?id=77353
+        <rdar://problem/10328309>
+
+        Reviewed by Chris Marrin.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+
 2012-01-30  Tommy Widenflycht  <tommyw@google.com>
 
         Memory leak caused by PeerConnection add a NULL media stream

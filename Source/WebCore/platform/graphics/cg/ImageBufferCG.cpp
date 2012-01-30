@@ -38,7 +38,6 @@
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
@@ -51,6 +50,10 @@
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include <IOSurface/IOSurface.h>
+#endif
+
+#if defined(BUILDING_ON_LION)
+#include <wtf/CurrentTime.h>
 #endif
 
 using namespace std;
@@ -169,7 +172,9 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -height.unsafeGet());
     m_context->setIsAcceleratedContext(accelerateRendering);
+#if defined(BUILDING_ON_LION)
     m_data.m_lastFlushTime = currentTimeMS();
+#endif
     success = true;
 }
 
@@ -184,6 +189,7 @@ size_t ImageBuffer::dataSize() const
 
 GraphicsContext* ImageBuffer::context() const
 {
+#if defined(BUILDING_ON_LION)
     // Force a flush if last flush was more than 20ms ago
     if (m_context->isAcceleratedContext()) {
         double elapsedTime = currentTimeMS() - m_data.m_lastFlushTime;
@@ -195,6 +201,7 @@ GraphicsContext* ImageBuffer::context() const
             m_data.m_lastFlushTime = currentTimeMS();
         }
     }
+#endif
 
     return m_context.get();
 }
@@ -228,7 +235,9 @@ NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else {
         image = wkIOSurfaceContextCreateImage(context()->platformContext());
+#if defined(BUILDING_ON_LION)
         m_data.m_lastFlushTime = currentTimeMS();
+#endif
     }
 #endif
 
@@ -280,7 +289,9 @@ PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect)
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+#if defined(BUILDING_ON_LION)
         m_data.m_lastFlushTime = currentTimeMS();
+#endif
     }
     return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), true);
 }
@@ -289,7 +300,9 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+#if defined(BUILDING_ON_LION)
         m_data.m_lastFlushTime = currentTimeMS();
+#endif
     }
     return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), false);
 }
@@ -298,7 +311,9 @@ void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sou
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+#if defined(BUILDING_ON_LION)
         m_data.m_lastFlushTime = currentTimeMS();
+#endif
     }
     m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), true);
 }
@@ -307,7 +322,9 @@ void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& so
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
+#if defined(BUILDING_ON_LION)
         m_data.m_lastFlushTime = currentTimeMS();
+#endif
     }
     m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), false);
 }
