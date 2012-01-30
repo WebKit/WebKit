@@ -2164,11 +2164,18 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         // Try to find the first focusable node up the chain, which will, for
         // example, focus links if we have found text within the link.
         Node* node = m_activeMatch->firstNode();
+        if (node && node->isInShadowTree()) {
+            Node* host = node->shadowAncestorNode();
+            if (host->hasTagName(HTMLNames::inputTag) || host->hasTagName(HTMLNames::textareaTag))
+                node = host;
+        }
         while (node && !node->isFocusable() && node != frame()->document())
             node = node->parentNode();
 
         if (node && node != frame()->document()) {
-            // Found a focusable parent node. Set focus to it.
+            // Found a focusable parent node. Set the active match as the
+            // selection and focus to the focusable node.
+            frame()->selection()->setSelection(m_activeMatch.get());
             frame()->document()->setFocusedNode(node);
             return;
         }

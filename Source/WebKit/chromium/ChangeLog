@@ -1,3 +1,27 @@
+2012-01-29  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] REGRESSION(r87067): WebFrame::setFindEndstateFocusAndSelection()
+        doesn't set the selection for <input> and <textarea>
+        https://bugs.webkit.org/show_bug.cgi?id=77186
+
+        Reviewed by Hajime Morita.
+
+        When the find-in-page box is closed, WebFrame::stopFinding(false) is
+        called. It calls setFindEndstateFocusAndSelection(). Before r87067,
+        m_activeMatch was stored as the normal selection in <input> or
+        <textarea> by accident. r87067 stopped this accidental behavior.
+
+        However the behavior of pre-r87067 is useful and we should support it
+        for contentEditable elements too.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection):
+        - Add special handing for <input> and <textarea> to find a focusable parent.
+        - Sets the active match as the selection even if a focusable parent is found.
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F): Add tests for find() and stopFinding().
+        * tests/data/find.html: Added.
+
 2012-01-29  Nico Weber  <nicolasweber@gmx.de>
 
         [chromium/mac] Fix two-finger scrolling

@@ -33,9 +33,11 @@
 #include "FrameTestHelpers.h"
 #include "ResourceError.h"
 #include "WebDocument.h"
+#include "WebFindOptions.h"
 #include "WebFormElement.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
+#include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSearchableFormData.h"
 #include "WebSecurityPolicy.h"
@@ -377,6 +379,56 @@ TEST_F(WebFrameTest, ContextNotificationsIsolatedWorlds)
         ++matchCount;
     }
     EXPECT_EQ(1, matchCount);
+}
+
+TEST_F(WebFrameTest, FindInPage)
+{
+    registerMockedHttpURLLoad("find.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find.html");
+    WebFrame* frame = webView->mainFrame();
+    const int findIdentifier = 12345;
+    WebFindOptions options;
+
+    // Find in a <div> element.
+    EXPECT_TRUE(frame->find(findIdentifier, WebString::fromUTF8("bar1"), options, false, 0));
+    frame->stopFinding(false);
+    WebRange range = frame->selectionRange();
+    EXPECT_EQ(5, range.startOffset());
+    EXPECT_EQ(9, range.endOffset());
+    EXPECT_TRUE(frame->document().focusedNode().isNull());
+
+    // Find in an <input> value.
+    EXPECT_TRUE(frame->find(findIdentifier, WebString::fromUTF8("bar2"), options, false, 0));
+    // Confirm stopFinding(false) sets the selection on the found text.
+    frame->stopFinding(false);
+    range = frame->selectionRange();
+    ASSERT_FALSE(range.isNull());
+    EXPECT_EQ(5, range.startOffset());
+    EXPECT_EQ(9, range.endOffset());
+    EXPECT_EQ(WebString::fromUTF8("INPUT"), frame->document().focusedNode().nodeName());
+
+    // Find in a <textarea> content.
+    EXPECT_TRUE(frame->find(findIdentifier, WebString::fromUTF8("bar3"), options, false, 0));
+    // Confirm stopFinding(false) sets the selection on the found text.
+    frame->stopFinding(false);
+    range = frame->selectionRange();
+    ASSERT_FALSE(range.isNull());
+    EXPECT_EQ(5, range.startOffset());
+    EXPECT_EQ(9, range.endOffset());
+    EXPECT_EQ(WebString::fromUTF8("TEXTAREA"), frame->document().focusedNode().nodeName());
+
+    // Find in a contentEditable element.
+    EXPECT_TRUE(frame->find(findIdentifier, WebString::fromUTF8("bar4"), options, false, 0));
+    // Confirm stopFinding(false) sets the selection on the found text.
+    frame->stopFinding(false);
+    range = frame->selectionRange();
+    ASSERT_FALSE(range.isNull());
+    EXPECT_EQ(0, range.startOffset());
+    EXPECT_EQ(4, range.endOffset());
+    // "bar4" is surrounded by <span>, but the focusable node should be the parent <div>.
+    EXPECT_EQ(WebString::fromUTF8("DIV"), frame->document().focusedNode().nodeName());
+
+    webView->close();
 }
 
 } // namespace
