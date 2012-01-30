@@ -1512,23 +1512,20 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         }
         case OPENPAREN: {
             m_nonTrivialExpressionCount++;
+            int nonLHSCount = m_nonLHSCount;
             if (newCount) {
                 newCount--;
-                if (match(OPENPAREN)) {
-                    int exprEnd = lastTokenEnd();
-                    TreeArguments arguments = parseArguments(context);
-                    failIfFalse(arguments);
-                    base = context.createNewExpr(m_lexer->lastLineNumber(), base, arguments, start, exprEnd, lastTokenEnd());
-                } else
-                    base = context.createNewExpr(m_lexer->lastLineNumber(), base, start, lastTokenEnd());               
+                int exprEnd = lastTokenEnd();
+                TreeArguments arguments = parseArguments(context);
+                failIfFalse(arguments);
+                base = context.createNewExpr(m_lexer->lastLineNumber(), base, arguments, start, exprEnd, lastTokenEnd());           
             } else {
-                int nonLHSCount = m_nonLHSCount;
                 int expressionEnd = lastTokenEnd();
                 TreeArguments arguments = parseArguments(context);
                 failIfFalse(arguments);
                 base = context.makeFunctionCallNode(m_lexer->lastLineNumber(), base, arguments, expressionStart, expressionEnd, lastTokenEnd());
-                m_nonLHSCount = nonLHSCount;
             }
+            m_nonLHSCount = nonLHSCount;
             break;
         }
         case DOT: {

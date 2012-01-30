@@ -2,7 +2,7 @@ description(
 "This test checks that the following expressions or statements are valid ECMASCRIPT code or should throw parse error"
 );
 
-function runTest(_a, throws)
+function runTest(_a, errorType)
 {
     var success;
     if (typeof _a != "string")
@@ -13,16 +13,16 @@ function runTest(_a, throws)
     } catch (e) {
         success = !(e instanceof SyntaxError);
     }
-    if (throws == !success) {
-        if (throws)
+    if ((!!errorType) == !success) {
+        if (errorType)
             testPassed('Invalid: "' + _a + '"');
         else
             testPassed('Valid:   "' + _a + '"');
     } else {
-        if (throws)
-            testFailed('Invalid: "' + _a + '" should throw SyntaxError: Parse error');
+        if (errorType)
+            testFailed('Invalid: "' + _a + '" should throw ' + errorType.name);
         else
-            testFailed('Valid:   "' + _a + '" should NOT throw SyntaxError: Parse error');
+            testFailed('Valid:   "' + _a + '" should NOT throw ');
     }
 }
 
@@ -33,8 +33,9 @@ function valid(_a)
     runTest("function f() { " + _a + " }", false);
 }
 
-function invalid(_a)
+function invalid(_a, _type)
 {
+    _type = _type || SyntaxError;
     // Test both the grammar and the syntax checker
     runTest(_a, true);
     runTest("function f() { " + _a + " }", true);
@@ -360,6 +361,8 @@ valid("if (0) obj._foo; ")
 valid("if (0) obj.foo$; ")
 valid("if (0) obj.foo_; ")
 valid("if (0) obj.foo\\u03bb; ")
+valid("if (0) new a(b+c).d = 5");
+valid("if (0) new a(b+c) = 5");
 
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
 foo = 'FAIL';

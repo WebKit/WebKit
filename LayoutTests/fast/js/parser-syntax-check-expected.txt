@@ -567,6 +567,10 @@ PASS Valid:   "if (0) obj.foo_; "
 PASS Valid:   "function f() { if (0) obj.foo_;  }"
 PASS Valid:   "if (0) obj.foo\u03bb; "
 PASS Valid:   "function f() { if (0) obj.foo\u03bb;  }"
+PASS Valid:   "if (0) new a(b+c).d = 5"
+PASS Valid:   "function f() { if (0) new a(b+c).d = 5 }"
+PASS Valid:   "if (0) new a(b+c) = 5"
+PASS Valid:   "function f() { if (0) new a(b+c) = 5 }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

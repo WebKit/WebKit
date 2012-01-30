@@ -1,3 +1,16 @@
+2012-01-30  Oliver Hunt  <oliver@apple.com>
+
+        Unexpected syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=77340
+
+        Reviewed by Gavin Barraclough.
+
+        Function calls and new expressions have the same semantics for
+        assignment, so should simply share their lhs handling.
+
+        * parser/Parser.cpp:
+        (JSC::::parseMemberExpression):
+
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed ARMv7 build fix.
