@@ -170,9 +170,10 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
     return jsString(exec, string);
 }
 
+template <typename CharType>
 static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacement, const UString& source, const int* ovector, RegExp* reg, size_t i)
 {
-    Vector<UChar> substitutedReplacement;
+    Vector<CharType> substitutedReplacement;
     int offset = 0;
     do {
         if (i + 1 == replacement.length())
@@ -182,7 +183,7 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
         if (ref == '$') {
             // "$$" -> "$"
             ++i;
-            substitutedReplacement.append(replacement.characters() + offset, i - offset);
+            substitutedReplacement.append(replacement.getCharacters<CharType>() + offset, i - offset);
             offset = i + 1;
             continue;
         }
@@ -222,15 +223,15 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
             continue;
 
         if (i - offset)
-            substitutedReplacement.append(replacement.characters() + offset, i - offset);
+            substitutedReplacement.append(replacement.getCharacters<CharType>() + offset, i - offset);
         i += 1 + advance;
         offset = i + 1;
         if (backrefStart >= 0)
-            substitutedReplacement.append(source.characters() + backrefStart, backrefLength);
+            substitutedReplacement.append(source.getCharacters<CharType>() + backrefStart, backrefLength);
     } while ((i = replacement.find('$', i + 1)) != notFound);
 
     if (replacement.length() - offset)
-        substitutedReplacement.append(replacement.characters() + offset, replacement.length() - offset);
+        substitutedReplacement.append(replacement.getCharacters<CharType>() + offset, replacement.length() - offset);
 
     substitutedReplacement.shrinkToFit();
     return UString::adopt(substitutedReplacement);
@@ -239,8 +240,11 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
 static inline UString substituteBackreferences(const UString& replacement, const UString& source, const int* ovector, RegExp* reg)
 {
     size_t i = replacement.find('$', 0);
-    if (UNLIKELY(i != notFound))
-        return substituteBackreferencesSlow(replacement, source, ovector, reg, i);
+    if (UNLIKELY(i != notFound)) {
+        if (replacement.is8Bit() && source.is8Bit())
+            return substituteBackreferencesSlow<LChar>(replacement, source, ovector, reg, i);
+        return substituteBackreferencesSlow<UChar>(replacement, source, ovector, reg, i);
+    }
     return replacement;
 }
 

@@ -139,18 +139,10 @@ private:
 };
 
 template<>
-inline const LChar* UString::getCharacters<LChar>() const
-{
-    ASSERT(is8Bit());
-    return characters8();
-}
+inline const LChar* UString::getCharacters<LChar>() const { return characters8(); }
 
 template<>
-inline const UChar* UString::getCharacters<UChar>() const
-{
-    ASSERT(!is8Bit());
-    return characters16();
-}
+inline const UChar* UString::getCharacters<UChar>() const { return characters(); }
 
 NEVER_INLINE bool equalSlowCase(const UString& s1, const UString& s2);
 

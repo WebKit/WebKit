@@ -1,3 +1,24 @@
+2012-01-30  Michael Saboff  <msaboff@apple.com>
+
+        stringProtoFuncReplace converts 8 bit strings to 16 bit during replacement
+        https://bugs.webkit.org/show_bug.cgi?id=76651
+
+        Reviewed by Geoffrey Garen.
+
+        Made local function substituteBackreferencesSlow a template function
+        based on character width.  Cleaned up getCharacters() in both UString
+        and StringImpl.  Changed getCharacters<UChar> to up convert an 8 bit
+        string to 16 bits if necessary.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::substituteBackreferences):
+        * runtime/UString.h:
+        (JSC::LChar):
+        (JSC::UChar):
+        * wtf/text/StringImpl.h:
+        (WTF::UChar):
+
 2012-01-30  Gavin Barraclough  <barraclough@apple.com>
 
         Clean up putDirect
