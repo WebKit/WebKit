@@ -1547,7 +1547,7 @@ Element* Node::parentOrHostElement() const
         return 0;
 
     if (parent->isShadowRoot())
-        parent = parent->shadowHost();
+        return parent->shadowHost();
 
     if (!parent->isElementNode())
         return 0;

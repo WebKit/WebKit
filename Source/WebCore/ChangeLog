@@ -1,3 +1,15 @@
+2012-01-30  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Node::parentOrHostElement(): Node::shadowHost() already returns an Element*
+        https://bugs.webkit.org/show_bug.cgi?id=77332
+
+        Reviewed by Kent Tamura.
+
+        No new tests. (simple refactoring)
+
+        * dom/Node.cpp:
+        (WebCore::Node::parentOrHostElement):
+
 2012-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
