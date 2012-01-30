@@ -429,29 +429,29 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.containmentView = new WebInspector.View();
     this.containmentView.element.addStyleClass("view");
     this.containmentDataGrid = new WebInspector.HeapSnapshotContainmentDataGrid();
-    this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.containmentDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.containmentDataGrid.show(this.containmentView.element);
+    this.containmentDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._selectionChanged, this);
 
     this.constructorsView = new WebInspector.View();
     this.constructorsView.element.addStyleClass("view");
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
-    this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.constructorsDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.constructorsDataGrid.show(this.constructorsView.element);
+    this.constructorsDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._selectionChanged, this);
 
     this.diffView = new WebInspector.View();
     this.diffView.element.addStyleClass("view");
     this.diffDataGrid = new WebInspector.HeapSnapshotDiffDataGrid();
-    this.diffDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.diffDataGrid.show(this.diffView.element);
+    this.diffDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._selectionChanged, this);
 
     this.dominatorView = new WebInspector.View();
     this.dominatorView.element.addStyleClass("view");
     this.dominatorDataGrid = new WebInspector.HeapSnapshotDominatorsDataGrid();
-    this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.dominatorDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.dominatorDataGrid.show(this.dominatorView.element);
+    this.dominatorDataGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._selectionChanged, this);
 
     this.retainmentViewHeader = document.createElement("div");
     this.retainmentViewHeader.addStyleClass("retainers-view-header");
@@ -809,18 +809,15 @@ WebInspector.DetailedHeapshotView.prototype = {
         profile.sidebarElement.subtitle = Number.bytesToString(s.totalSize);
     },
 
-    _mouseClickInContentsGrid: function(event)
+    _selectionChanged: function(event)
     {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell || (!cell.hasStyleClass("object-column")))
-            return;
-        var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
-        if (!row)
-            return;
-        var nodeItem = row._dataGridNode;
-        if (!nodeItem || nodeItem.isEventWithinDisclosureTriangle(event))
-            return;
-        if (nodeItem.snapshotNodeIndex)
+        var selectedNode = event.target.selectedNode;
+        this._setRetainmentDataGridSource(selectedNode);
+    },
+
+    _setRetainmentDataGridSource: function(nodeItem)
+    {
+        if (nodeItem && nodeItem.snapshotNodeIndex)
             this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
         else
             this.retainmentDataGrid.reset();

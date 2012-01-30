@@ -1,5 +1,21 @@
 2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: keyboard navigation through comparison view in heap profiler should update retainers view
+        https://bugs.webkit.org/show_bug.cgi?id=77326
+
+        Keyboard navigation in the detailed heap snapshot view now updates retainers view.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DataGrid.js: Added SelectedNode/DeselectedNode events to DataGrid.
+        (WebInspector.DataGridNode.prototype.select):
+        (WebInspector.DataGridNode.prototype.deselect):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._selectionChanged):
+        (WebInspector.DetailedHeapshotView.prototype._setRetainmentDataGridSource):
+
+2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Fix inspector front-end compilation.
 
         * inspector/front-end/RemoteObject.js:
