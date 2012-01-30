@@ -123,7 +123,7 @@ void WorkerInspectorController::connectFrontend()
     m_state->unmute();
     m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerContext));
     m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
-    m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(m_frontendChannel.get()));
+    m_backendDispatcher = InspectorBackendDispatcher::create(m_frontendChannel.get());
     m_consoleAgent->registerInDispatcher(m_backendDispatcher.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent->registerInDispatcher(m_backendDispatcher.get());

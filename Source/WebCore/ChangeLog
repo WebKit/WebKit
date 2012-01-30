@@ -1,3 +1,61 @@
+2012-01-30  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: clean InspectorBackendDispatcher.h
+        https://bugs.webkit.org/show_bug.cgi?id=77062
+
+        Reviewed by Yury Semikhatsky.
+
+        Code generator is changed. Now it generates InspectorBackendDispatcher
+        as an abstract class so that implementation details could be fully
+        hidden in .cpp file in a separate 'impl' class. This should make .h
+        file more clear.
+        Also new formal interfaces to domain agents are generated. This is an
+        improvement over the current case when interfaces to agents are
+        definen implicitly at calling sites.
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes):
+        (RawTypes.OutputPassModel):
+        (RawTypes.OutputPassModel.ByPointer):
+        (RawTypes.OutputPassModel.ByPointer.get_argument_prefix):
+        (RawTypes.OutputPassModel.ByPointer.get_parameter_type_suffix):
+        (RawTypes.OutputPassModel.ByReference):
+        (RawTypes.OutputPassModel.ByReference.get_argument_prefix):
+        (RawTypes.OutputPassModel.ByReference.get_parameter_type_suffix):
+        (RawTypes.BaseType.is_event_param_check_optional):
+        (RawTypes.String):
+        (RawTypes.String.get_output_pass_model):
+        (RawTypes.String.is_heavy_value):
+        (RawTypes.Int):
+        (RawTypes.Int.get_output_pass_model):
+        (RawTypes.Int.is_heavy_value):
+        (RawTypes.Number):
+        (RawTypes.Number.get_output_pass_model):
+        (RawTypes.Number.is_heavy_value):
+        (RawTypes.Bool.get_c_param_type):
+        (RawTypes.Bool):
+        (RawTypes.Bool.get_output_pass_model):
+        (RawTypes.Bool.is_heavy_value):
+        (RawTypes.Object):
+        (RawTypes.Object.get_output_pass_model):
+        (RawTypes.Object.is_heavy_value):
+        (RawTypes.Any.get_c_initializer):
+        (RawTypes.Any):
+        (RawTypes.Any.get_output_pass_model):
+        (RawTypes.Any.is_heavy_value):
+        (RawTypes.Array):
+        (RawTypes.Array.get_output_pass_model):
+        (RawTypes.Array.is_heavy_value):
+        (InspectorBackendDispatcherImpl):
+        (void):
+        (Generator):
+        (Generator.go):
+        (Generator.process_command):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+
 2012-01-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Custom written CSS lexer

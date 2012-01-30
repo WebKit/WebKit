@@ -219,6 +219,26 @@ class RawTypes(object):
         else:
             raise Exception("Unknown type: %s" % json_type)
 
+    # For output parameter all values are passed by pointer except RefPtr-based types.
+    class OutputPassModel:
+        class ByPointer:
+            @staticmethod
+            def get_argument_prefix():
+                return "&"
+
+            @staticmethod
+            def get_parameter_type_suffix():
+                return "*"
+
+        class ByReference:
+            @staticmethod
+            def get_argument_prefix():
+                return ""
+
+            @staticmethod
+            def get_parameter_type_suffix():
+                return "&"
+
     class BaseType(object):
         need_internal_runtime_cast_ = False
 
@@ -229,10 +249,6 @@ class RawTypes(object):
         @staticmethod
         def is_event_param_check_optional():
             return False
-
-        @staticmethod
-        def get_output_argument_prefix():
-            return "&"
 
         @classmethod
         def request_raw_internal_runtime_cast(cls):
@@ -293,6 +309,14 @@ class RawTypes(object):
                 as_method_name = "String"
             return ValidateMethodParams
 
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByPointer
+
+        @staticmethod
+        def is_heavy_value():
+            return True
+
         _plain_c_type = CParamType("String")
         _ref_c_type = CParamType("const String&")
 
@@ -321,6 +345,14 @@ class RawTypes(object):
                 as_method_name = "Number"
             return ValidateMethodParams
 
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByPointer
+
+        @staticmethod
+        def is_heavy_value():
+            return False
+
         default_c_param_type = CParamType("int")
 
     class Number(BaseType):
@@ -344,12 +376,20 @@ class RawTypes(object):
         def get_validate_method_params():
             raise Exception("TODO")
 
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByPointer
+
+        @staticmethod
+        def is_heavy_value():
+            return False
+
         default_c_param_type = CParamType("double")
 
     class Bool(BaseType):
         @classmethod
         def get_c_param_type(cls, param_type, optional):
-            if (param_type == ParamType.EVENT):
+            if param_type == ParamType.EVENT:
                 if optional:
                     return cls._ref_c_type
                 else:
@@ -378,6 +418,14 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             raise Exception("TODO")
+
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByPointer
+
+        @staticmethod
+        def is_heavy_value():
+            return False
 
         _plain_c_type = CParamType("bool")
         _ref_c_type = CParamType("const bool* const", "*%s")
@@ -416,6 +464,14 @@ class RawTypes(object):
         def get_validate_method_params():
             raise Exception("TODO")
 
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByReference
+
+        @staticmethod
+        def is_heavy_value():
+            return True
+
         _plain_c_type = CParamType("RefPtr<InspectorObject>")
         _ref_c_type = CParamType("PassRefPtr<InspectorObject>")
 
@@ -435,7 +491,7 @@ class RawTypes(object):
 
         @staticmethod
         def get_c_initializer():
-            return "InspectorValue::create()"
+            raise Exception("Unsupported")
 
         @staticmethod
         def get_js_bind_type():
@@ -455,6 +511,14 @@ class RawTypes(object):
         @staticmethod
         def get_raw_validator_call_text():
             return "assertAny"
+
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByReference
+
+        @staticmethod
+        def is_heavy_value():
+            return True
 
         _plain_c_type = CParamType("RefPtr<InspectorValue>")
         _ref_c_type = CParamType("PassRefPtr<InspectorValue>")
@@ -494,6 +558,14 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             raise Exception("TODO")
+
+        @staticmethod
+        def get_output_pass_model():
+            return RawTypes.OutputPassModel.ByReference
+
+        @staticmethod
+        def is_heavy_value():
+            return True
 
         _plain_c_type = CParamType("RefPtr<InspectorArray>")
         _ref_c_type = CParamType("PassRefPtr<InspectorArray>")
@@ -1521,7 +1593,7 @@ ${frontendDomainMethodDeclarations}        void setInspectorFrontendChannel(Insp
 """)
 
     backend_method = string.Template(
-"""void InspectorBackendDispatcher::${domainName}_$methodName(long callId, InspectorObject*$requestMessageObject)
+"""void InspectorBackendDispatcherImpl::${domainName}_$methodName(long callId, InspectorObject*$requestMessageObject)
 {
     RefPtr<InspectorArray> protocolErrors = InspectorArray::create();
 
@@ -1615,14 +1687,12 @@ typedef String ErrorString;
 
 class InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher> {
 public:
-    InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel)
-        : m_inspectorFrontendChannel(inspectorFrontendChannel)
-$constructorInit
-    { }
+    static PassRefPtr<InspectorBackendDispatcher> create(InspectorFrontendChannel* inspectorFrontendChannel);
 
-$setters
+$agentInterfaces
+$virtualSetters
 
-    void clearFrontend() { m_inspectorFrontendChannel = 0; }
+    virtual void clearFrontend() = 0;
 
     enum CommonErrorCode {
         ParseError = 0,
@@ -1635,8 +1705,8 @@ $setters
     };
 
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
-    void dispatch(const String& message);
+    virtual void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const = 0;
+    virtual void dispatch(const String& message) = 0;
     static bool getCommandName(const String& message, String* result);
 
     enum MethodNames {
@@ -1644,19 +1714,6 @@ $methodNamesEnumContent
     };
 
     static const char* commandNames[];
-
-private:
-    static int getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static String getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static bool getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static PassRefPtr<InspectorArray> getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
-
-$methodDeclarations
-
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
-$fieldDeclarations
 };
 
 } // namespace WebCore
@@ -1688,11 +1745,46 @@ $methodNameDeclarations
 };
 
 
+class InspectorBackendDispatcherImpl : public InspectorBackendDispatcher {
+public:
+    InspectorBackendDispatcherImpl(InspectorFrontendChannel* inspectorFrontendChannel)
+        : m_inspectorFrontendChannel(inspectorFrontendChannel)
+$constructorInit
+    { }
+
+    void clearFrontend() { m_inspectorFrontendChannel = 0; }
+    void dispatch(const String& message);
+    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
+    using InspectorBackendDispatcher::reportProtocolError;
+
+$setters
+private:
+$methodDeclarations
+
+    InspectorFrontendChannel* m_inspectorFrontendChannel;
+$fieldDeclarations
+
+    static int getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static String getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static bool getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorArray> getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
+
+};
+
 $methods
-void InspectorBackendDispatcher::dispatch(const String& message)
+
+PassRefPtr<InspectorBackendDispatcher> InspectorBackendDispatcher::create(InspectorFrontendChannel* inspectorFrontendChannel)
+{
+    return adoptRef(new InspectorBackendDispatcherImpl(inspectorFrontendChannel));
+}
+
+
+void InspectorBackendDispatcherImpl::dispatch(const String& message)
 {
     RefPtr<InspectorBackendDispatcher> protect = this;
-    typedef void (InspectorBackendDispatcher::*CallHandler)(long callId, InspectorObject* messageObject);
+    typedef void (InspectorBackendDispatcherImpl::*CallHandler)(long callId, InspectorObject* messageObject);
     typedef HashMap<String, CallHandler> DispatchMap;
     DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );
     long callId = 0;
@@ -1750,7 +1842,7 @@ $messageHandlers
     ((*this).*it->second)(callId, messageObject.get());
 }
 
-void InspectorBackendDispatcher::sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
+void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
 {
     if (protocolErrors->length()) {
         reportProtocolError(&callId, InvalidParams, errorMessage, protocolErrors);
@@ -1773,7 +1865,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
     reportProtocolError(callId, code, errorMessage, 0);
 }
 
-void InspectorBackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage, PassRefPtr<InspectorArray> data) const
+void InspectorBackendDispatcherImpl::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage, PassRefPtr<InspectorArray> data) const
 {
     DEFINE_STATIC_LOCAL(Vector<int>,s_commonErrors,);
     if (!s_commonErrors.size()) {
@@ -1803,7 +1895,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
         m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 
-int InspectorBackendDispatcher::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(protocolErrors);
 
@@ -1837,7 +1929,7 @@ int InspectorBackendDispatcher::getInt(InspectorObject* object, const String& na
     return value;
 }
 
-String InspectorBackendDispatcher::getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+String InspectorBackendDispatcherImpl::getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(protocolErrors);
 
@@ -1871,7 +1963,7 @@ String InspectorBackendDispatcher::getString(InspectorObject* object, const Stri
     return value;
 }
 
-bool InspectorBackendDispatcher::getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+bool InspectorBackendDispatcherImpl::getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(protocolErrors);
 
@@ -1905,7 +1997,7 @@ bool InspectorBackendDispatcher::getBoolean(InspectorObject* object, const Strin
     return value;
 }
 
-PassRefPtr<InspectorObject> InspectorBackendDispatcher::getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+PassRefPtr<InspectorObject> InspectorBackendDispatcherImpl::getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(protocolErrors);
 
@@ -1939,7 +2031,7 @@ PassRefPtr<InspectorObject> InspectorBackendDispatcher::getObject(InspectorObjec
     return value;
 }
 
-PassRefPtr<InspectorArray> InspectorBackendDispatcher::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+PassRefPtr<InspectorArray> InspectorBackendDispatcherImpl::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     ASSERT(protocolErrors);
 
@@ -1972,6 +2064,7 @@ PassRefPtr<InspectorArray> InspectorBackendDispatcher::getArray(InspectorObject*
             *valueFound = true;
     return value;
 }
+
 bool InspectorBackendDispatcher::getCommandName(const String& message, String* result)
 {
     RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
@@ -2041,8 +2134,8 @@ $validatorCode
 
     typebuilder_h = string.Template(file_header_ +
 """
-#ifndef InspectorBackendDispatcher_h
-#define InspectorBackendDispatcher_h
+#ifndef InspectorTypeBuilder_h
+#define InspectorTypeBuilder_h
 
 namespace WebCore {
 
@@ -2052,7 +2145,7 @@ namespace WebCore {
 extern bool typeBuilderTestVariable;
 
 } // namespace WebCore
-#endif // !defined(InspectorBackendDispatcher_h)
+#endif // !defined(InspectorTypeBuilder_h)
 
 """)
 
@@ -2220,6 +2313,8 @@ class Generator:
     frontend_method_list = []
     backend_js_domain_initializer_list = []
 
+    backend_virtual_setters_list = []
+    backend_agent_interface_list = []
     backend_setters_list = []
     backend_constructor_init_list = []
     backend_field_list = []
@@ -2242,6 +2337,7 @@ class Generator:
             Generator.backend_method_declaration_list,
             Generator.backend_method_implementation_list,
             Generator.backend_method_name_declaration_list,
+            Generator.backend_agent_interface_list,
             Generator.frontend_class_field_lines,
             Generator.frontend_constructor_init_list,
             Generator.frontend_domain_class_lines,
@@ -2281,9 +2377,13 @@ class Generator:
                 domainFieldName=domain_name_lower,
                 frontendDomainMethodDeclarations=join(flatten_list(frontend_method_declaration_lines), "")))
 
+            agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
+            Generator.backend_agent_interface_list.append("    class %s {\n" % agent_interface_name)
+            Generator.backend_agent_interface_list.append("    public:\n")
             if "commands" in json_domain:
                 for json_command in json_domain["commands"]:
                     Generator.process_command(json_command, domain_name, agent_field_name)
+            Generator.backend_agent_interface_list.append("    };\n\n")
 
             if domain_guard:
                 for l in reversed(first_cycle_guardable_list_list):
@@ -2295,6 +2395,7 @@ class Generator:
 
         sorted_cycle_guardable_list_list = [
             Generator.backend_constructor_init_list,
+            Generator.backend_virtual_setters_list,
             Generator.backend_setters_list,
             Generator.backend_field_list,
             Generator.backend_forward_list,
@@ -2310,11 +2411,14 @@ class Generator:
                 for l in sorted_cycle_guardable_list_list:
                     domain_guard.generate_open(l)
 
+            agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
+
             agent_type_name = domain_fixes.agent_type_name
             agent_field_name = domain_fixes.agent_field_name
             Generator.backend_constructor_init_list.append("        , m_%s(0)" % agent_field_name)
-            Generator.backend_setters_list.append("    void registerAgent(%s* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_type_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
-            Generator.backend_field_list.append("    %s* m_%s;" % (agent_type_name, agent_field_name))
+            Generator.backend_virtual_setters_list.append("    virtual void registerAgent(%s /* %s */* %s) = 0;" % (agent_type_name, agent_interface_name, agent_field_name))
+            Generator.backend_setters_list.append("    void registerAgent(%s /* %s */* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_type_name, agent_interface_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
+            Generator.backend_field_list.append("    %s /* %s */* m_%s;" % (agent_type_name, agent_interface_name, agent_field_name))
             Generator.backend_forward_list.append("class %s;" % agent_type_name)
             Generator.backend_include_list.append("#include \"%s.h\"" % agent_type_name)
 
@@ -2418,8 +2522,10 @@ class Generator:
     def process_command(json_command, domain_name, agent_field_name):
         json_command_name = json_command["name"]
         Generator.method_name_enum_list.append("        k%s_%sCmd," % (domain_name, json_command["name"]))
-        Generator.method_handler_list.append("            &InspectorBackendDispatcher::%s_%s," % (domain_name, json_command_name))
+        Generator.method_handler_list.append("            &InspectorBackendDispatcherImpl::%s_%s," % (domain_name, json_command_name))
         Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
+
+        Generator.backend_agent_interface_list.append("        virtual void %s(ErrorString*" % json_command_name)
 
         method_in_code = ""
         method_out_code = ""
@@ -2439,20 +2545,28 @@ class Generator:
                 param_raw_type = resolve_param_raw_type(json_parameter, domain_name)
 
                 var_type = param_raw_type.get_c_param_type(ParamType.INPUT, None)
+                formal_param_type = var_type
                 getter_name = param_raw_type.get_getter_name()
 
-                if "optional" in json_parameter and json_parameter["optional"]:
+                optional = json_parameter.get("optional")
+                if optional:
                     code = ("    bool %s_valueFound = false;\n"
                             "    %s in_%s = get%s(paramsContainerPtr, \"%s\", &%s_valueFound, protocolErrorsPtr);\n" %
                            (json_param_name, var_type.get_text(), json_param_name, getter_name, json_param_name, json_param_name))
                     param = ", %s_valueFound ? &in_%s : 0" % (json_param_name, json_param_name)
+                    formal_param_type_pattern = "const %s*"
                 else:
                     code = ("    %s in_%s = get%s(paramsContainerPtr, \"%s\", 0, protocolErrorsPtr);\n" %
                             (var_type.get_text(), json_param_name, getter_name, json_param_name))
                     param = ", in_%s" % json_param_name
+                    if param_raw_type.is_heavy_value():
+                        formal_param_type_pattern = "const %s&"
+                    else:
+                        formal_param_type_pattern = "%s"
 
                 method_in_code += code
                 agent_call_param_list.append(param)
+                Generator.backend_agent_interface_list.append(", %s in_%s" % (formal_param_type_pattern % formal_param_type.get_text(), json_param_name))
 
                 js_bind_type = param_raw_type.get_js_bind_type()
                 js_param_text = "{\"name\": \"%s\", \"type\": \"%s\", \"optional\": %s}" % (
@@ -2480,17 +2594,18 @@ class Generator:
                 var_type = raw_type.get_c_param_type(ParamType.OUTPUT, None)
 
                 code = "    %s out_%s = %s;\n" % (var_type.get_text(), json_return_name, initializer)
-                param = ", %sout_%s" % (raw_type.get_output_argument_prefix(), json_return_name)
+                param = ", %sout_%s" % (raw_type.get_output_pass_model().get_argument_prefix(), json_return_name)
                 cook = "        result->set%s(\"%s\", out_%s);\n" % (setter_type, json_return_name, json_return_name)
                 if optional:
+                        # FIXME: support optional properly. Probably an additional output parameter should be in each case.
                     if var_type.get_text() == "bool":
                         cook = ("        if (out_%s)\n    " % json_return_name) + cook
                     else:
-                        # FIXME: support optionals.
                         cook = "        // FIXME: support optional here.\n" + cook
 
                 method_out_code += code
                 agent_call_param_list.append(param)
+                Generator.backend_agent_interface_list.append(", %s%s out_%s" % (var_type.get_text(), raw_type.get_output_pass_model().get_parameter_type_suffix(), json_return_name))
                 response_cook_list.append(cook)
 
                 backend_js_reply_param_list.append("\"%s\"" % json_return_name)
@@ -2510,6 +2625,7 @@ class Generator:
         Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
+        Generator.backend_agent_interface_list.append(") = 0;\n")
 
     @staticmethod
     def process_types(type_map):
@@ -2604,17 +2720,19 @@ backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,
-    constructorInit=join(Generator.backend_constructor_init_list, "\n"),
-    setters=join(Generator.backend_setters_list, "\n"),
+    virtualSetters=join(Generator.backend_virtual_setters_list, "\n"),
+    agentInterfaces=join(Generator.backend_agent_interface_list, ""),
     methodNamesEnumContent=join(Generator.method_name_enum_list, "\n"),
-    methodDeclarations=join(Generator.backend_method_declaration_list, "\n"),
-    fieldDeclarations=join(Generator.backend_field_list, "\n"),
     forwardDeclarations=join(Generator.backend_forward_list, "\n")))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
+    constructorInit=join(Generator.backend_constructor_init_list, "\n"),
+    setters=join(Generator.backend_setters_list, "\n"),
+    fieldDeclarations=join(Generator.backend_field_list, "\n"),
     methodNameDeclarations=join(Generator.backend_method_name_declaration_list, "\n"),
     includes=join(Generator.backend_include_list, "\n"),
     methods=join(Generator.backend_method_implementation_list, "\n"),
+    methodDeclarations=join(Generator.backend_method_declaration_list, "\n"),
     messageHandlers=join(Generator.method_handler_list, "\n")))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,

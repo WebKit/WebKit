@@ -218,7 +218,7 @@ void InspectorController::connectFrontend()
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
-    m_inspectorBackendDispatcher = adoptRef(new InspectorBackendDispatcher(m_inspectorClient));
+    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(m_inspectorClient);
 
     InspectorBackendDispatcher* dispatcher = m_inspectorBackendDispatcher.get();
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
