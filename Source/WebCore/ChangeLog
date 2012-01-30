@@ -1,3 +1,20 @@
+2012-01-30  Levi Weintraub  <leviw@chromium.org>
+
+        !m_insideRegionPaint assertion in RenderRegion.cpp is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=77372
+
+        Reviewed by David Hyatt.
+
+        Removing the !m_insideRegionPaint assertion that's in three functions in
+        RenderRegion. It's triggering in numerous layout tests and isn't valid.
+
+        No new tests as this just removes assertions.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo):
+
 2012-01-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Always pre-reserve scrollbar and scroll corner textures

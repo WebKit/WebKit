@@ -247,10 +247,6 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
     if (!m_isValid || !m_flowThread)
         return 0;
 
-#ifndef NDEBUG
-    ASSERT(!m_insideRegionPaint && "RenderBoxRegionInfo should not be modified inside region paint.");
-#endif
-
     OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).first->second;
     if (boxInfo)
         *boxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
@@ -262,19 +258,11 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
 
 PassOwnPtr<RenderBoxRegionInfo> RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
 {
-#ifndef NDEBUG
-    ASSERT(!m_insideRegionPaint && "RenderBoxRegionInfo should not be modified inside region paint.");
-#endif
-
     return m_renderBoxRegionInfo.take(box);
 }
 
 void RenderRegion::removeRenderBoxRegionInfo(const RenderBox* box)
 {
-#ifndef NDEBUG
-    ASSERT(!m_insideRegionPaint && "RenderBoxRegionInfo should not be modified inside region paint.");
-#endif
-
     m_renderBoxRegionInfo.remove(box);
 }
 
