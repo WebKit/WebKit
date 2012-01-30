@@ -1,3 +1,19 @@
+2012-01-29  Nico Weber  <nicolasweber@gmx.de>
+
+        [chromium/mac] Fix two-finger scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=77316
+
+        http://trac.webkit.org/changeset/106021/trunk changed the phase enums
+        to match AppKit. This changes WebMouseWheelEvent accordingly.
+
+        No tests, because DRT doesn't support synthetic scroll events with
+        event phases.
+
+        Reviewed by Anders Carlsson.
+
+        * public/WebInputEvent.h:
+        * src/mac/WebInputEventFactory.mm:
+
 2012-01-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

@@ -43,7 +43,8 @@ enum {
     NSEventPhaseStationary  = 0x1 << 1,
     NSEventPhaseChanged     = 0x1 << 2,
     NSEventPhaseEnded       = 0x1 << 3,
-    NSEventPhaseCancelled   = 0x1 << 4
+    NSEventPhaseCancelled   = 0x1 << 4,
+    NSEventPhaseMayBegin    = 0x1 << 5
 };
 typedef NSUInteger NSEventPhase;
 
