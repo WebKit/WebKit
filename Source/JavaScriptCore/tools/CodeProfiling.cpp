@@ -41,23 +41,19 @@ WTF::MetaAllocatorTracker* CodeProfiling::s_tracker = 0;
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 #endif
 
+#if PLATFORM(MAC) && CPU(X86_64)
 // Helper function to start & stop the timer.
 // Presently we're using the wall-clock timer, since this seems to give the best results.
 static void setProfileTimer(unsigned usec)
 {
-#if PLATFORM(MAC) && CPU(X86_64)
     itimerval timer;
     timer.it_value.tv_sec = 0;
     timer.it_value.tv_usec = usec;
     timer.it_interval.tv_sec = 0;
     timer.it_interval.tv_usec = usec;
     setitimer(ITIMER_REAL, &timer, 0);
-#else
-    UNUSED_PARAM(usec);
-    // This platform is not yet supported!
-    ASSERT_NOT_REACHED();
-#endif
 }
+#endif
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
@@ -131,15 +127,15 @@ void CodeProfiling::begin(const SourceCode& source)
     if (alreadyProfiling)
         return;
 
-    // Regsiter a signal handler & itimer.
 #if PLATFORM(MAC) && CPU(X86_64)
+    // Regsiter a signal handler & itimer.
     struct sigaction action;
     action.sa_sigaction = reinterpret_cast<void (*)(int, struct __siginfo *, void *)>(profilingTimer);
     sigfillset(&action.sa_mask);
     action.sa_flags = SA_SIGINFO;
     sigaction(SIGALRM, &action, 0);
-#endif
     setProfileTimer(100);
+#endif
 }
 
 void CodeProfiling::end()
@@ -155,8 +151,10 @@ void CodeProfiling::end()
     if (s_profileStack)
         return;
 
+#if PLATFORM(MAC) && CPU(X86_64)
     // Stop profiling
     setProfileTimer(0);
+#endif
 
     current->report();
     delete current;

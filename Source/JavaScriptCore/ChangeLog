@@ -1,3 +1,13 @@
+2012-01-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed ARMv7 build fix.
+
+        * tools/CodeProfiling.cpp:
+        (JSC):
+        (JSC::setProfileTimer):
+        (JSC::CodeProfiling::begin):
+        (JSC::CodeProfiling::end):
+
 2012-01-30  David Levin  <levin@chromium.org>
 
         Using OS(WIN) or OS(MAC) should cause a build error.
