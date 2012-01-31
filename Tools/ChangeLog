@@ -1,3 +1,13 @@
+2012-01-31  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [GTK] build-webkit warning.
+        https://bugs.webkit.org/show_bug.cgi?id=77411
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitdirs.pm:
+        (isCrossCompilation):
+
 2012-01-31  Dan Bernstein  <mitz@apple.com>
 
         When generating derived sources, use the same compiler that is used to compile WebKitTestRunner.
