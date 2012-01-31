@@ -2030,8 +2030,6 @@ void WebViewImpl::setPageScaleFactorPreservingScrollOffset(float scaleFactor)
 {
     // Pick a scale factor that is within the expected limits
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
-    if (scaleFactor == pageScaleFactor())
-        return;
 
     IntPoint scrollOffsetAtNewScale(mainFrame()->scrollOffset().width, mainFrame()->scrollOffset().height);
     float deltaScale = scaleFactor / pageScaleFactor();
