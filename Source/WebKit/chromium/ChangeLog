@@ -1,5 +1,16 @@
 2012-01-31  Antoine Labour  <piman@chromium.org>
 
+        Add back temporarily WebKitPlatformSupport::createGraphicsContext3D() to fix build
+        https://bugs.webkit.org/show_bug.cgi?id=77467
+
+        Rubber-stamped by Nate Chapin <japhet@chromium.org>.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::createGraphicsContext3D):
+
+2012-01-31  Antoine Labour  <piman@chromium.org>
+
         Merge WebGraphicsContext3D creation and initialization, and move it to
         WebViewClient.
         https://bugs.webkit.org/show_bug.cgi?id=76593
