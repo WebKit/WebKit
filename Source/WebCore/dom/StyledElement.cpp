@@ -215,11 +215,12 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     bool hasClass = i < length;
     setHasClass(hasClass);
     if (hasClass) {
-        attributes()->setClass(newClassString);
+        const bool shouldFoldCase = document()->inQuirksMode();
+        ensureAttributeData()->setClass(newClassString, shouldFoldCase);
         if (DOMTokenList* classList = optionalClassList())
             static_cast<ClassList*>(classList)->reset(newClassString);
-    } else if (attributeMap())
-        attributeMap()->clearClass();
+    } else if (attributeData())
+        attributeData()->clearClass();
     setNeedsStyleRecalc();
     dispatchSubtreeModifiedEvent();
 }

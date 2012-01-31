@@ -26,6 +26,7 @@
 #define NamedNodeMap_h
 
 #include "Attribute.h"
+#include "ElementAttributeData.h"
 #include "SpaceSplitString.h"
 #include <wtf/NotFound.h>
 
@@ -84,9 +85,6 @@ public:
             addAttribute(newAttribute);
     }
 
-    const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
-    void setIdForStyleResolution(const AtomicString& newId) { m_idForStyleResolution = newId; }
-
     bool mapsEquivalent(const NamedNodeMap* otherMap) const;
 
     // These functions do no error checking.
@@ -96,11 +94,10 @@ public:
 
     Element* element() const { return m_element; }
 
-    void clearClass() { m_classNames.clear(); }
-    void setClass(const String&);
-    const SpaceSplitString& classNames() const { return m_classNames; }
-
     size_t mappedAttributeCount() const;
+
+    ElementAttributeData* attributeData() { return &m_attributeData; }
+    const ElementAttributeData* attributeData() const { return &m_attributeData; }
 
 private:
     NamedNodeMap(Element* element)
@@ -117,10 +114,13 @@ private:
     void clearAttributes();
     void replaceAttribute(size_t index, PassRefPtr<Attribute>);
 
-    SpaceSplitString m_classNames;
+    // FIXME: NamedNodeMap is being broken up into two classes, one containing data
+    //        for elements with attributes, and one for exposure to the DOM.
+    //        See <http://webkit.org/b/75069> for more information.
+    ElementAttributeData m_attributeData;
+
     Element* m_element;
     Vector<RefPtr<Attribute>, 4> m_attributes;
-    AtomicString m_idForStyleResolution;
 };
 
 inline Attribute* NamedNodeMap::getAttributeItem(const QualifiedName& name) const

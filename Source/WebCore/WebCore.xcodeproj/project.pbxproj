@@ -733,6 +733,8 @@
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
+		2CF6878814D32EB500340F39 /* ElementAttributeData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CF6878714D32EB500340F39 /* ElementAttributeData.cpp */; };
+		2CF6878A14D32EFF00340F39 /* ElementAttributeData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CF6878914D32EFF00340F39 /* ElementAttributeData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D481F00146B5C4C00AA7834 /* CrossfadeGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */; };
 		2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */; };
@@ -7479,6 +7481,8 @@
 		29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySpinButton.h; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
+		2CF6878714D32EB500340F39 /* ElementAttributeData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementAttributeData.cpp; sourceTree = "<group>"; };
+		2CF6878914D32EFF00340F39 /* ElementAttributeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAttributeData.h; sourceTree = "<group>"; };
 		2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossfadeGeneratedImage.cpp; sourceTree = "<group>"; };
 		2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossfadeGeneratedImage.h; sourceTree = "<group>"; };
 		2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorGeneratedImage.cpp; sourceTree = "<group>"; };
@@ -20452,6 +20456,8 @@
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
+				2CF6878714D32EB500340F39 /* ElementAttributeData.cpp */,
+				2CF6878914D32EFF00340F39 /* ElementAttributeData.h */,
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
 				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1EB09C2877700C515D1 /* Entity.idl */,
@@ -24101,6 +24107,7 @@
 				8AD0A59614C88358000D83C5 /* DOMWebKitCSSRegionRule.h in Headers */,
 				8AD0A59814C88358000D83C5 /* DOMWebKitCSSRegionRuleInternal.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
+				2CF6878A14D32EFF00340F39 /* ElementAttributeData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27030,6 +27037,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */,
 				0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */,
+				2CF6878814D32EB500340F39 /* ElementAttributeData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

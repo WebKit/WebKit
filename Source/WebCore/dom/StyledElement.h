@@ -98,8 +98,8 @@ private:
 inline const SpaceSplitString& StyledElement::classNames() const
 {
     ASSERT(hasClass());
-    ASSERT(attributeMap());
-    return attributeMap()->classNames();
+    ASSERT(attributeData());
+    return attributeData()->classNames();
 }
 
 inline void StyledElement::invalidateStyleAttribute()

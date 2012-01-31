@@ -224,6 +224,9 @@ public:
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
 
+    ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
+    ElementAttributeData* ensureAttributeData() const { return attributes()->attributeData(); }
+
     void setAttributesFromElement(const Element&);
 
     virtual void copyNonAttributeProperties(const Element* source);
@@ -572,7 +575,7 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
 inline const AtomicString& Element::idForStyleResolution() const
 {
     ASSERT(hasID());
-    return m_attributeMap->idForStyleResolution();
+    return attributeData()->idForStyleResolution();
 }
 
 inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const

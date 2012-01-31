@@ -1533,6 +1533,8 @@ webcore_sources += \
 	Source/WebCore/dom/EditingText.h \
 	Source/WebCore/dom/Element.cpp \
 	Source/WebCore/dom/Element.h \
+	Source/WebCore/dom/ElementAttributeData.cpp \
+	Source/WebCore/dom/ElementAttributeData.h \
 	Source/WebCore/dom/ElementRareData.h \
 	Source/WebCore/dom/Entity.h \
 	Source/WebCore/dom/EntityReference.cpp \

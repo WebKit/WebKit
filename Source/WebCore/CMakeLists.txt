@@ -546,6 +546,7 @@ SET(WebCore_SOURCES
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp
     dom/Element.cpp
+    dom/ElementAttributeData.cpp
     dom/EntityReference.cpp
     dom/ErrorEvent.cpp
     dom/Event.cpp

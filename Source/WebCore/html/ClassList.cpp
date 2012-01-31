@@ -140,7 +140,7 @@ const SpaceSplitString& ClassList::classNames() const
     ASSERT(m_element->hasClass());
     if (!m_classNamesForQuirksMode.isNull())
         return m_classNamesForQuirksMode;
-    return m_element->attributeMap()->classNames();
+    return m_element->attributeData()->classNames();
 }
 
 } // namespace WebCore

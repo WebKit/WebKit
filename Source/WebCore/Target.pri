@@ -509,6 +509,7 @@ SOURCES += \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
+    dom/ElementAttributeData.cpp \
     dom/EntityReference.cpp \
     dom/ErrorEvent.cpp \
     dom/Event.cpp \
@@ -1622,6 +1623,7 @@ HEADERS += \
     dom/DynamicNodeList.h \
     dom/EditingText.h \
     dom/Element.h \
+    dom/ElementAttributeData.h \
     dom/Entity.h \
     dom/EntityReference.h \
     dom/Event.h \

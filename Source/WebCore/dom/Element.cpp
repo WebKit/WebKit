@@ -710,13 +710,13 @@ void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
 void Element::idAttributeChanged(Attribute* attr)
 {
     setHasID(!attr->isNull());
-    if (attributeMap()) {
+    if (attributeData()) {
         if (attr->isNull())
-            attributeMap()->setIdForStyleResolution(nullAtom);
+            attributeData()->setIdForStyleResolution(nullAtom);
         else if (document()->inQuirksMode())
-            attributeMap()->setIdForStyleResolution(attr->value().lower());
+            attributeData()->setIdForStyleResolution(attr->value().lower());
         else
-            attributeMap()->setIdForStyleResolution(attr->value());
+            attributeData()->setIdForStyleResolution(attr->value());
     }
     setNeedsStyleRecalc();
 }

@@ -200,7 +200,7 @@ size_t NamedNodeMap::getAttributeItemIndexSlowCase(const String& name, bool shou
 
 void NamedNodeMap::clearAttributes()
 {
-    m_classNames.clear();
+    attributeData()->clearClass();
     detachAttributesFromElement();
     m_attributes.clear();
 }
@@ -299,16 +299,6 @@ void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> prpAttri
 
     if (m_element)
         m_element->didModifyAttribute(attribute.get());
-}
-
-void NamedNodeMap::setClass(const String& classStr) 
-{ 
-    if (!element()->hasClass()) { 
-        m_classNames.clear(); 
-        return;
-    }
-
-    m_classNames.set(classStr, element()->document()->inQuirksMode()); 
 }
 
 bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const

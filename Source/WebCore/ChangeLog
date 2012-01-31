@@ -1,3 +1,57 @@
+2012-01-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Add ElementAttributeData class to replace internal uses of NamedNodeMap
+        https://bugs.webkit.org/show_bug.cgi?id=77233
+
+        Reviewed by Andreas Kling.
+
+        Move part of non-DOM functionality of NamedNodeMap into a separate class. This is
+        the first step toward the goal of separating NamedNodeMap from internal attribute
+        storage, as described in https://bugs.webkit.org/show_bug.cgi?id=75069.
+
+        The internal attribute storage is exposed as attributeData() in Element, and when
+        necessary (because it has no back pointer to Element) via methods in Element.
+
+        No new tests. Except from setClass() change this is just moving the code, no new
+        feature was added.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::idAttributeChanged):
+        * dom/Element.h:
+        (WebCore::Element::attributeData):
+        (WebCore::Element::ensureAttributeData):
+        (Element):
+        (WebCore::Element::idForStyleResolution):
+        * dom/ElementAttributeData.cpp: Added.
+        (WebCore):
+        (WebCore::ElementAttributeData::setClass): the only caller of this function
+        already deal with the case when the element has no class, so don't do it here.
+        * dom/ElementAttributeData.h: Added.
+        (WebCore):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::clearClass):
+        (WebCore::ElementAttributeData::classNames):
+        (WebCore::ElementAttributeData::idForStyleResolution):
+        (WebCore::ElementAttributeData::setIdForStyleResolution):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::clearAttributes):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::attributeData):
+        (NamedNodeMap):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::classNames):
+        * html/ClassList.cpp:
+        (WebCore::ClassList::classNames):
+
 2012-01-30  Gregg Tavares  <gman@chromium.org>
 
         Add Plumming to get graphics error messages to JS Console
