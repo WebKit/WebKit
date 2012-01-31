@@ -317,9 +317,6 @@ FAIL tagJSWrapperConstructorClass('input') should be HTMLInputElementConstructor
 PASS tagJSWrapperClass('ins') is 'HTMLModElement'
 FAIL tagJSWrapperPrototypeClass('ins') should be HTMLModElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('ins') should be HTMLModElementConstructor. Was Function.
-PASS tagJSWrapperClass('isindex') is 'HTMLIsIndexElement'
-FAIL tagJSWrapperPrototypeClass('isindex') should be HTMLIsIndexElementPrototype. Was Object.
-FAIL tagJSWrapperConstructorClass('isindex') should be HTMLIsIndexElementConstructor. Was Function.
 PASS tagJSWrapperClass('kbd') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('kbd') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('kbd') should be HTMLElementConstructor. Was Function.

@@ -48,8 +48,6 @@ HTMLImageElement: function HTMLImageElement() { [native code] }
 
 HTMLInputElement: function HTMLInputElement() { [native code] }
 
-HTMLIsIndexElement: function HTMLIsIndexElement() { [native code] }
-
 HTMLLabelElement: function HTMLLabelElement() { [native code] }
 
 HTMLLegendElement: function HTMLLegendElement() { [native code] }

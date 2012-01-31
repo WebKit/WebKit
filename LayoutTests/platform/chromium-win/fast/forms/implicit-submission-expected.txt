@@ -25,6 +25,5 @@ Multi-line select with a submit should submit: PASS
 Multi-line select with a disabled submit should not submit: PASS
 Text field and single select, text focused should submit: PASS
 Text field and single select, select focused should not submit: PASS
-Isindex should submit: PASS
 Multiple text inputs with a button should submit: PASS
 Multiple text inputs with a disabled button should not submit: PASS
