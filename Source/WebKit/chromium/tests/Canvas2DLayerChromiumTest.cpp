@@ -29,6 +29,7 @@
 #include "CCSchedulerTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "Region.h"
 #include "TextureManager.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -138,7 +139,8 @@ protected:
 
         canvas->contentChanged();
         EXPECT_TRUE(canvas->needsDisplay());
-        canvas->paintContentsIfDirty();
+        Region occludedScreenSpace;
+        canvas->paintContentsIfDirty(occludedScreenSpace);
         EXPECT_FALSE(canvas->needsDisplay());
         {
             DebugScopedSetImplThread scopedImplThread;

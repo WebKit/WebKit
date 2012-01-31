@@ -488,6 +488,35 @@ void TiledLayerChromium::reserveTextures()
     }
 }
 
+void TiledLayerChromium::addSelfToOccludedScreenSpace(Region& occludedScreenSpace)
+{
+    if (m_skipsDraw || drawOpacity() != 1 || !isPaintedAxisAlignedInScreen())
+        return;
+
+    if (opaque()) {
+        LayerChromium::addSelfToOccludedScreenSpace(occludedScreenSpace);
+        return;
+    }
+
+    IntRect visibleRect = visibleLayerRect();
+    TransformationMatrix contentTransform = contentToScreenSpaceTransform();
+
+    // FIXME: Create/Use a FloatRegion for the occludedScreenSpace, instead of a Region based on ints, to avoid this step and get better accuracy between layers in target space.
+    Region tileRegion;
+    int left, top, right, bottom;
+    m_tiler->layerRectToTileIndices(visibleLayerRect(), left, top, right, bottom);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            if (tile) {
+                IntRect visibleTileOpaqueRect = intersection(visibleRect, tile->m_opaqueRect);
+                FloatRect screenRect = contentTransform.mapRect(FloatRect(visibleTileOpaqueRect));
+                occludedScreenSpace.unite(enclosedIntRect(screenRect));
+            }
+        }
+    }
+}
+
 void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect)
 {
     m_skipsDraw = false;

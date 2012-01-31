@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class GraphicsContext3D;
+class Region;
 
 // A layer containing an accelerated 2d canvas
 class Canvas2DLayerChromium : public CanvasLayerChromium {
@@ -52,7 +53,7 @@ public:
     virtual void contentChanged();
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty();
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace);
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);

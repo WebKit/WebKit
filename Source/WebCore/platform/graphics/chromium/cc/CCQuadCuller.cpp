@@ -75,18 +75,6 @@ static IntRect rectSubtractRegion(const Region& region, const IntRect& rect)
     return rect;
 }
 
-static IntRect enclosedIntRect(const FloatRect& rect)
-{
-    float x = ceilf(rect.x());
-    float y = ceilf(rect.y());
-    // A rect of width 0 should not become a rect of width -1.
-    float width = max<float>(floorf(rect.maxX()) - x, 0);
-    float height = max<float>(floorf(rect.maxY()) - y, 0);
-
-    return IntRect(clampToInteger(x), clampToInteger(y),
-                   clampToInteger(width), clampToInteger(height));
-}
-
 void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList)
 {
     if (!quadList.size())

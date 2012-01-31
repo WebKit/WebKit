@@ -1,3 +1,58 @@
+2012-01-30  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Compute occlusion during paint loop
+        https://bugs.webkit.org/show_bug.cgi?id=76858
+
+        Reviewed by James Robinson.
+
+        New unit tests in TiledLayerChromiumTest.cpp, CCLayerTreeHostCommonTest.cpp, CCLayerTreeHostTest.cpp
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosedIntRect):
+        (WebCore):
+        * platform/graphics/FloatRect.h:
+        (WebCore):
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        (Canvas2DLayerChromium):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::contentToScreenSpaceTransform):
+        (WebCore):
+        (WebCore::LayerChromium::addSelfToOccludedScreenSpace):
+        (WebCore::LayerChromium::isPaintedAxisAlignedInScreen):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (WebCore::LayerChromium::paintContentsIfDirty):
+        (LayerChromium):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::addSelfToOccludedScreenSpace):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (WebCore):
+        ():
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::paintContentsIfDirty):
+        (WebCore::CCLayerTreeHost::paintMaskAndReplicaForRenderSurface):
+        (RenderSurfaceRegion):
+        (WebCore):
+        (WebCore::pushTargetRenderSurfaceRegion):
+        (WebCore::popAndPushTargetRenderSurfaceRegion):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        ():
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+
 2012-01-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Add ElementAttributeData class to replace internal uses of NamedNodeMap

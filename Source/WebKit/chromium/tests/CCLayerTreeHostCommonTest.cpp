@@ -28,12 +28,19 @@
 
 #include "CCLayerTreeTestCommon.h"
 #include "LayerChromium.h"
+#include "Region.h"
 #include "TransformationMatrix.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+
+#define EXPECT_EQ_RECT(a, b) \
+    EXPECT_EQ(a.x(), b.x()); \
+    EXPECT_EQ(a.y(), b.y()); \
+    EXPECT_EQ(a.width(), b.width()); \
+    EXPECT_EQ(a.height(), b.height());
 
 namespace {
 
@@ -594,5 +601,175 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
 //  - test the special cases for mask layers and replica layers
 //  - test the other functions in CCLayerTreeHostCommon
 //
+
+TEST(CCLayerTreeHostCommonTest, layerAddsSelfToOccludedRegion)
+{
+    // This tests that the right transforms are being used.
+    Region occluded;
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(layer);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
+
+    layer->setOpaque(true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+}
+
+TEST(CCLayerTreeHostCommonTest, layerAddsSelfToOccludedRegionWithRotation)
+{
+    // This tests that the right transforms are being used.
+    Region occluded;
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(layer);
+
+    TransformationMatrix layerTransform;
+    layerTransform.translate(250, 250);
+    layerTransform.rotate(90);
+    layerTransform.translate(-250, -250);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
+
+    layer->setOpaque(true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+}
+
+TEST(CCLayerTreeHostCommonTest, layerAddsSelfToOccludedRegionWithTranslation)
+{
+    // This tests that the right transforms are being used.
+    Region occluded;
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(layer);
+
+    TransformationMatrix layerTransform;
+    layerTransform.translate(20, 20);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
+
+    layer->setOpaque(true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+}
+
+TEST(CCLayerTreeHostCommonTest, layerAddsSelfToOccludedRegionWithRotatedSurface)
+{
+    // This tests that the right transforms are being used.
+    Region occluded;
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(layer);
+
+    TransformationMatrix childTransform;
+    childTransform.translate(250, 250);
+    childTransform.rotate(90);
+    childTransform.translate(-250, -250);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), false);
+
+    child->setMasksToBounds(true);
+    layer->setOpaque(true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    occluded = Region();
+    layer->addSelfToOccludedScreenSpace(occluded);
+    EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occluded.bounds());
+    EXPECT_EQ(1u, occluded.rects().size());
+
+    /* Justification for the above opaque rect from |layer|:
+               100
+      +---------------------+                                      +---------------------+
+      |                     |                                      |                     |30  Visible region of |layer|: /////
+      |    30               |           rotate(90)                 |                     |
+      | 30 + ---------------------------------+                    |     +---------------------------------+
+  100 |    |  10            |                 |            ==>     |     |               |10               |
+      |    |10+---------------------------------+                  |  +---------------------------------+  |
+      |    |  |             |                 | |                  |  |  |///////////////|     420      |  |
+      |    |  |             |                 | |                  |  |  |///////////////|60            |  |
+      |    |  |             |                 | |                  |  |  |///////////////|              |  |
+      +----|--|-------------+                 | |                  +--|--|---------------+              |  |
+           |  |                               | |                   20|10|     70                       |  |
+           |  |                               | |                     |  |                              |  |
+           |  |                               | |500                  |  |                              |  |
+           |  |                               | |                     |  |                              |  |
+           |  |                               | |                     |  |                              |  |
+           |  |                               | |                     |  |                              |  |
+           |  |                               | |                     |  |                              |10|
+           +--|-------------------------------+ |                     |  +------------------------------|--+
+              |                                 |                     |                 490             |
+              +---------------------------------+                     +---------------------------------+
+                             500                                                     500
+     */
+}
 
 } // namespace
