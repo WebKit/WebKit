@@ -824,6 +824,7 @@ void QQuickWebViewExperimental::schemeDelegates_Append(QDeclarativeListProperty<
     QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(property->object->parent());
     if (!webViewExperimental)
         return;
+    scheme->reply()->setWebViewExperimental(webViewExperimental);
     QQuickWebViewPrivate* d = webViewExperimental->d_func();
     d->webPageProxy->registerApplicationScheme(scheme->scheme());
 }

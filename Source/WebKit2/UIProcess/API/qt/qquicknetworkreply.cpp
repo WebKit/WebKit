@@ -68,12 +68,18 @@ void QQuickNetworkReply::send()
         stringData = m_data.toString();
         ptrData = reinterpret_cast<const void*>(stringData.constData());
         smLength = sizeof(QChar) * stringData.length();
+        setContentType(QLatin1String("text/html; charset=utf-16"));
     } else {
         if (!m_data.canConvert<QByteArray>())
             return;
         byteArrayData = m_data.toByteArray();
         ptrData = byteArrayData.data();
         smLength = byteArrayData.size();
+    }
+
+    if (contentType().isEmpty()) {
+        qWarning("QQuickNetworkReply::send - Cannot send raw data without a content type being specified!");
+        return;
     }
 
     WTF::RefPtr<WebKit::SharedMemory> sharedMemory = SharedMemory::create(smLength);
@@ -85,18 +91,18 @@ void QQuickNetworkReply::send()
 
     if (sharedMemory->createHandle(m_networkReplyData->data().m_dataHandle, SharedMemory::ReadOnly)) {
         m_networkReplyData->data().m_contentLength = smLength;
-
-        QObject* schemeParent = parent()->parent();
-        if (schemeParent) {
-            QQuickWebViewExperimental* webViewExperimental = qobject_cast<QQuickWebViewExperimental*>(schemeParent->parent());
-            if (webViewExperimental)
-                webViewExperimental->sendApplicationSchemeReply(this);
-        }
+        if (m_webViewExperimental)
+            m_webViewExperimental.data()->sendApplicationSchemeReply(this);
     }
 
     // After sending the reply data, we have to reinitialize the m_networkReplyData,
     // to make sure we have a fresh SharesMemory::Handle.
     m_networkReplyData = adoptRef(new WebKit::QtRefCountedNetworkReplyData);
+}
+
+void QQuickNetworkReply::setWebViewExperimental(QQuickWebViewExperimental* webViewExperimental)
+{
+    m_webViewExperimental = webViewExperimental;
 }
 
 WebKit::QtRefCountedNetworkRequestData* QQuickNetworkReply::networkRequestData() const

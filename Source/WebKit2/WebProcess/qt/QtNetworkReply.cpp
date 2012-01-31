@@ -45,7 +45,6 @@ QtNetworkReply::QtNetworkReply(const QNetworkRequest& req, QtNetworkAccessManage
     setOperation(QNetworkAccessManager::GetOperation);
     setUrl(req.url());
     setOpenMode(QIODevice::ReadOnly);
-    setHeader(QNetworkRequest::ContentTypeHeader, QVariant(QString::fromLocal8Bit("text/html; charset=UTF-16")));
 }
 
 void QtNetworkReply::setData(const SharedMemory::Handle& handle, qint64 dataSize)
@@ -62,7 +61,7 @@ void QtNetworkReply::setData(const SharedMemory::Handle& handle, qint64 dataSize
 
 void QtNetworkReply::setReplyData(const QtNetworkReplyData& replyData)
 {
-    if (!replyData.m_contentType.isNull())
+    if (!replyData.m_contentType.isEmpty())
         setHeader(QNetworkRequest::ContentTypeHeader, QString(replyData.m_contentType));
     setHeader(QNetworkRequest::ContentLengthHeader, QVariant::fromValue(replyData.m_contentLength));
     setData(replyData.m_dataHandle, replyData.m_contentLength);

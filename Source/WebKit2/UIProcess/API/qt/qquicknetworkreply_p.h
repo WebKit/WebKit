@@ -23,10 +23,12 @@
 
 #include "QtNetworkReplyData.h"
 #include "QtNetworkRequestData.h"
+#include "qquickwebview_p.h"
 #include "SharedMemory.h"
 #include "qwebkitglobal.h"
 #include <QNetworkAccessManager>
 #include <QObject>
+#include <QWeakPointer>
 #include <QtDeclarative/qdeclarativelist.h>
 #include <QtQuick/qquickitem.h>
 
@@ -44,6 +46,7 @@ public:
     QVariant data() const;
     void setData(const QVariant& data);
 
+    void setWebViewExperimental(QQuickWebViewExperimental*);
     WebKit::QtRefCountedNetworkRequestData* networkRequestData() const;
     void setNetworkRequestData(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData> data);
     WebKit::QtRefCountedNetworkReplyData* networkReplyData() const;
@@ -55,6 +58,7 @@ private:
     WTF::RefPtr<WebKit::QtRefCountedNetworkRequestData> m_networkRequestData;
     WTF::RefPtr<WebKit::QtRefCountedNetworkReplyData> m_networkReplyData;
     QVariant m_data;
+    QWeakPointer<QQuickWebViewExperimental> m_webViewExperimental;
 };
 
 QML_DECLARE_TYPE(QQuickNetworkReply)
