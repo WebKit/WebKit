@@ -181,8 +181,9 @@ void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
     m_pendingFakeTouchEventCount++;
     QWindowSystemInterface::handleTouchEvent(browserWindow, device, m_touchPoints.values());
 
+    bool holdingControl = QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
     if (!m_windowOptions.useTraditionalDesktopBehavior())
-        browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
+        browserWindow->updateVisualMockTouchPoints(holdingControl ? m_touchPoints.values() : QList<QWindowSystemInterface::TouchPoint>());
 
     // Get rid of touch-points that are no longer valid
     foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {

@@ -1,3 +1,15 @@
+2012-01-31  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] MiniBrowser: Show touch mocking indicators only when Ctrl is held down.
+        https://bugs.webkit.org/show_bug.cgi?id=77221
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This makes sure that the indicator isn't in the way when doing clicks or dealing with the rest of the UI.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::sendTouchEvent):
+
 2012-01-26  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation
