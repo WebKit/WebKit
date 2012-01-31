@@ -1593,11 +1593,12 @@ RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base,
 
 RegisterID* BytecodeGenerator::emitGetArgumentByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
-    emitOpcode(op_get_argument_by_val);
+    ValueProfile* profile = emitProfiledOpcode(op_get_argument_by_val);
     instructions().append(dst->index());
     ASSERT(base->index() == m_codeBlock->argumentsRegister());
     instructions().append(base->index());
     instructions().append(property->index());
+    instructions().append(profile);
     return dst;
 }
 

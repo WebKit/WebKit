@@ -934,6 +934,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
             printf("[%4d] get_argument_by_val\t %s, %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
+            ++it;
             break;
         }
         case op_get_by_pname: {
