@@ -1,3 +1,20 @@
+2012-01-30  Rakesh KN  <rakesh.kn@motorola.com>
+
+        single-file input elements should refuse multi-file drags
+        https://bugs.webkit.org/show_bug.cgi?id=25913
+
+        Reviewed by Eric Seidel.
+
+        Refuse the multiple file drags onto a single file input element.
+
+        No new tests: Covered by existing tests, updated the expected results.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+        Setting the dragSession.numberOfItemsToBeAccepted to 0 so that drag operation is none if the
+        file input element under mouse is single input type and number of files dragged onto that
+        input element are more than 1.
+
 2012-01-30  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use region reported painted opaque for draw culling

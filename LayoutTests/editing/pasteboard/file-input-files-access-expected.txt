@@ -22,17 +22,16 @@ PASS fileInput.files[0].fileSize is 1476
 Dragging a directory onto an file input control:
 FAIL fileInput.value should be . Was C:\fakepath\directory-for-dragging.
 FAIL fileInput.files.length should be 0. Was 1.
-FIXME: Single-file input elements should refuse multi-file drags.  See https://bugs.webkit.org/show_bug.cgi?id=25913
 Dragging two files to a single-file input control:
-FAIL fileInput.value should be . Was C:\fakepath\apple.gif.
-FAIL fileInput.files.length should be 0. Was 1.
+PASS fileInput.value is ""
+PASS fileInput.files.length is 0
 Dragging a file and a directory onto a single-file input control:
-FAIL fileInput.value should be . Was C:\fakepath\apple.gif.
-FAIL fileInput.files.length should be 0. Was 1.
+PASS fileInput.value is ""
+PASS fileInput.files.length is 0
 FIXME:  elements should refuse drags including directories: https://bugs.webkit.org/show_bug.cgi?id=25879.  The page is given File objects corresponding to directories, but form submission will fail.
 Dragging a directory and a file onto a single-file input control:
-FAIL fileInput.value should be . Was C:\fakepath\directory-for-dragging.
-FAIL fileInput.files.length should be 0. Was 1.
+PASS fileInput.value is ""
+PASS fileInput.files.length is 0
 Dragging three files to a multi-file input control:
 PASS fileInput.value is "C:\\fakepath\\apple.gif"
 PASS fileInput.files.length is 3

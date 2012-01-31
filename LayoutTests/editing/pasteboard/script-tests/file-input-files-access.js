@@ -89,9 +89,6 @@ function runTest()
     debug("Dragging a directory onto an file input control:");
     draggingPathsShouldResultInFiles(['resources/directory-for-dragging'], []);
 
-    // FIXME: Current behavior is to take the first file, but I expect that's
-    // confusing to the user.  We should change this to expect drag failure.
-    debug("FIXME: Single-file input elements should refuse multi-file drags.  See https://bugs.webkit.org/show_bug.cgi?id=25913")
     debug("Dragging two files to a single-file input control:")
     draggingPathsShouldResultInFiles(['resources/apple.gif', 'resources/mozilla.gif'], []);
 

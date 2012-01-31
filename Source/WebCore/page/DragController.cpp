@@ -359,6 +359,8 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
                 dragSession.numberOfItemsToBeAccepted = 0;
             else if (m_fileInputElementUnderMouse->multiple())
                 dragSession.numberOfItemsToBeAccepted = numberOfFiles;
+            else if (numberOfFiles > 1)
+                dragSession.numberOfItemsToBeAccepted = 0;
             else
                 dragSession.numberOfItemsToBeAccepted = 1;
             
