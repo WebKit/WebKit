@@ -416,9 +416,18 @@ public:
 #endif
 
     // Trace Event --------------------------------------------------------
-    static bool isTraceEventEnabled();
-    static void traceEventBegin(const char* name, void*, const char* extra);
-    static void traceEventEnd(const char* name, void*, const char* extra);
+    static const unsigned char* getTraceCategoryEnabledFlag(const char* categoryName);
+    static int addTraceEvent(char phase,
+                             const unsigned char* categoryEnabledFlag,
+                             const char* name,
+                             unsigned long long id,
+                             int numArgs,
+                             const char** argNames,
+                             const unsigned char* argTypes,
+                             const unsigned long long* argValues,
+                             int thresholdBeginId,
+                             long long threshold,
+                             unsigned char flags);
 
     // Visited links ------------------------------------------------------
     static LinkHash visitedLinkHash(const UChar* url, unsigned length);

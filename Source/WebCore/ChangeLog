@@ -1,3 +1,36 @@
+2012-01-31  John Bates  <jbates@google.com>
+
+        [Chromium] Add chromium-style tracing support
+        https://bugs.webkit.org/show_bug.cgi?id=76885
+
+        Reviewed by Darin Fisher.
+
+        This code enables WebKit trace events to pass through more data to the
+        chromium platform tracing API and generally to use the full tracing
+        API provided by chromium.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluate): Replace old tracing API.
+        * page/Console.cpp:
+        (WebCore::Console::time): Replace old tracing API.
+        (WebCore::Console::timeEnd): Replace old tracing API.
+        * platform/chromium/PlatformSupport.h:
+        * platform/chromium/TraceEvent.h:
+        (WebCore::TraceEvent::TraceID::TraceID):
+        (WebCore::TraceEvent::TraceID::data):
+        (WebCore::TraceEvent::TraceStringWithCopy::TraceStringWithCopy):
+        (WebCore::TraceEvent::TraceStringWithCopy::operator const char* ):
+        (WebCore::TraceEvent::setTraceValue):
+        (WebCore::TraceEvent::addTraceEvent):
+        (WebCore::TraceEvent::TraceEndOnScopeClose::TraceEndOnScopeClose):
+        (WebCore::TraceEvent::TraceEndOnScopeClose::~TraceEndOnScopeClose):
+        (WebCore::TraceEvent::TraceEndOnScopeClose::initialize):
+        (WebCore::TraceEvent::TraceEndOnScopeClose::addEventIfEnabled):
+        (WebCore::TraceEvent::TraceEndOnScopeCloseThreshold::TraceEndOnScopeCloseThreshold):
+        (WebCore::TraceEvent::TraceEndOnScopeCloseThreshold::~TraceEndOnScopeCloseThreshold):
+        (WebCore::TraceEvent::TraceEndOnScopeCloseThreshold::initialize):
+        (WebCore::TraceEvent::TraceEndOnScopeCloseThreshold::addEventIfEnabled):
+
 2012-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in DeleteSelectionCommand::handleGeneralDelete when attempting to delete the start block
