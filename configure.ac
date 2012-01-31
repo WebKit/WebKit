@@ -843,19 +843,6 @@ AC_ARG_ENABLE(debug_features,
               [],[if test "$enable_debug" = "yes"; then enable_debug_features="yes"; else enable_debug_features="no"; fi])
 AC_MSG_RESULT([$enable_debug_features])
 
-# Determine JavaScript engine to use.
-AC_MSG_CHECKING([Javascript engine])
-AC_ARG_WITH(jsengine,
-            AC_HELP_STRING([--with-jsengine=@<:@jsc@:>@],
-                           [Select Javascript engine [default=jsc]]),
-            [],[with_jsengine="jsc"])
-
-case "$with_jsengine" in
-     jsc) ;;
-     *) AC_MSG_ERROR([Invalid JS engine: Must be jsc]) ;;
-esac
-AC_MSG_RESULT([$with_jsengine])
-
 AC_MSG_CHECKING([whether to enable JIT compilation])
 AC_ARG_ENABLE(jit,
               AS_HELP_STRING([--enable-jit],
@@ -1177,9 +1164,6 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
-# JS engine conditionals
-AM_CONDITIONAL([USE_JSC], [test "$with_jsengine" = "jsc"])
-
 # Unicode backend conditionals
 AM_CONDITIONAL([USE_ICU_UNICODE], [test "$with_unicode_backend" = "icu"])
 AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
@@ -1306,7 +1290,6 @@ Build configuration:
  Unicode backend                                          : $with_unicode_backend
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
- JavaScript Engine                                        : $with_jsengine
  Accelerated Compositing                                  : $with_accelerated_compositing
 
 Features:

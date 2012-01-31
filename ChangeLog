@@ -1,3 +1,16 @@
+2012-01-31  Nayan Kumar K  <nayankk@motorola.com>
+
+        [GTK] Remove V8 compilation option.
+        https://bugs.webkit.org/show_bug.cgi?id=77405
+
+        Reviewed by Philippe Normand.
+
+        Revert the changes introduced as part of bug 69469
+        to provide an option to compile V8 as JavaScript engine.
+
+        * GNUmakefile.am: Remove defining USE_JSC macro.
+        * configure.ac: Remove --with-jsengine option.
+
 2012-01-25  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 build support
