@@ -90,6 +90,7 @@ fast/speech
 
 # ENABLE(MEDIA_STREAM) is disabled.
 fast/dom/MediaStream
+fast/mediastream
 
 # ENABLE(DIRECTORY_UPLOAD) is disabled.
 fast/forms/file/input-file-directory-upload.html
@@ -1073,6 +1074,14 @@ http/tests/local/link-stylesheet-load-order-preload.html
 fast/preloader/document-write.html
 fast/preloader/document-write-2.html
 
+# ERROR: LayoutTestController::overridePreference() does not support the 'WebKitCSSCustomFilterEnabled' preference
+# https://bugs.webkit.org/show_bug.cgi?id=76444
+css3/filters/effect-custom-disabled.html
+
+# ERROR: LayoutTestController::overridePreference() does not support the 'WebKitPageCacheSupportsPluginsPreferenceKey' preference
+# http://trac.webkit.org/changeset/106305
+# plugins/crash-restoring-pluging-page-from-page-cache.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
@@ -1401,10 +1410,6 @@ css3/flexbox/flex-align.html
 # [Qt] REGRESSION(r105090): css3/filters/filtered-compositing-descendant.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76432
 css3/filters/filtered-compositing-descendant.html
-
-# ERROR: LayoutTestController::overridePreference() does not support the 'WebKitCSSCustomFilterEnabled' preference
-# https://bugs.webkit.org/show_bug.cgi?id=76444
-css3/filters/effect-custom-disabled.html
 
 # [Qt] CSS3 hardware accelerated Brightness and contrast filters fails
 # https://bugs.webkit.org/show_bug.cgi?id=76785
