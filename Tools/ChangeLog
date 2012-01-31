@@ -1,5 +1,12 @@
 2012-01-30  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed. Update download URLs to new domain.
+        
+        * waf/build/build_utils.py:
+        (update_wx_deps):
+
+2012-01-30  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed. Build fix, add JavaScriptCore/tools
         to the list of build directories.
         

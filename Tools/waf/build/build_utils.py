@@ -118,7 +118,7 @@ def update_wx_deps(conf, wk_root, msvc_version='msvc2008'):
     Logs.info('Ensuring wxWebKit dependencies are up-to-date.')
 
     wklibs_dir = os.path.join(wk_root, 'WebKitLibraries')
-    waf = download_if_newer('http://wxwebkit.wxcommunity.com/downloads/deps/waf', os.path.join(wk_root, 'Tools', 'wx'))
+    waf = download_if_newer('http://wxwebkit.kosoftworks.com/downloads/deps/waf', os.path.join(wk_root, 'Tools', 'wx'))
     if waf:
         # TODO: Make the build restart itself after an update.
         Logs.warn('Build system updated, please restart build.')
@@ -126,13 +126,13 @@ def update_wx_deps(conf, wk_root, msvc_version='msvc2008'):
 
     # since this module is still experimental
     wxpy_dir = os.path.join(wk_root, 'Source', 'WebKit', 'wx', 'bindings', 'python')
-    swig_module = download_if_newer('http://wxwebkit.wxcommunity.com/downloads/deps/swig.py.txt', wxpy_dir)
+    swig_module = download_if_newer('http://wxwebkit.kosoftworks.com/downloads/deps/swig.py.txt', wxpy_dir)
     if swig_module:
         shutil.copy(os.path.join(wxpy_dir, 'swig.py.txt'), os.path.join(wxpy_dir, 'swig.py'))
 
     if sys.platform.startswith('win'):
         Logs.info('downloading deps package')
-        archive = download_if_newer('http://wxwebkit.wxcommunity.com/downloads/deps/wxWebKitDeps-%s.zip' % msvc_version, wklibs_dir)
+        archive = download_if_newer('http://wxwebkit.kosoftworks.com/downloads/deps/wxWebKitDeps-%s.zip' % msvc_version, wklibs_dir)
         if archive and os.path.exists(archive):
             os.system('unzip -o %s -d %s' % (archive, os.path.join(wklibs_dir, msvc_version)))
 
