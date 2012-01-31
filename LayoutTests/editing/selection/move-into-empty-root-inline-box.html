@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><body><br><label style="margin-left: inherit;"></label><script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+getSelection().setPosition(document.querySelector('br'), 0);
+getSelection().modify("move","forward","paragraph");
+document.writeln("This tests moving into an empty root inline boxes. The test passes as long as WebKit doesn't crash.");
+
+</script></body></html>

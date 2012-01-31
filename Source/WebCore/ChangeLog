@@ -1,3 +1,19 @@
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in previousLinePosition when moving into a root inline box without leaves
+        https://bugs.webkit.org/show_bug.cgi?id=76812
+
+        Reviewed by Enrica Casucci.
+
+        The crash was caused by us assuming that every root inline box has at least one leaf,
+        which isn't true when we create inline boxes for an empty text run with margin, border, etc...
+
+        Test: editing/selection/move-into-empty-root-inline-box.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+
 2012-01-30  Levi Weintraub  <leviw@chromium.org>
 
         !m_insideRegionPaint assertion in RenderRegion.cpp is invalid
