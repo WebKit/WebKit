@@ -1,0 +1,69 @@
+Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new inner.Audio()).isInner is true
+PASS (new inner.Audio()).constructor.isInner is true
+PASS (new inner.BeforeLoadEvent()).isInner is true
+PASS (new inner.BeforeLoadEvent()).constructor.isInner is true
+PASS (new inner.CloseEvent()).isInner is true
+PASS (new inner.CloseEvent()).constructor.isInner is true
+PASS (new inner.CustomEvent()).isInner is true
+PASS (new inner.CustomEvent()).constructor.isInner is true
+PASS (new inner.DOMParser()).isInner is true
+PASS (new inner.DOMParser()).constructor.isInner is true
+PASS (new inner.ErrorEvent()).isInner is true
+PASS (new inner.ErrorEvent()).constructor.isInner is true
+PASS (new inner.Event()).isInner is true
+PASS (new inner.Event()).constructor.isInner is true
+PASS (new inner.FormData()).isInner is true
+PASS (new inner.FormData()).constructor.isInner is true
+PASS (new inner.HashChangeEvent()).isInner is true
+PASS (new inner.HashChangeEvent()).constructor.isInner is true
+PASS (new inner.Image()).isInner is true
+PASS (new inner.Image()).constructor.isInner is true
+PASS (new inner.MediaController()).isInner is true
+PASS (new inner.MediaController()).constructor.isInner is true
+PASS (new inner.MessageChannel()).isInner is true
+PASS (new inner.MessageChannel()).constructor.isInner is true
+PASS (new inner.MessageEvent()).isInner is true
+PASS (new inner.MessageEvent()).constructor.isInner is true
+PASS (new inner.Option()).isInner is true
+PASS (new inner.Option()).constructor.isInner is true
+PASS (new inner.OverflowEvent()).isInner is true
+PASS (new inner.OverflowEvent()).constructor.isInner is true
+PASS (new inner.PageTransitionEvent()).isInner is true
+PASS (new inner.PageTransitionEvent()).constructor.isInner is true
+PASS (new inner.PopStateEvent()).isInner is true
+PASS (new inner.PopStateEvent()).constructor.isInner is true
+PASS (new inner.ProgressEvent()).isInner is true
+PASS (new inner.ProgressEvent()).constructor.isInner is true
+PASS (new inner.StorageEvent()).isInner is true
+PASS (new inner.StorageEvent()).constructor.isInner is true
+PASS (new inner.TrackEvent()).isInner is true
+PASS (new inner.TrackEvent()).constructor.isInner is true
+PASS (new inner.WebGLContextEvent()).isInner is true
+PASS (new inner.WebGLContextEvent()).constructor.isInner is true
+PASS (new inner.WebKitAnimationEvent()).isInner is true
+PASS (new inner.WebKitAnimationEvent()).constructor.isInner is true
+PASS (new inner.WebKitCSSMatrix()).isInner is true
+PASS (new inner.WebKitCSSMatrix()).constructor.isInner is true
+PASS (new inner.WebKitPoint()).isInner is true
+PASS (new inner.WebKitPoint()).constructor.isInner is true
+PASS (new inner.WebKitTransitionEvent()).isInner is true
+PASS (new inner.WebKitTransitionEvent()).constructor.isInner is true
+PASS (new inner.Worker('foo')).isInner is true
+PASS (new inner.Worker('foo')).constructor.isInner is true
+PASS (new inner.XMLHttpRequest()).isInner is true
+PASS (new inner.XMLHttpRequest()).constructor.isInner is true
+PASS (new inner.XMLSerializer()).isInner is true
+PASS (new inner.XMLSerializer()).constructor.isInner is true
+PASS (new inner.XPathEvaluator()).isInner is true
+PASS (new inner.XPathEvaluator()).constructor.isInner is true
+PASS (new inner.XSLTProcessor()).isInner is true
+PASS (new inner.XSLTProcessor()).constructor.isInner is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

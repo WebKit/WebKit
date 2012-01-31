@@ -13,10 +13,6 @@ BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 BUGWK76815 DEBUG : editing/inserting/4960120-2.html = CRASH
 BUGWK76815 DEBUG : editing/execCommand/19455.html = CRASH
 
-// Needs ENABLE_SHADOW_DOM
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
-
 // Flaky tests
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
@@ -93,6 +89,7 @@ BUGWK76385 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow
 BUGWK76831 : svg/custom/junk-data.svg = PASS TEXT
 BUGWK76831 : svg/custom/missing-xlink.svg = PASS TEXT
 BUGWK76831 : svg/custom/use-font-face-crash.svg = PASS TEXT
+BUGWK76831 : svg/hixie/error/012.xml = PASS TEXT
 
 // End of Flaky tests
 

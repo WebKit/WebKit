@@ -1629,3 +1629,11 @@ fast/events/clear-edit-drag-state.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=77019
 http/tests/media/video-buffering-repaints-controls.html
+
+# ENABLE(SHADOW_DOM) is disabled
+# https://bugs.webkit.org/show_bug.cgi?id=76439
+fast/dom/shadow/content-element-api.html
+fast/dom/shadow/content-element-outside-shadow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=77413
+fast/parser/nested-fragment-parser-crash.html
