@@ -1,0 +1,94 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function listener1()
+{
+}
+
+function listener2()
+{
+}
+
+function listener3()
+{
+}
+
+function addListenerAndClick()
+{
+    var element = document.getElementById("test");
+    element.addEventListener("click", listener1, true);
+    element.addEventListener("click", listener2, true);
+    document.body.addEventListener("click", listener3, true);
+    document.body.addEventListener("click", listener3, false);
+    element.click();
+}
+
+function test()
+{
+    var pane = WebInspector.panels.scripts.sidebarPanes.eventListenerBreakpoints;
+    InspectorTest.runDebuggerTestSuite([
+        function testClickBreakpoint(next)
+        {
+            pane._setBreakpoint("listener:click");
+            InspectorTest.waitUntilPaused(paused1);
+            InspectorTest.evaluateInPageWithTimeout("addListenerAndClick()");
+
+            function paused1(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                InspectorTest.resumeExecution(resumed1);
+            }
+
+            function resumed1()
+            {
+                InspectorTest.waitUntilPaused(paused2);
+            }
+
+            function paused2(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                InspectorTest.resumeExecution(resumed2);
+            }
+
+            function resumed2()
+            {
+                InspectorTest.waitUntilPaused(paused3);
+            }
+
+            function paused3(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                InspectorTest.resumeExecution(resumed3);
+            }
+
+            function resumed3()
+            {
+                InspectorTest.waitUntilPaused(paused4);
+            }
+
+            function paused4(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                pane._removeBreakpoint("listener:click");
+                InspectorTest.resumeExecution(next);
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that debugger will pause in all event listeners when corresponding breakpoint is set.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=77331">Bug 77331.</a>
+</p>
+
+<input type=button id="test"></input>
+
+</body>
+</html>

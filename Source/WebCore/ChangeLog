@@ -1,3 +1,32 @@
+2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: should be possible to step through all event listeners when event listener breakpoint is hit
+        https://bugs.webkit.org/show_bug.cgi?id=77331
+
+        Inspector instrumentation is called before and after each event handler invokation.
+        In case inspector front-end is closed it is no-op, otherwise it may stop execution
+        on an event listener breakpoint.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/step-through-event-listeners.html
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindowImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willHandleEvent):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didHandleEvent):
+
 2011-01-30  Hayato Ito  <hayato@chromium.org>
 
         Attach light children after removing a shadow root.

@@ -279,8 +279,6 @@ void InspectorInstrumentation::didChangeXHRReadyStateImpl(const InspectorInstrum
 
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents* instrumentingAgents, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, listenerEventCategoryType, event.type(), false);
-
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
     if (timelineAgent && eventHasListeners(event.type(), window, node, ancestors)) {
@@ -290,18 +288,25 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentationCookie& cookie)
+InspectorInstrumentationCookie InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents* instrumentingAgents, Event* event)
+{
+    pauseOnNativeEventIfNeeded(instrumentingAgents, listenerEventCategoryType, event->type(), false);
+    return InspectorInstrumentationCookie(instrumentingAgents, 0);
+}
+
+void InspectorInstrumentation::didHandleEventImpl(const InspectorInstrumentationCookie& cookie)
 {
     cancelPauseOnNativeEvent(cookie.first);
+}
 
+void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentationCookie& cookie)
+{
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didDispatchEvent();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWindowImpl(InstrumentingAgents* instrumentingAgents, const Event& event, DOMWindow* window)
 {
-    pauseOnNativeEventIfNeeded(instrumentingAgents, listenerEventCategoryType, event.type(), false);
-
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
     if (timelineAgent && window->hasEventListeners(event.type())) {
@@ -313,8 +318,6 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWind
 
 void InspectorInstrumentation::didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie& cookie)
 {
-    cancelPauseOnNativeEvent(cookie.first);
-
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didDispatchEvent();
 }

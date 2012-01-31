@@ -258,6 +258,7 @@ inspector/debugger/selected-call-frame-after-formatting-source.html
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
 inspector/debugger/event-listener-breakpoints.html
+inspector/debugger/step-through-event-listeners.html
 inspector/debugger/xhr-breakpoints.html
 
 # Skipping newly added tests while I'm finding out what is wrong.

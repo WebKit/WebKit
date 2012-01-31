@@ -34,6 +34,7 @@
 
 #include "Event.h"
 #include "EventException.h"
+#include "InspectorInstrumentation.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -223,9 +224,12 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
         if (event->immediatePropagationStopped())
             break;
 
+        ScriptExecutionContext* context = scriptExecutionContext();
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, event);
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
-        registeredListener.listener->handleEvent(scriptExecutionContext(), event);
+        registeredListener.listener->handleEvent(context, event);
+        InspectorInstrumentation::didHandleEvent(cookie);
     }
     d->firingEventIterators.removeLast();
 }
