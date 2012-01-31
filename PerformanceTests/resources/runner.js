@@ -63,13 +63,24 @@ function computeStdev(values) {
     return Math.sqrt(sumOfSquaredDeviations / values.length);
 }
 
+function printStatistics(stats, printFunction)
+{
+    printFunction("");
+    printFunction("avg " + stats.avg);
+    printFunction("median " + stats.median);
+    printFunction("stdev " + stats.stdev);
+    printFunction("min " + stats.min);
+    printFunction("max " + stats.max);
+}
+
 function logStatistics(times) {
-    log("");
-    log("avg " + computeAverage(times));
-    log("median " + computeMedian(times));
-    log("stdev " + computeStdev(times));
-    log("min " + computeMin(times));
-    log("max " + computeMax(times));
+    printStatistics({
+        avg: computeAverage(times),
+        median: computeMedian(times),
+        stdev: computeStdev(times),
+        min: computeMin(times),
+        max: computeMax(times)
+    }, log);
 }
 
 function gc() {

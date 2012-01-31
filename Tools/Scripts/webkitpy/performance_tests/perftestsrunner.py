@@ -250,13 +250,15 @@ class PerfTestsRunner(object):
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
         re.compile(r'^\d+(.\d+)?$'),
-    ]
+        # Following are for handle existing test like Dromaeo
+        re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
+        re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)"""))]
 
     def _should_ignore_line_in_parser_test_result(self, line):
         if not line:
             return True
         for regex in self._lines_to_ignore_in_parser_result:
-            if regex.match(line):
+            if regex.search(line):
                 return True
         return False
 
