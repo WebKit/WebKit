@@ -1,3 +1,27 @@
+2012-01-31  Antti Koivisto  <antti@apple.com>
+
+        Parent SVGFontFaceElements style declaration to the rule
+        https://bugs.webkit.org/show_bug.cgi?id=77421
+
+        Reviewed by Adam Roben.
+
+        For some reason the declaration is parented to the element which adds a bunch of unnecessary special case code.
+        The invalidation on mutation is done explicitly by SVGFontFaceElement so that is not affected. The declaration
+        is not exposed so the change is not observable with a test.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::~CSSFontFaceRule):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::createInline):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::parseMappedAttribute):
+        (WebCore::SVGFontFaceElement::fontFamily):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceElement.h:
+        
+            Remove the unnecessary m_styleDeclaration field, access through m_fontFaceRule instead.
+
 2012-01-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Tap highlighting: Support better outlines for multiline inlines

@@ -33,8 +33,7 @@ CSSFontFaceRule::CSSFontFaceRule(CSSStyleSheet* parent)
 
 CSSFontFaceRule::~CSSFontFaceRule()
 {
-    // FIXME: SVGFontFaceElement's style declaration should probably be parented to the rule too.
-    if (m_style && !m_style->isElementStyleDeclaration())
+    if (m_style)
         m_style->clearParentRule();
 }
 

@@ -57,10 +57,6 @@ public:
     { 
         return adoptRef(new CSSMutableStyleDeclaration(element, true));
     }
-    static PassRefPtr<CSSMutableStyleDeclaration> createForSVGFontFaceElement(StyledElement* element) 
-    { 
-        return adoptRef(new CSSMutableStyleDeclaration(element, false));
-    }
 
     unsigned propertyCount() const { return m_properties.size(); }
     bool isEmpty() const { return m_properties.isEmpty(); }

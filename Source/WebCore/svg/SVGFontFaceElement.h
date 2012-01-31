@@ -61,8 +61,6 @@ private:
     virtual void removedFromDocument();
 
     RefPtr<CSSFontFaceRule> m_fontFaceRule;
-    RefPtr<CSSMutableStyleDeclaration> m_styleDeclaration;
-
     RefPtr<SVGFontElement> m_fontElement;
 };
 
