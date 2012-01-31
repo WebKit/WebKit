@@ -55,7 +55,7 @@ public:
     }
     static PassRefPtr<CSSMutableStyleDeclaration> createInline(StyledElement* element)
     { 
-        return adoptRef(new CSSMutableStyleDeclaration(element, true));
+        return adoptRef(new CSSMutableStyleDeclaration(element));
     }
 
     unsigned propertyCount() const { return m_properties.size(); }
@@ -115,7 +115,7 @@ private:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>&);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
-    CSSMutableStyleDeclaration(StyledElement*, bool isInline);
+    CSSMutableStyleDeclaration(StyledElement*);
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 

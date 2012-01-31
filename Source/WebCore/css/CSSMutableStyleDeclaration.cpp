@@ -134,7 +134,6 @@ bool StyleAttributeMutationScope::s_shouldDeliver = false;
 } // namespace
 
 CSSMutableStyleDeclaration::CSSMutableStyleDeclaration()
-    : CSSStyleDeclaration(0)
 {
     // This constructor is used for various inline style declarations, so disable strict parsing.
     m_strictParsing = false;
@@ -175,8 +174,8 @@ CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(CSSRule* parent, const CS
     }
 }
 
-CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(StyledElement* element, bool isInline) 
-    : CSSStyleDeclaration(element, isInline)
+CSSMutableStyleDeclaration::CSSMutableStyleDeclaration(StyledElement* element) 
+    : CSSStyleDeclaration(element)
 { 
 }
 
@@ -643,15 +642,13 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
 
 void CSSMutableStyleDeclaration::setNeedsStyleRecalc()
 {
-    if (isElementStyleDeclaration() && parentElement()) {
+    if (isInlineStyleDeclaration()) {
         StyledElement* element = parentElement();
-        if (!isInlineStyleDeclaration())
-            element->setNeedsStyleRecalc(FullStyleChange);
-        else {
-            element->setNeedsStyleRecalc(InlineStyleChange);
-            element->invalidateStyleAttribute();
-            StyleAttributeMutationScope(this).didInvalidateStyleAttr();
-        }
+        if (!element)
+            return;
+        element->setNeedsStyleRecalc(InlineStyleChange);
+        element->invalidateStyleAttribute();
+        StyleAttributeMutationScope(this).didInvalidateStyleAttr();
         return;
     }
 

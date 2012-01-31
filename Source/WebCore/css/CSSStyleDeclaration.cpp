@@ -41,34 +41,25 @@ namespace WebCore {
 
 CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parentRule)
     : m_strictParsing(!parentRule || parentRule->useStrictParsing())
-    , m_isElementStyleDeclaration(false)
     , m_isInlineStyleDeclaration(false)
     , m_parent(parentRule)
 {
 }
-    
-CSSStyleDeclaration::CSSStyleDeclaration(StyledElement* parentElement, bool isInline)
+
+CSSStyleDeclaration::CSSStyleDeclaration(StyledElement* parentElement)
     : m_strictParsing(false)
-    , m_isElementStyleDeclaration(true)
-    , m_isInlineStyleDeclaration(isInline)
+    , m_isInlineStyleDeclaration(true)
     , m_parent(parentElement)
 {
 }
 
 CSSStyleSheet* CSSStyleDeclaration::parentStyleSheet() const
 {
-    if (m_isElementStyleDeclaration) {
-        if (!m_parent.element)
-            return 0;
-        Document* document = m_parent.element->document();
-        if (!document)
-            return 0;
-        // If this is not an inline declaration then it is an SVG font face declaration.
-        return m_isInlineStyleDeclaration ? document->elementSheet() : document->mappedElementSheet();
+    if (m_isInlineStyleDeclaration) {
+        Document* document = m_parent.element ? m_parent.element->document() : 0;
+        return document ? document->elementSheet() : 0;
     }
-    if (!m_parent.rule)
-        return 0;
-    return m_parent.rule->parentStyleSheet();
+    return m_parent.rule ? m_parent.rule->parentStyleSheet() : 0;
 }
 
 bool CSSStyleDeclaration::isPropertyName(const String& propertyName)

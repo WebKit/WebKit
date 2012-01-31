@@ -42,11 +42,11 @@ public:
 
     static bool isPropertyName(const String&);
 
-    CSSRule* parentRule() const { return m_isElementStyleDeclaration ? 0 : m_parent.rule; }
-    void clearParentRule() { ASSERT(!m_isElementStyleDeclaration); m_parent.rule = 0; }
+    CSSRule* parentRule() const { return m_isInlineStyleDeclaration ? 0 : m_parent.rule; }
+    void clearParentRule() { ASSERT(!m_isInlineStyleDeclaration); m_parent.rule = 0; }
 
-    StyledElement* parentElement() const { ASSERT(m_isElementStyleDeclaration); return m_parent.element; }
-    void clearParentElement() { ASSERT(m_isElementStyleDeclaration); m_parent.element = 0; }
+    StyledElement* parentElement() const { ASSERT(m_isInlineStyleDeclaration); return m_parent.element; }
+    void clearParentElement() { ASSERT(m_isInlineStyleDeclaration); m_parent.element = 0; }
 
     CSSStyleSheet* parentStyleSheet() const;
 
@@ -77,19 +77,17 @@ public:
     void showStyle();
 #endif
 
-    bool isElementStyleDeclaration() const { return m_isElementStyleDeclaration; }
     bool isInlineStyleDeclaration() const { return m_isInlineStyleDeclaration; }
 
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
-    CSSStyleDeclaration(StyledElement* parentElement, bool isInline);
+    CSSStyleDeclaration(StyledElement* parentElement);
 
     // The bits in this section are only used by specific subclasses but kept here
     // to maximize struct packing.
 
     // CSSMutableStyleDeclaration bits:
     bool m_strictParsing : 1;
-    bool m_isElementStyleDeclaration : 1;
     bool m_isInlineStyleDeclaration : 1;
 
 private:
