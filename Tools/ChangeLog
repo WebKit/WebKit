@@ -1,3 +1,14 @@
+2012-01-31  Ehsan Akhgari  <ehsan.akhgari@gmail.com>
+
+        Fix the update_webgl_conformance_tests.py script in order to enable it
+        to detect the SCM being used correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=77462
+
+        Reviewed by Kenneth Russell.
+
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+        (default_out_dir):
+
 2012-01-31  Eric Seidel  <eric@webkit.org>
 
         webkit-patch apply-from-bug should work regardless of your CWD
