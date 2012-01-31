@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
+#include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -125,42 +126,33 @@ void SelectorChecker::popParentStackFrame()
     }
 }
 
-void SelectorChecker::pushParent(Element* parent)
+void SelectorChecker::setupParentStack(Element* parent)
 {
-    if (m_parentStack.isEmpty()) {
-        ASSERT(!m_ancestorIdentifierFilter);
-        m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
-        // If the element is not the root itself, build the stack starting from the root.
-        if (parent->parentOrHostNode()) {
-            Vector<Element*, 30> ancestors;
-            for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentOrHostElement())
-                ancestors.append(ancestor);
-            int count = ancestors.size();
-            for (int n = count - 1; n >= 0; --n)
-                pushParentStackFrame(ancestors[n]);
-            return;
-        }
-    } else if (!parent->parentOrHostElement()) {
-        // We are not always invoked consistently. For example, script execution can cause us to enter
-        // style recalc in the middle of tree building. Reset the stack if we see a new root element.
-        ASSERT(m_ancestorIdentifierFilter);
-        m_ancestorIdentifierFilter->clear();
-        m_parentStack.resize(0);
-    } else {
-        ASSERT(m_ancestorIdentifierFilter);
-        // We may get invoked for some random elements in some wacky cases during style resolve.
-        // Pause maintaining the stack in this case.
-        if (m_parentStack.last().element != parent->parentOrHostElement())
-            return;
+    ASSERT(m_parentStack.isEmpty() == !m_ancestorIdentifierFilter);
+    // Kill whatever we stored before.
+    m_parentStack.shrink(0);
+    m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
+    // Fast version if parent is a root element:
+    if (!parent->parentOrHostNode()) {
+        pushParentStackFrame(parent);
+        return;
     }
-    pushParentStackFrame(parent);
+    // Otherwise climb up the tree.
+    Vector<Element*, 30> ancestors;
+    for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentOrHostElement())
+        ancestors.append(ancestor);
+    for (size_t n = ancestors.size(); n; --n)
+        pushParentStackFrame(ancestors[n - 1]);
 }
 
-void SelectorChecker::popParent(Element* parent)
+void SelectorChecker::pushParent(Element* parent)
 {
-    if (m_parentStack.isEmpty() || m_parentStack.last().element != parent)
+    ASSERT(m_ancestorIdentifierFilter);
+    // We may get invoked for some random elements in some wacky cases during style resolve.
+    // Pause maintaining the stack in this case.
+    if (m_parentStack.last().element != parent->parentOrHostElement())
         return;
-    popParentStackFrame();
+    pushParentStackFrame(parent);
 }
 
 static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash, const unsigned* end)

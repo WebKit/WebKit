@@ -65,6 +65,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
+#include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
@@ -222,7 +223,7 @@ public:
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
-    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0);
+    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const Element* = 0);
 
     void addStyleRule(CSSStyleRule*);
     void addRule(CSSStyleRule*, CSSSelector*);
@@ -337,6 +338,9 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
 #if ENABLE(CSS_SHADERS)
     , m_hasPendingShaders(false)
 #endif
+#if ENABLE(STYLE_SCOPED)
+    , m_scopingElementStackParent(0)
+#endif
 {
     Element* root = document->documentElement();
 
@@ -368,6 +372,8 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
 
     m_authorStyle = adoptPtr(new RuleSet);
     // Adding rules from multiple sheets, shrink at the end.
+    // Adding global rules from multiple sheets, shrink at the end.
+    // Note that there usually is only 1 sheet for scoped rules, so auto-shrink-to-fit is fine.
     m_authorStyle->disableAutoShrinkToFit();
 
     // FIXME: This sucks! The user sheet is reparsed every time!
@@ -397,8 +403,10 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         m_userStyle = tempUserStyle.release();
 
     // Add rules from elements like SVG's <font-face>
-    if (mappedElementSheet)
+    if (mappedElementSheet) {
+        // FIXME: see if style scopes can/should be added here.
         m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
+    }
 
     // add stylesheets from document
     appendAuthorStylesheets(0, styleSheets->vector());
@@ -423,12 +431,41 @@ void CSSStyleSelector::collectFeatures()
     // sharing candidates.
     m_features.add(defaultStyle->features());
     m_features.add(m_authorStyle->features());
+#if ENABLE(STYLE_SCOPED)
+    for (ScopedRuleSetMap::iterator it = m_scopedAuthorStyles.begin(); it != m_scopedAuthorStyles.end(); ++it)
+        m_features.add(it->second->features());
+#endif
     if (m_userStyle)
         m_features.add(m_userStyle->features());
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 }
+
+#if ENABLE(STYLE_SCOPED)
+Element* CSSStyleSelector::determineScopingElement(const CSSStyleSheet* sheet)
+{
+    ASSERT(sheet);
+
+    Node* ownerNode = sheet->findStyleSheetOwnerNode();
+    if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))
+        return 0;
+
+    HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(ownerNode);
+    if (!styleElement->scoped())
+        return 0;
+
+    return styleElement->parentElement();
+}
+
+inline RuleSet* CSSStyleSelector::scopedRuleSetForElement(const Element* element) const
+{
+    if (!element->hasScopedHTMLStyleChild())
+        return 0;
+    ScopedRuleSetMap::const_iterator it = m_scopedAuthorStyles.find(element);
+    return it != m_scopedAuthorStyles.end() ? it->second.get() : 0; 
+}
+#endif
 
 void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >& stylesheets)
 {
@@ -438,13 +475,85 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
     for (unsigned i = firstNew; i < size; ++i) {
         if (!stylesheets[i]->isCSSStyleSheet() || stylesheets[i]->disabled())
             continue;
-        m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(stylesheets[i].get()), *m_medium, this);
+        CSSStyleSheet* cssSheet = static_cast<CSSStyleSheet*>(stylesheets[i].get());
+#if ENABLE(STYLE_SCOPED)
+        const Element* scope = determineScopingElement(cssSheet);
+        if (scope) {
+            pair<ScopedRuleSetMap::iterator, bool> addResult = m_scopedAuthorStyles.add(scope, nullptr);
+            if (addResult.second)
+                addResult.first->second = adoptPtr(new RuleSet());
+            addResult.first->second->addRulesFromSheet(cssSheet, *m_medium, this, scope);
+            continue;
+        }
+#endif
+        m_authorStyle->addRulesFromSheet(cssSheet, *m_medium, this);
     }
     m_authorStyle->shrinkToFit();
     collectFeatures();
     
     if (document()->renderer() && document()->renderer()->style())
         document()->renderer()->style()->font().update(fontSelector());
+}
+
+#if ENABLE(STYLE_SCOPED)
+void CSSStyleSelector::setupScopingElementStack(const Element* parent)
+{
+    // Shortcut: abort if <style scoped> isn't used anywhere
+    if (m_scopedAuthorStyles.isEmpty()) {
+        ASSERT(!m_scopingElementStackParent);
+        ASSERT(m_scopingElementStack.isEmpty());
+        return;
+    }
+    m_scopingElementStack.shrink(0);
+    for (; parent; parent = parent->parentOrHostElement()) {
+        RuleSet* ruleSet = scopedRuleSetForElement(parent);
+        if (ruleSet)
+            m_scopingElementStack.append(ScopeStackFrame(parent, ruleSet));
+    }
+    m_scopingElementStack.reverse();
+    m_scopingElementStackParent = parent;
+}
+#endif
+
+void CSSStyleSelector::pushParent(Element* parent)
+{
+    const Element* parentsParent = parent->parentOrHostElement();
+    // We are not always invoked consistently. For example, script execution can cause us to enter
+    // style recalc in the middle of tree building. We may also be invoked from somewhere within the tree.
+    // Reset the stack in this case, or if we see a new root element.
+    // Otherwise just push the new parent.
+    if (!parentsParent || m_checker.parentStackIsEmpty())
+        m_checker.setupParentStack(parent);
+    else
+        m_checker.pushParent(parent);
+
+#if ENABLE(STYLE_SCOPED)
+    if (!scopingElementStackIsConsistent(parentsParent)) {
+        // In some wacky cases during style resolve we may get invoked for random elements -
+        // recreate the scoping element stack in such cases.
+        setupScopingElementStack(parent);
+        return;
+    }
+    RuleSet* ruleSet = scopedRuleSetForElement(parent);
+    if (ruleSet)
+        m_scopingElementStack.append(ScopeStackFrame(parent, ruleSet));
+    m_scopingElementStackParent = parent;
+#endif
+}
+
+void CSSStyleSelector::popParent(Element* parent)
+{
+    // Note that we may get invoked for some random elements in some wacky cases during style resolve.
+    // Pause maintaining the stack in this case.
+    if (m_checker.parentStackIsConsistent(parent))
+        m_checker.popParent();
+#if ENABLE(STYLE_SCOPED)
+    // Only bother to update the scoping element stack if it is consistent.
+    if (scopingElementStackIsConsistent(parent)) {
+        m_scopingElementStack.removeLast();
+        m_scopingElementStackParent = parent->parentOrHostElement();
+    }
+#endif
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -687,16 +796,8 @@ void CSSStyleSelector::collectMatchingRulesForRegion(RuleSet* rules, int& firstR
     }
 }
 
-void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+void CSSStyleSelector::sortAndTransferMatchedRules()
 {
-    m_matchedRules.clear();
-
-    if (!rules || !m_element)
-        return;
-
-    collectMatchingRules(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    collectMatchingRulesForRegion(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
-
     if (m_matchedRules.isEmpty())
         return;
 
@@ -721,6 +822,50 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
         addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType);
     }
+}
+
+void CSSStyleSelector::matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+{
+    m_matchedRules.clear();
+
+    if (!m_element)
+        return;
+
+    // Match global author rules.
+    collectMatchingRules(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForRegion(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+
+#if ENABLE(STYLE_SCOPED)
+    // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
+    const Element* parent = m_element->parentOrHostElement();
+    if (!scopingElementStackIsConsistent(parent))
+        setupScopingElementStack(parent);
+    for (size_t i = m_scopingElementStack.size(); i; --i) {
+        collectMatchingRules(m_scopingElementStack[i - 1].m_ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        collectMatchingRulesForRegion(m_scopingElementStack[i - 1].m_ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+    // Also include the current element.
+    RuleSet* ruleSet = scopedRuleSetForElement(m_element);
+    if (ruleSet) {
+        collectMatchingRules(ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        collectMatchingRulesForRegion(ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+#endif
+
+    sortAndTransferMatchedRules();
+}
+
+void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+{
+    m_matchedRules.clear();
+
+    if (!rules || !m_element)
+        return;
+
+    collectMatchingRules(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForRegion(rules, firstRuleIndex, lastRuleIndex, includeEmptyRules);
+
+    sortAndTransferMatchedRules();
 }
 
 class MatchingUARulesScope {
@@ -870,7 +1015,7 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
     
     // Check the rules in author sheets next.
     if (m_matchAuthorAndUserStyles)
-        matchRules(m_authorStyle.get(), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, false);
+        matchAuthorRules(result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, false);
 
     // Now check our inline style attribute.
     if (m_matchAuthorAndUserStyles && m_styledElement) {
@@ -933,6 +1078,10 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
         return 0;
     if (!parent || !parent->isStyledElement())
         return 0;
+#if ENABLE(STYLE_SCOPED)
+    if (parent->hasScopedHTMLStyleChild())
+        return 0;
+#endif
     StyledElement* p = static_cast<StyledElement*>(parent);
     if (p->inlineStyleDecl())
         return 0;
@@ -1096,6 +1245,11 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
     if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
 
+#if ENABLE(STYLE_SCOPED)
+    if (element->hasScopedHTMLStyleChild())
+        return false;
+#endif
+
     bool isControl = element->isFormControlElement();
 
     if (isControl != m_element->isFormControlElement())
@@ -1167,6 +1321,10 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
         return 0;
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
+#if ENABLE(STYLE_SCOPED)
+    if (m_styledElement->hasScopedHTMLStyleChild())
+        return 0;
+#endif
 
     // Check previous siblings and their cousins.
     unsigned count = 0;
@@ -1486,7 +1644,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
 
     if (m_matchAuthorAndUserStyles) {
         matchRules(m_userStyle.get(), matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
-        matchRules(m_authorStyle.get(), matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, false);
+        matchAuthorRules(matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, false);
     }
 
     if (m_matchedDecls.isEmpty())
@@ -1523,6 +1681,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     const String page = pageName(pageIndex);
     matchPageRules(defaultPrintStyle, isLeft, isFirst, page);
     matchPageRules(m_userStyle.get(), isLeft, isFirst, page);
+    // Only consider the global author RuleSet for @page rules, as per the HTML5 spec.
     matchPageRules(m_authorStyle.get(), isLeft, isFirst, page);
     m_lineHeightValue = 0;
     bool inheritedOnly = false;
@@ -1766,6 +1925,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
 
 bool CSSStyleSelector::checkRegionStyle(Element* regionElement)
 {
+    // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment,
+    // so all region rules are global by default. Verify whether that can stand or needs changing.
+
     unsigned rulesSize = m_authorStyle->m_regionSelectorsAndRuleSets.size();
     for (unsigned i = 0; i < rulesSize; ++i) {
         ASSERT(m_authorStyle->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
@@ -1836,7 +1998,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
         m_sameOriginOnly = !(rulesToInclude & CrossOriginCSSRules);
 
         // Check the rules in author sheets.
-        matchRules(m_authorStyle.get(), dummy.ranges.firstAuthorRule, dummy.ranges.lastAuthorRule, rulesToInclude & EmptyCSSRules);
+        matchAuthorRules(dummy.ranges.firstAuthorRule, dummy.ranges.lastAuthorRule, rulesToInclude & EmptyCSSRules);
 
         m_sameOriginOnly = false;
     }
@@ -2114,7 +2276,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
 }
 
-void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
+void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const Element* scope)
 {
     ASSERT(sheet);
 
@@ -2134,7 +2296,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         else if (rule->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(rule);
             if (import->styleSheet() && (!import->media() || medium.eval(import->media(), styleSelector)))
-                addRulesFromSheet(import->styleSheet(), medium, styleSelector);
+                addRulesFromSheet(import->styleSheet(), medium, styleSelector, scope);
         }
         else if (rule->isMediaRule()) {
             CSSMediaRule* r = static_cast<CSSMediaRule*>(rule);
@@ -2150,24 +2312,40 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                         addPageRule(static_cast<CSSPageRule*>(childItem));
                     else if (childItem->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
+                        // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
+                        if (scope)
+                            continue;
                         const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childItem);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
                         styleSelector->invalidateMatchedDeclarationCache();
                     } else if (childItem->isKeyframesRule() && styleSelector) {
                         // Add this keyframe rule to our set.
+                        // FIXME(BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
+                        if (scope)
+                            continue;
                         styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(childItem));
                     }
                 }   // for rules
             }   // if rules
         } else if (rule->isFontFaceRule() && styleSelector) {
             // Add this font face to our set.
+            // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
+            if (scope)
+                continue;
             const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(rule);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
             styleSelector->invalidateMatchedDeclarationCache();
-        } else if (rule->isKeyframesRule())
+        } else if (rule->isKeyframesRule()) {
+            // FIXME (BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
+            if (scope)
+                continue;
             styleSelector->addKeyframeStyle(static_cast<WebKitCSSKeyframesRule*>(rule));
-        else if (rule->isRegionRule() && styleSelector)
+        } else if (rule->isRegionRule() && styleSelector) {
+            // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment.
+            if (scope)
+                continue;
             addRegionRule(static_cast<WebKitCSSRegionRule*>(rule));
+        }
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();

@@ -1,0 +1,27 @@
+Test detaching a <style scoped> element
+
+Text
+Text
+
+Text
+Text
+
+Text
+Text
+
+--- ORIGINAL ---
+S1: rgb(0, 0, 0)
+P1: rgb(0, 0, 0)
+S2: rgb(255, 0, 0)
+P2: rgb(0, 128, 0)
+S3: rgb(0, 0, 0)
+P3: rgb(0, 0, 0)
+--- AFTER DETACHING <STYLE SCOPED> ---
+S1: rgb(0, 0, 0)
+P1: rgb(0, 0, 0)
+S2: rgb(0, 0, 0)
+P2: rgb(0, 0, 0)
+S3: rgb(0, 0, 0)
+P3: rgb(0, 0, 0)
+--- FINISHED ---
+

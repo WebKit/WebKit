@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+
+        function test(id)
+        {
+            var elem = document.getElementById(id);
+            log(id + ': ' + document.defaultView.getComputedStyle(elem, null).getPropertyValue('color'));
+        }
+
+        function runTests()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            log('--- COMPUTED STYLES ---');
+
+            test('S1');
+            test('P1');
+            test('R1');
+            test('E1');
+            log('');
+            test('S2');
+            test('P2');
+            test('R2');
+            log('');
+            test('S3');
+            test('P3');
+            test('R3');
+            test('E3');
+            log('');
+            test('S4');
+            test('P4');
+            test('R4');
+            test('E4');
+
+            log('--- FINISHED ---');
+        }
+    </script>
+    <style type="text/css">
+        body { color: black; }
+    </style>
+</head>
+<body onload="runTests();">
+    <p>Test &lt;style scoped&gt;</p>
+    <div class="foo">
+        <span id="S1">Text</span>
+        <p id="P1">Text</p>
+        <pre id = "R1" class="bar">Text</pre>
+        <pre id="E1" class="baz">Text</pre>
+    </div>
+    <div>
+        <div>
+            <style type="text/css" scoped>
+                div { color: red; }
+                p { color: green; }
+                div .bar { color: blue; }
+            </style>
+            <span id="S2">Text</span>
+            <p id="P2">Text</p>
+            <pre id="R2" class="bar">Text</pre>
+        </div>
+        <span id="S3">Text</span>
+        <p id="P3">Text</p>
+        <pre id = "R3" class="bar">Text</pre>
+        <pre id="E3" class="baz">Text</pre>
+    </div>
+    <div class="foo">
+        <span id="S4">Text</span>
+        <p id="P4">Text</p>
+        <pre id = "R4" class="bar">Text</pre>
+        <pre id="E4" class="baz">Text</pre>
+    </div>
+    <pre id="console"></pre>
+</body>
+</html>

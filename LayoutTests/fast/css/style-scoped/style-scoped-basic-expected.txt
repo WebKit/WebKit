@@ -1,0 +1,42 @@
+Test <style scoped>
+
+Text
+Text
+
+Text
+Text
+Text
+Text
+
+Text
+Text
+Text
+
+Text
+Text
+Text
+Text
+
+Text
+Text
+--- COMPUTED STYLES ---
+S1: rgb(0, 0, 0)
+P1: rgb(0, 0, 0)
+R1: rgb(0, 0, 0)
+E1: rgb(0, 0, 0)
+
+S2: rgb(255, 0, 0)
+P2: rgb(0, 128, 0)
+R2: rgb(0, 0, 255)
+
+S3: rgb(0, 0, 0)
+P3: rgb(0, 0, 0)
+R3: rgb(0, 0, 0)
+E3: rgb(0, 0, 0)
+
+S4: rgb(0, 0, 0)
+P4: rgb(0, 0, 0)
+R4: rgb(0, 0, 0)
+E4: rgb(0, 0, 0)
+--- FINISHED ---
+

@@ -106,9 +106,13 @@ public:
                      bool strictParsing, bool matchAuthorAndUserStyles);
     ~CSSStyleSelector();
 
+#if ENABLE(STYLE_SCOPED)
+    static Element* determineScopingElement(const CSSStyleSheet*);
+#endif
+
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
-    void pushParent(Element* parent) { m_checker.pushParent(parent); }
-    void popParent(Element* parent) { m_checker.popParent(parent); }
+    void pushParent(Element* parent);
+    void popParent(Element* parent);
 
     PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, RenderRegion* regionForStyling = 0);
 
@@ -275,11 +279,13 @@ private:
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
     void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     bool fastRejectSelector(const RuleData&) const;
     void sortMatchedRules();
+    void sortAndTransferMatchedRules();
 
     bool checkSelector(const RuleData&);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
@@ -433,9 +439,33 @@ private:
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
     const CSSStyleApplyProperty& m_applyProperty;
-    
+
 #if ENABLE(CSS_SHADERS)
     bool m_hasPendingShaders;
+#endif
+
+#if ENABLE(STYLE_SCOPED)
+    typedef HashMap<const Element*, OwnPtr<RuleSet> > ScopedRuleSetMap;
+
+    RuleSet* scopedRuleSetForElement(const Element*) const;
+
+    void setupScopingElementStack(const Element*);
+    bool scopingElementStackIsConsistent(const Element* parent) const { return parent && parent == m_scopingElementStackParent; }
+
+    ScopedRuleSetMap m_scopedAuthorStyles;
+    
+    struct ScopeStackFrame {
+        ScopeStackFrame() : m_element(0), m_ruleSet(0) { }
+        ScopeStackFrame(const Element* element, RuleSet* ruleSet) : m_element(element), m_ruleSet(ruleSet) { }
+        const Element* m_element;
+        RuleSet* m_ruleSet;
+    };
+    // Vector (used as stack) that keeps track of scoping elements (i.e., elements with a <style scoped> child)
+    // encountered during tree iteration for style resolution.
+    Vector<ScopeStackFrame> m_scopingElementStack;
+    // Element last seen as parent element when updating m_scopingElementStack.
+    // This is used to decide whether m_scopingElementStack is consistent, separately from SelectorChecker::m_parentStack.
+    const Element* m_scopingElementStackParent;
 #endif
 
     friend class CSSStyleApplyProperty;

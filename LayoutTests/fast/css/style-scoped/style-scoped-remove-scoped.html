@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+
+        function test(id)
+        {
+            var elem = document.getElementById(id);
+            log(id + ': ' + document.defaultView.getComputedStyle(elem, null).getPropertyValue('color'));
+        }
+
+        function testAll()
+        {
+            test('S1');
+            test('P1');
+            test('S2');
+            test('P2');
+            test('S3');
+            test('P3');
+        }
+
+        function runTests()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            log('--- ORIGINAL ---');
+            testAll();
+
+            log('--- AFTER UN-SETTING @SCOPED ---');
+            document.getElementById('STYLE').removeAttribute('scoped');
+            setTimeout(function() {
+                testAll();
+                log('--- FINISHED ---');
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, 0);
+        }
+    </script>
+    <style type="text/css" scoped>
+        body { color: black; }
+    </style>
+</head>
+<body onload="runTests();">
+    <p>Test removing the 'scoped' attribute on a &lt;style&gt; element</p>
+    <div>
+        <span id="S1">Text</span>
+        <p id="P1">Text</p>
+    </div>
+    <div>
+        <style id="STYLE" type="text/css" scoped>
+            div { color: red; }
+            p { color: green; }
+        </style>
+        <span id="S2">Text</span>
+        <p id="P2">Text</p>
+    </div>
+    <div>
+        <span id="S3">Text</span>
+        <p id="P3">Text</p>
+    </div>
+    <pre id="console"></pre>
+</body>
+</html>

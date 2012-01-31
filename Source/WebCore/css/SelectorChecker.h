@@ -60,9 +60,11 @@ public:
     inline bool fastRejectSelector(const unsigned* identifierHashes) const;
     static void collectIdentifierHashes(const CSSSelector*, unsigned* identifierHashes, unsigned maximumIdentifierCount);
 
+    void setupParentStack(Element* parent);
     void pushParent(Element* parent);
-    void popParent(Element* parent);
-    bool parentStackIsConsistent(ContainerNode* parentNode) const { return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode; }
+    void popParent() { popParentStackFrame(); }
+    bool parentStackIsEmpty() const { return m_parentStack.isEmpty(); }
+    bool parentStackIsConsistent(const ContainerNode* parentNode) const { return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode; }
 
     EInsideLink determineLinkState(Element*) const;
     void allVisitedStateChanged();

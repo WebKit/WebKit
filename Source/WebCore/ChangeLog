@@ -1,3 +1,57 @@
+2012-01-30  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Implement scoped stylesheets and basic application
+        https://bugs.webkit.org/show_bug.cgi?id=73190
+
+        Implementing support for <style scoped>:
+        Add a vector stack to CSSStyleSelector that keeps track of encountered scoping elements. This is
+        used for O(1) access to all relevant style sheets for a given element.
+        Adapt matching of author style sheets to also consult appropriate scoped sheets.
+        Finally, prevent style sharing from crossing into/out of scoped style boundaries.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/css/style-scoped/style-scoped-attach.html
+               fast/css/style-scoped/style-scoped-basic.html
+               fast/css/style-scoped/style-scoped-detach.html
+               fast/css/style-scoped/style-scoped-remove-scoped.html
+               fast/css/style-scoped/style-scoped-set-scoped.html
+
+        * css/CSSStyleSelector.cpp:
+        (RuleSet):
+        (WebCore::CSSStyleSelector::CSSStyleSelector): add code for scoped style sheets
+        (WebCore::CSSStyleSelector::collectFeatures): ditto
+        (WebCore):
+        (WebCore::CSSStyleSelector::determineScopingElement): determine whether an author sheet is scoped (and to which scope), or global
+        (WebCore::CSSStyleSelector::scopedRuleSetForElement): returns the RuleSet for the <style scoped> contained by the passed-in element (if any), or 0
+        (WebCore::CSSStyleSelector::appendAuthorStylesheets): add code for scoped style sheets
+        (WebCore::CSSStyleSelector::setupScopingElementStack): determine scoping element ancestors of the given element
+        (WebCore::CSSStyleSelector::pushParent): simplify and refactor SelectorChecker::pushParent, as code in CSStyleSelector needs partial access
+        (WebCore::CSSStyleSelector::popParent): ditto
+        (WebCore::CSSStyleSelector::sortAndTransferMatchedRules): helper function
+        (WebCore::CSSStyleSelector::matchAuthorRules): use AuthorRuleSetIterator to iterate over all relevant RuleSets
+        (WebCore::CSSStyleSelector::matchRules): adapt for scoped style rules
+        (WebCore::CSSStyleSelector::matchAllRules): ditto
+        (WebCore::CSSStyleSelector::locateCousinList): prevent style sharing across scope boundaries
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): ditto
+        (WebCore::CSSStyleSelector::locateSharedStyle): ditto
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): changed call to matchAuthorRules
+        (WebCore::CSSStyleSelector::styleForPage): add comment
+        (WebCore::CSSStyleSelector::checkRegionStyle): add global scope parameter
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement): changed call to matchAuthorRules
+        (WebCore::RuleSet::addRulesFromSheet): adapt for scoped style rules
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector):
+        (WebCore::CSSStyleSelector::ScopeStackFrame::ScopeStackFrame): struct holding an Element pointer and a RuleSet pointer, to be used in a Vector
+        (WebCore::CSSStyleSelector::scopingElementStackIsConsistent): returns if the last seen parent matches the passed-in element
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::setupParentStack): set up the parent stack (refactoring)
+        (WebCore::SelectorChecker::pushParent): simplify and refactor
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::popParent): ditto
+        (WebCore::SelectorChecker::parentStackIsEmpty): ditto
+        (WebCore::SelectorChecker::parentStackIsConsistent): make parameter const
+
 2012-01-30  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Compute occlusion during paint loop
