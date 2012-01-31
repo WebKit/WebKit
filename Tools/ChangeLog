@@ -1,5 +1,36 @@
 2012-01-30  Ojan Vafai  <ojan@chromium.org>
 
+        run-webkit-tests calls out to webkit-build-directory twice
+        https://bugs.webkit.org/show_bug.cgi?id=77248
+
+        Reviewed by Dirk Pranke.
+
+        This reduces to calls to webkit-build-directory to one call and
+        saves 500ms for run-webkit-tests over a single file.
+
+        * Scripts/webkit-build-directory:
+        If called with no arguments, print out both the top-level directory and the 
+        configuration directory.
+
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        (Config.build_directory):
+        When called with no arguments, get and cache both the top-level and configuration directories.
+
+        * Scripts/webkitpy/layout_tests/port/config_standalone.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        (ConfigTest.assert_configuration):
+        (ConfigTest.test_build_directory.mock_webkit_build_directory):
+        (ConfigTest.test_build_directory):
+        (ConfigTest.test_default_configuration__notfound):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._build_path):
+        Cache the root directory in the options object so that other users
+        of the options object don't need to call out to webkit-build-directory.
+
+2012-01-30  Ojan Vafai  <ojan@chromium.org>
+
         Parsing test_expecations.txt + Skipped lists takes too long
         https://bugs.webkit.org/show_bug.cgi?id=77059
 
