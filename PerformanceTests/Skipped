@@ -6,3 +6,6 @@ Layout
 PageLoad
 SunSpider
 XSSAuditor
+
+# Bug 77024 - Web Inspector: tests in PerformanceTests/inspector/ are timing out
+inspector

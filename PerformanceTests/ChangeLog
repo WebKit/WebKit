@@ -1,3 +1,9 @@
+2012-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip inspector tests since they have been timing out.
+
+        * Skipped:
+
 2012-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         DOM/DOMDivWalk.html result is unreliable
