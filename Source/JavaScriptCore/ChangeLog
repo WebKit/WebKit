@@ -1,3 +1,38 @@
+2012-01-31  Oliver Hunt  <oliver@apple.com>
+
+        Implement Error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=66994
+
+        Reviewed by Gavin Barraclough.
+
+        Original patch by Juan Carlos Montemayor Elosua:
+            This patch utilizes topCallFrame to create a stack trace when
+            an error is thrown. Users will also be able to use the stack()
+            command in jsc to get arrays with stack trace information.
+
+        Modified to be correct on ToT, with a variety of correctness,
+        performance, and security improvements.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerLine):
+        (JSC::getSourceURLFromCallFrame):
+        (JSC::getStackFrameCodeType):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::toString):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionJSCStack):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+
 2012-01-31  Scott Graham  <scottmg@chromium.org>
 
         [Chromium] Remove references to gyp cygwin build target
