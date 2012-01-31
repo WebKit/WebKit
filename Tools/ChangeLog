@@ -1,3 +1,25 @@
+2012-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r106302.
+        http://trac.webkit.org/changeset/106302
+        https://bugs.webkit.org/show_bug.cgi?id=77472
+
+        Broke building DRT before running the tests (Requested by ojan
+        on #webkit).
+
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        (Config.build_directory):
+        * Scripts/webkitpy/layout_tests/port/config_standalone.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        (ConfigTest.assert_configuration):
+        (ConfigTest.test_build_directory.mock_webkit_build_directory):
+        (ConfigTest.test_build_directory):
+        (ConfigTest.test_default_configuration__notfound):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._build_path):
+
 2012-01-31  Antoine Labour  <piman@chromium.org>
 
         Merge WebGraphicsContext3D creation and initialization, and move it to

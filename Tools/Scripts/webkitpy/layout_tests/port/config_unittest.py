@@ -51,21 +51,18 @@ class ConfigTest(unittest.TestCase):
     def assert_configuration(self, contents, expected):
         # This tests that a configuration file containing
         # _contents_ ends up being interpreted as _expected_.
-        output = 'foo\nfoo/%s' % contents
-        c = self.make_config(output, {'foo/Configuration': contents})
+        c = self.make_config('foo', {'foo/Configuration': contents})
         self.assertEqual(c.default_configuration(), expected)
 
     def test_build_directory(self):
         # --top-level
         def mock_webkit_build_directory(arg_list):
             if arg_list == ['--top-level']:
-                return '/WebKitBuild/'
+                return '/WebKitBuild'
             elif arg_list == ['--configuration', '--debug']:
                 return '/WebKitBuild/Debug'
             elif arg_list == ['--configuration', '--release']:
                 return '/WebKitBuild/Release'
-            elif arg_list == []:
-                return '/WebKitBuild/\n/WebKitBuild//Debug\n'
             return 'Error'
 
         def mock_run_command(arg_list):
@@ -74,10 +71,10 @@ class ConfigTest(unittest.TestCase):
             return 'Error'
 
         c = self.make_config(run_command_fn=mock_run_command)
-        self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+        self.assertTrue(c.build_directory(None).endswith('WebKitBuild'))
 
         # Test again to check caching
-        self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+        self.assertTrue(c.build_directory(None).endswith('WebKitBuild'))
 
         # Test other values
         self.assertTrue(c.build_directory('Release').endswith('/Release'))
@@ -98,7 +95,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_default_configuration__notfound(self):
         # This tests what happens if the default configuration file doesn't exist.
-        c = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': None})
+        c = self.make_config(output='foo', files={'foo/Configuration': None})
         self.assertEqual(c.default_configuration(), "Release")
 
     def test_default_configuration__unknown(self):

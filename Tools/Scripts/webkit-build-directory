@@ -57,15 +57,12 @@ my $getOptionsResult = GetOptions(
     'help|h' => \$showHelp,
 );
 
-if (!$getOptionsResult || $showHelp) {
+if (!$getOptionsResult || $showHelp || (!$showConfigurationDirectory && !$showTopLevelDirectory)) {
     print STDERR $usage;
     exit 1;
 }
 
-if (!$showConfigurationDirectory && !$showTopLevelDirectory) {
-    print baseProductDir() . "\n";
-    print productDir() . "\n";
-} elsif ($showTopLevelDirectory) {
+if ($showTopLevelDirectory) {
     print baseProductDir() . "\n";
 } else {
     print productDir() . "\n";
