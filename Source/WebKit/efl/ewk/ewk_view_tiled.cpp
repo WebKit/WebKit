@@ -347,7 +347,7 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
         return false;
 
     if (EINA_UNLIKELY(!_parent_sc.sc.add)) {
-        _parent_sc.sc.name =  "Ewk_View_Tiled";
+        _parent_sc.sc.name = ewkViewTiledName;
         ewk_view_base_smart_set(&_parent_sc);
         api->sc.parent = reinterpret_cast<Evas_Smart_Class*>(&_parent_sc);
     }
@@ -374,7 +374,7 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
 
 static inline Evas_Smart* _ewk_view_tiled_smart_class_new(void)
 {
-    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("EWK_View_Tiled");
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(ewkViewTiledName);
     static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {

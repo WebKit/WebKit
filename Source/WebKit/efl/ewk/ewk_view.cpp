@@ -267,8 +267,8 @@ struct _Ewk_View_Private_Data {
     }
 
 #define EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView, ...) \
-    if (!evas_object_smart_type_check(ewkView, "Ewk_View_Tiled")) { \
-        INF("object is not a instance of Ewk_View_Tiled"); \
+    if (!evas_object_smart_type_check(ewkView, ewkViewTiledName)) { \
+        INF("object isn't an instance of %s", ewkViewTiledName); \
         return __VA_ARGS__; \
     }
 

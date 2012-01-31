@@ -396,7 +396,7 @@ Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
 
 static inline Evas_Smart* _ewk_view_single_smart_class_new(void)
 {
-    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Ewk_View_Single");
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(ewkViewSingleName);
     static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {

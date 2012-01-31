@@ -1,3 +1,21 @@
+2012-01-30  Eunsol Park  <eunsol47.park@samsung.com>
+
+        [EFL] Define the names of view smart class
+        https://bugs.webkit.org/show_bug.cgi?id=76370
+
+        Reviewed by Andreas Kling.
+
+        Strings of ewk_tiled_view's name were defined differently,
+        so the definitions were modified to make users not confused.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_class_new):
+        * ewk/ewk_view_tiled.cpp:
+        (ewk_view_tiled_smart_set):
+        (_ewk_view_tiled_smart_class_new):
+
 2012-01-26  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Added missing NETSCAPE_PLUGIN_API macro.
