@@ -4042,3 +4042,4 @@ BUGWK77239 : storage/indexeddb/structured-clone.html = PASS TEXT
 
 BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT
 BUGWK77412 LEOPARD : media/media-blocked-by-beforeload.html = TEXT
+BUGWK77416 LINUX : inspector/timeline/timeline-receive-response-event.html = PASS TEXT
