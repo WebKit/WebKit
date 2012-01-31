@@ -1,3 +1,15 @@
+2012-01-30  Raymond Liu  <raymond.liu@intel.com>
+
+        Fix ASSERT fail within AudioBus::processWithGainFrom()
+        https://bugs.webkit.org/show_bug.cgi?id=76685
+
+        Reviewed by Daniel Bates.
+
+        Test: webaudio/audionode-connect-order.html
+
+        * webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+
 2012-01-30  Roland Steiner  <rolandsteiner@chromium.org>
 
         <style scoped>: Implement scoped stylesheets and basic application

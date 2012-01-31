@@ -40,7 +40,7 @@ AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext* context, float sa
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
-    addOutput(adoptPtr(new AudioNodeOutput(this, 0)));
+    addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
 
     // The subclass must create m_processor.
 }
