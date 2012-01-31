@@ -418,6 +418,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
     if (startNode == m_startBlock && startOffset == 0 && canHaveChildrenForEditing(startNode) && !startNode->hasTagName(tableTag)) {
         startOffset = 0;
         startNode = startNode->traverseNextNode();
+        if (!startNode)
+            return;
     }
 
     if (startOffset >= caretMaxOffset(startNode) && startNode->isTextNode()) {

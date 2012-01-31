@@ -1,0 +1,5 @@
+This tests removing the start block. WebKit should not crash.
+| <div>
+|   <br>
+| <br>
+| <br>
