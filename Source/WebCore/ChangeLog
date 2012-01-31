@@ -1,3 +1,13 @@
+2012-01-30  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: [BlackBerry] Add BlackBerry UA Strings to the Inspector's UA switcher
+        https://bugs.webkit.org/show_bug.cgi?id=77343
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen.prototype._createUserAgentSelectRowElement.get const):
+
 2012-01-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: should be possible to step through all event listeners when event listener breakpoint is hit
