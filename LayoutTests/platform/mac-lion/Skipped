@@ -121,10 +121,6 @@ svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 
 # --- Misc failures that need investigation ---
 
-# These fail in DRT but look correct in Safari.
-fast/text/emphasis-combined-text.html
-fast/text/international/text-combine-image-test.html
-
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html
 

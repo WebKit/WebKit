@@ -1,3 +1,17 @@
+2012-01-30  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10778045> REGRESSION (r91935): text-combine fails
+        https://bugs.webkit.org/show_bug.cgi?id=77373
+
+        Reviewed by Darin Adler.
+
+        Removed tests that were failing because of this bug from the Lion skipped
+        list.
+
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill): Changed to use CTFontGetGlyphsForCharacters,
+        rather than wkGetVerticalGlyphsForCharacters, for non-fullwidth fonts.
+
 2012-01-30  Christopher Hutten-Czapski  <chutten@rim.com>
 
         BlackBerry - Support Proxy-Authenticate headers when a proxy is configured

@@ -64,7 +64,8 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                 haveGlyphs = true;
             }
         }
-    } else if (wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)) {
+    } else if ((fontData->platformData().widthVariant() == RegularWidth) ? wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
+        : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)) {
         for (unsigned i = 0; i < length; ++i) {
             if (!glyphs[i])
                 setGlyphDataForIndex(offset + i, 0, 0);
