@@ -498,12 +498,9 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
 #if ENABLE(STYLE_SCOPED)
 void CSSStyleSelector::setupScopingElementStack(const Element* parent)
 {
-    // Shortcut: abort if <style scoped> isn't used anywhere
-    if (m_scopedAuthorStyles.isEmpty()) {
-        ASSERT(!m_scopingElementStackParent);
-        ASSERT(m_scopingElementStack.isEmpty());
-        return;
-    }
+    // The scoping element stack shouldn't be used if <style scoped> isn't used anywhere.
+    ASSERT(!m_scopedAuthorStyles.isEmpty());
+
     m_scopingElementStack.shrink(0);
     for (; parent; parent = parent->parentOrHostElement()) {
         RuleSet* ruleSet = scopedRuleSetForElement(parent);
@@ -528,12 +525,19 @@ void CSSStyleSelector::pushParent(Element* parent)
         m_checker.pushParent(parent);
 
 #if ENABLE(STYLE_SCOPED)
+    // Shortcut: Don't bother with the scoping element stack if <style scoped> isn't used anywhere.
+    if (m_scopedAuthorStyles.isEmpty()) {
+        ASSERT(!m_scopingElementStackParent);
+        ASSERT(m_scopingElementStack.isEmpty());
+        return;
+    }
+    // In some wacky cases during style resolve we may get invoked for random elements.
+    // Recreate the whole scoping element stack in such cases.
     if (!scopingElementStackIsConsistent(parentsParent)) {
-        // In some wacky cases during style resolve we may get invoked for random elements -
-        // recreate the scoping element stack in such cases.
         setupScopingElementStack(parent);
         return;
     }
+    // Otherwise just push the parent onto the stack.
     RuleSet* ruleSet = scopedRuleSetForElement(parent);
     if (ruleSet)
         m_scopingElementStack.append(ScopeStackFrame(parent, ruleSet));
@@ -824,18 +828,12 @@ void CSSStyleSelector::sortAndTransferMatchedRules()
     }
 }
 
-void CSSStyleSelector::matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+void CSSStyleSelector::matchScopedAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
 {
-    m_matchedRules.clear();
-
-    if (!m_element)
+#if ENABLE(STYLE_SCOPED)
+    if (m_scopedAuthorStyles.isEmpty())
         return;
 
-    // Match global author rules.
-    collectMatchingRules(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    collectMatchingRulesForRegion(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-
-#if ENABLE(STYLE_SCOPED)
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
     const Element* parent = m_element->parentOrHostElement();
     if (!scopingElementStackIsConsistent(parent))
@@ -850,7 +848,25 @@ void CSSStyleSelector::matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex,
         collectMatchingRules(ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
         collectMatchingRulesForRegion(ruleSet, firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
+#else
+    UNUSED_PARAM(firstRuleIndex);
+    UNUSED_PARAM(lastRuleIndex);
+    UNUSED_PARAM(includeEmptyRules);
 #endif
+}
+
+void CSSStyleSelector::matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules)
+{
+    m_matchedRules.clear();
+
+    if (!m_element)
+        return;
+
+    // Match global author rules.
+    collectMatchingRules(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    collectMatchingRulesForRegion(m_authorStyle.get(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+
+    matchScopedAuthorRules(firstRuleIndex, lastRuleIndex, includeEmptyRules);
 
     sortAndTransferMatchedRules();
 }

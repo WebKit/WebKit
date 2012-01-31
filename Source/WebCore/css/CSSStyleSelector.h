@@ -280,6 +280,7 @@ private:
     void matchUARules(MatchResult&);
     void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void matchAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void matchScopedAuthorRules(int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
     void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);

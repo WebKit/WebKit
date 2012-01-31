@@ -1,3 +1,23 @@
+2012-01-31  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Improve shortcut code for cases where <style scoped> isn't used
+        https://bugs.webkit.org/show_bug.cgi?id=77410
+
+        Move shortcut from setupScopingElementStack(), do it at the calling sites instead
+        (where a larger chunk of work can be skipped).
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. (refactoring)
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::setupScopingElementStack): remove shortcut code
+        (WebCore::CSSStyleSelector::pushParent): add shortcut code
+        (WebCore::CSSStyleSelector::matchScopedAuthorRules): factor matching scoped rules out from matchAuthorRules
+        (WebCore::CSSStyleSelector::matchAuthorRules): add shortcut code
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector): add matchScopedAuthorRules
+
 2012-01-31  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: DOMDebugger.setEventListenerBreakpoint should accept regular DOM event names.
