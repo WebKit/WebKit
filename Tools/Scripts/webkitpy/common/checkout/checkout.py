@@ -158,7 +158,7 @@ class Checkout(object):
         args = [self._scm.script_path('svn-apply'), "--force"]
         if patch.reviewer():
             args += ['--reviewer', patch.reviewer().full_name]
-        self._executive.run_command(args, input=patch.contents())
+        self._executive.run_command(args, input=patch.contents(), cwd=self._scm.checkout_root)
 
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)

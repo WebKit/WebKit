@@ -261,5 +261,5 @@ class CheckoutTest(unittest.TestCase):
         mock_patch = Mock()
         mock_patch.contents = lambda: "foo"
         mock_patch.reviewer = lambda: None
-        expected_stderr = "MOCK run_command: ['svn-apply', '--force'], cwd=None\n"
+        expected_stderr = "MOCK run_command: ['svn-apply', '--force'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, checkout.apply_patch, [mock_patch], expected_stderr=expected_stderr)

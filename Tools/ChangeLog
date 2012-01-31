@@ -1,3 +1,20 @@
+2012-01-31  Eric Seidel  <eric@webkit.org>
+
+        webkit-patch apply-from-bug should work regardless of your CWD
+        https://bugs.webkit.org/show_bug.cgi?id=77482
+
+        Reviewed by Adam Barth.
+
+        webkit-patch only ever works with patches made from the root
+        directory.  We should pass the CWD to svn-apply in the case
+        where we're running not from the webkit root.  I believe
+        this used to work in the past and regressed.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.apply_patch):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_apply_patch):
+
 2012-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r106302.
