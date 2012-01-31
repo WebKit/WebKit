@@ -1,7 +1,7 @@
 Tests that TextTracks in a TextTrackList are kept in the correct order.
 
-** Add a track with video.addTrack().
-RUN(video.addTrack('descriptions', 'Descriptions Track', 'en'))
+** Add a track with video.addTextTrack().
+RUN(video.addTextTrack('descriptions', 'Descriptions Track', 'en'))
 
 ** Add a <track> element with DOM API.
 RUN(trackElement = document.createElement('track'))
@@ -14,7 +14,7 @@ EXPECTED (video.textTracks[0].kind == 'captions') OK
 EXPECTED (video.textTracks[1].kind == 'chapters') OK
 EXPECTED (video.textTracks[2].kind == 'descriptions') OK
 
-** Add another <track> element, is should insert before the addTrack() track.
+** Add another <track> element, is should insert before the addTextTrack() track.
 RUN(trackElement = document.createElement('track'))
 RUN(trackElement.setAttribute('kind', 'metadata'))
 RUN(video.appendChild(trackElement))

@@ -1,3 +1,19 @@
+2012-01-31  Arko Saha  <arko@motorola.com>
+
+        The spec renamed addTrack() to addTextTrack().
+        https://bugs.webkit.org/show_bug.cgi?id=77381
+
+        Reviewed by Eric Carlson.
+
+        Renamed addTrack() to addTextTrack().
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#media-elements
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::addTextTrack):
+        * html/HTMLMediaElement.idl:
+
 2012-01-31  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: reimplement generated array types

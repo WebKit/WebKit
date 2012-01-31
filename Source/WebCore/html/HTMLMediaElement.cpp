@@ -2198,7 +2198,7 @@ float HTMLMediaElement::percentLoaded() const
 }
 
 #if ENABLE(VIDEO_TRACK)
-PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
+PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return 0;

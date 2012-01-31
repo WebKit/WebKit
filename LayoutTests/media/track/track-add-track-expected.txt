@@ -11,8 +11,8 @@ EXPECTED (event.target == '[object TextTrackList]') OK
 EXPECTED (event instanceof window.TrackEvent == 'true') OK
 EXPECTED (event.track == '[object TextTrack]') OK
 
-** Test a TextTrack created with video.addTrack().
-RUN(tracks.push(video.addTrack('captions', 'Caption Track', 'en')))
+** Test a TextTrack created with video.addTextTrack().
+RUN(tracks.push(video.addTextTrack('captions', 'Caption Track', 'en')))
 EXPECTED (video.textTracks.length == '2') OK
 EVENT(addtrack)
 EXPECTED (event.target == '[object TextTrackList]') OK

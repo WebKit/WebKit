@@ -197,9 +197,9 @@ public:
     float percentLoaded() const;
 
 #if ENABLE(VIDEO_TRACK)
-    PassRefPtr<TextTrack> addTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
-    PassRefPtr<TextTrack> addTrack(const String& kind, const String& label, ExceptionCode& ec) { return addTrack(kind, label, emptyString(), ec); }
-    PassRefPtr<TextTrack> addTrack(const String& kind, ExceptionCode& ec) { return addTrack(kind, emptyString(), emptyString(), ec); }
+    PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
+    PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, ExceptionCode& ec) { return addTextTrack(kind, label, emptyString(), ec); }
+    PassRefPtr<TextTrack> addTextTrack(const String& kind, ExceptionCode& ec) { return addTextTrack(kind, emptyString(), emptyString(), ec); }
 
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }

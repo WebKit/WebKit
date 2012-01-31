@@ -11,7 +11,7 @@
 
             function addTrack(type)
             {
-                run("video.addTrack('" + type + "')");
+                run("video.addTextTrack('" + type + "')");
                 testExpected("video.textTracks.length", ++trackCount);
             }
 
@@ -21,7 +21,7 @@
 
                 consoleWrite("<em>++ Test invalid 'kind'.</em>");
                 testExpected("video.textTracks.length", 0);
-                testException("video.addTrack('kaptions')", "DOMException.SYNTAX_ERR");
+                testException("video.addTextTrack('kaptions')", "DOMException.SYNTAX_ERR");
                 testExpected("video.textTracks.length", 0);
                 consoleWrite("");
 
@@ -39,7 +39,7 @@
         </script>
     </head>
     <body onload="start()">
-        <p>Tests that the addTrack() only accepts known 'kind' values.</p>
+        <p>Tests that the addTextTrack() only accepts known 'kind' values.</p>
         <video>
         </video>
     </body>

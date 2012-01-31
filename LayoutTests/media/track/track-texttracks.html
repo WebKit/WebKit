@@ -13,8 +13,8 @@
             {
                 findMediaElement();
 
-                consoleWrite("** Add a track with video.addTrack().");
-                run("video.addTrack('descriptions', 'Descriptions Track', 'en')");
+                consoleWrite("** Add a track with video.addTextTrack().");
+                run("video.addTextTrack('descriptions', 'Descriptions Track', 'en')");
 
                 consoleWrite("<br>** Add a &lt;track&gt; element with DOM API.");
                 run("trackElement = document.createElement('track')");
@@ -27,7 +27,7 @@
                 testExpected("video.textTracks[1].kind", "chapters");
                 testExpected("video.textTracks[2].kind", "descriptions");
 
-                consoleWrite("<br>** Add another &lt;track&gt; element, is should insert before the addTrack() track.");
+                consoleWrite("<br>** Add another &lt;track&gt; element, is should insert before the addTextTrack() track.");
                 run("trackElement = document.createElement('track')");
                 run("trackElement.setAttribute('kind', 'metadata')");
                 run("video.appendChild(trackElement)");

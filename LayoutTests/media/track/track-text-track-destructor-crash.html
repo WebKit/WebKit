@@ -14,7 +14,7 @@
                 consoleWrite("Create video and add text tracks.");
                 var video = document.createElement('video');
                 for (var i = 0; i < 1000; i++)
-                    tracks[i] = video.addTrack('captions', 'Captions Track', 'en');
+                    tracks[i] = video.addTextTrack('captions', 'Captions Track', 'en');
                 testExpected("tracks.length", 1000);
                 consoleWrite("");
                 consoleWrite("Destroy the video and force a garbage collection.");
