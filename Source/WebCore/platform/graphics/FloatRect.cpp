@@ -218,6 +218,19 @@ IntRect enclosingIntRect(const FloatRect& rect)
                    clampToInteger(width), clampToInteger(height));
 }
 
+IntRect enclosedIntRect(const FloatRect& rect)
+{
+    int x = clampToInteger(ceilf(rect.x()));
+    int y = clampToInteger(ceilf(rect.y()));
+    float maxX = clampToInteger(floorf(rect.maxX()));
+    float maxY = clampToInteger(floorf(rect.maxY()));
+    // A rect of width 0 should not become a rect of width -1 due to ceil/floor.
+    int width = max(clampToInteger(maxX - x), 0);
+    int height = max(clampToInteger(maxY - y), 0);
+
+    return IntRect(x, y, width, height);
+}
+
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
 {
     if (srcRect.width() == 0 || srcRect.height() == 0)

@@ -93,7 +93,7 @@ bool ContentLayerChromium::drawsContent() const
     return TiledLayerChromium::drawsContent() && m_delegate;
 }
 
-void ContentLayerChromium::paintContentsIfDirty()
+void ContentLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
 {
     updateTileSizeAndTilingOption();
 

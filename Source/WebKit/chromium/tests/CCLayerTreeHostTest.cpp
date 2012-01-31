@@ -30,6 +30,7 @@
 #include "ContentLayerChromium.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
+#include "Region.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -1005,9 +1006,9 @@ public:
     int updateCount() { return m_updateCount; }
     void resetUpdateCount() { m_updateCount = 0; }
 
-    virtual void paintContentsIfDirty()
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace)
     {
-        ContentLayerChromium::paintContentsIfDirty();
+        ContentLayerChromium::paintContentsIfDirty(occludedScreenSpace);
         m_paintContentsCount++;
     }
 
@@ -1227,5 +1228,245 @@ TEST_F(CCLayerTreeHostTestAtomicCommit, runMultiThread)
 {
     runTest(true);
 }
+
+#define EXPECT_EQ_RECT(a, b) \
+    EXPECT_EQ(a.x(), b.x()); \
+    EXPECT_EQ(a.y(), b.y()); \
+    EXPECT_EQ(a.width(), b.width()); \
+    EXPECT_EQ(a.height(), b.height());
+
+class TestLayerChromium : public LayerChromium {
+public:
+    static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
+
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace)
+    {
+        m_occludedScreenSpace = occludedScreenSpace;
+    }
+
+    virtual bool drawsContent() const { return true; }
+
+    const Region& occludedScreenSpace() const { return m_occludedScreenSpace; }
+    void clearOccludedScreenSpace() { m_occludedScreenSpace = Region(); }
+
+private:
+    TestLayerChromium() : LayerChromium() { }
+
+    Region m_occludedScreenSpace;
+};
+
+static void setLayerPropertiesForTesting(TestLayerChromium* layer, LayerChromium* parent, const TransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
+{
+    layer->removeAllChildren();
+    if (parent)
+        parent->addChild(layer);
+    layer->setTransform(transform);
+    layer->setAnchorPoint(anchor);
+    layer->setPosition(position);
+    layer->setBounds(bounds);
+    layer->setOpaque(opaque);
+    layer->clearOccludedScreenSpace();
+}
+
+class CCLayerTreeHostTestLayerOcclusion : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestLayerOcclusion() { }
+
+    virtual void beginTest()
+    {
+        RefPtr<TestLayerChromium> rootLayer = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> child = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> child2 = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> grandChild = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> mask = TestLayerChromium::create();
+
+        TransformationMatrix identityMatrix;
+        TransformationMatrix childTransform;
+        childTransform.translate(250, 250);
+        childTransform.rotate(90);
+        childTransform.translate(-250, -250);
+
+        child->setMasksToBounds(true);
+
+        // See CCLayerTreeHostCommonTest.layerAddsSelfToOccludedRegionWithRotatedSurface for a nice visual of these layers and how they end up
+        // positioned on the screen.
+
+        // The child layer is rotated and the grandChild is opaque, but clipped to the child and rootLayer
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer is opaque, then it adds to the occlusion seen by the rootLayer.
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // Add a second child to the root layer and the regions should merge
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(70, 20), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 20, 70, 80), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(2u, rootLayer->occludedScreenSpace().rects().size());
+
+        // Move the second child to be sure.
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 30, 90, 70), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(2u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer has a mask on it, then it shouldn't contribute to occlusion on stuff below it
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        child->setMaskLayer(mask.get());
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer with a mask is below child2, then child2 should contribute to occlusion on everything, and child shouldn't contribute to the rootLayer
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+
+        child->setMaskLayer(mask.get());
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 40, 90, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(2u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer has a non-opaque drawOpacity, then it shouldn't contribute to occlusion on stuff below it
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+
+        child->setMaskLayer(0);
+        child->setOpacity(0.5);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // If the child layer with non-opaque drawOpacity is below child2, then child2 should contribute to occlusion on everything, and child shouldn't contribute to the rootLayer
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), childTransform, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+        setLayerPropertiesForTesting(child2.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 70), IntSize(500, 500), true);
+
+        child->setMaskLayer(0);
+        child->setOpacity(0.5);
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child2->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), grandChild->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, grandChild->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 40, 90, 60), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(2u, child->occludedScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(10, 70, 90, 30), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // Kill the layerTreeHost immediately.
+        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost.clear();
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerOcclusion)
 
 } // namespace

@@ -1,3 +1,38 @@
+2012-01-31  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Compute occlusion during paint loop
+        https://bugs.webkit.org/show_bug.cgi?id=76858
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::paintContentsIfDirty):
+        (WTF):
+        (TestLayerChromium):
+        (WTF::TestLayerChromium::create):
+        (WTF::TestLayerChromium::paintContentsIfDirty):
+        (WTF::TestLayerChromium::drawsContent):
+        (WTF::TestLayerChromium::occludedScreenSpace):
+        (WTF::TestLayerChromium::clearOccludedScreenSpace):
+        (WTF::TestLayerChromium::TestLayerChromium):
+        (WTF::setLayerPropertiesForTesting):
+        (CCLayerTreeHostTestLayerOcclusion):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::CCLayerTreeHostTestLayerOcclusion):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::afterTest):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeLayerTextureUpdater::setOpaquePaintRect):
+        (FakeLayerTextureUpdater):
+        (WTF::FakeTiledLayerChromium::paintContentsIfDirty):
+        (WTF::FakeLayerTextureUpdater::prepareToUpdate):
+        (WTF::TEST):
+        (WTF):
+
 2012-01-31  John Bates  <jbates@google.com>
 
         [Chromium] Add chromium-style tracing support

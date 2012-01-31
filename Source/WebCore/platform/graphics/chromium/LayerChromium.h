@@ -55,6 +55,7 @@ class CCLayerImpl;
 class CCLayerTreeHost;
 class CCTextureUpdater;
 class GraphicsContext3D;
+class Region;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
@@ -153,7 +154,7 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }
-    virtual void paintContentsIfDirty() { }
+    virtual void paintContentsIfDirty(const Region& /* occludedScreenSpace */) { }
     virtual void idlePaintContentsIfDirty() { }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
     virtual void setIsMask(bool) { }
@@ -182,14 +183,21 @@ public:
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
     RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
+    // This moves from layer space, with origin in the center to target space with origin in the top left
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
+    // This moves from layer space, with origin the top left to screen space with origin in the top left
     const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
     void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
+
+    TransformationMatrix contentToScreenSpaceTransform() const;
+
+    // Adds any opaque visible pixels to the occluded region.
+    virtual void addSelfToOccludedScreenSpace(Region& occludedScreenSpace);
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
@@ -210,6 +218,8 @@ protected:
     // layerRendererContext(). Subclasses should override this method if they
     // hold context-dependent resources such as textures.
     virtual void cleanupResources();
+
+    bool isPaintedAxisAlignedInScreen() const;
 
     void setNeedsCommit();
 

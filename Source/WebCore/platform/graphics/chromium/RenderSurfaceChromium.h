@@ -63,6 +63,8 @@ public:
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float drawOpacity) { m_drawOpacity = drawOpacity; }
 
+    // This goes from content space with the origin in the center of the rect being transformed to the target space with the origin in the top left of the
+    // rect being transformed. Position the rect so that the origin is in the center of it before applying this transform.
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const TransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
 
