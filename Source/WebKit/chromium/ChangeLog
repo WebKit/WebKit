@@ -1,3 +1,29 @@
+2012-01-26  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        Reviewed by Darin Fisher.
+
+        Remove the WebSpeechInputControllerMock interface and proxy
+        implementation. The mock is moving to the DumpRenderTree
+        implementation instead, which removes the need to expose this
+        interface in the WebKit API.
+
+        Also add a proper copy constructor for WebSpeechInputResult.
+        The default one doesn't do a proper copy.
+
+        * WebKit.gyp:
+        * public/WebSpeechInputControllerMock.h: Removed.
+        * public/WebSpeechInputResult.h:
+        (WebKit::WebSpeechInputResult::WebSpeechInputResult):
+        (WebSpeechInputResult):
+        * src/WebSpeechInputControllerMockImpl.cpp: Removed.
+        * src/WebSpeechInputControllerMockImpl.h: Removed.
+        * src/WebSpeechInputResult.cpp:
+        (WebKit::WebSpeechInputResult::set):
+        (WebKit):
+
 2012-01-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

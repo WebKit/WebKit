@@ -42,9 +42,11 @@ namespace WebKit {
 class WebSpeechInputResult {
 public:
     WebSpeechInputResult() { }
+    WebSpeechInputResult(const WebSpeechInputResult& other) { assign(other); }
     ~WebSpeechInputResult() { reset(); }
 
     WEBKIT_EXPORT void set(const WebString& utterance, double confidence);
+    WEBKIT_EXPORT void assign(const WebSpeechInputResult& other);
     WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION

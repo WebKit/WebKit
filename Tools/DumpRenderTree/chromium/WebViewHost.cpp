@@ -32,6 +32,7 @@
 #include "WebViewHost.h"
 
 #include "LayoutTestController.h"
+#include "MockWebSpeechInputController.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
@@ -55,7 +56,6 @@
 #include "platform/WebRect.h"
 #include "WebScreenInfo.h"
 #include "platform/WebSize.h"
-#include "WebSpeechInputControllerMock.h"
 #include "WebStorageNamespace.h"
 #include "WebTextCheckingCompletion.h"
 #include "WebTextCheckingResult.h"
@@ -678,7 +678,7 @@ WebKit::WebGeolocationClientMock* WebViewHost::geolocationClientMock()
 WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
 {
     if (!m_speechInputControllerMock)
-        m_speechInputControllerMock = adoptPtr(WebSpeechInputControllerMock::create(listener));
+        m_speechInputControllerMock = MockWebSpeechInputController::create(listener);
     return m_speechInputControllerMock.get();
 }
 

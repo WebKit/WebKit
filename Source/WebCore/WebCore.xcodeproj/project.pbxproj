@@ -1799,8 +1799,6 @@
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		750D029311D0E7F300BD1B27 /* RenderInputSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */; };
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
-		7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */; };
-		7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75415AF812958D5E003AD669 /* SpeechInputEvent.h */; };
@@ -8663,8 +8661,6 @@
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInputSpeech.cpp; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
-		7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeechInputClientMock.cpp; path = mock/SpeechInputClientMock.cpp; sourceTree = "<group>"; };
-		7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeechInputClientMock.h; path = mock/SpeechInputClientMock.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		75415AF812958D5E003AD669 /* SpeechInputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputEvent.h; sourceTree = "<group>"; };
@@ -14753,8 +14749,6 @@
 				052BFCEA128ABF2100FD338D /* GeolocationClientMock.h */,
 				0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */,
 				0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */,
-				7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */,
-				7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */,
 			);
 			name = mock;
 			sourceTree = "<group>";
@@ -23522,7 +23516,6 @@
 				626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */,
 				7578F90C11DDF26900D933C5 /* SpeechInput.h in Headers */,
 				7578F90D11DDF26900D933C5 /* SpeechInputClient.h in Headers */,
-				7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */,
 				75415AFD12958D5E003AD669 /* SpeechInputEvent.h in Headers */,
 				7578F92011E4E32800D933C5 /* SpeechInputListener.h in Headers */,
 				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
@@ -26580,7 +26573,6 @@
 				D01A27AD10C9BFD800026A42 /* SpaceSplitString.cpp in Sources */,
 				626CDE0E1140424C001E5A68 /* SpatialNavigation.cpp in Sources */,
 				7578F90B11DDF26900D933C5 /* SpeechInput.cpp in Sources */,
-				7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */,
 				75415C28129A9920003AD669 /* SpeechInputEvent.cpp in Sources */,
 				758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */,
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,

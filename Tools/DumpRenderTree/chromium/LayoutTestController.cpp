@@ -33,6 +33,7 @@
 #include "LayoutTestController.h"
 
 #include "DRTDevToolsAgent.h"
+#include "MockWebSpeechInputController.h"
 #include "TestShell.h"
 #include "WebAnimationController.h"
 #include "WebBindings.h"
@@ -55,7 +56,6 @@
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
 #include "platform/WebSize.h"
-#include "WebSpeechInputControllerMock.h"
 #include "platform/WebURL.h"
 #include "WebView.h"
 #include "WebViewHost.h"
@@ -1934,7 +1934,7 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
     if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
         return;
 
-    if (WebSpeechInputControllerMock* controller = m_shell->webViewHost()->speechInputControllerMock())
+    if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
         controller->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
 }
 

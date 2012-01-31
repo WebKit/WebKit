@@ -1,3 +1,45 @@
+2012-01-26  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: move MockSpeechInputClient into Chromium DumpRenderTree implementation
+        https://bugs.webkit.org/show_bug.cgi?id=77083
+
+        Reviewed by Darin Fisher.
+
+        Add MockWebSpeechInputController which provides a mock implementation
+        of the WebSpeechInputController interface, and use that in
+        DumpRenderTree.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::addMockSpeechInputResult):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        ():
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp: Added.
+        (MockWebSpeechInputController::create):
+        (MockWebSpeechInputController::addMockRecognitionResult):
+        (MockWebSpeechInputController::clearResults):
+        (MockWebSpeechInputController::startRecognition):
+        (MockWebSpeechInputController::cancelRecognition):
+        (MockWebSpeechInputController::stopRecording):
+        (MockWebSpeechInputController::MockWebSpeechInputController):
+        (MockWebSpeechInputController::speechTaskFired):
+        (MockWebSpeechInputController::SpeechTask::SpeechTask):
+        (MockWebSpeechInputController::SpeechTask::stop):
+        (MockWebSpeechInputController::SpeechTask::runIfValid):
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h: Added.
+        (WebKit):
+        (MockWebSpeechInputController):
+        (MockWebSpeechInputController::taskList):
+        (SpeechTask):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::speechInputController):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebKit):
+        (WebViewHost::speechInputControllerMock):
+        (WebViewHost):
+        ():
+
 2012-01-31  Hajime Morrita  <morrita@chromium.org>
 
         [PerformanceTests] Add landing html for Dromaeo dom-query test
