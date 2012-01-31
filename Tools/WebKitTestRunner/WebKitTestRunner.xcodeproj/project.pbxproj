@@ -545,7 +545,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\n\nexport WebKitTestRunner=\"${SRCROOT}\"\nexport WebCoreScripts=\"${WEBCORE_PRIVATE_HEADERS_DIR}\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"${WebKitTestRunner}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner\"\n\nexport WebKitTestRunner=\"${SRCROOT}\"\nexport WebCoreScripts=\"${WEBCORE_PRIVATE_HEADERS_DIR}\"\n\nif [ ! $CC ]; then\n    case $TARGET_GCC_VERSION in\n        (GCC_42)\n            export CC=\"${DT_TOOLCHAIN_DIR}/usr/bin/gcc-4.2\";;\n        (LLVM_GCC_42)\n            export CC=\"${DT_TOOLCHAIN_DIR}/usr/bin/llvm-gcc-4.2\";;\n        (LLVM_COMPILER)\n            export CC=\"${DT_TOOLCHAIN_DIR}/usr/bin/clang\";;\n    esac\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -f \"${WebKitTestRunner}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
