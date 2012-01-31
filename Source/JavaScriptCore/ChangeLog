@@ -1,3 +1,15 @@
+2012-01-31  Anders Carlsson  <andersca@apple.com>
+
+        Vector<T>::operator== shouldn't require T to have operator!=
+        https://bugs.webkit.org/show_bug.cgi?id=77448
+
+        Reviewed by Andreas Kling.
+
+        Change VectorComparer::compare to use !(a == b) instead of a != b since
+        it makes more sense for Vector::operator== to use the element's operator==.
+
+        * wtf/Vector.h:
+
 2012-01-30  Oliver Hunt  <oliver@apple.com>
 
         get_by_val_arguments is broken in the interpreter
