@@ -1,3 +1,10 @@
+2012-01-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fix, add JavaScriptCore/tools
+        to the list of build directories.
+        
+        * waf/build/settings.py:
+
 2012-01-30  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r105797): prepare-ChangeLog for a .cpp file can

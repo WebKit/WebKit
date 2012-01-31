@@ -89,6 +89,7 @@ jscore_dirs = [
     'parser',
     'profiler',
     'runtime',
+    'tools',
     'wtf',
     'wtf/dtoa',
     'wtf/text',

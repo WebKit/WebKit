@@ -31,6 +31,7 @@ import Options
 
 include_paths = [
             os.path.join(wk_root, 'Source', 'JavaScriptCore'),
+            os.path.join(wk_root, 'Source', 'JavaScriptCore', 'runtime'),
             os.path.join(wk_root, 'Source', 'WebCore', 'bindings', 'cpp'),
             os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
             os.path.join(wk_root, 'Source', 'WebKit', 'wx'),
